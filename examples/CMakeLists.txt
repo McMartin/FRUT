@@ -23,5 +23,6 @@ cmake_minimum_required(VERSION 3.0)
 project("examples")
 
 add_subdirectory("AnimationAppExample")
+add_subdirectory("AudioAppExample")
 add_subdirectory("HelloWorld")
 add_subdirectory("OSCMonitor")
