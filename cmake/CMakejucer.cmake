@@ -54,6 +54,16 @@ function(jucer_project_module module_name PATH_TAG module_path)
   list(APPEND JUCER_PROJECT_OSX_FRAMEWORKS ${osx_frameworks})
   set(JUCER_PROJECT_OSX_FRAMEWORKS ${JUCER_PROJECT_OSX_FRAMEWORKS} PARENT_SCOPE)
 
+  file(GLOB_RECURSE browsable_files "${module_path}/${module_name}/*")
+  foreach(file_path ${browsable_files})
+    get_filename_component(file_dir "${file_path}" DIRECTORY)
+    string(REPLACE "${module_path}" "" rel_file_dir "${file_dir}")
+    string(REPLACE "/" "\\" sub_group_name "${rel_file_dir}")
+    source_group("Juce Modules${sub_group_name}" FILES "${file_path}")
+  endforeach()
+  list(APPEND JUCER_PROJECT_BROWSABLE_FILES ${browsable_files})
+  set(JUCER_PROJECT_BROWSABLE_FILES ${JUCER_PROJECT_BROWSABLE_FILES} PARENT_SCOPE)
+
 endfunction()
 
 
@@ -98,7 +108,11 @@ function(jucer_project_end)
     "${CMAKE_CURRENT_BINARY_DIR}/JuceLibraryCode/AppConfig.h"
     "${CMAKE_CURRENT_BINARY_DIR}/JuceLibraryCode/JuceHeader.h"
     ${modules_sources}
+    ${JUCER_PROJECT_BROWSABLE_FILES}
   )
+
+  set_source_files_properties(${JUCER_PROJECT_BROWSABLE_FILES}
+    PROPERTIES HEADER_FILE_ONLY TRUE)
 
   target_include_directories(${JUCER_PROJECT_NAME} PRIVATE
     "${CMAKE_CURRENT_BINARY_DIR}/JuceLibraryCode"
