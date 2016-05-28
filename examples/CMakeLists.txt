@@ -24,5 +24,6 @@ project("examples")
 
 add_subdirectory("AnimationAppExample")
 add_subdirectory("AudioAppExample")
+add_subdirectory("BouncingBallWavetableDemo")
 add_subdirectory("HelloWorld")
 add_subdirectory("OSCMonitor")
