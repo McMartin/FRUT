@@ -27,7 +27,10 @@ function(jucer_project_begin project_name)
 endfunction()
 
 
-function(jucer_project_files)
+function(jucer_project_files source_group_name)
+
+  string(REPLACE "/" "\\" source_group_name ${source_group_name})
+  source_group(${source_group_name} FILES ${ARGN})
 
   list(APPEND JUCER_PROJECT_SOURCES ${ARGN})
   set(JUCER_PROJECT_SOURCES ${JUCER_PROJECT_SOURCES} PARENT_SCOPE)
@@ -84,8 +87,16 @@ function(jucer_project_end)
       "${CMAKE_CURRENT_BINARY_DIR}/JuceLibraryCode/${module_name}.${extension}")
   endforeach()
 
+  source_group("Juce Library Code" FILES
+    "${CMAKE_CURRENT_BINARY_DIR}/JuceLibraryCode/AppConfig.h"
+    "${CMAKE_CURRENT_BINARY_DIR}/JuceLibraryCode/JuceHeader.h"
+    ${modules_sources}
+  )
+
   add_executable(${JUCER_PROJECT_NAME} WIN32 MACOSX_BUNDLE
     ${JUCER_PROJECT_SOURCES}
+    "${CMAKE_CURRENT_BINARY_DIR}/JuceLibraryCode/AppConfig.h"
+    "${CMAKE_CURRENT_BINARY_DIR}/JuceLibraryCode/JuceHeader.h"
     ${modules_sources}
   )
 
