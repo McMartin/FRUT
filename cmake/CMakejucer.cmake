@@ -43,6 +43,14 @@ function(jucer_project_module module_name PATH_TAG module_path)
   list(APPEND JUCER_PROJECT_INCLUDE_DIRS "${module_path}")
   set(JUCER_PROJECT_INCLUDE_DIRS ${JUCER_PROJECT_INCLUDE_DIRS} PARENT_SCOPE)
 
+  set(module_header_file "${module_path}/${module_name}/${module_name}.h")
+
+  file(STRINGS "${module_header_file}" osx_frameworks_line REGEX "OSXFrameworks:")
+  string(REPLACE "OSXFrameworks:" "" osx_frameworks_line "${osx_frameworks_line}")
+  string(REPLACE " " ";" osx_frameworks "${osx_frameworks_line}")
+  list(APPEND JUCER_PROJECT_OSX_FRAMEWORKS ${osx_frameworks})
+  set(JUCER_PROJECT_OSX_FRAMEWORKS ${JUCER_PROJECT_OSX_FRAMEWORKS} PARENT_SCOPE)
+
 endfunction()
 
 
@@ -65,13 +73,18 @@ function(jucer_project_end)
   configure_file("${JUCE.cmake_ROOT}/cmake/JuceHeader.h" "JuceLibraryCode/JuceHeader.h")
 
   foreach(module_name ${JUCER_PROJECT_MODULES})
+    if(APPLE)
+      set(extension "mm")
+    else()
+      set(extension "cpp")
+    endif()
     configure_file("${JUCE.cmake_ROOT}/cmake/ModuleWrapper.cpp"
-      "JuceLibraryCode/${module_name}.cpp")
+      "JuceLibraryCode/${module_name}.${extension}")
     list(APPEND modules_sources
-      "${CMAKE_CURRENT_BINARY_DIR}/JuceLibraryCode/${module_name}.cpp")
+      "${CMAKE_CURRENT_BINARY_DIR}/JuceLibraryCode/${module_name}.${extension}")
   endforeach()
 
-  add_executable(${JUCER_PROJECT_NAME} WIN32
+  add_executable(${JUCER_PROJECT_NAME} WIN32 MACOSX_BUNDLE
     ${JUCER_PROJECT_SOURCES}
     ${modules_sources}
   )
@@ -80,5 +93,20 @@ function(jucer_project_end)
     "${CMAKE_CURRENT_BINARY_DIR}/JuceLibraryCode"
     ${JUCER_PROJECT_INCLUDE_DIRS}
   )
+
+  if(APPLE)
+    target_compile_options(${JUCER_PROJECT_NAME} PRIVATE -std=c++11)
+    target_compile_definitions(${JUCER_PROJECT_NAME} PRIVATE
+      $<$<CONFIG:Debug>:_DEBUG>
+    )
+
+    list(REMOVE_DUPLICATES JUCER_PROJECT_OSX_FRAMEWORKS)
+    foreach(framework_name ${JUCER_PROJECT_OSX_FRAMEWORKS})
+      find_library(${framework_name}_framework ${framework_name})
+      target_link_libraries(${JUCER_PROJECT_NAME}
+        "${${framework_name}_framework}"
+      )
+    endforeach()
+  endif()
 
 endfunction()

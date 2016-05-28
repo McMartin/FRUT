@@ -1,2 +1,2 @@
 #include "AppConfig.h"
-#include <@module_name@/@module_name@.cpp>
+#include <@module_name@/@module_name@.@extension@>
