@@ -1,0 +1,16 @@
+clone_depth: 50
+
+branches:
+  only:
+    - master
+
+install:
+  - cmake --version
+
+  - git clone -q https://github.com/julianstorer/JUCE.git ../JUCE --depth=1
+
+build_script:
+  - mkdir examples\HelloWorld\build
+  - cd examples\HelloWorld\build
+  - cmake ..
+  - cmake --build .
