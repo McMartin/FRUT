@@ -14,3 +14,4 @@ build_script:
   - cd examples\HelloWorld\build
   - cmake ..
   - cmake --build .
+  - cmake --build . --config Release
