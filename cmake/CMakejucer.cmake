@@ -121,9 +121,11 @@ function(jucer_project_end)
 
   if(APPLE)
     target_compile_options(${JUCER_PROJECT_NAME} PRIVATE -std=c++11)
-    target_compile_definitions(${JUCER_PROJECT_NAME} PRIVATE
-      $<$<CONFIG:Debug>:_DEBUG>
-    )
+
+    if(NOT DEFINED CMAKE_BUILD_TYPE)
+      set(CMAKE_BUILD_TYPE "Debug")
+    endif()
+    target_compile_definitions(${JUCER_PROJECT_NAME} PRIVATE $<$<CONFIG:Debug>:_DEBUG>)
 
     list(REMOVE_DUPLICATES JUCER_PROJECT_OSX_FRAMEWORKS)
     foreach(framework_name ${JUCER_PROJECT_OSX_FRAMEWORKS})
