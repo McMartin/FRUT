@@ -12,5 +12,5 @@ install:
 script:
   - mkdir examples/HelloWorld/build
   - cd examples/HelloWorld/build
-  - cmake ..
+  - cmake .. -DCMAKE_BUILD_TYPE=Debug
   - cmake --build .
