@@ -13,4 +13,5 @@ build_script:
   - mkdir examples\HelloWorld\build
   - cd examples\HelloWorld\build
   - cmake ..
-  - cmake --build .
+  - cmake --build . --config Debug
+  - cmake --build . --config Release
