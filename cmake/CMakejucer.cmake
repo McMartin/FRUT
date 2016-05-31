@@ -93,7 +93,7 @@ function(jucer_project_end)
     endif()
     configure_file("${JUCE.cmake_ROOT}/cmake/ModuleWrapper.cpp"
       "JuceLibraryCode/${module_name}.${extension}")
-    list(APPEND modules_sources
+    list(APPEND JUCER_PROJECT_SOURCES
       "${CMAKE_CURRENT_BINARY_DIR}/JuceLibraryCode/${module_name}.${extension}")
   endforeach()
 
@@ -104,7 +104,6 @@ function(jucer_project_end)
     ${JUCER_PROJECT_SOURCES}
     "${CMAKE_CURRENT_BINARY_DIR}/JuceLibraryCode/AppConfig.h"
     "${CMAKE_CURRENT_BINARY_DIR}/JuceLibraryCode/JuceHeader.h"
-    ${modules_sources}
     ${JUCER_PROJECT_BROWSABLE_FILES}
   )
 
