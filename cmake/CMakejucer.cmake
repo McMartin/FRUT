@@ -97,11 +97,8 @@ function(jucer_project_end)
       "${CMAKE_CURRENT_BINARY_DIR}/JuceLibraryCode/${module_name}.${extension}")
   endforeach()
 
-  source_group("Juce Library Code" FILES
-    "${CMAKE_CURRENT_BINARY_DIR}/JuceLibraryCode/AppConfig.h"
-    "${CMAKE_CURRENT_BINARY_DIR}/JuceLibraryCode/JuceHeader.h"
-    ${modules_sources}
-  )
+  source_group("Juce Library Code"
+    REGULAR_EXPRESSION "${CMAKE_CURRENT_BINARY_DIR}/JuceLibraryCode/*")
 
   add_executable(${JUCER_PROJECT_NAME} WIN32 MACOSX_BUNDLE
     ${JUCER_PROJECT_SOURCES}
