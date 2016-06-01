@@ -10,8 +10,8 @@ install:
   - git clone -q https://github.com/julianstorer/JUCE.git ../JUCE --depth=1
 
 build_script:
-  - mkdir examples\HelloWorld\build
-  - cd examples\HelloWorld\build
+  - mkdir examples\build
+  - cd examples\build
   - cmake ..
   - cmake --build . --config Debug
   - cmake --build . --config Release

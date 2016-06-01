@@ -46,6 +46,19 @@ function(jucer_project_module module_name PATH_TAG module_path)
   list(APPEND JUCER_PROJECT_INCLUDE_DIRS "${module_path}")
   set(JUCER_PROJECT_INCLUDE_DIRS ${JUCER_PROJECT_INCLUDE_DIRS} PARENT_SCOPE)
 
+  get_filename_component(obj_cpp_module_file
+    "${module_path}/${module_name}/${module_name}.mm" ABSOLUTE)
+  if(APPLE AND EXISTS "${obj_cpp_module_file}")
+    set(extension "mm")
+  else()
+    set(extension "cpp")
+  endif()
+  configure_file("${JUCE.cmake_ROOT}/cmake/ModuleWrapper.cpp"
+    "JuceLibraryCode/${module_name}.${extension}")
+  list(APPEND JUCER_PROJECT_SOURCES
+    "${CMAKE_CURRENT_BINARY_DIR}/JuceLibraryCode/${module_name}.${extension}")
+  set(JUCER_PROJECT_SOURCES ${JUCER_PROJECT_SOURCES} PARENT_SCOPE)
+
   set(module_header_file "${module_path}/${module_name}/${module_name}.h")
 
   file(STRINGS "${module_header_file}" osx_frameworks_line REGEX "OSXFrameworks:")
@@ -85,29 +98,13 @@ function(jucer_project_end)
   endforeach()
   configure_file("${JUCE.cmake_ROOT}/cmake/JuceHeader.h" "JuceLibraryCode/JuceHeader.h")
 
-  foreach(module_name ${JUCER_PROJECT_MODULES})
-    if(APPLE)
-      set(extension "mm")
-    else()
-      set(extension "cpp")
-    endif()
-    configure_file("${JUCE.cmake_ROOT}/cmake/ModuleWrapper.cpp"
-      "JuceLibraryCode/${module_name}.${extension}")
-    list(APPEND modules_sources
-      "${CMAKE_CURRENT_BINARY_DIR}/JuceLibraryCode/${module_name}.${extension}")
-  endforeach()
-
-  source_group("Juce Library Code" FILES
-    "${CMAKE_CURRENT_BINARY_DIR}/JuceLibraryCode/AppConfig.h"
-    "${CMAKE_CURRENT_BINARY_DIR}/JuceLibraryCode/JuceHeader.h"
-    ${modules_sources}
-  )
+  source_group("Juce Library Code"
+    REGULAR_EXPRESSION "${CMAKE_CURRENT_BINARY_DIR}/JuceLibraryCode/*")
 
   add_executable(${JUCER_PROJECT_NAME} WIN32 MACOSX_BUNDLE
     ${JUCER_PROJECT_SOURCES}
     "${CMAKE_CURRENT_BINARY_DIR}/JuceLibraryCode/AppConfig.h"
     "${CMAKE_CURRENT_BINARY_DIR}/JuceLibraryCode/JuceHeader.h"
-    ${modules_sources}
     ${JUCER_PROJECT_BROWSABLE_FILES}
   )
 
