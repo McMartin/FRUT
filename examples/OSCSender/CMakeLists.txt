@@ -20,17 +20,54 @@
 
 cmake_minimum_required(VERSION 3.0)
 
-project("examples")
 
-add_subdirectory("AnimationAppExample")
-add_subdirectory("AudioAppExample")
-add_subdirectory("BouncingBallWavetableDemo")
-add_subdirectory("ComponentTutorialExample")
-add_subdirectory("HelloWorld")
-add_subdirectory("MidiTest")
-add_subdirectory("MPETest")
-add_subdirectory("OSCMonitor")
-add_subdirectory("OSCReceiver")
-add_subdirectory("OSCSender")
-add_subdirectory("PluckedStringsDemo")
-add_subdirectory("SimpleFFTExample")
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/../..")
+include(JUCE)
+
+
+set(OSCSender_jucer_FILE "${JUCE_DIR}/examples/OSCSender/OSCSender.jucer"
+  CACHE PATH "Path to OSCSender.jucer")
+
+get_filename_component(OSCSender_jucer_DIR "${OSCSender_jucer_FILE}" DIRECTORY)
+
+file(COPY "${OSCSender_jucer_DIR}/Source" DESTINATION "${CMAKE_CURRENT_LIST_DIR}")
+
+
+jucer_project_begin("OSCSender")
+
+jucer_project_files("OSCSender/Source"
+  "Source/Main.cpp"
+  "Source/MainComponent.h"
+)
+
+jucer_project_module(
+  juce_core
+  PATH "${OSCSender_jucer_DIR}/../../modules"
+)
+
+jucer_project_module(
+  juce_data_structures
+  PATH "${OSCSender_jucer_DIR}/../../modules"
+)
+
+jucer_project_module(
+  juce_events
+  PATH "${OSCSender_jucer_DIR}/../../modules"
+)
+
+jucer_project_module(
+  juce_graphics
+  PATH "${OSCSender_jucer_DIR}/../../modules"
+)
+
+jucer_project_module(
+  juce_gui_basics
+  PATH "${OSCSender_jucer_DIR}/../../modules"
+)
+
+jucer_project_module(
+  juce_osc
+  PATH "${OSCSender_jucer_DIR}/../../modules"
+)
+
+jucer_project_end()
