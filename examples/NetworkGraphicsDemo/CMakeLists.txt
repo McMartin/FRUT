@@ -36,7 +36,7 @@ file(COPY "${NetworkGraphicsDemo_jucer_DIR}/Source"
   DESTINATION "${CMAKE_CURRENT_LIST_DIR}")
 
 
-jucer_project_begin("NetworkGraphicsDemo")
+jucer_project_begin("JUCE Network Graphics Demo")
 
 jucer_project_files("NetworkGraphicsDemo/Source"
   "Source/Demos.h"
