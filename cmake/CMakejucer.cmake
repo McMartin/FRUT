@@ -110,6 +110,8 @@ function(jucer_project_end)
     ${JUCER_PROJECT_BROWSABLE_FILES}
   )
 
+  set_target_properties(${target_name} PROPERTIES OUTPUT_NAME "${JUCER_PROJECT_NAME}")
+
   set_source_files_properties(${JUCER_PROJECT_BROWSABLE_FILES}
     PROPERTIES HEADER_FILE_ONLY TRUE)
 
