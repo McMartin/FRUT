@@ -118,16 +118,12 @@ function(jucer_project_end)
 
   if(APPLE)
     target_compile_options(${JUCER_PROJECT_NAME} PRIVATE -std=c++11)
-    target_compile_definitions(${JUCER_PROJECT_NAME} PRIVATE
-      $<$<CONFIG:Debug>:_DEBUG>
-    )
+    target_compile_definitions(${JUCER_PROJECT_NAME} PRIVATE $<$<CONFIG:Debug>:_DEBUG>)
 
     list(REMOVE_DUPLICATES JUCER_PROJECT_OSX_FRAMEWORKS)
     foreach(framework_name ${JUCER_PROJECT_OSX_FRAMEWORKS})
       find_library(${framework_name}_framework ${framework_name})
-      target_link_libraries(${JUCER_PROJECT_NAME}
-        "${${framework_name}_framework}"
-      )
+      target_link_libraries(${JUCER_PROJECT_NAME} "${${framework_name}_framework}")
     endforeach()
   endif()
 
