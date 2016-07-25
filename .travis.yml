@@ -19,8 +19,8 @@ script:
 
   - cd $TRAVIS_BUILD_DIR
 
-  - mkdir examples/OSCMonitor/build
-  - cd examples/OSCMonitor/build
+  - mkdir examples/NetworkGraphicsDemo/build
+  - cd examples/NetworkGraphicsDemo/build
   - cmake .. -DCMAKE_BUILD_TYPE=Debug
   - cmake --build .
   - cmake .. -DCMAKE_BUILD_TYPE=Release
