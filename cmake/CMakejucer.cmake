@@ -101,33 +101,33 @@ function(jucer_project_end)
   source_group("Juce Library Code"
     REGULAR_EXPRESSION "${CMAKE_CURRENT_BINARY_DIR}/JuceLibraryCode/*")
 
-  add_executable(${JUCER_PROJECT_NAME} WIN32 MACOSX_BUNDLE
+  string(REGEX REPLACE "[^A-Za-z0-9_.+-]" "_" target_name "${JUCER_PROJECT_NAME}")
+
+  add_executable(${target_name} WIN32 MACOSX_BUNDLE
     ${JUCER_PROJECT_SOURCES}
     "${CMAKE_CURRENT_BINARY_DIR}/JuceLibraryCode/AppConfig.h"
     "${CMAKE_CURRENT_BINARY_DIR}/JuceLibraryCode/JuceHeader.h"
     ${JUCER_PROJECT_BROWSABLE_FILES}
   )
 
+  set_target_properties(${target_name} PROPERTIES OUTPUT_NAME "${JUCER_PROJECT_NAME}")
+
   set_source_files_properties(${JUCER_PROJECT_BROWSABLE_FILES}
     PROPERTIES HEADER_FILE_ONLY TRUE)
 
-  target_include_directories(${JUCER_PROJECT_NAME} PRIVATE
+  target_include_directories(${target_name} PRIVATE
     "${CMAKE_CURRENT_BINARY_DIR}/JuceLibraryCode"
     ${JUCER_PROJECT_INCLUDE_DIRS}
   )
 
   if(APPLE)
-    target_compile_options(${JUCER_PROJECT_NAME} PRIVATE -std=c++11)
-    target_compile_definitions(${JUCER_PROJECT_NAME} PRIVATE
-      $<$<CONFIG:Debug>:_DEBUG>
-    )
+    target_compile_options(${target_name} PRIVATE -std=c++11)
+    target_compile_definitions(${target_name} PRIVATE $<$<CONFIG:Debug>:_DEBUG>)
 
     list(REMOVE_DUPLICATES JUCER_PROJECT_OSX_FRAMEWORKS)
     foreach(framework_name ${JUCER_PROJECT_OSX_FRAMEWORKS})
       find_library(${framework_name}_framework ${framework_name})
-      target_link_libraries(${JUCER_PROJECT_NAME}
-        "${${framework_name}_framework}"
-      )
+      target_link_libraries(${target_name} "${${framework_name}_framework}")
     endforeach()
   endif()
 

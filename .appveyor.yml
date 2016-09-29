@@ -18,8 +18,8 @@ build_script:
 
   - cd %APPVEYOR_BUILD_FOLDER%
 
-  - mkdir examples\OSCMonitor\build
-  - cd examples\OSCMonitor\build
+  - mkdir examples\NetworkGraphicsDemo\build
+  - cd examples\NetworkGraphicsDemo\build
   - cmake ..
   - cmake --build . --config Debug
   - cmake --build . --config Release
