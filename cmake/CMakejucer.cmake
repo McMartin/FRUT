@@ -108,6 +108,12 @@ function(jucer_project_end)
       endif()
       string(CONCAT config_flags_defines "${config_flags_defines}" "#endif\n\n")
 
+      if(${flag_name} STREQUAL "JUCE_PLUGINHOST_AU")
+        if(flag_value)
+          list(APPEND JUCER_PROJECT_OSX_FRAMEWORKS "AudioUnit" "CoreAudioKit")
+        endif()
+      endif()
+
       unset(flag_name)
     endif()
   endforeach()
