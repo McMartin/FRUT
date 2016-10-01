@@ -59,6 +59,9 @@ function(jucer_project_module module_name PATH_TAG module_path)
     "${CMAKE_CURRENT_BINARY_DIR}/JuceLibraryCode/${module_name}.${extension}")
   set(JUCER_PROJECT_SOURCES ${JUCER_PROJECT_SOURCES} PARENT_SCOPE)
 
+  list(APPEND JUCER_CONFIG_FLAGS ${ARGN})
+  set(JUCER_CONFIG_FLAGS ${JUCER_CONFIG_FLAGS} PARENT_SCOPE)
+
   set(module_header_file "${module_path}/${module_name}/${module_name}.h")
 
   file(STRINGS "${module_header_file}" osx_frameworks_line REGEX "OSXFrameworks:")
@@ -87,6 +90,26 @@ function(jucer_project_end)
       "${module_available_defines}"
       "#define JUCE_MODULE_AVAILABLE_${module_name} 1\n"
     )
+  endforeach()
+  foreach(element ${JUCER_CONFIG_FLAGS})
+    if(NOT DEFINED flag_name)
+      set(flag_name ${element})
+    else()
+      set(flag_value ${element})
+
+      string(CONCAT config_flags_defines
+        "${config_flags_defines}" "#ifndef    ${flag_name}\n")
+      if(flag_value)
+        string(CONCAT config_flags_defines
+          "${config_flags_defines}" " #define   ${flag_name} 1\n")
+      else()
+        string(CONCAT config_flags_defines
+          "${config_flags_defines}" " #define   ${flag_name} 0\n")
+      endif()
+      string(CONCAT config_flags_defines "${config_flags_defines}" "#endif\n\n")
+
+      unset(flag_name)
+    endif()
   endforeach()
   configure_file("${JUCE.cmake_ROOT}/cmake/AppConfig.h" "JuceLibraryCode/AppConfig.h")
 
