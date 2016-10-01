@@ -46,9 +46,9 @@ function(jucer_project_module module_name PATH_TAG module_path)
   list(APPEND JUCER_PROJECT_INCLUDE_DIRS "${module_path}")
   set(JUCER_PROJECT_INCLUDE_DIRS ${JUCER_PROJECT_INCLUDE_DIRS} PARENT_SCOPE)
 
-  get_filename_component(obj_cpp_module_file
+  get_filename_component(objcxx_module_file
     "${module_path}/${module_name}/${module_name}.mm" ABSOLUTE)
-  if(APPLE AND EXISTS "${obj_cpp_module_file}")
+  if(APPLE AND EXISTS "${objcxx_module_file}")
     set(extension "mm")
   else()
     set(extension "cpp")
