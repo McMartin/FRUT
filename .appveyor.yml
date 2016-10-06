@@ -9,9 +9,13 @@ install:
 
   - git clone -q https://github.com/julianstorer/JUCE.git ../JUCE --depth=1
 
+  - mkdir C:\SDKs
+  - ps: Invoke-WebRequest -Uri http://www.steinberg.net/sdk_downloads/vstsdk366_27_06_2016_build_61.zip -OutFile C:\SDKs\vstsdk3.zip
+  - 7z x C:\SDKs\vstsdk3.zip -oC:\SDKs
+
 build_script:
-  - mkdir examples\AudioAppExample\build
-  - cd examples\AudioAppExample\build
+  - mkdir "examples\audio plugin host\build"
+  - cd "examples\audio plugin host\build"
   - cmake ..
   - cmake --build . --config Debug
   - cmake --build . --config Release
