@@ -38,6 +38,17 @@ function(jucer_project_files source_group_name)
 endfunction()
 
 
+function(jucer_project_resources source_group_name)
+
+  string(REPLACE "/" "\\" source_group_name ${source_group_name})
+  source_group(${source_group_name} FILES ${ARGN})
+
+  list(APPEND JUCER_PROJECT_RESOURCES ${ARGN})
+  set(JUCER_PROJECT_RESOURCES ${JUCER_PROJECT_RESOURCES} PARENT_SCOPE)
+
+endfunction()
+
+
 function(jucer_project_module module_name PATH_TAG module_path)
 
   list(APPEND JUCER_PROJECT_MODULES ${module_name})
@@ -119,6 +130,39 @@ function(jucer_project_end)
   endforeach()
   configure_file("${JUCE.cmake_ROOT}/cmake/AppConfig.h" "JuceLibraryCode/AppConfig.h")
 
+  list(LENGTH JUCER_PROJECT_RESOURCES resources_count)
+  if(${resources_count} GREATER 0)
+    try_compile(BinaryDataBuilder
+      "${JUCE.cmake_ROOT}/cmake/BinaryDataBuilder/_build"
+      "${JUCE.cmake_ROOT}/cmake/BinaryDataBuilder"
+      BinaryDataBuilder install
+      CMAKE_FLAGS "-DCMAKE_INSTALL_PREFIX=${CMAKE_CURRENT_BINARY_DIR}"
+    )
+    if(NOT BinaryDataBuilder)
+      message(FATAL_ERROR "Failed to build BinaryDataBuilder")
+    endif()
+    list(APPEND BinaryDataBuilder_args "${CMAKE_CURRENT_BINARY_DIR}/JuceLibraryCode/")
+    foreach(element ${JUCER_PROJECT_RESOURCES})
+      list(APPEND BinaryDataBuilder_args "${CMAKE_CURRENT_LIST_DIR}/${element}")
+    endforeach()
+    execute_process(
+      COMMAND "${CMAKE_CURRENT_BINARY_DIR}/BinaryDataBuilder/BinaryDataBuilder"
+      ${BinaryDataBuilder_args}
+      OUTPUT_VARIABLE binary_data_filenames
+      RESULT_VARIABLE BinaryDataBuilder_return_code
+    )
+    if(NOT BinaryDataBuilder_return_code EQUAL 0)
+      message(FATAL_ERROR "Error when executing BinaryDataBuilder")
+    endif()
+    foreach(filename ${binary_data_filenames})
+      list(APPEND binary_data_files
+        "${CMAKE_CURRENT_BINARY_DIR}/JuceLibraryCode/${filename}")
+    endforeach()
+    set(binary_data_include "#include \"BinaryData.h\"")
+  else()
+    set(binary_data_include "")
+  endif()
+
   foreach(module_name ${JUCER_PROJECT_MODULES})
     string(CONCAT modules_includes
       "${modules_includes}"
@@ -137,6 +181,7 @@ function(jucer_project_end)
     "${CMAKE_CURRENT_BINARY_DIR}/JuceLibraryCode/AppConfig.h"
     "${CMAKE_CURRENT_BINARY_DIR}/JuceLibraryCode/JuceHeader.h"
     ${JUCER_PROJECT_BROWSABLE_FILES}
+    ${binary_data_files}
   )
 
   set_target_properties(${target_name} PROPERTIES OUTPUT_NAME "${JUCER_PROJECT_NAME}")
