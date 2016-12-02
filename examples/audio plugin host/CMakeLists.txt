@@ -48,6 +48,8 @@ jucer_project_begin("Plugin Host")
 jucer_project_files("Plugin Host/Source"
   "Source/FilterGraph.cpp"
   "Source/FilterGraph.h"
+  "Source/FilterIOConfiguration.cpp"
+  "Source/FilterIOConfiguration.h"
   "Source/GraphEditorPanel.cpp"
   "Source/GraphEditorPanel.h"
   "Source/HostStartup.cpp"
