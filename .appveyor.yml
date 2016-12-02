@@ -7,7 +7,7 @@ branches:
 install:
   - cmake --version
 
-  - git clone --quiet https://github.com/julianstorer/JUCE.git ../JUCE --depth=1
+  - git clone --depth=1 --quiet -- https://github.com/julianstorer/JUCE.git ../JUCE
 
   - mkdir C:\SDKs
   - ps: Invoke-WebRequest -Uri http://www.steinberg.net/sdk_downloads/vstsdk366_27_06_2016_build_61.zip -OutFile C:\SDKs\vstsdk3.zip
