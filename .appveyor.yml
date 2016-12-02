@@ -27,3 +27,11 @@ build_script:
   - cmake ..
   - cmake --build . --config Debug
   - cmake --build . --config Release
+
+  - cd %APPVEYOR_BUILD_FOLDER%
+
+  - mkdir examples\OpenGLAppExample\build
+  - cd examples\OpenGLAppExample\build
+  - cmake ..
+  - cmake --build . --config Debug
+  - cmake --build . --config Release

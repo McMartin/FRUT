@@ -29,3 +29,12 @@ script:
   - cmake --build .
   - cmake .. -DCMAKE_BUILD_TYPE=Release
   - cmake --build .
+
+  - cd $TRAVIS_BUILD_DIR
+
+  - mkdir examples/OpenGLAppExample/build
+  - cd examples/OpenGLAppExample/build
+  - cmake .. -DCMAKE_BUILD_TYPE=Debug
+  - cmake --build .
+  - cmake .. -DCMAKE_BUILD_TYPE=Release
+  - cmake --build .
