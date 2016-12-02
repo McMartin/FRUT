@@ -10,7 +10,7 @@ install:
   - git clone --depth=1 --quiet -- https://github.com/julianstorer/JUCE.git ../JUCE
 
   - mkdir ~/SDKs
-  - curl --output ~/SDKs/vstsdk3.zip http://www.steinberg.net/sdk_downloads/vstsdk366_27_06_2016_build_61.zip
+  - curl --location --output ~/SDKs/vstsdk3.zip http://www.steinberg.net/sdk_downloads/vstsdk366_27_06_2016_build_61.zip
   - unzip -q ~/SDKs/vstsdk3.zip -d ~/SDKs
 
 script:
