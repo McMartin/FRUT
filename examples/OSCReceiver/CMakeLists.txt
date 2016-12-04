@@ -33,7 +33,9 @@ get_filename_component(OSCReceiver_jucer_DIR "${OSCReceiver_jucer_FILE}" DIRECTO
 file(COPY "${OSCReceiver_jucer_DIR}/Source" DESTINATION "${CMAKE_CURRENT_LIST_DIR}")
 
 
-jucer_project_begin("OSCReceiver")
+jucer_project_begin("OSCReceiver"
+  PROJECT_TYPE "GUI Application"
+)
 
 jucer_project_files("OSCReceiver/Source"
   "Source/Main.cpp"

@@ -36,7 +36,9 @@ file(COPY "${PluckedStringsDemo_jucer_DIR}/Source"
   DESTINATION "${CMAKE_CURRENT_LIST_DIR}")
 
 
-jucer_project_begin("PluckedStringsDemo")
+jucer_project_begin("PluckedStringsDemo"
+  PROJECT_TYPE "GUI Application"
+)
 
 jucer_project_files("PluckedStringsDemo/Source"
   "Source/Main.cpp"

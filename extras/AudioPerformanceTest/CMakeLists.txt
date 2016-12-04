@@ -36,7 +36,9 @@ file(COPY "${AudioPerformanceTest_jucer_DIR}/Source"
   DESTINATION "${CMAKE_CURRENT_LIST_DIR}")
 
 
-jucer_project_begin("AudioPerformanceTest")
+jucer_project_begin("AudioPerformanceTest"
+  PROJECT_TYPE "GUI Application"
+)
 
 jucer_project_files("AudioPerformanceTest/Source"
   "Source/Main.cpp"

@@ -49,7 +49,9 @@ file(COPY
   DESTINATION "${CMAKE_CURRENT_LIST_DIR}/Source/Utility")
 
 
-jucer_project_begin("BinaryDataBuilder")
+jucer_project_begin("BinaryDataBuilder"
+  PROJECT_TYPE "Console Application"
+)
 
 jucer_project_files("BinaryDataBuilder/Source"
   "Source/Project Saving/jucer_ResourceFile.cpp"

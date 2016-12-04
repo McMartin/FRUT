@@ -19,10 +19,20 @@
 # SOFTWARE.
 
 
-function(jucer_project_begin project_name)
+function(jucer_project_begin project_name PROJECT_TYPE_TAG project_type_desc)
 
   project(${project_name})
   set(JUCER_PROJECT_NAME ${project_name} PARENT_SCOPE)
+
+  set(project_type_descs "GUI Application" "Console Application")
+  list(FIND project_type_descs "${project_type_desc}" project_type_index)
+  if(${project_type_index} EQUAL -1)
+    message(FATAL_ERROR "Unsupported project type: \"${project_type_desc}\"\n"
+      "Supported project types: ${project_type_descs}")
+  endif()
+  set(project_types "guiapp" "consoleapp")
+  list(GET project_types ${project_type_index} JUCER_PROJECT_TYPE)
+  set(JUCER_PROJECT_TYPE ${JUCER_PROJECT_TYPE} PARENT_SCOPE)
 
 endfunction()
 
