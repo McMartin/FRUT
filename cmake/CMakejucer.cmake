@@ -155,7 +155,7 @@ function(jucer_project_end)
       message(FATAL_ERROR "Error when executing BinaryDataBuilder")
     endif()
     foreach(filename ${binary_data_filenames})
-      list(APPEND binary_data_files
+      list(APPEND JUCER_PROJECT_SOURCES
         "${CMAKE_CURRENT_BINARY_DIR}/JuceLibraryCode/${filename}")
     endforeach()
     set(binary_data_include "#include \"BinaryData.h\"")
@@ -181,7 +181,6 @@ function(jucer_project_end)
     "${CMAKE_CURRENT_BINARY_DIR}/JuceLibraryCode/AppConfig.h"
     "${CMAKE_CURRENT_BINARY_DIR}/JuceLibraryCode/JuceHeader.h"
     ${JUCER_PROJECT_BROWSABLE_FILES}
-    ${binary_data_files}
   )
 
   set_target_properties(${target_name} PROPERTIES OUTPUT_NAME "${JUCER_PROJECT_NAME}")
