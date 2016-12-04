@@ -20,8 +20,33 @@
 
 cmake_minimum_required(VERSION 3.0)
 
-project("extras")
 
-add_subdirectory("AudioPerformanceTest")
-add_subdirectory("UnitTestRunner")
-add_subdirectory("binarybuilder")
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/../..")
+include(JUCE)
+
+
+set(BinaryBuilder_jucer_FILE
+  "${JUCE_DIR}/extras/BinaryBuilder/BinaryBuilder.jucer"
+  CACHE PATH "Path to BinaryBuilder.jucer")
+
+get_filename_component(BinaryBuilder_jucer_DIR
+  "${BinaryBuilder_jucer_FILE}" DIRECTORY)
+
+file(COPY "${BinaryBuilder_jucer_DIR}/Source"
+  DESTINATION "${CMAKE_CURRENT_LIST_DIR}")
+
+
+jucer_project_begin("BinaryBuilder"
+  PROJECT_TYPE "Console Application"
+)
+
+jucer_project_files("BinaryBuilder/Source"
+  "Source/Main.cpp"
+)
+
+jucer_project_module(
+  juce_core
+  PATH "${BinaryBuilder_jucer_DIR}/../../modules"
+)
+
+jucer_project_end()
