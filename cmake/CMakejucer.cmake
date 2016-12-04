@@ -186,12 +186,17 @@ function(jucer_project_end)
 
   string(REGEX REPLACE "[^A-Za-z0-9_.+-]" "_" target_name "${JUCER_PROJECT_NAME}")
 
-  add_executable(${target_name} WIN32 MACOSX_BUNDLE
+  add_executable(${target_name}
     ${JUCER_PROJECT_SOURCES}
     "${CMAKE_CURRENT_BINARY_DIR}/JuceLibraryCode/AppConfig.h"
     "${CMAKE_CURRENT_BINARY_DIR}/JuceLibraryCode/JuceHeader.h"
     ${JUCER_PROJECT_BROWSABLE_FILES}
   )
+
+  if("${JUCER_PROJECT_TYPE}" STREQUAL "guiapp")
+    set_target_properties(${target_name} PROPERTIES MACOSX_BUNDLE TRUE)
+    set_target_properties(${target_name} PROPERTIES WIN32_EXECUTABLE TRUE)
+  endif()
 
   set_target_properties(${target_name} PROPERTIES OUTPUT_NAME "${JUCER_PROJECT_NAME}")
 

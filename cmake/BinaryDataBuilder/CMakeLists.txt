@@ -98,8 +98,5 @@ jucer_project_module(
 
 jucer_project_end()
 
-# TODO: we need a proper way to build a console (i.e. non-gui) application
-set_target_properties(BinaryDataBuilder PROPERTIES MACOSX_BUNDLE FALSE)
-set_target_properties(BinaryDataBuilder PROPERTIES WIN32_EXECUTABLE FALSE)
 
 install(TARGETS BinaryDataBuilder DESTINATION "BinaryDataBuilder")
