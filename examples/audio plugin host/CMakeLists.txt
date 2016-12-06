@@ -50,8 +50,6 @@ jucer_project_begin("Plugin Host"
 jucer_project_files("Plugin Host/Source"
   "Source/FilterGraph.cpp"
   "Source/FilterGraph.h"
-  "Source/FilterIOConfiguration.cpp"
-  "Source/FilterIOConfiguration.h"
   "Source/GraphEditorPanel.cpp"
   "Source/GraphEditorPanel.h"
   "Source/HostStartup.cpp"
@@ -60,6 +58,13 @@ jucer_project_files("Plugin Host/Source"
   "Source/MainHostWindow.cpp"
   "Source/MainHostWindow.h"
 )
+
+if(EXISTS "${Plugin_Host_jucer_DIR}/Source/FilterIOConfiguration.cpp")
+  jucer_project_files("Plugin Host/Source"
+    "Source/FilterIOConfiguration.cpp"
+    "Source/FilterIOConfiguration.h"
+  )
+endif()
 
 jucer_project_module(
   juce_audio_basics

@@ -41,7 +41,6 @@ int main(int argc, char* argv[])
     Project project{args.at(1)};
 
     ResourceFile resourceFile{project};
-    resourceFile.setClassName("BinaryData");
 
     for (auto i = 2u; i < args.size(); ++i)
     {
