@@ -142,6 +142,7 @@ function(jucer_project_end)
 
   list(LENGTH JUCER_PROJECT_RESOURCES resources_count)
   if(${resources_count} GREATER 0)
+    message("Building BinaryDataBuilder for ${JUCER_PROJECT_NAME}")
     try_compile(BinaryDataBuilder
       "${JUCE.cmake_ROOT}/cmake/BinaryDataBuilder/_build"
       "${JUCE.cmake_ROOT}/cmake/BinaryDataBuilder"
@@ -151,6 +152,7 @@ function(jucer_project_end)
     if(NOT BinaryDataBuilder)
       message(FATAL_ERROR "Failed to build BinaryDataBuilder")
     endif()
+    message("BinaryDataBuilder has been successfully built")
     list(APPEND BinaryDataBuilder_args "${CMAKE_CURRENT_BINARY_DIR}/JuceLibraryCode/")
     foreach(element ${JUCER_PROJECT_RESOURCES})
       list(APPEND BinaryDataBuilder_args "${CMAKE_CURRENT_LIST_DIR}/${element}")
