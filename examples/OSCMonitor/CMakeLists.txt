@@ -33,7 +33,9 @@ get_filename_component(OSCMonitor_jucer_DIR "${OSCMonitor_jucer_FILE}" DIRECTORY
 file(COPY "${OSCMonitor_jucer_DIR}/Source" DESTINATION "${CMAKE_CURRENT_LIST_DIR}")
 
 
-jucer_project_begin("OSCMonitor")
+jucer_project_begin("OSCMonitor"
+  PROJECT_TYPE "GUI Application"
+)
 
 jucer_project_files("OSCMonitor/Source"
   "Source/Main.cpp"

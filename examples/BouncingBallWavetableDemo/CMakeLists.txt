@@ -36,7 +36,9 @@ file(COPY "${BouncingBallWavetableDemo_jucer_DIR}/Source"
   DESTINATION "${CMAKE_CURRENT_LIST_DIR}")
 
 
-jucer_project_begin("BouncingBallWavetableDemo")
+jucer_project_begin("BouncingBallWavetableDemo"
+  PROJECT_TYPE "GUI Application"
+)
 
 jucer_project_files("BouncingBallWavetableDemo/Source"
   "Source/Main.cpp"

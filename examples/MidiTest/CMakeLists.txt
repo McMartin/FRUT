@@ -33,7 +33,9 @@ get_filename_component(MidiTest_jucer_DIR "${MidiTest_jucer_FILE}" DIRECTORY)
 file(COPY "${MidiTest_jucer_DIR}/Source" DESTINATION "${CMAKE_CURRENT_LIST_DIR}")
 
 
-jucer_project_begin("MidiTest")
+jucer_project_begin("MidiTest"
+  PROJECT_TYPE "GUI Application"
+)
 
 jucer_project_files("MidiTest/Source"
   "Source/Main.cpp"

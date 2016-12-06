@@ -36,7 +36,9 @@ file(COPY "${ComponentTutorialExample_jucer_DIR}/Source"
   DESTINATION "${CMAKE_CURRENT_LIST_DIR}")
 
 
-jucer_project_begin("ComponentTutorialExample")
+jucer_project_begin("ComponentTutorialExample"
+  PROJECT_TYPE "GUI Application"
+)
 
 jucer_project_files("ComponentTutorialExample/Source"
   "Source/Main.cpp"

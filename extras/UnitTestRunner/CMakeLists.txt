@@ -25,79 +25,93 @@ list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/../..")
 include(JUCE)
 
 
-set(AudioPerformanceTest_jucer_FILE
-  "${JUCE_DIR}/extras/AudioPerformanceTest/AudioPerformanceTest.jucer"
-  CACHE PATH "Path to AudioPerformanceTest.jucer")
+set(UnitTestRunner_jucer_FILE
+  "${JUCE_DIR}/extras/UnitTestRunner/UnitTestRunner.jucer"
+  CACHE PATH "Path to UnitTestRunner.jucer")
 
-get_filename_component(AudioPerformanceTest_jucer_DIR
-  "${AudioPerformanceTest_jucer_FILE}" DIRECTORY)
+get_filename_component(UnitTestRunner_jucer_DIR
+  "${UnitTestRunner_jucer_FILE}" DIRECTORY)
 
-file(COPY "${AudioPerformanceTest_jucer_DIR}/Source"
+file(COPY "${UnitTestRunner_jucer_DIR}/Source"
   DESTINATION "${CMAKE_CURRENT_LIST_DIR}")
 
 
-jucer_project_begin("AudioPerformanceTest"
-  PROJECT_TYPE "GUI Application"
+jucer_project_begin("UnitTestRunner"
+  PROJECT_TYPE "Console Application"
 )
 
-jucer_project_files("AudioPerformanceTest/Source"
+jucer_project_files("UnitTestRunner/Source"
   "Source/Main.cpp"
-  "Source/MainComponent.h"
 )
 
 jucer_project_module(
   juce_audio_basics
-  PATH "${AudioPerformanceTest_jucer_DIR}/../../modules"
+  PATH "${UnitTestRunner_jucer_DIR}/../../modules"
 )
 
 jucer_project_module(
   juce_audio_devices
-  PATH "${AudioPerformanceTest_jucer_DIR}/../../modules"
+  PATH "${UnitTestRunner_jucer_DIR}/../../modules"
 )
 
 jucer_project_module(
   juce_audio_formats
-  PATH "${AudioPerformanceTest_jucer_DIR}/../../modules"
+  PATH "${UnitTestRunner_jucer_DIR}/../../modules"
 )
 
 jucer_project_module(
   juce_audio_processors
-  PATH "${AudioPerformanceTest_jucer_DIR}/../../modules"
-)
-
-jucer_project_module(
-  juce_audio_utils
-  PATH "${AudioPerformanceTest_jucer_DIR}/../../modules"
+  PATH "${UnitTestRunner_jucer_DIR}/../../modules"
 )
 
 jucer_project_module(
   juce_core
-  PATH "${AudioPerformanceTest_jucer_DIR}/../../modules"
+  PATH "${UnitTestRunner_jucer_DIR}/../../modules"
+)
+
+jucer_project_module(
+  juce_cryptography
+  PATH "${UnitTestRunner_jucer_DIR}/../../modules"
 )
 
 jucer_project_module(
   juce_data_structures
-  PATH "${AudioPerformanceTest_jucer_DIR}/../../modules"
+  PATH "${UnitTestRunner_jucer_DIR}/../../modules"
 )
 
 jucer_project_module(
   juce_events
-  PATH "${AudioPerformanceTest_jucer_DIR}/../../modules"
+  PATH "${UnitTestRunner_jucer_DIR}/../../modules"
 )
 
 jucer_project_module(
   juce_graphics
-  PATH "${AudioPerformanceTest_jucer_DIR}/../../modules"
+  PATH "${UnitTestRunner_jucer_DIR}/../../modules"
 )
 
 jucer_project_module(
   juce_gui_basics
-  PATH "${AudioPerformanceTest_jucer_DIR}/../../modules"
+  PATH "${UnitTestRunner_jucer_DIR}/../../modules"
 )
 
 jucer_project_module(
   juce_gui_extra
-  PATH "${AudioPerformanceTest_jucer_DIR}/../../modules"
+  PATH "${UnitTestRunner_jucer_DIR}/../../modules"
+)
+
+jucer_project_module(
+  juce_opengl
+  PATH "${UnitTestRunner_jucer_DIR}/../../modules"
+)
+
+jucer_project_module(
+  juce_osc
+  PATH "${UnitTestRunner_jucer_DIR}/../../modules"
+)
+
+jucer_project_module(
+  juce_video
+  PATH "${UnitTestRunner_jucer_DIR}/../../modules"
 )
 
 jucer_project_end()

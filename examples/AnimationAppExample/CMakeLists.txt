@@ -36,7 +36,9 @@ file(COPY "${AnimationAppExample_jucer_DIR}/Source"
   DESTINATION "${CMAKE_CURRENT_LIST_DIR}")
 
 
-jucer_project_begin("AnimationAppExample")
+jucer_project_begin("AnimationAppExample"
+  PROJECT_TYPE "GUI Application"
+)
 
 jucer_project_files("AnimationAppExample/Source"
   "Source/Main.cpp"

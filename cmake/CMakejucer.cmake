@@ -19,10 +19,20 @@
 # SOFTWARE.
 
 
-function(jucer_project_begin project_name)
+function(jucer_project_begin project_name PROJECT_TYPE_TAG project_type_desc)
 
   project(${project_name})
   set(JUCER_PROJECT_NAME ${project_name} PARENT_SCOPE)
+
+  set(project_type_descs "GUI Application" "Console Application")
+  list(FIND project_type_descs "${project_type_desc}" project_type_index)
+  if(${project_type_index} EQUAL -1)
+    message(FATAL_ERROR "Unsupported project type: \"${project_type_desc}\"\n"
+      "Supported project types: ${project_type_descs}")
+  endif()
+  set(project_types "guiapp" "consoleapp")
+  list(GET project_types ${project_type_index} JUCER_PROJECT_TYPE)
+  set(JUCER_PROJECT_TYPE ${JUCER_PROJECT_TYPE} PARENT_SCOPE)
 
 endfunction()
 
@@ -176,12 +186,17 @@ function(jucer_project_end)
 
   string(REGEX REPLACE "[^A-Za-z0-9_.+-]" "_" target_name "${JUCER_PROJECT_NAME}")
 
-  add_executable(${target_name} WIN32 MACOSX_BUNDLE
+  add_executable(${target_name}
     ${JUCER_PROJECT_SOURCES}
     "${CMAKE_CURRENT_BINARY_DIR}/JuceLibraryCode/AppConfig.h"
     "${CMAKE_CURRENT_BINARY_DIR}/JuceLibraryCode/JuceHeader.h"
     ${JUCER_PROJECT_BROWSABLE_FILES}
   )
+
+  if("${JUCER_PROJECT_TYPE}" STREQUAL "guiapp")
+    set_target_properties(${target_name} PROPERTIES MACOSX_BUNDLE TRUE)
+    set_target_properties(${target_name} PROPERTIES WIN32_EXECUTABLE TRUE)
+  endif()
 
   set_target_properties(${target_name} PROPERTIES OUTPUT_NAME "${JUCER_PROJECT_NAME}")
 

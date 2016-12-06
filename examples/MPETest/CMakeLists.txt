@@ -33,7 +33,9 @@ get_filename_component(MPETest_jucer_DIR "${MPETest_jucer_FILE}" DIRECTORY)
 file(COPY "${MPETest_jucer_DIR}/Source" DESTINATION "${CMAKE_CURRENT_LIST_DIR}")
 
 
-jucer_project_begin("MPETest")
+jucer_project_begin("MPETest"
+  PROJECT_TYPE "GUI Application"
+)
 
 jucer_project_files("MPETest/Source"
   "Source/Main.cpp"

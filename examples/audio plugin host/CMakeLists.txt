@@ -43,7 +43,9 @@ endif()
 set(VST3_SDK_Folder "${VST3_SDK_Folder_fallback}" CACHE PATH "VST3 SDK Folder")
 
 
-jucer_project_begin("Plugin Host")
+jucer_project_begin("Plugin Host"
+  PROJECT_TYPE "GUI Application"
+)
 
 jucer_project_files("Plugin Host/Source"
   "Source/FilterGraph.cpp"

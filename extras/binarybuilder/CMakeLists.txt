@@ -25,52 +25,28 @@ list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/../..")
 include(JUCE)
 
 
-set(HelloWorld_jucer_FILE "${JUCE_DIR}/examples/HelloWorld/HelloWorld.jucer"
-  CACHE PATH "Path to HelloWorld.jucer")
+set(BinaryBuilder_jucer_FILE
+  "${JUCE_DIR}/extras/BinaryBuilder/BinaryBuilder.jucer"
+  CACHE PATH "Path to BinaryBuilder.jucer")
 
-get_filename_component(HelloWorld_jucer_DIR "${HelloWorld_jucer_FILE}" DIRECTORY)
+get_filename_component(BinaryBuilder_jucer_DIR
+  "${BinaryBuilder_jucer_FILE}" DIRECTORY)
 
-file(COPY "${HelloWorld_jucer_DIR}/Source" DESTINATION "${CMAKE_CURRENT_LIST_DIR}")
+file(COPY "${BinaryBuilder_jucer_DIR}/Source"
+  DESTINATION "${CMAKE_CURRENT_LIST_DIR}")
 
 
-jucer_project_begin("HelloWorld"
-  PROJECT_TYPE "GUI Application"
+jucer_project_begin("BinaryBuilder"
+  PROJECT_TYPE "Console Application"
 )
 
-jucer_project_files("HelloWorld/Source"
+jucer_project_files("BinaryBuilder/Source"
   "Source/Main.cpp"
-  "Source/MainComponent.cpp"
-  "Source/MainComponent.h"
 )
 
 jucer_project_module(
   juce_core
-  PATH "${HelloWorld_jucer_DIR}/../../modules"
-)
-
-jucer_project_module(
-  juce_data_structures
-  PATH "${HelloWorld_jucer_DIR}/../../modules"
-)
-
-jucer_project_module(
-  juce_events
-  PATH "${HelloWorld_jucer_DIR}/../../modules"
-)
-
-jucer_project_module(
-  juce_graphics
-  PATH "${HelloWorld_jucer_DIR}/../../modules"
-)
-
-jucer_project_module(
-  juce_gui_basics
-  PATH "${HelloWorld_jucer_DIR}/../../modules"
-)
-
-jucer_project_module(
-  juce_gui_extra
-  PATH "${HelloWorld_jucer_DIR}/../../modules"
+  PATH "${BinaryBuilder_jucer_DIR}/../../modules"
 )
 
 jucer_project_end()
