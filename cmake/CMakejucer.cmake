@@ -393,3 +393,28 @@ function(__version_to_hex version out_hex_value)
   set(${out_hex_value} "${hex_value}" PARENT_SCOPE)
 
 endfunction()
+
+
+function(__four_chars_to_hex value out_hex_value)
+
+  foreach(ascii_code RANGE 1 127)
+    list(APPEND all_ascii_codes ${ascii_code})
+  endforeach()
+  string(ASCII ${all_ascii_codes} all_ascii_chars)
+
+  string(STRIP "${value}" value)
+  string(SUBSTRING "${value}" 0 4 value)
+  set(dec_value 0)
+  foreach(index 0 1 2 3)
+    string(SUBSTRING "${value}" ${index} 1 ascii_char)
+    string(FIND "${all_ascii_chars}" "${ascii_char}" ascii_code)
+    if(ascii_code EQUAL -1)
+      message(FATAL_ERROR "${value} cannot contain non-ASCII characters")
+    endif()
+    math(EXPR dec_value "(${dec_value} << 8) | ((${ascii_code} + 1) & 255)")
+  endforeach()
+
+  __dec_to_hex("${dec_value}" hex_value)
+  set(${out_hex_value} "${hex_value}" PARENT_SCOPE)
+
+endfunction()
