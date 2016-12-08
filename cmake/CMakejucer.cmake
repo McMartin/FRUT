@@ -26,7 +26,7 @@ function(jucer_project_begin project_name PROJECT_TYPE_TAG project_type_desc)
 
   set(project_type_descs "GUI Application" "Console Application")
   list(FIND project_type_descs "${project_type_desc}" project_type_index)
-  if(${project_type_index} EQUAL -1)
+  if(project_type_index EQUAL -1)
     message(FATAL_ERROR "Unsupported project type: \"${project_type_desc}\"\n"
       "Supported project types: ${project_type_descs}"
     )
@@ -135,7 +135,7 @@ function(jucer_project_end)
       endif()
       string(CONCAT config_flags_defines "${config_flags_defines}" "#endif\n\n")
 
-      if(${flag_name} STREQUAL "JUCE_PLUGINHOST_AU")
+      if(flag_name STREQUAL "JUCE_PLUGINHOST_AU")
         if(flag_value)
           list(APPEND JUCER_PROJECT_OSX_FRAMEWORKS "AudioUnit" "CoreAudioKit")
         endif()
@@ -147,7 +147,7 @@ function(jucer_project_end)
   configure_file("${JUCE.cmake_ROOT}/cmake/AppConfig.h" "JuceLibraryCode/AppConfig.h")
 
   list(LENGTH JUCER_PROJECT_RESOURCES resources_count)
-  if(${resources_count} GREATER 0)
+  if(resources_count GREATER 0)
     message("Building BinaryDataBuilder for ${JUCER_PROJECT_NAME}")
     try_compile(BinaryDataBuilder
       "${JUCE.cmake_ROOT}/cmake/BinaryDataBuilder/_build"
@@ -203,7 +203,7 @@ function(jucer_project_end)
     ${JUCER_PROJECT_BROWSABLE_FILES}
   )
 
-  if("${JUCER_PROJECT_TYPE}" STREQUAL "guiapp")
+  if(JUCER_PROJECT_TYPE STREQUAL "guiapp")
     set_target_properties(${target_name} PROPERTIES MACOSX_BUNDLE TRUE)
     set_target_properties(${target_name} PROPERTIES WIN32_EXECUTABLE TRUE)
   endif()
