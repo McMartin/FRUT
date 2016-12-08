@@ -37,6 +37,7 @@ add_subdirectory("OSCSender")
 add_subdirectory("OpenGLAppExample")
 add_subdirectory("PluckedStringsDemo")
 add_subdirectory("SimpleFFTExample")
+add_subdirectory("audio plugin demo")
 add_subdirectory("audio plugin host")
 
 if(EXISTS "${JUCE_DIR}/examples/BLOCKS")
