@@ -198,6 +198,7 @@ function(jucer_project_end)
 
   add_executable(${target_name}
     ${JUCER_PROJECT_SOURCES}
+    ${JUCER_PROJECT_RESOURCES}
     "${CMAKE_CURRENT_BINARY_DIR}/JuceLibraryCode/AppConfig.h"
     "${CMAKE_CURRENT_BINARY_DIR}/JuceLibraryCode/JuceHeader.h"
     ${JUCER_PROJECT_BROWSABLE_FILES}
@@ -210,7 +211,9 @@ function(jucer_project_end)
 
   set_target_properties(${target_name} PROPERTIES OUTPUT_NAME "${JUCER_PROJECT_NAME}")
 
-  set_source_files_properties(${JUCER_PROJECT_BROWSABLE_FILES}
+  set_source_files_properties(
+    ${JUCER_PROJECT_BROWSABLE_FILES}
+    ${JUCER_PROJECT_RESOURCES}
     PROPERTIES HEADER_FILE_ONLY TRUE
   )
 
