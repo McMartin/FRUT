@@ -26,9 +26,10 @@ function(jucer_project_begin project_name PROJECT_TYPE_TAG project_type_desc)
 
   set(project_type_descs "GUI Application" "Console Application")
   list(FIND project_type_descs "${project_type_desc}" project_type_index)
-  if(${project_type_index} EQUAL -1)
+  if(project_type_index EQUAL -1)
     message(FATAL_ERROR "Unsupported project type: \"${project_type_desc}\"\n"
-      "Supported project types: ${project_type_descs}")
+      "Supported project types: ${project_type_descs}"
+    )
   endif()
   set(project_types "guiapp" "consoleapp")
   list(GET project_types ${project_type_index} JUCER_PROJECT_TYPE)
@@ -75,9 +76,11 @@ function(jucer_project_module module_name PATH_TAG module_path)
     set(extension "cpp")
   endif()
   configure_file("${JUCE.cmake_ROOT}/cmake/ModuleWrapper.cpp"
-    "JuceLibraryCode/${module_name}.${extension}")
+    "JuceLibraryCode/${module_name}.${extension}"
+  )
   list(APPEND JUCER_PROJECT_SOURCES
-    "${CMAKE_CURRENT_BINARY_DIR}/JuceLibraryCode/${module_name}.${extension}")
+    "${CMAKE_CURRENT_BINARY_DIR}/JuceLibraryCode/${module_name}.${extension}"
+  )
   set(JUCER_PROJECT_SOURCES ${JUCER_PROJECT_SOURCES} PARENT_SCOPE)
 
   list(APPEND JUCER_CONFIG_FLAGS ${ARGN})
@@ -119,17 +122,20 @@ function(jucer_project_end)
       set(flag_value ${element})
 
       string(CONCAT config_flags_defines
-        "${config_flags_defines}" "#ifndef    ${flag_name}\n")
+        "${config_flags_defines}" "#ifndef    ${flag_name}\n"
+      )
       if(flag_value)
         string(CONCAT config_flags_defines
-          "${config_flags_defines}" " #define   ${flag_name} 1\n")
+          "${config_flags_defines}" " #define   ${flag_name} 1\n"
+        )
       else()
         string(CONCAT config_flags_defines
-          "${config_flags_defines}" " #define   ${flag_name} 0\n")
+          "${config_flags_defines}" " #define   ${flag_name} 0\n"
+        )
       endif()
       string(CONCAT config_flags_defines "${config_flags_defines}" "#endif\n\n")
 
-      if(${flag_name} STREQUAL "JUCE_PLUGINHOST_AU")
+      if(flag_name STREQUAL "JUCE_PLUGINHOST_AU")
         if(flag_value)
           list(APPEND JUCER_PROJECT_OSX_FRAMEWORKS "AudioUnit" "CoreAudioKit")
         endif()
@@ -141,7 +147,7 @@ function(jucer_project_end)
   configure_file("${JUCE.cmake_ROOT}/cmake/AppConfig.h" "JuceLibraryCode/AppConfig.h")
 
   list(LENGTH JUCER_PROJECT_RESOURCES resources_count)
-  if(${resources_count} GREATER 0)
+  if(resources_count GREATER 0)
     message("Building BinaryDataBuilder for ${JUCER_PROJECT_NAME}")
     try_compile(BinaryDataBuilder
       "${JUCE.cmake_ROOT}/cmake/BinaryDataBuilder/_build"
@@ -168,7 +174,8 @@ function(jucer_project_end)
     endif()
     foreach(filename ${binary_data_filenames})
       list(APPEND JUCER_PROJECT_SOURCES
-        "${CMAKE_CURRENT_BINARY_DIR}/JuceLibraryCode/${filename}")
+        "${CMAKE_CURRENT_BINARY_DIR}/JuceLibraryCode/${filename}"
+      )
     endforeach()
     set(binary_data_include "#include \"BinaryData.h\"")
   else()
@@ -184,26 +191,31 @@ function(jucer_project_end)
   configure_file("${JUCE.cmake_ROOT}/cmake/JuceHeader.h" "JuceLibraryCode/JuceHeader.h")
 
   source_group("Juce Library Code"
-    REGULAR_EXPRESSION "${CMAKE_CURRENT_BINARY_DIR}/JuceLibraryCode/*")
+    REGULAR_EXPRESSION "${CMAKE_CURRENT_BINARY_DIR}/JuceLibraryCode/*"
+  )
 
   string(REGEX REPLACE "[^A-Za-z0-9_.+-]" "_" target_name "${JUCER_PROJECT_NAME}")
 
   add_executable(${target_name}
     ${JUCER_PROJECT_SOURCES}
+    ${JUCER_PROJECT_RESOURCES}
     "${CMAKE_CURRENT_BINARY_DIR}/JuceLibraryCode/AppConfig.h"
     "${CMAKE_CURRENT_BINARY_DIR}/JuceLibraryCode/JuceHeader.h"
     ${JUCER_PROJECT_BROWSABLE_FILES}
   )
 
-  if("${JUCER_PROJECT_TYPE}" STREQUAL "guiapp")
+  if(JUCER_PROJECT_TYPE STREQUAL "guiapp")
     set_target_properties(${target_name} PROPERTIES MACOSX_BUNDLE TRUE)
     set_target_properties(${target_name} PROPERTIES WIN32_EXECUTABLE TRUE)
   endif()
 
   set_target_properties(${target_name} PROPERTIES OUTPUT_NAME "${JUCER_PROJECT_NAME}")
 
-  set_source_files_properties(${JUCER_PROJECT_BROWSABLE_FILES}
-    PROPERTIES HEADER_FILE_ONLY TRUE)
+  set_source_files_properties(
+    ${JUCER_PROJECT_BROWSABLE_FILES}
+    ${JUCER_PROJECT_RESOURCES}
+    PROPERTIES HEADER_FILE_ONLY TRUE
+  )
 
   target_include_directories(${target_name} PRIVATE
     "${CMAKE_CURRENT_BINARY_DIR}/JuceLibraryCode"
