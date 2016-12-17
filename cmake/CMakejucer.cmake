@@ -29,7 +29,9 @@ function(jucer_project_begin project_name)
     message(FATAL_ERROR "Missing PROJECT_TYPE argument")
   endif()
 
-  set(project_setting_tags "PROJECT_VERSION" "PROJECT_TYPE")
+  set(project_setting_tags "PROJECT_VERSION" "COMPANY_NAME" "COMPANY_WEBSITE"
+    "COMPANY_EMAIL" "PROJECT_TYPE"
+  )
   set(project_type_descs "GUI Application" "Console Application")
 
   foreach(element ${ARGN})
