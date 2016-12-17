@@ -39,6 +39,8 @@ function(jucer_project_begin project_name)
 
       if(tag STREQUAL "PROJECT_VERSION")
         set(JUCER_PROJECT_VERSION "${value}" PARENT_SCOPE)
+        __version_to_hex("${value}" hex_value)
+        set(JUCER_PROJECT_VERSION_AS_HEX "${hex_value}" PARENT_SCOPE)
       elseif(tag STREQUAL "PROJECT_TYPE")
         list(FIND project_type_descs "${value}" project_type_index)
         if(project_type_index EQUAL -1)
