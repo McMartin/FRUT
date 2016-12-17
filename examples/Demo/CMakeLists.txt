@@ -37,6 +37,7 @@ file(COPY "${JuceDemo_jucer_DIR}/Source" "${JuceDemo_jucer_DIR}/Resources"
 
 
 jucer_project_begin("JuceDemo"
+  PROJECT_VERSION "3.0.0"
   PROJECT_TYPE "GUI Application"
 )
 

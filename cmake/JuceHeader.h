@@ -16,7 +16,7 @@
 namespace ProjectInfo
 {
     const char* const  projectName    = "@JUCER_PROJECT_NAME@";
-    const char* const  versionString  = "1.0.0";
+    const char* const  versionString  = "@JUCER_PROJECT_VERSION@";
     const int          versionNumber  = 0x10000;
 }
 #endif

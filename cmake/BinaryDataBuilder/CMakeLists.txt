@@ -52,6 +52,7 @@ file(COPY
 
 
 jucer_project_begin("BinaryDataBuilder"
+  PROJECT_VERSION "1.0.0"
   PROJECT_TYPE "Console Application"
 )
 

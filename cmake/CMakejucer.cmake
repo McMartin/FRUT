@@ -37,7 +37,9 @@ function(jucer_project_begin project_name)
     else()
       set(value ${element})
 
-      if(tag STREQUAL "PROJECT_TYPE")
+      if(tag STREQUAL "PROJECT_VERSION")
+        set(JUCER_PROJECT_VERSION "${value}" PARENT_SCOPE)
+      elseif(tag STREQUAL "PROJECT_TYPE")
         list(FIND project_type_descs "${value}" project_type_index)
         if(project_type_index EQUAL -1)
           message(FATAL_ERROR "Unsupported project type: \"${project_type_desc}\"\n"

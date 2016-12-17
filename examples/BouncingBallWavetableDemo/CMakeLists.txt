@@ -40,6 +40,7 @@ file(COPY "${BouncingBallWavetableDemo_jucer_DIR}/Source"
 
 
 jucer_project_begin("BouncingBallWavetableDemo"
+  PROJECT_VERSION "1.0.0"
   PROJECT_TYPE "GUI Application"
 )
 

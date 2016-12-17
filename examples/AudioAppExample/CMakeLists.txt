@@ -38,6 +38,7 @@ file(COPY "${AudioAppExample_jucer_DIR}/Source" DESTINATION "${CMAKE_CURRENT_LIS
 
 
 jucer_project_begin("AudioAppExample"
+  PROJECT_VERSION "1.0.0"
   PROJECT_TYPE "GUI Application"
 )
 

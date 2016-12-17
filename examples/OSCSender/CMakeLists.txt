@@ -35,6 +35,7 @@ file(COPY "${OSCSender_jucer_DIR}/Source" DESTINATION "${CMAKE_CURRENT_LIST_DIR}
 
 
 jucer_project_begin("OSCSender"
+  PROJECT_VERSION "1.0.0"
   PROJECT_TYPE "GUI Application"
 )
 

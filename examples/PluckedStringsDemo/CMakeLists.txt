@@ -40,6 +40,7 @@ file(COPY "${PluckedStringsDemo_jucer_DIR}/Source"
 
 
 jucer_project_begin("PluckedStringsDemo"
+  PROJECT_VERSION "1.0.0"
   PROJECT_TYPE "GUI Application"
 )
 
