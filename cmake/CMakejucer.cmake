@@ -279,3 +279,26 @@ function(__dec_to_hex dec_value out_hex_value)
   endif()
 
 endfunction()
+
+
+function(__version_to_hex version out_hex_value)
+
+  string(REPLACE "." ";" segments "${version}")
+  list(LENGTH segments segments_size)
+  while(segments_size LESS 3)
+    list(APPEND segments 0)
+    math(EXPR segments_size "${segments_size} + 1")
+  endwhile()
+  list(GET segments 0 major)
+  list(GET segments 1 minor)
+  list(GET segments 2 patch)
+  math(EXPR dec_value "(${major} << 16) + (${minor} << 8) + ${patch}")
+  if(segments_size GREATER 3)
+    list(GET segments 3 revision)
+    math(EXPR dec_value "${dec_value} << 8 + ${revision}")
+  endif()
+
+  __dec_to_hex("${dec_value}" hex_value)
+  set(${out_hex_value} "${hex_value}" PARENT_SCOPE)
+
+endfunction()
