@@ -257,3 +257,25 @@ function(jucer_project_end)
   endif()
 
 endfunction()
+
+
+function(__dec_to_hex dec_value out_hex_value)
+
+  if(dec_value EQUAL 0)
+    set(${out_hex_value} "0x0" PARENT_SCOPE)
+  else()
+    while(dec_value GREATER 0)
+      math(EXPR hex_unit "${dec_value} & 15")
+      if(hex_unit LESS 10)
+        set(hex_char ${hex_unit})
+      else()
+        math(EXPR hex_unit "${hex_unit} + 87")
+        string(ASCII ${hex_unit} hex_char)
+      endif()
+      set(hex_value "${hex_char}${hex_value}")
+      math(EXPR dec_value "${dec_value} >> 4")
+    endwhile()
+    set(${out_hex_value} "0x${hex_value}" PARENT_SCOPE)
+  endif()
+
+endfunction()
