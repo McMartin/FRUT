@@ -30,7 +30,7 @@ function(jucer_project_begin project_name)
   endif()
 
   set(project_setting_tags "PROJECT_VERSION" "COMPANY_NAME" "COMPANY_WEBSITE"
-    "COMPANY_EMAIL" "PROJECT_TYPE" "BUNDLE_IDENTIFIER"
+    "COMPANY_EMAIL" "PROJECT_TYPE" "BUNDLE_IDENTIFIER" "PREPROCESSOR_DEFINITIONS"
   )
   set(project_type_descs "GUI Application" "Console Application")
 
@@ -254,6 +254,8 @@ function(jucer_project_end)
     "${CMAKE_CURRENT_BINARY_DIR}/JuceLibraryCode"
     ${JUCER_PROJECT_INCLUDE_DIRS}
   )
+
+  target_compile_definitions(${target_name} PRIVATE ${JUCER_PREPROCESSOR_DEFINITIONS})
 
   if(APPLE)
     target_compile_options(${target_name} PRIVATE -std=c++11)

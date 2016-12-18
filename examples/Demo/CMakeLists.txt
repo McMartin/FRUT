@@ -40,6 +40,7 @@ jucer_project_begin("JuceDemo"
   PROJECT_VERSION "3.0.0"
   PROJECT_TYPE "GUI Application"
   BUNDLE_IDENTIFIER "com.yourcompany.JuceDemo"
+  PREPROCESSOR_DEFINITIONS "JUCE_UNIT_TESTS=1"
 )
 
 jucer_project_files("JuceDemo/Source"
