@@ -27,7 +27,8 @@ include(JUCE)
 
 set(BlocksDrawing_jucer_FILE
   "${JUCE_DIR}/examples/BLOCKS/BlocksDrawing/BlocksDrawing.jucer"
-  CACHE PATH "Path to BlocksDrawing.jucer")
+  CACHE PATH "Path to BlocksDrawing.jucer"
+)
 
 get_filename_component(BlocksDrawing_jucer_DIR "${BlocksDrawing_jucer_FILE}" DIRECTORY)
 

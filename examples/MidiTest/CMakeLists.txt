@@ -26,7 +26,8 @@ include(JUCE)
 
 
 set(MidiTest_jucer_FILE "${JUCE_DIR}/examples/MidiTest/MidiTest.jucer"
-  CACHE PATH "Path to MidiTest.jucer")
+  CACHE PATH "Path to MidiTest.jucer"
+)
 
 get_filename_component(MidiTest_jucer_DIR "${MidiTest_jucer_FILE}" DIRECTORY)
 

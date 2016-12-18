@@ -27,10 +27,12 @@ include(JUCE)
 
 set(AudioAppExample_jucer_FILE
   "${JUCE_DIR}/examples/AudioAppExample/AudioAppExample.jucer"
-  CACHE PATH "Path to AudioAppExample.jucer")
+  CACHE PATH "Path to AudioAppExample.jucer"
+)
 
 get_filename_component(AudioAppExample_jucer_DIR
-  "${AudioAppExample_jucer_FILE}" DIRECTORY)
+  "${AudioAppExample_jucer_FILE}" DIRECTORY
+)
 
 file(COPY "${AudioAppExample_jucer_DIR}/Source" DESTINATION "${CMAKE_CURRENT_LIST_DIR}")
 

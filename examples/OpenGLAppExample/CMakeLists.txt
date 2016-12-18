@@ -27,10 +27,12 @@ include(JUCE)
 
 set(OpenGLAppExample_jucer_FILE
   "${JUCE_DIR}/examples/OpenGLAppExample/OpenGLAppExample.jucer"
-  CACHE PATH "Path to OpenGLAppExample.jucer")
+  CACHE PATH "Path to OpenGLAppExample.jucer"
+)
 
 get_filename_component(OpenGLAppExample_jucer_DIR
-  "${OpenGLAppExample_jucer_FILE}" DIRECTORY)
+  "${OpenGLAppExample_jucer_FILE}" DIRECTORY
+)
 
 file(COPY "${OpenGLAppExample_jucer_DIR}/Source" DESTINATION "${CMAKE_CURRENT_LIST_DIR}")
 

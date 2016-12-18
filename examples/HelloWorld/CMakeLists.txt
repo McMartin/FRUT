@@ -26,7 +26,8 @@ include(JUCE)
 
 
 set(HelloWorld_jucer_FILE "${JUCE_DIR}/examples/HelloWorld/HelloWorld.jucer"
-  CACHE PATH "Path to HelloWorld.jucer")
+  CACHE PATH "Path to HelloWorld.jucer"
+)
 
 get_filename_component(HelloWorld_jucer_DIR "${HelloWorld_jucer_FILE}" DIRECTORY)
 

@@ -27,13 +27,16 @@ include(JUCE)
 
 set(PluckedStringsDemo_jucer_FILE
   "${JUCE_DIR}/examples/PluckedStringsDemo/PluckedStringsDemo.jucer"
-  CACHE PATH "Path to PluckedStringsDemo.jucer")
+  CACHE PATH "Path to PluckedStringsDemo.jucer"
+)
 
 get_filename_component(PluckedStringsDemo_jucer_DIR
-  "${PluckedStringsDemo_jucer_FILE}" DIRECTORY)
+  "${PluckedStringsDemo_jucer_FILE}" DIRECTORY
+)
 
 file(COPY "${PluckedStringsDemo_jucer_DIR}/Source"
-  DESTINATION "${CMAKE_CURRENT_LIST_DIR}")
+  DESTINATION "${CMAKE_CURRENT_LIST_DIR}"
+)
 
 
 jucer_project_begin("PluckedStringsDemo"

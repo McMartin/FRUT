@@ -27,7 +27,8 @@ include(JUCE)
 
 set(UnitTestRunner_jucer_FILE
   "${JUCE_DIR}/extras/UnitTestRunner/UnitTestRunner.jucer"
-  CACHE PATH "Path to UnitTestRunner.jucer")
+  CACHE PATH "Path to UnitTestRunner.jucer"
+)
 
 get_filename_component(UnitTestRunner_jucer_DIR "${UnitTestRunner_jucer_FILE}" DIRECTORY)
 

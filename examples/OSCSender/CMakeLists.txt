@@ -26,7 +26,8 @@ include(JUCE)
 
 
 set(OSCSender_jucer_FILE "${JUCE_DIR}/examples/OSCSender/OSCSender.jucer"
-  CACHE PATH "Path to OSCSender.jucer")
+  CACHE PATH "Path to OSCSender.jucer"
+)
 
 get_filename_component(OSCSender_jucer_DIR "${OSCSender_jucer_FILE}" DIRECTORY)
 

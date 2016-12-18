@@ -26,7 +26,8 @@ include(JUCE)
 
 
 set(OSCMonitor_jucer_FILE "${JUCE_DIR}/examples/OSCMonitor/OSCMonitor.jucer"
-  CACHE PATH "Path to OSCMonitor.jucer")
+  CACHE PATH "Path to OSCMonitor.jucer"
+)
 
 get_filename_component(OSCMonitor_jucer_DIR "${OSCMonitor_jucer_FILE}" DIRECTORY)
 

@@ -27,13 +27,16 @@ include(JUCE)
 
 set(BouncingBallWavetableDemo_jucer_FILE
   "${JUCE_DIR}/examples/BouncingBallWavetableDemo/BouncingBallWavetableDemo.jucer"
-  CACHE PATH "Path to BouncingBallWavetableDemo.jucer")
+  CACHE PATH "Path to BouncingBallWavetableDemo.jucer"
+)
 
 get_filename_component(BouncingBallWavetableDemo_jucer_DIR
-  "${BouncingBallWavetableDemo_jucer_FILE}" DIRECTORY)
+  "${BouncingBallWavetableDemo_jucer_FILE}" DIRECTORY
+)
 
 file(COPY "${BouncingBallWavetableDemo_jucer_DIR}/Source"
-  DESTINATION "${CMAKE_CURRENT_LIST_DIR}")
+  DESTINATION "${CMAKE_CURRENT_LIST_DIR}"
+)
 
 
 jucer_project_begin("BouncingBallWavetableDemo"

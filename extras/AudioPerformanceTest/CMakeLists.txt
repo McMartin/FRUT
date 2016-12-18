@@ -27,13 +27,16 @@ include(JUCE)
 
 set(AudioPerformanceTest_jucer_FILE
   "${JUCE_DIR}/extras/AudioPerformanceTest/AudioPerformanceTest.jucer"
-  CACHE PATH "Path to AudioPerformanceTest.jucer")
+  CACHE PATH "Path to AudioPerformanceTest.jucer"
+)
 
 get_filename_component(AudioPerformanceTest_jucer_DIR
-  "${AudioPerformanceTest_jucer_FILE}" DIRECTORY)
+  "${AudioPerformanceTest_jucer_FILE}" DIRECTORY
+)
 
 file(COPY "${AudioPerformanceTest_jucer_DIR}/Source"
-  DESTINATION "${CMAKE_CURRENT_LIST_DIR}")
+  DESTINATION "${CMAKE_CURRENT_LIST_DIR}"
+)
 
 
 jucer_project_begin("AudioPerformanceTest"

@@ -25,17 +25,20 @@ list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/../..")
 include(JUCE)
 
 set(Projucer_jucer_FILE "${JUCE_DIR}/extras/Projucer/Projucer.jucer"
-  CACHE PATH "Path to Projucer.jucer")
+  CACHE PATH "Path to Projucer.jucer"
+)
 
 get_filename_component(Projucer_jucer_DIR "${Projucer_jucer_FILE}" DIRECTORY)
 
 file(COPY "${Projucer_jucer_DIR}/Source/jucer_Headers.h"
-  DESTINATION "${CMAKE_CURRENT_LIST_DIR}/Source")
+  DESTINATION "${CMAKE_CURRENT_LIST_DIR}/Source"
+)
 
 file(COPY
   "${Projucer_jucer_DIR}/Source/Project Saving/jucer_ResourceFile.cpp"
   "${Projucer_jucer_DIR}/Source/Project Saving/jucer_ResourceFile.h"
-  DESTINATION "${CMAKE_CURRENT_LIST_DIR}/Source/Project Saving")
+  DESTINATION "${CMAKE_CURRENT_LIST_DIR}/Source/Project Saving"
+)
 
 file(COPY
   "${Projucer_jucer_DIR}/Source/Utility/jucer_CodeHelpers.cpp"
@@ -44,7 +47,8 @@ file(COPY
   "${Projucer_jucer_DIR}/Source/Utility/jucer_FileHelpers.h"
   "${Projucer_jucer_DIR}/Source/Utility/jucer_MiscUtilities.cpp"
   "${Projucer_jucer_DIR}/Source/Utility/jucer_MiscUtilities.h"
-  DESTINATION "${CMAKE_CURRENT_LIST_DIR}/Source/Utility")
+  DESTINATION "${CMAKE_CURRENT_LIST_DIR}/Source/Utility"
+)
 
 
 jucer_project_begin("BinaryDataBuilder"

@@ -27,7 +27,8 @@ include(JUCE)
 
 set(BinaryBuilder_jucer_FILE
   "${JUCE_DIR}/extras/BinaryBuilder/BinaryBuilder.jucer"
-  CACHE PATH "Path to BinaryBuilder.jucer")
+  CACHE PATH "Path to BinaryBuilder.jucer"
+)
 
 get_filename_component(BinaryBuilder_jucer_DIR "${BinaryBuilder_jucer_FILE}" DIRECTORY)
 

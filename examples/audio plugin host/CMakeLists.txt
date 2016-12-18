@@ -27,7 +27,8 @@ include(JUCE)
 
 set(Plugin_Host_jucer_FILE
   "${JUCE_DIR}/examples/audio plugin host/Plugin Host.jucer"
-  CACHE PATH "Path to Plugin Host.jucer")
+  CACHE PATH "Path to Plugin Host.jucer"
+)
 
 get_filename_component(Plugin_Host_jucer_DIR "${Plugin_Host_jucer_FILE}" DIRECTORY)
 

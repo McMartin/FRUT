@@ -27,13 +27,16 @@ include(JUCE)
 
 set(AnimationAppExample_jucer_FILE
   "${JUCE_DIR}/examples/AnimationAppExample/AnimationAppExample.jucer"
-  CACHE PATH "Path to AnimationAppExample.jucer")
+  CACHE PATH "Path to AnimationAppExample.jucer"
+)
 
 get_filename_component(AnimationAppExample_jucer_DIR
-  "${AnimationAppExample_jucer_FILE}" DIRECTORY)
+  "${AnimationAppExample_jucer_FILE}" DIRECTORY
+)
 
 file(COPY "${AnimationAppExample_jucer_DIR}/Source"
-  DESTINATION "${CMAKE_CURRENT_LIST_DIR}")
+  DESTINATION "${CMAKE_CURRENT_LIST_DIR}"
+)
 
 
 jucer_project_begin("AnimationAppExample"
