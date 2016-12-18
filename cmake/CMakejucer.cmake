@@ -30,7 +30,7 @@ function(jucer_project_begin project_name)
   endif()
 
   set(project_setting_tags "PROJECT_VERSION" "COMPANY_NAME" "COMPANY_WEBSITE"
-    "COMPANY_EMAIL" "PROJECT_TYPE"
+    "COMPANY_EMAIL" "PROJECT_TYPE" "BUNDLE_IDENTIFIER"
   )
   set(project_type_descs "GUI Application" "Console Application")
 

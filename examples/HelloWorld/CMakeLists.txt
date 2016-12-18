@@ -38,6 +38,7 @@ jucer_project_begin("HelloWorld"
   PROJECT_VERSION "1.0.0"
   COMPANY_NAME "ROLI Ltd."
   PROJECT_TYPE "GUI Application"
+  BUNDLE_IDENTIFIER "com.roli.jucehelloworld"
 )
 
 jucer_project_files("HelloWorld/Source"
