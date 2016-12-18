@@ -30,8 +30,8 @@ build_script:
 
   - cd %APPVEYOR_BUILD_FOLDER%
 
-  - mkdir examples\OpenGLAppExample\build
-  - cd examples\OpenGLAppExample\build
+  - mkdir extras\Projucer\build
+  - cd extras\Projucer\build
   - cmake ..
   - cmake --build . --config Debug
   - cmake --build . --config Release
