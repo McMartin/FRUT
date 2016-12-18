@@ -29,8 +29,7 @@ set(BlocksMonitor_jucer_FILE
   "${JUCE_DIR}/examples/BLOCKS/BlocksMonitor/BlocksMonitor.jucer"
   CACHE PATH "Path to BlocksMonitor.jucer")
 
-get_filename_component(BlocksMonitor_jucer_DIR
-  "${BlocksMonitor_jucer_FILE}" DIRECTORY)
+get_filename_component(BlocksMonitor_jucer_DIR "${BlocksMonitor_jucer_FILE}" DIRECTORY)
 
 file(COPY "${BlocksMonitor_jucer_DIR}/Source" DESTINATION "${CMAKE_CURRENT_LIST_DIR}")
 

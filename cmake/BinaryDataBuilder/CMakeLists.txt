@@ -24,14 +24,12 @@ cmake_minimum_required(VERSION 3.0)
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/../..")
 include(JUCE)
 
-set(Projucer_jucer_FILE
-  "${JUCE_DIR}/extras/Projucer/Projucer.jucer"
+set(Projucer_jucer_FILE "${JUCE_DIR}/extras/Projucer/Projucer.jucer"
   CACHE PATH "Path to Projucer.jucer")
 
 get_filename_component(Projucer_jucer_DIR "${Projucer_jucer_FILE}" DIRECTORY)
 
-file(COPY
-  "${Projucer_jucer_DIR}/Source/jucer_Headers.h"
+file(COPY "${Projucer_jucer_DIR}/Source/jucer_Headers.h"
   DESTINATION "${CMAKE_CURRENT_LIST_DIR}/Source")
 
 file(COPY

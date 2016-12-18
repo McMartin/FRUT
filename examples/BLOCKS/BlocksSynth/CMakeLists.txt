@@ -29,8 +29,7 @@ set(BlocksSynth_jucer_FILE
   "${JUCE_DIR}/examples/BLOCKS/BlocksSynth/BlocksSynth.jucer"
   CACHE PATH "Path to BlocksSynth.jucer")
 
-get_filename_component(BlocksSynth_jucer_DIR
-  "${BlocksSynth_jucer_FILE}" DIRECTORY)
+get_filename_component(BlocksSynth_jucer_DIR "${BlocksSynth_jucer_FILE}" DIRECTORY)
 
 file(COPY "${BlocksSynth_jucer_DIR}/Source" DESTINATION "${CMAKE_CURRENT_LIST_DIR}")
 

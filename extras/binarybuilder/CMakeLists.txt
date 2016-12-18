@@ -29,11 +29,9 @@ set(BinaryBuilder_jucer_FILE
   "${JUCE_DIR}/extras/BinaryBuilder/BinaryBuilder.jucer"
   CACHE PATH "Path to BinaryBuilder.jucer")
 
-get_filename_component(BinaryBuilder_jucer_DIR
-  "${BinaryBuilder_jucer_FILE}" DIRECTORY)
+get_filename_component(BinaryBuilder_jucer_DIR "${BinaryBuilder_jucer_FILE}" DIRECTORY)
 
-file(COPY "${BinaryBuilder_jucer_DIR}/Source"
-  DESTINATION "${CMAKE_CURRENT_LIST_DIR}")
+file(COPY "${BinaryBuilder_jucer_DIR}/Source" DESTINATION "${CMAKE_CURRENT_LIST_DIR}")
 
 
 jucer_project_begin("BinaryBuilder"

@@ -32,8 +32,7 @@ set(OpenGLAppExample_jucer_FILE
 get_filename_component(OpenGLAppExample_jucer_DIR
   "${OpenGLAppExample_jucer_FILE}" DIRECTORY)
 
-file(COPY "${OpenGLAppExample_jucer_DIR}/Source"
-  DESTINATION "${CMAKE_CURRENT_LIST_DIR}")
+file(COPY "${OpenGLAppExample_jucer_DIR}/Source" DESTINATION "${CMAKE_CURRENT_LIST_DIR}")
 
 
 jucer_project_begin("OpenGLAppExample"
