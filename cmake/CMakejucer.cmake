@@ -29,6 +29,7 @@ function(jucer_project_begin project_name)
     message(FATAL_ERROR "Missing PROJECT_TYPE argument")
   endif()
 
+  set(project_setting_tags "PROJECT_VERSION" "PROJECT_TYPE")
   set(project_type_descs "GUI Application" "Console Application")
 
   foreach(element ${ARGN})
@@ -36,6 +37,13 @@ function(jucer_project_begin project_name)
       set(tag ${element})
     else()
       set(value ${element})
+
+      list(FIND project_setting_tags "${tag}" project_setting_index)
+      if(project_setting_index EQUAL -1)
+        message(FATAL_ERROR "Unsupported project setting: ${tag}\n"
+          "Supported project settings: ${project_setting_tags}"
+        )
+      endif()
 
       if(tag STREQUAL "PROJECT_VERSION")
         set(JUCER_PROJECT_VERSION "${value}" PARENT_SCOPE)
@@ -51,8 +59,6 @@ function(jucer_project_begin project_name)
         set(project_types "guiapp" "consoleapp")
         list(GET project_types ${project_type_index} JUCER_PROJECT_TYPE)
         set(JUCER_PROJECT_TYPE ${JUCER_PROJECT_TYPE} PARENT_SCOPE)
-      else()
-        message(FATAL_ERROR "Unsupported project setting: ${tag}")
       endif()
 
       unset(tag)
