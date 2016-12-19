@@ -15,9 +15,9 @@
 #if ! JUCE_DONT_DECLARE_PROJECTINFO
 namespace ProjectInfo
 {
-    const char* const  projectName    = "@JUCE_PROJECT_NAME@";
-    const char* const  versionString  = "1.0.0";
-    const int          versionNumber  = 0x10000;
+    const char* const  projectName    = "@JUCER_PROJECT_NAME@";
+    const char* const  versionString  = "@JUCER_PROJECT_VERSION@";
+    const int          versionNumber  = @JUCER_PROJECT_VERSION_AS_HEX@;
 }
 #endif
 

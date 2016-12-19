@@ -27,16 +27,20 @@ include(JUCE)
 
 set(NetworkGraphicsDemo_jucer_FILE
   "${JUCE_DIR}/examples/NetworkGraphicsDemo/NetworkGraphicsDemo.jucer"
-  CACHE PATH "Path to NetworkGraphicsDemo.jucer")
+  CACHE PATH "Path to NetworkGraphicsDemo.jucer"
+)
 
 get_filename_component(NetworkGraphicsDemo_jucer_DIR
-  "${NetworkGraphicsDemo_jucer_FILE}" DIRECTORY)
+  "${NetworkGraphicsDemo_jucer_FILE}" DIRECTORY
+)
 
 file(COPY "${NetworkGraphicsDemo_jucer_DIR}/Source"
-  DESTINATION "${CMAKE_CURRENT_LIST_DIR}")
+  DESTINATION "${CMAKE_CURRENT_LIST_DIR}"
+)
 
 
 jucer_project_begin("JUCE Network Graphics Demo"
+  PROJECT_VERSION "1.0.0"
   PROJECT_TYPE "GUI Application"
 )
 

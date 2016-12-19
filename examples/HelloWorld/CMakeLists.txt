@@ -26,7 +26,8 @@ include(JUCE)
 
 
 set(HelloWorld_jucer_FILE "${JUCE_DIR}/examples/HelloWorld/HelloWorld.jucer"
-  CACHE PATH "Path to HelloWorld.jucer")
+  CACHE PATH "Path to HelloWorld.jucer"
+)
 
 get_filename_component(HelloWorld_jucer_DIR "${HelloWorld_jucer_FILE}" DIRECTORY)
 
@@ -34,6 +35,7 @@ file(COPY "${HelloWorld_jucer_DIR}/Source" DESTINATION "${CMAKE_CURRENT_LIST_DIR
 
 
 jucer_project_begin("HelloWorld"
+  PROJECT_VERSION "1.0.0"
   PROJECT_TYPE "GUI Application"
 )
 

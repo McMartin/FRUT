@@ -27,10 +27,10 @@ include(JUCE)
 
 set(Plugin_Host_jucer_FILE
   "${JUCE_DIR}/examples/audio plugin host/Plugin Host.jucer"
-  CACHE PATH "Path to Plugin Host.jucer")
+  CACHE PATH "Path to Plugin Host.jucer"
+)
 
-get_filename_component(Plugin_Host_jucer_DIR
-  "${Plugin_Host_jucer_FILE}" DIRECTORY)
+get_filename_component(Plugin_Host_jucer_DIR "${Plugin_Host_jucer_FILE}" DIRECTORY)
 
 file(COPY "${Plugin_Host_jucer_DIR}/Source" DESTINATION "${CMAKE_CURRENT_LIST_DIR}")
 
@@ -44,6 +44,7 @@ set(VST3_SDK_Folder "${VST3_SDK_Folder_fallback}" CACHE PATH "VST3 SDK Folder")
 
 
 jucer_project_begin("Plugin Host"
+  PROJECT_VERSION "1.0.0"
   PROJECT_TYPE "GUI Application"
 )
 

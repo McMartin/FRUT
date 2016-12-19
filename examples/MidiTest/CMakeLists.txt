@@ -26,7 +26,8 @@ include(JUCE)
 
 
 set(MidiTest_jucer_FILE "${JUCE_DIR}/examples/MidiTest/MidiTest.jucer"
-  CACHE PATH "Path to MidiTest.jucer")
+  CACHE PATH "Path to MidiTest.jucer"
+)
 
 get_filename_component(MidiTest_jucer_DIR "${MidiTest_jucer_FILE}" DIRECTORY)
 
@@ -34,6 +35,7 @@ file(COPY "${MidiTest_jucer_DIR}/Source" DESTINATION "${CMAKE_CURRENT_LIST_DIR}"
 
 
 jucer_project_begin("MidiTest"
+  PROJECT_VERSION "1.0.0"
   PROJECT_TYPE "GUI Application"
 )
 

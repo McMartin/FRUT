@@ -26,7 +26,8 @@ include(JUCE)
 
 
 set(OSCSender_jucer_FILE "${JUCE_DIR}/examples/OSCSender/OSCSender.jucer"
-  CACHE PATH "Path to OSCSender.jucer")
+  CACHE PATH "Path to OSCSender.jucer"
+)
 
 get_filename_component(OSCSender_jucer_DIR "${OSCSender_jucer_FILE}" DIRECTORY)
 
@@ -34,6 +35,7 @@ file(COPY "${OSCSender_jucer_DIR}/Source" DESTINATION "${CMAKE_CURRENT_LIST_DIR}
 
 
 jucer_project_begin("OSCSender"
+  PROJECT_VERSION "1.0.0"
   PROJECT_TYPE "GUI Application"
 )
 

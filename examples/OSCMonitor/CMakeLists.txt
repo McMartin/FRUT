@@ -26,7 +26,8 @@ include(JUCE)
 
 
 set(OSCMonitor_jucer_FILE "${JUCE_DIR}/examples/OSCMonitor/OSCMonitor.jucer"
-  CACHE PATH "Path to OSCMonitor.jucer")
+  CACHE PATH "Path to OSCMonitor.jucer"
+)
 
 get_filename_component(OSCMonitor_jucer_DIR "${OSCMonitor_jucer_FILE}" DIRECTORY)
 
@@ -34,6 +35,7 @@ file(COPY "${OSCMonitor_jucer_DIR}/Source" DESTINATION "${CMAKE_CURRENT_LIST_DIR
 
 
 jucer_project_begin("OSCMonitor"
+  PROJECT_VERSION "1.0.0"
   PROJECT_TYPE "GUI Application"
 )
 

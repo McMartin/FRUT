@@ -32,8 +32,8 @@ script:
 
   - cd $TRAVIS_BUILD_DIR
 
-  - mkdir examples/OpenGLAppExample/build
-  - cd examples/OpenGLAppExample/build
+  - mkdir extras/Projucer/build
+  - cd extras/Projucer/build
   - cmake .. -DCMAKE_BUILD_TYPE=Debug
   - cmake --build .
   - cmake .. -DCMAKE_BUILD_TYPE=Release

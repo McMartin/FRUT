@@ -25,18 +25,19 @@ list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/../..")
 include(JUCE)
 
 
-set(JuceDemo_jucer_FILE
-  "${JUCE_DIR}/examples/Demo/JuceDemo.jucer"
-  CACHE PATH "Path to JuceDemo.jucer")
+set(JuceDemo_jucer_FILE "${JUCE_DIR}/examples/Demo/JuceDemo.jucer"
+  CACHE PATH "Path to JuceDemo.jucer"
+)
 
-get_filename_component(JuceDemo_jucer_DIR
-  "${JuceDemo_jucer_FILE}" DIRECTORY)
+get_filename_component(JuceDemo_jucer_DIR "${JuceDemo_jucer_FILE}" DIRECTORY)
 
 file(COPY "${JuceDemo_jucer_DIR}/Source" "${JuceDemo_jucer_DIR}/Resources"
-  DESTINATION "${CMAKE_CURRENT_LIST_DIR}")
+  DESTINATION "${CMAKE_CURRENT_LIST_DIR}"
+)
 
 
 jucer_project_begin("JuceDemo"
+  PROJECT_VERSION "3.0.0"
   PROJECT_TYPE "GUI Application"
 )
 

@@ -19,21 +19,45 @@
 # SOFTWARE.
 
 
-function(jucer_project_begin project_name PROJECT_TYPE_TAG project_type_desc)
+function(jucer_project_begin project_name)
 
   project(${project_name})
   set(JUCER_PROJECT_NAME ${project_name} PARENT_SCOPE)
 
-  set(project_type_descs "GUI Application" "Console Application")
-  list(FIND project_type_descs "${project_type_desc}" project_type_index)
-  if(project_type_index EQUAL -1)
-    message(FATAL_ERROR "Unsupported project type: \"${project_type_desc}\"\n"
-      "Supported project types: ${project_type_descs}"
-    )
+  list(FIND ARGN "PROJECT_TYPE" project_type_tag_index)
+  if(project_type_tag_index EQUAL -1)
+    message(FATAL_ERROR "Missing PROJECT_TYPE argument")
   endif()
-  set(project_types "guiapp" "consoleapp")
-  list(GET project_types ${project_type_index} JUCER_PROJECT_TYPE)
-  set(JUCER_PROJECT_TYPE ${JUCER_PROJECT_TYPE} PARENT_SCOPE)
+
+  set(project_type_descs "GUI Application" "Console Application")
+
+  foreach(element ${ARGN})
+    if(NOT DEFINED tag)
+      set(tag ${element})
+    else()
+      set(value ${element})
+
+      if(tag STREQUAL "PROJECT_VERSION")
+        set(JUCER_PROJECT_VERSION "${value}" PARENT_SCOPE)
+        __version_to_hex("${value}" hex_value)
+        set(JUCER_PROJECT_VERSION_AS_HEX "${hex_value}" PARENT_SCOPE)
+      elseif(tag STREQUAL "PROJECT_TYPE")
+        list(FIND project_type_descs "${value}" project_type_index)
+        if(project_type_index EQUAL -1)
+          message(FATAL_ERROR "Unsupported project type: \"${project_type_desc}\"\n"
+            "Supported project types: ${project_type_descs}"
+          )
+        endif()
+        set(project_types "guiapp" "consoleapp")
+        list(GET project_types ${project_type_index} JUCER_PROJECT_TYPE)
+        set(JUCER_PROJECT_TYPE ${JUCER_PROJECT_TYPE} PARENT_SCOPE)
+      else()
+        message(FATAL_ERROR "Unsupported project setting: ${tag}")
+      endif()
+
+      unset(tag)
+    endif()
+  endforeach()
 
 endfunction()
 
@@ -69,7 +93,8 @@ function(jucer_project_module module_name PATH_TAG module_path)
   set(JUCER_PROJECT_INCLUDE_DIRS ${JUCER_PROJECT_INCLUDE_DIRS} PARENT_SCOPE)
 
   get_filename_component(objcxx_module_file
-    "${module_path}/${module_name}/${module_name}.mm" ABSOLUTE)
+    "${module_path}/${module_name}/${module_name}.mm" ABSOLUTE
+  )
   if(APPLE AND EXISTS "${objcxx_module_file}")
     set(extension "mm")
   else()
@@ -232,5 +257,50 @@ function(jucer_project_end)
       target_link_libraries(${target_name} "${${framework_name}_framework}")
     endforeach()
   endif()
+
+endfunction()
+
+
+function(__dec_to_hex dec_value out_hex_value)
+
+  if(dec_value EQUAL 0)
+    set(${out_hex_value} "0x0" PARENT_SCOPE)
+  else()
+    while(dec_value GREATER 0)
+      math(EXPR hex_unit "${dec_value} & 15")
+      if(hex_unit LESS 10)
+        set(hex_char ${hex_unit})
+      else()
+        math(EXPR hex_unit "${hex_unit} + 87")
+        string(ASCII ${hex_unit} hex_char)
+      endif()
+      set(hex_value "${hex_char}${hex_value}")
+      math(EXPR dec_value "${dec_value} >> 4")
+    endwhile()
+    set(${out_hex_value} "0x${hex_value}" PARENT_SCOPE)
+  endif()
+
+endfunction()
+
+
+function(__version_to_hex version out_hex_value)
+
+  string(REPLACE "." ";" segments "${version}")
+  list(LENGTH segments segments_size)
+  while(segments_size LESS 3)
+    list(APPEND segments 0)
+    math(EXPR segments_size "${segments_size} + 1")
+  endwhile()
+  list(GET segments 0 major)
+  list(GET segments 1 minor)
+  list(GET segments 2 patch)
+  math(EXPR dec_value "(${major} << 16) + (${minor} << 8) + ${patch}")
+  if(segments_size GREATER 3)
+    list(GET segments 3 revision)
+    math(EXPR dec_value "${dec_value} << 8 + ${revision}")
+  endif()
+
+  __dec_to_hex("${dec_value}" hex_value)
+  set(${out_hex_value} "${hex_value}" PARENT_SCOPE)
 
 endfunction()

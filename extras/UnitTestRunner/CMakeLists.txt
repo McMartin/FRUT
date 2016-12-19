@@ -27,16 +27,16 @@ include(JUCE)
 
 set(UnitTestRunner_jucer_FILE
   "${JUCE_DIR}/extras/UnitTestRunner/UnitTestRunner.jucer"
-  CACHE PATH "Path to UnitTestRunner.jucer")
+  CACHE PATH "Path to UnitTestRunner.jucer"
+)
 
-get_filename_component(UnitTestRunner_jucer_DIR
-  "${UnitTestRunner_jucer_FILE}" DIRECTORY)
+get_filename_component(UnitTestRunner_jucer_DIR "${UnitTestRunner_jucer_FILE}" DIRECTORY)
 
-file(COPY "${UnitTestRunner_jucer_DIR}/Source"
-  DESTINATION "${CMAKE_CURRENT_LIST_DIR}")
+file(COPY "${UnitTestRunner_jucer_DIR}/Source" DESTINATION "${CMAKE_CURRENT_LIST_DIR}")
 
 
 jucer_project_begin("UnitTestRunner"
+  PROJECT_VERSION "1.0.0"
   PROJECT_TYPE "Console Application"
 )
 

@@ -27,16 +27,20 @@ include(JUCE)
 
 set(ComponentTutorialExample_jucer_FILE
   "${JUCE_DIR}/examples/ComponentTutorialExample/ComponentTutorialExample.jucer"
-  CACHE PATH "Path to ComponentTutorialExample.jucer")
+  CACHE PATH "Path to ComponentTutorialExample.jucer"
+)
 
 get_filename_component(ComponentTutorialExample_jucer_DIR
-  "${ComponentTutorialExample_jucer_FILE}" DIRECTORY)
+  "${ComponentTutorialExample_jucer_FILE}" DIRECTORY
+)
 
 file(COPY "${ComponentTutorialExample_jucer_DIR}/Source"
-  DESTINATION "${CMAKE_CURRENT_LIST_DIR}")
+  DESTINATION "${CMAKE_CURRENT_LIST_DIR}"
+)
 
 
 jucer_project_begin("ComponentTutorialExample"
+  PROJECT_VERSION "1.0.0"
   PROJECT_TYPE "GUI Application"
 )
 

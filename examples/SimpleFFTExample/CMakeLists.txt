@@ -27,15 +27,18 @@ include(JUCE)
 
 set(SimpleFFTExample_jucer_FILE
   "${JUCE_DIR}/examples/SimpleFFTExample/SimpleFFTExample.jucer"
-  CACHE PATH "Path to SimpleFFTExample.jucer")
+  CACHE PATH "Path to SimpleFFTExample.jucer"
+)
 
 get_filename_component(SimpleFFTExample_jucer_DIR
-  "${SimpleFFTExample_jucer_FILE}" DIRECTORY)
+  "${SimpleFFTExample_jucer_FILE}" DIRECTORY
+)
 
 file(COPY "${SimpleFFTExample_jucer_DIR}/Source" DESTINATION "${CMAKE_CURRENT_LIST_DIR}")
 
 
 jucer_project_begin("SimpleFFTExample"
+  PROJECT_VERSION "1.0.0"
   PROJECT_TYPE "GUI Application"
 )
 

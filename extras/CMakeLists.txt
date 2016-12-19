@@ -23,5 +23,6 @@ cmake_minimum_required(VERSION 3.0)
 project("extras")
 
 add_subdirectory("AudioPerformanceTest")
+add_subdirectory("Projucer")
 add_subdirectory("UnitTestRunner")
 add_subdirectory("binarybuilder")
