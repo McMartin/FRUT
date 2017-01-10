@@ -45,7 +45,9 @@ set(VST3_SDK_Folder "${VST3_SDK_Folder_fallback}" CACHE PATH "VST3 SDK Folder")
 
 jucer_project_begin("Plugin Host"
   PROJECT_VERSION "1.0.0"
+  COMPANY_NAME "ROLI Ltd."
   PROJECT_TYPE "GUI Application"
+  BUNDLE_IDENTIFIER "com.roli.pluginhost"
 )
 
 jucer_project_files("Plugin Host/Source"

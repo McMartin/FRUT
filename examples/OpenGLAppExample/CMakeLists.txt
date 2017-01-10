@@ -40,6 +40,7 @@ file(COPY "${OpenGLAppExample_jucer_DIR}/Source" DESTINATION "${CMAKE_CURRENT_LI
 jucer_project_begin("OpenGLAppExample"
   PROJECT_VERSION "1.0.0"
   PROJECT_TYPE "GUI Application"
+  BUNDLE_IDENTIFIER "com.yourcompany.OpenGLAppExample"
 )
 
 jucer_project_files("OpenGLAppExample/Source"

@@ -29,6 +29,9 @@ function(jucer_project_begin project_name)
     message(FATAL_ERROR "Missing PROJECT_TYPE argument")
   endif()
 
+  set(project_setting_tags "PROJECT_VERSION" "COMPANY_NAME" "COMPANY_WEBSITE"
+    "COMPANY_EMAIL" "PROJECT_TYPE" "BUNDLE_IDENTIFIER" "PREPROCESSOR_DEFINITIONS"
+  )
   set(project_type_descs "GUI Application" "Console Application")
 
   foreach(element ${ARGN})
@@ -37,8 +40,14 @@ function(jucer_project_begin project_name)
     else()
       set(value ${element})
 
+      list(FIND project_setting_tags "${tag}" project_setting_index)
+      if(project_setting_index EQUAL -1)
+        message(FATAL_ERROR "Unsupported project setting: ${tag}\n"
+          "Supported project settings: ${project_setting_tags}"
+        )
+      endif()
+
       if(tag STREQUAL "PROJECT_VERSION")
-        set(JUCER_PROJECT_VERSION "${value}" PARENT_SCOPE)
         __version_to_hex("${value}" hex_value)
         set(JUCER_PROJECT_VERSION_AS_HEX "${hex_value}" PARENT_SCOPE)
       elseif(tag STREQUAL "PROJECT_TYPE")
@@ -49,11 +58,10 @@ function(jucer_project_begin project_name)
           )
         endif()
         set(project_types "guiapp" "consoleapp")
-        list(GET project_types ${project_type_index} JUCER_PROJECT_TYPE)
-        set(JUCER_PROJECT_TYPE ${JUCER_PROJECT_TYPE} PARENT_SCOPE)
-      else()
-        message(FATAL_ERROR "Unsupported project setting: ${tag}")
+        list(GET project_types ${project_type_index} value)
       endif()
+
+      set(JUCER_${tag} "${value}" PARENT_SCOPE)
 
       unset(tag)
     endif()
@@ -230,7 +238,13 @@ function(jucer_project_end)
   )
 
   if(JUCER_PROJECT_TYPE STREQUAL "guiapp")
-    set_target_properties(${target_name} PROPERTIES MACOSX_BUNDLE TRUE)
+    configure_file("${JUCE.cmake_ROOT}/cmake/Info-App.plist" "Info-App.plist" @ONLY)
+    set_target_properties(${target_name} PROPERTIES
+      MACOSX_BUNDLE TRUE
+      MACOSX_BUNDLE_BUNDLE_NAME "${JUCER_PROJECT_NAME}"
+      MACOSX_BUNDLE_GUI_IDENTIFIER "${JUCER_BUNDLE_IDENTIFIER}"
+      MACOSX_BUNDLE_INFO_PLIST "${CMAKE_CURRENT_BINARY_DIR}/Info-App.plist"
+    )
     set_target_properties(${target_name} PROPERTIES WIN32_EXECUTABLE TRUE)
   endif()
 
@@ -246,6 +260,8 @@ function(jucer_project_end)
     "${CMAKE_CURRENT_BINARY_DIR}/JuceLibraryCode"
     ${JUCER_PROJECT_INCLUDE_DIRS}
   )
+
+  target_compile_definitions(${target_name} PRIVATE ${JUCER_PREPROCESSOR_DEFINITIONS})
 
   if(APPLE)
     target_compile_options(${target_name} PRIVATE -std=c++11)
