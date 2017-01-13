@@ -16,25 +16,25 @@ install:
 script:
   - mkdir "examples/audio plugin host/build"
   - cd "examples/audio plugin host/build"
-  - cmake .. -DCMAKE_BUILD_TYPE=Debug
+  - cmake .. -G Xcode -DCMAKE_BUILD_TYPE=Debug
   - cmake --build .
-  - cmake .. -DCMAKE_BUILD_TYPE=Release
+  - cmake .. -G Xcode -DCMAKE_BUILD_TYPE=Release
   - cmake --build .
 
   - cd $TRAVIS_BUILD_DIR
 
   - mkdir examples/NetworkGraphicsDemo/build
   - cd examples/NetworkGraphicsDemo/build
-  - cmake .. -DCMAKE_BUILD_TYPE=Debug
+  - cmake .. -G Xcode -DCMAKE_BUILD_TYPE=Debug
   - cmake --build .
-  - cmake .. -DCMAKE_BUILD_TYPE=Release
+  - cmake .. -G Xcode -DCMAKE_BUILD_TYPE=Release
   - cmake --build .
 
   - cd $TRAVIS_BUILD_DIR
 
   - mkdir extras/Projucer/build
   - cd extras/Projucer/build
-  - cmake .. -DCMAKE_BUILD_TYPE=Debug
+  - cmake .. -G Xcode -DCMAKE_BUILD_TYPE=Debug
   - cmake --build .
-  - cmake .. -DCMAKE_BUILD_TYPE=Release
+  - cmake .. -G Xcode -DCMAKE_BUILD_TYPE=Release
   - cmake --build .
