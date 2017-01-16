@@ -265,7 +265,12 @@ function(jucer_project_end)
 
   if(APPLE)
     target_compile_options(${target_name} PRIVATE -std=c++11)
-    target_compile_definitions(${target_name} PRIVATE $<$<CONFIG:Debug>:_DEBUG>)
+    target_compile_definitions(${target_name} PRIVATE
+      $<$<CONFIG:Debug>:_DEBUG=1>
+      $<$<CONFIG:Debug>:DEBUG=1>
+      $<$<NOT:$<CONFIG:Debug>>:_NDEBUG=1>
+      $<$<NOT:$<CONFIG:Debug>>:NDEBUG=1>
+    )
 
     list(REMOVE_DUPLICATES JUCER_PROJECT_OSX_FRAMEWORKS)
     foreach(framework_name ${JUCER_PROJECT_OSX_FRAMEWORKS})
