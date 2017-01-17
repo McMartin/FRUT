@@ -239,12 +239,22 @@ function(jucer_project_end)
 
   if(JUCER_PROJECT_TYPE STREQUAL "guiapp")
     set_target_properties(${target_name} PROPERTIES MACOSX_BUNDLE TRUE)
+    if(CMAKE_GENERATOR STREQUAL "Xcode")
+      configure_file("${JUCE.cmake_ROOT}/cmake/Info-App-Xcode.plist"
+        "Info-App.plist" @ONLY
+      )
+      set_target_properties(${target_name} PROPERTIES
+        XCODE_ATTRIBUTE_INFOPLIST_FILE "${CMAKE_CURRENT_BINARY_DIR}/Info-App.plist"
+        XCODE_ATTRIBUTE_PRODUCT_BUNDLE_IDENTIFIER "${JUCER_BUNDLE_IDENTIFIER}"
+      )
+    else()
       configure_file("${JUCE.cmake_ROOT}/cmake/Info-App.plist" "Info-App.plist" @ONLY)
       set_target_properties(${target_name} PROPERTIES
         MACOSX_BUNDLE_BUNDLE_NAME "${JUCER_PROJECT_NAME}"
         MACOSX_BUNDLE_GUI_IDENTIFIER "${JUCER_BUNDLE_IDENTIFIER}"
         MACOSX_BUNDLE_INFO_PLIST "${CMAKE_CURRENT_BINARY_DIR}/Info-App.plist"
       )
+    endif()
     set_target_properties(${target_name} PROPERTIES WIN32_EXECUTABLE TRUE)
   endif()
 

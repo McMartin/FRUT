@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist>
+  <dict>
+    <key>CFBundleExecutable</key>
+    <string>${EXECUTABLE_NAME}</string>
+    <key>CFBundleIconFile</key>
+    <string></string>
+    <key>CFBundleIdentifier</key>
+    <string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
+    <key>CFBundleName</key>
+    <string>@JUCER_PROJECT_NAME@</string>
+    <key>CFBundleDisplayName</key>
+    <string>@JUCER_PROJECT_NAME@</string>
+    <key>CFBundlePackageType</key>
+    <string>APPL</string>
+    <key>CFBundleSignature</key>
+    <string>????</string>
+    <key>CFBundleShortVersionString</key>
+    <string>@JUCER_PROJECT_VERSION@</string>
+    <key>CFBundleVersion</key>
+    <string>@JUCER_PROJECT_VERSION@</string>
+    <key>NSHumanReadableCopyright</key>
+    <string>@JUCER_COMPANY_NAME@</string>
+    <key>NSHighResolutionCapable</key>
+    <true/>
+  </dict>
+</plist>
