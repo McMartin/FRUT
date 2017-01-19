@@ -1,0 +1,30 @@
+#ifdef JUCE_USER_DEFINED_RC_FILE
+ #include JUCE_USER_DEFINED_RC_FILE
+#else
+
+#undef  WIN32_LEAN_AND_MEAN
+#define WIN32_LEAN_AND_MEAN
+#include <windows.h>
+
+VS_VERSION_INFO VERSIONINFO
+FILEVERSION  @comma_separated_version_number@
+BEGIN
+  BLOCK "StringFileInfo"
+  BEGIN
+    BLOCK "040904E4"
+    BEGIN
+      VALUE "CompanyName",  "@JUCER_COMPANY_NAME@\0"
+      VALUE "FileDescription",  "@JUCER_PROJECT_NAME@\0"
+      VALUE "FileVersion",  "@JUCER_PROJECT_VERSION@\0"
+      VALUE "ProductName",  "@JUCER_PROJECT_NAME@\0"
+      VALUE "ProductVersion",  "@JUCER_PROJECT_VERSION@\0"
+    END
+  END
+
+  BLOCK "VarFileInfo"
+  BEGIN
+    VALUE "Translation", 0x409, 1252
+  END
+END
+
+#endif
