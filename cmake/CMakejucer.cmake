@@ -238,13 +238,23 @@ function(jucer_project_end)
   )
 
   if(JUCER_PROJECT_TYPE STREQUAL "guiapp")
-    configure_file("${JUCE.cmake_ROOT}/cmake/Info-App.plist" "Info-App.plist" @ONLY)
-    set_target_properties(${target_name} PROPERTIES
-      MACOSX_BUNDLE TRUE
-      MACOSX_BUNDLE_BUNDLE_NAME "${JUCER_PROJECT_NAME}"
-      MACOSX_BUNDLE_GUI_IDENTIFIER "${JUCER_BUNDLE_IDENTIFIER}"
-      MACOSX_BUNDLE_INFO_PLIST "${CMAKE_CURRENT_BINARY_DIR}/Info-App.plist"
-    )
+    set_target_properties(${target_name} PROPERTIES MACOSX_BUNDLE TRUE)
+    if(CMAKE_GENERATOR STREQUAL "Xcode")
+      configure_file("${JUCE.cmake_ROOT}/cmake/Info-App-Xcode.plist"
+        "Info-App.plist" @ONLY
+      )
+      set_target_properties(${target_name} PROPERTIES
+        XCODE_ATTRIBUTE_INFOPLIST_FILE "${CMAKE_CURRENT_BINARY_DIR}/Info-App.plist"
+        XCODE_ATTRIBUTE_PRODUCT_BUNDLE_IDENTIFIER "${JUCER_BUNDLE_IDENTIFIER}"
+      )
+    else()
+      configure_file("${JUCE.cmake_ROOT}/cmake/Info-App.plist" "Info-App.plist" @ONLY)
+      set_target_properties(${target_name} PROPERTIES
+        MACOSX_BUNDLE_BUNDLE_NAME "${JUCER_PROJECT_NAME}"
+        MACOSX_BUNDLE_GUI_IDENTIFIER "${JUCER_BUNDLE_IDENTIFIER}"
+        MACOSX_BUNDLE_INFO_PLIST "${CMAKE_CURRENT_BINARY_DIR}/Info-App.plist"
+      )
+    endif()
     set_target_properties(${target_name} PROPERTIES WIN32_EXECUTABLE TRUE)
   endif()
 
@@ -265,7 +275,12 @@ function(jucer_project_end)
 
   if(APPLE)
     target_compile_options(${target_name} PRIVATE -std=c++11)
-    target_compile_definitions(${target_name} PRIVATE $<$<CONFIG:Debug>:_DEBUG>)
+    target_compile_definitions(${target_name} PRIVATE
+      $<$<CONFIG:Debug>:_DEBUG=1>
+      $<$<CONFIG:Debug>:DEBUG=1>
+      $<$<NOT:$<CONFIG:Debug>>:_NDEBUG=1>
+      $<$<NOT:$<CONFIG:Debug>>:NDEBUG=1>
+    )
 
     list(REMOVE_DUPLICATES JUCER_PROJECT_OSX_FRAMEWORKS)
     foreach(framework_name ${JUCER_PROJECT_OSX_FRAMEWORKS})
