@@ -227,6 +227,12 @@ function(jucer_project_end)
     REGULAR_EXPRESSION "${CMAKE_CURRENT_BINARY_DIR}/JuceLibraryCode/*"
   )
 
+  if(WIN32)
+    string(REPLACE "." "," comma_separated_version_number "${JUCER_PROJECT_VERSION}")
+    configure_file("${JUCE.cmake_ROOT}/cmake/resources.rc" "resources.rc")
+    list(APPEND ${JUCER_PROJECT_SOURCES} "${CMAKE_CURRENT_BINARY_DIR}/resources.rc")
+  endif()
+
   string(REGEX REPLACE "[^A-Za-z0-9_.+-]" "_" target_name "${JUCER_PROJECT_NAME}")
 
   add_executable(${target_name}
