@@ -25,9 +25,9 @@ list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/../../cmake")
 include(Reprojucer)
 
 
-set(JUCE_DIR "${CMAKE_CURRENT_LIST_DIR}/../../../JUCE" CACHE PATH "Path to JUCE")
+set(JUCE_ROOT "${CMAKE_CURRENT_LIST_DIR}/../../../JUCE" CACHE PATH "Path to JUCE")
 
-set(OSCMonitor_jucer_FILE "${JUCE_DIR}/examples/OSCMonitor/OSCMonitor.jucer"
+set(OSCMonitor_jucer_FILE "${JUCE_ROOT}/examples/OSCMonitor/OSCMonitor.jucer"
   CACHE PATH "Path to OSCMonitor.jucer"
 )
 

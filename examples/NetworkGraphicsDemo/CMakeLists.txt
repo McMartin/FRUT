@@ -25,10 +25,10 @@ list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/../../cmake")
 include(Reprojucer)
 
 
-set(JUCE_DIR "${CMAKE_CURRENT_LIST_DIR}/../../../JUCE" CACHE PATH "Path to JUCE")
+set(JUCE_ROOT "${CMAKE_CURRENT_LIST_DIR}/../../../JUCE" CACHE PATH "Path to JUCE")
 
 set(NetworkGraphicsDemo_jucer_FILE
-  "${JUCE_DIR}/examples/NetworkGraphicsDemo/NetworkGraphicsDemo.jucer"
+  "${JUCE_ROOT}/examples/NetworkGraphicsDemo/NetworkGraphicsDemo.jucer"
   CACHE PATH "Path to NetworkGraphicsDemo.jucer"
 )
 
