@@ -25,8 +25,7 @@ list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/../..")
 include(JUCE)
 
 
-set(BinaryBuilder_jucer_FILE
-  "${JUCE_DIR}/extras/BinaryBuilder/BinaryBuilder.jucer"
+set(BinaryBuilder_jucer_FILE "${JUCE_DIR}/extras/BinaryBuilder/BinaryBuilder.jucer"
   CACHE PATH "Path to BinaryBuilder.jucer"
 )
 

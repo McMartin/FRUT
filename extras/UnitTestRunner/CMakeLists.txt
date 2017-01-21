@@ -25,8 +25,7 @@ list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/../..")
 include(JUCE)
 
 
-set(UnitTestRunner_jucer_FILE
-  "${JUCE_DIR}/extras/UnitTestRunner/UnitTestRunner.jucer"
+set(UnitTestRunner_jucer_FILE "${JUCE_DIR}/extras/UnitTestRunner/UnitTestRunner.jucer"
   CACHE PATH "Path to UnitTestRunner.jucer"
 )
 
