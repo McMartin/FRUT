@@ -22,5 +22,4 @@ set(JUCE.cmake_ROOT "${CMAKE_CURRENT_LIST_DIR}")
 
 set(JUCE_DIR "${JUCE.cmake_ROOT}/../JUCE" CACHE PATH "Path to JUCE")
 
-list(APPEND CMAKE_MODULE_PATH "${JUCE.cmake_ROOT}/cmake")
-include(CMakejucer)
+include("${JUCE.cmake_ROOT}/cmake/CMakejucer.cmake")
