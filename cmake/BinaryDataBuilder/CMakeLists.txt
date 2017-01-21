@@ -25,11 +25,14 @@ list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/../../cmake")
 include(Reprojucer)
 
 
-set(JUCE_ROOT "${CMAKE_CURRENT_LIST_DIR}/../../../JUCE" CACHE PATH "Path to JUCE")
+if(NOT DEFINED JUCE_ROOT)
+  message(FATAL_ERROR "JUCE_ROOT must be defined")
+endif()
 
-set(Projucer_jucer_FILE "${JUCE_ROOT}/extras/Projucer/Projucer.jucer"
-  CACHE PATH "Path to Projucer.jucer"
-)
+set(Projucer_jucer_FILE "${JUCE_ROOT}/extras/Projucer/Projucer.jucer")
+if(NOT EXISTS "${Projucer_jucer_FILE}")
+  message(FATAL_ERROR "${Projucer_jucer_FILE} must exist")
+endif()
 
 get_filename_component(Projucer_jucer_DIR "${Projucer_jucer_FILE}" DIRECTORY)
 

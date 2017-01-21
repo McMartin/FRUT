@@ -189,7 +189,9 @@ function(jucer_project_end)
       "${Reprojucer.cmake_DIR}/BinaryDataBuilder/_build"
       "${Reprojucer.cmake_DIR}/BinaryDataBuilder"
       BinaryDataBuilder install
-      CMAKE_FLAGS "-DCMAKE_INSTALL_PREFIX=${CMAKE_CURRENT_BINARY_DIR}"
+      CMAKE_FLAGS
+      "-DJUCE_ROOT=${JUCE_ROOT}"
+      "-DCMAKE_INSTALL_PREFIX=${CMAKE_CURRENT_BINARY_DIR}"
     )
     if(NOT BinaryDataBuilder)
       message(FATAL_ERROR "Failed to build BinaryDataBuilder")
