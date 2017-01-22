@@ -13,4 +13,5 @@
 #define JUCE_GLOBAL_MODULE_SETTINGS_INCLUDED 1
 
 @config_flags_defines@
+@audio_plugin_settings_defines@
 #endif  // __JUCE_APPCONFIG__

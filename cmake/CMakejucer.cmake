@@ -32,7 +32,7 @@ function(jucer_project_begin project_name)
   set(project_setting_tags "PROJECT_VERSION" "COMPANY_NAME" "COMPANY_WEBSITE"
     "COMPANY_EMAIL" "PROJECT_TYPE" "BUNDLE_IDENTIFIER" "PREPROCESSOR_DEFINITIONS"
   )
-  set(project_type_descs "GUI Application" "Console Application")
+  set(project_type_descs "GUI Application" "Console Application" "Audio Plug-in")
 
   foreach(element ${ARGN})
     if(NOT DEFINED tag)
@@ -57,8 +57,43 @@ function(jucer_project_begin project_name)
             "Supported project types: ${project_type_descs}"
           )
         endif()
-        set(project_types "guiapp" "consoleapp")
+        set(project_types "guiapp" "consoleapp" "audioplug")
         list(GET project_types ${project_type_index} value)
+      endif()
+
+      set(JUCER_${tag} "${value}" PARENT_SCOPE)
+
+      unset(tag)
+    endif()
+  endforeach()
+
+endfunction()
+
+
+function(jucer_audio_plugin_settings)
+
+  set(plugin_setting_tags
+    "BUILD_VST"
+    # "BUILD_VST3" "BUILD_AUDIOUNIT" "BUILD_AUDIOUNIT_V3" "BUILD_RTAS" "BUILD_AAX"
+    "PLUGIN_NAME" "PLUGIN_DESCRIPTION" "PLUGIN_MANUFACTURER" "PLUGIN_MANUFACTURER_CODE"
+    "PLUGIN_CODE" "PLUGIN_CHANNEL_CONFIGURATIONS" "PLUGIN_IS_A_SYNTH" "PLUGIN_MIDI_INPUT"
+    "PLUGIN_MIDI_OUTPUT" "MIDI_EFFECT_PLUGIN" "KEY_FOCUS"
+    # "PLUGIN_AU_EXPORT_PREFIX" "PLUGIN_AU_MAIN_TYPE"
+    "JUCER_VST_CATEGORY"
+    # "PLUGIN_RTAS_CATEGORY" "PLUGIN_AAX_CATEGORY" "PLUGIN_AAX_IDENTIFIER"
+  )
+
+  foreach(element ${ARGN})
+    if(NOT DEFINED tag)
+      set(tag ${element})
+    else()
+      set(value ${element})
+
+      list(FIND plugin_setting_tags "${tag}" plugin_setting_index)
+      if(plugin_setting_index EQUAL -1)
+        message(FATAL_ERROR "Unsupported audio plugin setting: ${tag}\n"
+          "Supported audio plugin settings: ${plugin_setting_tags}"
+        )
       endif()
 
       set(JUCER_${tag} "${value}" PARENT_SCOPE)
@@ -100,20 +135,69 @@ function(jucer_project_module module_name PATH_TAG module_path)
   list(APPEND JUCER_PROJECT_INCLUDE_DIRS "${module_path}")
   set(JUCER_PROJECT_INCLUDE_DIRS ${JUCER_PROJECT_INCLUDE_DIRS} PARENT_SCOPE)
 
-  get_filename_component(objcxx_module_file
-    "${module_path}/${module_name}/${module_name}.mm" ABSOLUTE
+  file(GLOB module_src_files
+    "${module_path}/${module_name}/*.cpp" "${module_path}/${module_name}/*.mm"
   )
-  if(APPLE AND EXISTS "${objcxx_module_file}")
-    set(extension "mm")
-  else()
-    set(extension "cpp")
-  endif()
-  configure_file("${JUCE.cmake_ROOT}/cmake/ModuleWrapper.cpp"
-    "JuceLibraryCode/${module_name}.${extension}"
-  )
-  list(APPEND JUCER_PROJECT_SOURCES
-    "${CMAKE_CURRENT_BINARY_DIR}/JuceLibraryCode/${module_name}.${extension}"
-  )
+
+  foreach(src_file ${module_src_files})
+    set(to_compile FALSE)
+
+    if(src_file MATCHES "_AAX." OR src_file MATCHES "_AAX_")
+      if(JUCER_BUILD_AAX)
+        set(to_compile TRUE)
+      endif()
+    elseif(src_file MATCHES "_AUv3." OR src_file MATCHES "_AUv3_")
+      if(JUCER_BUILD_AUDIOUNIT_V3 AND APPLE)
+        set(to_compile TRUE)
+      endif()
+    elseif(src_file MATCHES "_AU." OR src_file MATCHES "_AU_")
+      if(JUCER_BUILD_AUDIOUNIT AND APPLE)
+        set(to_compile TRUE)
+      endif()
+    elseif(src_file MATCHES "_RTAS." OR src_file MATCHES "_RTAS_")
+      if(JUCER_BUILD_RTAS)
+        set(to_compile TRUE)
+      endif()
+    elseif(src_file MATCHES "_VST2." OR src_file MATCHES "_VST2_")
+      if(JUCER_BUILD_VST)
+        set(to_compile TRUE)
+      endif()
+    elseif(src_file MATCHES "_VST3." OR src_file MATCHES "_VST3_")
+      if(JUCER_BUILD_VST3)
+        set(to_compile TRUE)
+      endif()
+    elseif(src_file MATCHES "_Standalone." OR src_file MATCHES "_Standalone_")
+      if(JUCER_BUILD_AUDIOUNIT_V3 AND APPLE)
+        set(to_compile TRUE)
+      endif()
+    else()
+      get_filename_component(src_file_extension "${src_file}" EXT)
+      if(src_file_extension STREQUAL ".mm")
+        if(APPLE)
+          set(to_compile TRUE)
+        endif()
+      elseif(APPLE)
+        string(REGEX REPLACE "${src_file_extension}$" ".mm" objcxx_src_file "${src_file}")
+        list(FIND module_src_files "${objcxx_src_file}" index)
+        if(index EQUAL -1)
+          set(to_compile TRUE)
+        endif()
+      else()
+        set(to_compile TRUE)
+      endif()
+    endif()
+
+    if(to_compile)
+      get_filename_component(src_file_basename "${src_file}" NAME)
+      configure_file("${JUCE.cmake_ROOT}/cmake/ModuleWrapper.cpp"
+        "JuceLibraryCode/${src_file_basename}"
+      )
+      list(APPEND JUCER_PROJECT_SOURCES
+        "${CMAKE_CURRENT_BINARY_DIR}/JuceLibraryCode/${src_file_basename}"
+      )
+    endif()
+  endforeach()
+
   set(JUCER_PROJECT_SOURCES ${JUCER_PROJECT_SOURCES} PARENT_SCOPE)
 
   list(APPEND JUCER_CONFIG_FLAGS ${ARGN})
@@ -177,6 +261,38 @@ function(jucer_project_end)
       unset(flag_name)
     endif()
   endforeach()
+
+  if(JUCER_PROJECT_TYPE STREQUAL "audioplug")
+    set(plugin_settings "Build_VST" "Build_VST3" "Build_AU" "Build_AUv3" "Build_RTAS"
+      "Build_AAX" "Build_STANDALONE" "Name" "Desc" "Manufacturer" "ManufacturerWebsite"
+      "ManufacturerEmail" "ManufacturerCode" "PluginCode" "IsSynth" "WantsMidiInput"
+      "ProducesMidiOutput" "IsMidiEffect" "EditorRequiresKeyboardFocus" "Version"
+      "VersionCode" "VersionString" "VSTUniqueID" "VSTCategory" "AUMainType" "AUSubType"
+      "AUExportPrefix" "AUExportPrefixQuoted" "AUManufacturerCode" "CFBundleIdentifier"
+      "RTASCategory" "RTASManufacturerCode" "RTASProductId" "RTASDisableBypass"
+      "RTASDisableMultiMono" "AAXIdentifier" "AAXManufacturerCode" "AAXProductId"
+      "AAXCategory" "AAXDisableBypass" "AAXDisableMultiMono"
+    )
+
+    string(CONCAT audio_plugin_settings_defines
+      "//==============================================================================\n"
+      "// Audio plugin settings..\n\n"
+    )
+
+    foreach(setting_name ${plugin_settings})
+      __get_plugin_setting_value("${setting_name}" setting_value)
+
+      string(CONCAT audio_plugin_settings_defines "${audio_plugin_settings_defines}"
+        "#ifndef  JucePlugin_${setting_name}\n"
+      )
+      string(CONCAT audio_plugin_settings_defines "${audio_plugin_settings_defines}"
+        " #define JucePlugin_${setting_name}  ${setting_value}\n"
+      )
+      string(CONCAT audio_plugin_settings_defines "${audio_plugin_settings_defines}"
+        "#endif\n"
+      )
+    endforeach()
+  endif()
   configure_file("${JUCE.cmake_ROOT}/cmake/AppConfig.h" "JuceLibraryCode/AppConfig.h")
 
   list(LENGTH JUCER_PROJECT_RESOURCES resources_count)
@@ -235,13 +351,58 @@ function(jucer_project_end)
 
   string(REGEX REPLACE "[^A-Za-z0-9_.+-]" "_" target_name "${JUCER_PROJECT_NAME}")
 
-  add_executable(${target_name}
+  set(all_sources
     ${JUCER_PROJECT_SOURCES}
     ${JUCER_PROJECT_RESOURCES}
     "${CMAKE_CURRENT_BINARY_DIR}/JuceLibraryCode/AppConfig.h"
     "${CMAKE_CURRENT_BINARY_DIR}/JuceLibraryCode/JuceHeader.h"
     ${JUCER_PROJECT_BROWSABLE_FILES}
   )
+
+  if(JUCER_PROJECT_TYPE STREQUAL "audioplug")
+    if(APPLE)
+      foreach(src_file ${JUCER_PROJECT_SOURCES})
+        if(src_file MATCHES "_AAX." OR src_file MATCHES "_AAX_")
+          list(APPEND AAX_sources "${src_file}")
+        elseif(src_file MATCHES "_AUv3." OR src_file MATCHES "_AUv3_")
+          list(APPEND AUv3_sources "${src_file}")
+        elseif(src_file MATCHES "_AU." OR src_file MATCHES "_AU_")
+          list(APPEND AU_sources "${src_file}")
+        elseif(src_file MATCHES "_RTAS." OR src_file MATCHES "_RTAS_")
+          list(APPEND RTAS_sources "${src_file}")
+        elseif(src_file MATCHES "_VST2." OR src_file MATCHES "_VST2_")
+          list(APPEND VST_sources "${src_file}")
+        elseif(src_file MATCHES "_VST3." OR src_file MATCHES "_VST3_")
+          list(APPEND VST3_sources "${src_file}")
+        elseif(src_file MATCHES "_Standalone." OR src_file MATCHES "_Standalone_")
+          list(APPEND Standalone_sources "${src_file}")
+        else()
+          list(APPEND SharedCode_sources "${src_file}")
+        endif()
+      endforeach()
+
+      add_library(${target_name}_Shared_Code STATIC
+        ${SharedCode_sources}
+        ${JUCER_PROJECT_RESOURCES}
+        "${CMAKE_CURRENT_BINARY_DIR}/JuceLibraryCode/AppConfig.h"
+        "${CMAKE_CURRENT_BINARY_DIR}/JuceLibraryCode/JuceHeader.h"
+        ${JUCER_PROJECT_BROWSABLE_FILES}
+      )
+
+      if(JUCER_BUILD_VST)
+        add_library(${target_name}_VST MODULE ${VST_sources})
+        target_link_libraries(${target_name}_VST PRIVATE ${target_name}_Shared_Code)
+        set_target_properties(${target_name}_VST PROPERTIES
+          BUNDLE TRUE
+          BUNDLE_EXTENSION "vst"
+        )
+      endif()
+    else()
+      add_library(${target_name} MODULE ${all_sources})
+    endif()
+  else()
+    add_executable(${target_name} ${all_sources})
+  endif()
 
   if(JUCER_PROJECT_TYPE STREQUAL "guiapp")
     set_target_properties(${target_name} PROPERTIES MACOSX_BUNDLE TRUE)
@@ -298,6 +459,15 @@ function(jucer_project_end)
 endfunction()
 
 
+function(__bool_to_int bool_value out_int_value)
+  if(bool_value)
+    set(${out_int_value} 1 PARENT_SCOPE)
+  else()
+    set(${out_int_value} 0 PARENT_SCOPE)
+  endif()
+endfunction()
+
+
 function(__dec_to_hex dec_value out_hex_value)
 
   if(dec_value EQUAL 0)
@@ -339,5 +509,191 @@ function(__version_to_hex version out_hex_value)
 
   __dec_to_hex("${dec_value}" hex_value)
   set(${out_hex_value} "${hex_value}" PARENT_SCOPE)
+
+endfunction()
+
+
+function(__four_chars_to_hex value out_hex_value)
+
+  foreach(ascii_code RANGE 1 127)
+    list(APPEND all_ascii_codes ${ascii_code})
+  endforeach()
+  string(ASCII ${all_ascii_codes} all_ascii_chars)
+
+  string(STRIP "${value}" value)
+  string(SUBSTRING "${value}" 0 4 value)
+  set(dec_value 0)
+  foreach(index 0 1 2 3)
+    string(SUBSTRING "${value}" ${index} 1 ascii_char)
+    string(FIND "${all_ascii_chars}" "${ascii_char}" ascii_code)
+    if(ascii_code EQUAL -1)
+      message(FATAL_ERROR "${value} cannot contain non-ASCII characters")
+    endif()
+    math(EXPR dec_value "(${dec_value} << 8) | ((${ascii_code} + 1) & 255)")
+  endforeach()
+
+  __dec_to_hex("${dec_value}" hex_value)
+  set(${out_hex_value} "${hex_value}" PARENT_SCOPE)
+
+endfunction()
+
+
+function(__get_plugin_setting_value setting_name out_setting_value)
+
+  if(setting_name STREQUAL "Build_VST")
+    __bool_to_int("${JUCER_BUILD_VST}" setting_value)
+
+  elseif(setting_name STREQUAL "Build_VST3")
+    __bool_to_int("${JUCER_BUILD_VST3}" setting_value)
+
+  elseif(setting_name STREQUAL "Build_AU")
+    __bool_to_int("${JUCER_BUILD_AUDIOUNIT}" setting_value)
+
+  elseif(setting_name STREQUAL "Build_AUv3")
+    __bool_to_int("${JUCER_BUILD_AUDIOUNIT_V3}" setting_value)
+
+  elseif(setting_name STREQUAL "Build_RTAS")
+    __bool_to_int("${JUCER_BUILD_RTAS}" setting_value)
+
+  elseif(setting_name STREQUAL "Build_AAX")
+    __bool_to_int("${JUCER_BUILD_AAX}" setting_value)
+
+  elseif(setting_name STREQUAL "Build_STANDALONE")
+    __bool_to_int("${JUCER_BUILD_STANDALONE}" setting_value)
+
+  elseif(setting_name STREQUAL "Name")
+    set(setting_value "\"${JUCER_PLUGIN_NAME}\"")
+
+  elseif(setting_name STREQUAL "Desc")
+    set(setting_value "\"${JUCER_PLUGIN_DESCRIPTION}\"")
+
+  elseif(setting_name STREQUAL "Manufacturer")
+    set(setting_value "\"${JUCER_PLUGIN_MANUFACTURER}\"")
+
+  elseif(setting_name STREQUAL "ManufacturerWebsite")
+    set(setting_value "\"${JUCER_COMPANY_WEBSITE}\"")
+
+  elseif(setting_name STREQUAL "ManufacturerEmail")
+    set(setting_value "\"${JUCER_COMPANY_EMAIL}\"")
+
+  elseif(setting_name STREQUAL "ManufacturerCode")
+    __four_chars_to_hex("${JUCER_PLUGIN_MANUFACTURER_CODE}" hex_value)
+    set(setting_value "${hex_value} // '${JUCER_PLUGIN_MANUFACTURER_CODE}'")
+
+  elseif(setting_name STREQUAL "PluginCode")
+    __four_chars_to_hex("${JUCER_PLUGIN_CODE}" hex_value)
+    set(setting_value "${hex_value} // '${JUCER_PLUGIN_CODE}'")
+
+  elseif(setting_name STREQUAL "IsSynth")
+    __bool_to_int("${JUCER_PLUGIN_IS_A_SYNTH}" setting_value)
+
+  elseif(setting_name STREQUAL "WantsMidiInput")
+    __bool_to_int("${JUCER_PLUGIN_MIDI_INPUT}" setting_value)
+
+  elseif(setting_name STREQUAL "ProducesMidiOutput")
+    __bool_to_int("${JUCER_PLUGIN_MIDI_OUTPUT}" setting_value)
+
+  elseif(setting_name STREQUAL "IsMidiEffect")
+    __bool_to_int("${JUCER_MIDI_EFFECT_PLUGIN}" setting_value)
+
+  elseif(setting_name STREQUAL "EditorRequiresKeyboardFocus")
+    __bool_to_int("${JUCER_KEY_FOCUS}" setting_value)
+
+  elseif(setting_name STREQUAL "Version")
+    set(setting_value "${JUCER_PROJECT_VERSION}")
+
+  elseif(setting_name STREQUAL "VersionCode")
+    __version_to_hex("${JUCER_PROJECT_VERSION}" hex_value)
+    set(setting_value "${hex_value}")
+
+  elseif(setting_name STREQUAL "VersionString")
+    set(setting_value "\"${JUCER_PROJECT_VERSION}\"")
+
+  elseif(setting_name STREQUAL "VSTUniqueID")
+    set(setting_value "JucePlugin_PluginCode")
+
+  elseif(setting_name STREQUAL "VSTCategory")
+    if(NOT DEFINED JUCER_VST_CATEGORY)
+      if(JUCER_PLUGIN_IS_A_SYNTH)
+        set(setting_value "kPlugCategSynth")
+      else()
+        set(setting_value "kPlugCategEffect")
+      endif()
+    else()
+      set(setting_value "${JUCER_VST_CATEGORY}")
+    endif()
+
+  elseif(setting_name STREQUAL "AUMainType")
+    if(NOT DEFINED JUCER_PLUGIN_AU_MAIN_TYPE)
+      if(JUCER_MIDI_EFFECT_PLUGIN)
+        set(setting_value "'aumi'")
+      elseif(JUCER_PLUGIN_IS_A_SYNTH)
+        set(setting_value "kAudioUnitType_MusicDevice")
+      elseif(JUCER_PLUGIN_MIDI_INPUT)
+        set(setting_value "kAudioUnitType_MusicEffect")
+      else()
+        set(setting_value "kAudioUnitType_Effect")
+      endif()
+    else()
+      set(setting_value "${JUCER_PLUGIN_AU_MAIN_TYPE}")
+    endif()
+
+  elseif(setting_name STREQUAL "AUSubType")
+    set(setting_value "JucePlugin_PluginCode")
+
+  elseif(setting_name STREQUAL "AUExportPrefix")
+    set(setting_value "${JUCER_PLUGIN_AU_EXPORT_PREFIX}")
+
+  elseif(setting_name STREQUAL "AUExportPrefixQuoted")
+    set(setting_value "\"${JUCER_PLUGIN_AU_EXPORT_PREFIX}\"")
+
+  elseif(setting_name STREQUAL "AUManufacturerCode")
+    set(setting_value "JucePlugin_ManufacturerCode")
+
+  elseif(setting_name STREQUAL "CFBundleIdentifier")
+    set(setting_value "${JUCER_BUNDLE_IDENTIFIER}")
+
+  elseif(setting_name STREQUAL "RTASCategory")
+    if(JUCER_PLUGIN_IS_A_SYNTH)
+      set(setting_value "ePlugInCategory_SWGenerators")
+    elseif(NOT DEFINED JUCER_PLUGIN_RTAS_CATEGORY)
+      set(setting_value "ePlugInCategory_None")
+    else()
+      set(setting_value "${JUCER_PLUGIN_RTAS_CATEGORY}")
+    endif()
+
+  elseif(setting_name STREQUAL "RTASManufacturerCode")
+    set(setting_value "JucePlugin_ManufacturerCode")
+
+  elseif(setting_name STREQUAL "RTASProductId")
+    set(setting_value "JucePlugin_PluginCode")
+
+  elseif(setting_name STREQUAL "RTASDisableBypass")
+    set(setting_value 0)
+
+  elseif(setting_name STREQUAL "RTASDisableMultiMono")
+    set(setting_value 0)
+
+  elseif(setting_name STREQUAL "AAXIdentifier")
+    set(setting_value "${JUCER_PLUGIN_AAX_IDENTIFIER}")
+
+  elseif(setting_name STREQUAL "AAXManufacturerCode")
+    set(setting_value "JucePlugin_ManufacturerCode")
+
+  elseif(setting_name STREQUAL "AAXProductId")
+    set(setting_value "JucePlugin_PluginCode")
+
+  elseif(setting_name STREQUAL "AAXCategory")
+    set(setting_value "${JUCER_PLUGIN_AAX_CATEGORY}")
+
+  elseif(setting_name STREQUAL "AAXDisableBypass")
+    set(setting_value 0)
+
+  elseif(setting_name STREQUAL "AAXDisableMultiMono")
+    set(setting_value 0)
+
+  endif()
+
+  set(${out_setting_value} "${setting_value}" PARENT_SCOPE)
 
 endfunction()
