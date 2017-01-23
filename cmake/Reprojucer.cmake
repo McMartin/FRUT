@@ -174,12 +174,6 @@ function(jucer_project_end)
         )
       endif()
       string(CONCAT config_flags_defines "${config_flags_defines}" "#endif\n\n")
-
-      if(flag_name STREQUAL "JUCE_PLUGINHOST_AU")
-        if(JUCER_FLAG_${flag_name})
-          list(APPEND JUCER_PROJECT_OSX_FRAMEWORKS "AudioUnit" "CoreAudioKit")
-        endif()
-      endif()
   endforeach()
   configure_file("${Reprojucer.cmake_DIR}/AppConfig.h" "JuceLibraryCode/AppConfig.h")
 
@@ -294,6 +288,9 @@ function(jucer_project_end)
       $<$<NOT:$<CONFIG:Debug>>:NDEBUG=1>
     )
 
+    if(JUCER_FLAG_JUCE_PLUGINHOST_AU)
+      list(APPEND JUCER_PROJECT_OSX_FRAMEWORKS "AudioUnit" "CoreAudioKit")
+    endif()
     list(REMOVE_DUPLICATES JUCER_PROJECT_OSX_FRAMEWORKS)
     foreach(framework_name ${JUCER_PROJECT_OSX_FRAMEWORKS})
       find_library(${framework_name}_framework ${framework_name})
