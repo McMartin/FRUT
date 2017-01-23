@@ -122,13 +122,13 @@ function(jucer_project_module module_name PATH_TAG module_path)
   foreach(element ${ARGN})
     if(NOT DEFINED config_flag)
       set(config_flag ${element})
-      list(APPEND JUCER_CONFIG_FLAGS "${config_flag}")
+      list(APPEND module_config_flags "${config_flag}")
     else()
       set(JUCER_FLAG_${config_flag} ${element} PARENT_SCOPE)
       unset(config_flag)
     endif()
   endforeach()
-  set(JUCER_CONFIG_FLAGS ${JUCER_CONFIG_FLAGS} PARENT_SCOPE)
+  set(JUCER_${module_name}_CONFIG_FLAGS ${module_config_flags} PARENT_SCOPE)
 
   set(module_header_file "${module_path}/${module_name}/${module_name}.h")
 
@@ -159,8 +159,7 @@ function(jucer_project_end)
       "${module_available_defines}"
       "#define JUCE_MODULE_AVAILABLE_${module_name} 1\n"
     )
-  endforeach()
-  foreach(config_flag ${JUCER_CONFIG_FLAGS})
+    foreach(config_flag ${JUCER_${module_name}_CONFIG_FLAGS})
       string(CONCAT config_flags_defines
         "${config_flags_defines}" "#ifndef    ${config_flag}\n"
       )
@@ -174,6 +173,7 @@ function(jucer_project_end)
         )
       endif()
       string(CONCAT config_flags_defines "${config_flags_defines}" "#endif\n\n")
+    endforeach()
   endforeach()
   configure_file("${Reprojucer.cmake_DIR}/AppConfig.h" "JuceLibraryCode/AppConfig.h")
 
