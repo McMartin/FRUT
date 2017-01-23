@@ -119,7 +119,15 @@ function(jucer_project_module module_name PATH_TAG module_path)
   )
   set(JUCER_PROJECT_SOURCES ${JUCER_PROJECT_SOURCES} PARENT_SCOPE)
 
-  list(APPEND JUCER_CONFIG_FLAGS ${ARGN})
+  foreach(element ${ARGN})
+    if(NOT DEFINED config_flag)
+      set(config_flag ${element})
+      list(APPEND JUCER_CONFIG_FLAGS "${config_flag}")
+    else()
+      set(JUCER_FLAG_${config_flag} ${element} PARENT_SCOPE)
+      unset(config_flag)
+    endif()
+  endforeach()
   set(JUCER_CONFIG_FLAGS ${JUCER_CONFIG_FLAGS} PARENT_SCOPE)
 
   set(module_header_file "${module_path}/${module_name}/${module_name}.h")
@@ -152,16 +160,11 @@ function(jucer_project_end)
       "#define JUCE_MODULE_AVAILABLE_${module_name} 1\n"
     )
   endforeach()
-  foreach(element ${JUCER_CONFIG_FLAGS})
-    if(NOT DEFINED flag_name)
-      set(flag_name ${element})
-    else()
-      set(flag_value ${element})
-
+  foreach(flag_name ${JUCER_CONFIG_FLAGS})
       string(CONCAT config_flags_defines
         "${config_flags_defines}" "#ifndef    ${flag_name}\n"
       )
-      if(flag_value)
+      if(JUCER_FLAG_${flag_name})
         string(CONCAT config_flags_defines
           "${config_flags_defines}" " #define   ${flag_name} 1\n"
         )
@@ -173,13 +176,10 @@ function(jucer_project_end)
       string(CONCAT config_flags_defines "${config_flags_defines}" "#endif\n\n")
 
       if(flag_name STREQUAL "JUCE_PLUGINHOST_AU")
-        if(flag_value)
+        if(JUCER_FLAG_${flag_name})
           list(APPEND JUCER_PROJECT_OSX_FRAMEWORKS "AudioUnit" "CoreAudioKit")
         endif()
       endif()
-
-      unset(flag_name)
-    endif()
   endforeach()
   configure_file("${Reprojucer.cmake_DIR}/AppConfig.h" "JuceLibraryCode/AppConfig.h")
 
