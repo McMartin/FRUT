@@ -309,6 +309,17 @@ function(jucer_project_end)
     ${JUCER_PROJECT_INCLUDE_DIRS}
   )
 
+  if(JUCER_FLAG_JUCE_PLUGINHOST_VST3)
+    if(NOT DEFINED VST3_SDK_FOLDER)
+      message(FATAL_ERROR "VST3_SDK_FOLDER must be defined")
+    endif()
+    get_filename_component(vst3_sdk_abs_path "${VST3_SDK_FOLDER}" ABSOLUTE)
+    if(NOT IS_DIRECTORY "${vst3_sdk_abs_path}")
+      message(WARNING "VST3_SDK_FOLDER: no such directory \"${VST3_SDK_FOLDER}\"")
+    endif()
+    target_include_directories(${target_name} PRIVATE "${VST3_SDK_FOLDER}")
+  endif()
+
   target_compile_definitions(${target_name} PRIVATE ${JUCER_PREPROCESSOR_DEFINITIONS})
 
   if(APPLE)

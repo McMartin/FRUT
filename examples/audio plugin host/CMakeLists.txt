@@ -165,6 +165,3 @@ jucer_project_module(
 )
 
 jucer_project_end()
-
-
-target_include_directories(Plugin_Host PRIVATE "${VST3_SDK_FOLDER}")
