@@ -21,12 +21,14 @@
 cmake_minimum_required(VERSION 3.0)
 
 
-list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/../..")
-include(JUCE)
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/../../cmake")
+include(Reprojucer)
 
+
+set(JUCE_ROOT "${CMAKE_CURRENT_LIST_DIR}/../../../JUCE" CACHE PATH "Path to JUCE")
 
 set(Plugin_Host_jucer_FILE
-  "${JUCE_DIR}/examples/audio plugin host/Plugin Host.jucer"
+  "${JUCE_ROOT}/examples/audio plugin host/Plugin Host.jucer"
   CACHE PATH "Path to Plugin Host.jucer"
 )
 

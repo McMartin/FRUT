@@ -19,6 +19,9 @@
 # SOFTWARE.
 
 
+set(Reprojucer.cmake_DIR "${CMAKE_CURRENT_LIST_DIR}")
+
+
 function(jucer_project_begin project_name)
 
   project(${project_name})
@@ -108,7 +111,7 @@ function(jucer_project_module module_name PATH_TAG module_path)
   else()
     set(extension "cpp")
   endif()
-  configure_file("${JUCE.cmake_ROOT}/cmake/ModuleWrapper.cpp"
+  configure_file("${Reprojucer.cmake_DIR}/ModuleWrapper.cpp"
     "JuceLibraryCode/${module_name}.${extension}"
   )
   list(APPEND JUCER_PROJECT_SOURCES
@@ -177,16 +180,18 @@ function(jucer_project_end)
       unset(flag_name)
     endif()
   endforeach()
-  configure_file("${JUCE.cmake_ROOT}/cmake/AppConfig.h" "JuceLibraryCode/AppConfig.h")
+  configure_file("${Reprojucer.cmake_DIR}/AppConfig.h" "JuceLibraryCode/AppConfig.h")
 
   list(LENGTH JUCER_PROJECT_RESOURCES resources_count)
   if(resources_count GREATER 0)
     message("Building BinaryDataBuilder for ${JUCER_PROJECT_NAME}")
     try_compile(BinaryDataBuilder
-      "${JUCE.cmake_ROOT}/cmake/BinaryDataBuilder/_build"
-      "${JUCE.cmake_ROOT}/cmake/BinaryDataBuilder"
+      "${Reprojucer.cmake_DIR}/BinaryDataBuilder/_build"
+      "${Reprojucer.cmake_DIR}/BinaryDataBuilder"
       BinaryDataBuilder install
-      CMAKE_FLAGS "-DCMAKE_INSTALL_PREFIX=${CMAKE_CURRENT_BINARY_DIR}"
+      CMAKE_FLAGS
+      "-DJUCE_ROOT=${JUCE_ROOT}"
+      "-DCMAKE_INSTALL_PREFIX=${CMAKE_CURRENT_BINARY_DIR}"
     )
     if(NOT BinaryDataBuilder)
       message(FATAL_ERROR "Failed to build BinaryDataBuilder")
@@ -221,7 +226,7 @@ function(jucer_project_end)
       "#include <${module_name}/${module_name}.h>\n"
     )
   endforeach()
-  configure_file("${JUCE.cmake_ROOT}/cmake/JuceHeader.h" "JuceLibraryCode/JuceHeader.h")
+  configure_file("${Reprojucer.cmake_DIR}/JuceHeader.h" "JuceLibraryCode/JuceHeader.h")
 
   source_group("Juce Library Code"
     REGULAR_EXPRESSION "${CMAKE_CURRENT_BINARY_DIR}/JuceLibraryCode/*"
@@ -229,7 +234,7 @@ function(jucer_project_end)
 
   if(WIN32)
     string(REPLACE "." "," comma_separated_version_number "${JUCER_PROJECT_VERSION}")
-    configure_file("${JUCE.cmake_ROOT}/cmake/resources.rc" "resources.rc")
+    configure_file("${Reprojucer.cmake_DIR}/resources.rc" "resources.rc")
     list(APPEND ${JUCER_PROJECT_SOURCES} "${CMAKE_CURRENT_BINARY_DIR}/resources.rc")
   endif()
 
@@ -246,7 +251,7 @@ function(jucer_project_end)
   if(JUCER_PROJECT_TYPE STREQUAL "guiapp")
     set_target_properties(${target_name} PROPERTIES MACOSX_BUNDLE TRUE)
     if(CMAKE_GENERATOR STREQUAL "Xcode")
-      configure_file("${JUCE.cmake_ROOT}/cmake/Info-App-Xcode.plist"
+      configure_file("${Reprojucer.cmake_DIR}/Info-App-Xcode.plist"
         "Info-App.plist" @ONLY
       )
       set_target_properties(${target_name} PROPERTIES
@@ -254,7 +259,7 @@ function(jucer_project_end)
         XCODE_ATTRIBUTE_PRODUCT_BUNDLE_IDENTIFIER "${JUCER_BUNDLE_IDENTIFIER}"
       )
     else()
-      configure_file("${JUCE.cmake_ROOT}/cmake/Info-App.plist" "Info-App.plist" @ONLY)
+      configure_file("${Reprojucer.cmake_DIR}/Info-App.plist" "Info-App.plist" @ONLY)
       set_target_properties(${target_name} PROPERTIES
         MACOSX_BUNDLE_BUNDLE_NAME "${JUCER_PROJECT_NAME}"
         MACOSX_BUNDLE_GUI_IDENTIFIER "${JUCER_BUNDLE_IDENTIFIER}"
