@@ -121,16 +121,18 @@ function(jucer_project_module module_name PATH_TAG module_path)
 
   set(module_header_file "${module_path}/${module_name}/${module_name}.h")
 
+  file(STRINGS "${module_header_file}" config_flags_lines REGEX "/\\*\\* Config: ")
+  string(REPLACE "/** Config: " "" module_config_flags "${config_flags_lines}")
+  set(JUCER_${module_name}_CONFIG_FLAGS ${module_config_flags} PARENT_SCOPE)
+
   foreach(element ${ARGN})
     if(NOT DEFINED config_flag)
       set(config_flag ${element})
-      list(APPEND module_config_flags "${config_flag}")
     else()
       set(JUCER_FLAG_${config_flag} ${element} PARENT_SCOPE)
       unset(config_flag)
     endif()
   endforeach()
-  set(JUCER_${module_name}_CONFIG_FLAGS ${module_config_flags} PARENT_SCOPE)
 
   file(STRINGS "${module_header_file}" osx_frameworks_line REGEX "OSXFrameworks:")
   string(REPLACE "OSXFrameworks:" "" osx_frameworks_line "${osx_frameworks_line}")
@@ -169,7 +171,11 @@ function(jucer_project_end)
       string(CONCAT config_flags_defines
         "${config_flags_defines}" "#ifndef    ${config_flag}\n"
       )
-      if(JUCER_FLAG_${config_flag})
+      if(NOT DEFINED JUCER_FLAG_${config_flag})
+        string(CONCAT config_flags_defines
+          "${config_flags_defines}" " //#define ${config_flag}\n"
+        )
+      elseif(JUCER_FLAG_${config_flag})
         string(CONCAT config_flags_defines
           "${config_flags_defines}" " #define   ${config_flag} 1\n"
         )
