@@ -42,6 +42,7 @@ file(COPY "${NetworkGraphicsDemo_jucer_DIR}/Source"
 
 
 jucer_project_begin("JUCE Network Graphics Demo"
+  PROJECT_ID "gWI5Ir"
   PROJECT_VERSION "1.0.0"
   PROJECT_TYPE "GUI Application"
   BUNDLE_IDENTIFIER "com.juce.NetworkGraphicsDemo"

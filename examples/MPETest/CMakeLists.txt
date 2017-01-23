@@ -37,6 +37,7 @@ file(COPY "${MPETest_jucer_DIR}/Source" DESTINATION "${CMAKE_CURRENT_LIST_DIR}")
 
 
 jucer_project_begin("MPETest"
+  PROJECT_ID "IilE7R"
   PROJECT_VERSION "1.0.0"
   PROJECT_TYPE "GUI Application"
   BUNDLE_IDENTIFIER "com.yourcompany.MPETest"

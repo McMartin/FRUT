@@ -37,6 +37,7 @@ file(COPY "${BinaryBuilder_jucer_DIR}/Source" DESTINATION "${CMAKE_CURRENT_LIST_
 
 
 jucer_project_begin("BinaryBuilder"
+  PROJECT_ID "3t6YqETY1"
   PROJECT_VERSION "1.0.0"
   PROJECT_TYPE "Console Application"
   BUNDLE_IDENTIFIER "com.rawmaterialsoftware.binarybuilder"

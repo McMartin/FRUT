@@ -46,6 +46,7 @@ set(VST3_SDK_Folder "${VST3_SDK_Folder_fallback}" CACHE PATH "VST3 SDK Folder")
 
 
 jucer_project_begin("Plugin Host"
+  PROJECT_ID "NTe0XB0ij"
   PROJECT_VERSION "1.0.0"
   COMPANY_NAME "ROLI Ltd."
   PROJECT_TYPE "GUI Application"
@@ -86,8 +87,6 @@ jucer_project_module(
   JUCE_ALSA ON
   # JUCE_JACK
   # JUCE_USE_ANDROID_OPENSLES
-  JUCE_USE_CDREADER OFF
-  JUCE_USE_CDBURNER OFF
 )
 
 jucer_project_module(
@@ -111,6 +110,8 @@ jucer_project_module(
 jucer_project_module(
   juce_audio_utils
   PATH "${Plugin_Host_jucer_DIR}/../../modules"
+  JUCE_USE_CDREADER OFF
+  JUCE_USE_CDBURNER OFF
 )
 
 jucer_project_module(

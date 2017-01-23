@@ -32,7 +32,7 @@ function(jucer_project_begin project_name)
     message(FATAL_ERROR "Missing PROJECT_TYPE argument")
   endif()
 
-  set(project_setting_tags "PROJECT_VERSION" "COMPANY_NAME" "COMPANY_WEBSITE"
+  set(project_setting_tags "PROJECT_ID" "PROJECT_VERSION" "COMPANY_NAME" "COMPANY_WEBSITE"
     "COMPANY_EMAIL" "PROJECT_TYPE" "BUNDLE_IDENTIFIER" "PREPROCESSOR_DEFINITIONS"
   )
   set(project_type_descs "GUI Application" "Console Application")
@@ -119,10 +119,25 @@ function(jucer_project_module module_name PATH_TAG module_path)
   )
   set(JUCER_PROJECT_SOURCES ${JUCER_PROJECT_SOURCES} PARENT_SCOPE)
 
-  list(APPEND JUCER_CONFIG_FLAGS ${ARGN})
-  set(JUCER_CONFIG_FLAGS ${JUCER_CONFIG_FLAGS} PARENT_SCOPE)
-
   set(module_header_file "${module_path}/${module_name}/${module_name}.h")
+
+  file(STRINGS "${module_header_file}" config_flags_lines REGEX "/\\*\\* Config: ")
+  string(REPLACE "/** Config: " "" module_config_flags "${config_flags_lines}")
+  set(JUCER_${module_name}_CONFIG_FLAGS ${module_config_flags} PARENT_SCOPE)
+
+  foreach(element ${ARGN})
+    if(NOT DEFINED config_flag)
+      set(config_flag ${element})
+
+      list(FIND module_config_flags "${config_flag}" config_flag_index)
+      if(config_flag_index EQUAL -1)
+        message(WARNING "Unknown config flag ${config_flag} in module ${module_name}")
+      endif()
+    else()
+      set(JUCER_FLAG_${config_flag} ${element} PARENT_SCOPE)
+      unset(config_flag)
+    endif()
+  endforeach()
 
   file(STRINGS "${module_header_file}" osx_frameworks_line REGEX "OSXFrameworks:")
   string(REPLACE "OSXFrameworks:" "" osx_frameworks_line "${osx_frameworks_line}")
@@ -145,40 +160,53 @@ endfunction()
 
 function(jucer_project_end)
 
-  foreach(module_name ${JUCER_PROJECT_MODULES})
-    string(CONCAT module_available_defines
-      "${module_available_defines}"
-      "#define JUCE_MODULE_AVAILABLE_${module_name} 1\n"
-    )
-  endforeach()
-  foreach(element ${JUCER_CONFIG_FLAGS})
-    if(NOT DEFINED flag_name)
-      set(flag_name ${element})
-    else()
-      set(flag_value ${element})
+  string(TOUPPER "${JUCER_PROJECT_ID}" upper_project_id)
 
-      string(CONCAT config_flags_defines
-        "${config_flags_defines}" "#ifndef    ${flag_name}\n"
+  set(max_right_padding 0)
+  foreach(module_name ${JUCER_PROJECT_MODULES})
+    string(LENGTH "${module_name}" module_name_length)
+    if(module_name_length GREATER max_right_padding)
+      set(max_right_padding ${module_name_length})
+    endif()
+  endforeach()
+  math(EXPR max_right_padding "${max_right_padding} + 5")
+
+  foreach(module_name ${JUCER_PROJECT_MODULES})
+    string(LENGTH "${module_name}" right_padding)
+    while(right_padding LESS max_right_padding)
+      string(CONCAT padding_spaces "${padding_spaces}" " ")
+      math(EXPR right_padding "${right_padding} + 1")
+    endwhile()
+    string(CONCAT module_available_defines "${module_available_defines}"
+      "#define JUCE_MODULE_AVAILABLE_${module_name}${padding_spaces} 1\n"
+    )
+    unset(padding_spaces)
+
+    if(DEFINED JUCER_${module_name}_CONFIG_FLAGS)
+      string(CONCAT config_flags_defines "${config_flags_defines}"
+        "//=============================================================================="
+        "\n// ${module_name} flags:\n\n"
       )
-      if(flag_value)
-        string(CONCAT config_flags_defines
-          "${config_flags_defines}" " #define   ${flag_name} 1\n"
+    endif()
+    foreach(config_flag ${JUCER_${module_name}_CONFIG_FLAGS})
+      string(CONCAT config_flags_defines "${config_flags_defines}"
+        "#ifndef    ${config_flag}\n"
+      )
+      if(NOT DEFINED JUCER_FLAG_${config_flag})
+        string(CONCAT config_flags_defines "${config_flags_defines}"
+          " //#define ${config_flag}\n"
+        )
+      elseif(JUCER_FLAG_${config_flag})
+        string(CONCAT config_flags_defines "${config_flags_defines}"
+          " #define   ${config_flag} 1\n"
         )
       else()
-        string(CONCAT config_flags_defines
-          "${config_flags_defines}" " #define   ${flag_name} 0\n"
+        string(CONCAT config_flags_defines "${config_flags_defines}"
+          " #define   ${config_flag} 0\n"
         )
       endif()
       string(CONCAT config_flags_defines "${config_flags_defines}" "#endif\n\n")
-
-      if(flag_name STREQUAL "JUCE_PLUGINHOST_AU")
-        if(flag_value)
-          list(APPEND JUCER_PROJECT_OSX_FRAMEWORKS "AudioUnit" "CoreAudioKit")
-        endif()
-      endif()
-
-      unset(flag_name)
-    endif()
+    endforeach()
   endforeach()
   configure_file("${Reprojucer.cmake_DIR}/AppConfig.h" "JuceLibraryCode/AppConfig.h")
 
@@ -221,8 +249,7 @@ function(jucer_project_end)
   endif()
 
   foreach(module_name ${JUCER_PROJECT_MODULES})
-    string(CONCAT modules_includes
-      "${modules_includes}"
+    string(CONCAT modules_includes "${modules_includes}"
       "#include <${module_name}/${module_name}.h>\n"
     )
   endforeach()
@@ -293,6 +320,9 @@ function(jucer_project_end)
       $<$<NOT:$<CONFIG:Debug>>:NDEBUG=1>
     )
 
+    if(JUCER_FLAG_JUCE_PLUGINHOST_AU)
+      list(APPEND JUCER_PROJECT_OSX_FRAMEWORKS "AudioUnit" "CoreAudioKit")
+    endif()
     list(REMOVE_DUPLICATES JUCER_PROJECT_OSX_FRAMEWORKS)
     foreach(framework_name ${JUCER_PROJECT_OSX_FRAMEWORKS})
       find_library(${framework_name}_framework ${framework_name})
