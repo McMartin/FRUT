@@ -119,6 +119,8 @@ function(jucer_project_module module_name PATH_TAG module_path)
   )
   set(JUCER_PROJECT_SOURCES ${JUCER_PROJECT_SOURCES} PARENT_SCOPE)
 
+  set(module_header_file "${module_path}/${module_name}/${module_name}.h")
+
   foreach(element ${ARGN})
     if(NOT DEFINED config_flag)
       set(config_flag ${element})
@@ -129,8 +131,6 @@ function(jucer_project_module module_name PATH_TAG module_path)
     endif()
   endforeach()
   set(JUCER_${module_name}_CONFIG_FLAGS ${module_config_flags} PARENT_SCOPE)
-
-  set(module_header_file "${module_path}/${module_name}/${module_name}.h")
 
   file(STRINGS "${module_header_file}" osx_frameworks_line REGEX "OSXFrameworks:")
   string(REPLACE "OSXFrameworks:" "" osx_frameworks_line "${osx_frameworks_line}")
