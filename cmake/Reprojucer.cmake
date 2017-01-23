@@ -160,17 +160,17 @@ function(jucer_project_end)
       "#define JUCE_MODULE_AVAILABLE_${module_name} 1\n"
     )
   endforeach()
-  foreach(flag_name ${JUCER_CONFIG_FLAGS})
+  foreach(config_flag ${JUCER_CONFIG_FLAGS})
       string(CONCAT config_flags_defines
-        "${config_flags_defines}" "#ifndef    ${flag_name}\n"
+        "${config_flags_defines}" "#ifndef    ${config_flag}\n"
       )
-      if(JUCER_FLAG_${flag_name})
+      if(JUCER_FLAG_${config_flag})
         string(CONCAT config_flags_defines
-          "${config_flags_defines}" " #define   ${flag_name} 1\n"
+          "${config_flags_defines}" " #define   ${config_flag} 1\n"
         )
       else()
         string(CONCAT config_flags_defines
-          "${config_flags_defines}" " #define   ${flag_name} 0\n"
+          "${config_flags_defines}" " #define   ${config_flag} 0\n"
         )
       endif()
       string(CONCAT config_flags_defines "${config_flags_defines}" "#endif\n\n")
