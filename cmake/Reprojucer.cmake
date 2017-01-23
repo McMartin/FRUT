@@ -161,10 +161,27 @@ endfunction()
 function(jucer_project_end)
 
   string(TOUPPER "${JUCER_PROJECT_ID}" upper_project_id)
+
+  set(max_right_padding 0)
   foreach(module_name ${JUCER_PROJECT_MODULES})
+    string(LENGTH "${module_name}" module_name_length)
+    if(module_name_length GREATER max_right_padding)
+      set(max_right_padding ${module_name_length})
+    endif()
+  endforeach()
+  math(EXPR max_right_padding "${max_right_padding} + 5")
+
+  foreach(module_name ${JUCER_PROJECT_MODULES})
+    string(LENGTH "${module_name}" right_padding)
+    while(right_padding LESS max_right_padding)
+      string(CONCAT padding_spaces "${padding_spaces}" " ")
+      math(EXPR right_padding "${right_padding} + 1")
+    endwhile()
     string(CONCAT module_available_defines "${module_available_defines}"
-      "#define JUCE_MODULE_AVAILABLE_${module_name} 1\n"
+      "#define JUCE_MODULE_AVAILABLE_${module_name}${padding_spaces} 1\n"
     )
+    unset(padding_spaces)
+
     if(DEFINED JUCER_${module_name}_CONFIG_FLAGS)
       string(CONCAT config_flags_defines "${config_flags_defines}"
         "//=============================================================================="
