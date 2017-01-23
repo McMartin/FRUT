@@ -159,6 +159,12 @@ function(jucer_project_end)
       "${module_available_defines}"
       "#define JUCE_MODULE_AVAILABLE_${module_name} 1\n"
     )
+    if(DEFINED JUCER_${module_name}_CONFIG_FLAGS)
+      string(CONCAT config_flags_defines "${config_flags_defines}"
+        "//=============================================================================="
+        "\n// ${module_name} flags:\n\n"
+      )
+    endif()
     foreach(config_flag ${JUCER_${module_name}_CONFIG_FLAGS})
       string(CONCAT config_flags_defines
         "${config_flags_defines}" "#ifndef    ${config_flag}\n"
