@@ -37,6 +37,7 @@ file(COPY "${OSCReceiver_jucer_DIR}/Source" DESTINATION "${CMAKE_CURRENT_LIST_DI
 
 
 jucer_project_begin("OSCReceiver"
+  PROJECT_ID "pdocPt"
   PROJECT_VERSION "1.0.0"
   PROJECT_TYPE "GUI Application"
   BUNDLE_IDENTIFIER "com.yourcompany.OSCReceiver"

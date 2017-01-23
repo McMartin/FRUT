@@ -32,7 +32,7 @@ function(jucer_project_begin project_name)
     message(FATAL_ERROR "Missing PROJECT_TYPE argument")
   endif()
 
-  set(project_setting_tags "PROJECT_VERSION" "COMPANY_NAME" "COMPANY_WEBSITE"
+  set(project_setting_tags "PROJECT_ID" "PROJECT_VERSION" "COMPANY_NAME" "COMPANY_WEBSITE"
     "COMPANY_EMAIL" "PROJECT_TYPE" "BUNDLE_IDENTIFIER" "PREPROCESSOR_DEFINITIONS"
   )
   set(project_type_descs "GUI Application" "Console Application")
@@ -145,6 +145,7 @@ endfunction()
 
 function(jucer_project_end)
 
+  string(TOUPPER "${JUCER_PROJECT_ID}" upper_project_id)
   foreach(module_name ${JUCER_PROJECT_MODULES})
     string(CONCAT module_available_defines
       "${module_available_defines}"

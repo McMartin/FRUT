@@ -42,6 +42,7 @@ file(COPY "${AudioPerformanceTest_jucer_DIR}/Source"
 
 
 jucer_project_begin("AudioPerformanceTest"
+  PROJECT_ID "AKfc5m"
   PROJECT_VERSION "1.0.0"
   PROJECT_TYPE "GUI Application"
   BUNDLE_IDENTIFIER "com.juce.AudioPerformanceTest"

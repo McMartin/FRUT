@@ -38,6 +38,7 @@ file(COPY "${BlocksMonitor_jucer_DIR}/Source" DESTINATION "${CMAKE_CURRENT_LIST_
 
 
 jucer_project_begin("BlocksMonitor"
+  PROJECT_ID "X7eXs7"
   PROJECT_VERSION "1.0.0"
   PROJECT_TYPE "GUI Application"
   BUNDLE_IDENTIFIER "com.yourcompany.BlocksInfo"
