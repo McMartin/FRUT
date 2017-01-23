@@ -86,8 +86,6 @@ jucer_project_module(
   JUCE_ALSA ON
   # JUCE_JACK
   # JUCE_USE_ANDROID_OPENSLES
-  JUCE_USE_CDREADER OFF
-  JUCE_USE_CDBURNER OFF
 )
 
 jucer_project_module(
@@ -111,6 +109,8 @@ jucer_project_module(
 jucer_project_module(
   juce_audio_utils
   PATH "${Plugin_Host_jucer_DIR}/../../modules"
+  JUCE_USE_CDREADER OFF
+  JUCE_USE_CDBURNER OFF
 )
 
 jucer_project_module(
