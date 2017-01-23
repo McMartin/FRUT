@@ -162,8 +162,7 @@ function(jucer_project_end)
 
   string(TOUPPER "${JUCER_PROJECT_ID}" upper_project_id)
   foreach(module_name ${JUCER_PROJECT_MODULES})
-    string(CONCAT module_available_defines
-      "${module_available_defines}"
+    string(CONCAT module_available_defines "${module_available_defines}"
       "#define JUCE_MODULE_AVAILABLE_${module_name} 1\n"
     )
     if(DEFINED JUCER_${module_name}_CONFIG_FLAGS)
@@ -173,20 +172,20 @@ function(jucer_project_end)
       )
     endif()
     foreach(config_flag ${JUCER_${module_name}_CONFIG_FLAGS})
-      string(CONCAT config_flags_defines
-        "${config_flags_defines}" "#ifndef    ${config_flag}\n"
+      string(CONCAT config_flags_defines "${config_flags_defines}"
+        "#ifndef    ${config_flag}\n"
       )
       if(NOT DEFINED JUCER_FLAG_${config_flag})
-        string(CONCAT config_flags_defines
-          "${config_flags_defines}" " //#define ${config_flag}\n"
+        string(CONCAT config_flags_defines "${config_flags_defines}"
+          " //#define ${config_flag}\n"
         )
       elseif(JUCER_FLAG_${config_flag})
-        string(CONCAT config_flags_defines
-          "${config_flags_defines}" " #define   ${config_flag} 1\n"
+        string(CONCAT config_flags_defines "${config_flags_defines}"
+          " #define   ${config_flag} 1\n"
         )
       else()
-        string(CONCAT config_flags_defines
-          "${config_flags_defines}" " #define   ${config_flag} 0\n"
+        string(CONCAT config_flags_defines "${config_flags_defines}"
+          " #define   ${config_flag} 0\n"
         )
       endif()
       string(CONCAT config_flags_defines "${config_flags_defines}" "#endif\n\n")
@@ -233,8 +232,7 @@ function(jucer_project_end)
   endif()
 
   foreach(module_name ${JUCER_PROJECT_MODULES})
-    string(CONCAT modules_includes
-      "${modules_includes}"
+    string(CONCAT modules_includes "${modules_includes}"
       "#include <${module_name}/${module_name}.h>\n"
     )
   endforeach()
