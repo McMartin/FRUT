@@ -37,11 +37,11 @@ file(COPY "${Plugin_Host_jucer_DIR}/Source" DESTINATION "${CMAKE_CURRENT_LIST_DI
 
 
 if(WIN32)
-  set(VST3_SDK_Folder_fallback "C:/SDKs/VST3 SDK")
+  set(VST3_SDK_Folder "C:/SDKs/VST3 SDK")
 else()
-  set(VST3_SDK_Folder_fallback "~/SDKs/VST3 SDK")
+  set(VST3_SDK_Folder "~/SDKs/VST3 SDK")
 endif()
-set(VST3_SDK_Folder "${VST3_SDK_Folder_fallback}" CACHE PATH "VST3 SDK Folder")
+set(VST3_SDK_Folder "${VST3_SDK_Folder}" CACHE PATH "VST3 SDK Folder")
 
 
 jucer_project_begin("Plugin Host"
