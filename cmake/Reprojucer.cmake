@@ -1372,20 +1372,7 @@ function(jucer_project_end)
         )
         target_link_libraries(${au_target} ${shared_code_target})
 
-        if(NOT DEFINED JUCER_PLUGIN_AU_MAIN_TYPE)
-          if(JUCER_MIDI_EFFECT_PLUGIN)
-            set(au_main_type_code "aumi")
-          elseif(JUCER_PLUGIN_IS_A_SYNTH)
-            set(au_main_type_code "aumu")
-          elseif(JUCER_PLUGIN_MIDI_INPUT)
-            set(au_main_type_code "aumf")
-          else()
-            set(au_main_type_code "aufx")
-          endif()
-        else()
-          set(au_main_type_code "${JUCER_PLUGIN_AU_MAIN_TYPE}")
-        endif()
-
+        __get_au_main_type_code(au_main_type_code)
         __version_to_dec("${JUCER_PROJECT_VERSION}" dec_version)
 
         set(audio_components_entries "
@@ -2419,5 +2406,26 @@ function(__four_chars_to_hex value out_hex_value)
 
   __dec_to_hex("${dec_value}" hex_value)
   set(${out_hex_value} "${hex_value}" PARENT_SCOPE)
+
+endfunction()
+
+
+function(__get_au_main_type_code out_value)
+
+  if(NOT DEFINED JUCER_PLUGIN_AU_MAIN_TYPE)
+    if(JUCER_MIDI_EFFECT_PLUGIN)
+      set(code "aumi")
+    elseif(JUCER_PLUGIN_IS_A_SYNTH)
+      set(code "aumu")
+    elseif(JUCER_PLUGIN_MIDI_INPUT)
+      set(code "aumf")
+    else()
+      set(code "aufx")
+    endif()
+  else()
+    set(code "${JUCER_PLUGIN_AU_MAIN_TYPE}")
+  endif()
+
+  set(${out_value} "${code}" PARENT_SCOPE)
 
 endfunction()
