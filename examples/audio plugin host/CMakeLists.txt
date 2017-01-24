@@ -27,8 +27,7 @@ include(Reprojucer)
 
 set(JUCE_ROOT "${CMAKE_CURRENT_LIST_DIR}/../../../JUCE" CACHE PATH "Path to JUCE")
 
-set(Plugin_Host_jucer_FILE
-  "${JUCE_ROOT}/examples/audio plugin host/Plugin Host.jucer"
+set(Plugin_Host_jucer_FILE "${JUCE_ROOT}/examples/audio plugin host/Plugin Host.jucer"
   CACHE PATH "Path to Plugin Host.jucer"
 )
 
@@ -38,11 +37,11 @@ file(COPY "${Plugin_Host_jucer_DIR}/Source" DESTINATION "${CMAKE_CURRENT_LIST_DI
 
 
 if(WIN32)
-  set(VST3_SDK_Folder_fallback "C:/SDKs/VST3 SDK")
+  set(VST3_SDK_FOLDER "C:/SDKs/VST3 SDK")
 else()
-  set(VST3_SDK_Folder_fallback "~/SDKs/VST3 SDK")
+  set(VST3_SDK_FOLDER "~/SDKs/VST3 SDK")
 endif()
-set(VST3_SDK_Folder "${VST3_SDK_Folder_fallback}" CACHE PATH "VST3 SDK Folder")
+set(VST3_SDK_FOLDER "${VST3_SDK_FOLDER}" CACHE PATH "VST3 SDK Folder")
 
 
 jucer_project_begin("Plugin Host"
@@ -166,6 +165,3 @@ jucer_project_module(
 )
 
 jucer_project_end()
-
-
-target_include_directories(Plugin_Host PRIVATE "${VST3_SDK_Folder}")
