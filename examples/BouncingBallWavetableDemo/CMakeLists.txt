@@ -41,7 +41,8 @@ file(COPY "${BouncingBallWavetableDemo_jucer_DIR}/Source"
 )
 
 
-jucer_project_begin("BouncingBallWavetableDemo"
+jucer_project_begin(
+  PROJECT_NAME "BouncingBallWavetableDemo"
   PROJECT_VERSION "1.0.0"
   # COMPANY_NAME
   # COMPANY_WEBSITE

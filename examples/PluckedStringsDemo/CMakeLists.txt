@@ -41,7 +41,8 @@ file(COPY "${PluckedStringsDemo_jucer_DIR}/Source"
 )
 
 
-jucer_project_begin("PluckedStringsDemo"
+jucer_project_begin(
+  PROJECT_NAME "PluckedStringsDemo"
   PROJECT_VERSION "1.0.0"
   # COMPANY_NAME
   # COMPANY_WEBSITE

@@ -44,7 +44,8 @@ endif()
 set(VST3_SDK_FOLDER "${VST3_SDK_FOLDER}" CACHE PATH "VST3 SDK Folder")
 
 
-jucer_project_begin("Plugin Host"
+jucer_project_begin(
+  PROJECT_NAME "Plugin Host"
   PROJECT_VERSION "1.0.0"
   COMPANY_NAME "ROLI Ltd."
   # COMPANY_WEBSITE

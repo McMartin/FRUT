@@ -37,7 +37,8 @@ get_filename_component(BlocksMonitor_jucer_DIR "${BlocksMonitor_jucer_FILE}" DIR
 file(COPY "${BlocksMonitor_jucer_DIR}/Source" DESTINATION "${CMAKE_CURRENT_LIST_DIR}")
 
 
-jucer_project_begin("BlocksMonitor"
+jucer_project_begin(
+  PROJECT_NAME "BlocksMonitor"
   PROJECT_VERSION "1.0.0"
   # COMPANY_NAME
   # COMPANY_WEBSITE

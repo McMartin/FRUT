@@ -38,7 +38,8 @@ file(COPY "${JuceDemo_jucer_DIR}/Source" "${JuceDemo_jucer_DIR}/Resources"
 )
 
 
-jucer_project_begin("JuceDemo"
+jucer_project_begin(
+  PROJECT_NAME "JuceDemo"
   PROJECT_VERSION "3.0.0"
   # COMPANY_NAME
   # COMPANY_WEBSITE

@@ -41,7 +41,8 @@ file(COPY "${ComponentTutorialExample_jucer_DIR}/Source"
 )
 
 
-jucer_project_begin("ComponentTutorialExample"
+jucer_project_begin(
+  PROJECT_NAME "ComponentTutorialExample"
   PROJECT_VERSION "1.0.0"
   # COMPANY_NAME
   # COMPANY_WEBSITE

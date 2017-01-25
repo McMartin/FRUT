@@ -37,7 +37,8 @@ get_filename_component(BlocksSynth_jucer_DIR "${BlocksSynth_jucer_FILE}" DIRECTO
 file(COPY "${BlocksSynth_jucer_DIR}/Source" DESTINATION "${CMAKE_CURRENT_LIST_DIR}")
 
 
-jucer_project_begin("BlocksSynth"
+jucer_project_begin(
+  PROJECT_NAME "BlocksSynth"
   PROJECT_VERSION "1.0.0"
   # COMPANY_NAME
   # COMPANY_WEBSITE

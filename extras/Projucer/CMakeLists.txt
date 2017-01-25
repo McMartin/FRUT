@@ -36,7 +36,8 @@ get_filename_component(Projucer_jucer_DIR "${Projucer_jucer_FILE}" DIRECTORY)
 file(COPY "${Projucer_jucer_DIR}/Source" DESTINATION "${CMAKE_CURRENT_LIST_DIR}")
 
 
-jucer_project_begin("Projucer"
+jucer_project_begin(
+  PROJECT_NAME "Projucer"
   PROJECT_VERSION "4.3.0"
   # COMPANY_NAME
   # COMPANY_WEBSITE

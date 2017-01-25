@@ -22,10 +22,12 @@
 set(Reprojucer.cmake_DIR "${CMAKE_CURRENT_LIST_DIR}")
 
 
-function(jucer_project_begin project_name)
+function(jucer_project_begin)
 
-  project(${project_name})
-  set(JUCER_PROJECT_NAME ${project_name} PARENT_SCOPE)
+  list(FIND ARGN "PROJECT_NAME" project_name_tag_index)
+  if(project_name_tag_index EQUAL -1)
+    message(FATAL_ERROR "Missing PROJECT_NAME argument")
+  endif()
 
   list(FIND ARGN "PROJECT_TYPE" project_type_tag_index)
   if(project_type_tag_index EQUAL -1)
@@ -33,7 +35,7 @@ function(jucer_project_begin project_name)
   endif()
 
   set(project_setting_tags
-    "PROJECT_VERSION" "COMPANY_NAME" "COMPANY_WEBSITE" "COMPANY_EMAIL"
+    "PROJECT_NAME" "PROJECT_VERSION" "COMPANY_NAME" "COMPANY_WEBSITE" "COMPANY_EMAIL"
     "PROJECT_TYPE" "BUNDLE_IDENTIFIER" "PREPROCESSOR_DEFINITIONS" "PROJECT_ID"
   )
   set(project_type_descs "GUI Application" "Console Application")
@@ -51,7 +53,12 @@ function(jucer_project_begin project_name)
         )
       endif()
 
-      if(tag STREQUAL "PROJECT_VERSION")
+      if(POLICY CMP0054)
+        cmake_policy(SET CMP0054 NEW)
+      endif()
+      if(tag STREQUAL "PROJECT_NAME")
+        project(${value})
+      elseif(tag STREQUAL "PROJECT_VERSION")
         __version_to_hex("${value}" hex_value)
         set(JUCER_PROJECT_VERSION_AS_HEX "${hex_value}" PARENT_SCOPE)
       elseif(tag STREQUAL "PROJECT_TYPE")

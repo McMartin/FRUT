@@ -36,7 +36,8 @@ get_filename_component(OSCReceiver_jucer_DIR "${OSCReceiver_jucer_FILE}" DIRECTO
 file(COPY "${OSCReceiver_jucer_DIR}/Source" DESTINATION "${CMAKE_CURRENT_LIST_DIR}")
 
 
-jucer_project_begin("OSCReceiver"
+jucer_project_begin(
+  PROJECT_NAME "OSCReceiver"
   PROJECT_VERSION "1.0.0"
   # COMPANY_NAME
   # COMPANY_WEBSITE

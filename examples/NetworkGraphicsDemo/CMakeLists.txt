@@ -41,7 +41,8 @@ file(COPY "${NetworkGraphicsDemo_jucer_DIR}/Source"
 )
 
 
-jucer_project_begin("JUCE Network Graphics Demo"
+jucer_project_begin(
+  PROJECT_NAME "JUCE Network Graphics Demo"
   PROJECT_VERSION "1.0.0"
   # COMPANY_NAME
   # COMPANY_WEBSITE

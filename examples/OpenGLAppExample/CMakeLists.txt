@@ -39,7 +39,8 @@ get_filename_component(OpenGLAppExample_jucer_DIR
 file(COPY "${OpenGLAppExample_jucer_DIR}/Source" DESTINATION "${CMAKE_CURRENT_LIST_DIR}")
 
 
-jucer_project_begin("OpenGLAppExample"
+jucer_project_begin(
+  PROJECT_NAME "OpenGLAppExample"
   PROJECT_VERSION "1.0.0"
   # COMPANY_NAME
   # COMPANY_WEBSITE

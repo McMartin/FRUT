@@ -41,7 +41,8 @@ file(COPY "${AnimationAppExample_jucer_DIR}/Source"
 )
 
 
-jucer_project_begin("AnimationAppExample"
+jucer_project_begin(
+  PROJECT_NAME "AnimationAppExample"
   PROJECT_VERSION "1.0.0"
   # COMPANY_NAME
   # COMPANY_WEBSITE
