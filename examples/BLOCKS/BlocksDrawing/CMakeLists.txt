@@ -37,11 +37,16 @@ get_filename_component(BlocksDrawing_jucer_DIR "${BlocksDrawing_jucer_FILE}" DIR
 file(COPY "${BlocksDrawing_jucer_DIR}/Source" DESTINATION "${CMAKE_CURRENT_LIST_DIR}")
 
 
-jucer_project_begin("BlocksDrawing"
-  PROJECT_ID "aa4reI"
+jucer_project_begin(
+  PROJECT_NAME "BlocksDrawing"
   PROJECT_VERSION "1.0.0"
+  # COMPANY_NAME
+  # COMPANY_WEBSITE
+  # COMPANY_EMAIL
   PROJECT_TYPE "GUI Application"
   BUNDLE_IDENTIFIER "com.yourcompany.BlocksDrawing"
+  # PREPROCESSOR_DEFINITIONS
+  PROJECT_ID "aa4reI"
 )
 
 jucer_project_files("BlocksDrawing/Source"
@@ -57,11 +62,23 @@ jucer_project_module(
 jucer_project_module(
   juce_audio_devices
   PATH "${BlocksDrawing_jucer_DIR}/../../../modules"
+  # JUCE_ASIO
+  # JUCE_WASAPI
+  # JUCE_WASAPI_EXCLUSIVE
+  # JUCE_DIRECTSOUND
+  # JUCE_ALSA
+  # JUCE_JACK
+  # JUCE_USE_ANDROID_OPENSLES
 )
 
 jucer_project_module(
   juce_audio_formats
   PATH "${BlocksDrawing_jucer_DIR}/../../../modules"
+  # JUCE_USE_FLAC
+  # JUCE_USE_OGGVORBIS
+  # JUCE_USE_MP3AUDIOFORMAT
+  # JUCE_USE_LAME_AUDIO_FORMAT
+  # JUCE_USE_WINDOWS_MEDIA_FORMAT
 )
 
 jucer_project_module(
@@ -72,6 +89,14 @@ jucer_project_module(
 jucer_project_module(
   juce_core
   PATH "${BlocksDrawing_jucer_DIR}/../../../modules"
+  # JUCE_FORCE_DEBUG
+  # JUCE_LOG_ASSERTIONS
+  # JUCE_CHECK_MEMORY_LEAKS
+  # JUCE_DONT_AUTOLINK_TO_WIN32_LIBRARIES
+  # JUCE_INCLUDE_ZLIB_CODE
+  # JUCE_USE_CURL
+  # JUCE_CATCH_UNHANDLED_EXCEPTIONS
+  # JUCE_ALLOW_STATIC_NULL_VARIABLES
 )
 
 jucer_project_module(
@@ -87,16 +112,24 @@ jucer_project_module(
 jucer_project_module(
   juce_graphics
   PATH "${BlocksDrawing_jucer_DIR}/../../../modules"
+  # JUCE_USE_COREIMAGE_LOADER
+  # JUCE_USE_DIRECTWRITE
 )
 
 jucer_project_module(
   juce_gui_basics
   PATH "${BlocksDrawing_jucer_DIR}/../../../modules"
+  # JUCE_ENABLE_REPAINT_DEBUGGING
+  # JUCE_USE_XSHM
+  # JUCE_USE_XRENDER
+  # JUCE_USE_XCURSOR
 )
 
 jucer_project_module(
   juce_gui_extra
   PATH "${BlocksDrawing_jucer_DIR}/../../../modules"
+  # JUCE_WEB_BROWSER
+  # JUCE_ENABLE_LIVE_CONSTANT_EDITOR
 )
 
 jucer_project_module(

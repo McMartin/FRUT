@@ -36,11 +36,16 @@ get_filename_component(Projucer_jucer_DIR "${Projucer_jucer_FILE}" DIRECTORY)
 file(COPY "${Projucer_jucer_DIR}/Source" DESTINATION "${CMAKE_CURRENT_LIST_DIR}")
 
 
-jucer_project_begin("Projucer"
-  PROJECT_ID "M70qfTRRk"
+jucer_project_begin(
+  PROJECT_NAME "Projucer"
   PROJECT_VERSION "4.3.0"
+  # COMPANY_NAME
+  # COMPANY_WEBSITE
+  # COMPANY_EMAIL
   PROJECT_TYPE "GUI Application"
   BUNDLE_IDENTIFIER "com.juce.theprojucer"
+  # PREPROCESSOR_DEFINITIONS
+  PROJECT_ID "M70qfTRRk"
 )
 
 jucer_project_files("Projucer/Application"
@@ -378,16 +383,24 @@ jucer_project_module(
 jucer_project_module(
   juce_graphics
   PATH "${Projucer_jucer_DIR}/../../modules"
+  # JUCE_USE_COREIMAGE_LOADER
+  # JUCE_USE_DIRECTWRITE
 )
 
 jucer_project_module(
   juce_gui_basics
   PATH "${Projucer_jucer_DIR}/../../modules"
+  # JUCE_ENABLE_REPAINT_DEBUGGING
+  # JUCE_USE_XSHM
+  # JUCE_USE_XRENDER
+  # JUCE_USE_XCURSOR
 )
 
 jucer_project_module(
   juce_gui_extra
   PATH "${Projucer_jucer_DIR}/../../modules"
+  # JUCE_WEB_BROWSER
+  # JUCE_ENABLE_LIVE_CONSTANT_EDITOR
 )
 
 jucer_project_end()

@@ -36,11 +36,16 @@ get_filename_component(OSCSender_jucer_DIR "${OSCSender_jucer_FILE}" DIRECTORY)
 file(COPY "${OSCSender_jucer_DIR}/Source" DESTINATION "${CMAKE_CURRENT_LIST_DIR}")
 
 
-jucer_project_begin("OSCSender"
-  PROJECT_ID "rysVAr"
+jucer_project_begin(
+  PROJECT_NAME "OSCSender"
   PROJECT_VERSION "1.0.0"
+  # COMPANY_NAME
+  # COMPANY_WEBSITE
+  # COMPANY_EMAIL
   PROJECT_TYPE "GUI Application"
   BUNDLE_IDENTIFIER "com.yourcompany.OSCSender"
+  # PREPROCESSOR_DEFINITIONS
+  PROJECT_ID "rysVAr"
 )
 
 jucer_project_files("OSCSender/Source"
@@ -51,6 +56,14 @@ jucer_project_files("OSCSender/Source"
 jucer_project_module(
   juce_core
   PATH "${OSCSender_jucer_DIR}/../../modules"
+  # JUCE_FORCE_DEBUG
+  # JUCE_LOG_ASSERTIONS
+  # JUCE_CHECK_MEMORY_LEAKS
+  # JUCE_DONT_AUTOLINK_TO_WIN32_LIBRARIES
+  # JUCE_INCLUDE_ZLIB_CODE
+  # JUCE_USE_CURL
+  # JUCE_CATCH_UNHANDLED_EXCEPTIONS
+  # JUCE_ALLOW_STATIC_NULL_VARIABLES
 )
 
 jucer_project_module(
@@ -66,11 +79,17 @@ jucer_project_module(
 jucer_project_module(
   juce_graphics
   PATH "${OSCSender_jucer_DIR}/../../modules"
+  # JUCE_USE_COREIMAGE_LOADER
+  # JUCE_USE_DIRECTWRITE
 )
 
 jucer_project_module(
   juce_gui_basics
   PATH "${OSCSender_jucer_DIR}/../../modules"
+  # JUCE_ENABLE_REPAINT_DEBUGGING
+  # JUCE_USE_XSHM
+  # JUCE_USE_XRENDER
+  # JUCE_USE_XCURSOR
 )
 
 jucer_project_module(
