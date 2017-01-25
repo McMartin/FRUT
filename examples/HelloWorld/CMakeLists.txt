@@ -37,11 +37,11 @@ file(COPY "${HelloWorld_jucer_DIR}/Source" DESTINATION "${CMAKE_CURRENT_LIST_DIR
 
 
 jucer_project_begin("HelloWorld"
-  PROJECT_ID "tTAKTK1s"
   PROJECT_VERSION "1.0.0"
   COMPANY_NAME "ROLI Ltd."
   PROJECT_TYPE "GUI Application"
   BUNDLE_IDENTIFIER "com.roli.jucehelloworld"
+  PROJECT_ID "tTAKTK1s"
 )
 
 jucer_project_files("HelloWorld/Source"

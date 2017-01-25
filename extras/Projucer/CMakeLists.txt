@@ -37,10 +37,10 @@ file(COPY "${Projucer_jucer_DIR}/Source" DESTINATION "${CMAKE_CURRENT_LIST_DIR}"
 
 
 jucer_project_begin("Projucer"
-  PROJECT_ID "M70qfTRRk"
   PROJECT_VERSION "4.3.0"
   PROJECT_TYPE "GUI Application"
   BUNDLE_IDENTIFIER "com.juce.theprojucer"
+  PROJECT_ID "M70qfTRRk"
 )
 
 jucer_project_files("Projucer/Application"

@@ -39,11 +39,11 @@ file(COPY "${JuceDemo_jucer_DIR}/Source" "${JuceDemo_jucer_DIR}/Resources"
 
 
 jucer_project_begin("JuceDemo"
-  PROJECT_ID "sBBIzr"
   PROJECT_VERSION "3.0.0"
   PROJECT_TYPE "GUI Application"
   BUNDLE_IDENTIFIER "com.yourcompany.JuceDemo"
   PREPROCESSOR_DEFINITIONS "JUCE_UNIT_TESTS=1"
+  PROJECT_ID "sBBIzr"
 )
 
 jucer_project_files("JuceDemo/Source"

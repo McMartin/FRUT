@@ -42,10 +42,10 @@ file(COPY "${BouncingBallWavetableDemo_jucer_DIR}/Source"
 
 
 jucer_project_begin("BouncingBallWavetableDemo"
-  PROJECT_ID "fyUrFS"
   PROJECT_VERSION "1.0.0"
   PROJECT_TYPE "GUI Application"
   BUNDLE_IDENTIFIER "com.juce.BouncingBallWavetableDemo"
+  PROJECT_ID "fyUrFS"
 )
 
 jucer_project_files("BouncingBallWavetableDemo/Source"

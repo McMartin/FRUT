@@ -42,10 +42,10 @@ file(COPY "${AnimationAppExample_jucer_DIR}/Source"
 
 
 jucer_project_begin("AnimationAppExample"
-  PROJECT_ID "LrATE6"
   PROJECT_VERSION "1.0.0"
   PROJECT_TYPE "GUI Application"
   BUNDLE_IDENTIFIER "com.yourcompany.AnimationAppExample"
+  PROJECT_ID "LrATE6"
 )
 
 jucer_project_files("AnimationAppExample/Source"

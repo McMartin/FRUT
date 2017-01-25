@@ -38,10 +38,10 @@ file(COPY "${BlocksDrawing_jucer_DIR}/Source" DESTINATION "${CMAKE_CURRENT_LIST_
 
 
 jucer_project_begin("BlocksDrawing"
-  PROJECT_ID "aa4reI"
   PROJECT_VERSION "1.0.0"
   PROJECT_TYPE "GUI Application"
   BUNDLE_IDENTIFIER "com.yourcompany.BlocksDrawing"
+  PROJECT_ID "aa4reI"
 )
 
 jucer_project_files("BlocksDrawing/Source"

@@ -37,11 +37,11 @@ file(COPY "${UnitTestRunner_jucer_DIR}/Source" DESTINATION "${CMAKE_CURRENT_LIST
 
 
 jucer_project_begin("UnitTestRunner"
-  PROJECT_ID "Z2Xzcp"
   PROJECT_VERSION "1.0.0"
   PROJECT_TYPE "Console Application"
   BUNDLE_IDENTIFIER "com.yourcompany.UnitTestRunner"
   PREPROCESSOR_DEFINITIONS "JUCE_UNIT_TESTS=1"
+  PROJECT_ID "Z2Xzcp"
 )
 
 jucer_project_files("UnitTestRunner/Source"

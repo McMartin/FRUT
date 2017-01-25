@@ -42,10 +42,10 @@ file(COPY "${ComponentTutorialExample_jucer_DIR}/Source"
 
 
 jucer_project_begin("ComponentTutorialExample"
-  PROJECT_ID "oNvA5C"
   PROJECT_VERSION "1.0.0"
   PROJECT_TYPE "GUI Application"
   BUNDLE_IDENTIFIER "com.yourcompany.ComponentTutorialExample"
+  PROJECT_ID "oNvA5C"
 )
 
 jucer_project_files("ComponentTutorialExample/Source"

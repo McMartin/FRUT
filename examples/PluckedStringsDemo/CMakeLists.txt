@@ -42,10 +42,10 @@ file(COPY "${PluckedStringsDemo_jucer_DIR}/Source"
 
 
 jucer_project_begin("PluckedStringsDemo"
-  PROJECT_ID "jKHEJM"
   PROJECT_VERSION "1.0.0"
   PROJECT_TYPE "GUI Application"
   BUNDLE_IDENTIFIER "com.timurdoumler.PluckedStringsDemo"
+  PROJECT_ID "jKHEJM"
 )
 
 jucer_project_files("PluckedStringsDemo/Source"

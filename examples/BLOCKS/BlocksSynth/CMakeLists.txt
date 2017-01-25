@@ -38,10 +38,10 @@ file(COPY "${BlocksSynth_jucer_DIR}/Source" DESTINATION "${CMAKE_CURRENT_LIST_DI
 
 
 jucer_project_begin("BlocksSynth"
-  PROJECT_ID "XsTycT"
   PROJECT_VERSION "1.0.0"
   PROJECT_TYPE "GUI Application"
   BUNDLE_IDENTIFIER "com.yourcompany.BlocksSynth"
+  PROJECT_ID "XsTycT"
 )
 
 jucer_project_files("BlocksSynth/Source"
