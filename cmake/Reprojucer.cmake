@@ -43,8 +43,6 @@ function(jucer_project_begin)
   foreach(element ${ARGN})
     if(NOT DEFINED tag)
       set(tag ${element})
-    else()
-      set(value ${element})
 
       list(FIND project_setting_tags "${tag}" project_setting_index)
       if(project_setting_index EQUAL -1)
@@ -52,6 +50,8 @@ function(jucer_project_begin)
           "Supported project settings: ${project_setting_tags}"
         )
       endif()
+    else()
+      set(value ${element})
 
       if(POLICY CMP0054)
         cmake_policy(SET CMP0054 NEW)
@@ -111,20 +111,53 @@ function(jucer_project_module module_name PATH_TAG module_path)
   list(APPEND JUCER_PROJECT_INCLUDE_DIRS "${module_path}")
   set(JUCER_PROJECT_INCLUDE_DIRS ${JUCER_PROJECT_INCLUDE_DIRS} PARENT_SCOPE)
 
-  get_filename_component(objcxx_module_file
-    "${module_path}/${module_name}/${module_name}.mm" ABSOLUTE
+  file(GLOB module_src_files
+    "${module_path}/${module_name}/*.cpp" "${module_path}/${module_name}/*.mm"
   )
-  if(APPLE AND EXISTS "${objcxx_module_file}")
-    set(extension "mm")
-  else()
-    set(extension "cpp")
-  endif()
-  configure_file("${Reprojucer.cmake_DIR}/ModuleWrapper.cpp"
-    "JuceLibraryCode/${module_name}.${extension}"
-  )
-  list(APPEND JUCER_PROJECT_SOURCES
-    "${CMAKE_CURRENT_BINARY_DIR}/JuceLibraryCode/${module_name}.${extension}"
-  )
+
+  foreach(src_file ${module_src_files})
+    # See JUCE/extras/Projucer/Source/Project/jucer_Module.cpp:434
+    if(  (src_file MATCHES "_AU[._]"         AND NOT (JUCER_BUILD_AUDIOUNIT    AND APPLE))
+      OR (src_file MATCHES "_AUv3[._]"       AND NOT (JUCER_BUILD_AUDIOUNIT_V3 AND APPLE))
+      OR (src_file MATCHES "_AAX[._]"        AND NOT (JUCER_BUILD_AAX          AND TRUE ))
+      OR (src_file MATCHES "_RTAS[._]"       AND NOT (JUCER_BUILD_RTAS         AND TRUE ))
+      OR (src_file MATCHES "_VST2[._]"       AND NOT (JUCER_BUILD_VST          AND TRUE ))
+      OR (src_file MATCHES "_VST3[._]"       AND NOT (JUCER_BUILD_VST3         AND TRUE ))
+      OR (src_file MATCHES "_Standalone[._]" AND NOT (JUCER_BUILD_AUDIOUNIT_V3 AND APPLE))
+    )
+      set(to_compile FALSE)
+    endif()
+
+    if(NOT DEFINED to_compile)
+      get_filename_component(src_file_extension "${src_file}" EXT)
+      if(src_file_extension STREQUAL ".mm")
+        if(APPLE)
+          set(to_compile TRUE)
+        endif()
+      elseif(APPLE)
+        string(REGEX REPLACE "${src_file_extension}$" ".mm" objcxx_src_file "${src_file}")
+        list(FIND module_src_files "${objcxx_src_file}" index)
+        if(index EQUAL -1)
+          set(to_compile TRUE)
+        endif()
+      else()
+        set(to_compile TRUE)
+      endif()
+    endif()
+
+    if(to_compile)
+      get_filename_component(src_file_basename "${src_file}" NAME)
+      configure_file("${Reprojucer.cmake_DIR}/JuceLibraryCode-Wrapper.cpp"
+        "JuceLibraryCode/${src_file_basename}"
+      )
+      list(APPEND JUCER_PROJECT_SOURCES
+        "${CMAKE_CURRENT_BINARY_DIR}/JuceLibraryCode/${src_file_basename}"
+      )
+    endif()
+
+    unset(to_compile)
+  endforeach()
+
   set(JUCER_PROJECT_SOURCES ${JUCER_PROJECT_SOURCES} PARENT_SCOPE)
 
   set(module_header_file "${module_path}/${module_name}/${module_name}.h")
@@ -343,6 +376,7 @@ function(jucer_project_end)
       list(APPEND JUCER_PROJECT_OSX_FRAMEWORKS "AudioUnit" "CoreAudioKit")
     endif()
     list(REMOVE_DUPLICATES JUCER_PROJECT_OSX_FRAMEWORKS)
+    list(SORT JUCER_PROJECT_OSX_FRAMEWORKS)
     foreach(framework_name ${JUCER_PROJECT_OSX_FRAMEWORKS})
       find_library(${framework_name}_framework ${framework_name})
       target_link_libraries(${target_name} "${${framework_name}_framework}")
