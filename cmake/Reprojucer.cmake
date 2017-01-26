@@ -43,8 +43,6 @@ function(jucer_project_begin)
   foreach(element ${ARGN})
     if(NOT DEFINED tag)
       set(tag ${element})
-    else()
-      set(value ${element})
 
       list(FIND project_setting_tags "${tag}" project_setting_index)
       if(project_setting_index EQUAL -1)
@@ -52,6 +50,8 @@ function(jucer_project_begin)
           "Supported project settings: ${project_setting_tags}"
         )
       endif()
+    else()
+      set(value ${element})
 
       if(POLICY CMP0054)
         cmake_policy(SET CMP0054 NEW)
