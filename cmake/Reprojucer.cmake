@@ -169,54 +169,7 @@ endfunction()
 function(jucer_project_end)
 
   string(TOUPPER "${JUCER_PROJECT_ID}" upper_project_id)
-
-  set(max_right_padding 0)
-  foreach(module_name ${JUCER_PROJECT_MODULES})
-    string(LENGTH "${module_name}" module_name_length)
-    if(module_name_length GREATER max_right_padding)
-      set(max_right_padding ${module_name_length})
-    endif()
-  endforeach()
-  math(EXPR max_right_padding "${max_right_padding} + 5")
-
-  foreach(module_name ${JUCER_PROJECT_MODULES})
-    string(LENGTH "${module_name}" right_padding)
-    while(right_padding LESS max_right_padding)
-      string(CONCAT padding_spaces "${padding_spaces}" " ")
-      math(EXPR right_padding "${right_padding} + 1")
-    endwhile()
-    string(CONCAT module_available_defines "${module_available_defines}"
-      "#define JUCE_MODULE_AVAILABLE_${module_name}${padding_spaces} 1\n"
-    )
-    unset(padding_spaces)
-
-    if(DEFINED JUCER_${module_name}_CONFIG_FLAGS)
-      string(CONCAT config_flags_defines "${config_flags_defines}"
-        "//=============================================================================="
-        "\n// ${module_name} flags:\n\n"
-      )
-    endif()
-    foreach(config_flag ${JUCER_${module_name}_CONFIG_FLAGS})
-      string(CONCAT config_flags_defines "${config_flags_defines}"
-        "#ifndef    ${config_flag}\n"
-      )
-      if(NOT DEFINED JUCER_FLAG_${config_flag})
-        string(CONCAT config_flags_defines "${config_flags_defines}"
-          " //#define ${config_flag}\n"
-        )
-      elseif(JUCER_FLAG_${config_flag})
-        string(CONCAT config_flags_defines "${config_flags_defines}"
-          " #define   ${config_flag} 1\n"
-        )
-      else()
-        string(CONCAT config_flags_defines "${config_flags_defines}"
-          " #define   ${config_flag} 0\n"
-        )
-      endif()
-      string(CONCAT config_flags_defines "${config_flags_defines}" "#endif\n\n")
-    endforeach()
-  endforeach()
-  configure_file("${Reprojucer.cmake_DIR}/AppConfig.h" "JuceLibraryCode/AppConfig.h")
+  __generate_AppConfig_header("${upper_project_id}")
 
   list(LENGTH JUCER_PROJECT_RESOURCES resources_count)
   if(resources_count GREATER 0)
@@ -351,6 +304,60 @@ function(jucer_project_end)
       target_link_libraries(${target_name} "${${framework_name}_framework}")
     endforeach()
   endif()
+
+endfunction()
+
+
+function(__generate_AppConfig_header project_id)
+
+  set(max_right_padding 0)
+  foreach(module_name ${JUCER_PROJECT_MODULES})
+    string(LENGTH "${module_name}" module_name_length)
+    if(module_name_length GREATER max_right_padding)
+      set(max_right_padding ${module_name_length})
+    endif()
+  endforeach()
+  math(EXPR max_right_padding "${max_right_padding} + 5")
+
+  foreach(module_name ${JUCER_PROJECT_MODULES})
+    string(LENGTH "${module_name}" right_padding)
+    while(right_padding LESS max_right_padding)
+      string(CONCAT padding_spaces "${padding_spaces}" " ")
+      math(EXPR right_padding "${right_padding} + 1")
+    endwhile()
+    string(CONCAT module_available_defines "${module_available_defines}"
+      "#define JUCE_MODULE_AVAILABLE_${module_name}${padding_spaces} 1\n"
+    )
+    unset(padding_spaces)
+
+    if(DEFINED JUCER_${module_name}_CONFIG_FLAGS)
+      string(CONCAT config_flags_defines "${config_flags_defines}"
+        "//=============================================================================="
+        "\n// ${module_name} flags:\n\n"
+      )
+    endif()
+    foreach(config_flag ${JUCER_${module_name}_CONFIG_FLAGS})
+      string(CONCAT config_flags_defines "${config_flags_defines}"
+        "#ifndef    ${config_flag}\n"
+      )
+      if(NOT DEFINED JUCER_FLAG_${config_flag})
+        string(CONCAT config_flags_defines "${config_flags_defines}"
+          " //#define ${config_flag}\n"
+        )
+      elseif(JUCER_FLAG_${config_flag})
+        string(CONCAT config_flags_defines "${config_flags_defines}"
+          " #define   ${config_flag} 1\n"
+        )
+      else()
+        string(CONCAT config_flags_defines "${config_flags_defines}"
+          " #define   ${config_flag} 0\n"
+        )
+      endif()
+      string(CONCAT config_flags_defines "${config_flags_defines}" "#endif\n\n")
+    endforeach()
+  endforeach()
+
+  configure_file("${Reprojucer.cmake_DIR}/AppConfig.h" "JuceLibraryCode/AppConfig.h")
 
 endfunction()
 
