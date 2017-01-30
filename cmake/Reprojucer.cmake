@@ -263,15 +263,17 @@ function(jucer_project_end)
   endforeach()
   configure_file("${Reprojucer.cmake_DIR}/JuceHeader.h" "JuceLibraryCode/JuceHeader.h")
 
+  if(WIN32)
+    string(REPLACE "." "," comma_separated_version_number "${JUCER_PROJECT_VERSION}")
+    configure_file("${Reprojucer.cmake_DIR}/resources.rc" "JuceLibraryCode/resources.rc")
+    list(APPEND JUCER_PROJECT_SOURCES
+      "${CMAKE_CURRENT_BINARY_DIR}/JuceLibraryCode/resources.rc"
+    )
+  endif()
+
   source_group("Juce Library Code"
     REGULAR_EXPRESSION "${CMAKE_CURRENT_BINARY_DIR}/JuceLibraryCode/*"
   )
-
-  if(WIN32)
-    string(REPLACE "." "," comma_separated_version_number "${JUCER_PROJECT_VERSION}")
-    configure_file("${Reprojucer.cmake_DIR}/resources.rc" "resources.rc")
-    list(APPEND ${JUCER_PROJECT_SOURCES} "${CMAKE_CURRENT_BINARY_DIR}/resources.rc")
-  endif()
 
   string(REGEX REPLACE "[^A-Za-z0-9_.+-]" "_" target_name "${JUCER_PROJECT_NAME}")
 
