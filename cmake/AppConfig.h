@@ -1,5 +1,5 @@
-#ifndef __JUCE_APPCONFIG_@upper_project_id@__
-#define __JUCE_APPCONFIG_@upper_project_id@__
+#ifndef __JUCE_APPCONFIG_@project_id@__
+#define __JUCE_APPCONFIG_@project_id@__
 
 //==============================================================================
 @module_available_defines@
@@ -15,4 +15,4 @@
 #define JUCE_GLOBAL_MODULE_SETTINGS_INCLUDED 1
 
 @config_flags_defines@
-#endif  // __JUCE_APPCONFIG_@upper_project_id@__
+#endif  // __JUCE_APPCONFIG_@project_id@__

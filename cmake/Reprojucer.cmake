@@ -43,8 +43,6 @@ function(jucer_project_begin)
   foreach(element ${ARGN})
     if(NOT DEFINED tag)
       set(tag ${element})
-    else()
-      set(value ${element})
 
       list(FIND project_setting_tags "${tag}" project_setting_index)
       if(project_setting_index EQUAL -1)
@@ -52,6 +50,8 @@ function(jucer_project_begin)
           "Supported project settings: ${project_setting_tags}"
         )
       endif()
+    else()
+      set(value ${element})
 
       if(POLICY CMP0054)
         cmake_policy(SET CMP0054 NEW)
@@ -169,99 +169,8 @@ endfunction()
 function(jucer_project_end)
 
   string(TOUPPER "${JUCER_PROJECT_ID}" upper_project_id)
-
-  set(max_right_padding 0)
-  foreach(module_name ${JUCER_PROJECT_MODULES})
-    string(LENGTH "${module_name}" module_name_length)
-    if(module_name_length GREATER max_right_padding)
-      set(max_right_padding ${module_name_length})
-    endif()
-  endforeach()
-  math(EXPR max_right_padding "${max_right_padding} + 5")
-
-  foreach(module_name ${JUCER_PROJECT_MODULES})
-    string(LENGTH "${module_name}" right_padding)
-    while(right_padding LESS max_right_padding)
-      string(CONCAT padding_spaces "${padding_spaces}" " ")
-      math(EXPR right_padding "${right_padding} + 1")
-    endwhile()
-    string(CONCAT module_available_defines "${module_available_defines}"
-      "#define JUCE_MODULE_AVAILABLE_${module_name}${padding_spaces} 1\n"
-    )
-    unset(padding_spaces)
-
-    if(DEFINED JUCER_${module_name}_CONFIG_FLAGS)
-      string(CONCAT config_flags_defines "${config_flags_defines}"
-        "//=============================================================================="
-        "\n// ${module_name} flags:\n\n"
-      )
-    endif()
-    foreach(config_flag ${JUCER_${module_name}_CONFIG_FLAGS})
-      string(CONCAT config_flags_defines "${config_flags_defines}"
-        "#ifndef    ${config_flag}\n"
-      )
-      if(NOT DEFINED JUCER_FLAG_${config_flag})
-        string(CONCAT config_flags_defines "${config_flags_defines}"
-          " //#define ${config_flag}\n"
-        )
-      elseif(JUCER_FLAG_${config_flag})
-        string(CONCAT config_flags_defines "${config_flags_defines}"
-          " #define   ${config_flag} 1\n"
-        )
-      else()
-        string(CONCAT config_flags_defines "${config_flags_defines}"
-          " #define   ${config_flag} 0\n"
-        )
-      endif()
-      string(CONCAT config_flags_defines "${config_flags_defines}" "#endif\n\n")
-    endforeach()
-  endforeach()
-  configure_file("${Reprojucer.cmake_DIR}/AppConfig.h" "JuceLibraryCode/AppConfig.h")
-
-  list(LENGTH JUCER_PROJECT_RESOURCES resources_count)
-  if(resources_count GREATER 0)
-    message("Building BinaryDataBuilder for ${JUCER_PROJECT_NAME}")
-    try_compile(BinaryDataBuilder
-      "${Reprojucer.cmake_DIR}/BinaryDataBuilder/_build"
-      "${Reprojucer.cmake_DIR}/BinaryDataBuilder"
-      BinaryDataBuilder install
-      CMAKE_FLAGS
-      "-DJUCE_ROOT=${JUCE_ROOT}"
-      "-DCMAKE_INSTALL_PREFIX=${CMAKE_CURRENT_BINARY_DIR}"
-    )
-    if(NOT BinaryDataBuilder)
-      message(FATAL_ERROR "Failed to build BinaryDataBuilder")
-    endif()
-    message("BinaryDataBuilder has been successfully built")
-    list(APPEND BinaryDataBuilder_args "${CMAKE_CURRENT_BINARY_DIR}/JuceLibraryCode/")
-    foreach(element ${JUCER_PROJECT_RESOURCES})
-      list(APPEND BinaryDataBuilder_args "${CMAKE_CURRENT_LIST_DIR}/${element}")
-    endforeach()
-    execute_process(
-      COMMAND "${CMAKE_CURRENT_BINARY_DIR}/BinaryDataBuilder/BinaryDataBuilder"
-      ${BinaryDataBuilder_args}
-      OUTPUT_VARIABLE binary_data_filenames
-      RESULT_VARIABLE BinaryDataBuilder_return_code
-    )
-    if(NOT BinaryDataBuilder_return_code EQUAL 0)
-      message(FATAL_ERROR "Error when executing BinaryDataBuilder")
-    endif()
-    foreach(filename ${binary_data_filenames})
-      list(APPEND JUCER_PROJECT_SOURCES
-        "${CMAKE_CURRENT_BINARY_DIR}/JuceLibraryCode/${filename}"
-      )
-    endforeach()
-    set(binary_data_include "#include \"BinaryData.h\"")
-  else()
-    set(binary_data_include "")
-  endif()
-
-  foreach(module_name ${JUCER_PROJECT_MODULES})
-    string(CONCAT modules_includes "${modules_includes}"
-      "#include <${module_name}/${module_name}.h>\n"
-    )
-  endforeach()
-  configure_file("${Reprojucer.cmake_DIR}/JuceHeader.h" "JuceLibraryCode/JuceHeader.h")
+  __generate_AppConfig_header("${upper_project_id}")
+  __generate_JuceHeader_header("${upper_project_id}")
 
   if(WIN32)
     string(REPLACE "." "," comma_separated_version_number "${JUCER_PROJECT_VERSION}")
@@ -345,11 +254,118 @@ function(jucer_project_end)
       list(APPEND JUCER_PROJECT_OSX_FRAMEWORKS "AudioUnit" "CoreAudioKit")
     endif()
     list(REMOVE_DUPLICATES JUCER_PROJECT_OSX_FRAMEWORKS)
+    list(SORT JUCER_PROJECT_OSX_FRAMEWORKS)
     foreach(framework_name ${JUCER_PROJECT_OSX_FRAMEWORKS})
       find_library(${framework_name}_framework ${framework_name})
       target_link_libraries(${target_name} "${${framework_name}_framework}")
     endforeach()
   endif()
+
+endfunction()
+
+
+function(__generate_AppConfig_header project_id)
+
+  set(max_right_padding 0)
+  foreach(module_name ${JUCER_PROJECT_MODULES})
+    string(LENGTH "${module_name}" module_name_length)
+    if(module_name_length GREATER max_right_padding)
+      set(max_right_padding ${module_name_length})
+    endif()
+  endforeach()
+  math(EXPR max_right_padding "${max_right_padding} + 5")
+
+  foreach(module_name ${JUCER_PROJECT_MODULES})
+    string(LENGTH "${module_name}" right_padding)
+    while(right_padding LESS max_right_padding)
+      string(CONCAT padding_spaces "${padding_spaces}" " ")
+      math(EXPR right_padding "${right_padding} + 1")
+    endwhile()
+    string(CONCAT module_available_defines "${module_available_defines}"
+      "#define JUCE_MODULE_AVAILABLE_${module_name}${padding_spaces} 1\n"
+    )
+    unset(padding_spaces)
+
+    if(DEFINED JUCER_${module_name}_CONFIG_FLAGS)
+      string(CONCAT config_flags_defines "${config_flags_defines}"
+        "//=============================================================================="
+        "\n// ${module_name} flags:\n\n"
+      )
+    endif()
+    foreach(config_flag ${JUCER_${module_name}_CONFIG_FLAGS})
+      string(CONCAT config_flags_defines "${config_flags_defines}"
+        "#ifndef    ${config_flag}\n"
+      )
+      if(NOT DEFINED JUCER_FLAG_${config_flag})
+        string(CONCAT config_flags_defines "${config_flags_defines}"
+          " //#define ${config_flag}\n"
+        )
+      elseif(JUCER_FLAG_${config_flag})
+        string(CONCAT config_flags_defines "${config_flags_defines}"
+          " #define   ${config_flag} 1\n"
+        )
+      else()
+        string(CONCAT config_flags_defines "${config_flags_defines}"
+          " #define   ${config_flag} 0\n"
+        )
+      endif()
+      string(CONCAT config_flags_defines "${config_flags_defines}" "#endif\n\n")
+    endforeach()
+  endforeach()
+
+  configure_file("${Reprojucer.cmake_DIR}/AppConfig.h" "JuceLibraryCode/AppConfig.h")
+
+endfunction()
+
+
+function(__generate_JuceHeader_header project_id)
+
+  list(LENGTH JUCER_PROJECT_RESOURCES resources_count)
+  if(resources_count GREATER 0)
+    message("Building BinaryDataBuilder for ${JUCER_PROJECT_NAME}")
+    try_compile(BinaryDataBuilder
+      "${Reprojucer.cmake_DIR}/BinaryDataBuilder/_build"
+      "${Reprojucer.cmake_DIR}/BinaryDataBuilder"
+      BinaryDataBuilder install
+      CMAKE_FLAGS
+      "-DJUCE_ROOT=${JUCE_ROOT}"
+      "-DCMAKE_INSTALL_PREFIX=${CMAKE_CURRENT_BINARY_DIR}"
+    )
+    if(NOT BinaryDataBuilder)
+      message(FATAL_ERROR "Failed to build BinaryDataBuilder")
+    endif()
+    message("BinaryDataBuilder has been successfully built")
+    list(APPEND BinaryDataBuilder_args "${CMAKE_CURRENT_BINARY_DIR}/JuceLibraryCode/")
+    foreach(element ${JUCER_PROJECT_RESOURCES})
+      list(APPEND BinaryDataBuilder_args "${CMAKE_CURRENT_LIST_DIR}/${element}")
+    endforeach()
+    execute_process(
+      COMMAND "${CMAKE_CURRENT_BINARY_DIR}/BinaryDataBuilder/BinaryDataBuilder"
+      ${BinaryDataBuilder_args}
+      OUTPUT_VARIABLE binary_data_filenames
+      RESULT_VARIABLE BinaryDataBuilder_return_code
+    )
+    if(NOT BinaryDataBuilder_return_code EQUAL 0)
+      message(FATAL_ERROR "Error when executing BinaryDataBuilder")
+    endif()
+    foreach(filename ${binary_data_filenames})
+      list(APPEND JUCER_PROJECT_SOURCES
+        "${CMAKE_CURRENT_BINARY_DIR}/JuceLibraryCode/${filename}"
+      )
+    endforeach()
+    set(JUCER_PROJECT_SOURCES ${JUCER_PROJECT_SOURCES} PARENT_SCOPE)
+    set(binary_data_include "#include \"BinaryData.h\"")
+  else()
+    set(binary_data_include "")
+  endif()
+
+  foreach(module_name ${JUCER_PROJECT_MODULES})
+    string(CONCAT modules_includes "${modules_includes}"
+      "#include <${module_name}/${module_name}.h>\n"
+    )
+  endforeach()
+
+  configure_file("${Reprojucer.cmake_DIR}/JuceHeader.h" "JuceLibraryCode/JuceHeader.h")
 
 endfunction()
 
