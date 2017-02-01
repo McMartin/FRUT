@@ -35,3 +35,11 @@ build_script:
   - cmake ..
   - cmake --build . --config Debug
   - cmake --build . --config Release
+
+  - cd %APPVEYOR_BUILD_FOLDER%
+
+  - mkdir "examples\audio plugin demo\build"
+  - cd "examples\audio plugin demo\build"
+  - cmake ..
+  - cmake --build . --config Debug
+  - cmake --build . --config Release

@@ -38,7 +38,7 @@ function(jucer_project_begin)
     "PROJECT_NAME" "PROJECT_VERSION" "COMPANY_NAME" "COMPANY_WEBSITE" "COMPANY_EMAIL"
     "PROJECT_TYPE" "BUNDLE_IDENTIFIER" "PREPROCESSOR_DEFINITIONS" "PROJECT_ID"
   )
-  set(project_type_descs "GUI Application" "Console Application")
+  set(project_type_descs "GUI Application" "Console Application" "Audio Plug-in")
 
   foreach(element ${ARGN})
     if(NOT DEFINED tag)
@@ -68,8 +68,48 @@ function(jucer_project_begin)
             "Supported project types: ${project_type_descs}"
           )
         endif()
-        set(project_types "guiapp" "consoleapp")
+        set(project_types "guiapp" "consoleapp" "audioplug")
         list(GET project_types ${project_type_index} value)
+      endif()
+
+      set(JUCER_${tag} "${value}" PARENT_SCOPE)
+
+      unset(tag)
+    endif()
+  endforeach()
+
+endfunction()
+
+
+function(jucer_audio_plugin_settings)
+
+  set(plugin_setting_tags
+    "BUILD_VST"
+    "PLUGIN_NAME"
+    "PLUGIN_DESCRIPTION"
+    "PLUGIN_MANUFACTURER"
+    "PLUGIN_MANUFACTURER_CODE"
+    "PLUGIN_CODE"
+    "PLUGIN_CHANNEL_CONFIGURATIONS"
+    "PLUGIN_IS_A_SYNTH"
+    "PLUGIN_MIDI_INPUT"
+    "PLUGIN_MIDI_OUTPUT"
+    "MIDI_EFFECT_PLUGIN"
+    "KEY_FOCUS"
+    "VST_CATEGORY"
+  )
+
+  foreach(element ${ARGN})
+    if(NOT DEFINED tag)
+      set(tag ${element})
+    else()
+      set(value ${element})
+
+      list(FIND plugin_setting_tags "${tag}" plugin_setting_index)
+      if(plugin_setting_index EQUAL -1)
+        message(FATAL_ERROR "Unsupported audio plugin setting: ${tag}\n"
+          "Supported audio plugin settings: ${plugin_setting_tags}"
+        )
       endif()
 
       set(JUCER_${tag} "${value}" PARENT_SCOPE)
@@ -111,20 +151,55 @@ function(jucer_project_module module_name PATH_TAG module_path)
   list(APPEND JUCER_PROJECT_INCLUDE_DIRS "${module_path}")
   set(JUCER_PROJECT_INCLUDE_DIRS ${JUCER_PROJECT_INCLUDE_DIRS} PARENT_SCOPE)
 
-  get_filename_component(objcxx_module_file
-    "${module_path}/${module_name}/${module_name}.mm" ABSOLUTE
+  file(GLOB module_src_files
+    "${module_path}/${module_name}/*.cpp"
+    "${module_path}/${module_name}/*.mm"
   )
-  if(APPLE AND EXISTS "${objcxx_module_file}")
-    set(extension "mm")
-  else()
-    set(extension "cpp")
-  endif()
-  configure_file("${Reprojucer.cmake_DIR}/ModuleWrapper.cpp"
-    "JuceLibraryCode/${module_name}.${extension}"
-  )
-  list(APPEND JUCER_PROJECT_SOURCES
-    "${CMAKE_CURRENT_BINARY_DIR}/JuceLibraryCode/${module_name}.${extension}"
-  )
+
+  foreach(src_file ${module_src_files})
+    # See LibraryModule::CompileUnit::isNeededForExporter()
+    # in JUCE/extras/Projucer/Source/Project/jucer_Module.cpp
+    if(  (src_file MATCHES "_AU[._]"         AND NOT (JUCER_BUILD_AUDIOUNIT    AND APPLE))
+      OR (src_file MATCHES "_AUv3[._]"       AND NOT (JUCER_BUILD_AUDIOUNIT_V3 AND APPLE))
+      OR (src_file MATCHES "_AAX[._]"        AND NOT (JUCER_BUILD_AAX          AND TRUE ))
+      OR (src_file MATCHES "_RTAS[._]"       AND NOT (JUCER_BUILD_RTAS         AND TRUE ))
+      OR (src_file MATCHES "_VST2[._]"       AND NOT (JUCER_BUILD_VST          AND TRUE ))
+      OR (src_file MATCHES "_VST3[._]"       AND NOT (JUCER_BUILD_VST3         AND TRUE ))
+      OR (src_file MATCHES "_Standalone[._]" AND NOT (JUCER_BUILD_AUDIOUNIT_V3 AND APPLE))
+    )
+      set(to_compile FALSE)
+    endif()
+
+    if(NOT DEFINED to_compile)
+      get_filename_component(src_file_extension "${src_file}" EXT)
+      if(src_file_extension STREQUAL ".mm")
+        if(APPLE)
+          set(to_compile TRUE)
+        endif()
+      elseif(APPLE)
+        string(REGEX REPLACE "${src_file_extension}$" ".mm" objcxx_src_file "${src_file}")
+        list(FIND module_src_files "${objcxx_src_file}" index)
+        if(index EQUAL -1)
+          set(to_compile TRUE)
+        endif()
+      else()
+        set(to_compile TRUE)
+      endif()
+    endif()
+
+    if(to_compile)
+      get_filename_component(src_file_basename "${src_file}" NAME)
+      configure_file("${Reprojucer.cmake_DIR}/JuceLibraryCode-Wrapper.cpp"
+        "JuceLibraryCode/${src_file_basename}"
+      )
+      list(APPEND JUCER_PROJECT_SOURCES
+        "${CMAKE_CURRENT_BINARY_DIR}/JuceLibraryCode/${src_file_basename}"
+      )
+    endif()
+
+    unset(to_compile)
+  endforeach()
+
   set(JUCER_PROJECT_SOURCES ${JUCER_PROJECT_SOURCES} PARENT_SCOPE)
 
   set(module_header_file "${module_path}/${module_name}/${module_name}.h")
@@ -184,9 +259,15 @@ function(jucer_project_end)
     REGULAR_EXPRESSION "${CMAKE_CURRENT_BINARY_DIR}/JuceLibraryCode/*"
   )
 
+  set_source_files_properties(
+    ${JUCER_PROJECT_BROWSABLE_FILES}
+    ${JUCER_PROJECT_RESOURCES}
+    PROPERTIES HEADER_FILE_ONLY TRUE
+  )
+
   string(REGEX REPLACE "[^A-Za-z0-9_.+-]" "_" target_name "${JUCER_PROJECT_NAME}")
 
-  add_executable(${target_name}
+  set(all_sources
     ${JUCER_PROJECT_SOURCES}
     ${JUCER_PROJECT_RESOURCES}
     "${CMAKE_CURRENT_BINARY_DIR}/JuceLibraryCode/AppConfig.h"
@@ -194,71 +275,76 @@ function(jucer_project_end)
     ${JUCER_PROJECT_BROWSABLE_FILES}
   )
 
-  if(JUCER_PROJECT_TYPE STREQUAL "guiapp")
+  if(JUCER_PROJECT_TYPE STREQUAL "consoleapp")
+    add_executable(${target_name} ${all_sources})
+    __set_common_target_properties(${target_name})
+    __link_osx_frameworks(${target_name})
+
+  elseif(JUCER_PROJECT_TYPE STREQUAL "guiapp")
+    add_executable(${target_name} ${all_sources})
     set_target_properties(${target_name} PROPERTIES MACOSX_BUNDLE TRUE)
-    if(CMAKE_GENERATOR STREQUAL "Xcode")
-      configure_file("${Reprojucer.cmake_DIR}/Info-App-Xcode.plist"
-        "Info-App.plist" @ONLY
-      )
-      set_target_properties(${target_name} PROPERTIES
-        XCODE_ATTRIBUTE_INFOPLIST_FILE "${CMAKE_CURRENT_BINARY_DIR}/Info-App.plist"
-        XCODE_ATTRIBUTE_PRODUCT_BUNDLE_IDENTIFIER "${JUCER_BUNDLE_IDENTIFIER}"
-      )
-    else()
-      configure_file("${Reprojucer.cmake_DIR}/Info-App.plist" "Info-App.plist" @ONLY)
-      set_target_properties(${target_name} PROPERTIES
-        MACOSX_BUNDLE_BUNDLE_NAME "${JUCER_PROJECT_NAME}"
-        MACOSX_BUNDLE_GUI_IDENTIFIER "${JUCER_BUNDLE_IDENTIFIER}"
-        MACOSX_BUNDLE_INFO_PLIST "${CMAKE_CURRENT_BINARY_DIR}/Info-App.plist"
-      )
-    endif()
+    __generate_plist_file(${target_name} "App" "APPL" "????")
     set_target_properties(${target_name} PROPERTIES WIN32_EXECUTABLE TRUE)
-  endif()
+    __set_common_target_properties(${target_name})
+    __link_osx_frameworks(${target_name})
 
-  set_target_properties(${target_name} PROPERTIES OUTPUT_NAME "${JUCER_PROJECT_NAME}")
+  elseif(JUCER_PROJECT_TYPE STREQUAL "audioplug")
+    if(APPLE)
+      foreach(src_file ${JUCER_PROJECT_SOURCES})
+        # See XCodeProjectExporter::getTargetTypeFromFilePath()
+        # in JUCE/extras/Projucer/Source/Project Saving/jucer_ProjectExport_XCode.h
+        if(src_file MATCHES "_AU[._]")
+          list(APPEND AudioUnit_sources "${src_file}")
+        elseif(src_file MATCHES "_AUv3[._]")
+          list(APPEND AudioUnitv3_sources "${src_file}")
+        elseif(src_file MATCHES "_AAX[._]")
+          list(APPEND AAX_sources "${src_file}")
+        elseif(src_file MATCHES "_RTAS[._]")
+          list(APPEND RTAS_sources "${src_file}")
+        elseif(src_file MATCHES "_VST2[._]")
+          list(APPEND VST_sources "${src_file}")
+        elseif(src_file MATCHES "_VST3[._]")
+          list(APPEND VST3_sources "${src_file}")
+        elseif(src_file MATCHES "_Standalone[._]")
+          list(APPEND Standalone_sources "${src_file}")
+        else()
+          list(APPEND SharedCode_sources "${src_file}")
+        endif()
+      endforeach()
 
-  set_source_files_properties(
-    ${JUCER_PROJECT_BROWSABLE_FILES}
-    ${JUCER_PROJECT_RESOURCES}
-    PROPERTIES HEADER_FILE_ONLY TRUE
-  )
+      add_library(${target_name}_Shared_Code STATIC
+        ${SharedCode_sources}
+        ${JUCER_PROJECT_RESOURCES}
+        "${CMAKE_CURRENT_BINARY_DIR}/JuceLibraryCode/AppConfig.h"
+        "${CMAKE_CURRENT_BINARY_DIR}/JuceLibraryCode/JuceHeader.h"
+        ${JUCER_PROJECT_BROWSABLE_FILES}
+      )
+      __set_common_target_properties(${target_name}_Shared_Code)
+      target_compile_definitions(${target_name}_Shared_Code PRIVATE "JUCE_SHARED_CODE=1")
+      __set_JucePlugin_Build_defines(${target_name}_Shared_Code "SharedCodeTarget")
 
-  target_include_directories(${target_name} PRIVATE
-    "${CMAKE_CURRENT_BINARY_DIR}/JuceLibraryCode"
-    ${JUCER_PROJECT_INCLUDE_DIRS}
-  )
-
-  if(JUCER_FLAG_JUCE_PLUGINHOST_VST3)
-    if(NOT DEFINED VST3_SDK_FOLDER)
-      message(FATAL_ERROR "VST3_SDK_FOLDER must be defined")
+      if(JUCER_BUILD_VST)
+        set(full_target_name ${target_name}_VST)
+        add_library(${full_target_name} MODULE ${VST_sources})
+        target_link_libraries(${full_target_name} ${target_name}_Shared_Code)
+        __generate_plist_file(${full_target_name} "VST" "BNDL" "????")
+        set_target_properties(${full_target_name} PROPERTIES
+          BUNDLE TRUE
+          BUNDLE_EXTENSION "vst"
+          XCODE_ATTRIBUTE_WRAPPER_EXTENSION "vst"
+        )
+        __set_common_target_properties(${full_target_name})
+        __set_JucePlugin_Build_defines(${full_target_name} "VSTPlugIn")
+        __link_osx_frameworks(${target_name}_VST)
+      endif()
+    else()
+      add_library(${target_name} MODULE ${all_sources})
+      __set_common_target_properties(${target_name})
     endif()
-    get_filename_component(vst3_sdk_abs_path "${VST3_SDK_FOLDER}" ABSOLUTE)
-    if(NOT IS_DIRECTORY "${vst3_sdk_abs_path}")
-      message(WARNING "VST3_SDK_FOLDER: no such directory \"${VST3_SDK_FOLDER}\"")
-    endif()
-    target_include_directories(${target_name} PRIVATE "${VST3_SDK_FOLDER}")
-  endif()
 
-  target_compile_definitions(${target_name} PRIVATE ${JUCER_PREPROCESSOR_DEFINITIONS})
+  else()
+    message(FATAL_ERROR "Unknown project type: ${JUCER_PROJECT_TYPE}")
 
-  if(APPLE)
-    target_compile_options(${target_name} PRIVATE -std=c++11)
-    target_compile_definitions(${target_name} PRIVATE
-      $<$<CONFIG:Debug>:_DEBUG=1>
-      $<$<CONFIG:Debug>:DEBUG=1>
-      $<$<NOT:$<CONFIG:Debug>>:_NDEBUG=1>
-      $<$<NOT:$<CONFIG:Debug>>:NDEBUG=1>
-    )
-
-    if(JUCER_FLAG_JUCE_PLUGINHOST_AU)
-      list(APPEND JUCER_PROJECT_OSX_FRAMEWORKS "AudioUnit" "CoreAudioKit")
-    endif()
-    list(REMOVE_DUPLICATES JUCER_PROJECT_OSX_FRAMEWORKS)
-    list(SORT JUCER_PROJECT_OSX_FRAMEWORKS)
-    foreach(framework_name ${JUCER_PROJECT_OSX_FRAMEWORKS})
-      find_library(${framework_name}_framework ${framework_name})
-      target_link_libraries(${target_name} "${${framework_name}_framework}")
-    endforeach()
   endif()
 
 endfunction()
@@ -312,6 +398,134 @@ function(__generate_AppConfig_header project_id)
       string(CONCAT config_flags_defines "${config_flags_defines}" "#endif\n\n")
     endforeach()
   endforeach()
+
+  set(is_standalone_application 1)
+
+  if(JUCER_PROJECT_TYPE STREQUAL "audioplug")
+    set(is_standalone_application 0)
+
+    # See ProjectSaver::writePluginCharacteristicsFile()
+    # in JUCE/extras/Projucer/Source/Project Saving/jucer_ProjectSaver.cpp
+
+    __bool_to_int("${JUCER_BUILD_VST}" Build_VST_value)
+    list(APPEND plugin_settings "Build_VST" "${Build_VST_value}")
+
+    list(APPEND plugin_settings "Name" "\"${JUCER_PLUGIN_NAME}\"")
+    list(APPEND plugin_settings "Desc" "\"${JUCER_PLUGIN_DESCRIPTION}\"")
+    list(APPEND plugin_settings "Manufacturer" "\"${JUCER_PLUGIN_MANUFACTURER}\"")
+    list(APPEND plugin_settings "ManufacturerWebsite" "\"${JUCER_COMPANY_WEBSITE}\"")
+    list(APPEND plugin_settings "ManufacturerEmail" "\"${JUCER_COMPANY_EMAIL}\"")
+
+    __four_chars_to_hex("${JUCER_PLUGIN_MANUFACTURER_CODE}" ManufacturerCode_value)
+    list(APPEND plugin_settings "ManufacturerCode"
+      "${ManufacturerCode_value} // '${JUCER_PLUGIN_MANUFACTURER_CODE}'"
+    )
+
+    __four_chars_to_hex("${JUCER_PLUGIN_CODE}" PluginCode_value)
+    list(APPEND plugin_settings "PluginCode"
+      "${PluginCode_value} // '${JUCER_PLUGIN_CODE}'"
+    )
+
+    __bool_to_int("${JUCER_PLUGIN_IS_A_SYNTH}" IsSynth_value)
+    list(APPEND plugin_settings "IsSynth" "${IsSynth_value}")
+
+    __bool_to_int("${JUCER_PLUGIN_MIDI_INPUT}" WantsMidiInput_value)
+    list(APPEND plugin_settings "WantsMidiInput" "${WantsMidiInput_value}")
+
+    __bool_to_int("${JUCER_PLUGIN_MIDI_OUTPUT}" ProducesMidiOutput_value)
+    list(APPEND plugin_settings "ProducesMidiOutput" "${ProducesMidiOutput_value}")
+
+    __bool_to_int("${JUCER_MIDI_EFFECT_PLUGIN}" IsMidiEffect_value)
+    list(APPEND plugin_settings "IsMidiEffect" "${IsMidiEffect_value}")
+
+    __bool_to_int("${JUCER_KEY_FOCUS}" EditorRequiresKeyboardFocus_value)
+    list(APPEND plugin_settings "EditorRequiresKeyboardFocus"
+      "${EditorRequiresKeyboardFocus_value}"
+    )
+
+    list(APPEND plugin_settings "Version" "${JUCER_PROJECT_VERSION}")
+
+    __version_to_hex("${JUCER_PROJECT_VERSION}" VersionCode_value)
+    list(APPEND plugin_settings "VersionCode" "${VersionCode_value}")
+
+    list(APPEND plugin_settings "VersionString" "\"${JUCER_PROJECT_VERSION}\"")
+
+    list(APPEND plugin_settings "VSTUniqueID" "JucePlugin_PluginCode")
+
+    if(NOT DEFINED JUCER_VST_CATEGORY)
+      if(JUCER_PLUGIN_IS_A_SYNTH)
+        set(VSTCategory_value "kPlugCategSynth")
+      else()
+        set(VSTCategory_value "kPlugCategEffect")
+      endif()
+    else()
+      set(VSTCategory_value "${JUCER_VST_CATEGORY}")
+    endif()
+    list(APPEND plugin_settings "VSTCategory" "${VSTCategory_value}")
+
+    list(APPEND plugin_settings "CFBundleIdentifier" "${JUCER_BUNDLE_IDENTIFIER}")
+
+    string(LENGTH "${JUCER_PLUGIN_CHANNEL_CONFIGURATIONS}" plugin_channel_config_length)
+    if(plugin_channel_config_length GREATER 0)
+      # See countMaxPluginChannels()
+      # in JUCE/extras/Projucer/Source/Project Saving/jucer_ProjectSaver.cpp
+      string(REGEX REPLACE "[, {}]" ";" configs "${JUCER_PLUGIN_CHANNEL_CONFIGURATIONS}")
+      set(max_num_input 0)
+      set(max_num_output 0)
+      set(is_input TRUE)
+      foreach(element ${configs})
+        if(is_input)
+          if(element GREATER max_num_input)
+            set(max_num_input "${element}")
+          endif()
+          set(is_input FALSE)
+        else()
+          if(element GREATER max_num_output)
+            set(max_num_output "${element}")
+          endif()
+          set(is_input TRUE)
+        endif()
+      endforeach()
+
+      list(APPEND plugin_settings "MaxNumInputChannels" "${max_num_input}")
+      list(APPEND plugin_settings "MaxNumOutputChannels" "${max_num_output}")
+      list(APPEND plugin_settings "PreferredChannelConfigurations"
+        "${JUCER_PLUGIN_CHANNEL_CONFIGURATIONS}"
+      )
+    endif()
+
+    string(CONCAT audio_plugin_settings_defines
+      "//==============================================================================\n"
+      "// Audio plugin settings..\n\n"
+    )
+
+    foreach(element ${plugin_settings})
+      if(NOT DEFINED setting_name)
+        set(setting_name "${element}")
+      else()
+        set(setting_value "${element}")
+
+        string(LENGTH "JucePlugin_${setting_name}" right_padding)
+        while(right_padding LESS 32)
+          string(CONCAT padding_spaces "${padding_spaces}" " ")
+          math(EXPR right_padding "${right_padding} + 1")
+        endwhile()
+
+        string(CONCAT audio_plugin_settings_defines "${audio_plugin_settings_defines}"
+          "#ifndef  JucePlugin_${setting_name}\n"
+        )
+        string(CONCAT audio_plugin_settings_defines "${audio_plugin_settings_defines}"
+          " #define JucePlugin_${setting_name}${padding_spaces}  ${setting_value}\n"
+        )
+        string(CONCAT audio_plugin_settings_defines "${audio_plugin_settings_defines}"
+          "#endif\n"
+        )
+        unset(padding_spaces)
+
+        unset(setting_name)
+      endif()
+    endforeach()
+  endif()
 
   configure_file("${Reprojucer.cmake_DIR}/AppConfig.h" "JuceLibraryCode/AppConfig.h")
 
@@ -370,6 +584,118 @@ function(__generate_JuceHeader_header project_id)
 endfunction()
 
 
+function(__set_common_target_properties target_name)
+
+  set_target_properties(${target_name} PROPERTIES OUTPUT_NAME "${JUCER_PROJECT_NAME}")
+
+  target_include_directories(${target_name} PRIVATE
+    "${CMAKE_CURRENT_BINARY_DIR}/JuceLibraryCode"
+    ${JUCER_PROJECT_INCLUDE_DIRS}
+  )
+
+  if(JUCER_FLAG_JUCE_PLUGINHOST_VST3)
+    if(NOT DEFINED VST3_SDK_FOLDER)
+      message(FATAL_ERROR "VST3_SDK_FOLDER must be defined")
+    endif()
+    get_filename_component(vst3_sdk_abs_path "${VST3_SDK_FOLDER}" ABSOLUTE)
+    if(NOT IS_DIRECTORY "${vst3_sdk_abs_path}")
+      message(WARNING "VST3_SDK_FOLDER: no such directory \"${VST3_SDK_FOLDER}\"")
+    endif()
+    target_include_directories(${target_name} PRIVATE "${VST3_SDK_FOLDER}")
+  endif()
+
+  target_compile_definitions(${target_name} PRIVATE ${JUCER_PREPROCESSOR_DEFINITIONS})
+
+  if(APPLE)
+    target_compile_options(${target_name} PRIVATE -std=c++11)
+    target_compile_definitions(${target_name} PRIVATE
+      $<$<CONFIG:Debug>:_DEBUG=1>
+      $<$<CONFIG:Debug>:DEBUG=1>
+      $<$<NOT:$<CONFIG:Debug>>:_NDEBUG=1>
+      $<$<NOT:$<CONFIG:Debug>>:NDEBUG=1>
+    )
+  endif()
+
+endfunction()
+
+
+function(__generate_plist_file target_name plist_suffix package_type bundle_signature)
+
+  set(plist_filename "Info-${plist_suffix}.plist")
+  if(CMAKE_GENERATOR STREQUAL "Xcode")
+    configure_file("${Reprojucer.cmake_DIR}/Info-Xcode.plist" "${plist_filename}" @ONLY)
+    set_target_properties(${target_name} PROPERTIES
+      XCODE_ATTRIBUTE_INFOPLIST_FILE "${CMAKE_CURRENT_BINARY_DIR}/${plist_filename}"
+      XCODE_ATTRIBUTE_PRODUCT_BUNDLE_IDENTIFIER "${JUCER_BUNDLE_IDENTIFIER}"
+    )
+  else()
+    configure_file("${Reprojucer.cmake_DIR}/Info.plist" "${plist_filename}" @ONLY)
+    set_target_properties(${target_name} PROPERTIES
+      MACOSX_BUNDLE_BUNDLE_NAME "${JUCER_PROJECT_NAME}"
+      MACOSX_BUNDLE_GUI_IDENTIFIER "${JUCER_BUNDLE_IDENTIFIER}"
+      MACOSX_BUNDLE_INFO_PLIST "${CMAKE_CURRENT_BINARY_DIR}/${plist_filename}"
+    )
+  endif()
+
+endfunction()
+
+
+function(__set_JucePlugin_Build_defines target_name target_type)
+
+  # See XCodeProjectExporter::Target::getTargetSettings()
+  # in JUCE/extras/Projucer/Source/Project Saving/jucer_ProjectExport_XCode.h
+  set(plugin_types     VST VST3 AudioUnit AudioUnitv3  RTAS AAX Standalone)
+  set(setting_suffixes VST VST3 AUDIOUNIT AUDIOUNIT_V3 RTAS AAX STANDALONE)
+  set(define_suffixes  VST VST3 AU        AUv3         RTAS AAX Standalone)
+
+  foreach(index RANGE 6)
+    list(GET setting_suffixes ${index} setting_suffix)
+    list(GET plugin_types ${index} plugin_type)
+    list(GET define_suffixes ${index} define_suffix)
+
+    if(JUCER_BUILD_${setting_suffix} AND (target_type STREQUAL "SharedCodeTarget"
+        OR target_type STREQUAL "${plugin_type}PlugIn"))
+      target_compile_definitions(${target_name} PRIVATE
+        "JucePlugin_Build_${define_suffix}=1"
+      )
+    else()
+      target_compile_definitions(${target_name} PRIVATE
+        "JucePlugin_Build_${define_suffix}=0"
+      )
+    endif()
+  endforeach()
+
+endfunction()
+
+
+function(__link_osx_frameworks target_name)
+
+  if(APPLE)
+    if(JUCER_FLAG_JUCE_PLUGINHOST_AU)
+      list(APPEND JUCER_PROJECT_OSX_FRAMEWORKS "AudioUnit" "CoreAudioKit")
+    endif()
+    list(REMOVE_DUPLICATES JUCER_PROJECT_OSX_FRAMEWORKS)
+    list(SORT JUCER_PROJECT_OSX_FRAMEWORKS)
+    foreach(framework_name ${JUCER_PROJECT_OSX_FRAMEWORKS})
+      find_library(${framework_name}_framework ${framework_name})
+      target_link_libraries(${target_name} "${${framework_name}_framework}")
+    endforeach()
+  endif()
+
+endfunction()
+
+
+function(__bool_to_int bool_value out_int_value)
+
+  if(bool_value)
+    set(${out_int_value} 1 PARENT_SCOPE)
+  else()
+    set(${out_int_value} 0 PARENT_SCOPE)
+  endif()
+
+endfunction()
+
+
 function(__dec_to_hex dec_value out_hex_value)
 
   if(dec_value EQUAL 0)
@@ -408,6 +734,31 @@ function(__version_to_hex version out_hex_value)
     list(GET segments 3 revision)
     math(EXPR dec_value "${dec_value} << 8 + ${revision}")
   endif()
+
+  __dec_to_hex("${dec_value}" hex_value)
+  set(${out_hex_value} "${hex_value}" PARENT_SCOPE)
+
+endfunction()
+
+
+function(__four_chars_to_hex value out_hex_value)
+
+  foreach(ascii_code RANGE 1 127)
+    list(APPEND all_ascii_codes ${ascii_code})
+  endforeach()
+  string(ASCII ${all_ascii_codes} all_ascii_chars)
+
+  string(STRIP "${value}" four_chars)
+  string(SUBSTRING "${four_chars}" 0 4 four_chars)
+  set(dec_value 0)
+  foreach(index 0 1 2 3)
+    string(SUBSTRING "${four_chars}" ${index} 1 ascii_char)
+    string(FIND "${all_ascii_chars}" "${ascii_char}" ascii_code)
+    if(ascii_code EQUAL -1)
+      message(FATAL_ERROR "${value} cannot contain non-ASCII characters")
+    endif()
+    math(EXPR dec_value "(${dec_value} << 8) | ((${ascii_code} + 1) & 255)")
+  endforeach()
 
   __dec_to_hex("${dec_value}" hex_value)
   set(${out_hex_value} "${hex_value}" PARENT_SCOPE)
