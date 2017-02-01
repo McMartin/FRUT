@@ -81,6 +81,44 @@ function(jucer_project_begin)
 endfunction()
 
 
+function(jucer_audio_plugin_settings)
+
+  set(plugin_setting_tags
+    "PLUGIN_NAME"
+    "PLUGIN_DESCRIPTION"
+    "PLUGIN_MANUFACTURER"
+    "PLUGIN_MANUFACTURER_CODE"
+    "PLUGIN_CODE"
+    "PLUGIN_CHANNEL_CONFIGURATIONS"
+    "PLUGIN_IS_A_SYNTH"
+    "PLUGIN_MIDI_INPUT"
+    "PLUGIN_MIDI_OUTPUT"
+    "MIDI_EFFECT_PLUGIN"
+    "KEY_FOCUS"
+  )
+
+  foreach(element ${ARGN})
+    if(NOT DEFINED tag)
+      set(tag ${element})
+    else()
+      set(value ${element})
+
+      list(FIND plugin_setting_tags "${tag}" plugin_setting_index)
+      if(plugin_setting_index EQUAL -1)
+        message(FATAL_ERROR "Unsupported audio plugin setting: ${tag}\n"
+          "Supported audio plugin settings: ${plugin_setting_tags}"
+        )
+      endif()
+
+      set(JUCER_${tag} "${value}" PARENT_SCOPE)
+
+      unset(tag)
+    endif()
+  endforeach()
+
+endfunction()
+
+
 function(jucer_project_files source_group_name)
 
   string(REPLACE "/" "\\" source_group_name ${source_group_name})
@@ -306,6 +344,116 @@ function(__generate_AppConfig_header project_id)
   endforeach()
 
   set(is_standalone_application 1)
+
+  if(JUCER_PROJECT_TYPE STREQUAL "audioplug")
+    set(is_standalone_application 0)
+
+    # See ProjectSaver::writePluginCharacteristicsFile()
+    # in JUCE/extras/Projucer/Source/Project Saving/jucer_ProjectSaver.cpp
+
+    list(APPEND plugin_settings "Name" "\"${JUCER_PLUGIN_NAME}\"")
+    list(APPEND plugin_settings "Desc" "\"${JUCER_PLUGIN_DESCRIPTION}\"")
+    list(APPEND plugin_settings "Manufacturer" "\"${JUCER_PLUGIN_MANUFACTURER}\"")
+    list(APPEND plugin_settings "ManufacturerWebsite" "\"${JUCER_COMPANY_WEBSITE}\"")
+    list(APPEND plugin_settings "ManufacturerEmail" "\"${JUCER_COMPANY_EMAIL}\"")
+
+    __four_chars_to_hex("${JUCER_PLUGIN_MANUFACTURER_CODE}" ManufacturerCode_value)
+    list(APPEND plugin_settings "ManufacturerCode"
+      "${ManufacturerCode_value} // '${JUCER_PLUGIN_MANUFACTURER_CODE}'"
+    )
+
+    __four_chars_to_hex("${JUCER_PLUGIN_CODE}" PluginCode_value)
+    list(APPEND plugin_settings "PluginCode"
+      "${PluginCode_value} // '${JUCER_PLUGIN_CODE}'"
+    )
+
+    __bool_to_int("${JUCER_PLUGIN_IS_A_SYNTH}" IsSynth_value)
+    list(APPEND plugin_settings "IsSynth" "${IsSynth_value}")
+
+    __bool_to_int("${JUCER_PLUGIN_MIDI_INPUT}" WantsMidiInput_value)
+    list(APPEND plugin_settings "WantsMidiInput" "${WantsMidiInput_value}")
+
+    __bool_to_int("${JUCER_PLUGIN_MIDI_OUTPUT}" ProducesMidiOutput_value)
+    list(APPEND plugin_settings "ProducesMidiOutput" "${ProducesMidiOutput_value}")
+
+    __bool_to_int("${JUCER_MIDI_EFFECT_PLUGIN}" IsMidiEffect_value)
+    list(APPEND plugin_settings "IsMidiEffect" "${IsMidiEffect_value}")
+
+    __bool_to_int("${JUCER_KEY_FOCUS}" EditorRequiresKeyboardFocus_value)
+    list(APPEND plugin_settings "EditorRequiresKeyboardFocus"
+      "${EditorRequiresKeyboardFocus_value}"
+    )
+
+    list(APPEND plugin_settings "Version" "${JUCER_PROJECT_VERSION}")
+
+    __version_to_hex("${JUCER_PROJECT_VERSION}" VersionCode_value)
+    list(APPEND plugin_settings "VersionCode" "${VersionCode_value}")
+
+    list(APPEND plugin_settings "VersionString" "\"${JUCER_PROJECT_VERSION}\"")
+
+    list(APPEND plugin_settings "CFBundleIdentifier" "${JUCER_BUNDLE_IDENTIFIER}")
+
+    string(LENGTH "${JUCER_PLUGIN_CHANNEL_CONFIGURATIONS}" plugin_channel_config_length)
+    if(plugin_channel_config_length GREATER 0)
+      # See countMaxPluginChannels()
+      # in JUCE/extras/Projucer/Source/Project Saving/jucer_ProjectSaver.cpp
+      string(REGEX REPLACE "[, {}]" ";" configs "${JUCER_PLUGIN_CHANNEL_CONFIGURATIONS}")
+      set(max_num_input 0)
+      set(max_num_output 0)
+      set(is_input TRUE)
+      foreach(element ${configs})
+        if(is_input)
+          if(element GREATER max_num_input)
+            set(max_num_input "${element}")
+          endif()
+          set(is_input FALSE)
+        else()
+          if(element GREATER max_num_output)
+            set(max_num_output "${element}")
+          endif()
+          set(is_input TRUE)
+        endif()
+      endforeach()
+
+      list(APPEND plugin_settings "MaxNumInputChannels" "${max_num_input}")
+      list(APPEND plugin_settings "MaxNumOutputChannels" "${max_num_output}")
+      list(APPEND plugin_settings "PreferredChannelConfigurations"
+        "${JUCER_PLUGIN_CHANNEL_CONFIGURATIONS}"
+      )
+    endif()
+
+    string(CONCAT audio_plugin_settings_defines
+      "//==============================================================================\n"
+      "// Audio plugin settings..\n\n"
+    )
+
+    foreach(element ${plugin_settings})
+      if(NOT DEFINED setting_name)
+        set(setting_name "${element}")
+      else()
+        set(setting_value "${element}")
+
+        string(LENGTH "JucePlugin_${setting_name}" right_padding)
+        while(right_padding LESS 32)
+          string(CONCAT padding_spaces "${padding_spaces}" " ")
+          math(EXPR right_padding "${right_padding} + 1")
+        endwhile()
+
+        string(CONCAT audio_plugin_settings_defines "${audio_plugin_settings_defines}"
+          "#ifndef  JucePlugin_${setting_name}\n"
+        )
+        string(CONCAT audio_plugin_settings_defines "${audio_plugin_settings_defines}"
+          " #define JucePlugin_${setting_name}${padding_spaces}  ${setting_value}\n"
+        )
+        string(CONCAT audio_plugin_settings_defines "${audio_plugin_settings_defines}"
+          "#endif\n"
+        )
+        unset(padding_spaces)
+
+        unset(setting_name)
+      endif()
+    endforeach()
+  endif()
 
   configure_file("${Reprojucer.cmake_DIR}/AppConfig.h" "JuceLibraryCode/AppConfig.h")
 
