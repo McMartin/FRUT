@@ -321,6 +321,7 @@ function(jucer_project_end)
       )
       __set_common_target_properties(${target_name}_Shared_Code)
       target_compile_definitions(${target_name}_Shared_Code PRIVATE "JUCE_SHARED_CODE=1")
+      __set_JucePlugin_Build_defines(${target_name}_Shared_Code "SharedCodeTarget")
 
       if(JUCER_BUILD_VST)
         set(full_target_name ${target_name}_VST)
@@ -333,6 +334,7 @@ function(jucer_project_end)
           XCODE_ATTRIBUTE_WRAPPER_EXTENSION "vst"
         )
         __set_common_target_properties(${full_target_name})
+        __set_JucePlugin_Build_defines(${full_target_name} "VSTPlugIn")
         __link_osx_frameworks(${target_name}_VST)
       endif()
     else()
@@ -634,6 +636,34 @@ function(__generate_plist_file target_name plist_suffix package_type bundle_sign
       MACOSX_BUNDLE_INFO_PLIST "${CMAKE_CURRENT_BINARY_DIR}/${plist_filename}"
     )
   endif()
+
+endfunction()
+
+
+function(__set_JucePlugin_Build_defines target_name target_type)
+
+  # See XCodeProjectExporter::Target::getTargetSettings()
+  # in JUCE/extras/Projucer/Source/Project Saving/jucer_ProjectExport_XCode.h
+  set(plugin_types     VST VST3 AudioUnit AudioUnitv3  RTAS AAX Standalone)
+  set(setting_suffixes VST VST3 AUDIOUNIT AUDIOUNIT_V3 RTAS AAX STANDALONE)
+  set(define_suffixes  VST VST3 AU        AUv3         RTAS AAX Standalone)
+
+  foreach(index RANGE 6)
+    list(GET setting_suffixes ${index} setting_suffix)
+    list(GET plugin_types ${index} plugin_type)
+    list(GET define_suffixes ${index} define_suffix)
+
+    if(JUCER_BUILD_${setting_suffix} AND (target_type STREQUAL "SharedCodeTarget"
+        OR target_type STREQUAL "${plugin_type}PlugIn"))
+      target_compile_definitions(${target_name} PRIVATE
+        "JucePlugin_Build_${define_suffix}=1"
+      )
+    else()
+      target_compile_definitions(${target_name} PRIVATE
+        "JucePlugin_Build_${define_suffix}=0"
+      )
+    endif()
+  endforeach()
 
 endfunction()
 
