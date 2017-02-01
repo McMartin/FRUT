@@ -38,7 +38,7 @@ function(jucer_project_begin)
     "PROJECT_NAME" "PROJECT_VERSION" "COMPANY_NAME" "COMPANY_WEBSITE" "COMPANY_EMAIL"
     "PROJECT_TYPE" "BUNDLE_IDENTIFIER" "PREPROCESSOR_DEFINITIONS" "PROJECT_ID"
   )
-  set(project_type_descs "GUI Application" "Console Application")
+  set(project_type_descs "GUI Application" "Console Application" "Audio Plug-in")
 
   foreach(element ${ARGN})
     if(NOT DEFINED tag)
@@ -68,7 +68,7 @@ function(jucer_project_begin)
             "Supported project types: ${project_type_descs}"
           )
         endif()
-        set(project_types "guiapp" "consoleapp")
+        set(project_types "guiapp" "consoleapp" "audioplug")
         list(GET project_types ${project_type_index} value)
       endif()
 
@@ -84,6 +84,7 @@ endfunction()
 function(jucer_audio_plugin_settings)
 
   set(plugin_setting_tags
+    "BUILD_VST"
     "PLUGIN_NAME"
     "PLUGIN_DESCRIPTION"
     "PLUGIN_MANUFACTURER"
@@ -95,6 +96,7 @@ function(jucer_audio_plugin_settings)
     "PLUGIN_MIDI_OUTPUT"
     "MIDI_EFFECT_PLUGIN"
     "KEY_FOCUS"
+    "VST_CATEGORY"
   )
 
   foreach(element ${ARGN})
@@ -286,6 +288,58 @@ function(jucer_project_end)
     __set_common_target_properties(${target_name})
     __link_osx_frameworks(${target_name})
 
+  elseif(JUCER_PROJECT_TYPE STREQUAL "audioplug")
+    if(APPLE)
+      foreach(src_file ${JUCER_PROJECT_SOURCES})
+        # See XCodeProjectExporter::getTargetTypeFromFilePath()
+        # in JUCE/extras/Projucer/Source/Project Saving/jucer_ProjectExport_XCode.h
+        if(src_file MATCHES "_AU[._]")
+          list(APPEND AudioUnit_sources "${src_file}")
+        elseif(src_file MATCHES "_AUv3[._]")
+          list(APPEND AudioUnitv3_sources "${src_file}")
+        elseif(src_file MATCHES "_AAX[._]")
+          list(APPEND AAX_sources "${src_file}")
+        elseif(src_file MATCHES "_RTAS[._]")
+          list(APPEND RTAS_sources "${src_file}")
+        elseif(src_file MATCHES "_VST2[._]")
+          list(APPEND VST_sources "${src_file}")
+        elseif(src_file MATCHES "_VST3[._]")
+          list(APPEND VST3_sources "${src_file}")
+        elseif(src_file MATCHES "_Standalone[._]")
+          list(APPEND Standalone_sources "${src_file}")
+        else()
+          list(APPEND SharedCode_sources "${src_file}")
+        endif()
+      endforeach()
+
+      add_library(${target_name}_Shared_Code STATIC
+        ${SharedCode_sources}
+        ${JUCER_PROJECT_RESOURCES}
+        "${CMAKE_CURRENT_BINARY_DIR}/JuceLibraryCode/AppConfig.h"
+        "${CMAKE_CURRENT_BINARY_DIR}/JuceLibraryCode/JuceHeader.h"
+        ${JUCER_PROJECT_BROWSABLE_FILES}
+      )
+      __set_common_target_properties(${target_name}_Shared_Code)
+      target_compile_definitions(${target_name}_Shared_Code PRIVATE "JUCE_SHARED_CODE=1")
+
+      if(JUCER_BUILD_VST)
+        set(full_target_name ${target_name}_VST)
+        add_library(${full_target_name} MODULE ${VST_sources})
+        target_link_libraries(${full_target_name} ${target_name}_Shared_Code)
+        __generate_plist_file(${full_target_name} "VST" "BNDL" "????")
+        set_target_properties(${full_target_name} PROPERTIES
+          BUNDLE TRUE
+          BUNDLE_EXTENSION "vst"
+          XCODE_ATTRIBUTE_WRAPPER_EXTENSION "vst"
+        )
+        __set_common_target_properties(${full_target_name})
+        __link_osx_frameworks(${target_name}_VST)
+      endif()
+    else()
+      add_library(${target_name} MODULE ${all_sources})
+      __set_common_target_properties(${target_name})
+    endif()
+
   else()
     message(FATAL_ERROR "Unknown project type: ${JUCER_PROJECT_TYPE}")
 
@@ -351,6 +405,9 @@ function(__generate_AppConfig_header project_id)
     # See ProjectSaver::writePluginCharacteristicsFile()
     # in JUCE/extras/Projucer/Source/Project Saving/jucer_ProjectSaver.cpp
 
+    __bool_to_int("${JUCER_BUILD_VST}" Build_VST_value)
+    list(APPEND plugin_settings "Build_VST" "${Build_VST_value}")
+
     list(APPEND plugin_settings "Name" "\"${JUCER_PLUGIN_NAME}\"")
     list(APPEND plugin_settings "Desc" "\"${JUCER_PLUGIN_DESCRIPTION}\"")
     list(APPEND plugin_settings "Manufacturer" "\"${JUCER_PLUGIN_MANUFACTURER}\"")
@@ -390,6 +447,19 @@ function(__generate_AppConfig_header project_id)
     list(APPEND plugin_settings "VersionCode" "${VersionCode_value}")
 
     list(APPEND plugin_settings "VersionString" "\"${JUCER_PROJECT_VERSION}\"")
+
+    list(APPEND plugin_settings "VSTUniqueID" "JucePlugin_PluginCode")
+
+    if(NOT DEFINED JUCER_VST_CATEGORY)
+      if(JUCER_PLUGIN_IS_A_SYNTH)
+        set(VSTCategory_value "kPlugCategSynth")
+      else()
+        set(VSTCategory_value "kPlugCategEffect")
+      endif()
+    else()
+      set(VSTCategory_value "${JUCER_VST_CATEGORY}")
+    endif()
+    list(APPEND plugin_settings "VSTCategory" "${VSTCategory_value}")
 
     list(APPEND plugin_settings "CFBundleIdentifier" "${JUCER_BUNDLE_IDENTIFIER}")
 
