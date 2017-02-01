@@ -219,6 +219,12 @@ function(jucer_project_end)
     REGULAR_EXPRESSION "${CMAKE_CURRENT_BINARY_DIR}/JuceLibraryCode/*"
   )
 
+  set_source_files_properties(
+    ${JUCER_PROJECT_BROWSABLE_FILES}
+    ${JUCER_PROJECT_RESOURCES}
+    PROPERTIES HEADER_FILE_ONLY TRUE
+  )
+
   string(REGEX REPLACE "[^A-Za-z0-9_.+-]" "_" target_name "${JUCER_PROJECT_NAME}")
 
   add_executable(${target_name}
@@ -251,12 +257,6 @@ function(jucer_project_end)
   endif()
 
   set_target_properties(${target_name} PROPERTIES OUTPUT_NAME "${JUCER_PROJECT_NAME}")
-
-  set_source_files_properties(
-    ${JUCER_PROJECT_BROWSABLE_FILES}
-    ${JUCER_PROJECT_RESOURCES}
-    PROPERTIES HEADER_FILE_ONLY TRUE
-  )
 
   target_include_directories(${target_name} PRIVATE
     "${CMAKE_CURRENT_BINARY_DIR}/JuceLibraryCode"
