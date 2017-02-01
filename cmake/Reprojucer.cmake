@@ -227,7 +227,7 @@ function(jucer_project_end)
 
   string(REGEX REPLACE "[^A-Za-z0-9_.+-]" "_" target_name "${JUCER_PROJECT_NAME}")
 
-  add_executable(${target_name}
+  set(all_sources
     ${JUCER_PROJECT_SOURCES}
     ${JUCER_PROJECT_RESOURCES}
     "${CMAKE_CURRENT_BINARY_DIR}/JuceLibraryCode/AppConfig.h"
@@ -235,15 +235,23 @@ function(jucer_project_end)
     ${JUCER_PROJECT_BROWSABLE_FILES}
   )
 
-  if(JUCER_PROJECT_TYPE STREQUAL "guiapp")
+  if(JUCER_PROJECT_TYPE STREQUAL "consoleapp")
+    add_executable(${target_name} ${all_sources})
+    __set_common_target_properties(${target_name})
+    __link_osx_frameworks(${target_name})
+
+  elseif(JUCER_PROJECT_TYPE STREQUAL "guiapp")
+    add_executable(${target_name} ${all_sources})
     set_target_properties(${target_name} PROPERTIES MACOSX_BUNDLE TRUE)
     __generate_plist_file(${target_name} "App" "APPL" "????")
     set_target_properties(${target_name} PROPERTIES WIN32_EXECUTABLE TRUE)
+    __set_common_target_properties(${target_name})
+    __link_osx_frameworks(${target_name})
+
+  else()
+    message(FATAL_ERROR "Unknown project type: ${JUCER_PROJECT_TYPE}")
+
   endif()
-
-  __set_common_target_properties(${target_name})
-
-  __link_osx_frameworks(${target_name})
 
 endfunction()
 
