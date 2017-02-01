@@ -348,6 +348,8 @@ function(__generate_AppConfig_header project_id)
     endforeach()
   endforeach()
 
+  set(is_standalone_application 1)
+
   configure_file("${Reprojucer.cmake_DIR}/AppConfig.h" "JuceLibraryCode/AppConfig.h")
 
 endfunction()

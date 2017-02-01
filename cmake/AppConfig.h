@@ -8,7 +8,7 @@
  #ifdef JucePlugin_Build_Standalone
   #define  JUCE_STANDALONE_APPLICATION JucePlugin_Build_Standalone
  #else
-  #define  JUCE_STANDALONE_APPLICATION 1
+  #define  JUCE_STANDALONE_APPLICATION @is_standalone_application@
  #endif
 #endif
 
