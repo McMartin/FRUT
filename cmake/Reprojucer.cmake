@@ -243,17 +243,7 @@ function(jucer_project_end)
 
   __set_common_target_properties(${target_name})
 
-  if(APPLE)
-    if(JUCER_FLAG_JUCE_PLUGINHOST_AU)
-      list(APPEND JUCER_PROJECT_OSX_FRAMEWORKS "AudioUnit" "CoreAudioKit")
-    endif()
-    list(REMOVE_DUPLICATES JUCER_PROJECT_OSX_FRAMEWORKS)
-    list(SORT JUCER_PROJECT_OSX_FRAMEWORKS)
-    foreach(framework_name ${JUCER_PROJECT_OSX_FRAMEWORKS})
-      find_library(${framework_name}_framework ${framework_name})
-      target_link_libraries(${target_name} "${${framework_name}_framework}")
-    endforeach()
-  endif()
+  __link_osx_frameworks(${target_name})
 
 endfunction()
 
@@ -417,6 +407,23 @@ function(__generate_plist_file target_name plist_suffix package_type bundle_sign
       MACOSX_BUNDLE_GUI_IDENTIFIER "${JUCER_BUNDLE_IDENTIFIER}"
       MACOSX_BUNDLE_INFO_PLIST "${CMAKE_CURRENT_BINARY_DIR}/${plist_filename}"
     )
+  endif()
+
+endfunction()
+
+
+function(__link_osx_frameworks target_name)
+
+  if(APPLE)
+    if(JUCER_FLAG_JUCE_PLUGINHOST_AU)
+      list(APPEND JUCER_PROJECT_OSX_FRAMEWORKS "AudioUnit" "CoreAudioKit")
+    endif()
+    list(REMOVE_DUPLICATES JUCER_PROJECT_OSX_FRAMEWORKS)
+    list(SORT JUCER_PROJECT_OSX_FRAMEWORKS)
+    foreach(framework_name ${JUCER_PROJECT_OSX_FRAMEWORKS})
+      find_library(${framework_name}_framework ${framework_name})
+      target_link_libraries(${target_name} "${${framework_name}_framework}")
+    endforeach()
   endif()
 
 endfunction()
