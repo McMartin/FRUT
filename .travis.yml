@@ -35,3 +35,11 @@ script:
   - cmake .. -G Xcode
   - cmake --build . --config Debug
   - cmake --build . --config Release
+
+  - cd $TRAVIS_BUILD_DIR
+
+  - mkdir "examples/audio plugin demo/build"
+  - cd "examples/audio plugin demo/build"
+  - cmake .. -G Xcode
+  - cmake --build . --config Debug
+  - cmake --build . --config Release
