@@ -256,35 +256,9 @@ function(jucer_project_end)
     set_target_properties(${target_name} PROPERTIES WIN32_EXECUTABLE TRUE)
   endif()
 
-  set_target_properties(${target_name} PROPERTIES OUTPUT_NAME "${JUCER_PROJECT_NAME}")
-
-  target_include_directories(${target_name} PRIVATE
-    "${CMAKE_CURRENT_BINARY_DIR}/JuceLibraryCode"
-    ${JUCER_PROJECT_INCLUDE_DIRS}
-  )
-
-  if(JUCER_FLAG_JUCE_PLUGINHOST_VST3)
-    if(NOT DEFINED VST3_SDK_FOLDER)
-      message(FATAL_ERROR "VST3_SDK_FOLDER must be defined")
-    endif()
-    get_filename_component(vst3_sdk_abs_path "${VST3_SDK_FOLDER}" ABSOLUTE)
-    if(NOT IS_DIRECTORY "${vst3_sdk_abs_path}")
-      message(WARNING "VST3_SDK_FOLDER: no such directory \"${VST3_SDK_FOLDER}\"")
-    endif()
-    target_include_directories(${target_name} PRIVATE "${VST3_SDK_FOLDER}")
-  endif()
-
-  target_compile_definitions(${target_name} PRIVATE ${JUCER_PREPROCESSOR_DEFINITIONS})
+  __set_common_target_properties(${target_name})
 
   if(APPLE)
-    target_compile_options(${target_name} PRIVATE -std=c++11)
-    target_compile_definitions(${target_name} PRIVATE
-      $<$<CONFIG:Debug>:_DEBUG=1>
-      $<$<CONFIG:Debug>:DEBUG=1>
-      $<$<NOT:$<CONFIG:Debug>>:_NDEBUG=1>
-      $<$<NOT:$<CONFIG:Debug>>:NDEBUG=1>
-    )
-
     if(JUCER_FLAG_JUCE_PLUGINHOST_AU)
       list(APPEND JUCER_PROJECT_OSX_FRAMEWORKS "AudioUnit" "CoreAudioKit")
     endif()
@@ -403,6 +377,41 @@ function(__generate_JuceHeader_header project_id)
   endforeach()
 
   configure_file("${Reprojucer.cmake_DIR}/JuceHeader.h" "JuceLibraryCode/JuceHeader.h")
+
+endfunction()
+
+
+function(__set_common_target_properties target_name)
+
+  set_target_properties(${target_name} PROPERTIES OUTPUT_NAME "${JUCER_PROJECT_NAME}")
+
+  target_include_directories(${target_name} PRIVATE
+    "${CMAKE_CURRENT_BINARY_DIR}/JuceLibraryCode"
+    ${JUCER_PROJECT_INCLUDE_DIRS}
+  )
+
+  if(JUCER_FLAG_JUCE_PLUGINHOST_VST3)
+    if(NOT DEFINED VST3_SDK_FOLDER)
+      message(FATAL_ERROR "VST3_SDK_FOLDER must be defined")
+    endif()
+    get_filename_component(vst3_sdk_abs_path "${VST3_SDK_FOLDER}" ABSOLUTE)
+    if(NOT IS_DIRECTORY "${vst3_sdk_abs_path}")
+      message(WARNING "VST3_SDK_FOLDER: no such directory \"${VST3_SDK_FOLDER}\"")
+    endif()
+    target_include_directories(${target_name} PRIVATE "${VST3_SDK_FOLDER}")
+  endif()
+
+  target_compile_definitions(${target_name} PRIVATE ${JUCER_PREPROCESSOR_DEFINITIONS})
+
+  if(APPLE)
+    target_compile_options(${target_name} PRIVATE -std=c++11)
+    target_compile_definitions(${target_name} PRIVATE
+      $<$<CONFIG:Debug>:_DEBUG=1>
+      $<$<CONFIG:Debug>:DEBUG=1>
+      $<$<NOT:$<CONFIG:Debug>>:_NDEBUG=1>
+      $<$<NOT:$<CONFIG:Debug>>:NDEBUG=1>
+    )
+  endif()
 
 endfunction()
 
