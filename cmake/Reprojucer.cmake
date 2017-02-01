@@ -437,6 +437,17 @@ function(__link_osx_frameworks target_name)
 endfunction()
 
 
+function(__bool_to_int bool_value out_int_value)
+
+  if(bool_value)
+    set(${out_int_value} 1 PARENT_SCOPE)
+  else()
+    set(${out_int_value} 0 PARENT_SCOPE)
+  endif()
+
+endfunction()
+
+
 function(__dec_to_hex dec_value out_hex_value)
 
   if(dec_value EQUAL 0)
