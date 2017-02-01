@@ -111,20 +111,40 @@ function(jucer_project_module module_name PATH_TAG module_path)
   list(APPEND JUCER_PROJECT_INCLUDE_DIRS "${module_path}")
   set(JUCER_PROJECT_INCLUDE_DIRS ${JUCER_PROJECT_INCLUDE_DIRS} PARENT_SCOPE)
 
-  get_filename_component(objcxx_module_file
-    "${module_path}/${module_name}/${module_name}.mm" ABSOLUTE
+  file(GLOB module_src_files
+    "${module_path}/${module_name}/*.cpp"
+    "${module_path}/${module_name}/*.mm"
   )
-  if(APPLE AND EXISTS "${objcxx_module_file}")
-    set(extension "mm")
-  else()
-    set(extension "cpp")
-  endif()
-  configure_file("${Reprojucer.cmake_DIR}/ModuleWrapper.cpp"
-    "JuceLibraryCode/${module_name}.${extension}"
-  )
-  list(APPEND JUCER_PROJECT_SOURCES
-    "${CMAKE_CURRENT_BINARY_DIR}/JuceLibraryCode/${module_name}.${extension}"
-  )
+
+  foreach(src_file ${module_src_files})
+    get_filename_component(src_file_extension "${src_file}" EXT)
+    if(src_file_extension STREQUAL ".mm")
+      if(APPLE)
+        set(to_compile TRUE)
+      endif()
+    elseif(APPLE)
+      string(REGEX REPLACE "${src_file_extension}$" ".mm" objcxx_src_file "${src_file}")
+      list(FIND module_src_files "${objcxx_src_file}" index)
+      if(index EQUAL -1)
+        set(to_compile TRUE)
+      endif()
+    else()
+      set(to_compile TRUE)
+    endif()
+
+    if(to_compile)
+      get_filename_component(src_file_basename "${src_file}" NAME)
+      configure_file("${Reprojucer.cmake_DIR}/JuceLibraryCode-Wrapper.cpp"
+        "JuceLibraryCode/${src_file_basename}"
+      )
+      list(APPEND JUCER_PROJECT_SOURCES
+        "${CMAKE_CURRENT_BINARY_DIR}/JuceLibraryCode/${src_file_basename}"
+      )
+    endif()
+
+    unset(to_compile)
+  endforeach()
+
   set(JUCER_PROJECT_SOURCES ${JUCER_PROJECT_SOURCES} PARENT_SCOPE)
 
   set(module_header_file "${module_path}/${module_name}/${module_name}.h")
