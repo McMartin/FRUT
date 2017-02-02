@@ -328,11 +328,7 @@ function(jucer_project_end)
         add_library(${full_target_name} MODULE ${VST_sources})
         target_link_libraries(${full_target_name} ${target_name}_Shared_Code)
         __generate_plist_file(${full_target_name} "VST" "BNDL" "????")
-        set_target_properties(${full_target_name} PROPERTIES
-          BUNDLE TRUE
-          BUNDLE_EXTENSION "vst"
-          XCODE_ATTRIBUTE_WRAPPER_EXTENSION "vst"
-        )
+        __set_bundle_properties(${full_target_name} "vst")
         __set_common_target_properties(${full_target_name})
         __set_JucePlugin_Build_defines(${full_target_name} "VSTPlugIn")
         __link_osx_frameworks(${target_name}_VST)
@@ -636,6 +632,17 @@ function(__generate_plist_file target_name plist_suffix package_type bundle_sign
       MACOSX_BUNDLE_INFO_PLIST "${CMAKE_CURRENT_BINARY_DIR}/${plist_filename}"
     )
   endif()
+
+endfunction()
+
+
+function(__set_bundle_properties target_name extension)
+
+  set_target_properties(${target_name} PROPERTIES
+    BUNDLE TRUE
+    BUNDLE_EXTENSION "${extension}"
+    XCODE_ATTRIBUTE_WRAPPER_EXTENSION "${extension}"
+  )
 
 endfunction()
 
