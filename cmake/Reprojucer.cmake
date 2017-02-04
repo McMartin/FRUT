@@ -85,6 +85,7 @@ function(jucer_audio_plugin_settings)
 
   set(plugin_setting_tags
     "BUILD_VST"
+    "BUILD_AUDIOUNIT"
     "PLUGIN_NAME"
     "PLUGIN_DESCRIPTION"
     "PLUGIN_MANUFACTURER"
@@ -96,6 +97,8 @@ function(jucer_audio_plugin_settings)
     "PLUGIN_MIDI_OUTPUT"
     "MIDI_EFFECT_PLUGIN"
     "KEY_FOCUS"
+    "PLUGIN_AU_EXPORT_PREFIX"
+    "PLUGIN_AU_MAIN_TYPE"
     "VST_CATEGORY"
   )
 
@@ -278,15 +281,15 @@ function(jucer_project_end)
   if(JUCER_PROJECT_TYPE STREQUAL "consoleapp")
     add_executable(${target_name} ${all_sources})
     __set_common_target_properties(${target_name})
-    __link_osx_frameworks(${target_name})
+    __link_osx_frameworks(${target_name} ${JUCER_PROJECT_OSX_FRAMEWORKS})
 
   elseif(JUCER_PROJECT_TYPE STREQUAL "guiapp")
     add_executable(${target_name} ${all_sources})
     set_target_properties(${target_name} PROPERTIES MACOSX_BUNDLE TRUE)
-    __generate_plist_file(${target_name} "App" "APPL" "????")
+    __generate_plist_file(${target_name} "App" "APPL" "????" "")
     set_target_properties(${target_name} PROPERTIES WIN32_EXECUTABLE TRUE)
     __set_common_target_properties(${target_name})
-    __link_osx_frameworks(${target_name})
+    __link_osx_frameworks(${target_name} ${JUCER_PROJECT_OSX_FRAMEWORKS})
 
   elseif(JUCER_PROJECT_TYPE STREQUAL "audioplug")
     if(APPLE)
@@ -327,15 +330,62 @@ function(jucer_project_end)
         set(full_target_name ${target_name}_VST)
         add_library(${full_target_name} MODULE ${VST_sources})
         target_link_libraries(${full_target_name} ${target_name}_Shared_Code)
-        __generate_plist_file(${full_target_name} "VST" "BNDL" "????")
-        set_target_properties(${full_target_name} PROPERTIES
-          BUNDLE TRUE
-          BUNDLE_EXTENSION "vst"
-          XCODE_ATTRIBUTE_WRAPPER_EXTENSION "vst"
-        )
+        __generate_plist_file(${full_target_name} "VST" "BNDL" "????" "")
+        __set_bundle_properties(${full_target_name} "vst")
         __set_common_target_properties(${full_target_name})
         __set_JucePlugin_Build_defines(${full_target_name} "VSTPlugIn")
-        __link_osx_frameworks(${target_name}_VST)
+        __link_osx_frameworks(${target_name}_VST ${JUCER_PROJECT_OSX_FRAMEWORKS})
+      endif()
+
+      if(JUCER_BUILD_AUDIOUNIT)
+        set(full_target_name ${target_name}_AU)
+        add_library(${full_target_name} MODULE ${AudioUnit_sources})
+        target_link_libraries(${full_target_name} ${target_name}_Shared_Code)
+
+        if(NOT DEFINED JUCER_PLUGIN_AU_MAIN_TYPE)
+          if(JUCER_MIDI_EFFECT_PLUGIN)
+            set(au_main_type_code "aumi")
+          elseif(JUCER_PLUGIN_IS_A_SYNTH)
+            set(au_main_type_code "aumu")
+          elseif(JUCER_PLUGIN_MIDI_INPUT)
+            set(au_main_type_code "aumf")
+          else()
+            set(au_main_type_code "aufx")
+          endif()
+        else()
+          set(au_main_type_code "${JUCER_PLUGIN_AU_MAIN_TYPE}")
+        endif()
+
+        set(audio_components_entries
+          "<key>AudioComponents</key>
+          <array>
+            <dict>
+              <key>description</key>
+              <string>${JUCER_PLUGIN_DESCRIPTION}</string>
+              <key>factoryFunction</key>
+              <string>${JUCER_PLUGIN_AU_EXPORT_PREFIX}Factory</string>
+              <key>manufacturer</key>
+              <string>${JUCER_PLUGIN_MANUFACTURER_CODE}</string>
+              <key>name</key>
+              <string>${JUCER_PLUGIN_MANUFACTURER}: ${JUCER_PLUGIN_NAME}</string>
+              <key>subtype</key>
+              <string>${JUCER_PLUGIN_CODE}</string>
+              <key>type</key>
+              <string>${au_main_type_code}</string>
+              <key>version</key>
+              <integer>${JUCER_PROJECT_VERSION_AS_HEX}</integer>
+            </dict>
+          </array>"
+        )
+
+        __generate_plist_file(${full_target_name} "AU" "BNDL" "????" "${audio_components_entries}")
+        __set_bundle_properties(${full_target_name} "component")
+        __set_common_target_properties(${full_target_name})
+        __set_JucePlugin_Build_defines(${full_target_name} "AudioUnitPlugIn")
+        set(au_plugin_osx_frameworks
+          ${JUCER_PROJECT_OSX_FRAMEWORKS} "AudioUnit" "CoreAudioKit"
+        )
+        __link_osx_frameworks(${target_name}_AU ${au_plugin_osx_frameworks})
       endif()
     else()
       add_library(${target_name} MODULE ${all_sources})
@@ -410,6 +460,9 @@ function(__generate_AppConfig_header project_id)
     __bool_to_int("${JUCER_BUILD_VST}" Build_VST_value)
     list(APPEND plugin_settings "Build_VST" "${Build_VST_value}")
 
+    __bool_to_int("${JUCER_BUILD_AUDIOUNIT}" Build_AU_value)
+    list(APPEND plugin_settings "Build_AU" "${Build_AU_value}")
+
     list(APPEND plugin_settings "Name" "\"${JUCER_PLUGIN_NAME}\"")
     list(APPEND plugin_settings "Desc" "\"${JUCER_PLUGIN_DESCRIPTION}\"")
     list(APPEND plugin_settings "Manufacturer" "\"${JUCER_PLUGIN_MANUFACTURER}\"")
@@ -462,6 +515,28 @@ function(__generate_AppConfig_header project_id)
       set(VSTCategory_value "${JUCER_VST_CATEGORY}")
     endif()
     list(APPEND plugin_settings "VSTCategory" "${VSTCategory_value}")
+
+    if(NOT DEFINED JUCER_PLUGIN_AU_MAIN_TYPE)
+      if(JUCER_MIDI_EFFECT_PLUGIN)
+        set(AUMainType_value "'aumi'")
+      elseif(JUCER_PLUGIN_IS_A_SYNTH)
+        set(AUMainType_value "kAudioUnitType_MusicDevice")
+      elseif(JUCER_PLUGIN_MIDI_INPUT)
+        set(AUMainType_value "kAudioUnitType_MusicEffect")
+      else()
+        set(AUMainType_value "kAudioUnitType_Effect")
+      endif()
+    else()
+      set(AUMainType_value "${JUCER_PLUGIN_AU_MAIN_TYPE}")
+    endif()
+    list(APPEND plugin_settings "AUMainType" "${AUMainType_value}")
+
+    list(APPEND plugin_settings "AUSubType" "JucePlugin_PluginCode")
+    list(APPEND plugin_settings "AUExportPrefix" "${JUCER_PLUGIN_AU_EXPORT_PREFIX}")
+    list(APPEND plugin_settings "AUExportPrefixQuoted"
+      "\"${JUCER_PLUGIN_AU_EXPORT_PREFIX}\""
+    )
+    list(APPEND plugin_settings "AUManufacturerCode" "JucePlugin_ManufacturerCode")
 
     list(APPEND plugin_settings "CFBundleIdentifier" "${JUCER_BUNDLE_IDENTIFIER}")
 
@@ -619,7 +694,7 @@ function(__set_common_target_properties target_name)
 endfunction()
 
 
-function(__generate_plist_file target_name plist_suffix package_type bundle_signature)
+function(__generate_plist_file target_name plist_suffix package_type bundle_signature extra_plist_entries)
 
   set(plist_filename "Info-${plist_suffix}.plist")
   if(CMAKE_GENERATOR STREQUAL "Xcode")
@@ -636,6 +711,17 @@ function(__generate_plist_file target_name plist_suffix package_type bundle_sign
       MACOSX_BUNDLE_INFO_PLIST "${CMAKE_CURRENT_BINARY_DIR}/${plist_filename}"
     )
   endif()
+
+endfunction()
+
+
+function(__set_bundle_properties target_name extension)
+
+  set_target_properties(${target_name} PROPERTIES
+    BUNDLE TRUE
+    BUNDLE_EXTENSION "${extension}"
+    XCODE_ATTRIBUTE_WRAPPER_EXTENSION "${extension}"
+  )
 
 endfunction()
 
@@ -670,13 +756,15 @@ endfunction()
 
 function(__link_osx_frameworks target_name)
 
+  set(osx_frameworks ${ARGN})
+
   if(APPLE)
     if(JUCER_FLAG_JUCE_PLUGINHOST_AU)
-      list(APPEND JUCER_PROJECT_OSX_FRAMEWORKS "AudioUnit" "CoreAudioKit")
+      list(APPEND osx_frameworks "AudioUnit" "CoreAudioKit")
     endif()
-    list(REMOVE_DUPLICATES JUCER_PROJECT_OSX_FRAMEWORKS)
-    list(SORT JUCER_PROJECT_OSX_FRAMEWORKS)
-    foreach(framework_name ${JUCER_PROJECT_OSX_FRAMEWORKS})
+    list(REMOVE_DUPLICATES osx_frameworks)
+    list(SORT osx_frameworks)
+    foreach(framework_name ${osx_frameworks})
       find_library(${framework_name}_framework ${framework_name})
       target_link_libraries(${target_name} "${${framework_name}_framework}")
     endforeach()
