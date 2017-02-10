@@ -31,7 +31,10 @@ int main(int argc, char* argv[])
     if (argc < 3)
     {
         std::cerr
-            << "usage: BinaryDataBuilder <BinaryData-files-output-dir> <resource-files>..."
+            << "usage: BinaryDataBuilder"
+            << " <BinaryData-files-output-dir>"
+            << " <BinaryData.cpp-size-limit>"
+            << " <resource-files>..."
             << std::endl;
         return 1;
     }
@@ -40,15 +43,16 @@ int main(int argc, char* argv[])
 
     Project project{args.at(1)};
 
+    const int maxSize = std::stoi(args.at(2));
+
     ResourceFile resourceFile{project};
 
-    for (auto i = 2u; i < args.size(); ++i)
+    for (auto i = 3u; i < args.size(); ++i)
     {
         resourceFile.addFile(File{args.at(i)});
     }
 
     Array<File> binaryDataFiles;
-    const int maxSize = 10 * 1024 * 1024;
 
     auto result = resourceFile.write(binaryDataFiles, maxSize);
 
