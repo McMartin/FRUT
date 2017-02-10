@@ -44,6 +44,7 @@ jucer_project_begin(
   # COMPANY_EMAIL
   PROJECT_TYPE "GUI Application"
   BUNDLE_IDENTIFIER "com.roli.jucehelloworld"
+  BINARYDATACPP_SIZE_LIMIT "Default"
   # PREPROCESSOR_DEFINITIONS
   PROJECT_ID "tTAKTK1s"
 )

@@ -46,6 +46,7 @@ jucer_project_begin(
   # COMPANY_EMAIL
   PROJECT_TYPE "GUI Application"
   BUNDLE_IDENTIFIER "com.yourcompany.JuceDemo"
+  BINARYDATACPP_SIZE_LIMIT "Default"
   PREPROCESSOR_DEFINITIONS "JUCE_UNIT_TESTS=1"
   PROJECT_ID "sBBIzr"
 )
