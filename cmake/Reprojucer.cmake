@@ -64,7 +64,7 @@ function(jucer_project_begin)
       elseif(tag STREQUAL "PROJECT_TYPE")
         list(FIND project_type_descs "${value}" project_type_index)
         if(project_type_index EQUAL -1)
-          message(FATAL_ERROR "Unsupported project type: \"${project_type_desc}\"\n"
+          message(FATAL_ERROR "Unsupported project type: \"${value}\"\n"
             "Supported project types: ${project_type_descs}"
           )
         endif()
