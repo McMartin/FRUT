@@ -47,6 +47,7 @@ function(jucer_project_begin)
   )
 
   set(project_type_descs "GUI Application" "Console Application" "Audio Plug-in")
+  set(project_types "guiapp" "consoleapp" "audioplug")
 
   foreach(element ${ARGN})
     if(NOT DEFINED tag)
@@ -78,7 +79,6 @@ function(jucer_project_begin)
             "Supported project types: ${project_type_descs}"
           )
         endif()
-        set(project_types "guiapp" "consoleapp" "audioplug")
         list(GET project_types ${project_type_index} value)
 
       endif()
