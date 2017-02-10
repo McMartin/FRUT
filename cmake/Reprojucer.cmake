@@ -35,8 +35,15 @@ function(jucer_project_begin)
   endif()
 
   set(project_setting_tags
-    "PROJECT_NAME" "PROJECT_VERSION" "COMPANY_NAME" "COMPANY_WEBSITE" "COMPANY_EMAIL"
-    "PROJECT_TYPE" "BUNDLE_IDENTIFIER" "PREPROCESSOR_DEFINITIONS" "PROJECT_ID"
+    "PROJECT_NAME"
+    "PROJECT_VERSION"
+    "COMPANY_NAME"
+    "COMPANY_WEBSITE"
+    "COMPANY_EMAIL"
+    "PROJECT_TYPE"
+    "BUNDLE_IDENTIFIER"
+    "PREPROCESSOR_DEFINITIONS"
+    "PROJECT_ID"
   )
   set(project_type_descs "GUI Application" "Console Application" "Audio Plug-in")
 
