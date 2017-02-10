@@ -665,6 +665,7 @@ function(__generate_JuceHeader_header project_id)
     set(BinaryDataBuilder_args
       "${CMAKE_CURRENT_BINARY_DIR}/JuceLibraryCode/"
       ${size_limit_in_bytes}
+      "BinaryData"
     )
     foreach(element ${JUCER_PROJECT_RESOURCES})
       list(APPEND BinaryDataBuilder_args "${CMAKE_CURRENT_LIST_DIR}/${element}")

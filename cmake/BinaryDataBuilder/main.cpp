@@ -34,6 +34,7 @@ int main(int argc, char* argv[])
             << "usage: BinaryDataBuilder"
             << " <BinaryData-files-output-dir>"
             << " <BinaryData.cpp-size-limit>"
+            << " <BinaryData-namespace>"
             << " <resource-files>..."
             << std::endl;
         return 1;
@@ -45,9 +46,12 @@ int main(int argc, char* argv[])
 
     const int maxSize = std::stoi(args.at(2));
 
-    ResourceFile resourceFile{project};
+    const std::string& dataNamespace = args.at(3);
 
-    for (auto i = 3u; i < args.size(); ++i)
+    ResourceFile resourceFile{project};
+    resourceFile.setClassName(dataNamespace);
+
+    for (auto i = 4u; i < args.size(); ++i)
     {
         resourceFile.addFile(File{args.at(i)});
     }
