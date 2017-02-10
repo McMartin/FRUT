@@ -686,8 +686,6 @@ function(__generate_JuceHeader_header project_id)
     endforeach()
     set(JUCER_PROJECT_SOURCES ${JUCER_PROJECT_SOURCES} PARENT_SCOPE)
     set(binary_data_include "#include \"BinaryData.h\"")
-  else()
-    set(binary_data_include "")
   endif()
 
   foreach(module_name ${JUCER_PROJECT_MODULES})
