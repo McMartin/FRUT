@@ -45,6 +45,7 @@ jucer_project_begin(
   PROJECT_TYPE "GUI Application"
   BUNDLE_IDENTIFIER "com.rawmaterialsoftware.OSCMonitor"
   BINARYDATACPP_SIZE_LIMIT "Default"
+  # BINARYDATA_NAMESPACE
   # PREPROCESSOR_DEFINITIONS
   PROJECT_ID "IhmIkj"
 )

@@ -50,6 +50,7 @@ jucer_project_begin(
   PROJECT_TYPE "GUI Application"
   BUNDLE_IDENTIFIER "com.yourcompany.AnimationAppExample"
   BINARYDATACPP_SIZE_LIMIT "Default"
+  # BINARYDATA_NAMESPACE
   # PREPROCESSOR_DEFINITIONS
   PROJECT_ID "LrATE6"
 )

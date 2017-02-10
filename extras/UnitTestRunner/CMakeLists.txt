@@ -45,6 +45,7 @@ jucer_project_begin(
   PROJECT_TYPE "Console Application"
   BUNDLE_IDENTIFIER "com.yourcompany.UnitTestRunner"
   BINARYDATACPP_SIZE_LIMIT "Default"
+  # BINARYDATA_NAMESPACE
   PREPROCESSOR_DEFINITIONS "JUCE_UNIT_TESTS=1"
   PROJECT_ID "Z2Xzcp"
 )

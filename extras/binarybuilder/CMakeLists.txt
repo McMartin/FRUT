@@ -45,6 +45,7 @@ jucer_project_begin(
   PROJECT_TYPE "Console Application"
   BUNDLE_IDENTIFIER "com.rawmaterialsoftware.binarybuilder"
   BINARYDATACPP_SIZE_LIMIT "Default"
+  # BINARYDATA_NAMESPACE
   # PREPROCESSOR_DEFINITIONS
   PROJECT_ID "3t6YqETY1"
 )

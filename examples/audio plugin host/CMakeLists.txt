@@ -53,6 +53,7 @@ jucer_project_begin(
   PROJECT_TYPE "GUI Application"
   BUNDLE_IDENTIFIER "com.roli.pluginhost"
   BINARYDATACPP_SIZE_LIMIT "Default"
+  # BINARYDATA_NAMESPACE
   # PREPROCESSOR_DEFINITIONS
   PROJECT_ID "NTe0XB0ij"
 )
