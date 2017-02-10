@@ -42,12 +42,18 @@ function(jucer_project_begin)
     "COMPANY_EMAIL"
     "PROJECT_TYPE"
     "BUNDLE_IDENTIFIER"
+    "BINARYDATACPP_SIZE_LIMIT"
     "PREPROCESSOR_DEFINITIONS"
     "PROJECT_ID"
   )
 
   set(project_type_descs "GUI Application" "Console Application" "Audio Plug-in")
   set(project_types "guiapp" "consoleapp" "audioplug")
+
+  set(size_limit_descs "Default" "20.0 MB" "10.0 MB" "6.0 MB" "2.0 MB" "1.0 MB" "512.0 KB"
+    "256.0 KB" "128.0 KB" "64.0 KB"
+  )
+  set(size_limits 10240 20480 10240 6144 2048 1024 512 256 128 64)
 
   foreach(element ${ARGN})
     if(NOT DEFINED tag)
@@ -80,6 +86,16 @@ function(jucer_project_begin)
           )
         endif()
         list(GET project_types ${project_type_index} value)
+
+      elseif(tag STREQUAL "BINARYDATACPP_SIZE_LIMIT")
+        list(FIND size_limit_descs "${value}" size_limit_index)
+        if(size_limit_index EQUAL -1)
+          message(FATAL_ERROR
+            "Unsupported value for BINARYDATACPP_SIZE_LIMIT: \"${value}\"\n"
+            "Supported values: ${size_limit_descs}"
+          )
+        endif()
+        list(GET size_limits ${size_limit_index} value)
 
       endif()
 
@@ -636,7 +652,16 @@ function(__generate_JuceHeader_header project_id)
     endif()
     message("BinaryDataBuilder has been successfully built")
 
-    math(EXPR size_limit_in_bytes "10 * 1024 * 1024")
+    if(NOT DEFINED JUCER_BINARYDATACPP_SIZE_LIMIT)
+      set(JUCER_BINARYDATACPP_SIZE_LIMIT 10240)
+    endif()
+    math(EXPR size_limit_in_bytes "${JUCER_BINARYDATACPP_SIZE_LIMIT} * 1024")
+    if(NOT DEFINED size_limit_in_bytes)
+      message(FATAL_ERROR
+        "Error when computing size_limit_in_bytes = "
+        "${JUCER_BINARYDATACPP_SIZE_LIMIT} * 1024"
+      )
+    endif()
     set(BinaryDataBuilder_args
       "${CMAKE_CURRENT_BINARY_DIR}/JuceLibraryCode/"
       ${size_limit_in_bytes}
