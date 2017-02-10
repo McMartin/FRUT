@@ -43,6 +43,7 @@ function(jucer_project_begin)
     "PROJECT_TYPE"
     "BUNDLE_IDENTIFIER"
     "BINARYDATACPP_SIZE_LIMIT"
+    "BINARYDATA_NAMESPACE"
     "PREPROCESSOR_DEFINITIONS"
     "PROJECT_ID"
   )
@@ -662,10 +663,13 @@ function(__generate_JuceHeader_header project_id)
         "${JUCER_BINARYDATACPP_SIZE_LIMIT} * 1024"
       )
     endif()
+    if(NOT DEFINED JUCER_BINARYDATA_NAMESPACE)
+      set(JUCER_BINARYDATA_NAMESPACE "BinaryData")
+    endif()
     set(BinaryDataBuilder_args
       "${CMAKE_CURRENT_BINARY_DIR}/JuceLibraryCode/"
       ${size_limit_in_bytes}
-      "BinaryData"
+      "${JUCER_BINARYDATA_NAMESPACE}"
     )
     foreach(element ${JUCER_PROJECT_RESOURCES})
       list(APPEND BinaryDataBuilder_args "${CMAKE_CURRENT_LIST_DIR}/${element}")
