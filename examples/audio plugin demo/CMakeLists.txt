@@ -45,6 +45,8 @@ jucer_project_begin(
   COMPANY_EMAIL "info@juce.com"
   PROJECT_TYPE "Audio Plug-in"
   BUNDLE_IDENTIFIER "com.juce.JuceDemoPlugin"
+  BINARYDATACPP_SIZE_LIMIT "Default"
+  # BINARYDATA_NAMESPACE
   # PREPROCESSOR_DEFINITIONS
   PROJECT_ID "0nRd9LLGO"
 )

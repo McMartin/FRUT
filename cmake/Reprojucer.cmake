@@ -35,10 +35,26 @@ function(jucer_project_begin)
   endif()
 
   set(project_setting_tags
-    "PROJECT_NAME" "PROJECT_VERSION" "COMPANY_NAME" "COMPANY_WEBSITE" "COMPANY_EMAIL"
-    "PROJECT_TYPE" "BUNDLE_IDENTIFIER" "PREPROCESSOR_DEFINITIONS" "PROJECT_ID"
+    "PROJECT_NAME"
+    "PROJECT_VERSION"
+    "COMPANY_NAME"
+    "COMPANY_WEBSITE"
+    "COMPANY_EMAIL"
+    "PROJECT_TYPE"
+    "BUNDLE_IDENTIFIER"
+    "BINARYDATACPP_SIZE_LIMIT"
+    "BINARYDATA_NAMESPACE"
+    "PREPROCESSOR_DEFINITIONS"
+    "PROJECT_ID"
   )
+
   set(project_type_descs "GUI Application" "Console Application" "Audio Plug-in")
+  set(project_types "guiapp" "consoleapp" "audioplug")
+
+  set(size_limit_descs "Default" "20.0 MB" "10.0 MB" "6.0 MB" "2.0 MB" "1.0 MB" "512.0 KB"
+    "256.0 KB" "128.0 KB" "64.0 KB"
+  )
+  set(size_limits 10240 20480 10240 6144 2048 1024 512 256 128 64)
 
   foreach(element ${ARGN})
     if(NOT DEFINED tag)
@@ -58,18 +74,30 @@ function(jucer_project_begin)
       endif()
       if(tag STREQUAL "PROJECT_NAME")
         project(${value})
+
       elseif(tag STREQUAL "PROJECT_VERSION")
         __version_to_hex("${value}" hex_value)
         set(JUCER_PROJECT_VERSION_AS_HEX "${hex_value}" PARENT_SCOPE)
+
       elseif(tag STREQUAL "PROJECT_TYPE")
         list(FIND project_type_descs "${value}" project_type_index)
         if(project_type_index EQUAL -1)
-          message(FATAL_ERROR "Unsupported project type: \"${project_type_desc}\"\n"
+          message(FATAL_ERROR "Unsupported project type: \"${value}\"\n"
             "Supported project types: ${project_type_descs}"
           )
         endif()
-        set(project_types "guiapp" "consoleapp" "audioplug")
         list(GET project_types ${project_type_index} value)
+
+      elseif(tag STREQUAL "BINARYDATACPP_SIZE_LIMIT")
+        list(FIND size_limit_descs "${value}" size_limit_index)
+        if(size_limit_index EQUAL -1)
+          message(FATAL_ERROR
+            "Unsupported value for BINARYDATACPP_SIZE_LIMIT: \"${value}\"\n"
+            "Supported values: ${size_limit_descs}"
+          )
+        endif()
+        list(GET size_limits ${size_limit_index} value)
+
       endif()
 
       set(JUCER_${tag} "${value}" PARENT_SCOPE)
@@ -624,7 +652,25 @@ function(__generate_JuceHeader_header project_id)
       message(FATAL_ERROR "Failed to build BinaryDataBuilder")
     endif()
     message("BinaryDataBuilder has been successfully built")
-    list(APPEND BinaryDataBuilder_args "${CMAKE_CURRENT_BINARY_DIR}/JuceLibraryCode/")
+
+    if(NOT DEFINED JUCER_BINARYDATACPP_SIZE_LIMIT)
+      set(JUCER_BINARYDATACPP_SIZE_LIMIT 10240)
+    endif()
+    math(EXPR size_limit_in_bytes "${JUCER_BINARYDATACPP_SIZE_LIMIT} * 1024")
+    if(NOT DEFINED size_limit_in_bytes)
+      message(FATAL_ERROR
+        "Error when computing size_limit_in_bytes = "
+        "${JUCER_BINARYDATACPP_SIZE_LIMIT} * 1024"
+      )
+    endif()
+    if(NOT DEFINED JUCER_BINARYDATA_NAMESPACE)
+      set(JUCER_BINARYDATA_NAMESPACE "BinaryData")
+    endif()
+    set(BinaryDataBuilder_args
+      "${CMAKE_CURRENT_BINARY_DIR}/JuceLibraryCode/"
+      ${size_limit_in_bytes}
+      "${JUCER_BINARYDATA_NAMESPACE}"
+    )
     foreach(element ${JUCER_PROJECT_RESOURCES})
       list(APPEND BinaryDataBuilder_args "${CMAKE_CURRENT_LIST_DIR}/${element}")
     endforeach()
@@ -637,6 +683,7 @@ function(__generate_JuceHeader_header project_id)
     if(NOT BinaryDataBuilder_return_code EQUAL 0)
       message(FATAL_ERROR "Error when executing BinaryDataBuilder")
     endif()
+
     foreach(filename ${binary_data_filenames})
       list(APPEND JUCER_PROJECT_SOURCES
         "${CMAKE_CURRENT_BINARY_DIR}/JuceLibraryCode/${filename}"
@@ -644,8 +691,6 @@ function(__generate_JuceHeader_header project_id)
     endforeach()
     set(JUCER_PROJECT_SOURCES ${JUCER_PROJECT_SOURCES} PARENT_SCOPE)
     set(binary_data_include "#include \"BinaryData.h\"")
-  else()
-    set(binary_data_include "")
   endif()
 
   foreach(module_name ${JUCER_PROJECT_MODULES})
