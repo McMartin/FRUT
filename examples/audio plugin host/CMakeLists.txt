@@ -36,11 +36,6 @@ get_filename_component(Plugin_Host_jucer_DIR "${Plugin_Host_jucer_FILE}" DIRECTO
 file(COPY "${Plugin_Host_jucer_DIR}/Source" DESTINATION "${CMAKE_CURRENT_LIST_DIR}")
 
 
-if(WIN32)
-  set(VST3_SDK_FOLDER "C:/SDKs/VST3 SDK")
-else()
-  set(VST3_SDK_FOLDER "~/SDKs/VST3 SDK")
-endif()
 set(VST3_SDK_FOLDER "${VST3_SDK_FOLDER}" CACHE PATH "VST3 SDK Folder")
 
 

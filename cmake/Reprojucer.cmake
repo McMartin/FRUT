@@ -22,6 +22,13 @@
 set(Reprojucer.cmake_DIR "${CMAKE_CURRENT_LIST_DIR}")
 
 
+if(WIN32)
+  set(VST3_SDK_FOLDER "C:/SDKs/VST3 SDK")
+else()
+  set(VST3_SDK_FOLDER "~/SDKs/VST3 SDK")
+endif()
+
+
 function(jucer_project_begin)
 
   list(FIND ARGN "PROJECT_NAME" project_name_tag_index)
