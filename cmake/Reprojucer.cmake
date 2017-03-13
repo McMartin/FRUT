@@ -641,7 +641,7 @@ function(__generate_JuceHeader_header project_id)
   if(resources_count GREATER 0)
     message("Building BinaryDataBuilder for ${JUCER_PROJECT_NAME}")
     try_compile(BinaryDataBuilder
-      "${Reprojucer.cmake_DIR}/BinaryDataBuilder/_build"
+      "${Reprojucer.cmake_DIR}/BinaryDataBuilder/_build/${CMAKE_GENERATOR}"
       "${Reprojucer.cmake_DIR}/BinaryDataBuilder"
       BinaryDataBuilder install
       CMAKE_FLAGS
