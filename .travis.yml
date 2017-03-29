@@ -16,7 +16,7 @@ install:
 script:
   - mkdir "examples/audio plugin host/build"
   - cd "examples/audio plugin host/build"
-  - cmake .. -G Xcode -DVST3_SDK_FOLDER=~/SDKs/VST_SDK/VST3_SDK
+  - cmake .. -G Xcode
   - cmake --build . --config Debug
   - cmake --build . --config Release
 

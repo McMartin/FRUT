@@ -16,7 +16,7 @@ install:
 build_script:
   - mkdir "examples\audio plugin host\build"
   - cd "examples\audio plugin host\build"
-  - cmake .. -DVST3_SDK_FOLDER=C:\SDKs\VST_SDK\VST3_SDK
+  - cmake ..
   - cmake --build . --config Debug
   - cmake --build . --config Release
 
