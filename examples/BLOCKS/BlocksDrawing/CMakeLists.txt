@@ -34,8 +34,6 @@ set(BlocksDrawing_jucer_FILE
 
 get_filename_component(BlocksDrawing_jucer_DIR "${BlocksDrawing_jucer_FILE}" DIRECTORY)
 
-file(COPY "${BlocksDrawing_jucer_DIR}/Source" DESTINATION "${CMAKE_CURRENT_LIST_DIR}")
-
 
 jucer_project_begin(
   PROJECT_NAME "BlocksDrawing"
@@ -52,8 +50,8 @@ jucer_project_begin(
 )
 
 jucer_project_files("BlocksDrawing/Source"
-  "Source/Main.cpp"
-  "Source/MainComponent.h"
+  "${BlocksDrawing_jucer_DIR}/Source/Main.cpp"
+  "${BlocksDrawing_jucer_DIR}/Source/MainComponent.h"
 )
 
 jucer_project_module(

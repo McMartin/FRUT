@@ -36,8 +36,6 @@ get_filename_component(SimpleFFTExample_jucer_DIR
   "${SimpleFFTExample_jucer_FILE}" DIRECTORY
 )
 
-file(COPY "${SimpleFFTExample_jucer_DIR}/Source" DESTINATION "${CMAKE_CURRENT_LIST_DIR}")
-
 
 jucer_project_begin(
   PROJECT_NAME "SimpleFFTExample"
@@ -54,8 +52,8 @@ jucer_project_begin(
 )
 
 jucer_project_files("SimpleFFTExample/Source"
-  "Source/Main.cpp"
-  "Source/SpectrogramComponent.h"
+  "${SimpleFFTExample_jucer_DIR}/Source/Main.cpp"
+  "${SimpleFFTExample_jucer_DIR}/Source/SpectrogramComponent.h"
 )
 
 jucer_project_module(

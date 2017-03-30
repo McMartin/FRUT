@@ -33,8 +33,6 @@ set(Plugin_Host_jucer_FILE "${JUCE_ROOT}/examples/audio plugin host/Plugin Host.
 
 get_filename_component(Plugin_Host_jucer_DIR "${Plugin_Host_jucer_FILE}" DIRECTORY)
 
-file(COPY "${Plugin_Host_jucer_DIR}/Source" DESTINATION "${CMAKE_CURRENT_LIST_DIR}")
-
 
 if(WIN32)
   set(VST3_SDK_FOLDER "C:/SDKs/VST_SDK/VST3_SDK")
@@ -59,21 +57,21 @@ jucer_project_begin(
 )
 
 jucer_project_files("Plugin Host/Source"
-  "Source/FilterGraph.cpp"
-  "Source/FilterGraph.h"
-  "Source/GraphEditorPanel.cpp"
-  "Source/GraphEditorPanel.h"
-  "Source/HostStartup.cpp"
-  "Source/InternalFilters.cpp"
-  "Source/InternalFilters.h"
-  "Source/MainHostWindow.cpp"
-  "Source/MainHostWindow.h"
+  "${Plugin_Host_jucer_DIR}/Source/FilterGraph.cpp"
+  "${Plugin_Host_jucer_DIR}/Source/FilterGraph.h"
+  "${Plugin_Host_jucer_DIR}/Source/GraphEditorPanel.cpp"
+  "${Plugin_Host_jucer_DIR}/Source/GraphEditorPanel.h"
+  "${Plugin_Host_jucer_DIR}/Source/HostStartup.cpp"
+  "${Plugin_Host_jucer_DIR}/Source/InternalFilters.cpp"
+  "${Plugin_Host_jucer_DIR}/Source/InternalFilters.h"
+  "${Plugin_Host_jucer_DIR}/Source/MainHostWindow.cpp"
+  "${Plugin_Host_jucer_DIR}/Source/MainHostWindow.h"
 )
 
 if(EXISTS "${Plugin_Host_jucer_DIR}/Source/FilterIOConfiguration.cpp")
   jucer_project_files("Plugin Host/Source"
-    "Source/FilterIOConfiguration.cpp"
-    "Source/FilterIOConfiguration.h"
+    "${Plugin_Host_jucer_DIR}/Source/FilterIOConfiguration.cpp"
+    "${Plugin_Host_jucer_DIR}/Source/FilterIOConfiguration.h"
   )
 endif()
 

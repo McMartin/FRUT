@@ -36,10 +36,6 @@ get_filename_component(PluckedStringsDemo_jucer_DIR
   "${PluckedStringsDemo_jucer_FILE}" DIRECTORY
 )
 
-file(COPY "${PluckedStringsDemo_jucer_DIR}/Source"
-  DESTINATION "${CMAKE_CURRENT_LIST_DIR}"
-)
-
 
 jucer_project_begin(
   PROJECT_NAME "PluckedStringsDemo"
@@ -56,10 +52,10 @@ jucer_project_begin(
 )
 
 jucer_project_files("PluckedStringsDemo/Source"
-  "Source/Main.cpp"
-  "Source/StringComponent.h"
-  "Source/StringDemoComponent.h"
-  "Source/StringSynthesiser.h"
+  "${PluckedStringsDemo_jucer_DIR}/Source/Main.cpp"
+  "${PluckedStringsDemo_jucer_DIR}/Source/StringComponent.h"
+  "${PluckedStringsDemo_jucer_DIR}/Source/StringDemoComponent.h"
+  "${PluckedStringsDemo_jucer_DIR}/Source/StringSynthesiser.h"
 )
 
 jucer_project_module(

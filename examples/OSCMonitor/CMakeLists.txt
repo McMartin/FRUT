@@ -33,8 +33,6 @@ set(OSCMonitor_jucer_FILE "${JUCE_ROOT}/examples/OSCMonitor/OSCMonitor.jucer"
 
 get_filename_component(OSCMonitor_jucer_DIR "${OSCMonitor_jucer_FILE}" DIRECTORY)
 
-file(COPY "${OSCMonitor_jucer_DIR}/Source" DESTINATION "${CMAKE_CURRENT_LIST_DIR}")
-
 
 jucer_project_begin(
   PROJECT_NAME "OSCMonitor"
@@ -51,9 +49,9 @@ jucer_project_begin(
 )
 
 jucer_project_files("OSCMonitor/Source"
-  "Source/Main.cpp"
-  "Source/MainComponent.h"
-  "Source/OSCLogListBox.h"
+  "${OSCMonitor_jucer_DIR}/Source/Main.cpp"
+  "${OSCMonitor_jucer_DIR}/Source/MainComponent.h"
+  "${OSCMonitor_jucer_DIR}/Source/OSCLogListBox.h"
 )
 
 jucer_project_module(

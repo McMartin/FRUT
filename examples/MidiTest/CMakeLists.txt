@@ -33,8 +33,6 @@ set(MidiTest_jucer_FILE "${JUCE_ROOT}/examples/MidiTest/MidiTest.jucer"
 
 get_filename_component(MidiTest_jucer_DIR "${MidiTest_jucer_FILE}" DIRECTORY)
 
-file(COPY "${MidiTest_jucer_DIR}/Source" DESTINATION "${CMAKE_CURRENT_LIST_DIR}")
-
 
 jucer_project_begin(
   PROJECT_NAME "MidiTest"
@@ -51,9 +49,9 @@ jucer_project_begin(
 )
 
 jucer_project_files("MidiTest/Source"
-  "Source/Main.cpp"
-  "Source/MainComponent.cpp"
-  "Source/MainComponent.h"
+  "${MidiTest_jucer_DIR}/Source/Main.cpp"
+  "${MidiTest_jucer_DIR}/Source/MainComponent.cpp"
+  "${MidiTest_jucer_DIR}/Source/MainComponent.h"
 )
 
 jucer_project_module(

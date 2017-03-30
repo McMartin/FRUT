@@ -33,8 +33,6 @@ set(MPETest_jucer_FILE "${JUCE_ROOT}/examples/MPETest/MPETest.jucer"
 
 get_filename_component(MPETest_jucer_DIR "${MPETest_jucer_FILE}" DIRECTORY)
 
-file(COPY "${MPETest_jucer_DIR}/Source" DESTINATION "${CMAKE_CURRENT_LIST_DIR}")
-
 
 jucer_project_begin(
   PROJECT_NAME "MPETest"
@@ -51,13 +49,13 @@ jucer_project_begin(
 )
 
 jucer_project_files("MPETest/Source"
-  "Source/Main.cpp"
-  "Source/MainComponent.h"
-  "Source/MPEDemoSynthVoice.h"
-  "Source/MPESetupComponent.h"
-  "Source/Visualiser.h"
-  "Source/ZoneColourPicker.h"
-  "Source/ZoneLayoutComponent.h"
+  "${MPETest_jucer_DIR}/Source/Main.cpp"
+  "${MPETest_jucer_DIR}/Source/MainComponent.h"
+  "${MPETest_jucer_DIR}/Source/MPEDemoSynthVoice.h"
+  "${MPETest_jucer_DIR}/Source/MPESetupComponent.h"
+  "${MPETest_jucer_DIR}/Source/Visualiser.h"
+  "${MPETest_jucer_DIR}/Source/ZoneColourPicker.h"
+  "${MPETest_jucer_DIR}/Source/ZoneLayoutComponent.h"
 )
 
 jucer_project_module(

@@ -36,10 +36,6 @@ get_filename_component(NetworkGraphicsDemo_jucer_DIR
   "${NetworkGraphicsDemo_jucer_FILE}" DIRECTORY
 )
 
-file(COPY "${NetworkGraphicsDemo_jucer_DIR}/Source"
-  DESTINATION "${CMAKE_CURRENT_LIST_DIR}"
-)
-
 
 jucer_project_begin(
   PROJECT_NAME "JUCE Network Graphics Demo"
@@ -56,11 +52,11 @@ jucer_project_begin(
 )
 
 jucer_project_files("NetworkGraphicsDemo/Source"
-  "Source/Demos.h"
-  "Source/Main.cpp"
-  "Source/MasterComponent.h"
-  "Source/SharedCanvas.h"
-  "Source/SlaveComponent.h"
+  "${NetworkGraphicsDemo_jucer_DIR}/Source/Demos.h"
+  "${NetworkGraphicsDemo_jucer_DIR}/Source/Main.cpp"
+  "${NetworkGraphicsDemo_jucer_DIR}/Source/MasterComponent.h"
+  "${NetworkGraphicsDemo_jucer_DIR}/Source/SharedCanvas.h"
+  "${NetworkGraphicsDemo_jucer_DIR}/Source/SlaveComponent.h"
 )
 
 jucer_project_module(

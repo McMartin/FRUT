@@ -34,8 +34,6 @@ set(BlocksMonitor_jucer_FILE
 
 get_filename_component(BlocksMonitor_jucer_DIR "${BlocksMonitor_jucer_FILE}" DIRECTORY)
 
-file(COPY "${BlocksMonitor_jucer_DIR}/Source" DESTINATION "${CMAKE_CURRENT_LIST_DIR}")
-
 
 jucer_project_begin(
   PROJECT_NAME "BlocksMonitor"
@@ -52,9 +50,9 @@ jucer_project_begin(
 )
 
 jucer_project_files("BlocksMonitor/Source"
-  "Source/BlockComponents.h"
-  "Source/Main.cpp"
-  "Source/MainComponent.h"
+  "${BlocksMonitor_jucer_DIR}/Source/BlockComponents.h"
+  "${BlocksMonitor_jucer_DIR}/Source/Main.cpp"
+  "${BlocksMonitor_jucer_DIR}/Source/MainComponent.h"
 )
 
 jucer_project_module(

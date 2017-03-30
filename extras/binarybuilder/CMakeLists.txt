@@ -33,8 +33,6 @@ set(BinaryBuilder_jucer_FILE "${JUCE_ROOT}/extras/BinaryBuilder/BinaryBuilder.ju
 
 get_filename_component(BinaryBuilder_jucer_DIR "${BinaryBuilder_jucer_FILE}" DIRECTORY)
 
-file(COPY "${BinaryBuilder_jucer_DIR}/Source" DESTINATION "${CMAKE_CURRENT_LIST_DIR}")
-
 
 jucer_project_begin(
   PROJECT_NAME "BinaryBuilder"
@@ -51,7 +49,7 @@ jucer_project_begin(
 )
 
 jucer_project_files("BinaryBuilder/Source"
-  "Source/Main.cpp"
+  "${BinaryBuilder_jucer_DIR}/Source/Main.cpp"
 )
 
 jucer_project_module(

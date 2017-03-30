@@ -36,10 +36,6 @@ get_filename_component(ComponentTutorialExample_jucer_DIR
   "${ComponentTutorialExample_jucer_FILE}" DIRECTORY
 )
 
-file(COPY "${ComponentTutorialExample_jucer_DIR}/Source"
-  DESTINATION "${CMAKE_CURRENT_LIST_DIR}"
-)
-
 
 jucer_project_begin(
   PROJECT_NAME "ComponentTutorialExample"
@@ -56,11 +52,11 @@ jucer_project_begin(
 )
 
 jucer_project_files("ComponentTutorialExample/Source"
-  "Source/Main.cpp"
-  "Source/MainComponent.cpp"
-  "Source/MainComponent.h"
-  "Source/ToggleLightComponent.h"
-  "Source/ToggleLightGridComponent.h"
+  "${ComponentTutorialExample_jucer_DIR}/Source/Main.cpp"
+  "${ComponentTutorialExample_jucer_DIR}/Source/MainComponent.cpp"
+  "${ComponentTutorialExample_jucer_DIR}/Source/MainComponent.h"
+  "${ComponentTutorialExample_jucer_DIR}/Source/ToggleLightComponent.h"
+  "${ComponentTutorialExample_jucer_DIR}/Source/ToggleLightGridComponent.h"
 )
 
 jucer_project_module(
