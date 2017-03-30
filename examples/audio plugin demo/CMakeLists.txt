@@ -34,8 +34,6 @@ set(JuceDemoPlugin_jucer_FILE
 
 get_filename_component(JuceDemoPlugin_jucer_DIR "${JuceDemoPlugin_jucer_FILE}" DIRECTORY)
 
-file(COPY "${JuceDemoPlugin_jucer_DIR}/Source" DESTINATION "${CMAKE_CURRENT_LIST_DIR}")
-
 
 jucer_project_begin(
   PROJECT_NAME "JuceDemoPlugin"
@@ -71,11 +69,11 @@ jucer_audio_plugin_settings(
 )
 
 jucer_project_files("JuceDemoPlugin/Source"
-  "Source/PluginEditor.cpp"
-  "Source/PluginEditor.h"
-  "Source/PluginProcessor.cpp"
-  "Source/PluginProcessor.h"
-  "Source/SinewaveSynth.h"
+  "${JuceDemoPlugin_jucer_DIR}/Source/PluginEditor.cpp"
+  "${JuceDemoPlugin_jucer_DIR}/Source/PluginEditor.h"
+  "${JuceDemoPlugin_jucer_DIR}/Source/PluginProcessor.cpp"
+  "${JuceDemoPlugin_jucer_DIR}/Source/PluginProcessor.h"
+  "${JuceDemoPlugin_jucer_DIR}/Source/SinewaveSynth.h"
 )
 
 jucer_project_module(

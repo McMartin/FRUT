@@ -36,10 +36,6 @@ get_filename_component(AudioPerformanceTest_jucer_DIR
   "${AudioPerformanceTest_jucer_FILE}" DIRECTORY
 )
 
-file(COPY "${AudioPerformanceTest_jucer_DIR}/Source"
-  DESTINATION "${CMAKE_CURRENT_LIST_DIR}"
-)
-
 
 jucer_project_begin(
   PROJECT_NAME "AudioPerformanceTest"
@@ -56,8 +52,8 @@ jucer_project_begin(
 )
 
 jucer_project_files("AudioPerformanceTest/Source"
-  "Source/Main.cpp"
-  "Source/MainComponent.h"
+  "${AudioPerformanceTest_jucer_DIR}/Source/Main.cpp"
+  "${AudioPerformanceTest_jucer_DIR}/Source/MainComponent.h"
 )
 
 jucer_project_module(

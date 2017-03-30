@@ -34,8 +34,6 @@ set(BlocksSynth_jucer_FILE
 
 get_filename_component(BlocksSynth_jucer_DIR "${BlocksSynth_jucer_FILE}" DIRECTORY)
 
-file(COPY "${BlocksSynth_jucer_DIR}/Source" DESTINATION "${CMAKE_CURRENT_LIST_DIR}")
-
 
 jucer_project_begin(
   PROJECT_NAME "BlocksSynth"
@@ -52,13 +50,13 @@ jucer_project_begin(
 )
 
 jucer_project_files("BlocksSynth/Source"
-  "Source/Main.cpp"
-  "Source/MainComponent.h"
+  "${BlocksSynth_jucer_DIR}/Source/Main.cpp"
+  "${BlocksSynth_jucer_DIR}/Source/MainComponent.h"
 )
 
 jucer_project_files("BlocksSynth/Source/Audio"
-  "Source/Audio.h"
-  "Source/Oscillators.h"
+  "${BlocksSynth_jucer_DIR}/Source/Audio.h"
+  "${BlocksSynth_jucer_DIR}/Source/Oscillators.h"
 )
 
 jucer_project_module(

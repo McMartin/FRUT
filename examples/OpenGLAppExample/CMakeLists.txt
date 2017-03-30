@@ -36,8 +36,6 @@ get_filename_component(OpenGLAppExample_jucer_DIR
   "${OpenGLAppExample_jucer_FILE}" DIRECTORY
 )
 
-file(COPY "${OpenGLAppExample_jucer_DIR}/Source" DESTINATION "${CMAKE_CURRENT_LIST_DIR}")
-
 
 jucer_project_begin(
   PROJECT_NAME "OpenGLAppExample"
@@ -54,13 +52,13 @@ jucer_project_begin(
 )
 
 jucer_project_files("OpenGLAppExample/Source"
-  "Source/MainComponent.cpp"
-  "Source/Main.cpp"
-  "Source/Resources/WavefrontObjParser.h"
+  "${OpenGLAppExample_jucer_DIR}/Source/MainComponent.cpp"
+  "${OpenGLAppExample_jucer_DIR}/Source/Main.cpp"
+  "${OpenGLAppExample_jucer_DIR}/Source/Resources/WavefrontObjParser.h"
 )
 
 jucer_project_resources("OpenGLAppExample/Source/Resources"
-  "Source/Resources/teapot.obj"
+  "${OpenGLAppExample_jucer_DIR}/Source/Resources/teapot.obj"
 )
 
 jucer_project_module(

@@ -671,8 +671,9 @@ function(__generate_JuceHeader_header project_id)
       ${size_limit_in_bytes}
       "${JUCER_BINARYDATA_NAMESPACE}"
     )
-    foreach(element ${JUCER_PROJECT_RESOURCES})
-      list(APPEND BinaryDataBuilder_args "${CMAKE_CURRENT_LIST_DIR}/${element}")
+    foreach(resource_path ${JUCER_PROJECT_RESOURCES})
+      get_filename_component(resource_abs_path "${resource_path}" ABSOLUTE)
+      list(APPEND BinaryDataBuilder_args "${resource_abs_path}")
     endforeach()
     execute_process(
       COMMAND "${CMAKE_CURRENT_BINARY_DIR}/BinaryDataBuilder/BinaryDataBuilder"

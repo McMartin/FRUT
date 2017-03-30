@@ -36,8 +36,6 @@ get_filename_component(AudioAppExample_jucer_DIR
   "${AudioAppExample_jucer_FILE}" DIRECTORY
 )
 
-file(COPY "${AudioAppExample_jucer_DIR}/Source" DESTINATION "${CMAKE_CURRENT_LIST_DIR}")
-
 
 jucer_project_begin(
   PROJECT_NAME "AudioAppExample"
@@ -54,8 +52,8 @@ jucer_project_begin(
 )
 
 jucer_project_files("AudioAppExample/Source"
-  "Source/Main.cpp"
-  "Source/MainComponent.cpp"
+  "${AudioAppExample_jucer_DIR}/Source/Main.cpp"
+  "${AudioAppExample_jucer_DIR}/Source/MainComponent.cpp"
 )
 
 jucer_project_module(

@@ -36,10 +36,6 @@ get_filename_component(AnimationAppExample_jucer_DIR
   "${AnimationAppExample_jucer_FILE}" DIRECTORY
 )
 
-file(COPY "${AnimationAppExample_jucer_DIR}/Source"
-  DESTINATION "${CMAKE_CURRENT_LIST_DIR}"
-)
-
 
 jucer_project_begin(
   PROJECT_NAME "AnimationAppExample"
@@ -56,8 +52,8 @@ jucer_project_begin(
 )
 
 jucer_project_files("AnimationAppExample/Source"
-  "Source/Main.cpp"
-  "Source/MainComponent.cpp"
+  "${AnimationAppExample_jucer_DIR}/Source/Main.cpp"
+  "${AnimationAppExample_jucer_DIR}/Source/MainComponent.cpp"
 )
 
 jucer_project_module(

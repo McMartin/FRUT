@@ -36,10 +36,6 @@ get_filename_component(BouncingBallWavetableDemo_jucer_DIR
   "${BouncingBallWavetableDemo_jucer_FILE}" DIRECTORY
 )
 
-file(COPY "${BouncingBallWavetableDemo_jucer_DIR}/Source"
-  DESTINATION "${CMAKE_CURRENT_LIST_DIR}"
-)
-
 
 jucer_project_begin(
   PROJECT_NAME "BouncingBallWavetableDemo"
@@ -56,8 +52,8 @@ jucer_project_begin(
 )
 
 jucer_project_files("BouncingBallWavetableDemo/Source"
-  "Source/Main.cpp"
-  "Source/MainComponent.cpp"
+  "${BouncingBallWavetableDemo_jucer_DIR}/Source/Main.cpp"
+  "${BouncingBallWavetableDemo_jucer_DIR}/Source/MainComponent.cpp"
 )
 
 jucer_project_module(

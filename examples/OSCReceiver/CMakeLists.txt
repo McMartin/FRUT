@@ -33,8 +33,6 @@ set(OSCReceiver_jucer_FILE "${JUCE_ROOT}/examples/OSCReceiver/OSCReceiver.jucer"
 
 get_filename_component(OSCReceiver_jucer_DIR "${OSCReceiver_jucer_FILE}" DIRECTORY)
 
-file(COPY "${OSCReceiver_jucer_DIR}/Source" DESTINATION "${CMAKE_CURRENT_LIST_DIR}")
-
 
 jucer_project_begin(
   PROJECT_NAME "OSCReceiver"
@@ -51,8 +49,8 @@ jucer_project_begin(
 )
 
 jucer_project_files("OSCReceiver/Source"
-  "Source/Main.cpp"
-  "Source/MainComponent.h"
+  "${OSCReceiver_jucer_DIR}/Source/Main.cpp"
+  "${OSCReceiver_jucer_DIR}/Source/MainComponent.h"
 )
 
 jucer_project_module(

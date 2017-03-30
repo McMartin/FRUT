@@ -33,8 +33,6 @@ set(UnitTestRunner_jucer_FILE "${JUCE_ROOT}/extras/UnitTestRunner/UnitTestRunner
 
 get_filename_component(UnitTestRunner_jucer_DIR "${UnitTestRunner_jucer_FILE}" DIRECTORY)
 
-file(COPY "${UnitTestRunner_jucer_DIR}/Source" DESTINATION "${CMAKE_CURRENT_LIST_DIR}")
-
 
 jucer_project_begin(
   PROJECT_NAME "UnitTestRunner"
@@ -51,7 +49,7 @@ jucer_project_begin(
 )
 
 jucer_project_files("UnitTestRunner/Source"
-  "Source/Main.cpp"
+  "${UnitTestRunner_jucer_DIR}/Source/Main.cpp"
 )
 
 jucer_project_module(
