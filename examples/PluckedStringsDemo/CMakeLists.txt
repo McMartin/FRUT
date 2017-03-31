@@ -25,11 +25,10 @@ list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/../../cmake")
 include(Reprojucer)
 
 
-set(JUCE_ROOT "${CMAKE_CURRENT_LIST_DIR}/../../../JUCE" CACHE PATH "Path to JUCE")
+get_filename_component(JUCE_ROOT "${CMAKE_CURRENT_LIST_DIR}/../../../JUCE" ABSOLUTE CACHE)
 
-set(PluckedStringsDemo_jucer_FILE
-  "${JUCE_ROOT}/examples/PluckedStringsDemo/PluckedStringsDemo.jucer"
-  CACHE PATH "Path to PluckedStringsDemo.jucer"
+get_filename_component(PluckedStringsDemo_jucer_FILE
+  "${JUCE_ROOT}/examples/PluckedStringsDemo/PluckedStringsDemo.jucer" ABSOLUTE CACHE
 )
 
 if(NOT EXISTS "${PluckedStringsDemo_jucer_FILE}")
