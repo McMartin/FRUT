@@ -31,6 +31,10 @@ set(Projucer_jucer_FILE "${JUCE_ROOT}/extras/Projucer/Projucer.jucer"
   CACHE PATH "Path to Projucer.jucer"
 )
 
+if(NOT EXISTS "${Projucer_jucer_FILE}")
+  message(FATAL_ERROR "No such file: ${Projucer_jucer_FILE}")
+endif()
+
 get_filename_component(Projucer_jucer_DIR "${Projucer_jucer_FILE}" DIRECTORY)
 
 

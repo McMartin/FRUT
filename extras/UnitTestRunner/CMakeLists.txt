@@ -31,6 +31,10 @@ set(UnitTestRunner_jucer_FILE "${JUCE_ROOT}/extras/UnitTestRunner/UnitTestRunner
   CACHE PATH "Path to UnitTestRunner.jucer"
 )
 
+if(NOT EXISTS "${UnitTestRunner_jucer_FILE}")
+  message(FATAL_ERROR "No such file: ${UnitTestRunner_jucer_FILE}")
+endif()
+
 get_filename_component(UnitTestRunner_jucer_DIR "${UnitTestRunner_jucer_FILE}" DIRECTORY)
 
 

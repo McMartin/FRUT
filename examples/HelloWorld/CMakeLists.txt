@@ -31,6 +31,10 @@ set(HelloWorld_jucer_FILE "${JUCE_ROOT}/examples/HelloWorld/HelloWorld.jucer"
   CACHE PATH "Path to HelloWorld.jucer"
 )
 
+if(NOT EXISTS "${HelloWorld_jucer_FILE}")
+  message(FATAL_ERROR "No such file: ${HelloWorld_jucer_FILE}")
+endif()
+
 get_filename_component(HelloWorld_jucer_DIR "${HelloWorld_jucer_FILE}" DIRECTORY)
 
 

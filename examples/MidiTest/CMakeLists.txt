@@ -31,6 +31,10 @@ set(MidiTest_jucer_FILE "${JUCE_ROOT}/examples/MidiTest/MidiTest.jucer"
   CACHE PATH "Path to MidiTest.jucer"
 )
 
+if(NOT EXISTS "${MidiTest_jucer_FILE}")
+  message(FATAL_ERROR "No such file: ${MidiTest_jucer_FILE}")
+endif()
+
 get_filename_component(MidiTest_jucer_DIR "${MidiTest_jucer_FILE}" DIRECTORY)
 
 

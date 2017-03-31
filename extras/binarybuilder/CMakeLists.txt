@@ -31,6 +31,10 @@ set(BinaryBuilder_jucer_FILE "${JUCE_ROOT}/extras/BinaryBuilder/BinaryBuilder.ju
   CACHE PATH "Path to BinaryBuilder.jucer"
 )
 
+if(NOT EXISTS "${BinaryBuilder_jucer_FILE}")
+  message(FATAL_ERROR "No such file: ${BinaryBuilder_jucer_FILE}")
+endif()
+
 get_filename_component(BinaryBuilder_jucer_DIR "${BinaryBuilder_jucer_FILE}" DIRECTORY)
 
 

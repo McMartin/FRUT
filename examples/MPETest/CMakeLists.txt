@@ -31,6 +31,10 @@ set(MPETest_jucer_FILE "${JUCE_ROOT}/examples/MPETest/MPETest.jucer"
   CACHE PATH "Path to MPETest.jucer"
 )
 
+if(NOT EXISTS "${MPETest_jucer_FILE}")
+  message(FATAL_ERROR "No such file: ${MPETest_jucer_FILE}")
+endif()
+
 get_filename_component(MPETest_jucer_DIR "${MPETest_jucer_FILE}" DIRECTORY)
 
 

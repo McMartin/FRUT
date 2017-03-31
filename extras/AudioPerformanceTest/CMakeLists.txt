@@ -32,6 +32,10 @@ set(AudioPerformanceTest_jucer_FILE
   CACHE PATH "Path to AudioPerformanceTest.jucer"
 )
 
+if(NOT EXISTS "${AudioPerformanceTest_jucer_FILE}")
+  message(FATAL_ERROR "No such file: ${AudioPerformanceTest_jucer_FILE}")
+endif()
+
 get_filename_component(AudioPerformanceTest_jucer_DIR
   "${AudioPerformanceTest_jucer_FILE}" DIRECTORY
 )

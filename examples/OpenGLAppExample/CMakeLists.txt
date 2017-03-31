@@ -32,6 +32,10 @@ set(OpenGLAppExample_jucer_FILE
   CACHE PATH "Path to OpenGLAppExample.jucer"
 )
 
+if(NOT EXISTS "${OpenGLAppExample_jucer_FILE}")
+  message(FATAL_ERROR "No such file: ${OpenGLAppExample_jucer_FILE}")
+endif()
+
 get_filename_component(OpenGLAppExample_jucer_DIR
   "${OpenGLAppExample_jucer_FILE}" DIRECTORY
 )

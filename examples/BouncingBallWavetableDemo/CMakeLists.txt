@@ -32,6 +32,10 @@ set(BouncingBallWavetableDemo_jucer_FILE
   CACHE PATH "Path to BouncingBallWavetableDemo.jucer"
 )
 
+if(NOT EXISTS "${BouncingBallWavetableDemo_jucer_FILE}")
+  message(FATAL_ERROR "No such file: ${BouncingBallWavetableDemo_jucer_FILE}")
+endif()
+
 get_filename_component(BouncingBallWavetableDemo_jucer_DIR
   "${BouncingBallWavetableDemo_jucer_FILE}" DIRECTORY
 )

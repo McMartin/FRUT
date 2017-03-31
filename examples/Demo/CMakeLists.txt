@@ -31,6 +31,10 @@ set(JuceDemo_jucer_FILE "${JUCE_ROOT}/examples/Demo/JuceDemo.jucer"
   CACHE PATH "Path to JuceDemo.jucer"
 )
 
+if(NOT EXISTS "${JuceDemo_jucer_FILE}")
+  message(FATAL_ERROR "No such file: ${JuceDemo_jucer_FILE}")
+endif()
+
 get_filename_component(JuceDemo_jucer_DIR "${JuceDemo_jucer_FILE}" DIRECTORY)
 
 

@@ -31,6 +31,10 @@ set(Plugin_Host_jucer_FILE "${JUCE_ROOT}/examples/audio plugin host/Plugin Host.
   CACHE PATH "Path to Plugin Host.jucer"
 )
 
+if(NOT EXISTS "${Plugin_Host_jucer_FILE}")
+  message(FATAL_ERROR "No such file: ${Plugin_Host_jucer_FILE}")
+endif()
+
 get_filename_component(Plugin_Host_jucer_DIR "${Plugin_Host_jucer_FILE}" DIRECTORY)
 
 

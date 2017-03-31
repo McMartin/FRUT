@@ -32,6 +32,10 @@ set(AnimationAppExample_jucer_FILE
   CACHE PATH "Path to AnimationAppExample.jucer"
 )
 
+if(NOT EXISTS "${AnimationAppExample_jucer_FILE}")
+  message(FATAL_ERROR "No such file: ${AnimationAppExample_jucer_FILE}")
+endif()
+
 get_filename_component(AnimationAppExample_jucer_DIR
   "${AnimationAppExample_jucer_FILE}" DIRECTORY
 )

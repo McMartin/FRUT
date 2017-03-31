@@ -31,6 +31,10 @@ set(OSCSender_jucer_FILE "${JUCE_ROOT}/examples/OSCSender/OSCSender.jucer"
   CACHE PATH "Path to OSCSender.jucer"
 )
 
+if(NOT EXISTS "${OSCSender_jucer_FILE}")
+  message(FATAL_ERROR "No such file: ${OSCSender_jucer_FILE}")
+endif()
+
 get_filename_component(OSCSender_jucer_DIR "${OSCSender_jucer_FILE}" DIRECTORY)
 
 

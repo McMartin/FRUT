@@ -31,6 +31,10 @@ set(OSCReceiver_jucer_FILE "${JUCE_ROOT}/examples/OSCReceiver/OSCReceiver.jucer"
   CACHE PATH "Path to OSCReceiver.jucer"
 )
 
+if(NOT EXISTS "${OSCReceiver_jucer_FILE}")
+  message(FATAL_ERROR "No such file: ${OSCReceiver_jucer_FILE}")
+endif()
+
 get_filename_component(OSCReceiver_jucer_DIR "${OSCReceiver_jucer_FILE}" DIRECTORY)
 
 

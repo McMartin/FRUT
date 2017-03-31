@@ -32,6 +32,10 @@ set(BlocksDrawing_jucer_FILE
   CACHE PATH "Path to BlocksDrawing.jucer"
 )
 
+if(NOT EXISTS "${BlocksDrawing_jucer_FILE}")
+  message(FATAL_ERROR "No such file: ${BlocksDrawing_jucer_FILE}")
+endif()
+
 get_filename_component(BlocksDrawing_jucer_DIR "${BlocksDrawing_jucer_FILE}" DIRECTORY)
 
 

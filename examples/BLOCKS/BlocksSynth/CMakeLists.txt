@@ -32,6 +32,10 @@ set(BlocksSynth_jucer_FILE
   CACHE PATH "Path to BlocksSynth.jucer"
 )
 
+if(NOT EXISTS "${BlocksSynth_jucer_FILE}")
+  message(FATAL_ERROR "No such file: ${BlocksSynth_jucer_FILE}")
+endif()
+
 get_filename_component(BlocksSynth_jucer_DIR "${BlocksSynth_jucer_FILE}" DIRECTORY)
 
 

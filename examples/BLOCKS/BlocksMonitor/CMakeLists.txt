@@ -32,6 +32,10 @@ set(BlocksMonitor_jucer_FILE
   CACHE PATH "Path to BlocksMonitor.jucer"
 )
 
+if(NOT EXISTS "${BlocksMonitor_jucer_FILE}")
+  message(FATAL_ERROR "No such file: ${BlocksMonitor_jucer_FILE}")
+endif()
+
 get_filename_component(BlocksMonitor_jucer_DIR "${BlocksMonitor_jucer_FILE}" DIRECTORY)
 
 
