@@ -25,12 +25,15 @@ list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/../../cmake")
 include(Reprojucer)
 
 
-set(JUCE_ROOT "${CMAKE_CURRENT_LIST_DIR}/../../../JUCE" CACHE PATH "Path to JUCE")
+get_filename_component(JUCE_ROOT "${CMAKE_CURRENT_LIST_DIR}/../../../JUCE" ABSOLUTE CACHE)
 
-set(AnimationAppExample_jucer_FILE
-  "${JUCE_ROOT}/examples/AnimationAppExample/AnimationAppExample.jucer"
-  CACHE PATH "Path to AnimationAppExample.jucer"
+get_filename_component(AnimationAppExample_jucer_FILE
+  "${JUCE_ROOT}/examples/AnimationAppExample/AnimationAppExample.jucer" ABSOLUTE CACHE
 )
+
+if(NOT EXISTS "${AnimationAppExample_jucer_FILE}")
+  message(FATAL_ERROR "No such file: ${AnimationAppExample_jucer_FILE}")
+endif()
 
 get_filename_component(AnimationAppExample_jucer_DIR
   "${AnimationAppExample_jucer_FILE}" DIRECTORY

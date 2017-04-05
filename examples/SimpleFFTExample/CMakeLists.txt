@@ -25,12 +25,15 @@ list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/../../cmake")
 include(Reprojucer)
 
 
-set(JUCE_ROOT "${CMAKE_CURRENT_LIST_DIR}/../../../JUCE" CACHE PATH "Path to JUCE")
+get_filename_component(JUCE_ROOT "${CMAKE_CURRENT_LIST_DIR}/../../../JUCE" ABSOLUTE CACHE)
 
-set(SimpleFFTExample_jucer_FILE
-  "${JUCE_ROOT}/examples/SimpleFFTExample/SimpleFFTExample.jucer"
-  CACHE PATH "Path to SimpleFFTExample.jucer"
+get_filename_component(SimpleFFTExample_jucer_FILE
+  "${JUCE_ROOT}/examples/SimpleFFTExample/SimpleFFTExample.jucer" ABSOLUTE CACHE
 )
+
+if(NOT EXISTS "${SimpleFFTExample_jucer_FILE}")
+  message(FATAL_ERROR "No such file: ${SimpleFFTExample_jucer_FILE}")
+endif()
 
 get_filename_component(SimpleFFTExample_jucer_DIR
   "${SimpleFFTExample_jucer_FILE}" DIRECTORY

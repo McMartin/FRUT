@@ -25,11 +25,15 @@ list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/../../cmake")
 include(Reprojucer)
 
 
-set(JUCE_ROOT "${CMAKE_CURRENT_LIST_DIR}/../../../JUCE" CACHE PATH "Path to JUCE")
+get_filename_component(JUCE_ROOT "${CMAKE_CURRENT_LIST_DIR}/../../../JUCE" ABSOLUTE CACHE)
 
-set(OSCSender_jucer_FILE "${JUCE_ROOT}/examples/OSCSender/OSCSender.jucer"
-  CACHE PATH "Path to OSCSender.jucer"
+get_filename_component(OSCSender_jucer_FILE
+  "${JUCE_ROOT}/examples/OSCSender/OSCSender.jucer" ABSOLUTE CACHE
 )
+
+if(NOT EXISTS "${OSCSender_jucer_FILE}")
+  message(FATAL_ERROR "No such file: ${OSCSender_jucer_FILE}")
+endif()
 
 get_filename_component(OSCSender_jucer_DIR "${OSCSender_jucer_FILE}" DIRECTORY)
 
