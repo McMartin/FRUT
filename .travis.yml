@@ -1,8 +1,8 @@
-os: osx
-
 branches:
   only:
     - master
+
+os: osx
 
 install:
   - cmake --version

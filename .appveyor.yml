@@ -1,8 +1,8 @@
-clone_depth: 50
-
 branches:
   only:
     - master
+
+clone_depth: 50
 
 install:
   - cmake --version
