@@ -640,7 +640,7 @@ function(__generate_JuceHeader_header project_id)
 
   list(LENGTH JUCER_PROJECT_RESOURCES resources_count)
   if(resources_count GREATER 0)
-    message("Building BinaryDataBuilder for ${JUCER_PROJECT_NAME}")
+    message(STATUS "Building BinaryDataBuilder for ${JUCER_PROJECT_NAME}")
     try_compile(BinaryDataBuilder
       "${Reprojucer.cmake_DIR}/BinaryDataBuilder/_build/${CMAKE_GENERATOR}"
       "${Reprojucer.cmake_DIR}/BinaryDataBuilder"
@@ -652,7 +652,7 @@ function(__generate_JuceHeader_header project_id)
     if(NOT BinaryDataBuilder)
       message(FATAL_ERROR "Failed to build BinaryDataBuilder")
     endif()
-    message("BinaryDataBuilder has been successfully built")
+    message(STATUS "BinaryDataBuilder has been successfully built")
 
     if(NOT DEFINED JUCER_BINARYDATACPP_SIZE_LIMIT)
       set(JUCER_BINARYDATACPP_SIZE_LIMIT 10240)
