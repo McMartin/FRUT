@@ -175,17 +175,17 @@ function(jucer_project_resources source_group_name)
 endfunction()
 
 
-function(jucer_project_module module_name PATH_TAG module_path)
+function(jucer_project_module module_name PATH_TAG modules_folder)
 
   list(APPEND JUCER_PROJECT_MODULES ${module_name})
   set(JUCER_PROJECT_MODULES ${JUCER_PROJECT_MODULES} PARENT_SCOPE)
 
-  list(APPEND JUCER_PROJECT_INCLUDE_DIRS "${module_path}")
+  list(APPEND JUCER_PROJECT_INCLUDE_DIRS "${modules_folder}")
   set(JUCER_PROJECT_INCLUDE_DIRS ${JUCER_PROJECT_INCLUDE_DIRS} PARENT_SCOPE)
 
   file(GLOB module_src_files
-    "${module_path}/${module_name}/*.cpp"
-    "${module_path}/${module_name}/*.mm"
+    "${modules_folder}/${module_name}/*.cpp"
+    "${modules_folder}/${module_name}/*.mm"
   )
 
   foreach(src_file ${module_src_files})
@@ -234,7 +234,7 @@ function(jucer_project_module module_name PATH_TAG module_path)
 
   set(JUCER_PROJECT_SOURCES ${JUCER_PROJECT_SOURCES} PARENT_SCOPE)
 
-  set(module_header_file "${module_path}/${module_name}/${module_name}.h")
+  set(module_header_file "${modules_folder}/${module_name}/${module_name}.h")
 
   file(STRINGS "${module_header_file}" config_flags_lines REGEX "/\\*\\* Config: ")
   string(REPLACE "/** Config: " "" module_config_flags "${config_flags_lines}")
@@ -260,10 +260,10 @@ function(jucer_project_module module_name PATH_TAG module_path)
   list(APPEND JUCER_PROJECT_OSX_FRAMEWORKS ${osx_frameworks})
   set(JUCER_PROJECT_OSX_FRAMEWORKS ${JUCER_PROJECT_OSX_FRAMEWORKS} PARENT_SCOPE)
 
-  file(GLOB_RECURSE browsable_files "${module_path}/${module_name}/*")
+  file(GLOB_RECURSE browsable_files "${modules_folder}/${module_name}/*")
   foreach(file_path ${browsable_files})
     get_filename_component(file_dir "${file_path}" DIRECTORY)
-    string(REPLACE "${module_path}" "" rel_file_dir "${file_dir}")
+    string(REPLACE "${modules_folder}" "" rel_file_dir "${file_dir}")
     string(REPLACE "/" "\\" sub_group_name "${rel_file_dir}")
     source_group("Juce Modules${sub_group_name}" FILES "${file_path}")
   endforeach()
