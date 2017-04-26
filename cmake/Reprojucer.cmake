@@ -643,13 +643,29 @@ function(__generate_JuceHeader_header project_id)
 
   list(LENGTH JUCER_PROJECT_RESOURCES resources_count)
   if(resources_count GREATER 0)
+    list(REMOVE_DUPLICATES JUCER_PROJECT_MODULES_FOLDERS)
+    foreach(modules_folder ${JUCER_PROJECT_MODULES_FOLDERS})
+      get_filename_component(jucer_file
+        "${modules_folder}/../extras/Projucer/Projucer.jucer" ABSOLUTE
+      )
+      if(EXISTS "${jucer_file}")
+        set(Projucer_jucer_FILE "${jucer_file}")
+        break()
+      endif()
+    endforeach()
+    if(NOT DEFINED Projucer_jucer_FILE)
+      message(FATAL_ERROR
+        "Could not find ../extras/Projucer/Projucer.jucer from modules folders: "
+        "${JUCER_PROJECT_MODULES_FOLDERS}"
+      )
+    endif()
     message(STATUS "Building BinaryDataBuilder for ${JUCER_PROJECT_NAME}")
     try_compile(BinaryDataBuilder
       "${Reprojucer.cmake_DIR}/BinaryDataBuilder/_build/${CMAKE_GENERATOR}"
       "${Reprojucer.cmake_DIR}/BinaryDataBuilder"
       BinaryDataBuilder install
       CMAKE_FLAGS
-      "-DJUCE_ROOT=${JUCE_ROOT}"
+      "-DProjucer_jucer_FILE=${Projucer_jucer_FILE}"
       "-DCMAKE_INSTALL_PREFIX=${CMAKE_CURRENT_BINARY_DIR}"
     )
     if(NOT BinaryDataBuilder)
