@@ -66,12 +66,15 @@ jucer_project_begin(
   PROJECT_TYPE "Console Application"
 )
 
+jucer_project_files("BinaryDataBuilder"
+  "main.cpp"
+)
+
 jucer_project_files("BinaryDataBuilder/Source"
   "Source/Project Saving/jucer_ResourceFile.cpp"
   "Source/Utility/jucer_CodeHelpers.cpp"
   "Source/Utility/jucer_FileHelpers.cpp"
   "Source/Utility/jucer_MiscUtilities.cpp"
-  "main.cpp"
 )
 
 jucer_project_module(
