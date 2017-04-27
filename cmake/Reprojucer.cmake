@@ -180,6 +180,9 @@ function(jucer_project_module module_name PATH_TAG modules_folder)
   list(APPEND JUCER_PROJECT_MODULES ${module_name})
   set(JUCER_PROJECT_MODULES ${JUCER_PROJECT_MODULES} PARENT_SCOPE)
 
+  if(NOT EXISTS "${modules_folder}")
+    message(FATAL_ERROR "No such directory: \"${modules_folder}\"")
+  endif()
   list(APPEND JUCER_PROJECT_INCLUDE_DIRS "${modules_folder}")
   set(JUCER_PROJECT_INCLUDE_DIRS ${JUCER_PROJECT_INCLUDE_DIRS} PARENT_SCOPE)
 
