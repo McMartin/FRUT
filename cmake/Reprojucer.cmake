@@ -183,8 +183,8 @@ function(jucer_project_module module_name PATH_TAG modules_folder)
   if(NOT EXISTS "${modules_folder}")
     message(FATAL_ERROR "No such directory: \"${modules_folder}\"")
   endif()
-  list(APPEND JUCER_PROJECT_INCLUDE_DIRS "${modules_folder}")
-  set(JUCER_PROJECT_INCLUDE_DIRS ${JUCER_PROJECT_INCLUDE_DIRS} PARENT_SCOPE)
+  list(APPEND JUCER_PROJECT_MODULES_FOLDERS "${modules_folder}")
+  set(JUCER_PROJECT_MODULES_FOLDERS ${JUCER_PROJECT_MODULES_FOLDERS} PARENT_SCOPE)
 
   file(GLOB module_src_files
     "${modules_folder}/${module_name}/*.cpp"
@@ -715,7 +715,7 @@ function(__set_common_target_properties target_name)
 
   target_include_directories(${target_name} PRIVATE
     "${CMAKE_CURRENT_BINARY_DIR}/JuceLibraryCode"
-    ${JUCER_PROJECT_INCLUDE_DIRS}
+    ${JUCER_PROJECT_MODULES_FOLDERS}
   )
 
   if(JUCER_FLAG_JUCE_PLUGINHOST_VST3)
