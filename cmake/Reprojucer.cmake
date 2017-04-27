@@ -175,17 +175,20 @@ function(jucer_project_resources source_group_name)
 endfunction()
 
 
-function(jucer_project_module module_name PATH_TAG module_path)
+function(jucer_project_module module_name PATH_TAG modules_folder)
 
   list(APPEND JUCER_PROJECT_MODULES ${module_name})
   set(JUCER_PROJECT_MODULES ${JUCER_PROJECT_MODULES} PARENT_SCOPE)
 
-  list(APPEND JUCER_PROJECT_INCLUDE_DIRS "${module_path}")
-  set(JUCER_PROJECT_INCLUDE_DIRS ${JUCER_PROJECT_INCLUDE_DIRS} PARENT_SCOPE)
+  if(NOT EXISTS "${modules_folder}")
+    message(FATAL_ERROR "No such directory: \"${modules_folder}\"")
+  endif()
+  list(APPEND JUCER_PROJECT_MODULES_FOLDERS "${modules_folder}")
+  set(JUCER_PROJECT_MODULES_FOLDERS ${JUCER_PROJECT_MODULES_FOLDERS} PARENT_SCOPE)
 
   file(GLOB module_src_files
-    "${module_path}/${module_name}/*.cpp"
-    "${module_path}/${module_name}/*.mm"
+    "${modules_folder}/${module_name}/*.cpp"
+    "${modules_folder}/${module_name}/*.mm"
   )
 
   foreach(src_file ${module_src_files})
@@ -234,7 +237,7 @@ function(jucer_project_module module_name PATH_TAG module_path)
 
   set(JUCER_PROJECT_SOURCES ${JUCER_PROJECT_SOURCES} PARENT_SCOPE)
 
-  set(module_header_file "${module_path}/${module_name}/${module_name}.h")
+  set(module_header_file "${modules_folder}/${module_name}/${module_name}.h")
 
   file(STRINGS "${module_header_file}" config_flags_lines REGEX "/\\*\\* Config: ")
   string(REPLACE "/** Config: " "" module_config_flags "${config_flags_lines}")
@@ -260,10 +263,10 @@ function(jucer_project_module module_name PATH_TAG module_path)
   list(APPEND JUCER_PROJECT_OSX_FRAMEWORKS ${osx_frameworks})
   set(JUCER_PROJECT_OSX_FRAMEWORKS ${JUCER_PROJECT_OSX_FRAMEWORKS} PARENT_SCOPE)
 
-  file(GLOB_RECURSE browsable_files "${module_path}/${module_name}/*")
+  file(GLOB_RECURSE browsable_files "${modules_folder}/${module_name}/*")
   foreach(file_path ${browsable_files})
     get_filename_component(file_dir "${file_path}" DIRECTORY)
-    string(REPLACE "${module_path}" "" rel_file_dir "${file_dir}")
+    string(REPLACE "${modules_folder}" "" rel_file_dir "${file_dir}")
     string(REPLACE "/" "\\" sub_group_name "${rel_file_dir}")
     source_group("Juce Modules${sub_group_name}" FILES "${file_path}")
   endforeach()
@@ -640,13 +643,29 @@ function(__generate_JuceHeader_header project_id)
 
   list(LENGTH JUCER_PROJECT_RESOURCES resources_count)
   if(resources_count GREATER 0)
+    list(REMOVE_DUPLICATES JUCER_PROJECT_MODULES_FOLDERS)
+    foreach(modules_folder ${JUCER_PROJECT_MODULES_FOLDERS})
+      get_filename_component(jucer_file
+        "${modules_folder}/../extras/Projucer/Projucer.jucer" ABSOLUTE
+      )
+      if(EXISTS "${jucer_file}")
+        set(Projucer_jucer_FILE "${jucer_file}")
+        break()
+      endif()
+    endforeach()
+    if(NOT DEFINED Projucer_jucer_FILE)
+      message(FATAL_ERROR
+        "Could not find ../extras/Projucer/Projucer.jucer from modules folders: "
+        "${JUCER_PROJECT_MODULES_FOLDERS}"
+      )
+    endif()
     message(STATUS "Building BinaryDataBuilder for ${JUCER_PROJECT_NAME}")
     try_compile(BinaryDataBuilder
       "${Reprojucer.cmake_DIR}/BinaryDataBuilder/_build/${CMAKE_GENERATOR}"
       "${Reprojucer.cmake_DIR}/BinaryDataBuilder"
       BinaryDataBuilder install
       CMAKE_FLAGS
-      "-DJUCE_ROOT=${JUCE_ROOT}"
+      "-DProjucer_jucer_FILE=${Projucer_jucer_FILE}"
       "-DCMAKE_INSTALL_PREFIX=${CMAKE_CURRENT_BINARY_DIR}"
     )
     if(NOT BinaryDataBuilder)
@@ -712,7 +731,7 @@ function(__set_common_target_properties target_name)
 
   target_include_directories(${target_name} PRIVATE
     "${CMAKE_CURRENT_BINARY_DIR}/JuceLibraryCode"
-    ${JUCER_PROJECT_INCLUDE_DIRS}
+    ${JUCER_PROJECT_MODULES_FOLDERS}
   )
 
   if(JUCER_FLAG_JUCE_PLUGINHOST_VST3)
