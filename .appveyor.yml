@@ -1,13 +1,13 @@
-clone_depth: 50
-
 branches:
   only:
     - master
 
+clone_depth: 50
+
 install:
   - cmake --version
 
-  - git clone --depth=1 --quiet -- https://github.com/julianstorer/JUCE.git ../JUCE
+  - git clone --depth=1 --quiet -- https://github.com/WeAreROLI/JUCE.git ../JUCE
 
   - mkdir C:\SDKs
   - ps: Invoke-WebRequest -Uri http://www.steinberg.net/sdk_downloads/vstsdk367_03_03_2017_build_352.zip -OutFile C:\SDKs\vstsdk3.zip
