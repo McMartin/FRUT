@@ -22,10 +22,13 @@ list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/../../cmake")
 include(Reprojucer)
 
 
-get_filename_component(JUCE_ROOT "${CMAKE_CURRENT_LIST_DIR}/../../../JUCE" ABSOLUTE CACHE)
+if(NOT DEFINED HelloWorld_jucer)
+  message(FATAL_ERROR "HelloWorld_jucer must be defined")
+endif()
 
 get_filename_component(HelloWorld_jucer_FILE
-  "${JUCE_ROOT}/examples/HelloWorld/HelloWorld.jucer" ABSOLUTE CACHE
+  "${HelloWorld_jucer}" REALPATH
+  BASE_DIR "${CMAKE_BINARY_DIR}"
 )
 
 if(NOT EXISTS "${HelloWorld_jucer_FILE}")

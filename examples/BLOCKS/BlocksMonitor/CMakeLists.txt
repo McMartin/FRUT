@@ -22,12 +22,13 @@ list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/../../../cmake")
 include(Reprojucer)
 
 
-get_filename_component(JUCE_ROOT
-  "${CMAKE_CURRENT_LIST_DIR}/../../../../JUCE" ABSOLUTE CACHE
-)
+if(NOT DEFINED BlocksMonitor_jucer)
+  message(FATAL_ERROR "BlocksMonitor_jucer must be defined")
+endif()
 
 get_filename_component(BlocksMonitor_jucer_FILE
-  "${JUCE_ROOT}/examples/BLOCKS/BlocksMonitor/BlocksMonitor.jucer" ABSOLUTE CACHE
+  "${BlocksMonitor_jucer}" REALPATH
+  BASE_DIR "${CMAKE_BINARY_DIR}"
 )
 
 if(NOT EXISTS "${BlocksMonitor_jucer_FILE}")

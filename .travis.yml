@@ -18,7 +18,7 @@ install:
 script:
   - mkdir "examples/audio plugin host/build"
   - cd "examples/audio plugin host/build"
-  - cmake .. -G Xcode
+  - cmake .. -G Xcode -DPlugin_Host_jucer="../../../JUCE/examples/audio plugin host/Plugin Host.jucer"
   - cmake --build . --config Debug
   - cmake --build . --config Release
 
@@ -26,7 +26,7 @@ script:
 
   - mkdir examples/NetworkGraphicsDemo/build
   - cd examples/NetworkGraphicsDemo/build
-  - cmake .. -G Xcode
+  - cmake .. -G Xcode -DNetworkGraphicsDemo_jucer="../../../JUCE/examples/NetworkGraphicsDemo/NetworkGraphicsDemo.jucer"
   - cmake --build . --config Debug
   - cmake --build . --config Release
 
@@ -34,7 +34,7 @@ script:
 
   - mkdir extras/Projucer/build
   - cd extras/Projucer/build
-  - cmake .. -G Xcode
+  - cmake .. -G Xcode -DProjucer_jucer="../../../JUCE/extras/Projucer/Projucer.jucer"
   - cmake --build . --config Debug
   - cmake --build . --config Release
 
@@ -42,6 +42,6 @@ script:
 
   - mkdir "examples/audio plugin demo/build"
   - cd "examples/audio plugin demo/build"
-  - cmake .. -G Xcode
+  - cmake .. -G Xcode -DJuceDemoPlugin_jucer="../../../JUCE/examples/audio plugin demo/JuceDemoPlugin.jucer"
   - cmake --build . --config Debug
   - cmake --build . --config Release

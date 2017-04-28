@@ -22,10 +22,13 @@ list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/../../../cmake")
 include(Reprojucer)
 
 
-get_filename_component(JUCE_ROOT "${CMAKE_CURRENT_LIST_DIR}/../../../../JUCE" ABSOLUTE CACHE)
+if(NOT DEFINED Arpeggiator_jucer)
+  message(FATAL_ERROR "Arpeggiator_jucer must be defined")
+endif()
 
 get_filename_component(Arpeggiator_jucer_FILE
-  "${JUCE_ROOT}/examples/PlugInSamples/Arpeggiator/Arpeggiator.jucer" ABSOLUTE CACHE
+  "${Arpeggiator_jucer}" REALPATH
+  BASE_DIR "${CMAKE_BINARY_DIR}"
 )
 
 if(NOT EXISTS "${Arpeggiator_jucer_FILE}")
