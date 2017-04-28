@@ -28,49 +28,47 @@
 
 int main(int argc, char* argv[])
 {
-    if (argc < 3)
-    {
-        std::cerr
-            << "usage: BinaryDataBuilder"
-            << " <BinaryData-files-output-dir>"
-            << " <BinaryData.cpp-size-limit>"
-            << " <BinaryData-namespace>"
-            << " <resource-files>..."
-            << std::endl;
-        return 1;
-    }
+  if (argc < 3)
+  {
+    std::cerr << "usage: BinaryDataBuilder"
+              << " <BinaryData-files-output-dir>"
+              << " <BinaryData.cpp-size-limit>"
+              << " <BinaryData-namespace>"
+              << " <resource-files>..." << std::endl;
+    return 1;
+  }
 
-    std::vector<std::string> args{argv, argv + argc};
+  std::vector<std::string> args{argv, argv + argc};
 
-    Project project{args.at(1)};
+  Project project{args.at(1)};
 
-    const int maxSize = std::stoi(args.at(2));
+  const int maxSize = std::stoi(args.at(2));
 
-    const std::string& dataNamespace = args.at(3);
+  const std::string& dataNamespace = args.at(3);
 
-    ResourceFile resourceFile{project};
-    resourceFile.setClassName(dataNamespace);
+  ResourceFile resourceFile{project};
+  resourceFile.setClassName(dataNamespace);
 
-    for (auto i = 4u; i < args.size(); ++i)
-    {
-        resourceFile.addFile(File{args.at(i)});
-    }
+  for (auto i = 4u; i < args.size(); ++i)
+  {
+    resourceFile.addFile(File{args.at(i)});
+  }
 
-    Array<File> binaryDataFiles;
+  Array<File> binaryDataFiles;
 
-    auto result = resourceFile.write(binaryDataFiles, maxSize);
+  auto result = resourceFile.write(binaryDataFiles, maxSize);
 
-    if (!result.wasOk())
-    {
-        std::cerr << result.getErrorMessage() << std::endl;
-        return 1;
-    }
+  if (!result.wasOk())
+  {
+    std::cerr << result.getErrorMessage() << std::endl;
+    return 1;
+  }
 
-    for (const File& file : binaryDataFiles)
-    {
-        std::cout << file.getFileName() << ";";
-    }
-    std::cout << std::flush;
+  for (const File& file : binaryDataFiles)
+  {
+    std::cout << file.getFileName() << ";";
+  }
+  std::cout << std::flush;
 
-    return 0;
+  return 0;
 }
