@@ -30,13 +30,11 @@ int main(int argc, char* argv[])
 {
   if (argc < 3)
   {
-    std::cerr
-      << "usage: BinaryDataBuilder"
-      << " <BinaryData-files-output-dir>"
-      << " <BinaryData.cpp-size-limit>"
-      << " <BinaryData-namespace>"
-      << " <resource-files>..."
-      << std::endl;
+    std::cerr << "usage: BinaryDataBuilder"
+              << " <BinaryData-files-output-dir>"
+              << " <BinaryData.cpp-size-limit>"
+              << " <BinaryData-namespace>"
+              << " <resource-files>..." << std::endl;
     return 1;
   }
 
