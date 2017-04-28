@@ -7,7 +7,9 @@ os: osx
 install:
   - cmake --version
 
-  - git clone --depth=1 --quiet -- https://github.com/WeAreROLI/JUCE.git ../JUCE
+  - git clone --depth=10 --quiet -- https://github.com/WeAreROLI/JUCE.git ../JUCE
+  - cd ../JUCE && git reset --hard 75cd666a61f31eaa3ee6c6d9ad97bc404878a0d8
+  - cd $TRAVIS_BUILD_DIR
 
   - mkdir ~/SDKs
   - curl --location --output ~/SDKs/vstsdk3.zip http://www.steinberg.net/sdk_downloads/vstsdk367_03_03_2017_build_352.zip
