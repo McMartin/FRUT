@@ -25,66 +25,66 @@ class Project
 {
 
 public:
-    Project(String outputDir)
-        : binaryDataFilesOuputDir{outputDir}
+  Project(String outputDir)
+    : binaryDataFilesOuputDir{outputDir}
+  {
+  }
+
+  String getProjectUID() const
+  {
+    return {"JUCE.cmake"};
+  }
+
+  File getBinaryDataCppFile(int index) const
+  {
+    if (index > 0)
     {
+      return binaryDataFilesOuputDir.getChildFile(
+        "BinaryData" + String{index + 1} + ".cpp");
     }
 
-    String getProjectUID() const
+    return binaryDataFilesOuputDir.getChildFile("BinaryData.cpp");
+  }
+
+  File getBinaryDataHeaderFile() const
+  {
+    return binaryDataFilesOuputDir.getChildFile("BinaryData.h");
+  }
+
+  class Item
+  {
+  public:
+    bool isGroup() const
     {
-        return {"JUCE.cmake"};
+      return false;
     }
 
-    File getBinaryDataCppFile(int index) const
+    int getNumChildren() const
     {
-        if (index > 0)
-        {
-            return binaryDataFilesOuputDir.getChildFile(
-                "BinaryData" + String{index + 1} + ".cpp");
-        }
-
-        return binaryDataFilesOuputDir.getChildFile("BinaryData.cpp");
+      return 0;
     }
 
-    File getBinaryDataHeaderFile() const
+    Item getChild(int) const
     {
-        return binaryDataFilesOuputDir.getChildFile("BinaryData.h");
+      return {};
     }
 
-    class Item
+    bool shouldBeAddedToBinaryResources() const
     {
-    public:
-        bool isGroup() const
-        {
-            return false;
-        }
-
-        int getNumChildren() const
-        {
-            return 0;
-        }
-
-        Item getChild(int) const
-        {
-            return {};
-        }
-
-        bool shouldBeAddedToBinaryResources() const
-        {
-            return false;
-        }
-
-        File getFile() const
-        {
-            return {};
-        }
-    };
-
-    Item getMainGroup()
-    {
-        return {};
+      return false;
     }
+
+    File getFile() const
+    {
+      return {};
+    }
+  };
+
+  Item getMainGroup()
+  {
+    return {};
+  }
 
 private:
-    const File binaryDataFilesOuputDir;
+  const File binaryDataFilesOuputDir;
 };
