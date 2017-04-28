@@ -1,0 +1,11 @@
+# Using clang-format 3.7.0
+
+AlignAfterOpenBracket: false
+AllowShortFunctionsOnASingleLine: false
+BreakBeforeBraces: Allman
+BreakConstructorInitializersBeforeComma: true
+ColumnLimit: 90
+ConstructorInitializerIndentWidth: 2
+ContinuationIndentWidth: 2
+MaxEmptyLinesToKeep: 2
+PointerAlignment: Left
