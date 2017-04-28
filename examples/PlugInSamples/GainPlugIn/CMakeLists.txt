@@ -22,10 +22,13 @@ list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/../../../cmake")
 include(Reprojucer)
 
 
-get_filename_component(JUCE_ROOT "${CMAKE_CURRENT_LIST_DIR}/../../../../JUCE" ABSOLUTE CACHE)
+if(NOT DEFINED GainPlugIn_jucer)
+  message(FATAL_ERROR "GainPlugIn_jucer must be defined")
+endif()
 
 get_filename_component(GainPlugIn_jucer_FILE
-  "${JUCE_ROOT}/examples/PlugInSamples/GainPlugIn/GainPlugIn.jucer" ABSOLUTE CACHE
+  "${GainPlugIn_jucer}" REALPATH
+  BASE_DIR "${CMAKE_BINARY_DIR}"
 )
 
 if(NOT EXISTS "${GainPlugIn_jucer_FILE}")

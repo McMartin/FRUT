@@ -22,10 +22,13 @@ list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/../../cmake")
 include(Reprojucer)
 
 
-get_filename_component(JUCE_ROOT "${CMAKE_CURRENT_LIST_DIR}/../../../JUCE" ABSOLUTE CACHE)
+if(NOT DEFINED AudioPerformanceTest_jucer)
+  message(FATAL_ERROR "AudioPerformanceTest_jucer must be defined")
+endif()
 
 get_filename_component(AudioPerformanceTest_jucer_FILE
-  "${JUCE_ROOT}/extras/AudioPerformanceTest/AudioPerformanceTest.jucer" ABSOLUTE CACHE
+  "${AudioPerformanceTest_jucer}" REALPATH
+  BASE_DIR "${CMAKE_BINARY_DIR}"
 )
 
 if(NOT EXISTS "${AudioPerformanceTest_jucer_FILE}")

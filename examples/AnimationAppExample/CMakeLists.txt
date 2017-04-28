@@ -22,10 +22,13 @@ list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/../../cmake")
 include(Reprojucer)
 
 
-get_filename_component(JUCE_ROOT "${CMAKE_CURRENT_LIST_DIR}/../../../JUCE" ABSOLUTE CACHE)
+if(NOT DEFINED AnimationAppExample_jucer)
+  message(FATAL_ERROR "AnimationAppExample_jucer must be defined")
+endif()
 
 get_filename_component(AnimationAppExample_jucer_FILE
-  "${JUCE_ROOT}/examples/AnimationAppExample/AnimationAppExample.jucer" ABSOLUTE CACHE
+  "${AnimationAppExample_jucer}" REALPATH
+  BASE_DIR "${CMAKE_BINARY_DIR}"
 )
 
 if(NOT EXISTS "${AnimationAppExample_jucer_FILE}")

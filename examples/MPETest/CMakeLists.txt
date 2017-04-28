@@ -22,10 +22,13 @@ list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/../../cmake")
 include(Reprojucer)
 
 
-get_filename_component(JUCE_ROOT "${CMAKE_CURRENT_LIST_DIR}/../../../JUCE" ABSOLUTE CACHE)
+if(NOT DEFINED MPETest_jucer)
+  message(FATAL_ERROR "MPETest_jucer must be defined")
+endif()
 
 get_filename_component(MPETest_jucer_FILE
-  "${JUCE_ROOT}/examples/MPETest/MPETest.jucer" ABSOLUTE CACHE
+  "${MPETest_jucer}" REALPATH
+  BASE_DIR "${CMAKE_BINARY_DIR}"
 )
 
 if(NOT EXISTS "${MPETest_jucer_FILE}")

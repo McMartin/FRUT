@@ -22,10 +22,13 @@ list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/../../cmake")
 include(Reprojucer)
 
 
-get_filename_component(JUCE_ROOT "${CMAKE_CURRENT_LIST_DIR}/../../../JUCE" ABSOLUTE CACHE)
+if(NOT DEFINED BinaryBuilder_jucer)
+  message(FATAL_ERROR "BinaryBuilder_jucer must be defined")
+endif()
 
 get_filename_component(BinaryBuilder_jucer_FILE
-  "${JUCE_ROOT}/extras/BinaryBuilder/BinaryBuilder.jucer" ABSOLUTE CACHE
+  "${BinaryBuilder_jucer}" REALPATH
+  BASE_DIR "${CMAKE_BINARY_DIR}"
 )
 
 if(NOT EXISTS "${BinaryBuilder_jucer_FILE}")
