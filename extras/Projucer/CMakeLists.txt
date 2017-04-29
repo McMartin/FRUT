@@ -22,7 +22,9 @@ list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/../../cmake")
 include(Reprojucer)
 
 
-get_filename_component(JUCE_ROOT "${CMAKE_CURRENT_LIST_DIR}/../../../JUCE" ABSOLUTE CACHE)
+get_filename_component(JUCE_ROOT
+  "${CMAKE_CURRENT_LIST_DIR}/../../../JUCE" ABSOLUTE CACHE
+)
 
 get_filename_component(Projucer_jucer_FILE
   "${JUCE_ROOT}/extras/Projucer/Projucer.jucer" ABSOLUTE CACHE
@@ -32,7 +34,9 @@ if(NOT EXISTS "${Projucer_jucer_FILE}")
   message(FATAL_ERROR "No such file: ${Projucer_jucer_FILE}")
 endif()
 
-get_filename_component(Projucer_jucer_DIR "${Projucer_jucer_FILE}" DIRECTORY)
+get_filename_component(Projucer_jucer_DIR
+  "${Projucer_jucer_FILE}" DIRECTORY
+)
 
 
 jucer_project_begin(

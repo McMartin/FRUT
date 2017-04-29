@@ -22,7 +22,9 @@ list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/../../cmake")
 include(Reprojucer)
 
 
-get_filename_component(JUCE_ROOT "${CMAKE_CURRENT_LIST_DIR}/../../../JUCE" ABSOLUTE CACHE)
+get_filename_component(JUCE_ROOT
+  "${CMAKE_CURRENT_LIST_DIR}/../../../JUCE" ABSOLUTE CACHE
+)
 
 get_filename_component(Plugin_Host_jucer_FILE
   "${JUCE_ROOT}/examples/audio plugin host/Plugin Host.jucer" ABSOLUTE CACHE
@@ -32,7 +34,9 @@ if(NOT EXISTS "${Plugin_Host_jucer_FILE}")
   message(FATAL_ERROR "No such file: ${Plugin_Host_jucer_FILE}")
 endif()
 
-get_filename_component(Plugin_Host_jucer_DIR "${Plugin_Host_jucer_FILE}" DIRECTORY)
+get_filename_component(Plugin_Host_jucer_DIR
+  "${Plugin_Host_jucer_FILE}" DIRECTORY
+)
 
 
 if(WIN32)

@@ -22,7 +22,9 @@ list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/../../cmake")
 include(Reprojucer)
 
 
-get_filename_component(JUCE_ROOT "${CMAKE_CURRENT_LIST_DIR}/../../../JUCE" ABSOLUTE CACHE)
+get_filename_component(JUCE_ROOT
+  "${CMAKE_CURRENT_LIST_DIR}/../../../JUCE" ABSOLUTE CACHE
+)
 
 get_filename_component(HelloWorld_jucer_FILE
   "${JUCE_ROOT}/examples/HelloWorld/HelloWorld.jucer" ABSOLUTE CACHE
@@ -32,7 +34,9 @@ if(NOT EXISTS "${HelloWorld_jucer_FILE}")
   message(FATAL_ERROR "No such file: ${HelloWorld_jucer_FILE}")
 endif()
 
-get_filename_component(HelloWorld_jucer_DIR "${HelloWorld_jucer_FILE}" DIRECTORY)
+get_filename_component(HelloWorld_jucer_DIR
+  "${HelloWorld_jucer_FILE}" DIRECTORY
+)
 
 
 jucer_project_begin(

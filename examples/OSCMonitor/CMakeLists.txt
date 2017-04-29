@@ -22,7 +22,9 @@ list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/../../cmake")
 include(Reprojucer)
 
 
-get_filename_component(JUCE_ROOT "${CMAKE_CURRENT_LIST_DIR}/../../../JUCE" ABSOLUTE CACHE)
+get_filename_component(JUCE_ROOT
+  "${CMAKE_CURRENT_LIST_DIR}/../../../JUCE" ABSOLUTE CACHE
+)
 
 get_filename_component(OSCMonitor_jucer_FILE
   "${JUCE_ROOT}/examples/OSCMonitor/OSCMonitor.jucer" ABSOLUTE CACHE
@@ -32,7 +34,9 @@ if(NOT EXISTS "${OSCMonitor_jucer_FILE}")
   message(FATAL_ERROR "No such file: ${OSCMonitor_jucer_FILE}")
 endif()
 
-get_filename_component(OSCMonitor_jucer_DIR "${OSCMonitor_jucer_FILE}" DIRECTORY)
+get_filename_component(OSCMonitor_jucer_DIR
+  "${OSCMonitor_jucer_FILE}" DIRECTORY
+)
 
 
 jucer_project_begin(

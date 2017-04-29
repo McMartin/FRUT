@@ -34,7 +34,9 @@ if(NOT EXISTS "${BlocksSynth_jucer_FILE}")
   message(FATAL_ERROR "No such file: ${BlocksSynth_jucer_FILE}")
 endif()
 
-get_filename_component(BlocksSynth_jucer_DIR "${BlocksSynth_jucer_FILE}" DIRECTORY)
+get_filename_component(BlocksSynth_jucer_DIR
+  "${BlocksSynth_jucer_FILE}" DIRECTORY
+)
 
 
 jucer_project_begin(

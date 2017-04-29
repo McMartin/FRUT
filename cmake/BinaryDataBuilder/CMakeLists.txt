@@ -30,7 +30,9 @@ if(NOT EXISTS "${Projucer_jucer_FILE}")
   message(FATAL_ERROR "${Projucer_jucer_FILE} must exist")
 endif()
 
-get_filename_component(Projucer_jucer_DIR "${Projucer_jucer_FILE}" DIRECTORY)
+get_filename_component(Projucer_jucer_DIR
+  "${Projucer_jucer_FILE}" DIRECTORY
+)
 
 file(COPY "${Projucer_jucer_DIR}/Source/jucer_Headers.h"
   DESTINATION "${CMAKE_CURRENT_LIST_DIR}/Source"
