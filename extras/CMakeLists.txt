@@ -15,11 +15,45 @@
 # You should have received a copy of the GNU General Public License
 # along with JUCE.cmake.  If not, see <http://www.gnu.org/licenses/>.
 
-cmake_minimum_required(VERSION 3.0)
+cmake_minimum_required(VERSION 3.4)
+
+
+if(NOT DEFINED JUCE_extras_DIR)
+  message(FATAL_ERROR "JUCE_extras_DIR must be defined")
+endif()
+
+get_filename_component(JUCE_extras_DIR
+  "${JUCE_extras_DIR}" ABSOLUTE
+  BASE_DIR "${CMAKE_CURRENT_BINARY_DIR}"
+)
+
+if(NOT EXISTS "${JUCE_extras_DIR}")
+  message(FATAL_ERROR "No such directory: ${JUCE_extras_DIR}")
+endif()
+
 
 project("extras")
 
+
+set(AudioPerformanceTest_jucer_FILE
+  "${JUCE_extras_DIR}/AudioPerformanceTest/AudioPerformanceTest.jucer"
+)
 add_subdirectory("AudioPerformanceTest")
+
+
+set(Projucer_jucer_FILE
+  "${JUCE_extras_DIR}/Projucer/Projucer.jucer"
+)
 add_subdirectory("Projucer")
+
+
+set(UnitTestRunner_jucer_FILE
+  "${JUCE_extras_DIR}/UnitTestRunner/UnitTestRunner.jucer"
+)
 add_subdirectory("UnitTestRunner")
+
+
+set(BinaryBuilder_jucer_FILE
+  "${JUCE_extras_DIR}/binarybuilder/BinaryBuilder.jucer"
+)
 add_subdirectory("binarybuilder")

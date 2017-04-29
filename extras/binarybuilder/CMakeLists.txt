@@ -15,19 +15,20 @@
 # You should have received a copy of the GNU General Public License
 # along with JUCE.cmake.  If not, see <http://www.gnu.org/licenses/>.
 
-cmake_minimum_required(VERSION 3.0)
+cmake_minimum_required(VERSION 3.4)
 
 
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/../../cmake")
 include(Reprojucer)
 
 
-get_filename_component(JUCE_ROOT
-  "${CMAKE_CURRENT_LIST_DIR}/../../../JUCE" ABSOLUTE CACHE
-)
+if(NOT DEFINED BinaryBuilder_jucer_FILE)
+  message(FATAL_ERROR "BinaryBuilder_jucer_FILE must be defined")
+endif()
 
 get_filename_component(BinaryBuilder_jucer_FILE
-  "${JUCE_ROOT}/extras/binarybuilder/BinaryBuilder.jucer" ABSOLUTE CACHE
+  "${BinaryBuilder_jucer_FILE}" ABSOLUTE
+  BASE_DIR "${CMAKE_CURRENT_BINARY_DIR}"
 )
 
 if(NOT EXISTS "${BinaryBuilder_jucer_FILE}")
