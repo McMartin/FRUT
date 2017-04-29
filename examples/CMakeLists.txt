@@ -45,7 +45,8 @@ add_subdirectory("audio plugin host")
 if(EXISTS "${JUCE_ROOT}/examples/BLOCKS")
   if(DEFINED MSVC_VERSION AND MSVC_VERSION LESS 1900)
     message(WARNING
-      "Not adding BLOCKS examples since they require at least Visual Studio 2015")
+      "Not adding BLOCKS examples since they require at least Visual Studio 2015"
+    )
   else()
     add_subdirectory("BLOCKS/BlocksDrawing")
     add_subdirectory("BLOCKS/BlocksMonitor")
