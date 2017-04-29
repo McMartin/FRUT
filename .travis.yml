@@ -8,7 +8,8 @@ install:
   - cmake --version
 
   - git clone --depth=10 --quiet -- https://github.com/WeAreROLI/JUCE.git ../JUCE
-  - cd ../JUCE && git reset --hard 75cd666a61f31eaa3ee6c6d9ad97bc404878a0d8
+  - cd ../JUCE
+  - git reset --hard 75cd666a61f31eaa3ee6c6d9ad97bc404878a0d8
   - cd $TRAVIS_BUILD_DIR
 
   - mkdir ~/SDKs
@@ -18,7 +19,7 @@ install:
 script:
   - mkdir "examples/audio plugin host/build"
   - cd "examples/audio plugin host/build"
-  - cmake .. -G Xcode
+  - cmake .. -G Xcode -DPlugin_Host_jucer_FILE="../../../../JUCE/examples/audio plugin host/Plugin Host.jucer"
   - cmake --build . --config Debug
   - cmake --build . --config Release
 
@@ -26,7 +27,7 @@ script:
 
   - mkdir examples/NetworkGraphicsDemo/build
   - cd examples/NetworkGraphicsDemo/build
-  - cmake .. -G Xcode
+  - cmake .. -G Xcode -DNetworkGraphicsDemo_jucer_FILE="../../../../JUCE/examples/NetworkGraphicsDemo/NetworkGraphicsDemo.jucer"
   - cmake --build . --config Debug
   - cmake --build . --config Release
 
@@ -34,7 +35,7 @@ script:
 
   - mkdir extras/Projucer/build
   - cd extras/Projucer/build
-  - cmake .. -G Xcode
+  - cmake .. -G Xcode -DProjucer_jucer_FILE="../../../../JUCE/extras/Projucer/Projucer.jucer"
   - cmake --build . --config Debug
   - cmake --build . --config Release
 
@@ -42,6 +43,6 @@ script:
 
   - mkdir "examples/audio plugin demo/build"
   - cd "examples/audio plugin demo/build"
-  - cmake .. -G Xcode
+  - cmake .. -G Xcode -DJuceDemoPlugin_jucer_FILE="../../../../JUCE/examples/audio plugin demo/JuceDemoPlugin.jucer"
   - cmake --build . --config Debug
   - cmake --build . --config Release
