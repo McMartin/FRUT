@@ -27,7 +27,7 @@ if(NOT DEFINED Projucer_jucer_FILE)
 endif()
 
 if(NOT EXISTS "${Projucer_jucer_FILE}")
-  message(FATAL_ERROR "${Projucer_jucer_FILE} must exist")
+  message(FATAL_ERROR "No such file: ${Projucer_jucer_FILE}")
 endif()
 
 get_filename_component(Projucer_jucer_DIR
