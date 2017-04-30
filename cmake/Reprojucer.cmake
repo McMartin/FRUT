@@ -445,38 +445,30 @@ function(__generate_AppConfig_header project_id)
   foreach(module_name ${JUCER_PROJECT_MODULES})
     string(LENGTH "${module_name}" right_padding)
     while(right_padding LESS max_right_padding)
-      string(CONCAT padding_spaces "${padding_spaces}" " ")
+      string(APPEND padding_spaces " ")
       math(EXPR right_padding "${right_padding} + 1")
     endwhile()
-    string(CONCAT module_available_defines "${module_available_defines}"
+    string(APPEND module_available_defines
       "#define JUCE_MODULE_AVAILABLE_${module_name}${padding_spaces} 1\n"
     )
     unset(padding_spaces)
 
     if(DEFINED JUCER_${module_name}_CONFIG_FLAGS)
-      string(CONCAT config_flags_defines "${config_flags_defines}"
+      string(APPEND config_flags_defines
         "//=============================================================================="
         "\n// ${module_name} flags:\n\n"
       )
     endif()
     foreach(config_flag ${JUCER_${module_name}_CONFIG_FLAGS})
-      string(CONCAT config_flags_defines "${config_flags_defines}"
-        "#ifndef    ${config_flag}\n"
-      )
+      string(APPEND config_flags_defines "#ifndef    ${config_flag}\n")
       if(NOT DEFINED JUCER_FLAG_${config_flag})
-        string(CONCAT config_flags_defines "${config_flags_defines}"
-          " //#define ${config_flag}\n"
-        )
+        string(APPEND config_flags_defines " //#define ${config_flag}\n")
       elseif(JUCER_FLAG_${config_flag})
-        string(CONCAT config_flags_defines "${config_flags_defines}"
-          " #define   ${config_flag} 1\n"
-        )
+        string(APPEND config_flags_defines " #define   ${config_flag} 1\n")
       else()
-        string(CONCAT config_flags_defines "${config_flags_defines}"
-          " #define   ${config_flag} 0\n"
-        )
+        string(APPEND config_flags_defines " #define   ${config_flag} 0\n")
       endif()
-      string(CONCAT config_flags_defines "${config_flags_defines}" "#endif\n\n")
+      string(APPEND config_flags_defines "#endif\n\n")
     endforeach()
   endforeach()
 
@@ -613,19 +605,17 @@ function(__generate_AppConfig_header project_id)
 
         string(LENGTH "JucePlugin_${setting_name}" right_padding)
         while(right_padding LESS 32)
-          string(CONCAT padding_spaces "${padding_spaces}" " ")
+          string(APPEND padding_spaces " ")
           math(EXPR right_padding "${right_padding} + 1")
         endwhile()
 
-        string(CONCAT audio_plugin_settings_defines "${audio_plugin_settings_defines}"
+        string(APPEND audio_plugin_settings_defines
           "#ifndef  JucePlugin_${setting_name}\n"
         )
-        string(CONCAT audio_plugin_settings_defines "${audio_plugin_settings_defines}"
+        string(APPEND audio_plugin_settings_defines
           " #define JucePlugin_${setting_name}${padding_spaces}  ${setting_value}\n"
         )
-        string(CONCAT audio_plugin_settings_defines "${audio_plugin_settings_defines}"
-          "#endif\n"
-        )
+        string(APPEND audio_plugin_settings_defines "#endif\n")
         unset(padding_spaces)
 
         unset(setting_name)
@@ -714,9 +704,7 @@ function(__generate_JuceHeader_header project_id)
   endif()
 
   foreach(module_name ${JUCER_PROJECT_MODULES})
-    string(CONCAT modules_includes "${modules_includes}"
-      "#include <${module_name}/${module_name}.h>\n"
-    )
+    string(APPEND modules_includes "#include <${module_name}/${module_name}.h>\n")
   endforeach()
 
   configure_file("${templates_DIR}/JuceHeader.h" "JuceLibraryCode/JuceHeader.h")
