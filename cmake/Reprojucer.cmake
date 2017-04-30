@@ -24,13 +24,11 @@ set(templates_DIR "${Reprojucer.cmake_DIR}/templates")
 
 function(jucer_project_begin)
 
-  list(FIND ARGN "PROJECT_NAME" project_name_tag_index)
-  if(project_name_tag_index EQUAL -1)
+  if(NOT "PROJECT_NAME" IN_LIST ARGN)
     message(FATAL_ERROR "Missing PROJECT_NAME argument")
   endif()
 
-  list(FIND ARGN "PROJECT_TYPE" project_type_tag_index)
-  if(project_type_tag_index EQUAL -1)
+  if(NOT "PROJECT_TYPE" IN_LIST ARGN)
     message(FATAL_ERROR "Missing PROJECT_TYPE argument")
   endif()
 
@@ -60,8 +58,7 @@ function(jucer_project_begin)
     if(NOT DEFINED tag)
       set(tag ${element})
 
-      list(FIND project_setting_tags "${tag}" project_setting_index)
-      if(project_setting_index EQUAL -1)
+      if(NOT "${tag}" IN_LIST project_setting_tags)
         message(FATAL_ERROR "Unsupported project setting: ${tag}\n"
           "Supported project settings: ${project_setting_tags}"
         )
@@ -136,8 +133,7 @@ function(jucer_audio_plugin_settings)
     else()
       set(value ${element})
 
-      list(FIND plugin_setting_tags "${tag}" plugin_setting_index)
-      if(plugin_setting_index EQUAL -1)
+      if(NOT "${tag}" IN_LIST plugin_setting_tags)
         message(FATAL_ERROR "Unsupported audio plugin setting: ${tag}\n"
           "Supported audio plugin settings: ${plugin_setting_tags}"
         )
@@ -212,8 +208,7 @@ function(jucer_project_module module_name PATH_TAG modules_folder)
         endif()
       elseif(APPLE)
         string(REGEX REPLACE "${src_file_extension}$" ".mm" objcxx_src_file "${src_file}")
-        list(FIND module_src_files "${objcxx_src_file}" index)
-        if(index EQUAL -1)
+        if(NOT "${objcxx_src_file}" IN_LIST module_src_files)
           set(to_compile TRUE)
         endif()
       else()
@@ -246,8 +241,7 @@ function(jucer_project_module module_name PATH_TAG modules_folder)
     if(NOT DEFINED config_flag)
       set(config_flag ${element})
 
-      list(FIND module_config_flags "${config_flag}" config_flag_index)
-      if(config_flag_index EQUAL -1)
+      if(NOT "${config_flag}" IN_LIST module_config_flags)
         message(WARNING "Unknown config flag ${config_flag} in module ${module_name}")
       endif()
     else()
