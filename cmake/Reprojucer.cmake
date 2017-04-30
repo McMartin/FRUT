@@ -15,6 +15,8 @@
 # You should have received a copy of the GNU General Public License
 # along with JUCE.cmake.  If not, see <http://www.gnu.org/licenses/>.
 
+cmake_minimum_required(VERSION 3.4)
+
 
 set(Reprojucer.cmake_DIR "${CMAKE_CURRENT_LIST_DIR}")
 set(templates_DIR "${Reprojucer.cmake_DIR}/templates")
