@@ -17,6 +17,14 @@ install:
   - 7z x C:\SDKs\vstsdk3.zip -oC:\SDKs
 
 build_script:
+  - mkdir cmake\Jucer2CMake\build
+  - cd cmake\Jucer2CMake\build
+  - cmake .. -DProjucer_jucer_FILE="../../../../JUCE/extras/Projucer/Projucer.jucer"
+  - cmake --build . --config Debug
+  - cmake --build . --config Release
+
+  - cd %APPVEYOR_BUILD_FOLDER%
+
   - mkdir "examples\audio plugin host\build"
   - cd "examples\audio plugin host\build"
   - cmake .. -DPlugin_Host_jucer_FILE="../../../../JUCE/examples/audio plugin host/Plugin Host.jucer"
