@@ -35,21 +35,11 @@ void printError(const std::string& error)
 }
 
 
-inline std::string trim(std::string& str)
-{
-  const auto ws = " \t\n\r\f\v";
-  str.erase(0, str.find_first_not_of(ws));
-  str.erase(str.find_last_not_of(ws) + 1);
-  return str;
-}
-
-
 std::string makeValidIdentifier(std::string s)
 {
   jassert(!s.empty());
   const std::string allowedChars(
     "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_0123456789");
-  trim(s);
   for (auto& c : s)
   {
     if (allowedChars.find(c) == std::string::npos)
