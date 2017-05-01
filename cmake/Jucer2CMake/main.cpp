@@ -53,7 +53,6 @@ std::string makeValidIdentifier(std::string s)
 
 int main(int argc, char* argv[])
 {
-  // Test initial conditions
   if (argc != 3)
   {
     std::cerr << "usage: Jucer2CMake <jucer_project_file> "
@@ -62,12 +61,10 @@ int main(int argc, char* argv[])
     return 1;
   }
 
-  // Parse command line arguments
   const auto args = std::vector<std::string>{argv, argv + argc};
   const auto& jucerFilePath = args.at(1);
   const auto& reproducerLibraryPath = args.at(2);
 
-  // Load jucer project
   const auto xml = std::unique_ptr<juce::XmlElement>{
     juce::XmlDocument::parse(juce::File{jucerFilePath})};
   if (xml == nullptr || !xml->hasTagName(Ids::JUCERPROJECT.toString()))
