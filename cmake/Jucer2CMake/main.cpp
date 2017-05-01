@@ -69,8 +69,6 @@ int main(int argc, char* argv[])
 
   const auto currentWorkingDirectory =
     juce::File::getCurrentWorkingDirectory().getFullPathName().toStdString();
-  const auto cmakeProjectJucerPrefix = makeValidIdentifier(
-    juce::File(jucerFilePath).getFileNameWithoutExtension().toStdString() + "_jucer");
 
   // Load jucer project
   auto file = juce::File{jucerFilePath};
@@ -103,6 +101,9 @@ int main(int argc, char* argv[])
       jucerProject.setProperty(id, valueTo, nullptr);
     }
   }
+
+  const auto cmakeProjectJucerPrefix = makeValidIdentifier(
+    juce::File(jucerFilePath).getFileNameWithoutExtension().toStdString() + "_jucer");
 
   // Open out stream to the CMakeLists file
   std::ofstream out{"CMakeLists.txt"};
