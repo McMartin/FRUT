@@ -92,6 +92,21 @@ jucer_project_module(
 )
 
 jucer_project_module(
+  juce_audio_processors
+  PATH "${BlocksSynth_jucer_DIR}/../../../modules"
+  # JUCE_PLUGINHOST_VST
+  # JUCE_PLUGINHOST_VST3
+  # JUCE_PLUGINHOST_AU
+)
+
+jucer_project_module(
+  juce_audio_utils
+  PATH "${BlocksSynth_jucer_DIR}/../../../modules"
+  # JUCE_USE_CDREADER
+  # JUCE_USE_CDBURNER
+)
+
+jucer_project_module(
   juce_blocks_basics
   PATH "${BlocksSynth_jucer_DIR}/../../../modules"
 )

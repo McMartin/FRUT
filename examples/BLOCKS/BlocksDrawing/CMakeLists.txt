@@ -55,6 +55,7 @@ jucer_project_begin(
 )
 
 jucer_project_files("BlocksDrawing/Source"
+  "${BlocksDrawing_jucer_DIR}/Source/LightpadComponent.h"
   "${BlocksDrawing_jucer_DIR}/Source/Main.cpp"
   "${BlocksDrawing_jucer_DIR}/Source/MainComponent.h"
 )
@@ -84,6 +85,21 @@ jucer_project_module(
   # JUCE_USE_MP3AUDIOFORMAT
   # JUCE_USE_LAME_AUDIO_FORMAT
   # JUCE_USE_WINDOWS_MEDIA_FORMAT
+)
+
+jucer_project_module(
+  juce_audio_processors
+  PATH "${BlocksDrawing_jucer_DIR}/../../../modules"
+  # JUCE_PLUGINHOST_VST
+  # JUCE_PLUGINHOST_VST3
+  # JUCE_PLUGINHOST_AU
+)
+
+jucer_project_module(
+  juce_audio_utils
+  PATH "${BlocksDrawing_jucer_DIR}/../../../modules"
+  # JUCE_USE_CDREADER
+  # JUCE_USE_CDBURNER
 )
 
 jucer_project_module(
