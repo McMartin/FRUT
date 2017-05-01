@@ -68,9 +68,8 @@ int main(int argc, char* argv[])
   const auto& reproducerLibraryPath = args.at(2);
 
   // Load jucer project
-  auto file = juce::File{jucerFilePath};
-  std::unique_ptr<juce::XmlElement> xml;
-  xml.reset(juce::XmlDocument::parse(file));
+  const auto xml = std::unique_ptr<juce::XmlElement>{
+    juce::XmlDocument::parse(juce::File{jucerFilePath})};
   if (xml == nullptr || !xml->hasTagName(Ids::JUCERPROJECT.toString()))
   {
     printError(jucerFilePath + " is not a valid Jucer project.");
