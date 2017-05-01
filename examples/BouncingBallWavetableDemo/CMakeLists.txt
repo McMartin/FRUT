@@ -55,8 +55,8 @@ jucer_project_begin(
 )
 
 jucer_project_files("BouncingBallWavetableDemo/Source"
-  "${BouncingBallWavetableDemo_jucer_DIR}/Source/Main.cpp"
   "${BouncingBallWavetableDemo_jucer_DIR}/Source/MainComponent.cpp"
+  "${BouncingBallWavetableDemo_jucer_DIR}/Source/Main.cpp"
 )
 
 jucer_project_module(

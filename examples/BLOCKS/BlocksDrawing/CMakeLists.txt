@@ -56,8 +56,8 @@ jucer_project_begin(
 
 jucer_project_files("BlocksDrawing/Source"
   "${BlocksDrawing_jucer_DIR}/Source/LightpadComponent.h"
-  "${BlocksDrawing_jucer_DIR}/Source/Main.cpp"
   "${BlocksDrawing_jucer_DIR}/Source/MainComponent.h"
+  "${BlocksDrawing_jucer_DIR}/Source/Main.cpp"
 )
 
 jucer_project_module(

@@ -55,8 +55,8 @@ jucer_project_begin(
 )
 
 jucer_project_files("OSCSender/Source"
-  "${OSCSender_jucer_DIR}/Source/Main.cpp"
   "${OSCSender_jucer_DIR}/Source/MainComponent.h"
+  "${OSCSender_jucer_DIR}/Source/Main.cpp"
 )
 
 jucer_project_module(

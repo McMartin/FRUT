@@ -55,10 +55,10 @@ jucer_project_begin(
 )
 
 jucer_project_files("PluckedStringsDemo/Source"
-  "${PluckedStringsDemo_jucer_DIR}/Source/Main.cpp"
+  "${PluckedStringsDemo_jucer_DIR}/Source/StringSynthesiser.h"
   "${PluckedStringsDemo_jucer_DIR}/Source/StringComponent.h"
   "${PluckedStringsDemo_jucer_DIR}/Source/StringDemoComponent.h"
-  "${PluckedStringsDemo_jucer_DIR}/Source/StringSynthesiser.h"
+  "${PluckedStringsDemo_jucer_DIR}/Source/Main.cpp"
 )
 
 jucer_project_module(

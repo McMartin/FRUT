@@ -55,9 +55,9 @@ jucer_project_begin(
 )
 
 jucer_project_files("OSCMonitor/Source"
-  "${OSCMonitor_jucer_DIR}/Source/Main.cpp"
-  "${OSCMonitor_jucer_DIR}/Source/MainComponent.h"
   "${OSCMonitor_jucer_DIR}/Source/OSCLogListBox.h"
+  "${OSCMonitor_jucer_DIR}/Source/MainComponent.h"
+  "${OSCMonitor_jucer_DIR}/Source/Main.cpp"
 )
 
 jucer_project_module(

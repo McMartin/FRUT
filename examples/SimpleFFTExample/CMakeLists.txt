@@ -55,8 +55,8 @@ jucer_project_begin(
 )
 
 jucer_project_files("SimpleFFTExample/Source"
-  "${SimpleFFTExample_jucer_DIR}/Source/Main.cpp"
   "${SimpleFFTExample_jucer_DIR}/Source/SpectrogramComponent.h"
+  "${SimpleFFTExample_jucer_DIR}/Source/Main.cpp"
 )
 
 jucer_project_module(

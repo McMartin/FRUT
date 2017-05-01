@@ -55,8 +55,8 @@ jucer_project_begin(
 )
 
 jucer_project_files("BlocksMonitor/Source"
-  "${BlocksMonitor_jucer_DIR}/Source/BlockComponents.h"
   "${BlocksMonitor_jucer_DIR}/Source/Main.cpp"
+  "${BlocksMonitor_jucer_DIR}/Source/BlockComponents.h"
   "${BlocksMonitor_jucer_DIR}/Source/MainComponent.h"
 )
 

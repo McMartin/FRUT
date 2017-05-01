@@ -55,11 +55,11 @@ jucer_project_begin(
 )
 
 jucer_project_files("ComponentTutorialExample/Source"
-  "${ComponentTutorialExample_jucer_DIR}/Source/Main.cpp"
+  "${ComponentTutorialExample_jucer_DIR}/Source/ToggleLightGridComponent.h"
+  "${ComponentTutorialExample_jucer_DIR}/Source/ToggleLightComponent.h"
   "${ComponentTutorialExample_jucer_DIR}/Source/MainComponent.cpp"
   "${ComponentTutorialExample_jucer_DIR}/Source/MainComponent.h"
-  "${ComponentTutorialExample_jucer_DIR}/Source/ToggleLightComponent.h"
-  "${ComponentTutorialExample_jucer_DIR}/Source/ToggleLightGridComponent.h"
+  "${ComponentTutorialExample_jucer_DIR}/Source/Main.cpp"
 )
 
 jucer_project_module(

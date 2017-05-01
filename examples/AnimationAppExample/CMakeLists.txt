@@ -55,8 +55,8 @@ jucer_project_begin(
 )
 
 jucer_project_files("AnimationAppExample/Source"
-  "${AnimationAppExample_jucer_DIR}/Source/Main.cpp"
   "${AnimationAppExample_jucer_DIR}/Source/MainComponent.cpp"
+  "${AnimationAppExample_jucer_DIR}/Source/Main.cpp"
 )
 
 jucer_project_module(

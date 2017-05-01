@@ -55,8 +55,8 @@ jucer_project_begin(
 )
 
 jucer_project_files("AudioAppExample/Source"
-  "${AudioAppExample_jucer_DIR}/Source/Main.cpp"
   "${AudioAppExample_jucer_DIR}/Source/MainComponent.cpp"
+  "${AudioAppExample_jucer_DIR}/Source/Main.cpp"
 )
 
 jucer_project_module(
