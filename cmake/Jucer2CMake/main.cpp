@@ -116,7 +116,6 @@ int main(int argc, char* argv[])
       << juce::File(reproducerLibraryPath)
            .getRelativePathFrom(juce::File(currentWorkingDirectory))
            .replace("\\", "/")
-           .toStdString()
       << "\")\n"
       << "include(Reprojucer)\n"
       << "\n"
