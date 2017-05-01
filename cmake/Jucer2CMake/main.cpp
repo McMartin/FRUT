@@ -71,7 +71,6 @@ int main(int argc, char* argv[])
     juce::File::getCurrentWorkingDirectory().getFullPathName().toStdString();
   const auto cmakeProjectJucerPrefix = makeValidIdentifier(
     juce::File(jucerFilePath).getFileNameWithoutExtension().toStdString() + "_jucer");
-  const auto cmakeJuceRootDir = "JUCE_ROOT";
 
   // Load jucer project
   auto file = juce::File{jucerFilePath};
@@ -88,14 +87,6 @@ int main(int argc, char* argv[])
     printError(jucerFilePath + " is not a valid Jucer project.");
     return 1;
   }
-
-  // Read juceRoot value from jucer project (DEPRECATED)
-  // TODO use projucer heuristic instead
-  const auto juceRootDirectory =
-    juce::File(
-      currentWorkingDirectory + "/" + jucerProject.getProperty("juceFolder").toString())
-      .getFullPathName()
-      .toStdString();
 
   // Replace values that differ from dot jucer format and dot cmake format.
   std::vector<std::tuple<juce::Identifier, juce::var, juce::var>>
