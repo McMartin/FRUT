@@ -55,8 +55,9 @@ int main(int argc, char* argv[])
 {
   if (argc != 3)
   {
-    std::cerr << "usage: Jucer2CMake <jucer_project_file> "
-                 "<reproducer_library_path>"
+    std::cerr << "usage: Jucer2CMake"
+                 " <jucer_project_file>"
+                 " <reproducer_library_path>"
               << std::endl;
     return 1;
   }
