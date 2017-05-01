@@ -1,4 +1,4 @@
-# Copyright (c) 2016 Alain Martin
+# Copyright (c) 2017 Alain Martin, Matthieu Talbot
 #
 # This file is part of JUCE.cmake.
 #
@@ -39,51 +39,19 @@ get_filename_component(Projucer_jucer_DIR
   "${Projucer_jucer_FILE}" DIRECTORY
 )
 
-file(COPY "${Projucer_jucer_DIR}/Source/jucer_Headers.h"
-  DESTINATION "${CMAKE_CURRENT_LIST_DIR}/Source"
-)
-
-file(COPY
-  "${Projucer_jucer_DIR}/Source/Project Saving/jucer_ResourceFile.cpp"
-  "${Projucer_jucer_DIR}/Source/Project Saving/jucer_ResourceFile.h"
-  DESTINATION "${CMAKE_CURRENT_LIST_DIR}/Source/Project Saving"
-)
-
-file(COPY
-  "${Projucer_jucer_DIR}/Source/Utility/jucer_CodeHelpers.cpp"
-  "${Projucer_jucer_DIR}/Source/Utility/jucer_CodeHelpers.h"
-  "${Projucer_jucer_DIR}/Source/Utility/jucer_FileHelpers.cpp"
-  "${Projucer_jucer_DIR}/Source/Utility/jucer_FileHelpers.h"
-  "${Projucer_jucer_DIR}/Source/Utility/jucer_MiscUtilities.cpp"
-  "${Projucer_jucer_DIR}/Source/Utility/jucer_MiscUtilities.h"
-  DESTINATION "${CMAKE_CURRENT_LIST_DIR}/Source/Utility"
-)
-
 
 jucer_project_begin(
-  PROJECT_NAME "BinaryDataBuilder"
+  PROJECT_NAME "Jucer2CMake"
   PROJECT_VERSION "1.0.0"
   PROJECT_TYPE "Console Application"
 )
 
-jucer_project_files("BinaryDataBuilder"
+jucer_project_files("Jucer2CMake"
   "main.cpp"
-)
-
-jucer_project_files("BinaryDataBuilder/Source"
-  "Source/Project Saving/jucer_ResourceFile.cpp"
-  "Source/Utility/jucer_CodeHelpers.cpp"
-  "Source/Utility/jucer_FileHelpers.cpp"
-  "Source/Utility/jucer_MiscUtilities.cpp"
 )
 
 jucer_project_module(
   juce_core
-  PATH "${Projucer_jucer_DIR}/../../modules"
-)
-
-jucer_project_module(
-  juce_cryptography
   PATH "${Projucer_jucer_DIR}/../../modules"
 )
 
@@ -97,22 +65,13 @@ jucer_project_module(
   PATH "${Projucer_jucer_DIR}/../../modules"
 )
 
-jucer_project_module(
-  juce_graphics
-  PATH "${Projucer_jucer_DIR}/../../modules"
-)
-
-jucer_project_module(
-  juce_gui_basics
-  PATH "${Projucer_jucer_DIR}/../../modules"
-)
-
-jucer_project_module(
-  juce_gui_extra
-  PATH "${Projucer_jucer_DIR}/../../modules"
-)
-
 jucer_project_end()
 
 
-install(TARGETS BinaryDataBuilder DESTINATION "BinaryDataBuilder")
+target_include_directories(Jucer2CMake
+  PRIVATE "${Projucer_jucer_DIR}/Source/Utility"
+)
+
+target_compile_definitions(Jucer2CMake
+  PRIVATE DONT_SET_USING_JUCE_NAMESPACE
+)
