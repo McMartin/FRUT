@@ -72,6 +72,7 @@ int main(int argc, char* argv[])
     printError(jucerFilePath + " is not a valid Jucer project.");
     return 1;
   }
+
   auto jucerProject = juce::ValueTree::fromXml(*xml);
   if (!jucerProject.hasType(Ids::JUCERPROJECT))
   {
