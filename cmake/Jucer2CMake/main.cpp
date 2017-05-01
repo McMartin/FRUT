@@ -63,7 +63,7 @@ int main(int argc, char* argv[])
   }
 
   // Parse command line arguments
-  std::vector<std::string> args{argv, argv + argc};
+  const auto args = std::vector<std::string>{argv, argv + argc};
   const auto& jucerFilePath = args.at(1);
   const auto& reproducerLibraryPath = args.at(2);
 
