@@ -156,17 +156,17 @@ int main(int argc, char* argv[])
   // jucer_project_files()
   {
     const auto mainGroup = jucerProject.getChildWithName(Ids::MAINGROUP);
-    const auto mainGroupName = mainGroup.getProperty(Ids::name).toString();
+    const auto mainGroupName = mainGroup.getProperty(Ids::name).toString().toStdString();
 
-    const auto writeFileGroup = [&](const juce::ValueTree& group)
+    const auto writeFileGroup = [&out, &escapedJucerFileName](
+      const std::string fullGroupName, const std::vector<std::string>& filePaths)
     {
-      const auto groupName = group.getProperty(Ids::name).toString();
-      out << "jucer_project_files(\"" << (mainGroupName + "/" + groupName) << "\"\n";
+      out << "jucer_project_files(\"" << std::move(fullGroupName) << "\"\n";
 
-      for (const auto& file : group)
+      for (const auto& filePath : filePaths)
       {
         out << "  \"${" << escapedJucerFileName << "_DIR"
-            << "}/" << file.getProperty(Ids::file).toString() << "\"\n";
+            << "}/" << filePath << "\"\n";
       }
 
       out << ")\n"
@@ -175,7 +175,23 @@ int main(int argc, char* argv[])
 
     for (const auto& group : mainGroup)
     {
-      writeFileGroup(group);
+      std::vector<std::string> filePaths;
+
+      for (const auto& fileOrGroup : group)
+      {
+        if (fileOrGroup.hasType(Ids::FILE))
+        {
+          filePaths.push_back(
+            fileOrGroup.getProperty(Ids::file).toString().toStdString());
+        }
+      }
+
+      if (!filePaths.empty())
+      {
+        const auto fullGroupName =
+          mainGroupName + "/" + group.getProperty(Ids::name).toString().toStdString();
+        writeFileGroup(fullGroupName, filePaths);
+      }
     }
   }
 
