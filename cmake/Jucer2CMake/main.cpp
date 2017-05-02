@@ -21,8 +21,11 @@ using juce::Identifier;
 #include <Utility/jucer_PresetIDs.h>
 
 #include <fstream>
+#include <functional>
 #include <iostream>
+#include <iterator>
 #include <locale>
+#include <numeric>
 #include <string>
 #include <vector>
 
@@ -155,9 +158,6 @@ int main(int argc, char* argv[])
 
   // jucer_project_files()
   {
-    const auto mainGroup = jucerProject.getChildWithName(Ids::MAINGROUP);
-    const auto mainGroupName = mainGroup.getProperty(Ids::name).toString().toStdString();
-
     const auto writeFileGroup = [&out, &escapedJucerFileName](
       const std::string fullGroupName, const std::vector<std::string>& filePaths)
     {
@@ -173,8 +173,20 @@ int main(int argc, char* argv[])
           << "\n";
     };
 
-    for (const auto& group : mainGroup)
+    std::vector<std::string> groupNames;
+
+    std::function<void(const juce::ValueTree&)> processGroup = [&groupNames,
+      &processGroup, &writeFileGroup](const juce::ValueTree& group)
     {
+      groupNames.push_back(group.getProperty(Ids::name).toString().toStdString());
+
+      const auto fullGroupName =
+        std::accumulate(std::next(groupNames.begin()), groupNames.end(),
+          *groupNames.begin(), [](const std::string sum, const std::string s)
+          {
+            return sum + "/" + s;
+          });
+
       std::vector<std::string> filePaths;
 
       for (const auto& fileOrGroup : group)
@@ -184,15 +196,27 @@ int main(int argc, char* argv[])
           filePaths.push_back(
             fileOrGroup.getProperty(Ids::file).toString().toStdString());
         }
+        else
+        {
+          if (!filePaths.empty())
+          {
+            writeFileGroup(fullGroupName, filePaths);
+            filePaths.clear();
+          }
+
+          processGroup(fileOrGroup);
+        }
       }
 
       if (!filePaths.empty())
       {
-        const auto fullGroupName =
-          mainGroupName + "/" + group.getProperty(Ids::name).toString().toStdString();
         writeFileGroup(fullGroupName, filePaths);
       }
-    }
+
+      groupNames.pop_back();
+    };
+
+    processGroup(jucerProject.getChildWithName(Ids::MAINGROUP));
   }
 
   // jucer_project_module()
