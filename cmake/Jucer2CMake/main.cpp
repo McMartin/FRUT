@@ -191,14 +191,21 @@ int main(int argc, char* argv[])
           return sum + "/" + s;
         });
 
-      std::vector<std::string> filePaths;
+      std::vector<std::string> filePaths, resourcePaths;
 
       for (const auto& fileOrGroup : group)
       {
         if (fileOrGroup.hasType(Ids::FILE))
         {
-          filePaths.push_back(
-            fileOrGroup.getProperty(Ids::file).toString().toStdString());
+          const auto& file = fileOrGroup;
+          if (int{file.getProperty(Ids::resource)} == 1)
+          {
+            resourcePaths.push_back(file.getProperty(Ids::file).toString().toStdString());
+          }
+          else
+          {
+            filePaths.push_back(file.getProperty(Ids::file).toString().toStdString());
+          }
         }
         else
         {
@@ -206,6 +213,11 @@ int main(int argc, char* argv[])
           {
             writeFileGroup("jucer_project_files", fullGroupName, filePaths);
             filePaths.clear();
+          }
+          if (!resourcePaths.empty())
+          {
+            writeFileGroup("jucer_project_resources", fullGroupName, resourcePaths);
+            resourcePaths.clear();
           }
 
           processGroup(fileOrGroup);
@@ -215,6 +227,10 @@ int main(int argc, char* argv[])
       if (!filePaths.empty())
       {
         writeFileGroup("jucer_project_files", fullGroupName, filePaths);
+      }
+      if (!resourcePaths.empty())
+      {
+        writeFileGroup("jucer_project_resources", fullGroupName, resourcePaths);
       }
 
       groupNames.pop_back();
