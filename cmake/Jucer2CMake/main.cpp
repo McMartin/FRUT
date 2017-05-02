@@ -128,15 +128,15 @@ int main(int argc, char* argv[])
   // jucer_project_begin()
   {
     const auto projectSetting = [&jucerProject](
-      const std::string cmakeTag, const juce::Identifier& property)
+      const std::string& cmakeTag, const juce::Identifier& property)
     {
       if (jucerProject.hasProperty(property))
       {
-        return std::move(cmakeTag) + " \"" +
+        return cmakeTag + " \"" +
                jucerProject.getProperty(property).toString().toStdString() + "\"";
       }
 
-      return "# " + std::move(cmakeTag);
+      return "# " + cmakeTag;
     };
 
     out << "jucer_project_begin(\n"
@@ -159,9 +159,9 @@ int main(int argc, char* argv[])
   // jucer_project_files()
   {
     const auto writeFileGroup = [&out, &escapedJucerFileName](
-      const std::string fullGroupName, const std::vector<std::string>& filePaths)
+      const std::string& fullGroupName, const std::vector<std::string>& filePaths)
     {
-      out << "jucer_project_files(\"" << std::move(fullGroupName) << "\"\n";
+      out << "jucer_project_files(\"" << fullGroupName << "\"\n";
 
       for (const auto& filePath : filePaths)
       {
