@@ -100,13 +100,6 @@ jucer_project_module(
 )
 
 jucer_project_module(
-  juce_audio_utils
-  PATH "${OpenGLAppExample_jucer_DIR}/../../modules"
-  # JUCE_USE_CDREADER
-  # JUCE_USE_CDBURNER
-)
-
-jucer_project_module(
   juce_core
   PATH "${OpenGLAppExample_jucer_DIR}/../../modules"
   # JUCE_FORCE_DEBUG
