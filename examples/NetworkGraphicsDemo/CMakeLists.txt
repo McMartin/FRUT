@@ -62,6 +62,10 @@ jucer_project_files("JUCE Network Graphics Demo/Source"
   "${NetworkGraphicsDemo_jucer_DIR}/Source/SlaveComponent.h"
 )
 
+jucer_project_resources("JUCE Network Graphics Demo"
+  "${NetworkGraphicsDemo_jucer_DIR}/Source/juce_icon.png"
+)
+
 jucer_project_module(
   juce_audio_basics
   PATH "${NetworkGraphicsDemo_jucer_DIR}/../../modules"
