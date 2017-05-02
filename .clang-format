@@ -2,6 +2,7 @@
 
 AlignAfterOpenBracket: false
 AllowShortFunctionsOnASingleLine: false
+BinPackArguments: false
 BreakBeforeBraces: Allman
 BreakConstructorInitializersBeforeComma: true
 ColumnLimit: 90

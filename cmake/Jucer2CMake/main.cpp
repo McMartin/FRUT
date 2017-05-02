@@ -94,7 +94,8 @@ int main(int argc, char* argv[])
   }
 
   std::string escapedJucerFileName = jucerFileName;
-  std::replace_if(escapedJucerFileName.begin(), escapedJucerFileName.end(),
+  std::replace_if(escapedJucerFileName.begin(),
+    escapedJucerFileName.end(),
     [](const std::string::value_type& c)
     {
       return !std::isalpha(c, std::locale{"C"});
@@ -128,15 +129,15 @@ int main(int argc, char* argv[])
   // jucer_project_begin()
   {
     const auto projectSetting = [&jucerProject](
-      const std::string cmakeTag, const juce::Identifier& property)
+      const std::string& cmakeTag, const juce::Identifier& property)
     {
       if (jucerProject.hasProperty(property))
       {
-        return std::move(cmakeTag) + " \"" +
+        return cmakeTag + " \"" +
                jucerProject.getProperty(property).toString().toStdString() + "\"";
       }
 
-      return "# " + std::move(cmakeTag);
+      return "# " + cmakeTag;
     };
 
     out << "jucer_project_begin(\n"
@@ -159,9 +160,11 @@ int main(int argc, char* argv[])
   // jucer_project_files()
   {
     const auto writeFileGroup = [&out, &escapedJucerFileName](
-      const std::string fullGroupName, const std::vector<std::string>& filePaths)
+      const std::string& functionName,
+      const std::string& fullGroupName,
+      const std::vector<std::string>& filePaths)
     {
-      out << "jucer_project_files(\"" << std::move(fullGroupName) << "\"\n";
+      out << functionName << "(\"" << fullGroupName << "\"\n";
 
       for (const auto& filePath : filePaths)
       {
@@ -175,33 +178,46 @@ int main(int argc, char* argv[])
 
     std::vector<std::string> groupNames;
 
-    std::function<void(const juce::ValueTree&)> processGroup = [&groupNames,
-      &processGroup, &writeFileGroup](const juce::ValueTree& group)
+    std::function<void(const juce::ValueTree&)> processGroup =
+      [&groupNames, &processGroup, &writeFileGroup](const juce::ValueTree& group)
     {
       groupNames.push_back(group.getProperty(Ids::name).toString().toStdString());
 
-      const auto fullGroupName =
-        std::accumulate(std::next(groupNames.begin()), groupNames.end(),
-          *groupNames.begin(), [](const std::string sum, const std::string s)
-          {
-            return sum + "/" + s;
-          });
+      const auto fullGroupName = std::accumulate(std::next(groupNames.begin()),
+        groupNames.end(),
+        *groupNames.begin(),
+        [](const std::string sum, const std::string s)
+        {
+          return sum + "/" + s;
+        });
 
-      std::vector<std::string> filePaths;
+      std::vector<std::string> filePaths, resourcePaths;
 
       for (const auto& fileOrGroup : group)
       {
         if (fileOrGroup.hasType(Ids::FILE))
         {
-          filePaths.push_back(
-            fileOrGroup.getProperty(Ids::file).toString().toStdString());
+          const auto& file = fileOrGroup;
+          if (int{file.getProperty(Ids::resource)} == 1)
+          {
+            resourcePaths.push_back(file.getProperty(Ids::file).toString().toStdString());
+          }
+          else
+          {
+            filePaths.push_back(file.getProperty(Ids::file).toString().toStdString());
+          }
         }
         else
         {
           if (!filePaths.empty())
           {
-            writeFileGroup(fullGroupName, filePaths);
+            writeFileGroup("jucer_project_files", fullGroupName, filePaths);
             filePaths.clear();
+          }
+          if (!resourcePaths.empty())
+          {
+            writeFileGroup("jucer_project_resources", fullGroupName, resourcePaths);
+            resourcePaths.clear();
           }
 
           processGroup(fileOrGroup);
@@ -210,7 +226,11 @@ int main(int argc, char* argv[])
 
       if (!filePaths.empty())
       {
-        writeFileGroup(fullGroupName, filePaths);
+        writeFileGroup("jucer_project_files", fullGroupName, filePaths);
+      }
+      if (!resourcePaths.empty())
+      {
+        writeFileGroup("jucer_project_resources", fullGroupName, resourcePaths);
       }
 
       groupNames.pop_back();
