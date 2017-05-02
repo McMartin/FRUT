@@ -189,7 +189,7 @@ int main(int argc, char* argv[])
     for (const auto& moduleName : moduleNames)
     {
       const auto relativeModulePath =
-        modulePaths.getChildWithProperty(Ids::ID, juce::var(juce::String{moduleName}))
+        modulePaths.getChildWithProperty(Ids::ID, juce::var{juce::String{moduleName}})
           .getProperty(Ids::path)
           .toString();
 
