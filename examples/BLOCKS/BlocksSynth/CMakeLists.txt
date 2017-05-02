@@ -54,15 +54,15 @@ jucer_project_begin(
   PROJECT_ID "XsTycT"
 )
 
+jucer_project_files("BlocksSynth/Source/Audio"
+  "${BlocksSynth_jucer_DIR}/Source/Oscillators.h"
+  "${BlocksSynth_jucer_DIR}/Source/Audio.h"
+)
+
 jucer_project_files("BlocksSynth/Source"
   "${BlocksSynth_jucer_DIR}/Source/Main.cpp"
   "${BlocksSynth_jucer_DIR}/Source/MainComponent.h"
   "${BlocksSynth_jucer_DIR}/Source/WaveshapeProgram.h"
-)
-
-jucer_project_files("BlocksSynth/Source/Audio"
-  "${BlocksSynth_jucer_DIR}/Source/Audio.h"
-  "${BlocksSynth_jucer_DIR}/Source/Oscillators.h"
 )
 
 jucer_project_module(
