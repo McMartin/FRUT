@@ -158,7 +158,7 @@ int main(int argc, char* argv[])
     const auto mainGroup = jucerProject.getChildWithName(Ids::MAINGROUP);
     const auto mainGroupName = mainGroup.getProperty(Ids::name).toString();
 
-    for (const auto& group : mainGroup)
+    const auto writeFileGroup = [&](const juce::ValueTree& group)
     {
       const auto groupName = group.getProperty(Ids::name).toString();
       out << "jucer_project_files(\"" << (mainGroupName + "/" + groupName) << "\"\n";
@@ -171,6 +171,11 @@ int main(int argc, char* argv[])
 
       out << ")\n"
           << "\n";
+    };
+
+    for (const auto& group : mainGroup)
+    {
+      writeFileGroup(group);
     }
   }
 
