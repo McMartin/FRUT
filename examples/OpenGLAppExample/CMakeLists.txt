@@ -54,14 +54,14 @@ jucer_project_begin(
   PROJECT_ID "c3KrlE"
 )
 
+jucer_project_resources("OpenGLAppExample/Source/Resources"
+  "${OpenGLAppExample_jucer_DIR}/Source/Resources/teapot.obj"
+)
+
 jucer_project_files("OpenGLAppExample/Source"
   "${OpenGLAppExample_jucer_DIR}/Source/MainComponent.cpp"
   "${OpenGLAppExample_jucer_DIR}/Source/Main.cpp"
   "${OpenGLAppExample_jucer_DIR}/Source/Resources/WavefrontObjParser.h"
-)
-
-jucer_project_resources("OpenGLAppExample/Source/Resources"
-  "${OpenGLAppExample_jucer_DIR}/Source/Resources/teapot.obj"
 )
 
 jucer_project_module(

@@ -58,8 +58,8 @@ jucer_project_files("JUCE Network Graphics Demo/Source"
   "${NetworkGraphicsDemo_jucer_DIR}/Source/Demos.h"
   "${NetworkGraphicsDemo_jucer_DIR}/Source/Main.cpp"
   "${NetworkGraphicsDemo_jucer_DIR}/Source/MasterComponent.h"
-  "${NetworkGraphicsDemo_jucer_DIR}/Source/SharedCanvas.h"
   "${NetworkGraphicsDemo_jucer_DIR}/Source/SlaveComponent.h"
+  "${NetworkGraphicsDemo_jucer_DIR}/Source/SharedCanvas.h"
 )
 
 jucer_project_resources("JUCE Network Graphics Demo"
