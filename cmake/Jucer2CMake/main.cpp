@@ -94,7 +94,8 @@ int main(int argc, char* argv[])
   }
 
   std::string escapedJucerFileName = jucerFileName;
-  std::replace_if(escapedJucerFileName.begin(), escapedJucerFileName.end(),
+  std::replace_if(escapedJucerFileName.begin(),
+    escapedJucerFileName.end(),
     [](const std::string::value_type& c)
     {
       return !std::isalpha(c, std::locale{"C"});
@@ -175,17 +176,18 @@ int main(int argc, char* argv[])
 
     std::vector<std::string> groupNames;
 
-    std::function<void(const juce::ValueTree&)> processGroup = [&groupNames,
-      &processGroup, &writeFileGroup](const juce::ValueTree& group)
+    std::function<void(const juce::ValueTree&)> processGroup =
+      [&groupNames, &processGroup, &writeFileGroup](const juce::ValueTree& group)
     {
       groupNames.push_back(group.getProperty(Ids::name).toString().toStdString());
 
-      const auto fullGroupName =
-        std::accumulate(std::next(groupNames.begin()), groupNames.end(),
-          *groupNames.begin(), [](const std::string sum, const std::string s)
-          {
-            return sum + "/" + s;
-          });
+      const auto fullGroupName = std::accumulate(std::next(groupNames.begin()),
+        groupNames.end(),
+        *groupNames.begin(),
+        [](const std::string sum, const std::string s)
+        {
+          return sum + "/" + s;
+        });
 
       std::vector<std::string> filePaths;
 
