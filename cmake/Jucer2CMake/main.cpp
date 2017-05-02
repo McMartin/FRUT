@@ -140,13 +140,18 @@ int main(int argc, char* argv[])
       return "# " + cmakeTag;
     };
 
+    const auto projectType = jucerProject.getProperty(Ids::projectType).toString();
+    const auto projectTypeDescription =
+      projectType == "guiapp" ? "GUI Application"
+                              : projectType == "consoleapp" ? "Console Application" : "";
+
     out << "jucer_project_begin(\n"
         << "  " << projectSetting("PROJECT_NAME", Ids::name) << "\n"
         << "  " << projectSetting("PROJECT_VERSION", Ids::version) << "\n"
         << "  " << projectSetting("COMPANY_NAME", Ids::companyName) << "\n"
         << "  " << projectSetting("COMPANY_WEBSITE", Ids::companyWebsite) << "\n"
         << "  " << projectSetting("COMPANY_EMAIL", Ids::companyEmail) << "\n"
-        << "  PROJECT_TYPE \"GUI Application\"\n"
+        << "  PROJECT_TYPE \"" << projectTypeDescription << "\"\n"
         << "  " << projectSetting("BUNDLE_IDENTIFIER", Ids::bundleIdentifier) << "\n"
         << "  BINARYDATACPP_SIZE_LIMIT \"Default\"\n"
         << "  " << projectSetting("BINARYDATA_NAMESPACE", Ids::binaryDataNamespace)
