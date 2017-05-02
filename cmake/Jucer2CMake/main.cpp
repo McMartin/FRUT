@@ -160,9 +160,11 @@ int main(int argc, char* argv[])
   // jucer_project_files()
   {
     const auto writeFileGroup = [&out, &escapedJucerFileName](
-      const std::string& fullGroupName, const std::vector<std::string>& filePaths)
+      const std::string& functionName,
+      const std::string& fullGroupName,
+      const std::vector<std::string>& filePaths)
     {
-      out << "jucer_project_files(\"" << fullGroupName << "\"\n";
+      out << functionName << "(\"" << fullGroupName << "\"\n";
 
       for (const auto& filePath : filePaths)
       {
@@ -202,7 +204,7 @@ int main(int argc, char* argv[])
         {
           if (!filePaths.empty())
           {
-            writeFileGroup(fullGroupName, filePaths);
+            writeFileGroup("jucer_project_files", fullGroupName, filePaths);
             filePaths.clear();
           }
 
@@ -212,7 +214,7 @@ int main(int argc, char* argv[])
 
       if (!filePaths.empty())
       {
-        writeFileGroup(fullGroupName, filePaths);
+        writeFileGroup("jucer_project_files", fullGroupName, filePaths);
       }
 
       groupNames.pop_back();
