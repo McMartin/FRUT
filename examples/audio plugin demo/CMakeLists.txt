@@ -73,7 +73,7 @@ jucer_audio_plugin_settings(
   # VST_CATEGORY
 )
 
-jucer_project_files("JuceDemoPlugin/Source"
+jucer_project_files("JuceDemoPlugin"
   "${JuceDemoPlugin_jucer_DIR}/Source/PluginEditor.cpp"
   "${JuceDemoPlugin_jucer_DIR}/Source/PluginEditor.h"
   "${JuceDemoPlugin_jucer_DIR}/Source/PluginProcessor.cpp"
