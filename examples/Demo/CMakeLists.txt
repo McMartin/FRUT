@@ -55,12 +55,12 @@ jucer_project_begin(
 )
 
 jucer_project_files("JuceDemo/Source"
-  "${JuceDemo_jucer_DIR}/Source/DemoUtilities.h"
-  "${JuceDemo_jucer_DIR}/Source/IntroScreen.cpp"
-  "${JuceDemo_jucer_DIR}/Source/JuceDemoHeader.h"
   "${JuceDemo_jucer_DIR}/Source/Main.cpp"
   "${JuceDemo_jucer_DIR}/Source/MainWindow.cpp"
   "${JuceDemo_jucer_DIR}/Source/MainWindow.h"
+  "${JuceDemo_jucer_DIR}/Source/DemoUtilities.h"
+  "${JuceDemo_jucer_DIR}/Source/IntroScreen.cpp"
+  "${JuceDemo_jucer_DIR}/Source/JuceDemoHeader.h"
 )
 
 jucer_project_files("JuceDemo/Source/Demos"
@@ -88,8 +88,8 @@ jucer_project_files("JuceDemo/Source/Demos"
   "${JuceDemo_jucer_DIR}/Source/Demos/LookAndFeelDemo.cpp"
   "${JuceDemo_jucer_DIR}/Source/Demos/MDIDemo.cpp"
   "${JuceDemo_jucer_DIR}/Source/Demos/MidiDemo.cpp"
-  "${JuceDemo_jucer_DIR}/Source/Demos/MultiTouch.cpp"
   "${JuceDemo_jucer_DIR}/Source/Demos/MultithreadingDemo.cpp"
+  "${JuceDemo_jucer_DIR}/Source/Demos/MultiTouch.cpp"
   "${JuceDemo_jucer_DIR}/Source/Demos/NetworkingDemo.cpp"
   "${JuceDemo_jucer_DIR}/Source/Demos/OpenGLDemo.cpp"
   "${JuceDemo_jucer_DIR}/Source/Demos/OpenGLDemo2D.cpp"
@@ -107,6 +107,7 @@ jucer_project_files("JuceDemo/Source/Demos"
 )
 
 jucer_project_resources("JuceDemo/Source/Resources"
+  "${JuceDemo_jucer_DIR}/Resources/tile_background.png"
   "${JuceDemo_jucer_DIR}/Resources/cello.wav"
   "${JuceDemo_jucer_DIR}/Resources/demo table data.xml"
   "${JuceDemo_jucer_DIR}/Resources/icons.zip"
@@ -114,7 +115,6 @@ jucer_project_resources("JuceDemo/Source/Resources"
   "${JuceDemo_jucer_DIR}/Resources/juce_module_info"
   "${JuceDemo_jucer_DIR}/Resources/portmeirion.jpg"
   "${JuceDemo_jucer_DIR}/Resources/teapot.obj"
-  "${JuceDemo_jucer_DIR}/Resources/tile_background.png"
   "${JuceDemo_jucer_DIR}/Resources/treedemo.xml"
 )
 
