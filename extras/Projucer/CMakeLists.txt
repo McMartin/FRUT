@@ -42,7 +42,7 @@ get_filename_component(Projucer_jucer_DIR
 
 jucer_project_begin(
   PROJECT_NAME "Projucer"
-  PROJECT_VERSION "4.3.0"
+  PROJECT_VERSION "4.3.1"
   # COMPANY_NAME
   # COMPANY_WEBSITE
   # COMPANY_EMAIL
