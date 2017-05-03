@@ -231,27 +231,61 @@ int main(int argc, char* argv[])
 
   // jucer_project_files()
   {
-    const auto writeFileGroup = [&out, &escapedJucerFileName](
-      const std::string& functionName,
+    const auto writeFileGroups = [&out, &escapedJucerFileName](
       const std::string& fullGroupName,
-      const std::vector<std::string>& filePaths)
+      const std::vector<std::string>& filePaths,
+      const std::vector<std::string>& doNotCompileFilePaths,
+      const std::vector<std::string>& resourcePaths)
     {
-      out << functionName << "(\"" << fullGroupName << "\"\n";
-
-      for (const auto& filePath : filePaths)
+      if (!filePaths.empty())
       {
-        out << "  \"${" << escapedJucerFileName << "_DIR"
-            << "}/" << filePath << "\"\n";
+        out << "jucer_project_files"
+            << "(\"" << fullGroupName << "\"\n";
+
+        for (const auto& filePath : filePaths)
+        {
+          out << "  \"${" << escapedJucerFileName << "_DIR"
+              << "}/" << filePath << "\"\n";
+        }
+
+        if (!doNotCompileFilePaths.empty())
+        {
+          out << ")\n"
+              << "set_source_files_properties(\n";
+
+          for (const auto& doNotCompileFilePath : doNotCompileFilePaths)
+          {
+            out << "  \"${" << escapedJucerFileName << "_DIR"
+                << "}/" << doNotCompileFilePath << "\"\n";
+          }
+
+          out << "  PROPERTIES HEADER_FILE_ONLY TRUE\n";
+        }
+
+        out << ")\n"
+            << "\n";
       }
 
-      out << ")\n"
-          << "\n";
+      if (!resourcePaths.empty())
+      {
+        out << "jucer_project_resources"
+            << "(\"" << fullGroupName << "\"\n";
+
+        for (const auto& resourcePath : resourcePaths)
+        {
+          out << "  \"${" << escapedJucerFileName << "_DIR"
+              << "}/" << resourcePath << "\"\n";
+        }
+
+        out << ")\n"
+            << "\n";
+      }
     };
 
     std::vector<std::string> groupNames;
 
     std::function<void(const juce::ValueTree&)> processGroup =
-      [&groupNames, &processGroup, &writeFileGroup](const juce::ValueTree& group)
+      [&groupNames, &processGroup, &writeFileGroups](const juce::ValueTree& group)
     {
       groupNames.push_back(group.getProperty(Ids::name).toString().toStdString());
 
@@ -263,47 +297,42 @@ int main(int argc, char* argv[])
           return sum + "/" + s;
         });
 
-      std::vector<std::string> filePaths, resourcePaths;
+      std::vector<std::string> filePaths, doNotCompileFilePaths, resourcePaths;
 
       for (const auto& fileOrGroup : group)
       {
         if (fileOrGroup.hasType(Ids::FILE))
         {
           const auto& file = fileOrGroup;
+          const auto path = file.getProperty(Ids::file).toString().toStdString();
+
           if (int{file.getProperty(Ids::resource)} == 1)
           {
-            resourcePaths.push_back(file.getProperty(Ids::file).toString().toStdString());
+            resourcePaths.push_back(path);
           }
           else
           {
-            filePaths.push_back(file.getProperty(Ids::file).toString().toStdString());
+            filePaths.push_back(path);
+
+            if (juce::File{path}.hasFileExtension("cpp") &&
+                int{file.getProperty(Ids::compile)} == 0)
+            {
+              doNotCompileFilePaths.push_back(path);
+            }
           }
         }
         else
         {
-          if (!filePaths.empty())
-          {
-            writeFileGroup("jucer_project_files", fullGroupName, filePaths);
-            filePaths.clear();
-          }
-          if (!resourcePaths.empty())
-          {
-            writeFileGroup("jucer_project_resources", fullGroupName, resourcePaths);
-            resourcePaths.clear();
-          }
+          writeFileGroups(fullGroupName, filePaths, doNotCompileFilePaths, resourcePaths);
+          filePaths.clear();
+          doNotCompileFilePaths.clear();
+          resourcePaths.clear();
 
           processGroup(fileOrGroup);
         }
       }
 
-      if (!filePaths.empty())
-      {
-        writeFileGroup("jucer_project_files", fullGroupName, filePaths);
-      }
-      if (!resourcePaths.empty())
-      {
-        writeFileGroup("jucer_project_resources", fullGroupName, resourcePaths);
-      }
+      writeFileGroups(fullGroupName, filePaths, doNotCompileFilePaths, resourcePaths);
 
       groupNames.pop_back();
     };
