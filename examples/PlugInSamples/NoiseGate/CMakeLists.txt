@@ -39,6 +39,7 @@ get_filename_component(NoiseGate_jucer_DIR
   "${NoiseGate_jucer_FILE}" DIRECTORY
 )
 
+
 jucer_project_begin(
   PROJECT_NAME "NoiseGate"
   PROJECT_VERSION "1.0.0"

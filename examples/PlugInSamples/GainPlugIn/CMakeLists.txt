@@ -132,7 +132,6 @@ jucer_project_module(
   # JUCE_ALLOW_STATIC_NULL_VARIABLES
 )
 
-
 jucer_project_module(
   juce_cryptography
   PATH "${GainPlugIn_jucer_DIR}/../../../modules"
