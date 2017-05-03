@@ -78,6 +78,7 @@ jucer_project_files("JuceDemo/Source/Demos"
   "${JuceDemo_jucer_DIR}/Source/Demos/ComponentTransformsDemo.cpp"
   "${JuceDemo_jucer_DIR}/Source/Demos/CryptographyDemo.cpp"
   "${JuceDemo_jucer_DIR}/Source/Demos/DialogsDemo.cpp"
+  "${JuceDemo_jucer_DIR}/Source/Demos/FlexBoxDemo.cpp"
   "${JuceDemo_jucer_DIR}/Source/Demos/FontsDemo.cpp"
   "${JuceDemo_jucer_DIR}/Source/Demos/GraphicsDemo.cpp"
   "${JuceDemo_jucer_DIR}/Source/Demos/ImagesDemo.cpp"
@@ -104,12 +105,6 @@ jucer_project_files("JuceDemo/Source/Demos"
   "${JuceDemo_jucer_DIR}/Source/Demos/WindowsDemo.cpp"
   "${JuceDemo_jucer_DIR}/Source/Demos/XMLandJSONDemo.cpp"
 )
-
-if(EXISTS "${JuceDemo_jucer_DIR}/Source/Demos/FlexBoxDemo.cpp")
-  jucer_project_files("JuceDemo/Source/Demos"
-    "${JuceDemo_jucer_DIR}/Source/Demos/FlexBoxDemo.cpp"
-  )
-endif()
 
 jucer_project_resources("JuceDemo/Source/Resources"
   "${JuceDemo_jucer_DIR}/Resources/cello.wav"
