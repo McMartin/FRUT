@@ -62,7 +62,7 @@ jucer_project_begin(
   PROJECT_ID "NTe0XB0ij"
 )
 
-jucer_project_files("Plugin Host/Source"
+jucer_project_files("Plugin Host"
   "${Plugin_Host_jucer_DIR}/Source/FilterGraph.cpp"
   "${Plugin_Host_jucer_DIR}/Source/FilterGraph.h"
   "${Plugin_Host_jucer_DIR}/Source/GraphEditorPanel.cpp"
