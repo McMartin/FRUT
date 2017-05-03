@@ -27,7 +27,7 @@ get_filename_component(JUCE_examples_DIR
   BASE_DIR "${CMAKE_CURRENT_BINARY_DIR}"
 )
 
-if(NOT EXISTS "${JUCE_examples_DIR}")
+if(NOT IS_DIRECTORY "${JUCE_examples_DIR}")
   message(FATAL_ERROR "No such directory: ${JUCE_examples_DIR}")
 endif()
 
@@ -167,7 +167,7 @@ set(Plugin_Host_jucer_FILE
 add_subdirectory("audio plugin host")
 
 
-if(EXISTS "${JUCE_examples_DIR}/BLOCKS")
+if(IS_DIRECTORY "${JUCE_examples_DIR}/BLOCKS")
   if(DEFINED MSVC_VERSION AND MSVC_VERSION LESS 1900)
     message(WARNING
       "Not adding BLOCKS examples since they require at least Visual Studio 2015"
