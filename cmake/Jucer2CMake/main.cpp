@@ -289,13 +289,15 @@ int main(int argc, char* argv[])
         if (fileOrGroup.hasType(Ids::FILE))
         {
           const auto& file = fileOrGroup;
+          const auto path = file.getProperty(Ids::file).toString().toStdString();
+
           if (int{file.getProperty(Ids::resource)} == 1)
           {
-            resourcePaths.push_back(file.getProperty(Ids::file).toString().toStdString());
+            resourcePaths.push_back(path);
           }
           else
           {
-            filePaths.push_back(file.getProperty(Ids::file).toString().toStdString());
+            filePaths.push_back(path);
           }
         }
         else
