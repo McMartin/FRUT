@@ -126,6 +126,24 @@ int main(int argc, char* argv[])
         << "\n";
   }
 
+  // set(VST3_SDK_FOLDER)
+  if (jucerProject.getChildWithName(Ids::MODULES)
+        .getChildWithProperty(Ids::ID, "juce_audio_processors")
+        .isValid() &&
+      jucerProject.getChildWithName(Ids::JUCEOPTIONS)
+          .getProperty("JUCE_PLUGINHOST_VST3") == "enabled")
+  {
+    out << "if(WIN32)\n"
+        << "  set(VST3_SDK_FOLDER \"C:/SDKs/VST_SDK/VST3_SDK\")\n"
+        << "else()\n"
+        << "  set(VST3_SDK_FOLDER \"~/SDKs/VST_SDK/VST3_SDK\")\n"
+        << "endif()\n"
+        << "set(VST3_SDK_FOLDER \"${VST3_SDK_FOLDER}\" CACHE PATH \"VST3 SDK "
+           "Folder\")\n"
+        << "\n"
+        << "\n";
+  }
+
   // jucer_project_begin()
   {
     const auto projectSetting = [&jucerProject](
