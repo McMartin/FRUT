@@ -271,12 +271,27 @@ int main(int argc, char* argv[])
       juce::StringArray moduleHeaderLines;
       moduleHeader.readLines(moduleHeaderLines);
 
+      const auto modulesOptions = jucerProject.getChildWithName(Ids::JUCEOPTIONS);
+
       for (const auto& line : moduleHeaderLines)
       {
         if (line.startsWith("/** Config: "))
         {
           const auto moduleOption = line.substring(12);
-          out << "  # " << moduleOption << "\n";
+          const auto optionValue = modulesOptions.getProperty(moduleOption);
+
+          if (optionValue == "enabled")
+          {
+            out << "  " << moduleOption << " ON\n";
+          }
+          else if (optionValue == "disabled")
+          {
+            out << "  " << moduleOption << " OFF\n";
+          }
+          else
+          {
+            out << "  # " << moduleOption << "\n";
+          }
         }
       }
 
