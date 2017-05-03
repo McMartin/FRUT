@@ -151,8 +151,12 @@ int main(int argc, char* argv[])
     {
       if (jucerProject.hasProperty(property))
       {
-        return cmakeTag + " \"" +
-               jucerProject.getProperty(property).toString().toStdString() + "\"";
+        const auto value = jucerProject.getProperty(property).toString().toStdString();
+
+        if (!value.empty())
+        {
+          return cmakeTag + " \"" + value + "\"";
+        }
       }
 
       return "# " + cmakeTag;
