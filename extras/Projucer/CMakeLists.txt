@@ -57,7 +57,7 @@ jucer_project_begin(
 jucer_project_files("Projucer/Application"
   "${Projucer_jucer_DIR}/Source/Application/jucer_AppearanceSettings.cpp"
   "${Projucer_jucer_DIR}/Source/Application/jucer_AppearanceSettings.h"
-  # "${Projucer_jucer_DIR}/Source/Application/jucer_Application.cpp"
+  "${Projucer_jucer_DIR}/Source/Application/jucer_Application.cpp"
   "${Projucer_jucer_DIR}/Source/Application/jucer_Application.h"
   "${Projucer_jucer_DIR}/Source/Application/jucer_AutoUpdater.cpp"
   "${Projucer_jucer_DIR}/Source/Application/jucer_AutoUpdater.h"
@@ -81,6 +81,10 @@ jucer_project_files("Projucer/Application"
   "${Projucer_jucer_DIR}/Source/Application/jucer_OpenDocumentManager.h"
   "${Projucer_jucer_DIR}/Source/Application/jucer_ProjucerLicenses.h"
   "${Projucer_jucer_DIR}/Source/jucer_Headers.h"
+)
+set_source_files_properties(
+  "${Projucer_jucer_DIR}/Source/Application/jucer_Application.cpp"
+  PROPERTIES HEADER_FILE_ONLY TRUE
 )
 
 jucer_project_files("Projucer/LiveBuildEngine"
@@ -225,13 +229,17 @@ jucer_project_files("Projucer/Project"
   "${Projucer_jucer_DIR}/Source/Project/jucer_ModulesPanel.h"
   "${Projucer_jucer_DIR}/Source/Project/jucer_Project.cpp"
   "${Projucer_jucer_DIR}/Source/Project/jucer_Project.h"
-  # "${Projucer_jucer_DIR}/Source/Project/jucer_ProjectContentComponent.cpp"
+  "${Projucer_jucer_DIR}/Source/Project/jucer_ProjectContentComponent.cpp"
   "${Projucer_jucer_DIR}/Source/Project/jucer_ProjectContentComponent.h"
   "${Projucer_jucer_DIR}/Source/Project/jucer_ProjectTree_Base.h"
   "${Projucer_jucer_DIR}/Source/Project/jucer_ProjectTree_File.h"
   "${Projucer_jucer_DIR}/Source/Project/jucer_ProjectTree_Group.h"
   "${Projucer_jucer_DIR}/Source/Project/jucer_ProjectType.h"
   "${Projucer_jucer_DIR}/Source/Project/jucer_TreeItemTypes.h"
+)
+set_source_files_properties(
+  "${Projucer_jucer_DIR}/Source/Project/jucer_ProjectContentComponent.cpp"
+  PROPERTIES HEADER_FILE_ONLY TRUE
 )
 
 jucer_project_files("Projucer/Project Saving"
