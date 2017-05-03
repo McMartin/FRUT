@@ -234,6 +234,7 @@ int main(int argc, char* argv[])
     const auto writeFileGroups = [&out, &escapedJucerFileName](
       const std::string& fullGroupName,
       const std::vector<std::string>& filePaths,
+      const std::vector<std::string>& doNotCompileFilePaths,
       const std::vector<std::string>& resourcePaths)
     {
       if (!filePaths.empty())
@@ -245,6 +246,20 @@ int main(int argc, char* argv[])
         {
           out << "  \"${" << escapedJucerFileName << "_DIR"
               << "}/" << filePath << "\"\n";
+        }
+
+        if (!doNotCompileFilePaths.empty())
+        {
+          out << ")\n"
+              << "set_source_files_properties(\n";
+
+          for (const auto& doNotCompileFilePath : doNotCompileFilePaths)
+          {
+            out << "  \"${" << escapedJucerFileName << "_DIR"
+                << "}/" << doNotCompileFilePath << "\"\n";
+          }
+
+          out << "  PROPERTIES HEADER_FILE_ONLY TRUE\n";
         }
 
         out << ")\n"
@@ -282,7 +297,7 @@ int main(int argc, char* argv[])
           return sum + "/" + s;
         });
 
-      std::vector<std::string> filePaths, resourcePaths;
+      std::vector<std::string> filePaths, doNotCompileFilePaths, resourcePaths;
 
       for (const auto& fileOrGroup : group)
       {
@@ -298,19 +313,26 @@ int main(int argc, char* argv[])
           else
           {
             filePaths.push_back(path);
+
+            if (juce::File{path}.hasFileExtension("cpp") &&
+                int{file.getProperty(Ids::compile)} == 0)
+            {
+              doNotCompileFilePaths.push_back(path);
+            }
           }
         }
         else
         {
-          writeFileGroups(fullGroupName, filePaths, resourcePaths);
+          writeFileGroups(fullGroupName, filePaths, doNotCompileFilePaths, resourcePaths);
           filePaths.clear();
+          doNotCompileFilePaths.clear();
           resourcePaths.clear();
 
           processGroup(fileOrGroup);
         }
       }
 
-      writeFileGroups(fullGroupName, filePaths, resourcePaths);
+      writeFileGroups(fullGroupName, filePaths, doNotCompileFilePaths, resourcePaths);
 
       groupNames.pop_back();
     };
