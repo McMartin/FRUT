@@ -27,7 +27,7 @@ get_filename_component(JUCE_extras_DIR
   BASE_DIR "${CMAKE_CURRENT_BINARY_DIR}"
 )
 
-if(NOT EXISTS "${JUCE_extras_DIR}")
+if(NOT IS_DIRECTORY "${JUCE_extras_DIR}")
   message(FATAL_ERROR "No such directory: ${JUCE_extras_DIR}")
 endif()
 
