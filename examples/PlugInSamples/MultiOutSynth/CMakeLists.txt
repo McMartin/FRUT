@@ -73,12 +73,12 @@ jucer_audio_plugin_settings(
   # VST_CATEGORY
 )
 
-jucer_project_files("MultiOutSynth/Source"
-  "${MultiOutSynth_jucer_DIR}/Source/MultiOutSynth.cpp"
-)
-
 jucer_project_resources("MultiOutSynth/Source/BinaryData"
   "${MultiOutSynth_jucer_DIR}/Source/BinaryData/singing.ogg"
+)
+
+jucer_project_files("MultiOutSynth/Source"
+  "${MultiOutSynth_jucer_DIR}/Source/MultiOutSynth.cpp"
 )
 
 jucer_project_module(
