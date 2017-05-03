@@ -43,15 +43,15 @@ get_filename_component(Surround_jucer_DIR
 jucer_project_begin(
   PROJECT_NAME "Surround"
   PROJECT_VERSION "1.0.0"
-  COMPANY_NAME "ROLI Ltd."
-  COMPANY_WEBSITE "www.juce.com"
-  COMPANY_EMAIL "info@juce.com"
+  # COMPANY_NAME
+  # COMPANY_WEBSITE
+  # COMPANY_EMAIL
   PROJECT_TYPE "Audio Plug-in"
   BUNDLE_IDENTIFIER "com.ROLI.Surround"
   BINARYDATACPP_SIZE_LIMIT "Default"
   # BINARYDATA_NAMESPACE
   # PREPROCESSOR_DEFINITIONS
-  PROJECT_ID "S9q71q"
+  PROJECT_ID "S8q71q"
 )
 
 jucer_audio_plugin_settings(
@@ -67,7 +67,7 @@ jucer_audio_plugin_settings(
   PLUGIN_MIDI_INPUT OFF
   PLUGIN_MIDI_OUTPUT OFF
   MIDI_EFFECT_PLUGIN OFF
-  KEY_FOCUS ON
+  KEY_FOCUS OFF
   PLUGIN_AU_EXPORT_PREFIX "SurroundAU"
   # PLUGIN_AU_MAIN_TYPE
   # VST_CATEGORY

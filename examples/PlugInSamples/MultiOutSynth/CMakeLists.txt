@@ -44,7 +44,7 @@ jucer_project_begin(
   PROJECT_NAME "MultiOutSynth"
   PROJECT_VERSION "1.0.0"
   COMPANY_NAME "ROLI Ltd."
-  COMPANY_WEBSITE "www.juce.com"
+  COMPANY_WEBSITE "www.roli.com"
   COMPANY_EMAIL "info@juce.com"
   PROJECT_TYPE "Audio Plug-in"
   BUNDLE_IDENTIFIER "com.ROLI.MultiOutSynth"
@@ -67,7 +67,7 @@ jucer_audio_plugin_settings(
   PLUGIN_MIDI_INPUT ON
   PLUGIN_MIDI_OUTPUT OFF
   MIDI_EFFECT_PLUGIN OFF
-  KEY_FOCUS ON
+  KEY_FOCUS OFF
   PLUGIN_AU_EXPORT_PREFIX "MultiOutSynthAU"
   # PLUGIN_AU_MAIN_TYPE
   # VST_CATEGORY
