@@ -151,8 +151,12 @@ int main(int argc, char* argv[])
     {
       if (jucerProject.hasProperty(property))
       {
-        return cmakeTag + " \"" +
-               jucerProject.getProperty(property).toString().toStdString() + "\"";
+        const auto value = jucerProject.getProperty(property).toString().toStdString();
+
+        if (!value.empty())
+        {
+          return cmakeTag + " \"" + value + "\"";
+        }
       }
 
       return "# " + cmakeTag;
@@ -160,8 +164,10 @@ int main(int argc, char* argv[])
 
     const auto projectType = jucerProject.getProperty(Ids::projectType).toString();
     const auto projectTypeDescription =
-      projectType == "guiapp" ? "GUI Application"
-                              : projectType == "consoleapp" ? "Console Application" : "";
+      projectType == "guiapp"
+        ? "GUI Application"
+        : projectType == "consoleapp" ? "Console Application"
+                                      : projectType == "audioplug" ? "Audio Plug-in" : "";
 
     out << "jucer_project_begin(\n"
         << "  " << projectSetting("PROJECT_NAME", Ids::name) << "\n"
@@ -178,6 +184,49 @@ int main(int argc, char* argv[])
         << "  " << projectSetting("PROJECT_ID", Ids::ID) << "\n"
         << ")\n"
         << "\n";
+
+    // jucer_audio_plugin_settings()
+    if (projectType == "audioplug")
+    {
+      const auto onOffProjectSetting = [&jucerProject](
+        const std::string& cmakeTag, const juce::Identifier& property)
+      {
+        if (jucerProject.hasProperty(property))
+        {
+          const auto value = int{jucerProject.getProperty(property)};
+
+          return cmakeTag + " " + (value ? "ON" : "OFF");
+        }
+
+        return "# " + cmakeTag;
+      };
+
+      out << "jucer_audio_plugin_settings(\n"
+          << "  " << onOffProjectSetting("BUILD_VST", "buildVST") << "\n"
+          << "  " << onOffProjectSetting("BUILD_AUDIOUNIT", "buildAU") << "\n"
+          << "  " << projectSetting("PLUGIN_NAME", "pluginName") << "\n"
+          << "  " << projectSetting("PLUGIN_DESCRIPTION", "pluginDesc") << "\n"
+          << "  " << projectSetting("PLUGIN_MANUFACTURER", "pluginManufacturer") << "\n"
+          << "  " << projectSetting("PLUGIN_MANUFACTURER_CODE", "pluginManufacturerCode")
+          << "\n"
+          << "  " << projectSetting("PLUGIN_CODE", "pluginCode") << "\n"
+          << "  "
+          << projectSetting("PLUGIN_CHANNEL_CONFIGURATIONS", "pluginChannelConfigs")
+          << "\n"
+          << "  " << onOffProjectSetting("PLUGIN_IS_A_SYNTH", "pluginIsSynth") << "\n"
+          << "  " << onOffProjectSetting("PLUGIN_MIDI_INPUT", "pluginWantsMidiIn") << "\n"
+          << "  " << onOffProjectSetting("PLUGIN_MIDI_OUTPUT", "pluginProducesMidiOut")
+          << "\n"
+          << "  " << onOffProjectSetting("MIDI_EFFECT_PLUGIN", "pluginIsMidiEffectPlugin")
+          << "\n"
+          << "  " << onOffProjectSetting("KEY_FOCUS", "pluginEditorRequiresKeys") << "\n"
+          << "  " << projectSetting("PLUGIN_AU_EXPORT_PREFIX", "pluginAUExportPrefix")
+          << "\n"
+          << "  " << projectSetting("PLUGIN_AU_MAIN_TYPE", "pluginAUMainType") << "\n"
+          << "  " << projectSetting("VST_CATEGORY", "pluginVSTCategory") << "\n"
+          << ")\n"
+          << "\n";
+    }
   }
 
   // jucer_project_files()
