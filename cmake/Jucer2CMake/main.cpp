@@ -231,34 +231,39 @@ int main(int argc, char* argv[])
 
   // jucer_project_files()
   {
-    const auto writeFileGroup = [&out, &escapedJucerFileName](
-      const std::string& functionName,
+    const auto writeFileGroups = [&out, &escapedJucerFileName](
       const std::string& fullGroupName,
-      const std::vector<std::string>& filePaths)
-    {
-      out << functionName << "(\"" << fullGroupName << "\"\n";
-
-      for (const auto& filePath : filePaths)
-      {
-        out << "  \"${" << escapedJucerFileName << "_DIR"
-            << "}/" << filePath << "\"\n";
-      }
-
-      out << ")\n"
-          << "\n";
-    };
-
-    const auto writeFileGroups = [&writeFileGroup](const std::string& fullGroupName,
       const std::vector<std::string>& filePaths,
       const std::vector<std::string>& resourcePaths)
     {
       if (!filePaths.empty())
       {
-        writeFileGroup("jucer_project_files", fullGroupName, filePaths);
+        out << "jucer_project_files"
+            << "(\"" << fullGroupName << "\"\n";
+
+        for (const auto& filePath : filePaths)
+        {
+          out << "  \"${" << escapedJucerFileName << "_DIR"
+              << "}/" << filePath << "\"\n";
+        }
+
+        out << ")\n"
+            << "\n";
       }
+
       if (!resourcePaths.empty())
       {
-        writeFileGroup("jucer_project_resources", fullGroupName, resourcePaths);
+        out << "jucer_project_resources"
+            << "(\"" << fullGroupName << "\"\n";
+
+        for (const auto& resourcePath : resourcePaths)
+        {
+          out << "  \"${" << escapedJucerFileName << "_DIR"
+              << "}/" << resourcePath << "\"\n";
+        }
+
+        out << ")\n"
+            << "\n";
       }
     };
 
