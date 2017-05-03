@@ -248,10 +248,24 @@ int main(int argc, char* argv[])
           << "\n";
     };
 
+    const auto writeFileGroups = [&writeFileGroup](const std::string& fullGroupName,
+      const std::vector<std::string>& filePaths,
+      const std::vector<std::string>& resourcePaths)
+    {
+      if (!filePaths.empty())
+      {
+        writeFileGroup("jucer_project_files", fullGroupName, filePaths);
+      }
+      if (!resourcePaths.empty())
+      {
+        writeFileGroup("jucer_project_resources", fullGroupName, resourcePaths);
+      }
+    };
+
     std::vector<std::string> groupNames;
 
     std::function<void(const juce::ValueTree&)> processGroup =
-      [&groupNames, &processGroup, &writeFileGroup](const juce::ValueTree& group)
+      [&groupNames, &processGroup, &writeFileGroups](const juce::ValueTree& group)
     {
       groupNames.push_back(group.getProperty(Ids::name).toString().toStdString());
 
@@ -281,29 +295,15 @@ int main(int argc, char* argv[])
         }
         else
         {
-          if (!filePaths.empty())
-          {
-            writeFileGroup("jucer_project_files", fullGroupName, filePaths);
-            filePaths.clear();
-          }
-          if (!resourcePaths.empty())
-          {
-            writeFileGroup("jucer_project_resources", fullGroupName, resourcePaths);
-            resourcePaths.clear();
-          }
+          writeFileGroups(fullGroupName, filePaths, resourcePaths);
+          filePaths.clear();
+          resourcePaths.clear();
 
           processGroup(fileOrGroup);
         }
       }
 
-      if (!filePaths.empty())
-      {
-        writeFileGroup("jucer_project_files", fullGroupName, filePaths);
-      }
-      if (!resourcePaths.empty())
-      {
-        writeFileGroup("jucer_project_resources", fullGroupName, resourcePaths);
-      }
+      writeFileGroups(fullGroupName, filePaths, resourcePaths);
 
       groupNames.pop_back();
     };
