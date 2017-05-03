@@ -131,7 +131,13 @@ jucer_project_module(
 jucer_project_module(
   juce_audio_devices
   PATH "${JuceDemo_jucer_DIR}/../../modules"
+  # JUCE_ASIO
+  # JUCE_WASAPI
   JUCE_WASAPI_EXCLUSIVE ON
+  # JUCE_DIRECTSOUND
+  # JUCE_ALSA
+  # JUCE_JACK
+  # JUCE_USE_ANDROID_OPENSLES
 )
 
 jucer_project_module(
@@ -211,6 +217,7 @@ jucer_project_module(
 jucer_project_module(
   juce_gui_extra
   PATH "${JuceDemo_jucer_DIR}/../../modules"
+  # JUCE_WEB_BROWSER
   JUCE_ENABLE_LIVE_CONSTANT_EDITOR ON
 )
 
