@@ -13,7 +13,7 @@ endif()
 
 get_filename_component(Plugin_Host_jucer_FILE
   "${Plugin_Host_jucer_FILE}" ABSOLUTE
-  BASE_DIR "${CMAKE_CURRENT_BINARY_DIR}"
+  BASE_DIR "${CMAKE_BINARY_DIR}"
 )
 
 if(NOT EXISTS "${Plugin_Host_jucer_FILE}")

@@ -13,7 +13,7 @@ endif()
 
 get_filename_component(OSCReceiver_jucer_FILE
   "${OSCReceiver_jucer_FILE}" ABSOLUTE
-  BASE_DIR "${CMAKE_CURRENT_BINARY_DIR}"
+  BASE_DIR "${CMAKE_BINARY_DIR}"
 )
 
 if(NOT EXISTS "${OSCReceiver_jucer_FILE}")

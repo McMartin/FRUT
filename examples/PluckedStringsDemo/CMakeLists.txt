@@ -13,7 +13,7 @@ endif()
 
 get_filename_component(PluckedStringsDemo_jucer_FILE
   "${PluckedStringsDemo_jucer_FILE}" ABSOLUTE
-  BASE_DIR "${CMAKE_CURRENT_BINARY_DIR}"
+  BASE_DIR "${CMAKE_BINARY_DIR}"
 )
 
 if(NOT EXISTS "${PluckedStringsDemo_jucer_FILE}")

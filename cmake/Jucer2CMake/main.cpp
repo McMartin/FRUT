@@ -111,7 +111,7 @@ int main(int argc, char* argv[])
         << "\n"
         << "get_filename_component(" << escapedJucerFileName << "_FILE\n"
         << "  \"${" << escapedJucerFileName << "_FILE}\" ABSOLUTE\n"
-        << "  BASE_DIR \"${CMAKE_CURRENT_BINARY_DIR}\"\n"
+        << "  BASE_DIR \"${CMAKE_BINARY_DIR}\"\n"
         << ")\n"
         << "\n"
         << "if(NOT EXISTS \"${" << escapedJucerFileName << "_FILE}\")\n"

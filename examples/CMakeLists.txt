@@ -24,7 +24,7 @@ endif()
 
 get_filename_component(JUCE_examples_DIR
   "${JUCE_examples_DIR}" ABSOLUTE
-  BASE_DIR "${CMAKE_CURRENT_BINARY_DIR}"
+  BASE_DIR "${CMAKE_BINARY_DIR}"
 )
 
 if(NOT IS_DIRECTORY "${JUCE_examples_DIR}")

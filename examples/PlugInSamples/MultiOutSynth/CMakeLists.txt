@@ -13,7 +13,7 @@ endif()
 
 get_filename_component(MultiOutSynth_jucer_FILE
   "${MultiOutSynth_jucer_FILE}" ABSOLUTE
-  BASE_DIR "${CMAKE_CURRENT_BINARY_DIR}"
+  BASE_DIR "${CMAKE_BINARY_DIR}"
 )
 
 if(NOT EXISTS "${MultiOutSynth_jucer_FILE}")
