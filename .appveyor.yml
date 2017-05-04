@@ -12,9 +12,8 @@ install:
   - git reset --hard 75cd666a61f31eaa3ee6c6d9ad97bc404878a0d8
   - cd %APPVEYOR_BUILD_FOLDER%
 
-  - mkdir C:\SDKs
-  - ps: Invoke-WebRequest -Uri http://www.steinberg.net/sdk_downloads/vstsdk367_03_03_2017_build_352.zip -OutFile C:\SDKs\vstsdk3.zip
-  - 7z x C:\SDKs\vstsdk3.zip -oC:\SDKs
+  - mkdir C:\SDKs\VST_SDK
+  - xcopy /S ci\third-party\VST_SDK C:\SDKs\VST_SDK
 
 build_script:
   - mkdir ci\build

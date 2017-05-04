@@ -13,8 +13,7 @@ install:
   - cd $TRAVIS_BUILD_DIR
 
   - mkdir ~/SDKs
-  - travis_retry curl --location --output ~/SDKs/vstsdk3.zip http://www.steinberg.net/sdk_downloads/vstsdk367_03_03_2017_build_352.zip
-  - unzip -q ~/SDKs/vstsdk3.zip -d ~/SDKs
+  - cp -R ci/third-party/VST_SDK ~/SDKs
 
 script:
   - mkdir ci/build
