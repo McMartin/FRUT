@@ -13,7 +13,7 @@ endif()
 
 get_filename_component(BlocksDrawing_jucer_FILE
   "${BlocksDrawing_jucer_FILE}" ABSOLUTE
-  BASE_DIR "${CMAKE_CURRENT_BINARY_DIR}"
+  BASE_DIR "${CMAKE_BINARY_DIR}"
 )
 
 if(NOT EXISTS "${BlocksDrawing_jucer_FILE}")
