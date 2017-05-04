@@ -156,7 +156,7 @@ int main(int argc, char* argv[])
     escapedJucerFileName.end(),
     [](const std::string::value_type& c)
     {
-      return !std::isalpha(c, std::locale{"C"});
+      return !(std::isalpha(c, std::locale{"C"}) || std::isdigit(c, std::locale{"C"}));
     },
     '_');
 
