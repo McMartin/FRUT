@@ -22,6 +22,7 @@ script:
 
   - >
     cmake .. -G Xcode
+    -DJUCE_ROOT="../../../JUCE"
     -DJuceDemoPlugin_jucer_FILE="../../../JUCE/examples/audio plugin demo/JuceDemoPlugin.jucer"
     -DNetworkGraphicsDemo_jucer_FILE="../../../JUCE/examples/NetworkGraphicsDemo/NetworkGraphicsDemo.jucer"
     -DPlugin_Host_jucer_FILE="../../../JUCE/examples/audio plugin host/Plugin Host.jucer"

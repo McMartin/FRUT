@@ -22,22 +22,18 @@ list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/../cmake")
 include(Reprojucer)
 
 
-if(NOT DEFINED Projucer_jucer_FILE)
-  message(FATAL_ERROR "Projucer_jucer_FILE must be defined")
+if(NOT DEFINED JUCE_ROOT)
+  message(FATAL_ERROR "JUCE_ROOT must be defined")
 endif()
 
-get_filename_component(Projucer_jucer_FILE
-  "${Projucer_jucer_FILE}" ABSOLUTE
+get_filename_component(JUCE_ROOT
+  "${JUCE_ROOT}" ABSOLUTE
   BASE_DIR "${CMAKE_BINARY_DIR}"
 )
 
-if(NOT EXISTS "${Projucer_jucer_FILE}")
-  message(FATAL_ERROR "No such file: ${Projucer_jucer_FILE}")
+if(NOT IS_DIRECTORY "${JUCE_ROOT}")
+  message(FATAL_ERROR "No such directory: ${JUCE_ROOT}")
 endif()
-
-get_filename_component(Projucer_jucer_DIR
-  "${Projucer_jucer_FILE}" DIRECTORY
-)
 
 
 jucer_project_begin(
@@ -52,21 +48,20 @@ jucer_project_files("Jucer2CMake"
 
 jucer_project_module(
   juce_core
-  PATH "${Projucer_jucer_DIR}/../../modules"
+  PATH "${JUCE_ROOT}/modules"
 )
 
 jucer_project_module(
   juce_data_structures
-  PATH "${Projucer_jucer_DIR}/../../modules"
+  PATH "${JUCE_ROOT}/modules"
 )
 
 jucer_project_module(
   juce_events
-  PATH "${Projucer_jucer_DIR}/../../modules"
+  PATH "${JUCE_ROOT}/modules"
 )
 
 jucer_project_end()
 
 
-target_include_directories(Jucer2CMake PRIVATE "${Projucer_jucer_DIR}/Source")
 target_compile_definitions(Jucer2CMake PRIVATE DONT_SET_USING_JUCE_NAMESPACE=1)
