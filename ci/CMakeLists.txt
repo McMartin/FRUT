@@ -21,7 +21,7 @@ cmake_minimum_required(VERSION 3.4)
 project(ci)
 
 
-add_subdirectory("../cmake/Jucer2CMake"
+add_subdirectory("../Jucer2CMake"
   "Jucer2CMake"
 )
 
