@@ -25,18 +25,18 @@ add_subdirectory("../Jucer2CMake"
   "Jucer2CMake"
 )
 
-add_subdirectory("../examples/audio plugin host"
+add_subdirectory("../Jucer2CMake/generated/JUCE/examples/audio plugin host"
   "Plugin Host"
 )
 
-add_subdirectory("../examples/NetworkGraphicsDemo"
+add_subdirectory("../Jucer2CMake/generated/JUCE/examples/NetworkGraphicsDemo"
   "NetworkGraphicsDemo"
 )
 
-add_subdirectory("../extras/Projucer"
+add_subdirectory("../Jucer2CMake/generated/JUCE/extras/Projucer"
   "Projucer"
 )
 
-add_subdirectory("../examples/audio plugin demo"
+add_subdirectory("../Jucer2CMake/generated/JUCE/examples/audio plugin demo"
   "JuceDemoPlugin"
 )
