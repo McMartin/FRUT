@@ -17,9 +17,6 @@
 
 #include "JuceHeader.h"
 
-using juce::Identifier;
-#include <Utility/jucer_PresetIDs.h>
-
 #include <fstream>
 #include <functional>
 #include <iostream>
@@ -53,14 +50,14 @@ int main(int argc, char* argv[])
 
   const auto xml = std::unique_ptr<juce::XmlElement>{
     juce::XmlDocument::parse(juce::File{jucerFilePath})};
-  if (xml == nullptr || !xml->hasTagName(Ids::JUCERPROJECT.toString()))
+  if (xml == nullptr || !xml->hasTagName("JUCERPROJECT"))
   {
     printError(jucerFilePath + " is not a valid Jucer project.");
     return 1;
   }
 
   const auto jucerProject = juce::ValueTree::fromXml(*xml);
-  if (!jucerProject.hasType(Ids::JUCERPROJECT))
+  if (!jucerProject.hasType("JUCERPROJECT"))
   {
     printError(jucerFilePath + " is not a valid Jucer project.");
     return 1;
@@ -127,11 +124,11 @@ int main(int argc, char* argv[])
   }
 
   // set(VST3_SDK_FOLDER)
-  if (jucerProject.getChildWithName(Ids::MODULES)
-        .getChildWithProperty(Ids::ID, "juce_audio_processors")
+  if (jucerProject.getChildWithName("MODULES")
+        .getChildWithProperty("id", "juce_audio_processors")
         .isValid() &&
-      jucerProject.getChildWithName(Ids::JUCEOPTIONS)
-          .getProperty("JUCE_PLUGINHOST_VST3") == "enabled")
+      jucerProject.getChildWithName("JUCEOPTIONS").getProperty("JUCE_PLUGINHOST_VST3") ==
+        "enabled")
   {
     out << "if(WIN32)\n"
         << "  set(VST3_SDK_FOLDER \"C:/SDKs/VST_SDK/VST3_SDK\")\n"
@@ -162,7 +159,7 @@ int main(int argc, char* argv[])
       return "# " + cmakeTag;
     };
 
-    const auto projectType = jucerProject.getProperty(Ids::projectType).toString();
+    const auto projectType = jucerProject.getProperty("projectType").toString();
     const auto projectTypeDescription =
       projectType == "guiapp"
         ? "GUI Application"
@@ -170,18 +167,17 @@ int main(int argc, char* argv[])
                                       : projectType == "audioplug" ? "Audio Plug-in" : "";
 
     out << "jucer_project_begin(\n"
-        << "  " << projectSetting("PROJECT_NAME", Ids::name) << "\n"
-        << "  " << projectSetting("PROJECT_VERSION", Ids::version) << "\n"
-        << "  " << projectSetting("COMPANY_NAME", Ids::companyName) << "\n"
-        << "  " << projectSetting("COMPANY_WEBSITE", Ids::companyWebsite) << "\n"
-        << "  " << projectSetting("COMPANY_EMAIL", Ids::companyEmail) << "\n"
+        << "  " << projectSetting("PROJECT_NAME", "name") << "\n"
+        << "  " << projectSetting("PROJECT_VERSION", "version") << "\n"
+        << "  " << projectSetting("COMPANY_NAME", "companyName") << "\n"
+        << "  " << projectSetting("COMPANY_WEBSITE", "companyWebsite") << "\n"
+        << "  " << projectSetting("COMPANY_EMAIL", "companyEmail") << "\n"
         << "  PROJECT_TYPE \"" << projectTypeDescription << "\"\n"
-        << "  " << projectSetting("BUNDLE_IDENTIFIER", Ids::bundleIdentifier) << "\n"
+        << "  " << projectSetting("BUNDLE_IDENTIFIER", "bundleIdentifier") << "\n"
         << "  BINARYDATACPP_SIZE_LIMIT \"Default\"\n"
-        << "  " << projectSetting("BINARYDATA_NAMESPACE", Ids::binaryDataNamespace)
-        << "\n"
-        << "  " << projectSetting("PREPROCESSOR_DEFINITIONS", Ids::defines) << "\n"
-        << "  " << projectSetting("PROJECT_ID", Ids::ID) << "\n"
+        << "  " << projectSetting("BINARYDATA_NAMESPACE", "binaryDataNamespace") << "\n"
+        << "  " << projectSetting("PREPROCESSOR_DEFINITIONS", "defines") << "\n"
+        << "  " << projectSetting("PROJECT_ID", "id") << "\n"
         << ")\n"
         << "\n";
 
@@ -287,7 +283,7 @@ int main(int argc, char* argv[])
     std::function<void(const juce::ValueTree&)> processGroup =
       [&groupNames, &processGroup, &writeFileGroups](const juce::ValueTree& group)
     {
-      groupNames.push_back(group.getProperty(Ids::name).toString().toStdString());
+      groupNames.push_back(group.getProperty("name").toString().toStdString());
 
       const auto fullGroupName = std::accumulate(std::next(groupNames.begin()),
         groupNames.end(),
@@ -301,12 +297,12 @@ int main(int argc, char* argv[])
 
       for (const auto& fileOrGroup : group)
       {
-        if (fileOrGroup.hasType(Ids::FILE))
+        if (fileOrGroup.hasType("FILE"))
         {
           const auto& file = fileOrGroup;
-          const auto path = file.getProperty(Ids::file).toString().toStdString();
+          const auto path = file.getProperty("file").toString().toStdString();
 
-          if (int{file.getProperty(Ids::resource)} == 1)
+          if (int{file.getProperty("resource")} == 1)
           {
             resourcePaths.push_back(path);
           }
@@ -315,7 +311,7 @@ int main(int argc, char* argv[])
             filePaths.push_back(path);
 
             if (juce::File{path}.hasFileExtension("cpp") &&
-                int{file.getProperty(Ids::compile)} == 0)
+                int{file.getProperty("compile")} == 0)
             {
               doNotCompileFilePaths.push_back(path);
             }
@@ -337,26 +333,26 @@ int main(int argc, char* argv[])
       groupNames.pop_back();
     };
 
-    processGroup(jucerProject.getChildWithName(Ids::MAINGROUP));
+    processGroup(jucerProject.getChildWithName("MAINGROUP"));
   }
 
   // jucer_project_module()
   {
     std::vector<std::string> moduleNames;
-    for (const auto& module : jucerProject.getChildWithName(Ids::MODULES))
+    for (const auto& module : jucerProject.getChildWithName("MODULES"))
     {
-      moduleNames.push_back(module.getProperty(Ids::ID).toString().toStdString());
+      moduleNames.push_back(module.getProperty("id").toString().toStdString());
     }
 
-    const auto modulePaths = jucerProject.getChildWithName(Ids::EXPORTFORMATS)
+    const auto modulePaths = jucerProject.getChildWithName("EXPORTFORMATS")
                                .getChild(1)
-                               .getChildWithName(Ids::MODULEPATHS);
+                               .getChildWithName("MODULEPATHS");
 
     for (const auto& moduleName : moduleNames)
     {
       const auto relativeModulePath =
-        modulePaths.getChildWithProperty(Ids::ID, juce::String{moduleName})
-          .getProperty(Ids::path)
+        modulePaths.getChildWithProperty("id", juce::String{moduleName})
+          .getProperty("path")
           .toString();
 
       out << "jucer_project_module(\n"
@@ -372,7 +368,7 @@ int main(int argc, char* argv[])
       juce::StringArray moduleHeaderLines;
       moduleHeader.readLines(moduleHeaderLines);
 
-      const auto modulesOptions = jucerProject.getChildWithName(Ids::JUCEOPTIONS);
+      const auto modulesOptions = jucerProject.getChildWithName("JUCEOPTIONS");
 
       for (const auto& line : moduleHeaderLines)
       {

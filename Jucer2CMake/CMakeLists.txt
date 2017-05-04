@@ -68,5 +68,4 @@ jucer_project_module(
 jucer_project_end()
 
 
-target_include_directories(Jucer2CMake PRIVATE "${Projucer_jucer_DIR}/Source")
 target_compile_definitions(Jucer2CMake PRIVATE DONT_SET_USING_JUCE_NAMESPACE=1)
