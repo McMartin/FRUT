@@ -345,7 +345,7 @@ int main(int argc, char* argv[])
     }
 
     const auto modulePaths = jucerProject.getChildWithName("EXPORTFORMATS")
-                               .getChild(1)
+                               .getChild(0)
                                .getChildWithName("MODULEPATHS");
 
     for (const auto& moduleName : moduleNames)
