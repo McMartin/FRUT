@@ -33,6 +33,20 @@ void printError(const std::string& error)
 }
 
 
+std::string escape(const std::string& charsToEscape, std::string value)
+{
+  auto pos = std::string::size_type{0};
+
+  while ((pos = value.find_first_of(charsToEscape, pos)) != std::string::npos)
+  {
+    value.insert(pos, "\\");
+    pos += 2;
+  }
+
+  return value;
+}
+
+
 int main(int argc, char* argv[])
 {
   if (argc != 3)
@@ -152,7 +166,7 @@ int main(int argc, char* argv[])
 
         if (!value.empty())
         {
-          return cmakeTag + " \"" + value + "\"";
+          return cmakeTag + " \"" + escape("\"", value) + "\"";
         }
       }
 
