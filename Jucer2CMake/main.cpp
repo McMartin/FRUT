@@ -47,6 +47,23 @@ std::string escape(const std::string& charsToEscape, std::string value)
 }
 
 
+std::string join(const std::string& sep, const std::vector<std::string>& elements)
+{
+  if (elements.empty())
+  {
+    return {};
+  }
+
+  return std::accumulate(std::next(elements.begin()),
+    elements.end(),
+    *elements.begin(),
+    [&sep](const std::string& sum, const std::string& elm)
+    {
+      return sum + sep + elm;
+    });
+}
+
+
 int main(int argc, char* argv[])
 {
   if (argc != 3)
@@ -299,13 +316,7 @@ int main(int argc, char* argv[])
     {
       groupNames.push_back(group.getProperty("name").toString().toStdString());
 
-      const auto fullGroupName = std::accumulate(std::next(groupNames.begin()),
-        groupNames.end(),
-        *groupNames.begin(),
-        [](const std::string& sum, const std::string& s)
-        {
-          return sum + "/" + s;
-        });
+      const auto fullGroupName = join("/", groupNames);
 
       std::vector<std::string> filePaths, doNotCompileFilePaths, resourcePaths;
 
