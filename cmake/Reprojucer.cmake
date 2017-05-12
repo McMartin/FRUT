@@ -156,6 +156,13 @@ function(jucer_project_files source_group_name)
   list(APPEND JUCER_PROJECT_SOURCES ${ARGN})
   set(JUCER_PROJECT_SOURCES ${JUCER_PROJECT_SOURCES} PARENT_SCOPE)
 
+  foreach(src_file ${ARGN})
+    get_filename_component(src_file_extension "${src_file}" EXT)
+    if(src_file_extension STREQUAL ".mm" AND NOT APPLE)
+      set_source_files_properties("${src_file}" PROPERTIES HEADER_FILE_ONLY TRUE)
+    endif()
+  endforeach()
+
 endfunction()
 
 
