@@ -222,9 +222,11 @@ int main(int argc, char* argv[])
 
     const auto projectType = jucerProject.getProperty("projectType").toString();
     const auto projectTypeDescription =
-      projectType == "guiapp"
-        ? "GUI Application"
-        : projectType == "consoleapp" ? "Console Application"
+      projectType == "guiapp" ? "GUI Application"
+                              : projectType == "consoleapp"
+                                  ? "Console Application"
+                                  : projectType == "library"
+                                      ? "Static Library"
                                       : projectType == "audioplug" ? "Audio Plug-in" : "";
 
     const auto preprocessorDefinitions =
