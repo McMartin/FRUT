@@ -375,7 +375,7 @@ int main(int argc, char* argv[])
           {
             filePaths.push_back(path);
 
-            if (juce::File{path}.hasFileExtension("cpp") &&
+            if (juce::File::createFileWithoutCheckingPath(path).hasFileExtension("cpp") &&
                 int{file.getProperty("compile")} == 0)
             {
               doNotCompileFilePaths.push_back(path);
