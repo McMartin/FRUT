@@ -288,7 +288,7 @@ int main(int argc, char* argv[])
       const auto fullGroupName = std::accumulate(std::next(groupNames.begin()),
         groupNames.end(),
         *groupNames.begin(),
-        [](const std::string sum, const std::string s)
+        [](const std::string& sum, const std::string& s)
         {
           return sum + "/" + s;
         });
