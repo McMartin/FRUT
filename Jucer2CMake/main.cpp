@@ -33,6 +33,67 @@ void printError(const std::string& error)
 }
 
 
+std::string escape(const std::string& charsToEscape, std::string value)
+{
+  auto pos = std::string::size_type{0};
+
+  while ((pos = value.find_first_of(charsToEscape, pos)) != std::string::npos)
+  {
+    value.insert(pos, "\\");
+    pos += 2;
+  }
+
+  return value;
+}
+
+
+std::vector<std::string> escape(
+  const std::string& charsToEscape, std::vector<std::string> elements)
+{
+  std::transform(elements.begin(),
+    elements.end(),
+    elements.begin(),
+    [&charsToEscape](const std::string& element)
+    {
+      return escape(charsToEscape, element);
+    });
+  return elements;
+}
+
+
+std::string join(const std::string& sep, const std::vector<std::string>& elements)
+{
+  if (elements.empty())
+  {
+    return {};
+  }
+
+  return std::accumulate(std::next(elements.begin()),
+    elements.end(),
+    *elements.begin(),
+    [&sep](const std::string& sum, const std::string& elm)
+    {
+      return sum + sep + elm;
+    });
+}
+
+
+std::vector<std::string> split(const std::string& sep, const std::string& value)
+{
+  std::vector<std::string> tokens;
+  std::string::size_type start = 0u, end = 0u;
+
+  while ((end = value.find(sep, start)) != std::string::npos)
+  {
+    tokens.push_back(value.substr(start, end - start));
+    start = end + sep.length();
+  }
+  tokens.push_back(value.substr(start));
+
+  return tokens;
+}
+
+
 int main(int argc, char* argv[])
 {
   if (argc != 3)
@@ -152,7 +213,7 @@ int main(int argc, char* argv[])
 
         if (!value.empty())
         {
-          return cmakeTag + " \"" + value + "\"";
+          return cmakeTag + " \"" + escape("\"", value) + "\"";
         }
       }
 
@@ -166,6 +227,11 @@ int main(int argc, char* argv[])
         : projectType == "consoleapp" ? "Console Application"
                                       : projectType == "audioplug" ? "Audio Plug-in" : "";
 
+    const auto preprocessorDefinitions =
+      join(";",
+        escape(";\"",
+             split("\n", jucerProject.getProperty("defines").toString().toStdString())));
+
     out << "jucer_project_begin(\n"
         << "  " << projectSetting("PROJECT_NAME", "name") << "\n"
         << "  " << projectSetting("PROJECT_VERSION", "version") << "\n"
@@ -176,7 +242,10 @@ int main(int argc, char* argv[])
         << "  " << projectSetting("BUNDLE_IDENTIFIER", "bundleIdentifier") << "\n"
         << "  BINARYDATACPP_SIZE_LIMIT \"Default\"\n"
         << "  " << projectSetting("BINARYDATA_NAMESPACE", "binaryDataNamespace") << "\n"
-        << "  " << projectSetting("PREPROCESSOR_DEFINITIONS", "defines") << "\n"
+        << "  " << (preprocessorDefinitions.empty()
+                       ? "# PREPROCESSOR_DEFINITIONS"
+                       : "PREPROCESSOR_DEFINITIONS \"" + preprocessorDefinitions + "\"")
+        << "\n"
         << "  " << projectSetting("PROJECT_ID", "id") << "\n"
         << ")\n"
         << "\n";
@@ -285,13 +354,7 @@ int main(int argc, char* argv[])
     {
       groupNames.push_back(group.getProperty("name").toString().toStdString());
 
-      const auto fullGroupName = std::accumulate(std::next(groupNames.begin()),
-        groupNames.end(),
-        *groupNames.begin(),
-        [](const std::string sum, const std::string s)
-        {
-          return sum + "/" + s;
-        });
+      const auto fullGroupName = join("/", groupNames);
 
       std::vector<std::string> filePaths, doNotCompileFilePaths, resourcePaths;
 
