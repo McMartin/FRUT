@@ -4,6 +4,11 @@ branches:
 
 clone_depth: 50
 
+environment:
+  matrix:
+    - GENERATOR: "Visual Studio 12 2013"
+    - GENERATOR: "Visual Studio 14 2015"
+
 install:
   - cmake --version
 
@@ -21,6 +26,7 @@ build_script:
 
   - >
     cmake ..
+    -G "%GENERATOR%"
     -DJUCE_ROOT="../../../JUCE"
     -DJuceDemoPlugin_jucer_FILE="../../../JUCE/examples/audio plugin demo/JuceDemoPlugin.jucer"
     -DNetworkGraphicsDemo_jucer_FILE="../../../JUCE/examples/NetworkGraphicsDemo/NetworkGraphicsDemo.jucer"
