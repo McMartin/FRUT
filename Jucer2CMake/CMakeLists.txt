@@ -40,6 +40,7 @@ jucer_project_begin(
   PROJECT_NAME "Jucer2CMake"
   PROJECT_VERSION "1.0.0"
   PROJECT_TYPE "Console Application"
+  PREPROCESSOR_DEFINITIONS "DONT_SET_USING_JUCE_NAMESPACE=1"
 )
 
 jucer_project_files("Jucer2CMake"
@@ -62,6 +63,3 @@ jucer_project_module(
 )
 
 jucer_project_end()
-
-
-target_compile_definitions(Jucer2CMake PRIVATE DONT_SET_USING_JUCE_NAMESPACE=1)
