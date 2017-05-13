@@ -228,8 +228,8 @@ int main(int argc, char* argv[])
                                       : projectType == "audioplug" ? "Audio Plug-in" : "";
 
     const auto preprocessorDefinitions =
-      join(";",
-        escape(";\"",
+      join("\\;",
+        escape("\"",
              split("\n", jucerProject.getProperty("defines").toString().toStdString())));
 
     out << "jucer_project_begin(\n"
