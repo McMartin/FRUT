@@ -46,8 +46,10 @@ function(jucer_project_begin)
     "PROJECT_ID"
   )
 
-  set(project_type_descs "GUI Application" "Console Application" "Audio Plug-in")
-  set(project_types "guiapp" "consoleapp" "audioplug")
+  set(project_type_descs
+    "GUI Application" "Console Application" "Static Library" "Audio Plug-in"
+  )
+  set(project_types "guiapp" "consoleapp" "library" "audioplug")
 
   set(size_limit_descs "Default" "20.0 MB" "10.0 MB" "6.0 MB" "2.0 MB" "1.0 MB" "512.0 KB"
     "256.0 KB" "128.0 KB" "64.0 KB"
@@ -322,6 +324,10 @@ function(jucer_project_end)
     set_target_properties(${target_name} PROPERTIES WIN32_EXECUTABLE TRUE)
     __set_common_target_properties(${target_name})
     __link_osx_frameworks(${target_name} ${JUCER_PROJECT_OSX_FRAMEWORKS})
+
+  elseif(JUCER_PROJECT_TYPE STREQUAL "library")
+    add_library(${target_name} STATIC ${all_sources})
+    __set_common_target_properties(${target_name})
 
   elseif(JUCER_PROJECT_TYPE STREQUAL "audioplug")
     if(APPLE)
