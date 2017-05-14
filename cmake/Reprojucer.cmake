@@ -278,6 +278,37 @@ function(jucer_project_module module_name PATH_TAG modules_folder)
 endfunction()
 
 
+function(jucer_export_target exporter)
+
+  set(supported_exporters
+    "Xcode (MacOSX)"
+    "Visual Studio 2015"
+    "Visual Studio 2013"
+  )
+
+  if(NOT "${exporter}" IN_LIST supported_exporters)
+    message(FATAL_ERROR "Unsupported exporter: ${exporter}\n"
+      "Supported exporters: ${supported_exporters}"
+    )
+  endif()
+  list(APPEND JUCER_EXPORT_TARGETS "${exporter}")
+  set(JUCER_EXPORT_TARGETS ${JUCER_EXPORT_TARGETS} PARENT_SCOPE)
+
+endfunction()
+
+
+function(jucer_export_target_configuration exporter)
+
+  if(NOT "${exporter}" IN_LIST JUCER_EXPORT_TARGETS)
+    message(FATAL_ERROR
+      "Call jucer_export_target(\"${exporter}\") before "
+      "calling jucer_export_target_configuration(\"${exporter}\")"
+    )
+  endif()
+
+endfunction()
+
+
 function(jucer_project_end)
 
   string(TOUPPER "${JUCER_PROJECT_ID}" upper_project_id)

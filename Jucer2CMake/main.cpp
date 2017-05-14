@@ -24,6 +24,7 @@
 #include <locale>
 #include <numeric>
 #include <string>
+#include <utility>
 #include <vector>
 
 
@@ -459,6 +460,35 @@ int main(int argc, char* argv[])
 
       out << ")\n"
           << "\n";
+    }
+  }
+
+  // jucer_export_target() and jucer_export_target_configuration()
+  {
+    const std::vector<std::pair<const char*, const char*>> supportedExporters = {
+      {"XCODE_MAC", "Xcode (MacOSX)"},
+      {"VS2015", "Visual Studio 2015"},
+      {"VS2013", "Visual Studio 2013"}};
+
+    for (const auto& element : supportedExporters)
+    {
+      const auto exporter = jucerProject.getChildWithName("EXPORTFORMATS")
+                              .getChildWithName(std::get<0>(element));
+      if (exporter.isValid())
+      {
+        out << "jucer_export_target(\n"
+            << "  \"" << std::get<1>(element) << "\"\n"
+            << ")\n"
+            << "\n";
+
+        for (const auto& configuration : exporter.getChildWithName("CONFIGURATIONS"))
+        {
+          out << "jucer_export_target_configuration(\n"
+              << "  \"" << std::get<1>(element) << "\"\n"
+              << ")\n"
+              << "\n";
+        }
+      }
     }
   }
 
