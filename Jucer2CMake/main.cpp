@@ -95,6 +95,12 @@ std::vector<std::string> split(const std::string& sep, const std::string& value)
 }
 
 
+std::string makePreprocessorDefinitionsList(const std::string& preprocessorDefinitions)
+{
+  return join("\\;", escape("\"", split("\n", preprocessorDefinitions)));
+}
+
+
 int main(int argc, char* argv[])
 {
   if (argc != 3)
@@ -230,10 +236,8 @@ int main(int argc, char* argv[])
                                       ? "Static Library"
                                       : projectType == "audioplug" ? "Audio Plug-in" : "";
 
-    const auto preprocessorDefinitions =
-      join("\\;",
-        escape("\"",
-             split("\n", jucerProject.getProperty("defines").toString().toStdString())));
+    const auto preprocessorDefinitions = makePreprocessorDefinitionsList(
+      jucerProject.getProperty("defines").toString().toStdString());
 
     out << "jucer_project_begin(\n"
         << "  " << projectSetting("PROJECT_NAME", "name") << "\n"
