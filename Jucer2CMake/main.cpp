@@ -495,9 +495,17 @@ int main(int argc, char* argv[])
 
         for (const auto& configuration : exporter.getChildWithName("CONFIGURATIONS"))
         {
+          const auto preprocessorDefinitions = makePreprocessorDefinitionsList(
+            configuration.getProperty("defines").toString().toStdString());
+
           out << "jucer_export_target_configuration(\n"
               << "  \"" << std::get<1>(element) << "\"\n"
               << "  NAME \"" << configuration.getProperty("name").toString() << "\"\n"
+              << "  "
+              << (preprocessorDefinitions.empty()
+                     ? "# PREPROCESSOR_DEFINITIONS"
+                     : "PREPROCESSOR_DEFINITIONS \"" + preprocessorDefinitions + "\"")
+              << "\n"
               << ")\n"
               << "\n";
         }

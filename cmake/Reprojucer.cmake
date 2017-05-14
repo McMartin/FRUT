@@ -354,6 +354,7 @@ function(jucer_export_target_configuration exporter)
 
   set(configuration_settings_tags
     "NAME"
+    "PREPROCESSOR_DEFINITIONS"
   )
 
   foreach(element ${ARGN})
@@ -371,6 +372,12 @@ function(jucer_export_target_configuration exporter)
       if(tag STREQUAL "NAME")
         list(APPEND JUCER_PROJECT_CONFIGURATIONS ${value})
         set(JUCER_PROJECT_CONFIGURATIONS ${JUCER_PROJECT_CONFIGURATIONS} PARENT_SCOPE)
+
+      elseif(tag STREQUAL "PREPROCESSOR_DEFINITIONS")
+        list(APPEND JUCER_PREPROCESSOR_DEFINITIONS
+          $<$<CONFIG:${configuration_name}>:${value}>
+        )
+        set(JUCER_PREPROCESSOR_DEFINITIONS ${JUCER_PREPROCESSOR_DEFINITIONS} PARENT_SCOPE)
 
       endif()
 
