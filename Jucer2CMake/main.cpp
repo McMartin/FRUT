@@ -480,8 +480,16 @@ int main(int argc, char* argv[])
                               .getChildWithName(std::get<0>(element));
       if (exporter.isValid())
       {
+        const auto extraPreprocessorDefinitions = makePreprocessorDefinitionsList(
+          exporter.getProperty("extraDefs").toString().toStdString());
+
         out << "jucer_export_target(\n"
             << "  \"" << std::get<1>(element) << "\"\n"
+            << "  " << (extraPreprocessorDefinitions.empty()
+                           ? "# EXTRA_PREPROCESSOR_DEFINITIONS"
+                           : "EXTRA_PREPROCESSOR_DEFINITIONS \"" +
+                               extraPreprocessorDefinitions + "\"")
+            << "\n"
             << ")\n"
             << "\n";
 
