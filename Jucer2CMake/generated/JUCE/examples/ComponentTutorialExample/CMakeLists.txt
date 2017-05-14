@@ -95,16 +95,19 @@ jucer_project_module(
 
 jucer_export_target(
   "Xcode (MacOSX)"
+  # EXTRA_PREPROCESSOR_DEFINITIONS
 )
 
 jucer_export_target_configuration(
   "Xcode (MacOSX)"
   NAME "Debug"
+  # PREPROCESSOR_DEFINITIONS
 )
 
 jucer_export_target_configuration(
   "Xcode (MacOSX)"
   NAME "Release"
+  # PREPROCESSOR_DEFINITIONS
 )
 
 jucer_project_end()
