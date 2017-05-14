@@ -46,10 +46,9 @@ function(jucer_project_begin)
     "PROJECT_ID"
   )
 
-  set(project_type_descs
+  set(project_types
     "GUI Application" "Console Application" "Static Library" "Audio Plug-in"
   )
-  set(project_types "guiapp" "consoleapp" "library" "audioplug")
 
   set(size_limit_descs "Default" "20.0 MB" "10.0 MB" "6.0 MB" "2.0 MB" "1.0 MB" "512.0 KB"
     "256.0 KB" "128.0 KB" "64.0 KB"
@@ -79,13 +78,11 @@ function(jucer_project_begin)
         set(JUCER_PROJECT_VERSION_AS_HEX "${hex_value}" PARENT_SCOPE)
 
       elseif(tag STREQUAL "PROJECT_TYPE")
-        list(FIND project_type_descs "${value}" project_type_index)
-        if(project_type_index EQUAL -1)
+        if(NOT "${value}" IN_LIST project_types)
           message(FATAL_ERROR "Unsupported project type: \"${value}\"\n"
-            "Supported project types: ${project_type_descs}"
+            "Supported project types: ${project_types}"
           )
         endif()
-        list(GET project_types ${project_type_index} value)
 
       elseif(tag STREQUAL "BINARYDATACPP_SIZE_LIMIT")
         list(FIND size_limit_descs "${value}" size_limit_index)
@@ -426,12 +423,12 @@ function(jucer_project_end)
     ${JUCER_PROJECT_BROWSABLE_FILES}
   )
 
-  if(JUCER_PROJECT_TYPE STREQUAL "consoleapp")
+  if(JUCER_PROJECT_TYPE STREQUAL "Console Application")
     add_executable(${target_name} ${all_sources})
     __set_common_target_properties(${target_name})
     __link_osx_frameworks(${target_name} ${JUCER_PROJECT_OSX_FRAMEWORKS})
 
-  elseif(JUCER_PROJECT_TYPE STREQUAL "guiapp")
+  elseif(JUCER_PROJECT_TYPE STREQUAL "GUI Application")
     add_executable(${target_name} ${all_sources})
     set_target_properties(${target_name} PROPERTIES MACOSX_BUNDLE TRUE)
     __generate_plist_file(${target_name} "App" "APPL" "????" "")
@@ -439,11 +436,11 @@ function(jucer_project_end)
     __set_common_target_properties(${target_name})
     __link_osx_frameworks(${target_name} ${JUCER_PROJECT_OSX_FRAMEWORKS})
 
-  elseif(JUCER_PROJECT_TYPE STREQUAL "library")
+  elseif(JUCER_PROJECT_TYPE STREQUAL "Static Library")
     add_library(${target_name} STATIC ${all_sources})
     __set_common_target_properties(${target_name})
 
-  elseif(JUCER_PROJECT_TYPE STREQUAL "audioplug")
+  elseif(JUCER_PROJECT_TYPE STREQUAL "Audio Plug-in")
     if(APPLE)
       foreach(src_file ${JUCER_PROJECT_SOURCES})
         # See XCodeProjectExporter::getTargetTypeFromFilePath()
@@ -595,7 +592,7 @@ function(__generate_AppConfig_header project_id)
 
   set(is_standalone_application 1)
 
-  if(JUCER_PROJECT_TYPE STREQUAL "audioplug")
+  if(JUCER_PROJECT_TYPE STREQUAL "Audio Plug-in")
     set(is_standalone_application 0)
 
     # See ProjectSaver::writePluginCharacteristicsFile()
