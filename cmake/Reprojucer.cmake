@@ -306,10 +306,52 @@ function(jucer_export_target_configuration exporter)
     )
   endif()
 
+  if(NOT "NAME" IN_LIST ARGN)
+    message(FATAL_ERROR "Missing NAME argument")
+  endif()
+
+  if(exporter STREQUAL "Xcode (MacOSX)" AND NOT APPLE)
+    return()
+  elseif(exporter STREQUAL "Visual Studio 2015" AND NOT MSVC_VERSION EQUAL 1900)
+    return()
+  elseif(exporter STREQUAL "Visual Studio 2013" AND NOT MSVC_VERSION EQUAL 1800)
+    return()
+  endif()
+
+  set(configuration_settings_tags
+    "NAME"
+  )
+
+  foreach(element ${ARGN})
+    if(NOT DEFINED tag)
+      set(tag ${element})
+
+      if(NOT "${tag}" IN_LIST configuration_settings_tags)
+        message(FATAL_ERROR "Unsupported configuration setting: ${tag}\n"
+          "Supported configuration settings: ${configuration_settings_tags}"
+        )
+      endif()
+    else()
+      set(value ${element})
+
+      if(tag STREQUAL "NAME")
+        list(APPEND JUCER_PROJECT_CONFIGURATIONS ${value})
+        set(JUCER_PROJECT_CONFIGURATIONS ${JUCER_PROJECT_CONFIGURATIONS} PARENT_SCOPE)
+
+      endif()
+
+      unset(tag)
+    endif()
+  endforeach()
+
 endfunction()
 
 
 function(jucer_project_end)
+
+  if(DEFINED JUCER_PROJECT_CONFIGURATIONS)
+    set(CMAKE_CONFIGURATION_TYPES ${JUCER_PROJECT_CONFIGURATIONS} PARENT_SCOPE)
+  endif()
 
   string(TOUPPER "${JUCER_PROJECT_ID}" upper_project_id)
   __generate_AppConfig_header("${upper_project_id}")

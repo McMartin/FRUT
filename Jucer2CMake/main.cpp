@@ -485,6 +485,7 @@ int main(int argc, char* argv[])
         {
           out << "jucer_export_target_configuration(\n"
               << "  \"" << std::get<1>(element) << "\"\n"
+              << "  NAME \"" << configuration.getProperty("name").toString() << "\"\n"
               << ")\n"
               << "\n";
         }
