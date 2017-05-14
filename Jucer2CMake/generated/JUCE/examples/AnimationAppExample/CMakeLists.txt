@@ -144,4 +144,18 @@ jucer_project_module(
   # JUCE_USE_CAMERA
 )
 
+jucer_export_target(
+  "Xcode (MacOSX)"
+)
+
+jucer_export_target_configuration(
+  "Xcode (MacOSX)"
+  NAME "Debug"
+)
+
+jucer_export_target_configuration(
+  "Xcode (MacOSX)"
+  NAME "Release"
+)
+
 jucer_project_end()

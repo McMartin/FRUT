@@ -154,4 +154,32 @@ jucer_project_module(
   PATH "${NetworkGraphicsDemo_jucer_DIR}/../../modules"
 )
 
+jucer_export_target(
+  "Xcode (MacOSX)"
+)
+
+jucer_export_target_configuration(
+  "Xcode (MacOSX)"
+  NAME "Debug"
+)
+
+jucer_export_target_configuration(
+  "Xcode (MacOSX)"
+  NAME "Release"
+)
+
+jucer_export_target(
+  "Visual Studio 2013"
+)
+
+jucer_export_target_configuration(
+  "Visual Studio 2013"
+  NAME "Debug"
+)
+
+jucer_export_target_configuration(
+  "Visual Studio 2013"
+  NAME "Release"
+)
+
 jucer_project_end()
