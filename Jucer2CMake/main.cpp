@@ -24,6 +24,7 @@
 #include <locale>
 #include <numeric>
 #include <string>
+#include <utility>
 #include <vector>
 
 
@@ -91,6 +92,12 @@ std::vector<std::string> split(const std::string& sep, const std::string& value)
   tokens.push_back(value.substr(start));
 
   return tokens;
+}
+
+
+std::string makePreprocessorDefinitionsList(const std::string& preprocessorDefinitions)
+{
+  return join("\\;", escape("\"", split("\n", preprocessorDefinitions)));
 }
 
 
@@ -229,10 +236,8 @@ int main(int argc, char* argv[])
                                       ? "Static Library"
                                       : projectType == "audioplug" ? "Audio Plug-in" : "";
 
-    const auto preprocessorDefinitions =
-      join("\\;",
-        escape("\"",
-             split("\n", jucerProject.getProperty("defines").toString().toStdString())));
+    const auto preprocessorDefinitions = makePreprocessorDefinitionsList(
+      jucerProject.getProperty("defines").toString().toStdString());
 
     out << "jucer_project_begin(\n"
         << "  " << projectSetting("PROJECT_NAME", "name") << "\n"
@@ -459,6 +464,52 @@ int main(int argc, char* argv[])
 
       out << ")\n"
           << "\n";
+    }
+  }
+
+  // jucer_export_target() and jucer_export_target_configuration()
+  {
+    const std::vector<std::pair<const char*, const char*>> supportedExporters = {
+      {"XCODE_MAC", "Xcode (MacOSX)"},
+      {"VS2015", "Visual Studio 2015"},
+      {"VS2013", "Visual Studio 2013"}};
+
+    for (const auto& element : supportedExporters)
+    {
+      const auto exporter = jucerProject.getChildWithName("EXPORTFORMATS")
+                              .getChildWithName(std::get<0>(element));
+      if (exporter.isValid())
+      {
+        const auto extraPreprocessorDefinitions = makePreprocessorDefinitionsList(
+          exporter.getProperty("extraDefs").toString().toStdString());
+
+        out << "jucer_export_target(\n"
+            << "  \"" << std::get<1>(element) << "\"\n"
+            << "  " << (extraPreprocessorDefinitions.empty()
+                           ? "# EXTRA_PREPROCESSOR_DEFINITIONS"
+                           : "EXTRA_PREPROCESSOR_DEFINITIONS \"" +
+                               extraPreprocessorDefinitions + "\"")
+            << "\n"
+            << ")\n"
+            << "\n";
+
+        for (const auto& configuration : exporter.getChildWithName("CONFIGURATIONS"))
+        {
+          const auto preprocessorDefinitions = makePreprocessorDefinitionsList(
+            configuration.getProperty("defines").toString().toStdString());
+
+          out << "jucer_export_target_configuration(\n"
+              << "  \"" << std::get<1>(element) << "\"\n"
+              << "  NAME \"" << configuration.getProperty("name").toString() << "\"\n"
+              << "  "
+              << (preprocessorDefinitions.empty()
+                     ? "# PREPROCESSOR_DEFINITIONS"
+                     : "PREPROCESSOR_DEFINITIONS \"" + preprocessorDefinitions + "\"")
+              << "\n"
+              << ")\n"
+              << "\n";
+        }
+      }
     }
   }
 

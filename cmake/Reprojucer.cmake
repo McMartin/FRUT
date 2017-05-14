@@ -278,7 +278,121 @@ function(jucer_project_module module_name PATH_TAG modules_folder)
 endfunction()
 
 
+function(jucer_export_target exporter)
+
+  set(supported_exporters
+    "Xcode (MacOSX)"
+    "Visual Studio 2015"
+    "Visual Studio 2013"
+  )
+
+  if(NOT "${exporter}" IN_LIST supported_exporters)
+    message(FATAL_ERROR "Unsupported exporter: ${exporter}\n"
+      "Supported exporters: ${supported_exporters}"
+    )
+  endif()
+  list(APPEND JUCER_EXPORT_TARGETS "${exporter}")
+  set(JUCER_EXPORT_TARGETS ${JUCER_EXPORT_TARGETS} PARENT_SCOPE)
+
+  if(exporter STREQUAL "Xcode (MacOSX)" AND NOT APPLE)
+    return()
+  elseif(exporter STREQUAL "Visual Studio 2015" AND NOT MSVC_VERSION EQUAL 1900)
+    return()
+  elseif(exporter STREQUAL "Visual Studio 2013" AND NOT MSVC_VERSION EQUAL 1800)
+    return()
+  endif()
+
+  set(export_target_settings_tags
+    "EXTRA_PREPROCESSOR_DEFINITIONS"
+  )
+
+  foreach(element ${ARGN})
+    if(NOT DEFINED tag)
+      set(tag ${element})
+
+      if(NOT "${tag}" IN_LIST export_target_settings_tags)
+        message(FATAL_ERROR "Unsupported export target setting: ${tag}\n"
+          "Supported export target settings: ${export_target_settings_tags}"
+        )
+      endif()
+    else()
+      set(value ${element})
+
+      if(tag STREQUAL "EXTRA_PREPROCESSOR_DEFINITIONS")
+        list(APPEND JUCER_PREPROCESSOR_DEFINITIONS ${value})
+        set(JUCER_PREPROCESSOR_DEFINITIONS ${JUCER_PREPROCESSOR_DEFINITIONS} PARENT_SCOPE)
+
+      endif()
+
+      unset(tag)
+    endif()
+  endforeach()
+
+endfunction()
+
+
+function(jucer_export_target_configuration exporter)
+
+  if(NOT "${exporter}" IN_LIST JUCER_EXPORT_TARGETS)
+    message(FATAL_ERROR
+      "Call jucer_export_target(\"${exporter}\") before "
+      "calling jucer_export_target_configuration(\"${exporter}\")"
+    )
+  endif()
+
+  if(NOT "NAME" IN_LIST ARGN)
+    message(FATAL_ERROR "Missing NAME argument")
+  endif()
+
+  if(exporter STREQUAL "Xcode (MacOSX)" AND NOT APPLE)
+    return()
+  elseif(exporter STREQUAL "Visual Studio 2015" AND NOT MSVC_VERSION EQUAL 1900)
+    return()
+  elseif(exporter STREQUAL "Visual Studio 2013" AND NOT MSVC_VERSION EQUAL 1800)
+    return()
+  endif()
+
+  set(configuration_settings_tags
+    "NAME"
+    "PREPROCESSOR_DEFINITIONS"
+  )
+
+  foreach(element ${ARGN})
+    if(NOT DEFINED tag)
+      set(tag ${element})
+
+      if(NOT "${tag}" IN_LIST configuration_settings_tags)
+        message(FATAL_ERROR "Unsupported configuration setting: ${tag}\n"
+          "Supported configuration settings: ${configuration_settings_tags}"
+        )
+      endif()
+    else()
+      set(value ${element})
+
+      if(tag STREQUAL "NAME")
+        list(APPEND JUCER_PROJECT_CONFIGURATIONS ${value})
+        set(JUCER_PROJECT_CONFIGURATIONS ${JUCER_PROJECT_CONFIGURATIONS} PARENT_SCOPE)
+
+      elseif(tag STREQUAL "PREPROCESSOR_DEFINITIONS")
+        list(APPEND JUCER_PREPROCESSOR_DEFINITIONS
+          $<$<CONFIG:${configuration_name}>:${value}>
+        )
+        set(JUCER_PREPROCESSOR_DEFINITIONS ${JUCER_PREPROCESSOR_DEFINITIONS} PARENT_SCOPE)
+
+      endif()
+
+      unset(tag)
+    endif()
+  endforeach()
+
+endfunction()
+
+
 function(jucer_project_end)
+
+  if(DEFINED JUCER_PROJECT_CONFIGURATIONS)
+    set(CMAKE_CONFIGURATION_TYPES ${JUCER_PROJECT_CONFIGURATIONS} PARENT_SCOPE)
+  endif()
 
   string(TOUPPER "${JUCER_PROJECT_ID}" upper_project_id)
   __generate_AppConfig_header("${upper_project_id}")

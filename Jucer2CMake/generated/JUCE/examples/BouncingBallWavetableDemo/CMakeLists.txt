@@ -146,4 +146,38 @@ jucer_project_module(
   # JUCE_USE_CAMERA
 )
 
+jucer_export_target(
+  "Xcode (MacOSX)"
+  # EXTRA_PREPROCESSOR_DEFINITIONS
+)
+
+jucer_export_target_configuration(
+  "Xcode (MacOSX)"
+  NAME "Debug"
+  # PREPROCESSOR_DEFINITIONS
+)
+
+jucer_export_target_configuration(
+  "Xcode (MacOSX)"
+  NAME "Release"
+  # PREPROCESSOR_DEFINITIONS
+)
+
+jucer_export_target(
+  "Visual Studio 2013"
+  # EXTRA_PREPROCESSOR_DEFINITIONS
+)
+
+jucer_export_target_configuration(
+  "Visual Studio 2013"
+  NAME "Debug"
+  # PREPROCESSOR_DEFINITIONS
+)
+
+jucer_export_target_configuration(
+  "Visual Studio 2013"
+  NAME "Release"
+  # PREPROCESSOR_DEFINITIONS
+)
+
 jucer_project_end()
