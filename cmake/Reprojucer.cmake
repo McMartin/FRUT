@@ -74,6 +74,13 @@ function(jucer_project_begin)
         project(${value})
 
       elseif(tag STREQUAL "PROJECT_VERSION")
+        string(REGEX MATCH ".+\\..+\\..+(\\..+)?" version_match "${value}")
+        if(NOT value STREQUAL version_match)
+          message(WARNING
+            "The PROJECT_VERSION doesn't seem to be in the format "
+            "major.minor.point[.point]"
+          )
+        endif()
         __version_to_hex("${value}" hex_value)
         set(JUCER_PROJECT_VERSION_AS_HEX "${hex_value}" PARENT_SCOPE)
 
