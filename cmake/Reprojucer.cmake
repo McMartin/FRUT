@@ -335,17 +335,13 @@ function(jucer_export_target exporter)
 endfunction()
 
 
-function(jucer_export_target_configuration exporter)
+function(jucer_export_target_configuration exporter NAME_TAG configuration_name)
 
   if(NOT "${exporter}" IN_LIST JUCER_EXPORT_TARGETS)
     message(FATAL_ERROR
       "Call jucer_export_target(\"${exporter}\") before "
       "calling jucer_export_target_configuration(\"${exporter}\")"
     )
-  endif()
-
-  if(NOT "NAME" IN_LIST ARGN)
-    message(FATAL_ERROR "Missing NAME argument")
   endif()
 
   if(exporter STREQUAL "Xcode (MacOSX)" AND NOT APPLE)
@@ -356,8 +352,10 @@ function(jucer_export_target_configuration exporter)
     return()
   endif()
 
+  list(APPEND JUCER_PROJECT_CONFIGURATIONS ${configuration_name})
+  set(JUCER_PROJECT_CONFIGURATIONS ${JUCER_PROJECT_CONFIGURATIONS} PARENT_SCOPE)
+
   set(configuration_settings_tags
-    "NAME"
     "PREPROCESSOR_DEFINITIONS"
   )
 
@@ -373,12 +371,7 @@ function(jucer_export_target_configuration exporter)
     else()
       set(value ${element})
 
-      if(tag STREQUAL "NAME")
-        set(configuration_name ${value})
-        list(APPEND JUCER_PROJECT_CONFIGURATIONS ${value})
-        set(JUCER_PROJECT_CONFIGURATIONS ${JUCER_PROJECT_CONFIGURATIONS} PARENT_SCOPE)
-
-      elseif(tag STREQUAL "PREPROCESSOR_DEFINITIONS")
+      if(tag STREQUAL "PREPROCESSOR_DEFINITIONS")
         list(APPEND JUCER_PREPROCESSOR_DEFINITIONS
           $<$<CONFIG:${configuration_name}>:${value}>
         )
