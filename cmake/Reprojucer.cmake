@@ -374,6 +374,7 @@ function(jucer_export_target_configuration exporter)
       set(value ${element})
 
       if(tag STREQUAL "NAME")
+        set(configuration_name ${value})
         list(APPEND JUCER_PROJECT_CONFIGURATIONS ${value})
         set(JUCER_PROJECT_CONFIGURATIONS ${JUCER_PROJECT_CONFIGURATIONS} PARENT_SCOPE)
 
