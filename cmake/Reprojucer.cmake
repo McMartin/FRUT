@@ -962,6 +962,10 @@ function(__dec_to_hex dec_value out_hex_value)
     return()
   endif()
 
+  if(dec_value LESS 0)
+    math(EXPR dec_value "2147483647 ${dec_value} + 1")
+  endif()
+
   while(dec_value GREATER 0)
     math(EXPR hex_unit "${dec_value} & 15")
     if(hex_unit LESS 10)
