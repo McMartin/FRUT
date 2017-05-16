@@ -101,6 +101,9 @@ function(jucer_project_begin)
         endif()
         list(GET size_limits ${size_limit_index} value)
 
+      elseif(tag STREQUAL "PREPROCESSOR_DEFINITIONS")
+        string(REPLACE "\n" ";" value "${value}")
+
       endif()
 
       set(JUCER_${tag} "${value}" PARENT_SCOPE)
@@ -308,6 +311,7 @@ function(jucer_export_target exporter)
 
   set(export_target_settings_tags
     "EXTRA_PREPROCESSOR_DEFINITIONS"
+    "EXTRA_COMPILER_FLAGS"
   )
 
   foreach(element ${ARGN})
@@ -323,8 +327,14 @@ function(jucer_export_target exporter)
       set(value ${element})
 
       if(tag STREQUAL "EXTRA_PREPROCESSOR_DEFINITIONS")
+        string(REPLACE "\n" ";" value "${value}")
         list(APPEND JUCER_PREPROCESSOR_DEFINITIONS ${value})
         set(JUCER_PREPROCESSOR_DEFINITIONS ${JUCER_PREPROCESSOR_DEFINITIONS} PARENT_SCOPE)
+
+      elseif(tag STREQUAL "EXTRA_COMPILER_FLAGS")
+        string(REPLACE " " ";" value "${value}")
+        list(APPEND JUCER_COMPILER_FLAGS ${value})
+        set(JUCER_COMPILER_FLAGS ${JUCER_COMPILER_FLAGS} PARENT_SCOPE)
 
       endif()
 
@@ -372,6 +382,7 @@ function(jucer_export_target_configuration exporter NAME_TAG configuration_name)
       set(value ${element})
 
       if(tag STREQUAL "PREPROCESSOR_DEFINITIONS")
+        string(REPLACE "\n" ";" value "${value}")
         list(APPEND JUCER_PREPROCESSOR_DEFINITIONS
           $<$<CONFIG:${configuration_name}>:${value}>
         )
@@ -852,6 +863,7 @@ function(__set_common_target_properties target_name)
   endif()
 
   target_compile_definitions(${target_name} PRIVATE ${JUCER_PREPROCESSOR_DEFINITIONS})
+  target_compile_options(${target_name} PRIVATE ${JUCER_COMPILER_FLAGS})
 
   if(APPLE)
     target_compile_options(${target_name} PRIVATE -std=c++11)
