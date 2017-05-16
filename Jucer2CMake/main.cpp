@@ -469,6 +469,9 @@ int main(int argc, char* argv[])
           out << "jucer_export_target_configuration(\n"
               << "  \"" << std::get<1>(element) << "\"\n"
               << "  NAME \"" << configuration.getProperty("name").toString() << "\"\n"
+              << "  " << escape("\\",
+                           getSetting(configuration, "HEADER_SEARCH_PATHS", "headerPath"))
+              << "\n"
               << "  " << getSetting(configuration, "PREPROCESSOR_DEFINITIONS", "defines")
               << "\n"
               << ")\n"
