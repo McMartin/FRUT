@@ -465,6 +465,8 @@ int main(int argc, char* argv[])
             << "  \"" << std::get<1>(element) << "\"\n"
             << "  " << getSetting(exporter, "EXTRA_PREPROCESSOR_DEFINITIONS", "extraDefs")
             << "\n"
+            << "  " << getSetting(exporter, "EXTRA_COMPILER_FLAGS", "extraCompilerFlags")
+            << "\n"
             << ")\n"
             << "\n";
 
