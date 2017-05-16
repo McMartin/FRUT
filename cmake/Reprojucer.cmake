@@ -101,6 +101,9 @@ function(jucer_project_begin)
         endif()
         list(GET size_limits ${size_limit_index} value)
 
+      elseif(tag STREQUAL "PREPROCESSOR_DEFINITIONS")
+        string(REPLACE "\n" ";" value "${value}")
+
       endif()
 
       set(JUCER_${tag} "${value}" PARENT_SCOPE)
@@ -323,6 +326,7 @@ function(jucer_export_target exporter)
       set(value ${element})
 
       if(tag STREQUAL "EXTRA_PREPROCESSOR_DEFINITIONS")
+        string(REPLACE "\n" ";" value "${value}")
         list(APPEND JUCER_PREPROCESSOR_DEFINITIONS ${value})
         set(JUCER_PREPROCESSOR_DEFINITIONS ${JUCER_PREPROCESSOR_DEFINITIONS} PARENT_SCOPE)
 
@@ -372,6 +376,7 @@ function(jucer_export_target_configuration exporter NAME_TAG configuration_name)
       set(value ${element})
 
       if(tag STREQUAL "PREPROCESSOR_DEFINITIONS")
+        string(REPLACE "\n" ";" value "${value}")
         list(APPEND JUCER_PREPROCESSOR_DEFINITIONS
           $<$<CONFIG:${configuration_name}>:${value}>
         )

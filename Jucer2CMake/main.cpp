@@ -95,12 +95,6 @@ std::vector<std::string> split(const std::string& sep, const std::string& value)
 }
 
 
-std::string makePreprocessorDefinitionsList(const std::string& preprocessorDefinitions)
-{
-  return join("\\;", escape("\"", split("\n", preprocessorDefinitions)));
-}
-
-
 int main(int argc, char* argv[])
 {
   if (argc != 3)
@@ -236,9 +230,6 @@ int main(int argc, char* argv[])
                                       ? "Static Library"
                                       : projectType == "audioplug" ? "Audio Plug-in" : "";
 
-    const auto preprocessorDefinitions = makePreprocessorDefinitionsList(
-      jucerProject.getProperty("defines").toString().toStdString());
-
     out << "jucer_project_begin(\n"
         << "  " << projectSetting("PROJECT_NAME", "name") << "\n"
         << "  " << projectSetting("PROJECT_VERSION", "version") << "\n"
@@ -249,10 +240,7 @@ int main(int argc, char* argv[])
         << "  " << projectSetting("BUNDLE_IDENTIFIER", "bundleIdentifier") << "\n"
         << "  BINARYDATACPP_SIZE_LIMIT \"Default\"\n"
         << "  " << projectSetting("BINARYDATA_NAMESPACE", "binaryDataNamespace") << "\n"
-        << "  " << (preprocessorDefinitions.empty()
-                       ? "# PREPROCESSOR_DEFINITIONS"
-                       : "PREPROCESSOR_DEFINITIONS \"" + preprocessorDefinitions + "\"")
-        << "\n"
+        << "  " << projectSetting("PREPROCESSOR_DEFINITIONS", "defines") << "\n"
         << "  " << projectSetting("PROJECT_ID", "id") << "\n"
         << ")\n"
         << "\n";
@@ -480,8 +468,8 @@ int main(int argc, char* argv[])
                               .getChildWithName(std::get<0>(element));
       if (exporter.isValid())
       {
-        const auto extraPreprocessorDefinitions = makePreprocessorDefinitionsList(
-          exporter.getProperty("extraDefs").toString().toStdString());
+        const auto extraPreprocessorDefinitions =
+          escape("\"", exporter.getProperty("extraDefs").toString().toStdString());
 
         out << "jucer_export_target(\n"
             << "  \"" << std::get<1>(element) << "\"\n"
@@ -495,8 +483,8 @@ int main(int argc, char* argv[])
 
         for (const auto& configuration : exporter.getChildWithName("CONFIGURATIONS"))
         {
-          const auto preprocessorDefinitions = makePreprocessorDefinitionsList(
-            configuration.getProperty("defines").toString().toStdString());
+          const auto preprocessorDefinitions =
+            escape("\"", configuration.getProperty("defines").toString().toStdString());
 
           out << "jucer_export_target_configuration(\n"
               << "  \"" << std::get<1>(element) << "\"\n"
