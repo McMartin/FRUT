@@ -48,20 +48,6 @@ std::string escape(const std::string& charsToEscape, std::string value)
 }
 
 
-std::vector<std::string> escape(
-  const std::string& charsToEscape, std::vector<std::string> elements)
-{
-  std::transform(elements.begin(),
-    elements.end(),
-    elements.begin(),
-    [&charsToEscape](const std::string& element)
-    {
-      return escape(charsToEscape, element);
-    });
-  return elements;
-}
-
-
 std::string join(const std::string& sep, const std::vector<std::string>& elements)
 {
   if (elements.empty())
