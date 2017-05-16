@@ -81,6 +81,23 @@ std::vector<std::string> split(const std::string& sep, const std::string& value)
 }
 
 
+std::string getSetting(const juce::ValueTree& valueTree, const std::string& cmakeTag,
+  const juce::Identifier& property)
+{
+  if (valueTree.hasProperty(property))
+  {
+    const auto value = valueTree.getProperty(property).toString().toStdString();
+
+    if (!value.empty())
+    {
+      return cmakeTag + " \"" + escape("\"", value) + "\"";
+    }
+  }
+
+  return "# " + cmakeTag;
+}
+
+
 int main(int argc, char* argv[])
 {
   if (argc != 3)
@@ -194,17 +211,7 @@ int main(int argc, char* argv[])
     const auto projectSetting = [&jucerProject](
       const std::string& cmakeTag, const juce::Identifier& property)
     {
-      if (jucerProject.hasProperty(property))
-      {
-        const auto value = jucerProject.getProperty(property).toString().toStdString();
-
-        if (!value.empty())
-        {
-          return cmakeTag + " \"" + escape("\"", value) + "\"";
-        }
-      }
-
-      return "# " + cmakeTag;
+      return getSetting(jucerProject, cmakeTag, property);
     };
 
     const auto projectType = jucerProject.getProperty("projectType").toString();
@@ -454,31 +461,19 @@ int main(int argc, char* argv[])
                               .getChildWithName(std::get<0>(element));
       if (exporter.isValid())
       {
-        const auto extraPreprocessorDefinitions =
-          escape("\"", exporter.getProperty("extraDefs").toString().toStdString());
-
         out << "jucer_export_target(\n"
             << "  \"" << std::get<1>(element) << "\"\n"
-            << "  " << (extraPreprocessorDefinitions.empty()
-                           ? "# EXTRA_PREPROCESSOR_DEFINITIONS"
-                           : "EXTRA_PREPROCESSOR_DEFINITIONS \"" +
-                               extraPreprocessorDefinitions + "\"")
+            << "  " << getSetting(exporter, "EXTRA_PREPROCESSOR_DEFINITIONS", "extraDefs")
             << "\n"
             << ")\n"
             << "\n";
 
         for (const auto& configuration : exporter.getChildWithName("CONFIGURATIONS"))
         {
-          const auto preprocessorDefinitions =
-            escape("\"", configuration.getProperty("defines").toString().toStdString());
-
           out << "jucer_export_target_configuration(\n"
               << "  \"" << std::get<1>(element) << "\"\n"
               << "  NAME \"" << configuration.getProperty("name").toString() << "\"\n"
-              << "  "
-              << (preprocessorDefinitions.empty()
-                     ? "# PREPROCESSOR_DEFINITIONS"
-                     : "PREPROCESSOR_DEFINITIONS \"" + preprocessorDefinitions + "\"")
+              << "  " << getSetting(configuration, "PREPROCESSOR_DEFINITIONS", "defines")
               << "\n"
               << ")\n"
               << "\n";
