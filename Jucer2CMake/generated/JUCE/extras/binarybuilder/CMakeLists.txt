@@ -20,10 +20,6 @@ if(NOT EXISTS "${BinaryBuilder_jucer_FILE}")
   message(FATAL_ERROR "No such file: ${BinaryBuilder_jucer_FILE}")
 endif()
 
-get_filename_component(BinaryBuilder_jucer_DIR
-  "${BinaryBuilder_jucer_FILE}" DIRECTORY
-)
-
 
 jucer_project_begin(
   PROJECT_FILE "${BinaryBuilder_jucer_FILE}"

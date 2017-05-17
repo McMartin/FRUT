@@ -20,10 +20,6 @@ if(NOT EXISTS "${Surround_jucer_FILE}")
   message(FATAL_ERROR "No such file: ${Surround_jucer_FILE}")
 endif()
 
-get_filename_component(Surround_jucer_DIR
-  "${Surround_jucer_FILE}" DIRECTORY
-)
-
 
 jucer_project_begin(
   PROJECT_FILE "${Surround_jucer_FILE}"

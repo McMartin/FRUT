@@ -20,10 +20,6 @@ if(NOT EXISTS "${Plugin_Host_jucer_FILE}")
   message(FATAL_ERROR "No such file: ${Plugin_Host_jucer_FILE}")
 endif()
 
-get_filename_component(Plugin_Host_jucer_DIR
-  "${Plugin_Host_jucer_FILE}" DIRECTORY
-)
-
 
 if(WIN32)
   set(VST3_SDK_FOLDER "C:/SDKs/VST_SDK/VST3_SDK")

@@ -181,10 +181,6 @@ int main(int argc, char* argv[])
         << "_FILE}\")\n"
         << "endif()\n"
         << "\n"
-        << "get_filename_component(" << escapedJucerFileName << "_DIR\n"
-        << "  \"${" << escapedJucerFileName << "_FILE}\" DIRECTORY\n"
-        << ")\n"
-        << "\n"
         << "\n";
   }
 

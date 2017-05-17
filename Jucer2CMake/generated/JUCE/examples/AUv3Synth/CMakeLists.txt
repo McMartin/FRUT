@@ -20,10 +20,6 @@ if(NOT EXISTS "${AUv3Synth_jucer_FILE}")
   message(FATAL_ERROR "No such file: ${AUv3Synth_jucer_FILE}")
 endif()
 
-get_filename_component(AUv3Synth_jucer_DIR
-  "${AUv3Synth_jucer_FILE}" DIRECTORY
-)
-
 
 jucer_project_begin(
   PROJECT_FILE "${AUv3Synth_jucer_FILE}"

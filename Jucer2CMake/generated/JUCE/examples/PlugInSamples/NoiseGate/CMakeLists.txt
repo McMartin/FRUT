@@ -20,10 +20,6 @@ if(NOT EXISTS "${NoiseGate_jucer_FILE}")
   message(FATAL_ERROR "No such file: ${NoiseGate_jucer_FILE}")
 endif()
 
-get_filename_component(NoiseGate_jucer_DIR
-  "${NoiseGate_jucer_FILE}" DIRECTORY
-)
-
 
 jucer_project_begin(
   PROJECT_FILE "${NoiseGate_jucer_FILE}"

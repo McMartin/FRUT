@@ -20,10 +20,6 @@ if(NOT EXISTS "${MPETest_jucer_FILE}")
   message(FATAL_ERROR "No such file: ${MPETest_jucer_FILE}")
 endif()
 
-get_filename_component(MPETest_jucer_DIR
-  "${MPETest_jucer_FILE}" DIRECTORY
-)
-
 
 jucer_project_begin(
   PROJECT_FILE "${MPETest_jucer_FILE}"

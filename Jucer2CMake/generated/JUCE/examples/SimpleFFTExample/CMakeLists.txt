@@ -20,10 +20,6 @@ if(NOT EXISTS "${SimpleFFTExample_jucer_FILE}")
   message(FATAL_ERROR "No such file: ${SimpleFFTExample_jucer_FILE}")
 endif()
 
-get_filename_component(SimpleFFTExample_jucer_DIR
-  "${SimpleFFTExample_jucer_FILE}" DIRECTORY
-)
-
 
 jucer_project_begin(
   PROJECT_FILE "${SimpleFFTExample_jucer_FILE}"

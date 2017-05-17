@@ -20,10 +20,6 @@ if(NOT EXISTS "${BlocksMonitor_jucer_FILE}")
   message(FATAL_ERROR "No such file: ${BlocksMonitor_jucer_FILE}")
 endif()
 
-get_filename_component(BlocksMonitor_jucer_DIR
-  "${BlocksMonitor_jucer_FILE}" DIRECTORY
-)
-
 
 jucer_project_begin(
   PROJECT_FILE "${BlocksMonitor_jucer_FILE}"

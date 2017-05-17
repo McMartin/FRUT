@@ -20,10 +20,6 @@ if(NOT EXISTS "${BouncingBallWavetableDemo_jucer_FILE}")
   message(FATAL_ERROR "No such file: ${BouncingBallWavetableDemo_jucer_FILE}")
 endif()
 
-get_filename_component(BouncingBallWavetableDemo_jucer_DIR
-  "${BouncingBallWavetableDemo_jucer_FILE}" DIRECTORY
-)
-
 
 jucer_project_begin(
   PROJECT_FILE "${BouncingBallWavetableDemo_jucer_FILE}"

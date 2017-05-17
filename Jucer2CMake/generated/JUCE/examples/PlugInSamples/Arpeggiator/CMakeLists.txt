@@ -20,10 +20,6 @@ if(NOT EXISTS "${Arpeggiator_jucer_FILE}")
   message(FATAL_ERROR "No such file: ${Arpeggiator_jucer_FILE}")
 endif()
 
-get_filename_component(Arpeggiator_jucer_DIR
-  "${Arpeggiator_jucer_FILE}" DIRECTORY
-)
-
 
 jucer_project_begin(
   PROJECT_FILE "${Arpeggiator_jucer_FILE}"

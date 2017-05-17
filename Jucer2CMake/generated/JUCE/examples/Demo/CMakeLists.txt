@@ -20,10 +20,6 @@ if(NOT EXISTS "${JuceDemo_jucer_FILE}")
   message(FATAL_ERROR "No such file: ${JuceDemo_jucer_FILE}")
 endif()
 
-get_filename_component(JuceDemo_jucer_DIR
-  "${JuceDemo_jucer_FILE}" DIRECTORY
-)
-
 
 jucer_project_begin(
   PROJECT_FILE "${JuceDemo_jucer_FILE}"

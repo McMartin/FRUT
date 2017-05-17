@@ -20,10 +20,6 @@ if(NOT EXISTS "${OpenGLAppExample_jucer_FILE}")
   message(FATAL_ERROR "No such file: ${OpenGLAppExample_jucer_FILE}")
 endif()
 
-get_filename_component(OpenGLAppExample_jucer_DIR
-  "${OpenGLAppExample_jucer_FILE}" DIRECTORY
-)
-
 
 jucer_project_begin(
   PROJECT_FILE "${OpenGLAppExample_jucer_FILE}"

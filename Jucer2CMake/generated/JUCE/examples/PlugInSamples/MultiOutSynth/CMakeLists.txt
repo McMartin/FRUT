@@ -20,10 +20,6 @@ if(NOT EXISTS "${MultiOutSynth_jucer_FILE}")
   message(FATAL_ERROR "No such file: ${MultiOutSynth_jucer_FILE}")
 endif()
 
-get_filename_component(MultiOutSynth_jucer_DIR
-  "${MultiOutSynth_jucer_FILE}" DIRECTORY
-)
-
 
 jucer_project_begin(
   PROJECT_FILE "${MultiOutSynth_jucer_FILE}"

@@ -20,10 +20,6 @@ if(NOT EXISTS "${NetworkGraphicsDemo_jucer_FILE}")
   message(FATAL_ERROR "No such file: ${NetworkGraphicsDemo_jucer_FILE}")
 endif()
 
-get_filename_component(NetworkGraphicsDemo_jucer_DIR
-  "${NetworkGraphicsDemo_jucer_FILE}" DIRECTORY
-)
-
 
 jucer_project_begin(
   PROJECT_FILE "${NetworkGraphicsDemo_jucer_FILE}"

@@ -20,10 +20,6 @@ if(NOT EXISTS "${PluckedStringsDemo_jucer_FILE}")
   message(FATAL_ERROR "No such file: ${PluckedStringsDemo_jucer_FILE}")
 endif()
 
-get_filename_component(PluckedStringsDemo_jucer_DIR
-  "${PluckedStringsDemo_jucer_FILE}" DIRECTORY
-)
-
 
 jucer_project_begin(
   PROJECT_FILE "${PluckedStringsDemo_jucer_FILE}"

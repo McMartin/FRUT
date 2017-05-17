@@ -20,10 +20,6 @@ if(NOT EXISTS "${OSCMonitor_jucer_FILE}")
   message(FATAL_ERROR "No such file: ${OSCMonitor_jucer_FILE}")
 endif()
 
-get_filename_component(OSCMonitor_jucer_DIR
-  "${OSCMonitor_jucer_FILE}" DIRECTORY
-)
-
 
 jucer_project_begin(
   PROJECT_FILE "${OSCMonitor_jucer_FILE}"

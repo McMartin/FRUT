@@ -20,10 +20,6 @@ if(NOT EXISTS "${AudioPerformanceTest_jucer_FILE}")
   message(FATAL_ERROR "No such file: ${AudioPerformanceTest_jucer_FILE}")
 endif()
 
-get_filename_component(AudioPerformanceTest_jucer_DIR
-  "${AudioPerformanceTest_jucer_FILE}" DIRECTORY
-)
-
 
 jucer_project_begin(
   PROJECT_FILE "${AudioPerformanceTest_jucer_FILE}"
