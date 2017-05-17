@@ -208,6 +208,14 @@ int main(int argc, char* argv[])
 
   // jucer_project_begin()
   {
+    out << "jucer_project_begin(\n"
+        << "  " << getSetting(jucerProject, "PROJECT_ID", "id") << "\n"
+        << ")\n"
+        << "\n";
+  }
+
+  // jucer_project_settings()
+  {
     const auto projectSetting = [&jucerProject](
       const std::string& cmakeTag, const juce::Identifier& property)
     {
@@ -223,7 +231,7 @@ int main(int argc, char* argv[])
                                       ? "Static Library"
                                       : projectType == "audioplug" ? "Audio Plug-in" : "";
 
-    out << "jucer_project_begin(\n"
+    out << "jucer_project_settings(\n"
         << "  " << projectSetting("PROJECT_NAME", "name") << "\n"
         << "  " << projectSetting("PROJECT_VERSION", "version") << "\n"
         << "  " << projectSetting("COMPANY_NAME", "companyName") << "\n"
@@ -234,7 +242,6 @@ int main(int argc, char* argv[])
         << "  BINARYDATACPP_SIZE_LIMIT \"Default\"\n"
         << "  " << projectSetting("BINARYDATA_NAMESPACE", "binaryDataNamespace") << "\n"
         << "  " << projectSetting("PREPROCESSOR_DEFINITIONS", "defines") << "\n"
-        << "  " << projectSetting("PROJECT_ID", "id") << "\n"
         << ")\n"
         << "\n";
 

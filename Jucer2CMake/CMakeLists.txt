@@ -36,7 +36,9 @@ if(NOT IS_DIRECTORY "${JUCE_ROOT}")
 endif()
 
 
-jucer_project_begin(
+jucer_project_begin()
+
+jucer_project_settings(
   PROJECT_NAME "Jucer2CMake"
   PROJECT_VERSION "1.0.0"
   PROJECT_TYPE "Console Application"

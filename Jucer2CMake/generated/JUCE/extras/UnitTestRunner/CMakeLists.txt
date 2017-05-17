@@ -26,6 +26,10 @@ get_filename_component(UnitTestRunner_jucer_DIR
 
 
 jucer_project_begin(
+  PROJECT_ID "Z2Xzcp"
+)
+
+jucer_project_settings(
   PROJECT_NAME "UnitTestRunner"
   PROJECT_VERSION "1.0.0"
   # COMPANY_NAME
@@ -36,7 +40,6 @@ jucer_project_begin(
   BINARYDATACPP_SIZE_LIMIT "Default"
   # BINARYDATA_NAMESPACE
   PREPROCESSOR_DEFINITIONS "JUCE_UNIT_TESTS=1"
-  PROJECT_ID "Z2Xzcp"
 )
 
 jucer_project_files("UnitTestRunner/Source"

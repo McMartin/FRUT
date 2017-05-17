@@ -34,6 +34,10 @@ set(VST3_SDK_FOLDER "${VST3_SDK_FOLDER}" CACHE PATH "VST3 SDK Folder")
 
 
 jucer_project_begin(
+  PROJECT_ID "NTe0XB0ij"
+)
+
+jucer_project_settings(
   PROJECT_NAME "Plugin Host"
   PROJECT_VERSION "1.0.0"
   COMPANY_NAME "ROLI Ltd."
@@ -44,7 +48,6 @@ jucer_project_begin(
   BINARYDATACPP_SIZE_LIMIT "Default"
   # BINARYDATA_NAMESPACE
   # PREPROCESSOR_DEFINITIONS
-  PROJECT_ID "NTe0XB0ij"
 )
 
 jucer_project_files("Plugin Host"

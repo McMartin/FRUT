@@ -60,7 +60,9 @@ file(COPY
 )
 
 
-jucer_project_begin(
+jucer_project_begin()
+
+jucer_project_settings(
   PROJECT_NAME "BinaryDataBuilder"
   PROJECT_VERSION "1.0.0"
   PROJECT_TYPE "Console Application"

@@ -26,6 +26,10 @@ get_filename_component(Projucer_jucer_DIR
 
 
 jucer_project_begin(
+  PROJECT_ID "M70qfTRRk"
+)
+
+jucer_project_settings(
   PROJECT_NAME "Projucer"
   PROJECT_VERSION "4.3.1"
   # COMPANY_NAME
@@ -36,7 +40,6 @@ jucer_project_begin(
   BINARYDATACPP_SIZE_LIMIT "Default"
   # BINARYDATA_NAMESPACE
   # PREPROCESSOR_DEFINITIONS
-  PROJECT_ID "M70qfTRRk"
 )
 
 jucer_project_files("Projucer/Application"

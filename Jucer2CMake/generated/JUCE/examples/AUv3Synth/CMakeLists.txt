@@ -26,6 +26,10 @@ get_filename_component(AUv3Synth_jucer_DIR
 
 
 jucer_project_begin(
+  PROJECT_ID "NaPIav"
+)
+
+jucer_project_settings(
   PROJECT_NAME "AUv3Synth"
   PROJECT_VERSION "1.0.0"
   # COMPANY_NAME
@@ -36,7 +40,6 @@ jucer_project_begin(
   BINARYDATACPP_SIZE_LIMIT "Default"
   # BINARYDATA_NAMESPACE
   # PREPROCESSOR_DEFINITIONS
-  PROJECT_ID "NaPIav"
 )
 
 jucer_audio_plugin_settings(

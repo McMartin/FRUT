@@ -24,6 +24,33 @@ set(templates_DIR "${Reprojucer.cmake_DIR}/templates")
 
 function(jucer_project_begin)
 
+  set(project_property_tags
+    "PROJECT_ID"
+  )
+
+  foreach(element ${ARGN})
+    if(NOT DEFINED tag)
+      set(tag ${element})
+
+      if(NOT "${tag}" IN_LIST project_property_tags)
+        message(FATAL_ERROR "Unsupported project property: ${tag}\n"
+          "Supported project properties: ${project_property_tags}"
+        )
+      endif()
+    else()
+      set(value ${element})
+
+      set(JUCER_${tag} "${value}" PARENT_SCOPE)
+
+      unset(tag)
+    endif()
+  endforeach()
+
+endfunction()
+
+
+function(jucer_project_settings)
+
   if(NOT "PROJECT_NAME" IN_LIST ARGN)
     message(FATAL_ERROR "Missing PROJECT_NAME argument")
   endif()
@@ -43,7 +70,6 @@ function(jucer_project_begin)
     "BINARYDATACPP_SIZE_LIMIT"
     "BINARYDATA_NAMESPACE"
     "PREPROCESSOR_DEFINITIONS"
-    "PROJECT_ID"
   )
 
   set(project_types
