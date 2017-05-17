@@ -357,6 +357,7 @@ function(jucer_export_target exporter)
   endif()
 
   set(export_target_settings_tags
+    "VST3_SDK_FOLDER"
     "EXTRA_PREPROCESSOR_DEFINITIONS"
     "EXTRA_COMPILER_FLAGS"
   )
@@ -373,7 +374,12 @@ function(jucer_export_target exporter)
     else()
       set(value ${element})
 
-      if(tag STREQUAL "EXTRA_PREPROCESSOR_DEFINITIONS")
+      if(tag STREQUAL "VST3_SDK_FOLDER")
+        string(REPLACE "\\" "/" value "${value}")
+        __abs_path_based_on_jucer_project_dir("${value}" value)
+        set(JUCER_VST3_SDK_FOLDER ${value} PARENT_SCOPE)
+
+      elseif(tag STREQUAL "EXTRA_PREPROCESSOR_DEFINITIONS")
         string(REPLACE "\n" ";" value "${value}")
         list(APPEND JUCER_PREPROCESSOR_DEFINITIONS ${value})
         set(JUCER_PREPROCESSOR_DEFINITIONS ${JUCER_PREPROCESSOR_DEFINITIONS} PARENT_SCOPE)
@@ -924,14 +930,17 @@ function(__set_common_target_properties target_name)
   )
 
   if(JUCER_FLAG_JUCE_PLUGINHOST_VST3)
-    if(NOT DEFINED VST3_SDK_FOLDER)
-      message(FATAL_ERROR "VST3_SDK_FOLDER must be defined")
+    if(NOT DEFINED JUCER_VST3_SDK_FOLDER)
+      message(FATAL_ERROR "JUCER_VST3_SDK_FOLDER must be defined. Give VST3_SDK_FOLDER "
+        "when calling jucer_export_target()."
+      )
     endif()
-    get_filename_component(vst3_sdk_abs_path "${VST3_SDK_FOLDER}" ABSOLUTE)
-    if(NOT IS_DIRECTORY "${vst3_sdk_abs_path}")
-      message(WARNING "VST3_SDK_FOLDER: no such directory \"${VST3_SDK_FOLDER}\"")
+    if(NOT IS_DIRECTORY "${JUCER_VST3_SDK_FOLDER}")
+      message(WARNING
+        "JUCER_VST3_SDK_FOLDER: no such directory \"${JUCER_VST3_SDK_FOLDER}\""
+      )
     endif()
-    target_include_directories(${target_name} PRIVATE "${VST3_SDK_FOLDER}")
+    target_include_directories(${target_name} PRIVATE "${JUCER_VST3_SDK_FOLDER}")
   endif()
 
   target_compile_definitions(${target_name} PRIVATE ${JUCER_PREPROCESSOR_DEFINITIONS})
