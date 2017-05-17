@@ -16,16 +16,13 @@ get_filename_component(NetworkGraphicsDemo_jucer_FILE
   BASE_DIR "${CMAKE_BINARY_DIR}"
 )
 
-if(NOT EXISTS "${NetworkGraphicsDemo_jucer_FILE}")
-  message(FATAL_ERROR "No such file: ${NetworkGraphicsDemo_jucer_FILE}")
-endif()
-
-get_filename_component(NetworkGraphicsDemo_jucer_DIR
-  "${NetworkGraphicsDemo_jucer_FILE}" DIRECTORY
-)
-
 
 jucer_project_begin(
+  PROJECT_FILE "${NetworkGraphicsDemo_jucer_FILE}"
+  PROJECT_ID "gWI5Ir"
+)
+
+jucer_project_settings(
   PROJECT_NAME "JUCE Network Graphics Demo"
   PROJECT_VERSION "1.0.0"
   # COMPANY_NAME
@@ -36,29 +33,28 @@ jucer_project_begin(
   BINARYDATACPP_SIZE_LIMIT "Default"
   # BINARYDATA_NAMESPACE
   # PREPROCESSOR_DEFINITIONS
-  PROJECT_ID "gWI5Ir"
 )
 
 jucer_project_files("JUCE Network Graphics Demo/Source"
-  "${NetworkGraphicsDemo_jucer_DIR}/Source/Demos.h"
-  "${NetworkGraphicsDemo_jucer_DIR}/Source/Main.cpp"
-  "${NetworkGraphicsDemo_jucer_DIR}/Source/MasterComponent.h"
-  "${NetworkGraphicsDemo_jucer_DIR}/Source/SlaveComponent.h"
-  "${NetworkGraphicsDemo_jucer_DIR}/Source/SharedCanvas.h"
+  "Source/Demos.h"
+  "Source/Main.cpp"
+  "Source/MasterComponent.h"
+  "Source/SlaveComponent.h"
+  "Source/SharedCanvas.h"
 )
 
 jucer_project_resources("JUCE Network Graphics Demo"
-  "${NetworkGraphicsDemo_jucer_DIR}/Source/juce_icon.png"
+  "Source/juce_icon.png"
 )
 
 jucer_project_module(
   juce_audio_basics
-  PATH "${NetworkGraphicsDemo_jucer_DIR}/../../modules"
+  PATH "../../modules"
 )
 
 jucer_project_module(
   juce_audio_devices
-  PATH "${NetworkGraphicsDemo_jucer_DIR}/../../modules"
+  PATH "../../modules"
   # JUCE_ASIO
   # JUCE_WASAPI
   # JUCE_WASAPI_EXCLUSIVE
@@ -70,7 +66,7 @@ jucer_project_module(
 
 jucer_project_module(
   juce_audio_formats
-  PATH "${NetworkGraphicsDemo_jucer_DIR}/../../modules"
+  PATH "../../modules"
   # JUCE_USE_FLAC
   # JUCE_USE_OGGVORBIS
   # JUCE_USE_MP3AUDIOFORMAT
@@ -80,7 +76,7 @@ jucer_project_module(
 
 jucer_project_module(
   juce_audio_processors
-  PATH "${NetworkGraphicsDemo_jucer_DIR}/../../modules"
+  PATH "../../modules"
   # JUCE_PLUGINHOST_VST
   # JUCE_PLUGINHOST_VST3
   # JUCE_PLUGINHOST_AU
@@ -88,14 +84,14 @@ jucer_project_module(
 
 jucer_project_module(
   juce_audio_utils
-  PATH "${NetworkGraphicsDemo_jucer_DIR}/../../modules"
+  PATH "../../modules"
   # JUCE_USE_CDREADER
   # JUCE_USE_CDBURNER
 )
 
 jucer_project_module(
   juce_core
-  PATH "${NetworkGraphicsDemo_jucer_DIR}/../../modules"
+  PATH "../../modules"
   # JUCE_FORCE_DEBUG
   # JUCE_LOG_ASSERTIONS
   # JUCE_CHECK_MEMORY_LEAKS
@@ -108,29 +104,29 @@ jucer_project_module(
 
 jucer_project_module(
   juce_cryptography
-  PATH "${NetworkGraphicsDemo_jucer_DIR}/../../modules"
+  PATH "../../modules"
 )
 
 jucer_project_module(
   juce_data_structures
-  PATH "${NetworkGraphicsDemo_jucer_DIR}/../../modules"
+  PATH "../../modules"
 )
 
 jucer_project_module(
   juce_events
-  PATH "${NetworkGraphicsDemo_jucer_DIR}/../../modules"
+  PATH "../../modules"
 )
 
 jucer_project_module(
   juce_graphics
-  PATH "${NetworkGraphicsDemo_jucer_DIR}/../../modules"
+  PATH "../../modules"
   # JUCE_USE_COREIMAGE_LOADER
   # JUCE_USE_DIRECTWRITE
 )
 
 jucer_project_module(
   juce_gui_basics
-  PATH "${NetworkGraphicsDemo_jucer_DIR}/../../modules"
+  PATH "../../modules"
   # JUCE_ENABLE_REPAINT_DEBUGGING
   # JUCE_USE_XSHM
   # JUCE_USE_XRENDER
@@ -139,19 +135,19 @@ jucer_project_module(
 
 jucer_project_module(
   juce_gui_extra
-  PATH "${NetworkGraphicsDemo_jucer_DIR}/../../modules"
+  PATH "../../modules"
   # JUCE_WEB_BROWSER
   # JUCE_ENABLE_LIVE_CONSTANT_EDITOR
 )
 
 jucer_project_module(
   juce_opengl
-  PATH "${NetworkGraphicsDemo_jucer_DIR}/../../modules"
+  PATH "../../modules"
 )
 
 jucer_project_module(
   juce_osc
-  PATH "${NetworkGraphicsDemo_jucer_DIR}/../../modules"
+  PATH "../../modules"
 )
 
 jucer_export_target(

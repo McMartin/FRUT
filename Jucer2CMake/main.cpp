@@ -176,15 +176,6 @@ int main(int argc, char* argv[])
         << "  BASE_DIR \"${CMAKE_BINARY_DIR}\"\n"
         << ")\n"
         << "\n"
-        << "if(NOT EXISTS \"${" << escapedJucerFileName << "_FILE}\")\n"
-        << "  message(FATAL_ERROR \"No such file: ${" << escapedJucerFileName
-        << "_FILE}\")\n"
-        << "endif()\n"
-        << "\n"
-        << "get_filename_component(" << escapedJucerFileName << "_DIR\n"
-        << "  \"${" << escapedJucerFileName << "_FILE}\" DIRECTORY\n"
-        << ")\n"
-        << "\n"
         << "\n";
   }
 
@@ -208,6 +199,15 @@ int main(int argc, char* argv[])
 
   // jucer_project_begin()
   {
+    out << "jucer_project_begin(\n"
+        << "  PROJECT_FILE \"${" << escapedJucerFileName << "_FILE}\"\n"
+        << "  " << getSetting(jucerProject, "PROJECT_ID", "id") << "\n"
+        << ")\n"
+        << "\n";
+  }
+
+  // jucer_project_settings()
+  {
     const auto projectSetting = [&jucerProject](
       const std::string& cmakeTag, const juce::Identifier& property)
     {
@@ -223,7 +223,7 @@ int main(int argc, char* argv[])
                                       ? "Static Library"
                                       : projectType == "audioplug" ? "Audio Plug-in" : "";
 
-    out << "jucer_project_begin(\n"
+    out << "jucer_project_settings(\n"
         << "  " << projectSetting("PROJECT_NAME", "name") << "\n"
         << "  " << projectSetting("PROJECT_VERSION", "version") << "\n"
         << "  " << projectSetting("COMPANY_NAME", "companyName") << "\n"
@@ -234,7 +234,6 @@ int main(int argc, char* argv[])
         << "  BINARYDATACPP_SIZE_LIMIT \"Default\"\n"
         << "  " << projectSetting("BINARYDATA_NAMESPACE", "binaryDataNamespace") << "\n"
         << "  " << projectSetting("PREPROCESSOR_DEFINITIONS", "defines") << "\n"
-        << "  " << projectSetting("PROJECT_ID", "id") << "\n"
         << ")\n"
         << "\n";
 
@@ -284,8 +283,7 @@ int main(int argc, char* argv[])
 
   // jucer_project_files()
   {
-    const auto writeFileGroups = [&out, &escapedJucerFileName](
-      const std::string& fullGroupName,
+    const auto writeFileGroups = [&out](const std::string& fullGroupName,
       const std::vector<std::string>& filePaths,
       const std::vector<std::string>& doNotCompileFilePaths,
       const std::vector<std::string>& resourcePaths)
@@ -297,8 +295,7 @@ int main(int argc, char* argv[])
 
         for (const auto& filePath : filePaths)
         {
-          out << "  \"${" << escapedJucerFileName << "_DIR"
-              << "}/" << filePath << "\"\n";
+          out << "  \"" << filePath << "\"\n";
         }
 
         if (!doNotCompileFilePaths.empty())
@@ -308,8 +305,7 @@ int main(int argc, char* argv[])
 
           for (const auto& doNotCompileFilePath : doNotCompileFilePaths)
           {
-            out << "  \"${" << escapedJucerFileName << "_DIR"
-                << "}/" << doNotCompileFilePath << "\"\n";
+            out << "  \"${JUCER_PROJECT_DIR}/" << doNotCompileFilePath << "\"\n";
           }
 
           out << "  PROPERTIES HEADER_FILE_ONLY TRUE\n";
@@ -326,8 +322,7 @@ int main(int argc, char* argv[])
 
         for (const auto& resourcePath : resourcePaths)
         {
-          out << "  \"${" << escapedJucerFileName << "_DIR"
-              << "}/" << resourcePath << "\"\n";
+          out << "  \"" << resourcePath << "\"\n";
         }
 
         out << ")\n"
@@ -408,8 +403,7 @@ int main(int argc, char* argv[])
 
       out << "jucer_project_module(\n"
           << "  " << moduleName << "\n"
-          << "  PATH \"${" << escapedJucerFileName << "_DIR"
-          << "}/" << relativeModulePath << "\"\n";
+          << "  PATH \"" << relativeModulePath << "\"\n";
 
       const auto moduleHeader = juce::File{jucerFilePath}
                                   .getParentDirectory()

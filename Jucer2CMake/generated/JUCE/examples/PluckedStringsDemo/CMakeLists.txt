@@ -16,16 +16,13 @@ get_filename_component(PluckedStringsDemo_jucer_FILE
   BASE_DIR "${CMAKE_BINARY_DIR}"
 )
 
-if(NOT EXISTS "${PluckedStringsDemo_jucer_FILE}")
-  message(FATAL_ERROR "No such file: ${PluckedStringsDemo_jucer_FILE}")
-endif()
-
-get_filename_component(PluckedStringsDemo_jucer_DIR
-  "${PluckedStringsDemo_jucer_FILE}" DIRECTORY
-)
-
 
 jucer_project_begin(
+  PROJECT_FILE "${PluckedStringsDemo_jucer_FILE}"
+  PROJECT_ID "jKHEJM"
+)
+
+jucer_project_settings(
   PROJECT_NAME "PluckedStringsDemo"
   PROJECT_VERSION "1.0.0"
   # COMPANY_NAME
@@ -36,24 +33,23 @@ jucer_project_begin(
   BINARYDATACPP_SIZE_LIMIT "Default"
   # BINARYDATA_NAMESPACE
   # PREPROCESSOR_DEFINITIONS
-  PROJECT_ID "jKHEJM"
 )
 
 jucer_project_files("PluckedStringsDemo/Source"
-  "${PluckedStringsDemo_jucer_DIR}/Source/StringSynthesiser.h"
-  "${PluckedStringsDemo_jucer_DIR}/Source/StringComponent.h"
-  "${PluckedStringsDemo_jucer_DIR}/Source/StringDemoComponent.h"
-  "${PluckedStringsDemo_jucer_DIR}/Source/Main.cpp"
+  "Source/StringSynthesiser.h"
+  "Source/StringComponent.h"
+  "Source/StringDemoComponent.h"
+  "Source/Main.cpp"
 )
 
 jucer_project_module(
   juce_audio_basics
-  PATH "${PluckedStringsDemo_jucer_DIR}/../../modules"
+  PATH "../../modules"
 )
 
 jucer_project_module(
   juce_audio_devices
-  PATH "${PluckedStringsDemo_jucer_DIR}/../../modules"
+  PATH "../../modules"
   # JUCE_ASIO
   # JUCE_WASAPI
   # JUCE_WASAPI_EXCLUSIVE
@@ -65,7 +61,7 @@ jucer_project_module(
 
 jucer_project_module(
   juce_audio_formats
-  PATH "${PluckedStringsDemo_jucer_DIR}/../../modules"
+  PATH "../../modules"
   # JUCE_USE_FLAC
   # JUCE_USE_OGGVORBIS
   # JUCE_USE_MP3AUDIOFORMAT
@@ -75,7 +71,7 @@ jucer_project_module(
 
 jucer_project_module(
   juce_audio_processors
-  PATH "${PluckedStringsDemo_jucer_DIR}/../../modules"
+  PATH "../../modules"
   # JUCE_PLUGINHOST_VST
   # JUCE_PLUGINHOST_VST3
   # JUCE_PLUGINHOST_AU
@@ -83,14 +79,14 @@ jucer_project_module(
 
 jucer_project_module(
   juce_audio_utils
-  PATH "${PluckedStringsDemo_jucer_DIR}/../../modules"
+  PATH "../../modules"
   # JUCE_USE_CDREADER
   # JUCE_USE_CDBURNER
 )
 
 jucer_project_module(
   juce_core
-  PATH "${PluckedStringsDemo_jucer_DIR}/../../modules"
+  PATH "../../modules"
   # JUCE_FORCE_DEBUG
   # JUCE_LOG_ASSERTIONS
   # JUCE_CHECK_MEMORY_LEAKS
@@ -103,24 +99,24 @@ jucer_project_module(
 
 jucer_project_module(
   juce_data_structures
-  PATH "${PluckedStringsDemo_jucer_DIR}/../../modules"
+  PATH "../../modules"
 )
 
 jucer_project_module(
   juce_events
-  PATH "${PluckedStringsDemo_jucer_DIR}/../../modules"
+  PATH "../../modules"
 )
 
 jucer_project_module(
   juce_graphics
-  PATH "${PluckedStringsDemo_jucer_DIR}/../../modules"
+  PATH "../../modules"
   # JUCE_USE_COREIMAGE_LOADER
   # JUCE_USE_DIRECTWRITE
 )
 
 jucer_project_module(
   juce_gui_basics
-  PATH "${PluckedStringsDemo_jucer_DIR}/../../modules"
+  PATH "../../modules"
   # JUCE_ENABLE_REPAINT_DEBUGGING
   # JUCE_USE_XSHM
   # JUCE_USE_XRENDER
@@ -129,7 +125,7 @@ jucer_project_module(
 
 jucer_project_module(
   juce_gui_extra
-  PATH "${PluckedStringsDemo_jucer_DIR}/../../modules"
+  PATH "../../modules"
   # JUCE_WEB_BROWSER
   # JUCE_ENABLE_LIVE_CONSTANT_EDITOR
 )

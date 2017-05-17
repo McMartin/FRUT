@@ -16,16 +16,13 @@ get_filename_component(JuceDemoPlugin_jucer_FILE
   BASE_DIR "${CMAKE_BINARY_DIR}"
 )
 
-if(NOT EXISTS "${JuceDemoPlugin_jucer_FILE}")
-  message(FATAL_ERROR "No such file: ${JuceDemoPlugin_jucer_FILE}")
-endif()
-
-get_filename_component(JuceDemoPlugin_jucer_DIR
-  "${JuceDemoPlugin_jucer_FILE}" DIRECTORY
-)
-
 
 jucer_project_begin(
+  PROJECT_FILE "${JuceDemoPlugin_jucer_FILE}"
+  PROJECT_ID "0nRd9LLGO"
+)
+
+jucer_project_settings(
   PROJECT_NAME "JuceDemoPlugin"
   PROJECT_VERSION "1.0.0"
   COMPANY_NAME "ROLI Ltd."
@@ -36,7 +33,6 @@ jucer_project_begin(
   BINARYDATACPP_SIZE_LIMIT "Default"
   # BINARYDATA_NAMESPACE
   # PREPROCESSOR_DEFINITIONS
-  PROJECT_ID "0nRd9LLGO"
 )
 
 jucer_audio_plugin_settings(
@@ -59,21 +55,21 @@ jucer_audio_plugin_settings(
 )
 
 jucer_project_files("JuceDemoPlugin"
-  "${JuceDemoPlugin_jucer_DIR}/Source/PluginEditor.cpp"
-  "${JuceDemoPlugin_jucer_DIR}/Source/PluginEditor.h"
-  "${JuceDemoPlugin_jucer_DIR}/Source/PluginProcessor.cpp"
-  "${JuceDemoPlugin_jucer_DIR}/Source/PluginProcessor.h"
-  "${JuceDemoPlugin_jucer_DIR}/Source/SinewaveSynth.h"
+  "Source/PluginEditor.cpp"
+  "Source/PluginEditor.h"
+  "Source/PluginProcessor.cpp"
+  "Source/PluginProcessor.h"
+  "Source/SinewaveSynth.h"
 )
 
 jucer_project_module(
   juce_audio_basics
-  PATH "${JuceDemoPlugin_jucer_DIR}/../../modules"
+  PATH "../../modules"
 )
 
 jucer_project_module(
   juce_audio_devices
-  PATH "${JuceDemoPlugin_jucer_DIR}/../../modules"
+  PATH "../../modules"
   # JUCE_ASIO
   # JUCE_WASAPI
   # JUCE_WASAPI_EXCLUSIVE
@@ -85,7 +81,7 @@ jucer_project_module(
 
 jucer_project_module(
   juce_audio_formats
-  PATH "${JuceDemoPlugin_jucer_DIR}/../../modules"
+  PATH "../../modules"
   # JUCE_USE_FLAC
   # JUCE_USE_OGGVORBIS
   # JUCE_USE_MP3AUDIOFORMAT
@@ -95,14 +91,14 @@ jucer_project_module(
 
 jucer_project_module(
   juce_audio_plugin_client
-  PATH "${JuceDemoPlugin_jucer_DIR}/../../modules"
+  PATH "../../modules"
   # JUCE_FORCE_USE_LEGACY_PARAM_IDS
   # JUCE_USE_STUDIO_ONE_COMPATIBLE_PARAMETERS
 )
 
 jucer_project_module(
   juce_audio_processors
-  PATH "${JuceDemoPlugin_jucer_DIR}/../../modules"
+  PATH "../../modules"
   JUCE_PLUGINHOST_VST OFF
   # JUCE_PLUGINHOST_VST3
   JUCE_PLUGINHOST_AU OFF
@@ -110,14 +106,14 @@ jucer_project_module(
 
 jucer_project_module(
   juce_audio_utils
-  PATH "${JuceDemoPlugin_jucer_DIR}/../../modules"
+  PATH "../../modules"
   # JUCE_USE_CDREADER
   # JUCE_USE_CDBURNER
 )
 
 jucer_project_module(
   juce_core
-  PATH "${JuceDemoPlugin_jucer_DIR}/../../modules"
+  PATH "../../modules"
   # JUCE_FORCE_DEBUG
   # JUCE_LOG_ASSERTIONS
   # JUCE_CHECK_MEMORY_LEAKS
@@ -130,24 +126,24 @@ jucer_project_module(
 
 jucer_project_module(
   juce_data_structures
-  PATH "${JuceDemoPlugin_jucer_DIR}/../../modules"
+  PATH "../../modules"
 )
 
 jucer_project_module(
   juce_events
-  PATH "${JuceDemoPlugin_jucer_DIR}/../../modules"
+  PATH "../../modules"
 )
 
 jucer_project_module(
   juce_graphics
-  PATH "${JuceDemoPlugin_jucer_DIR}/../../modules"
+  PATH "../../modules"
   # JUCE_USE_COREIMAGE_LOADER
   # JUCE_USE_DIRECTWRITE
 )
 
 jucer_project_module(
   juce_gui_basics
-  PATH "${JuceDemoPlugin_jucer_DIR}/../../modules"
+  PATH "../../modules"
   # JUCE_ENABLE_REPAINT_DEBUGGING
   # JUCE_USE_XSHM
   # JUCE_USE_XRENDER
@@ -156,7 +152,7 @@ jucer_project_module(
 
 jucer_project_module(
   juce_gui_extra
-  PATH "${JuceDemoPlugin_jucer_DIR}/../../modules"
+  PATH "../../modules"
   # JUCE_WEB_BROWSER
   # JUCE_ENABLE_LIVE_CONSTANT_EDITOR
 )

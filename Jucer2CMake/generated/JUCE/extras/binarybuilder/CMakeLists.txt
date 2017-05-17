@@ -16,16 +16,13 @@ get_filename_component(BinaryBuilder_jucer_FILE
   BASE_DIR "${CMAKE_BINARY_DIR}"
 )
 
-if(NOT EXISTS "${BinaryBuilder_jucer_FILE}")
-  message(FATAL_ERROR "No such file: ${BinaryBuilder_jucer_FILE}")
-endif()
-
-get_filename_component(BinaryBuilder_jucer_DIR
-  "${BinaryBuilder_jucer_FILE}" DIRECTORY
-)
-
 
 jucer_project_begin(
+  PROJECT_FILE "${BinaryBuilder_jucer_FILE}"
+  PROJECT_ID "3t6YqETY1"
+)
+
+jucer_project_settings(
   PROJECT_NAME "BinaryBuilder"
   PROJECT_VERSION "1.0.0"
   # COMPANY_NAME
@@ -36,16 +33,15 @@ jucer_project_begin(
   BINARYDATACPP_SIZE_LIMIT "Default"
   # BINARYDATA_NAMESPACE
   # PREPROCESSOR_DEFINITIONS
-  PROJECT_ID "3t6YqETY1"
 )
 
 jucer_project_files("BinaryBuilder/Source"
-  "${BinaryBuilder_jucer_DIR}/Source/Main.cpp"
+  "Source/Main.cpp"
 )
 
 jucer_project_module(
   juce_core
-  PATH "${BinaryBuilder_jucer_DIR}/../../modules"
+  PATH "../../modules"
   # JUCE_FORCE_DEBUG
   # JUCE_LOG_ASSERTIONS
   # JUCE_CHECK_MEMORY_LEAKS

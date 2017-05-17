@@ -60,21 +60,23 @@ file(COPY
 )
 
 
-jucer_project_begin(
+jucer_project_begin()
+
+jucer_project_settings(
   PROJECT_NAME "BinaryDataBuilder"
   PROJECT_VERSION "1.0.0"
   PROJECT_TYPE "Console Application"
 )
 
 jucer_project_files("BinaryDataBuilder"
-  "main.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/main.cpp"
 )
 
 jucer_project_files("BinaryDataBuilder/Source"
-  "Source/Project Saving/jucer_ResourceFile.cpp"
-  "Source/Utility/jucer_CodeHelpers.cpp"
-  "Source/Utility/jucer_FileHelpers.cpp"
-  "Source/Utility/jucer_MiscUtilities.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/Source/Project Saving/jucer_ResourceFile.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/Source/Utility/jucer_CodeHelpers.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/Source/Utility/jucer_FileHelpers.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/Source/Utility/jucer_MiscUtilities.cpp"
 )
 
 jucer_project_module(

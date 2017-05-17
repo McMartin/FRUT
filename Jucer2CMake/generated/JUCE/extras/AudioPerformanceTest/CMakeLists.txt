@@ -16,16 +16,13 @@ get_filename_component(AudioPerformanceTest_jucer_FILE
   BASE_DIR "${CMAKE_BINARY_DIR}"
 )
 
-if(NOT EXISTS "${AudioPerformanceTest_jucer_FILE}")
-  message(FATAL_ERROR "No such file: ${AudioPerformanceTest_jucer_FILE}")
-endif()
-
-get_filename_component(AudioPerformanceTest_jucer_DIR
-  "${AudioPerformanceTest_jucer_FILE}" DIRECTORY
-)
-
 
 jucer_project_begin(
+  PROJECT_FILE "${AudioPerformanceTest_jucer_FILE}"
+  PROJECT_ID "AKfc5m"
+)
+
+jucer_project_settings(
   PROJECT_NAME "AudioPerformanceTest"
   PROJECT_VERSION "1.0.0"
   # COMPANY_NAME
@@ -36,22 +33,21 @@ jucer_project_begin(
   BINARYDATACPP_SIZE_LIMIT "Default"
   # BINARYDATA_NAMESPACE
   # PREPROCESSOR_DEFINITIONS
-  PROJECT_ID "AKfc5m"
 )
 
 jucer_project_files("AudioPerformanceTest/Source"
-  "${AudioPerformanceTest_jucer_DIR}/Source/Main.cpp"
-  "${AudioPerformanceTest_jucer_DIR}/Source/MainComponent.h"
+  "Source/Main.cpp"
+  "Source/MainComponent.h"
 )
 
 jucer_project_module(
   juce_audio_basics
-  PATH "${AudioPerformanceTest_jucer_DIR}/../../modules"
+  PATH "../../modules"
 )
 
 jucer_project_module(
   juce_audio_devices
-  PATH "${AudioPerformanceTest_jucer_DIR}/../../modules"
+  PATH "../../modules"
   # JUCE_ASIO
   # JUCE_WASAPI
   # JUCE_WASAPI_EXCLUSIVE
@@ -63,7 +59,7 @@ jucer_project_module(
 
 jucer_project_module(
   juce_audio_formats
-  PATH "${AudioPerformanceTest_jucer_DIR}/../../modules"
+  PATH "../../modules"
   # JUCE_USE_FLAC
   # JUCE_USE_OGGVORBIS
   # JUCE_USE_MP3AUDIOFORMAT
@@ -73,7 +69,7 @@ jucer_project_module(
 
 jucer_project_module(
   juce_audio_processors
-  PATH "${AudioPerformanceTest_jucer_DIR}/../../modules"
+  PATH "../../modules"
   # JUCE_PLUGINHOST_VST
   # JUCE_PLUGINHOST_VST3
   # JUCE_PLUGINHOST_AU
@@ -81,14 +77,14 @@ jucer_project_module(
 
 jucer_project_module(
   juce_audio_utils
-  PATH "${AudioPerformanceTest_jucer_DIR}/../../modules"
+  PATH "../../modules"
   # JUCE_USE_CDREADER
   # JUCE_USE_CDBURNER
 )
 
 jucer_project_module(
   juce_core
-  PATH "${AudioPerformanceTest_jucer_DIR}/../../modules"
+  PATH "../../modules"
   # JUCE_FORCE_DEBUG
   # JUCE_LOG_ASSERTIONS
   # JUCE_CHECK_MEMORY_LEAKS
@@ -101,24 +97,24 @@ jucer_project_module(
 
 jucer_project_module(
   juce_data_structures
-  PATH "${AudioPerformanceTest_jucer_DIR}/../../modules"
+  PATH "../../modules"
 )
 
 jucer_project_module(
   juce_events
-  PATH "${AudioPerformanceTest_jucer_DIR}/../../modules"
+  PATH "../../modules"
 )
 
 jucer_project_module(
   juce_graphics
-  PATH "${AudioPerformanceTest_jucer_DIR}/../../modules"
+  PATH "../../modules"
   # JUCE_USE_COREIMAGE_LOADER
   # JUCE_USE_DIRECTWRITE
 )
 
 jucer_project_module(
   juce_gui_basics
-  PATH "${AudioPerformanceTest_jucer_DIR}/../../modules"
+  PATH "../../modules"
   # JUCE_ENABLE_REPAINT_DEBUGGING
   # JUCE_USE_XSHM
   # JUCE_USE_XRENDER
@@ -127,7 +123,7 @@ jucer_project_module(
 
 jucer_project_module(
   juce_gui_extra
-  PATH "${AudioPerformanceTest_jucer_DIR}/../../modules"
+  PATH "../../modules"
   # JUCE_WEB_BROWSER
   # JUCE_ENABLE_LIVE_CONSTANT_EDITOR
 )

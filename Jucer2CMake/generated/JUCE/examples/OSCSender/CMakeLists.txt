@@ -16,16 +16,13 @@ get_filename_component(OSCSender_jucer_FILE
   BASE_DIR "${CMAKE_BINARY_DIR}"
 )
 
-if(NOT EXISTS "${OSCSender_jucer_FILE}")
-  message(FATAL_ERROR "No such file: ${OSCSender_jucer_FILE}")
-endif()
-
-get_filename_component(OSCSender_jucer_DIR
-  "${OSCSender_jucer_FILE}" DIRECTORY
-)
-
 
 jucer_project_begin(
+  PROJECT_FILE "${OSCSender_jucer_FILE}"
+  PROJECT_ID "rysVAr"
+)
+
+jucer_project_settings(
   PROJECT_NAME "OSCSender"
   PROJECT_VERSION "1.0.0"
   # COMPANY_NAME
@@ -36,17 +33,16 @@ jucer_project_begin(
   BINARYDATACPP_SIZE_LIMIT "Default"
   # BINARYDATA_NAMESPACE
   # PREPROCESSOR_DEFINITIONS
-  PROJECT_ID "rysVAr"
 )
 
 jucer_project_files("OSCSender/Source"
-  "${OSCSender_jucer_DIR}/Source/MainComponent.h"
-  "${OSCSender_jucer_DIR}/Source/Main.cpp"
+  "Source/MainComponent.h"
+  "Source/Main.cpp"
 )
 
 jucer_project_module(
   juce_core
-  PATH "${OSCSender_jucer_DIR}/../../modules"
+  PATH "../../modules"
   # JUCE_FORCE_DEBUG
   # JUCE_LOG_ASSERTIONS
   # JUCE_CHECK_MEMORY_LEAKS
@@ -59,24 +55,24 @@ jucer_project_module(
 
 jucer_project_module(
   juce_data_structures
-  PATH "${OSCSender_jucer_DIR}/../../modules"
+  PATH "../../modules"
 )
 
 jucer_project_module(
   juce_events
-  PATH "${OSCSender_jucer_DIR}/../../modules"
+  PATH "../../modules"
 )
 
 jucer_project_module(
   juce_graphics
-  PATH "${OSCSender_jucer_DIR}/../../modules"
+  PATH "../../modules"
   # JUCE_USE_COREIMAGE_LOADER
   # JUCE_USE_DIRECTWRITE
 )
 
 jucer_project_module(
   juce_gui_basics
-  PATH "${OSCSender_jucer_DIR}/../../modules"
+  PATH "../../modules"
   # JUCE_ENABLE_REPAINT_DEBUGGING
   # JUCE_USE_XSHM
   # JUCE_USE_XRENDER
@@ -85,7 +81,7 @@ jucer_project_module(
 
 jucer_project_module(
   juce_osc
-  PATH "${OSCSender_jucer_DIR}/../../modules"
+  PATH "../../modules"
 )
 
 jucer_export_target(

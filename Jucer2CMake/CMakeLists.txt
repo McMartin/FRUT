@@ -36,7 +36,9 @@ if(NOT IS_DIRECTORY "${JUCE_ROOT}")
 endif()
 
 
-jucer_project_begin(
+jucer_project_begin()
+
+jucer_project_settings(
   PROJECT_NAME "Jucer2CMake"
   PROJECT_VERSION "1.0.0"
   PROJECT_TYPE "Console Application"
@@ -44,7 +46,7 @@ jucer_project_begin(
 )
 
 jucer_project_files("Jucer2CMake"
-  "main.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/main.cpp"
 )
 
 jucer_project_module(

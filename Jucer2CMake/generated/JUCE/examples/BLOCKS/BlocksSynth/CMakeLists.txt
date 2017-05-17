@@ -16,16 +16,13 @@ get_filename_component(BlocksSynth_jucer_FILE
   BASE_DIR "${CMAKE_BINARY_DIR}"
 )
 
-if(NOT EXISTS "${BlocksSynth_jucer_FILE}")
-  message(FATAL_ERROR "No such file: ${BlocksSynth_jucer_FILE}")
-endif()
-
-get_filename_component(BlocksSynth_jucer_DIR
-  "${BlocksSynth_jucer_FILE}" DIRECTORY
-)
-
 
 jucer_project_begin(
+  PROJECT_FILE "${BlocksSynth_jucer_FILE}"
+  PROJECT_ID "XsTycT"
+)
+
+jucer_project_settings(
   PROJECT_NAME "BlocksSynth"
   PROJECT_VERSION "1.0.0"
   # COMPANY_NAME
@@ -36,28 +33,27 @@ jucer_project_begin(
   BINARYDATACPP_SIZE_LIMIT "Default"
   # BINARYDATA_NAMESPACE
   # PREPROCESSOR_DEFINITIONS
-  PROJECT_ID "XsTycT"
 )
 
 jucer_project_files("BlocksSynth/Source/Audio"
-  "${BlocksSynth_jucer_DIR}/Source/Oscillators.h"
-  "${BlocksSynth_jucer_DIR}/Source/Audio.h"
+  "Source/Oscillators.h"
+  "Source/Audio.h"
 )
 
 jucer_project_files("BlocksSynth/Source"
-  "${BlocksSynth_jucer_DIR}/Source/Main.cpp"
-  "${BlocksSynth_jucer_DIR}/Source/MainComponent.h"
-  "${BlocksSynth_jucer_DIR}/Source/WaveshapeProgram.h"
+  "Source/Main.cpp"
+  "Source/MainComponent.h"
+  "Source/WaveshapeProgram.h"
 )
 
 jucer_project_module(
   juce_audio_basics
-  PATH "${BlocksSynth_jucer_DIR}/../../../modules"
+  PATH "../../../modules"
 )
 
 jucer_project_module(
   juce_audio_devices
-  PATH "${BlocksSynth_jucer_DIR}/../../../modules"
+  PATH "../../../modules"
   # JUCE_ASIO
   # JUCE_WASAPI
   # JUCE_WASAPI_EXCLUSIVE
@@ -69,7 +65,7 @@ jucer_project_module(
 
 jucer_project_module(
   juce_audio_formats
-  PATH "${BlocksSynth_jucer_DIR}/../../../modules"
+  PATH "../../../modules"
   # JUCE_USE_FLAC
   # JUCE_USE_OGGVORBIS
   # JUCE_USE_MP3AUDIOFORMAT
@@ -79,7 +75,7 @@ jucer_project_module(
 
 jucer_project_module(
   juce_audio_processors
-  PATH "${BlocksSynth_jucer_DIR}/../../../modules"
+  PATH "../../../modules"
   # JUCE_PLUGINHOST_VST
   # JUCE_PLUGINHOST_VST3
   # JUCE_PLUGINHOST_AU
@@ -87,19 +83,19 @@ jucer_project_module(
 
 jucer_project_module(
   juce_audio_utils
-  PATH "${BlocksSynth_jucer_DIR}/../../../modules"
+  PATH "../../../modules"
   # JUCE_USE_CDREADER
   # JUCE_USE_CDBURNER
 )
 
 jucer_project_module(
   juce_blocks_basics
-  PATH "${BlocksSynth_jucer_DIR}/../../../modules"
+  PATH "../../../modules"
 )
 
 jucer_project_module(
   juce_core
-  PATH "${BlocksSynth_jucer_DIR}/../../../modules"
+  PATH "../../../modules"
   # JUCE_FORCE_DEBUG
   # JUCE_LOG_ASSERTIONS
   # JUCE_CHECK_MEMORY_LEAKS
@@ -112,24 +108,24 @@ jucer_project_module(
 
 jucer_project_module(
   juce_data_structures
-  PATH "${BlocksSynth_jucer_DIR}/../../../modules"
+  PATH "../../../modules"
 )
 
 jucer_project_module(
   juce_events
-  PATH "${BlocksSynth_jucer_DIR}/../../../modules"
+  PATH "../../../modules"
 )
 
 jucer_project_module(
   juce_graphics
-  PATH "${BlocksSynth_jucer_DIR}/../../../modules"
+  PATH "../../../modules"
   # JUCE_USE_COREIMAGE_LOADER
   # JUCE_USE_DIRECTWRITE
 )
 
 jucer_project_module(
   juce_gui_basics
-  PATH "${BlocksSynth_jucer_DIR}/../../../modules"
+  PATH "../../../modules"
   # JUCE_ENABLE_REPAINT_DEBUGGING
   # JUCE_USE_XSHM
   # JUCE_USE_XRENDER
@@ -138,14 +134,14 @@ jucer_project_module(
 
 jucer_project_module(
   juce_gui_extra
-  PATH "${BlocksSynth_jucer_DIR}/../../../modules"
+  PATH "../../../modules"
   # JUCE_WEB_BROWSER
   # JUCE_ENABLE_LIVE_CONSTANT_EDITOR
 )
 
 jucer_project_module(
   juce_opengl
-  PATH "${BlocksSynth_jucer_DIR}/../../../modules"
+  PATH "../../../modules"
 )
 
 jucer_export_target(

@@ -16,16 +16,13 @@ get_filename_component(Arpeggiator_jucer_FILE
   BASE_DIR "${CMAKE_BINARY_DIR}"
 )
 
-if(NOT EXISTS "${Arpeggiator_jucer_FILE}")
-  message(FATAL_ERROR "No such file: ${Arpeggiator_jucer_FILE}")
-endif()
-
-get_filename_component(Arpeggiator_jucer_DIR
-  "${Arpeggiator_jucer_FILE}" DIRECTORY
-)
-
 
 jucer_project_begin(
+  PROJECT_FILE "${Arpeggiator_jucer_FILE}"
+  PROJECT_ID "NXaszK"
+)
+
+jucer_project_settings(
   PROJECT_NAME "Arpeggiator"
   PROJECT_VERSION "1.0.0"
   COMPANY_NAME "ROLI Ltd."
@@ -36,7 +33,6 @@ jucer_project_begin(
   BINARYDATACPP_SIZE_LIMIT "Default"
   # BINARYDATA_NAMESPACE
   # PREPROCESSOR_DEFINITIONS
-  PROJECT_ID "NXaszK"
 )
 
 jucer_audio_plugin_settings(
@@ -59,17 +55,17 @@ jucer_audio_plugin_settings(
 )
 
 jucer_project_files("Arpeggiator/Source"
-  "${Arpeggiator_jucer_DIR}/Source/Arpeggiator.cpp"
+  "Source/Arpeggiator.cpp"
 )
 
 jucer_project_module(
   juce_audio_basics
-  PATH "${Arpeggiator_jucer_DIR}/../../../modules"
+  PATH "../../../modules"
 )
 
 jucer_project_module(
   juce_audio_devices
-  PATH "${Arpeggiator_jucer_DIR}/../../../modules"
+  PATH "../../../modules"
   # JUCE_ASIO
   # JUCE_WASAPI
   # JUCE_WASAPI_EXCLUSIVE
@@ -81,7 +77,7 @@ jucer_project_module(
 
 jucer_project_module(
   juce_audio_formats
-  PATH "${Arpeggiator_jucer_DIR}/../../../modules"
+  PATH "../../../modules"
   # JUCE_USE_FLAC
   # JUCE_USE_OGGVORBIS
   # JUCE_USE_MP3AUDIOFORMAT
@@ -91,14 +87,14 @@ jucer_project_module(
 
 jucer_project_module(
   juce_audio_plugin_client
-  PATH "${Arpeggiator_jucer_DIR}/../../../modules"
+  PATH "../../../modules"
   # JUCE_FORCE_USE_LEGACY_PARAM_IDS
   # JUCE_USE_STUDIO_ONE_COMPATIBLE_PARAMETERS
 )
 
 jucer_project_module(
   juce_audio_processors
-  PATH "${Arpeggiator_jucer_DIR}/../../../modules"
+  PATH "../../../modules"
   # JUCE_PLUGINHOST_VST
   # JUCE_PLUGINHOST_VST3
   # JUCE_PLUGINHOST_AU
@@ -106,7 +102,7 @@ jucer_project_module(
 
 jucer_project_module(
   juce_core
-  PATH "${Arpeggiator_jucer_DIR}/../../../modules"
+  PATH "../../../modules"
   # JUCE_FORCE_DEBUG
   # JUCE_LOG_ASSERTIONS
   # JUCE_CHECK_MEMORY_LEAKS
@@ -119,29 +115,29 @@ jucer_project_module(
 
 jucer_project_module(
   juce_cryptography
-  PATH "${Arpeggiator_jucer_DIR}/../../../modules"
+  PATH "../../../modules"
 )
 
 jucer_project_module(
   juce_data_structures
-  PATH "${Arpeggiator_jucer_DIR}/../../../modules"
+  PATH "../../../modules"
 )
 
 jucer_project_module(
   juce_events
-  PATH "${Arpeggiator_jucer_DIR}/../../../modules"
+  PATH "../../../modules"
 )
 
 jucer_project_module(
   juce_graphics
-  PATH "${Arpeggiator_jucer_DIR}/../../../modules"
+  PATH "../../../modules"
   # JUCE_USE_COREIMAGE_LOADER
   # JUCE_USE_DIRECTWRITE
 )
 
 jucer_project_module(
   juce_gui_basics
-  PATH "${Arpeggiator_jucer_DIR}/../../../modules"
+  PATH "../../../modules"
   # JUCE_ENABLE_REPAINT_DEBUGGING
   # JUCE_USE_XSHM
   # JUCE_USE_XRENDER
@@ -150,19 +146,19 @@ jucer_project_module(
 
 jucer_project_module(
   juce_gui_extra
-  PATH "${Arpeggiator_jucer_DIR}/../../../modules"
+  PATH "../../../modules"
   # JUCE_WEB_BROWSER
   # JUCE_ENABLE_LIVE_CONSTANT_EDITOR
 )
 
 jucer_project_module(
   juce_opengl
-  PATH "${Arpeggiator_jucer_DIR}/../../../modules"
+  PATH "../../../modules"
 )
 
 jucer_project_module(
   juce_video
-  PATH "${Arpeggiator_jucer_DIR}/../../../modules"
+  PATH "../../../modules"
   # JUCE_DIRECTSHOW
   # JUCE_MEDIAFOUNDATION
   JUCE_QUICKTIME OFF

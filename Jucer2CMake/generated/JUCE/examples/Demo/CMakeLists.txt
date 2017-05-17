@@ -16,16 +16,13 @@ get_filename_component(JuceDemo_jucer_FILE
   BASE_DIR "${CMAKE_BINARY_DIR}"
 )
 
-if(NOT EXISTS "${JuceDemo_jucer_FILE}")
-  message(FATAL_ERROR "No such file: ${JuceDemo_jucer_FILE}")
-endif()
-
-get_filename_component(JuceDemo_jucer_DIR
-  "${JuceDemo_jucer_FILE}" DIRECTORY
-)
-
 
 jucer_project_begin(
+  PROJECT_FILE "${JuceDemo_jucer_FILE}"
+  PROJECT_ID "sBBIzr"
+)
+
+jucer_project_settings(
   PROJECT_NAME "JuceDemo"
   PROJECT_VERSION "3.0.0"
   # COMPANY_NAME
@@ -36,81 +33,80 @@ jucer_project_begin(
   BINARYDATACPP_SIZE_LIMIT "Default"
   # BINARYDATA_NAMESPACE
   PREPROCESSOR_DEFINITIONS "JUCE_UNIT_TESTS=1"
-  PROJECT_ID "sBBIzr"
 )
 
 jucer_project_files("JuceDemo/Source"
-  "${JuceDemo_jucer_DIR}/Source/Main.cpp"
-  "${JuceDemo_jucer_DIR}/Source/MainWindow.cpp"
-  "${JuceDemo_jucer_DIR}/Source/MainWindow.h"
-  "${JuceDemo_jucer_DIR}/Source/DemoUtilities.h"
-  "${JuceDemo_jucer_DIR}/Source/IntroScreen.cpp"
-  "${JuceDemo_jucer_DIR}/Source/JuceDemoHeader.h"
+  "Source/Main.cpp"
+  "Source/MainWindow.cpp"
+  "Source/MainWindow.h"
+  "Source/DemoUtilities.h"
+  "Source/IntroScreen.cpp"
+  "Source/JuceDemoHeader.h"
 )
 
 jucer_project_files("JuceDemo/Source/Demos"
-  "${JuceDemo_jucer_DIR}/Source/Demos/AnimationDemo.cpp"
-  "${JuceDemo_jucer_DIR}/Source/Demos/AudioLatencyDemo.cpp"
-  "${JuceDemo_jucer_DIR}/Source/Demos/AudioLiveScrollingDisplay.h"
-  "${JuceDemo_jucer_DIR}/Source/Demos/AudioPlaybackDemo.cpp"
-  "${JuceDemo_jucer_DIR}/Source/Demos/AudioRecordingDemo.cpp"
-  "${JuceDemo_jucer_DIR}/Source/Demos/AudioSettingsDemo.cpp"
-  "${JuceDemo_jucer_DIR}/Source/Demos/AudioSynthesiserDemo.cpp"
-  "${JuceDemo_jucer_DIR}/Source/Demos/Box2DDemo.cpp"
-  "${JuceDemo_jucer_DIR}/Source/Demos/CameraDemo.cpp"
-  "${JuceDemo_jucer_DIR}/Source/Demos/ChildProcessDemo.cpp"
-  "${JuceDemo_jucer_DIR}/Source/Demos/CodeEditorDemo.cpp"
-  "${JuceDemo_jucer_DIR}/Source/Demos/ComponentTransformsDemo.cpp"
-  "${JuceDemo_jucer_DIR}/Source/Demos/CryptographyDemo.cpp"
-  "${JuceDemo_jucer_DIR}/Source/Demos/DialogsDemo.cpp"
-  "${JuceDemo_jucer_DIR}/Source/Demos/FlexBoxDemo.cpp"
-  "${JuceDemo_jucer_DIR}/Source/Demos/FontsDemo.cpp"
-  "${JuceDemo_jucer_DIR}/Source/Demos/GraphicsDemo.cpp"
-  "${JuceDemo_jucer_DIR}/Source/Demos/ImagesDemo.cpp"
-  "${JuceDemo_jucer_DIR}/Source/Demos/JavaScript.cpp"
-  "${JuceDemo_jucer_DIR}/Source/Demos/KeyMappingsDemo.cpp"
-  "${JuceDemo_jucer_DIR}/Source/Demos/LiveConstantDemo.cpp"
-  "${JuceDemo_jucer_DIR}/Source/Demos/LookAndFeelDemo.cpp"
-  "${JuceDemo_jucer_DIR}/Source/Demos/MDIDemo.cpp"
-  "${JuceDemo_jucer_DIR}/Source/Demos/MidiDemo.cpp"
-  "${JuceDemo_jucer_DIR}/Source/Demos/MultithreadingDemo.cpp"
-  "${JuceDemo_jucer_DIR}/Source/Demos/MultiTouch.cpp"
-  "${JuceDemo_jucer_DIR}/Source/Demos/NetworkingDemo.cpp"
-  "${JuceDemo_jucer_DIR}/Source/Demos/OpenGLDemo.cpp"
-  "${JuceDemo_jucer_DIR}/Source/Demos/OpenGLDemo2D.cpp"
-  "${JuceDemo_jucer_DIR}/Source/Demos/PropertiesDemo.cpp"
-  "${JuceDemo_jucer_DIR}/Source/Demos/SystemInfoDemo.cpp"
-  "${JuceDemo_jucer_DIR}/Source/Demos/TimersAndEventsDemo.cpp"
-  "${JuceDemo_jucer_DIR}/Source/Demos/UnitTestsDemo.cpp"
-  "${JuceDemo_jucer_DIR}/Source/Demos/ValueTreesDemo.cpp"
-  "${JuceDemo_jucer_DIR}/Source/Demos/VideoDemo.cpp"
-  "${JuceDemo_jucer_DIR}/Source/Demos/WavefrontObjParser.h"
-  "${JuceDemo_jucer_DIR}/Source/Demos/WebBrowserDemo.cpp"
-  "${JuceDemo_jucer_DIR}/Source/Demos/WidgetsDemo.cpp"
-  "${JuceDemo_jucer_DIR}/Source/Demos/WindowsDemo.cpp"
-  "${JuceDemo_jucer_DIR}/Source/Demos/XMLandJSONDemo.cpp"
+  "Source/Demos/AnimationDemo.cpp"
+  "Source/Demos/AudioLatencyDemo.cpp"
+  "Source/Demos/AudioLiveScrollingDisplay.h"
+  "Source/Demos/AudioPlaybackDemo.cpp"
+  "Source/Demos/AudioRecordingDemo.cpp"
+  "Source/Demos/AudioSettingsDemo.cpp"
+  "Source/Demos/AudioSynthesiserDemo.cpp"
+  "Source/Demos/Box2DDemo.cpp"
+  "Source/Demos/CameraDemo.cpp"
+  "Source/Demos/ChildProcessDemo.cpp"
+  "Source/Demos/CodeEditorDemo.cpp"
+  "Source/Demos/ComponentTransformsDemo.cpp"
+  "Source/Demos/CryptographyDemo.cpp"
+  "Source/Demos/DialogsDemo.cpp"
+  "Source/Demos/FlexBoxDemo.cpp"
+  "Source/Demos/FontsDemo.cpp"
+  "Source/Demos/GraphicsDemo.cpp"
+  "Source/Demos/ImagesDemo.cpp"
+  "Source/Demos/JavaScript.cpp"
+  "Source/Demos/KeyMappingsDemo.cpp"
+  "Source/Demos/LiveConstantDemo.cpp"
+  "Source/Demos/LookAndFeelDemo.cpp"
+  "Source/Demos/MDIDemo.cpp"
+  "Source/Demos/MidiDemo.cpp"
+  "Source/Demos/MultithreadingDemo.cpp"
+  "Source/Demos/MultiTouch.cpp"
+  "Source/Demos/NetworkingDemo.cpp"
+  "Source/Demos/OpenGLDemo.cpp"
+  "Source/Demos/OpenGLDemo2D.cpp"
+  "Source/Demos/PropertiesDemo.cpp"
+  "Source/Demos/SystemInfoDemo.cpp"
+  "Source/Demos/TimersAndEventsDemo.cpp"
+  "Source/Demos/UnitTestsDemo.cpp"
+  "Source/Demos/ValueTreesDemo.cpp"
+  "Source/Demos/VideoDemo.cpp"
+  "Source/Demos/WavefrontObjParser.h"
+  "Source/Demos/WebBrowserDemo.cpp"
+  "Source/Demos/WidgetsDemo.cpp"
+  "Source/Demos/WindowsDemo.cpp"
+  "Source/Demos/XMLandJSONDemo.cpp"
 )
 
 jucer_project_resources("JuceDemo/Source/Resources"
-  "${JuceDemo_jucer_DIR}/Resources/tile_background.png"
-  "${JuceDemo_jucer_DIR}/Resources/cello.wav"
-  "${JuceDemo_jucer_DIR}/Resources/demo table data.xml"
-  "${JuceDemo_jucer_DIR}/Resources/icons.zip"
-  "${JuceDemo_jucer_DIR}/Resources/juce_icon.png"
-  "${JuceDemo_jucer_DIR}/Resources/juce_module_info"
-  "${JuceDemo_jucer_DIR}/Resources/portmeirion.jpg"
-  "${JuceDemo_jucer_DIR}/Resources/teapot.obj"
-  "${JuceDemo_jucer_DIR}/Resources/treedemo.xml"
+  "Resources/tile_background.png"
+  "Resources/cello.wav"
+  "Resources/demo table data.xml"
+  "Resources/icons.zip"
+  "Resources/juce_icon.png"
+  "Resources/juce_module_info"
+  "Resources/portmeirion.jpg"
+  "Resources/teapot.obj"
+  "Resources/treedemo.xml"
 )
 
 jucer_project_module(
   juce_audio_basics
-  PATH "${JuceDemo_jucer_DIR}/../../modules"
+  PATH "../../modules"
 )
 
 jucer_project_module(
   juce_audio_devices
-  PATH "${JuceDemo_jucer_DIR}/../../modules"
+  PATH "../../modules"
   # JUCE_ASIO
   # JUCE_WASAPI
   JUCE_WASAPI_EXCLUSIVE ON
@@ -122,7 +118,7 @@ jucer_project_module(
 
 jucer_project_module(
   juce_audio_formats
-  PATH "${JuceDemo_jucer_DIR}/../../modules"
+  PATH "../../modules"
   # JUCE_USE_FLAC
   # JUCE_USE_OGGVORBIS
   # JUCE_USE_MP3AUDIOFORMAT
@@ -132,7 +128,7 @@ jucer_project_module(
 
 jucer_project_module(
   juce_audio_processors
-  PATH "${JuceDemo_jucer_DIR}/../../modules"
+  PATH "../../modules"
   # JUCE_PLUGINHOST_VST
   # JUCE_PLUGINHOST_VST3
   # JUCE_PLUGINHOST_AU
@@ -140,19 +136,19 @@ jucer_project_module(
 
 jucer_project_module(
   juce_audio_utils
-  PATH "${JuceDemo_jucer_DIR}/../../modules"
+  PATH "../../modules"
   # JUCE_USE_CDREADER
   # JUCE_USE_CDBURNER
 )
 
 jucer_project_module(
   juce_box2d
-  PATH "${JuceDemo_jucer_DIR}/../../modules"
+  PATH "../../modules"
 )
 
 jucer_project_module(
   juce_core
-  PATH "${JuceDemo_jucer_DIR}/../../modules"
+  PATH "../../modules"
   # JUCE_FORCE_DEBUG
   # JUCE_LOG_ASSERTIONS
   # JUCE_CHECK_MEMORY_LEAKS
@@ -165,29 +161,29 @@ jucer_project_module(
 
 jucer_project_module(
   juce_cryptography
-  PATH "${JuceDemo_jucer_DIR}/../../modules"
+  PATH "../../modules"
 )
 
 jucer_project_module(
   juce_data_structures
-  PATH "${JuceDemo_jucer_DIR}/../../modules"
+  PATH "../../modules"
 )
 
 jucer_project_module(
   juce_events
-  PATH "${JuceDemo_jucer_DIR}/../../modules"
+  PATH "../../modules"
 )
 
 jucer_project_module(
   juce_graphics
-  PATH "${JuceDemo_jucer_DIR}/../../modules"
+  PATH "../../modules"
   # JUCE_USE_COREIMAGE_LOADER
   # JUCE_USE_DIRECTWRITE
 )
 
 jucer_project_module(
   juce_gui_basics
-  PATH "${JuceDemo_jucer_DIR}/../../modules"
+  PATH "../../modules"
   # JUCE_ENABLE_REPAINT_DEBUGGING
   # JUCE_USE_XSHM
   # JUCE_USE_XRENDER
@@ -196,19 +192,19 @@ jucer_project_module(
 
 jucer_project_module(
   juce_gui_extra
-  PATH "${JuceDemo_jucer_DIR}/../../modules"
+  PATH "../../modules"
   # JUCE_WEB_BROWSER
   JUCE_ENABLE_LIVE_CONSTANT_EDITOR ON
 )
 
 jucer_project_module(
   juce_opengl
-  PATH "${JuceDemo_jucer_DIR}/../../modules"
+  PATH "../../modules"
 )
 
 jucer_project_module(
   juce_video
-  PATH "${JuceDemo_jucer_DIR}/../../modules"
+  PATH "../../modules"
   # JUCE_DIRECTSHOW
   # JUCE_MEDIAFOUNDATION
   # JUCE_QUICKTIME
