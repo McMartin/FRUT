@@ -26,6 +26,7 @@ get_filename_component(Arpeggiator_jucer_DIR
 
 
 jucer_project_begin(
+  PROJECT_FILE "${Arpeggiator_jucer_FILE}"
   PROJECT_ID "NXaszK"
 )
 

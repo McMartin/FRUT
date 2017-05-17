@@ -209,6 +209,7 @@ int main(int argc, char* argv[])
   // jucer_project_begin()
   {
     out << "jucer_project_begin(\n"
+        << "  PROJECT_FILE \"${" << escapedJucerFileName << "_FILE}\"\n"
         << "  " << getSetting(jucerProject, "PROJECT_ID", "id") << "\n"
         << ")\n"
         << "\n";

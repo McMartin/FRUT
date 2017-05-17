@@ -26,6 +26,7 @@ get_filename_component(PluckedStringsDemo_jucer_DIR
 
 
 jucer_project_begin(
+  PROJECT_FILE "${PluckedStringsDemo_jucer_FILE}"
   PROJECT_ID "jKHEJM"
 )
 

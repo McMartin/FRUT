@@ -26,6 +26,7 @@ get_filename_component(HelloWorld_jucer_DIR
 
 
 jucer_project_begin(
+  PROJECT_FILE "${HelloWorld_jucer_FILE}"
   PROJECT_ID "tTAKTK1s"
 )
 

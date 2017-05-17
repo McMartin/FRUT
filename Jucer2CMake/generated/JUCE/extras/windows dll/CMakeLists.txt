@@ -26,6 +26,7 @@ get_filename_component(jucedll_jucer_DIR
 
 
 jucer_project_begin(
+  PROJECT_FILE "${jucedll_jucer_FILE}"
   PROJECT_ID "IvabE4"
 )
 

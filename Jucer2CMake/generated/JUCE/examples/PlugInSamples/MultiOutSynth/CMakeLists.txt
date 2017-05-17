@@ -26,6 +26,7 @@ get_filename_component(MultiOutSynth_jucer_DIR
 
 
 jucer_project_begin(
+  PROJECT_FILE "${MultiOutSynth_jucer_FILE}"
   PROJECT_ID "CbHSoe"
 )
 

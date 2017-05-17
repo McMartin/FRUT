@@ -26,6 +26,7 @@ get_filename_component(BlocksMonitor_jucer_DIR
 
 
 jucer_project_begin(
+  PROJECT_FILE "${BlocksMonitor_jucer_FILE}"
   PROJECT_ID "X7eXs7"
 )
 

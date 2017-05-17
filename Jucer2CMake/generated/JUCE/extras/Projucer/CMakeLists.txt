@@ -26,6 +26,7 @@ get_filename_component(Projucer_jucer_DIR
 
 
 jucer_project_begin(
+  PROJECT_FILE "${Projucer_jucer_FILE}"
   PROJECT_ID "M70qfTRRk"
 )
 

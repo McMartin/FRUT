@@ -26,6 +26,7 @@ get_filename_component(AudioAppExample_jucer_DIR
 
 
 jucer_project_begin(
+  PROJECT_FILE "${AudioAppExample_jucer_FILE}"
   PROJECT_ID "PAnJXP"
 )
 

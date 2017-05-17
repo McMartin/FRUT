@@ -26,6 +26,7 @@ get_filename_component(OSCReceiver_jucer_DIR
 
 
 jucer_project_begin(
+  PROJECT_FILE "${OSCReceiver_jucer_FILE}"
   PROJECT_ID "pdocPt"
 )
 

@@ -26,6 +26,7 @@ get_filename_component(BinaryBuilder_jucer_DIR
 
 
 jucer_project_begin(
+  PROJECT_FILE "${BinaryBuilder_jucer_FILE}"
   PROJECT_ID "3t6YqETY1"
 )
 

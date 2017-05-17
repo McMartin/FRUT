@@ -26,6 +26,7 @@ get_filename_component(AudioPerformanceTest_jucer_DIR
 
 
 jucer_project_begin(
+  PROJECT_FILE "${AudioPerformanceTest_jucer_FILE}"
   PROJECT_ID "AKfc5m"
 )
 

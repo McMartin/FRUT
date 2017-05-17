@@ -26,6 +26,7 @@ get_filename_component(OpenGLAppExample_jucer_DIR
 
 
 jucer_project_begin(
+  PROJECT_FILE "${OpenGLAppExample_jucer_FILE}"
   PROJECT_ID "c3KrlE"
 )
 

@@ -26,6 +26,7 @@ get_filename_component(NoiseGate_jucer_DIR
 
 
 jucer_project_begin(
+  PROJECT_FILE "${NoiseGate_jucer_FILE}"
   PROJECT_ID "kmYCMo"
 )
 

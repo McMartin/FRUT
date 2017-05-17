@@ -26,6 +26,7 @@ get_filename_component(AnimationAppExample_jucer_DIR
 
 
 jucer_project_begin(
+  PROJECT_FILE "${AnimationAppExample_jucer_FILE}"
   PROJECT_ID "LrATE6"
 )
 

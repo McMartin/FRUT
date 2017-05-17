@@ -26,6 +26,7 @@ get_filename_component(OSCMonitor_jucer_DIR
 
 
 jucer_project_begin(
+  PROJECT_FILE "${OSCMonitor_jucer_FILE}"
   PROJECT_ID "IhmIkj"
 )
 

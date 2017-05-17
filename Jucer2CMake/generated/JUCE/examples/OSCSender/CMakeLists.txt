@@ -26,6 +26,7 @@ get_filename_component(OSCSender_jucer_DIR
 
 
 jucer_project_begin(
+  PROJECT_FILE "${OSCSender_jucer_FILE}"
   PROJECT_ID "rysVAr"
 )
 

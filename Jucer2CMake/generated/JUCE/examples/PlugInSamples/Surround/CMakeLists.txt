@@ -26,6 +26,7 @@ get_filename_component(Surround_jucer_DIR
 
 
 jucer_project_begin(
+  PROJECT_FILE "${Surround_jucer_FILE}"
   PROJECT_ID "S8q71q"
 )
 

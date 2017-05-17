@@ -26,6 +26,7 @@ get_filename_component(MPETest_jucer_DIR
 
 
 jucer_project_begin(
+  PROJECT_FILE "${MPETest_jucer_FILE}"
   PROJECT_ID "IilE7R"
 )
 

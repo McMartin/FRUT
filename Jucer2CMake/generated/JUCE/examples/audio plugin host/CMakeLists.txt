@@ -34,6 +34,7 @@ set(VST3_SDK_FOLDER "${VST3_SDK_FOLDER}" CACHE PATH "VST3 SDK Folder")
 
 
 jucer_project_begin(
+  PROJECT_FILE "${Plugin_Host_jucer_FILE}"
   PROJECT_ID "NTe0XB0ij"
 )
 

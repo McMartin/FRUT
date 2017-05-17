@@ -26,6 +26,7 @@ get_filename_component(SimpleFFTExample_jucer_DIR
 
 
 jucer_project_begin(
+  PROJECT_FILE "${SimpleFFTExample_jucer_FILE}"
   PROJECT_ID "cgcxPd"
 )
 

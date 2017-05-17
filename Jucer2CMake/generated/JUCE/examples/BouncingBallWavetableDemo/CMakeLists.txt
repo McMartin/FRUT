@@ -26,6 +26,7 @@ get_filename_component(BouncingBallWavetableDemo_jucer_DIR
 
 
 jucer_project_begin(
+  PROJECT_FILE "${BouncingBallWavetableDemo_jucer_FILE}"
   PROJECT_ID "fyUrFS"
 )
 

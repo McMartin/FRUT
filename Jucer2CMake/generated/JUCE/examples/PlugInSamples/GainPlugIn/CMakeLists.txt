@@ -26,6 +26,7 @@ get_filename_component(GainPlugIn_jucer_DIR
 
 
 jucer_project_begin(
+  PROJECT_FILE "${GainPlugIn_jucer_FILE}"
   PROJECT_ID "jXbtGS"
 )
 

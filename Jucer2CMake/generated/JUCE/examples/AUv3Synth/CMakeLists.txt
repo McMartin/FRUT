@@ -26,6 +26,7 @@ get_filename_component(AUv3Synth_jucer_DIR
 
 
 jucer_project_begin(
+  PROJECT_FILE "${AUv3Synth_jucer_FILE}"
   PROJECT_ID "NaPIav"
 )
 

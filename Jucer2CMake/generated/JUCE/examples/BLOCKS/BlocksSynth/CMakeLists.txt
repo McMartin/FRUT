@@ -26,6 +26,7 @@ get_filename_component(BlocksSynth_jucer_DIR
 
 
 jucer_project_begin(
+  PROJECT_FILE "${BlocksSynth_jucer_FILE}"
   PROJECT_ID "XsTycT"
 )
 

@@ -26,6 +26,7 @@ get_filename_component(UnitTestRunner_jucer_DIR
 
 
 jucer_project_begin(
+  PROJECT_FILE "${UnitTestRunner_jucer_FILE}"
   PROJECT_ID "Z2Xzcp"
 )
 
