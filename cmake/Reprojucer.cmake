@@ -25,6 +25,7 @@ set(templates_DIR "${Reprojucer.cmake_DIR}/templates")
 function(jucer_project_begin)
 
   set(project_property_tags
+    "PROJECT_FILE"
     "PROJECT_ID"
   )
 
@@ -39,6 +40,15 @@ function(jucer_project_begin)
       endif()
     else()
       set(value ${element})
+
+      if(tag STREQUAL "PROJECT_FILE")
+        if(NOT EXISTS "${value}")
+          message(FATAL_ERROR "No such JUCE project file: ${value}")
+        endif()
+
+        get_filename_component(project_dir "${value}" DIRECTORY)
+        set(JUCER_PROJECT_DIR "${project_dir}" PARENT_SCOPE)
+      endif()
 
       set(JUCER_${tag} "${value}" PARENT_SCOPE)
 
