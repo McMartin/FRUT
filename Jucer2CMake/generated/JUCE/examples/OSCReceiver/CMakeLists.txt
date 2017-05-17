@@ -44,13 +44,13 @@ jucer_project_settings(
 )
 
 jucer_project_files("OSCReceiver/Source"
-  "${OSCReceiver_jucer_DIR}/Source/MainComponent.h"
-  "${OSCReceiver_jucer_DIR}/Source/Main.cpp"
+  "Source/MainComponent.h"
+  "Source/Main.cpp"
 )
 
 jucer_project_module(
   juce_core
-  PATH "${OSCReceiver_jucer_DIR}/../../modules"
+  PATH "../../modules"
   # JUCE_FORCE_DEBUG
   # JUCE_LOG_ASSERTIONS
   # JUCE_CHECK_MEMORY_LEAKS
@@ -63,29 +63,29 @@ jucer_project_module(
 
 jucer_project_module(
   juce_cryptography
-  PATH "${OSCReceiver_jucer_DIR}/../../modules"
+  PATH "../../modules"
 )
 
 jucer_project_module(
   juce_data_structures
-  PATH "${OSCReceiver_jucer_DIR}/../../modules"
+  PATH "../../modules"
 )
 
 jucer_project_module(
   juce_events
-  PATH "${OSCReceiver_jucer_DIR}/../../modules"
+  PATH "../../modules"
 )
 
 jucer_project_module(
   juce_graphics
-  PATH "${OSCReceiver_jucer_DIR}/../../modules"
+  PATH "../../modules"
   # JUCE_USE_COREIMAGE_LOADER
   # JUCE_USE_DIRECTWRITE
 )
 
 jucer_project_module(
   juce_gui_basics
-  PATH "${OSCReceiver_jucer_DIR}/../../modules"
+  PATH "../../modules"
   # JUCE_ENABLE_REPAINT_DEBUGGING
   # JUCE_USE_XSHM
   # JUCE_USE_XRENDER
@@ -94,14 +94,14 @@ jucer_project_module(
 
 jucer_project_module(
   juce_gui_extra
-  PATH "${OSCReceiver_jucer_DIR}/../../modules"
+  PATH "../../modules"
   # JUCE_WEB_BROWSER
   # JUCE_ENABLE_LIVE_CONSTANT_EDITOR
 )
 
 jucer_project_module(
   juce_osc
-  PATH "${OSCReceiver_jucer_DIR}/../../modules"
+  PATH "../../modules"
 )
 
 jucer_export_target(

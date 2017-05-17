@@ -63,21 +63,21 @@ jucer_audio_plugin_settings(
 )
 
 jucer_project_resources("MultiOutSynth/Source/BinaryData"
-  "${MultiOutSynth_jucer_DIR}/Source/BinaryData/singing.ogg"
+  "Source/BinaryData/singing.ogg"
 )
 
 jucer_project_files("MultiOutSynth/Source"
-  "${MultiOutSynth_jucer_DIR}/Source/MultiOutSynth.cpp"
+  "Source/MultiOutSynth.cpp"
 )
 
 jucer_project_module(
   juce_audio_basics
-  PATH "${MultiOutSynth_jucer_DIR}/../../../modules"
+  PATH "../../../modules"
 )
 
 jucer_project_module(
   juce_audio_devices
-  PATH "${MultiOutSynth_jucer_DIR}/../../../modules"
+  PATH "../../../modules"
   # JUCE_ASIO
   # JUCE_WASAPI
   # JUCE_WASAPI_EXCLUSIVE
@@ -89,7 +89,7 @@ jucer_project_module(
 
 jucer_project_module(
   juce_audio_formats
-  PATH "${MultiOutSynth_jucer_DIR}/../../../modules"
+  PATH "../../../modules"
   # JUCE_USE_FLAC
   # JUCE_USE_OGGVORBIS
   # JUCE_USE_MP3AUDIOFORMAT
@@ -99,14 +99,14 @@ jucer_project_module(
 
 jucer_project_module(
   juce_audio_plugin_client
-  PATH "${MultiOutSynth_jucer_DIR}/../../../modules"
+  PATH "../../../modules"
   # JUCE_FORCE_USE_LEGACY_PARAM_IDS
   # JUCE_USE_STUDIO_ONE_COMPATIBLE_PARAMETERS
 )
 
 jucer_project_module(
   juce_audio_processors
-  PATH "${MultiOutSynth_jucer_DIR}/../../../modules"
+  PATH "../../../modules"
   # JUCE_PLUGINHOST_VST
   # JUCE_PLUGINHOST_VST3
   # JUCE_PLUGINHOST_AU
@@ -114,7 +114,7 @@ jucer_project_module(
 
 jucer_project_module(
   juce_core
-  PATH "${MultiOutSynth_jucer_DIR}/../../../modules"
+  PATH "../../../modules"
   # JUCE_FORCE_DEBUG
   # JUCE_LOG_ASSERTIONS
   # JUCE_CHECK_MEMORY_LEAKS
@@ -127,29 +127,29 @@ jucer_project_module(
 
 jucer_project_module(
   juce_cryptography
-  PATH "${MultiOutSynth_jucer_DIR}/../../../modules"
+  PATH "../../../modules"
 )
 
 jucer_project_module(
   juce_data_structures
-  PATH "${MultiOutSynth_jucer_DIR}/../../../modules"
+  PATH "../../../modules"
 )
 
 jucer_project_module(
   juce_events
-  PATH "${MultiOutSynth_jucer_DIR}/../../../modules"
+  PATH "../../../modules"
 )
 
 jucer_project_module(
   juce_graphics
-  PATH "${MultiOutSynth_jucer_DIR}/../../../modules"
+  PATH "../../../modules"
   # JUCE_USE_COREIMAGE_LOADER
   # JUCE_USE_DIRECTWRITE
 )
 
 jucer_project_module(
   juce_gui_basics
-  PATH "${MultiOutSynth_jucer_DIR}/../../../modules"
+  PATH "../../../modules"
   # JUCE_ENABLE_REPAINT_DEBUGGING
   # JUCE_USE_XSHM
   # JUCE_USE_XRENDER
@@ -158,19 +158,19 @@ jucer_project_module(
 
 jucer_project_module(
   juce_gui_extra
-  PATH "${MultiOutSynth_jucer_DIR}/../../../modules"
+  PATH "../../../modules"
   # JUCE_WEB_BROWSER
   # JUCE_ENABLE_LIVE_CONSTANT_EDITOR
 )
 
 jucer_project_module(
   juce_opengl
-  PATH "${MultiOutSynth_jucer_DIR}/../../../modules"
+  PATH "../../../modules"
 )
 
 jucer_project_module(
   juce_video
-  PATH "${MultiOutSynth_jucer_DIR}/../../../modules"
+  PATH "../../../modules"
   # JUCE_DIRECTSHOW
   # JUCE_MEDIAFOUNDATION
   JUCE_QUICKTIME OFF

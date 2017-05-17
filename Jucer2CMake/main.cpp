@@ -292,8 +292,7 @@ int main(int argc, char* argv[])
 
   // jucer_project_files()
   {
-    const auto writeFileGroups = [&out, &escapedJucerFileName](
-      const std::string& fullGroupName,
+    const auto writeFileGroups = [&out](const std::string& fullGroupName,
       const std::vector<std::string>& filePaths,
       const std::vector<std::string>& doNotCompileFilePaths,
       const std::vector<std::string>& resourcePaths)
@@ -305,8 +304,7 @@ int main(int argc, char* argv[])
 
         for (const auto& filePath : filePaths)
         {
-          out << "  \"${" << escapedJucerFileName << "_DIR"
-              << "}/" << filePath << "\"\n";
+          out << "  \"" << filePath << "\"\n";
         }
 
         if (!doNotCompileFilePaths.empty())
@@ -316,8 +314,7 @@ int main(int argc, char* argv[])
 
           for (const auto& doNotCompileFilePath : doNotCompileFilePaths)
           {
-            out << "  \"${" << escapedJucerFileName << "_DIR"
-                << "}/" << doNotCompileFilePath << "\"\n";
+            out << "  \"${JUCER_PROJECT_DIR}/" << doNotCompileFilePath << "\"\n";
           }
 
           out << "  PROPERTIES HEADER_FILE_ONLY TRUE\n";
@@ -334,8 +331,7 @@ int main(int argc, char* argv[])
 
         for (const auto& resourcePath : resourcePaths)
         {
-          out << "  \"${" << escapedJucerFileName << "_DIR"
-              << "}/" << resourcePath << "\"\n";
+          out << "  \"" << resourcePath << "\"\n";
         }
 
         out << ")\n"
@@ -416,8 +412,7 @@ int main(int argc, char* argv[])
 
       out << "jucer_project_module(\n"
           << "  " << moduleName << "\n"
-          << "  PATH \"${" << escapedJucerFileName << "_DIR"
-          << "}/" << relativeModulePath << "\"\n";
+          << "  PATH \"" << relativeModulePath << "\"\n";
 
       const auto moduleHeader = juce::File{jucerFilePath}
                                   .getParentDirectory()

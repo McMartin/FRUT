@@ -52,27 +52,27 @@ jucer_project_settings(
 )
 
 jucer_project_files("Plugin Host"
-  "${Plugin_Host_jucer_DIR}/Source/FilterGraph.cpp"
-  "${Plugin_Host_jucer_DIR}/Source/FilterGraph.h"
-  "${Plugin_Host_jucer_DIR}/Source/FilterIOConfiguration.cpp"
-  "${Plugin_Host_jucer_DIR}/Source/FilterIOConfiguration.h"
-  "${Plugin_Host_jucer_DIR}/Source/GraphEditorPanel.cpp"
-  "${Plugin_Host_jucer_DIR}/Source/GraphEditorPanel.h"
-  "${Plugin_Host_jucer_DIR}/Source/HostStartup.cpp"
-  "${Plugin_Host_jucer_DIR}/Source/InternalFilters.cpp"
-  "${Plugin_Host_jucer_DIR}/Source/InternalFilters.h"
-  "${Plugin_Host_jucer_DIR}/Source/MainHostWindow.cpp"
-  "${Plugin_Host_jucer_DIR}/Source/MainHostWindow.h"
+  "Source/FilterGraph.cpp"
+  "Source/FilterGraph.h"
+  "Source/FilterIOConfiguration.cpp"
+  "Source/FilterIOConfiguration.h"
+  "Source/GraphEditorPanel.cpp"
+  "Source/GraphEditorPanel.h"
+  "Source/HostStartup.cpp"
+  "Source/InternalFilters.cpp"
+  "Source/InternalFilters.h"
+  "Source/MainHostWindow.cpp"
+  "Source/MainHostWindow.h"
 )
 
 jucer_project_module(
   juce_audio_basics
-  PATH "${Plugin_Host_jucer_DIR}/../../modules"
+  PATH "../../modules"
 )
 
 jucer_project_module(
   juce_audio_devices
-  PATH "${Plugin_Host_jucer_DIR}/../../modules"
+  PATH "../../modules"
   # JUCE_ASIO
   JUCE_WASAPI ON
   # JUCE_WASAPI_EXCLUSIVE
@@ -84,7 +84,7 @@ jucer_project_module(
 
 jucer_project_module(
   juce_audio_formats
-  PATH "${Plugin_Host_jucer_DIR}/../../modules"
+  PATH "../../modules"
   JUCE_USE_FLAC OFF
   JUCE_USE_OGGVORBIS OFF
   # JUCE_USE_MP3AUDIOFORMAT
@@ -94,7 +94,7 @@ jucer_project_module(
 
 jucer_project_module(
   juce_audio_processors
-  PATH "${Plugin_Host_jucer_DIR}/../../modules"
+  PATH "../../modules"
   JUCE_PLUGINHOST_VST ON
   JUCE_PLUGINHOST_VST3 ON
   JUCE_PLUGINHOST_AU ON
@@ -102,14 +102,14 @@ jucer_project_module(
 
 jucer_project_module(
   juce_audio_utils
-  PATH "${Plugin_Host_jucer_DIR}/../../modules"
+  PATH "../../modules"
   JUCE_USE_CDREADER OFF
   JUCE_USE_CDBURNER OFF
 )
 
 jucer_project_module(
   juce_core
-  PATH "${Plugin_Host_jucer_DIR}/../../modules"
+  PATH "../../modules"
   # JUCE_FORCE_DEBUG
   # JUCE_LOG_ASSERTIONS
   # JUCE_CHECK_MEMORY_LEAKS
@@ -122,29 +122,29 @@ jucer_project_module(
 
 jucer_project_module(
   juce_cryptography
-  PATH "${Plugin_Host_jucer_DIR}/../../modules"
+  PATH "../../modules"
 )
 
 jucer_project_module(
   juce_data_structures
-  PATH "${Plugin_Host_jucer_DIR}/../../modules"
+  PATH "../../modules"
 )
 
 jucer_project_module(
   juce_events
-  PATH "${Plugin_Host_jucer_DIR}/../../modules"
+  PATH "../../modules"
 )
 
 jucer_project_module(
   juce_graphics
-  PATH "${Plugin_Host_jucer_DIR}/../../modules"
+  PATH "../../modules"
   # JUCE_USE_COREIMAGE_LOADER
   # JUCE_USE_DIRECTWRITE
 )
 
 jucer_project_module(
   juce_gui_basics
-  PATH "${Plugin_Host_jucer_DIR}/../../modules"
+  PATH "../../modules"
   # JUCE_ENABLE_REPAINT_DEBUGGING
   # JUCE_USE_XSHM
   # JUCE_USE_XRENDER
@@ -153,19 +153,19 @@ jucer_project_module(
 
 jucer_project_module(
   juce_gui_extra
-  PATH "${Plugin_Host_jucer_DIR}/../../modules"
+  PATH "../../modules"
   JUCE_WEB_BROWSER OFF
   # JUCE_ENABLE_LIVE_CONSTANT_EDITOR
 )
 
 jucer_project_module(
   juce_opengl
-  PATH "${Plugin_Host_jucer_DIR}/../../modules"
+  PATH "../../modules"
 )
 
 jucer_project_module(
   juce_video
-  PATH "${Plugin_Host_jucer_DIR}/../../modules"
+  PATH "../../modules"
   # JUCE_DIRECTSHOW
   # JUCE_MEDIAFOUNDATION
   JUCE_QUICKTIME OFF

@@ -44,16 +44,16 @@ jucer_project_settings(
 )
 
 jucer_project_files("ComponentTutorialExample/Source"
-  "${ComponentTutorialExample_jucer_DIR}/Source/ToggleLightGridComponent.h"
-  "${ComponentTutorialExample_jucer_DIR}/Source/ToggleLightComponent.h"
-  "${ComponentTutorialExample_jucer_DIR}/Source/MainComponent.cpp"
-  "${ComponentTutorialExample_jucer_DIR}/Source/MainComponent.h"
-  "${ComponentTutorialExample_jucer_DIR}/Source/Main.cpp"
+  "Source/ToggleLightGridComponent.h"
+  "Source/ToggleLightComponent.h"
+  "Source/MainComponent.cpp"
+  "Source/MainComponent.h"
+  "Source/Main.cpp"
 )
 
 jucer_project_module(
   juce_core
-  PATH "${ComponentTutorialExample_jucer_DIR}/../../modules"
+  PATH "../../modules"
   # JUCE_FORCE_DEBUG
   # JUCE_LOG_ASSERTIONS
   # JUCE_CHECK_MEMORY_LEAKS
@@ -66,24 +66,24 @@ jucer_project_module(
 
 jucer_project_module(
   juce_data_structures
-  PATH "${ComponentTutorialExample_jucer_DIR}/../../modules"
+  PATH "../../modules"
 )
 
 jucer_project_module(
   juce_events
-  PATH "${ComponentTutorialExample_jucer_DIR}/../../modules"
+  PATH "../../modules"
 )
 
 jucer_project_module(
   juce_graphics
-  PATH "${ComponentTutorialExample_jucer_DIR}/../../modules"
+  PATH "../../modules"
   # JUCE_USE_COREIMAGE_LOADER
   # JUCE_USE_DIRECTWRITE
 )
 
 jucer_project_module(
   juce_gui_basics
-  PATH "${ComponentTutorialExample_jucer_DIR}/../../modules"
+  PATH "../../modules"
   # JUCE_ENABLE_REPAINT_DEBUGGING
   # JUCE_USE_XSHM
   # JUCE_USE_XRENDER
@@ -92,7 +92,7 @@ jucer_project_module(
 
 jucer_project_module(
   juce_gui_extra
-  PATH "${ComponentTutorialExample_jucer_DIR}/../../modules"
+  PATH "../../modules"
   # JUCE_WEB_BROWSER
   # JUCE_ENABLE_LIVE_CONSTANT_EDITOR
 )

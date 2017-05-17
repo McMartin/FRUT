@@ -44,19 +44,19 @@ jucer_project_settings(
 )
 
 jucer_project_files("MidiTest/Source"
-  "${MidiTest_jucer_DIR}/Source/Main.cpp"
-  "${MidiTest_jucer_DIR}/Source/MainComponent.cpp"
-  "${MidiTest_jucer_DIR}/Source/MainComponent.h"
+  "Source/Main.cpp"
+  "Source/MainComponent.cpp"
+  "Source/MainComponent.h"
 )
 
 jucer_project_module(
   juce_audio_basics
-  PATH "${MidiTest_jucer_DIR}/../../modules"
+  PATH "../../modules"
 )
 
 jucer_project_module(
   juce_audio_devices
-  PATH "${MidiTest_jucer_DIR}/../../modules"
+  PATH "../../modules"
   # JUCE_ASIO
   # JUCE_WASAPI
   # JUCE_WASAPI_EXCLUSIVE
@@ -68,7 +68,7 @@ jucer_project_module(
 
 jucer_project_module(
   juce_audio_formats
-  PATH "${MidiTest_jucer_DIR}/../../modules"
+  PATH "../../modules"
   # JUCE_USE_FLAC
   # JUCE_USE_OGGVORBIS
   # JUCE_USE_MP3AUDIOFORMAT
@@ -78,7 +78,7 @@ jucer_project_module(
 
 jucer_project_module(
   juce_audio_processors
-  PATH "${MidiTest_jucer_DIR}/../../modules"
+  PATH "../../modules"
   # JUCE_PLUGINHOST_VST
   # JUCE_PLUGINHOST_VST3
   # JUCE_PLUGINHOST_AU
@@ -86,14 +86,14 @@ jucer_project_module(
 
 jucer_project_module(
   juce_audio_utils
-  PATH "${MidiTest_jucer_DIR}/../../modules"
+  PATH "../../modules"
   # JUCE_USE_CDREADER
   # JUCE_USE_CDBURNER
 )
 
 jucer_project_module(
   juce_core
-  PATH "${MidiTest_jucer_DIR}/../../modules"
+  PATH "../../modules"
   # JUCE_FORCE_DEBUG
   # JUCE_LOG_ASSERTIONS
   # JUCE_CHECK_MEMORY_LEAKS
@@ -106,24 +106,24 @@ jucer_project_module(
 
 jucer_project_module(
   juce_data_structures
-  PATH "${MidiTest_jucer_DIR}/../../modules"
+  PATH "../../modules"
 )
 
 jucer_project_module(
   juce_events
-  PATH "${MidiTest_jucer_DIR}/../../modules"
+  PATH "../../modules"
 )
 
 jucer_project_module(
   juce_graphics
-  PATH "${MidiTest_jucer_DIR}/../../modules"
+  PATH "../../modules"
   # JUCE_USE_COREIMAGE_LOADER
   # JUCE_USE_DIRECTWRITE
 )
 
 jucer_project_module(
   juce_gui_basics
-  PATH "${MidiTest_jucer_DIR}/../../modules"
+  PATH "../../modules"
   # JUCE_ENABLE_REPAINT_DEBUGGING
   # JUCE_USE_XSHM
   # JUCE_USE_XRENDER
@@ -132,7 +132,7 @@ jucer_project_module(
 
 jucer_project_module(
   juce_gui_extra
-  PATH "${MidiTest_jucer_DIR}/../../modules"
+  PATH "../../modules"
   # JUCE_WEB_BROWSER
   # JUCE_ENABLE_LIVE_CONSTANT_EDITOR
 )

@@ -44,12 +44,12 @@ jucer_project_settings(
 )
 
 jucer_project_files("BinaryBuilder/Source"
-  "${BinaryBuilder_jucer_DIR}/Source/Main.cpp"
+  "Source/Main.cpp"
 )
 
 jucer_project_module(
   juce_core
-  PATH "${BinaryBuilder_jucer_DIR}/../../modules"
+  PATH "../../modules"
   # JUCE_FORCE_DEBUG
   # JUCE_LOG_ASSERTIONS
   # JUCE_CHECK_MEMORY_LEAKS

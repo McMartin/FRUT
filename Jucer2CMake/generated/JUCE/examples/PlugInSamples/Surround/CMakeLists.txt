@@ -63,18 +63,18 @@ jucer_audio_plugin_settings(
 )
 
 jucer_project_files("Surround/Source"
-  "${Surround_jucer_DIR}/Source/SurroundProcessor.cpp"
-  "${Surround_jucer_DIR}/Source/SurroundEditor.h"
+  "Source/SurroundProcessor.cpp"
+  "Source/SurroundEditor.h"
 )
 
 jucer_project_module(
   juce_audio_basics
-  PATH "${Surround_jucer_DIR}/../../../modules"
+  PATH "../../../modules"
 )
 
 jucer_project_module(
   juce_audio_devices
-  PATH "${Surround_jucer_DIR}/../../../modules"
+  PATH "../../../modules"
   # JUCE_ASIO
   # JUCE_WASAPI
   # JUCE_WASAPI_EXCLUSIVE
@@ -86,7 +86,7 @@ jucer_project_module(
 
 jucer_project_module(
   juce_audio_formats
-  PATH "${Surround_jucer_DIR}/../../../modules"
+  PATH "../../../modules"
   # JUCE_USE_FLAC
   # JUCE_USE_OGGVORBIS
   # JUCE_USE_MP3AUDIOFORMAT
@@ -96,14 +96,14 @@ jucer_project_module(
 
 jucer_project_module(
   juce_audio_plugin_client
-  PATH "${Surround_jucer_DIR}/../../../modules"
+  PATH "../../../modules"
   # JUCE_FORCE_USE_LEGACY_PARAM_IDS
   # JUCE_USE_STUDIO_ONE_COMPATIBLE_PARAMETERS
 )
 
 jucer_project_module(
   juce_audio_processors
-  PATH "${Surround_jucer_DIR}/../../../modules"
+  PATH "../../../modules"
   # JUCE_PLUGINHOST_VST
   # JUCE_PLUGINHOST_VST3
   # JUCE_PLUGINHOST_AU
@@ -111,7 +111,7 @@ jucer_project_module(
 
 jucer_project_module(
   juce_core
-  PATH "${Surround_jucer_DIR}/../../../modules"
+  PATH "../../../modules"
   # JUCE_FORCE_DEBUG
   # JUCE_LOG_ASSERTIONS
   # JUCE_CHECK_MEMORY_LEAKS
@@ -124,29 +124,29 @@ jucer_project_module(
 
 jucer_project_module(
   juce_cryptography
-  PATH "${Surround_jucer_DIR}/../../../modules"
+  PATH "../../../modules"
 )
 
 jucer_project_module(
   juce_data_structures
-  PATH "${Surround_jucer_DIR}/../../../modules"
+  PATH "../../../modules"
 )
 
 jucer_project_module(
   juce_events
-  PATH "${Surround_jucer_DIR}/../../../modules"
+  PATH "../../../modules"
 )
 
 jucer_project_module(
   juce_graphics
-  PATH "${Surround_jucer_DIR}/../../../modules"
+  PATH "../../../modules"
   # JUCE_USE_COREIMAGE_LOADER
   # JUCE_USE_DIRECTWRITE
 )
 
 jucer_project_module(
   juce_gui_basics
-  PATH "${Surround_jucer_DIR}/../../../modules"
+  PATH "../../../modules"
   # JUCE_ENABLE_REPAINT_DEBUGGING
   # JUCE_USE_XSHM
   # JUCE_USE_XRENDER
@@ -155,19 +155,19 @@ jucer_project_module(
 
 jucer_project_module(
   juce_gui_extra
-  PATH "${Surround_jucer_DIR}/../../../modules"
+  PATH "../../../modules"
   # JUCE_WEB_BROWSER
   # JUCE_ENABLE_LIVE_CONSTANT_EDITOR
 )
 
 jucer_project_module(
   juce_opengl
-  PATH "${Surround_jucer_DIR}/../../../modules"
+  PATH "../../../modules"
 )
 
 jucer_project_module(
   juce_video
-  PATH "${Surround_jucer_DIR}/../../../modules"
+  PATH "../../../modules"
   # JUCE_DIRECTSHOW
   # JUCE_MEDIAFOUNDATION
   JUCE_QUICKTIME OFF
