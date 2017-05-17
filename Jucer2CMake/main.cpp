@@ -176,11 +176,6 @@ int main(int argc, char* argv[])
         << "  BASE_DIR \"${CMAKE_BINARY_DIR}\"\n"
         << ")\n"
         << "\n"
-        << "if(NOT EXISTS \"${" << escapedJucerFileName << "_FILE}\")\n"
-        << "  message(FATAL_ERROR \"No such file: ${" << escapedJucerFileName
-        << "_FILE}\")\n"
-        << "endif()\n"
-        << "\n"
         << "\n";
   }
 

@@ -16,10 +16,6 @@ get_filename_component(BouncingBallWavetableDemo_jucer_FILE
   BASE_DIR "${CMAKE_BINARY_DIR}"
 )
 
-if(NOT EXISTS "${BouncingBallWavetableDemo_jucer_FILE}")
-  message(FATAL_ERROR "No such file: ${BouncingBallWavetableDemo_jucer_FILE}")
-endif()
-
 
 jucer_project_begin(
   PROJECT_FILE "${BouncingBallWavetableDemo_jucer_FILE}"

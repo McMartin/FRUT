@@ -16,10 +16,6 @@ get_filename_component(JuceDemoPlugin_jucer_FILE
   BASE_DIR "${CMAKE_BINARY_DIR}"
 )
 
-if(NOT EXISTS "${JuceDemoPlugin_jucer_FILE}")
-  message(FATAL_ERROR "No such file: ${JuceDemoPlugin_jucer_FILE}")
-endif()
-
 
 jucer_project_begin(
   PROJECT_FILE "${JuceDemoPlugin_jucer_FILE}"

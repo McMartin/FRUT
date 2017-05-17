@@ -16,10 +16,6 @@ get_filename_component(NetworkGraphicsDemo_jucer_FILE
   BASE_DIR "${CMAKE_BINARY_DIR}"
 )
 
-if(NOT EXISTS "${NetworkGraphicsDemo_jucer_FILE}")
-  message(FATAL_ERROR "No such file: ${NetworkGraphicsDemo_jucer_FILE}")
-endif()
-
 
 jucer_project_begin(
   PROJECT_FILE "${NetworkGraphicsDemo_jucer_FILE}"

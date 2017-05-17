@@ -16,10 +16,6 @@ get_filename_component(MPETest_jucer_FILE
   BASE_DIR "${CMAKE_BINARY_DIR}"
 )
 
-if(NOT EXISTS "${MPETest_jucer_FILE}")
-  message(FATAL_ERROR "No such file: ${MPETest_jucer_FILE}")
-endif()
-
 
 jucer_project_begin(
   PROJECT_FILE "${MPETest_jucer_FILE}"

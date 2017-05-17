@@ -16,10 +16,6 @@ get_filename_component(SimpleFFTExample_jucer_FILE
   BASE_DIR "${CMAKE_BINARY_DIR}"
 )
 
-if(NOT EXISTS "${SimpleFFTExample_jucer_FILE}")
-  message(FATAL_ERROR "No such file: ${SimpleFFTExample_jucer_FILE}")
-endif()
-
 
 jucer_project_begin(
   PROJECT_FILE "${SimpleFFTExample_jucer_FILE}"

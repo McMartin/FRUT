@@ -16,10 +16,6 @@ get_filename_component(AUv3Synth_jucer_FILE
   BASE_DIR "${CMAKE_BINARY_DIR}"
 )
 
-if(NOT EXISTS "${AUv3Synth_jucer_FILE}")
-  message(FATAL_ERROR "No such file: ${AUv3Synth_jucer_FILE}")
-endif()
-
 
 jucer_project_begin(
   PROJECT_FILE "${AUv3Synth_jucer_FILE}"

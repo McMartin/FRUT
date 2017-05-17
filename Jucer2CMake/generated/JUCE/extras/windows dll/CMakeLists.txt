@@ -16,10 +16,6 @@ get_filename_component(jucedll_jucer_FILE
   BASE_DIR "${CMAKE_BINARY_DIR}"
 )
 
-if(NOT EXISTS "${jucedll_jucer_FILE}")
-  message(FATAL_ERROR "No such file: ${jucedll_jucer_FILE}")
-endif()
-
 
 jucer_project_begin(
   PROJECT_FILE "${jucedll_jucer_FILE}"

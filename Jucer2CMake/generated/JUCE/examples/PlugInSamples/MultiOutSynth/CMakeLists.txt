@@ -16,10 +16,6 @@ get_filename_component(MultiOutSynth_jucer_FILE
   BASE_DIR "${CMAKE_BINARY_DIR}"
 )
 
-if(NOT EXISTS "${MultiOutSynth_jucer_FILE}")
-  message(FATAL_ERROR "No such file: ${MultiOutSynth_jucer_FILE}")
-endif()
-
 
 jucer_project_begin(
   PROJECT_FILE "${MultiOutSynth_jucer_FILE}"

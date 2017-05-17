@@ -16,10 +16,6 @@ get_filename_component(OSCMonitor_jucer_FILE
   BASE_DIR "${CMAKE_BINARY_DIR}"
 )
 
-if(NOT EXISTS "${OSCMonitor_jucer_FILE}")
-  message(FATAL_ERROR "No such file: ${OSCMonitor_jucer_FILE}")
-endif()
-
 
 jucer_project_begin(
   PROJECT_FILE "${OSCMonitor_jucer_FILE}"
