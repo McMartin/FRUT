@@ -161,12 +161,14 @@ jucer_export_target(
 jucer_export_target_configuration(
   "Xcode (MacOSX)"
   NAME "Debug"
+  # HEADER_SEARCH_PATHS
   # PREPROCESSOR_DEFINITIONS
 )
 
 jucer_export_target_configuration(
   "Xcode (MacOSX)"
   NAME "Release"
+  # HEADER_SEARCH_PATHS
   # PREPROCESSOR_DEFINITIONS
 )
 
@@ -179,12 +181,14 @@ jucer_export_target(
 jucer_export_target_configuration(
   "Visual Studio 2015"
   NAME "Debug"
+  # HEADER_SEARCH_PATHS
   # PREPROCESSOR_DEFINITIONS
 )
 
 jucer_export_target_configuration(
   "Visual Studio 2015"
   NAME "Release"
+  # HEADER_SEARCH_PATHS
   # PREPROCESSOR_DEFINITIONS
 )
 
