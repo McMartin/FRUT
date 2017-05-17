@@ -413,6 +413,7 @@ function(jucer_export_target_configuration exporter NAME_TAG configuration_name)
   set(JUCER_PROJECT_CONFIGURATIONS ${JUCER_PROJECT_CONFIGURATIONS} PARENT_SCOPE)
 
   set(configuration_settings_tags
+    "HEADER_SEARCH_PATHS"
     "PREPROCESSOR_DEFINITIONS"
   )
 
@@ -428,7 +429,19 @@ function(jucer_export_target_configuration exporter NAME_TAG configuration_name)
     else()
       set(value ${element})
 
-      if(tag STREQUAL "PREPROCESSOR_DEFINITIONS")
+      if(tag STREQUAL "HEADER_SEARCH_PATHS")
+        string(REPLACE "\\" "/" value "${value}")
+        string(REPLACE "\n" ";" value "${value}")
+        foreach(path ${value})
+          __abs_path_based_on_jucer_project_dir("${path}" path)
+          list(APPEND include_directories "${path}")
+        endforeach()
+        list(APPEND JUCER_INCLUDE_DIRECTORIES
+          $<$<CONFIG:${configuration_name}>:${include_directories}>
+        )
+        set(JUCER_INCLUDE_DIRECTORIES ${JUCER_INCLUDE_DIRECTORIES} PARENT_SCOPE)
+
+      elseif(tag STREQUAL "PREPROCESSOR_DEFINITIONS")
         string(REPLACE "\n" ";" value "${value}")
         list(APPEND JUCER_PREPROCESSOR_DEFINITIONS
           $<$<CONFIG:${configuration_name}>:${value}>
@@ -911,6 +924,7 @@ function(__set_common_target_properties target_name)
   target_include_directories(${target_name} PRIVATE
     "${CMAKE_CURRENT_BINARY_DIR}/JuceLibraryCode"
     ${JUCER_PROJECT_MODULES_FOLDERS}
+    ${JUCER_INCLUDE_DIRECTORIES}
   )
 
   if(JUCER_FLAG_JUCE_PLUGINHOST_VST3)
