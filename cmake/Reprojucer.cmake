@@ -195,13 +195,18 @@ endfunction()
 
 function(jucer_project_files source_group_name)
 
-  string(REPLACE "/" "\\" source_group_name ${source_group_name})
-  source_group(${source_group_name} FILES ${ARGN})
+  foreach(path ${ARGN})
+    __abs_path_based_on_jucer_project_dir("${path}" path)
+    list(APPEND source_files "${path}")
+  endforeach()
 
-  list(APPEND JUCER_PROJECT_SOURCES ${ARGN})
+  string(REPLACE "/" "\\" source_group_name ${source_group_name})
+  source_group(${source_group_name} FILES ${source_files})
+
+  list(APPEND JUCER_PROJECT_SOURCES ${source_files})
   set(JUCER_PROJECT_SOURCES ${JUCER_PROJECT_SOURCES} PARENT_SCOPE)
 
-  foreach(src_file ${ARGN})
+  foreach(src_file ${source_files})
     get_filename_component(src_file_extension "${src_file}" EXT)
     if(src_file_extension STREQUAL ".mm" AND NOT APPLE)
       set_source_files_properties("${src_file}" PROPERTIES HEADER_FILE_ONLY TRUE)
@@ -213,10 +218,15 @@ endfunction()
 
 function(jucer_project_resources source_group_name)
 
-  string(REPLACE "/" "\\" source_group_name ${source_group_name})
-  source_group(${source_group_name} FILES ${ARGN})
+  foreach(path ${ARGN})
+    __abs_path_based_on_jucer_project_dir("${path}" path)
+    list(APPEND resource_files "${path}")
+  endforeach()
 
-  list(APPEND JUCER_PROJECT_RESOURCES ${ARGN})
+  string(REPLACE "/" "\\" source_group_name ${source_group_name})
+  source_group(${source_group_name} FILES ${resource_files})
+
+  list(APPEND JUCER_PROJECT_RESOURCES ${resource_files})
   set(JUCER_PROJECT_RESOURCES ${JUCER_PROJECT_RESOURCES} PARENT_SCOPE)
 
 endfunction()
@@ -227,6 +237,7 @@ function(jucer_project_module module_name PATH_TAG modules_folder)
   list(APPEND JUCER_PROJECT_MODULES ${module_name})
   set(JUCER_PROJECT_MODULES ${JUCER_PROJECT_MODULES} PARENT_SCOPE)
 
+  __abs_path_based_on_jucer_project_dir("${modules_folder}" modules_folder)
   if(NOT IS_DIRECTORY "${modules_folder}")
     message(FATAL_ERROR "No such directory: \"${modules_folder}\"")
   endif()
@@ -593,6 +604,21 @@ function(jucer_project_end)
     message(FATAL_ERROR "Unknown project type: ${JUCER_PROJECT_TYPE}")
 
   endif()
+
+endfunction()
+
+
+function(__abs_path_based_on_jucer_project_dir in_path out_path)
+
+  if(NOT IS_ABSOLUTE "${in_path}" AND NOT DEFINED JUCER_PROJECT_DIR)
+    message(FATAL_ERROR
+      "The path \"${in_path}\" must be absolute, unless you give PROJECT_FILE when "
+      "calling jucer_project_begin()."
+    )
+  endif()
+
+  get_filename_component(in_path "${in_path}" ABSOLUTE BASE_DIR "${JUCER_PROJECT_DIR}")
+  set(${out_path} ${in_path} PARENT_SCOPE)
 
 endfunction()
 
