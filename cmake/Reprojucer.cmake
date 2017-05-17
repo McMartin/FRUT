@@ -395,8 +395,7 @@ endfunction()
 function(jucer_export_target_configuration exporter NAME_TAG configuration_name)
 
   if(NOT "${exporter}" IN_LIST JUCER_EXPORT_TARGETS)
-    message(FATAL_ERROR
-      "Call jucer_export_target(\"${exporter}\") before "
+    message(FATAL_ERROR "Call jucer_export_target(\"${exporter}\") before "
       "calling jucer_export_target_configuration(\"${exporter}\")"
     )
   endif()
@@ -624,9 +623,8 @@ endfunction()
 function(__abs_path_based_on_jucer_project_dir in_path out_path)
 
   if(NOT IS_ABSOLUTE "${in_path}" AND NOT DEFINED JUCER_PROJECT_DIR)
-    message(FATAL_ERROR
-      "The path \"${in_path}\" must be absolute, unless you give PROJECT_FILE when "
-      "calling jucer_project_begin()."
+    message(FATAL_ERROR "The path \"${in_path}\" must be absolute, unless you give "
+      "PROJECT_FILE when calling jucer_project_begin()."
     )
   endif()
 
@@ -848,9 +846,8 @@ function(__generate_JuceHeader_header project_id)
       endif()
     endforeach()
     if(NOT DEFINED Projucer_jucer_FILE)
-      message(FATAL_ERROR
-        "Could not find ../extras/Projucer/Projucer.jucer from modules folders: "
-        "${JUCER_PROJECT_MODULES_FOLDERS}"
+      message(FATAL_ERROR "Could not find ../extras/Projucer/Projucer.jucer from "
+        "modules folders: ${JUCER_PROJECT_MODULES_FOLDERS}"
       )
     endif()
     message(STATUS "Building BinaryDataBuilder for ${JUCER_PROJECT_NAME}")
@@ -872,8 +869,7 @@ function(__generate_JuceHeader_header project_id)
     endif()
     math(EXPR size_limit_in_bytes "${JUCER_BINARYDATACPP_SIZE_LIMIT} * 1024")
     if(NOT DEFINED size_limit_in_bytes)
-      message(FATAL_ERROR
-        "Error when computing size_limit_in_bytes = "
+      message(FATAL_ERROR "Error when computing size_limit_in_bytes = "
         "${JUCER_BINARYDATACPP_SIZE_LIMIT} * 1024"
       )
     endif()
