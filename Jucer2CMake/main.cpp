@@ -466,11 +466,40 @@ int main(int argc, char* argv[])
         {
           out << "jucer_export_target_configuration(\n"
               << "  \"" << std::get<1>(element) << "\"\n"
-              << "  NAME \"" << configuration.getProperty("name").toString() << "\"\n"
-              << "  " << escape("\\",
-                           getSetting(configuration, "HEADER_SEARCH_PATHS", "headerPath"))
-              << "\n"
-              << "  " << getSetting(configuration, "PREPROCESSOR_DEFINITIONS", "defines")
+              << "  NAME \"" << configuration.getProperty("name").toString() << "\"\n";
+
+          const auto headerPath =
+            configuration.getProperty("headerPath").toString().toStdString();
+          if (headerPath.empty())
+          {
+            out << "  # HEADER_SEARCH_PATHS\n";
+          }
+          else
+          {
+            const auto jucerFileDir = jucerFile.getParentDirectory();
+            const auto targetProjectDir =
+              jucerFileDir.getChildFile(exporter.getProperty("targetFolder").toString());
+
+            std::vector<std::string> pathsRelativeToJucerFileDir;
+
+            for (const auto& path : split("\n", headerPath))
+            {
+              if (path.empty())
+              {
+                continue;
+              }
+
+              pathsRelativeToJucerFileDir.push_back(
+                targetProjectDir.getChildFile(juce::String{path})
+                  .getRelativePathFrom(jucerFileDir)
+                  .toStdString());
+            }
+
+            out << "  HEADER_SEARCH_PATHS \""
+                << escape("\\", join("\n", pathsRelativeToJucerFileDir)) << "\"\n";
+          }
+
+          out << "  " << getSetting(configuration, "PREPROCESSOR_DEFINITIONS", "defines")
               << "\n"
               << ")\n"
               << "\n";
