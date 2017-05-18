@@ -357,6 +357,7 @@ function(jucer_export_target exporter)
   endif()
 
   set(export_target_settings_tags
+    "TARGET_PROJECT_FOLDER"
     "VST3_SDK_FOLDER"
     "EXTRA_PREPROCESSOR_DEFINITIONS"
     "EXTRA_COMPILER_FLAGS"
@@ -374,7 +375,12 @@ function(jucer_export_target exporter)
     else()
       set(value ${element})
 
-      if(tag STREQUAL "VST3_SDK_FOLDER")
+      if(tag STREQUAL "TARGET_PROJECT_FOLDER")
+        string(REPLACE "\\" "/" value "${value}")
+        __abs_path_based_on_jucer_project_dir("${value}" value)
+        set(JUCER_TARGET_PROJECT_FOLDER ${value} PARENT_SCOPE)
+
+      elseif(tag STREQUAL "VST3_SDK_FOLDER")
         string(REPLACE "\\" "/" value "${value}")
         __abs_path_based_on_jucer_project_dir("${value}" value)
         set(JUCER_VST3_SDK_FOLDER ${value} PARENT_SCOPE)
@@ -438,7 +444,7 @@ function(jucer_export_target_configuration exporter NAME_TAG configuration_name)
         string(REPLACE "\\" "/" value "${value}")
         string(REPLACE "\n" ";" value "${value}")
         foreach(path ${value})
-          __abs_path_based_on_jucer_project_dir("${path}" path)
+          __abs_path_based_on_target_project_folder("${path}" path)
           list(APPEND include_directories "${path}")
         endforeach()
         list(APPEND JUCER_INCLUDE_DIRECTORIES
@@ -635,6 +641,22 @@ function(__abs_path_based_on_jucer_project_dir in_path out_path)
   endif()
 
   get_filename_component(in_path "${in_path}" ABSOLUTE BASE_DIR "${JUCER_PROJECT_DIR}")
+  set(${out_path} ${in_path} PARENT_SCOPE)
+
+endfunction()
+
+
+function(__abs_path_based_on_target_project_folder in_path out_path)
+
+  if(NOT IS_ABSOLUTE "${in_path}" AND NOT DEFINED JUCER_TARGET_PROJECT_FOLDER)
+    message(FATAL_ERROR "The path \"${in_path}\" must be absolute, unless you give "
+      "TARGET_PROJECT_FOLDER when calling jucer_export_target()."
+    )
+  endif()
+
+  get_filename_component(in_path "${in_path}" ABSOLUTE
+    BASE_DIR "${JUCER_TARGET_PROJECT_FOLDER}"
+  )
   set(${out_path} ${in_path} PARENT_SCOPE)
 
 endfunction()

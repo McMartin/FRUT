@@ -439,7 +439,10 @@ int main(int argc, char* argv[])
       if (exporter.isValid())
       {
         out << "jucer_export_target(\n"
-            << "  \"" << std::get<1>(element) << "\"\n";
+            << "  \"" << std::get<1>(element) << "\"\n"
+            << "  TARGET_PROJECT_FOLDER \""
+            << escape("\\", exporter.getProperty("targetFolder").toString().toStdString())
+            << "\"\n";
 
         if (jucerProject.getChildWithName("MODULES")
               .getChildWithProperty("id", "juce_audio_processors")
