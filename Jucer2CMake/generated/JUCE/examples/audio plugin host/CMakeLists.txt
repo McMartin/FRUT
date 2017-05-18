@@ -17,14 +17,6 @@ get_filename_component(Plugin_Host_jucer_FILE
 )
 
 
-if(WIN32)
-  set(VST3_SDK_FOLDER "C:/SDKs/VST_SDK/VST3_SDK")
-else()
-  set(VST3_SDK_FOLDER "~/SDKs/VST_SDK/VST3_SDK")
-endif()
-set(VST3_SDK_FOLDER "${VST3_SDK_FOLDER}" CACHE PATH "VST3 SDK Folder")
-
-
 jucer_project_begin(
   PROJECT_FILE "${Plugin_Host_jucer_FILE}"
   PROJECT_ID "NTe0XB0ij"
@@ -166,6 +158,7 @@ jucer_project_module(
 
 jucer_export_target(
   "Xcode (MacOSX)"
+  VST3_SDK_FOLDER "~/SDKs/VST_SDK/VST3_SDK"
   # EXTRA_PREPROCESSOR_DEFINITIONS
   EXTRA_COMPILER_FLAGS "-Wall -Wshadow -Wno-missing-field-initializers -Wshadow -Wshorten-64-to-32 -Wstrict-aliasing -Wuninitialized -Wunused-parameter -Wconversion -Wsign-compare -Wint-conversion -Woverloaded-virtual -Wreorder -Wconstant-conversion -Wsign-conversion"
 )
@@ -186,6 +179,7 @@ jucer_export_target_configuration(
 
 jucer_export_target(
   "Visual Studio 2015"
+  VST3_SDK_FOLDER "c:\\SDKs\\VST_SDK\\VST3_SDK"
   # EXTRA_PREPROCESSOR_DEFINITIONS
   # EXTRA_COMPILER_FLAGS
 )
@@ -206,6 +200,7 @@ jucer_export_target_configuration(
 
 jucer_export_target(
   "Visual Studio 2013"
+  VST3_SDK_FOLDER "c:\\SDKs\\VST_SDK\\VST3_SDK"
   # EXTRA_PREPROCESSOR_DEFINITIONS
   # EXTRA_COMPILER_FLAGS
 )

@@ -357,6 +357,7 @@ function(jucer_export_target exporter)
   endif()
 
   set(export_target_settings_tags
+    "VST3_SDK_FOLDER"
     "EXTRA_PREPROCESSOR_DEFINITIONS"
     "EXTRA_COMPILER_FLAGS"
   )
@@ -373,7 +374,12 @@ function(jucer_export_target exporter)
     else()
       set(value ${element})
 
-      if(tag STREQUAL "EXTRA_PREPROCESSOR_DEFINITIONS")
+      if(tag STREQUAL "VST3_SDK_FOLDER")
+        string(REPLACE "\\" "/" value "${value}")
+        __abs_path_based_on_jucer_project_dir("${value}" value)
+        set(JUCER_VST3_SDK_FOLDER ${value} PARENT_SCOPE)
+
+      elseif(tag STREQUAL "EXTRA_PREPROCESSOR_DEFINITIONS")
         string(REPLACE "\n" ";" value "${value}")
         list(APPEND JUCER_PREPROCESSOR_DEFINITIONS ${value})
         set(JUCER_PREPROCESSOR_DEFINITIONS ${JUCER_PREPROCESSOR_DEFINITIONS} PARENT_SCOPE)
@@ -395,8 +401,7 @@ endfunction()
 function(jucer_export_target_configuration exporter NAME_TAG configuration_name)
 
   if(NOT "${exporter}" IN_LIST JUCER_EXPORT_TARGETS)
-    message(FATAL_ERROR
-      "Call jucer_export_target(\"${exporter}\") before "
+    message(FATAL_ERROR "Call jucer_export_target(\"${exporter}\") before "
       "calling jucer_export_target_configuration(\"${exporter}\")"
     )
   endif()
@@ -624,9 +629,8 @@ endfunction()
 function(__abs_path_based_on_jucer_project_dir in_path out_path)
 
   if(NOT IS_ABSOLUTE "${in_path}" AND NOT DEFINED JUCER_PROJECT_DIR)
-    message(FATAL_ERROR
-      "The path \"${in_path}\" must be absolute, unless you give PROJECT_FILE when "
-      "calling jucer_project_begin()."
+    message(FATAL_ERROR "The path \"${in_path}\" must be absolute, unless you give "
+      "PROJECT_FILE when calling jucer_project_begin()."
     )
   endif()
 
@@ -848,9 +852,8 @@ function(__generate_JuceHeader_header project_id)
       endif()
     endforeach()
     if(NOT DEFINED Projucer_jucer_FILE)
-      message(FATAL_ERROR
-        "Could not find ../extras/Projucer/Projucer.jucer from modules folders: "
-        "${JUCER_PROJECT_MODULES_FOLDERS}"
+      message(FATAL_ERROR "Could not find ../extras/Projucer/Projucer.jucer from "
+        "modules folders: ${JUCER_PROJECT_MODULES_FOLDERS}"
       )
     endif()
     message(STATUS "Building BinaryDataBuilder for ${JUCER_PROJECT_NAME}")
@@ -872,8 +875,7 @@ function(__generate_JuceHeader_header project_id)
     endif()
     math(EXPR size_limit_in_bytes "${JUCER_BINARYDATACPP_SIZE_LIMIT} * 1024")
     if(NOT DEFINED size_limit_in_bytes)
-      message(FATAL_ERROR
-        "Error when computing size_limit_in_bytes = "
+      message(FATAL_ERROR "Error when computing size_limit_in_bytes = "
         "${JUCER_BINARYDATACPP_SIZE_LIMIT} * 1024"
       )
     endif()
@@ -928,14 +930,17 @@ function(__set_common_target_properties target_name)
   )
 
   if(JUCER_FLAG_JUCE_PLUGINHOST_VST3)
-    if(NOT DEFINED VST3_SDK_FOLDER)
-      message(FATAL_ERROR "VST3_SDK_FOLDER must be defined")
+    if(NOT DEFINED JUCER_VST3_SDK_FOLDER)
+      message(FATAL_ERROR "JUCER_VST3_SDK_FOLDER must be defined. Give VST3_SDK_FOLDER "
+        "when calling jucer_export_target()."
+      )
     endif()
-    get_filename_component(vst3_sdk_abs_path "${VST3_SDK_FOLDER}" ABSOLUTE)
-    if(NOT IS_DIRECTORY "${vst3_sdk_abs_path}")
-      message(WARNING "VST3_SDK_FOLDER: no such directory \"${VST3_SDK_FOLDER}\"")
+    if(NOT IS_DIRECTORY "${JUCER_VST3_SDK_FOLDER}")
+      message(WARNING
+        "JUCER_VST3_SDK_FOLDER: no such directory \"${JUCER_VST3_SDK_FOLDER}\""
+      )
     endif()
-    target_include_directories(${target_name} PRIVATE "${VST3_SDK_FOLDER}")
+    target_include_directories(${target_name} PRIVATE "${JUCER_VST3_SDK_FOLDER}")
   endif()
 
   target_compile_definitions(${target_name} PRIVATE ${JUCER_PREPROCESSOR_DEFINITIONS})

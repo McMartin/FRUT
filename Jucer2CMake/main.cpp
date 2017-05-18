@@ -24,7 +24,7 @@
 #include <locale>
 #include <numeric>
 #include <string>
-#include <utility>
+#include <tuple>
 #include <vector>
 
 
@@ -175,24 +175,6 @@ int main(int argc, char* argv[])
         << "  \"${" << escapedJucerFileName << "_FILE}\" ABSOLUTE\n"
         << "  BASE_DIR \"${CMAKE_BINARY_DIR}\"\n"
         << ")\n"
-        << "\n"
-        << "\n";
-  }
-
-  // set(VST3_SDK_FOLDER)
-  if (jucerProject.getChildWithName("MODULES")
-        .getChildWithProperty("id", "juce_audio_processors")
-        .isValid() &&
-      jucerProject.getChildWithName("JUCEOPTIONS").getProperty("JUCE_PLUGINHOST_VST3") ==
-        "enabled")
-  {
-    out << "if(WIN32)\n"
-        << "  set(VST3_SDK_FOLDER \"C:/SDKs/VST_SDK/VST3_SDK\")\n"
-        << "else()\n"
-        << "  set(VST3_SDK_FOLDER \"~/SDKs/VST_SDK/VST3_SDK\")\n"
-        << "endif()\n"
-        << "set(VST3_SDK_FOLDER \"${VST3_SDK_FOLDER}\" CACHE PATH \"VST3 SDK "
-           "Folder\")\n"
         << "\n"
         << "\n";
   }
@@ -444,10 +426,11 @@ int main(int argc, char* argv[])
 
   // jucer_export_target() and jucer_export_target_configuration()
   {
-    const std::vector<std::pair<const char*, const char*>> supportedExporters = {
-      {"XCODE_MAC", "Xcode (MacOSX)"},
-      {"VS2015", "Visual Studio 2015"},
-      {"VS2013", "Visual Studio 2013"}};
+    using Exporter = std::tuple<const char*, const char*, const char*>;
+    const std::vector<Exporter> supportedExporters = {
+      Exporter{"XCODE_MAC", "Xcode (MacOSX)", "~/SDKs/VST_SDK/VST3_SDK"},
+      Exporter{"VS2015", "Visual Studio 2015", "c:\\SDKs\\VST_SDK\\VST3_SDK"},
+      Exporter{"VS2013", "Visual Studio 2013", "c:\\SDKs\\VST_SDK\\VST3_SDK"}};
 
     for (const auto& element : supportedExporters)
     {
@@ -456,8 +439,23 @@ int main(int argc, char* argv[])
       if (exporter.isValid())
       {
         out << "jucer_export_target(\n"
-            << "  \"" << std::get<1>(element) << "\"\n"
-            << "  " << getSetting(exporter, "EXTRA_PREPROCESSOR_DEFINITIONS", "extraDefs")
+            << "  \"" << std::get<1>(element) << "\"\n";
+
+        if (jucerProject.getChildWithName("MODULES")
+              .getChildWithProperty("id", "juce_audio_processors")
+              .isValid() &&
+            jucerProject.getChildWithName("JUCEOPTIONS")
+                .getProperty("JUCE_PLUGINHOST_VST3") == "enabled")
+        {
+          const auto vst3Folder =
+            exporter.getProperty("vst3Folder").toString().toStdString();
+
+          out << "  VST3_SDK_FOLDER \""
+              << escape("\\", (vst3Folder.empty() ? std::get<2>(element) : vst3Folder))
+              << "\"\n";
+        }
+
+        out << "  " << getSetting(exporter, "EXTRA_PREPROCESSOR_DEFINITIONS", "extraDefs")
             << "\n"
             << "  " << getSetting(exporter, "EXTRA_COMPILER_FLAGS", "extraCompilerFlags")
             << "\n"
