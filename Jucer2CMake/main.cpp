@@ -113,8 +113,9 @@ int main(int argc, char* argv[])
   const auto& jucerFilePath = args.at(1);
   const auto& reprojucerFilePath = args.at(2);
 
-  const auto xml = std::unique_ptr<juce::XmlElement>{
-    juce::XmlDocument::parse(juce::File{jucerFilePath})};
+  const auto jucerFile = juce::File{jucerFilePath};
+
+  const auto xml = std::unique_ptr<juce::XmlElement>{juce::XmlDocument::parse(jucerFile)};
   if (xml == nullptr || !xml->hasTagName("JUCERPROJECT"))
   {
     printError(jucerFilePath + " is not a valid Jucer project.");
@@ -130,7 +131,7 @@ int main(int argc, char* argv[])
 
   std::ofstream out{"CMakeLists.txt"};
 
-  const auto jucerFileName = juce::File{jucerFilePath}.getFileName().toStdString();
+  const auto jucerFileName = jucerFile.getFileName().toStdString();
 
   // Preamble
   {
@@ -387,8 +388,7 @@ int main(int argc, char* argv[])
           << "  " << moduleName << "\n"
           << "  PATH \"" << relativeModulePath << "\"\n";
 
-      const auto moduleHeader = juce::File{jucerFilePath}
-                                  .getParentDirectory()
+      const auto moduleHeader = jucerFile.getParentDirectory()
                                   .getChildFile(relativeModulePath)
                                   .getChildFile(juce::String{moduleName})
                                   .getChildFile(juce::String{moduleName + ".h"});
