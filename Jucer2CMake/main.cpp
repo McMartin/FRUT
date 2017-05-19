@@ -274,8 +274,7 @@ int main(int argc, char* argv[])
     {
       if (!filePaths.empty())
       {
-        out << "jucer_project_files"
-            << "(\"" << fullGroupName << "\"\n";
+        out << "jucer_project_files(\"" << fullGroupName << "\"\n";
 
         for (const auto& filePath : filePaths)
         {
@@ -301,8 +300,7 @@ int main(int argc, char* argv[])
 
       if (!resourcePaths.empty())
       {
-        out << "jucer_project_resources"
-            << "(\"" << fullGroupName << "\"\n";
+        out << "jucer_project_resources(\"" << fullGroupName << "\"\n";
 
         for (const auto& resourcePath : resourcePaths)
         {
