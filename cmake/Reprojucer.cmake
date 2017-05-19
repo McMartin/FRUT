@@ -358,6 +358,7 @@ function(jucer_export_target exporter)
   if(NOT ${condition})
     return()
   endif()
+  set(JUCER_ACTIVE_EXPORT_TARGET ${exporter} PARENT_SCOPE)
 
   set(export_target_settings_tags
     "VST3_SDK_FOLDER"
@@ -470,6 +471,17 @@ endfunction()
 
 
 function(jucer_project_end)
+
+  if(NOT DEFINED JUCER_ACTIVE_EXPORT_TARGET)
+    list(LENGTH JUCER_EXPORT_TARGETS export_targets_length)
+    if(export_targets_length GREATER 0)
+      message(WARNING
+        "JUCER_ACTIVE_EXPORT_TARGET is not defined, though jucer_export_target() was "
+        "called at least once. You might want to call jucer_export_target() with an "
+        "exporter that matches the current CMake generator (${CMAKE_GENERATOR})."
+      )
+    endif()
+  endif()
 
   if(DEFINED JUCER_PROJECT_CONFIGURATIONS)
     set(CMAKE_CONFIGURATION_TYPES ${JUCER_PROJECT_CONFIGURATIONS} PARENT_SCOPE)
