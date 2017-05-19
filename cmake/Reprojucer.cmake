@@ -114,13 +114,7 @@ function(jucer_project_settings)
     else()
       set(value ${element})
 
-      if(POLICY CMP0054)
-        cmake_policy(SET CMP0054 NEW)
-      endif()
-      if(tag STREQUAL "PROJECT_NAME")
-        project(${value})
-
-      elseif(tag STREQUAL "PROJECT_VERSION")
+      if(tag STREQUAL "PROJECT_VERSION")
         string(REGEX MATCH ".+\\..+\\..+(\\..+)?" version_match "${value}")
         if(NOT value STREQUAL version_match)
           message(WARNING
@@ -482,6 +476,8 @@ function(jucer_project_end)
   if(DEFINED JUCER_PROJECT_CONFIGURATIONS)
     set(CMAKE_CONFIGURATION_TYPES ${JUCER_PROJECT_CONFIGURATIONS} PARENT_SCOPE)
   endif()
+
+  project(${JUCER_PROJECT_NAME})
 
   string(TOUPPER "${JUCER_PROJECT_ID}" upper_project_id)
   __generate_AppConfig_header("${upper_project_id}")
