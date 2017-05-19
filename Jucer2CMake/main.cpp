@@ -270,7 +270,8 @@ int main(int argc, char* argv[])
     const auto writeFileGroups = [&out](const std::string& fullGroupName,
       const std::vector<std::string>& filePaths,
       const std::vector<std::string>& doNotCompileFilePaths,
-      const std::vector<std::string>& resourcePaths)
+      const std::vector<std::string>& resourcePaths,
+      const std::vector<std::string>& xcodeResourcePaths)
     {
       if (!filePaths.empty())
       {
@@ -310,6 +311,19 @@ int main(int argc, char* argv[])
         out << ")\n"
             << "\n";
       }
+
+      if (!xcodeResourcePaths.empty())
+      {
+        out << "jucer_project_xcode_resources(\"" << fullGroupName << "\"\n";
+
+        for (const auto& xcodeResourcePath : xcodeResourcePaths)
+        {
+          out << "  \"" << xcodeResourcePath << "\"\n";
+        }
+
+        out << ")\n"
+            << "\n";
+      }
     };
 
     std::vector<std::string> groupNames;
@@ -321,7 +335,8 @@ int main(int argc, char* argv[])
 
       const auto fullGroupName = join("/", groupNames);
 
-      std::vector<std::string> filePaths, doNotCompileFilePaths, resourcePaths;
+      std::vector<std::string> filePaths, doNotCompileFilePaths, resourcePaths,
+        xcodeResourcePaths;
 
       for (const auto& fileOrGroup : group)
       {
@@ -330,7 +345,11 @@ int main(int argc, char* argv[])
           const auto& file = fileOrGroup;
           const auto path = file.getProperty("file").toString().toStdString();
 
-          if (int{file.getProperty("resource")} == 1)
+          if (int{file.getProperty("xcodeResource")} == 1)
+          {
+            xcodeResourcePaths.push_back(path);
+          }
+          else if (int{file.getProperty("resource")} == 1)
           {
             resourcePaths.push_back(path);
           }
@@ -347,7 +366,11 @@ int main(int argc, char* argv[])
         }
         else
         {
-          writeFileGroups(fullGroupName, filePaths, doNotCompileFilePaths, resourcePaths);
+          writeFileGroups(fullGroupName,
+            filePaths,
+            doNotCompileFilePaths,
+            resourcePaths,
+            xcodeResourcePaths);
           filePaths.clear();
           doNotCompileFilePaths.clear();
           resourcePaths.clear();
@@ -356,7 +379,11 @@ int main(int argc, char* argv[])
         }
       }
 
-      writeFileGroups(fullGroupName, filePaths, doNotCompileFilePaths, resourcePaths);
+      writeFileGroups(fullGroupName,
+        filePaths,
+        doNotCompileFilePaths,
+        resourcePaths,
+        xcodeResourcePaths);
 
       groupNames.pop_back();
     };
