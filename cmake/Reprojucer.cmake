@@ -19,7 +19,7 @@ cmake_minimum_required(VERSION 3.4)
 
 
 set(Reprojucer.cmake_DIR "${CMAKE_CURRENT_LIST_DIR}")
-set(templates_DIR "${Reprojucer.cmake_DIR}/templates")
+set(Reprojucer_templates_DIR "${Reprojucer.cmake_DIR}/templates")
 
 
 function(jucer_project_begin)
@@ -281,7 +281,7 @@ function(jucer_project_module module_name PATH_TAG modules_folder)
 
     if(to_compile)
       get_filename_component(src_file_basename "${src_file}" NAME)
-      configure_file("${templates_DIR}/JuceLibraryCode-Wrapper.cpp"
+      configure_file("${Reprojucer_templates_DIR}/JuceLibraryCode-Wrapper.cpp"
         "JuceLibraryCode/${src_file_basename}"
       )
       list(APPEND JUCER_PROJECT_SOURCES
@@ -474,7 +474,9 @@ function(jucer_project_end)
 
   if(WIN32)
     string(REPLACE "." "," comma_separated_version_number "${JUCER_PROJECT_VERSION}")
-    configure_file("${templates_DIR}/resources.rc" "JuceLibraryCode/resources.rc")
+    configure_file("${Reprojucer_templates_DIR}/resources.rc"
+      "JuceLibraryCode/resources.rc"
+    )
     list(APPEND JUCER_PROJECT_SOURCES
       "${CMAKE_CURRENT_BINARY_DIR}/JuceLibraryCode/resources.rc"
     )
@@ -832,7 +834,7 @@ function(__generate_AppConfig_header project_id)
     endforeach()
   endif()
 
-  configure_file("${templates_DIR}/AppConfig.h" "JuceLibraryCode/AppConfig.h")
+  configure_file("${Reprojucer_templates_DIR}/AppConfig.h" "JuceLibraryCode/AppConfig.h")
 
 endfunction()
 
@@ -914,7 +916,9 @@ function(__generate_JuceHeader_header project_id)
     string(APPEND modules_includes "#include <${module_name}/${module_name}.h>\n")
   endforeach()
 
-  configure_file("${templates_DIR}/JuceHeader.h" "JuceLibraryCode/JuceHeader.h")
+  configure_file("${Reprojucer_templates_DIR}/JuceHeader.h"
+    "JuceLibraryCode/JuceHeader.h"
+  )
 
 endfunction()
 
@@ -963,13 +967,15 @@ function(__generate_plist_file target_name plist_suffix package_type bundle_sign
 
   set(plist_filename "Info-${plist_suffix}.plist")
   if(CMAKE_GENERATOR STREQUAL "Xcode")
-    configure_file("${templates_DIR}/Info-Xcode.plist" "${plist_filename}" @ONLY)
+    configure_file("${Reprojucer_templates_DIR}/Info-Xcode.plist"
+      "${plist_filename}" @ONLY
+    )
     set_target_properties(${target_name} PROPERTIES
       XCODE_ATTRIBUTE_INFOPLIST_FILE "${CMAKE_CURRENT_BINARY_DIR}/${plist_filename}"
       XCODE_ATTRIBUTE_PRODUCT_BUNDLE_IDENTIFIER "${JUCER_BUNDLE_IDENTIFIER}"
     )
   else()
-    configure_file("${templates_DIR}/Info.plist" "${plist_filename}" @ONLY)
+    configure_file("${Reprojucer_templates_DIR}/Info.plist" "${plist_filename}" @ONLY)
     set_target_properties(${target_name} PROPERTIES
       MACOSX_BUNDLE_BUNDLE_NAME "${JUCER_PROJECT_NAME}"
       MACOSX_BUNDLE_GUI_IDENTIFIER "${JUCER_BUNDLE_IDENTIFIER}"
