@@ -21,6 +21,12 @@ cmake_minimum_required(VERSION 3.4)
 set(Reprojucer.cmake_DIR "${CMAKE_CURRENT_LIST_DIR}")
 set(Reprojucer_templates_DIR "${Reprojucer.cmake_DIR}/templates")
 
+set(Reprojucer_supported_exporters
+  "Xcode (MacOSX)"
+  "Visual Studio 2015"
+  "Visual Studio 2013"
+)
+
 
 function(jucer_project_begin)
 
@@ -334,15 +340,9 @@ endfunction()
 
 function(jucer_export_target exporter)
 
-  set(supported_exporters
-    "Xcode (MacOSX)"
-    "Visual Studio 2015"
-    "Visual Studio 2013"
-  )
-
-  if(NOT "${exporter}" IN_LIST supported_exporters)
+  if(NOT "${exporter}" IN_LIST Reprojucer_supported_exporters)
     message(FATAL_ERROR "Unsupported exporter: ${exporter}\n"
-      "Supported exporters: ${supported_exporters}"
+      "Supported exporters: ${Reprojucer_supported_exporters}"
     )
   endif()
   list(APPEND JUCER_EXPORT_TARGETS "${exporter}")
@@ -399,6 +399,12 @@ endfunction()
 
 
 function(jucer_export_target_configuration exporter NAME_TAG configuration_name)
+
+  if(NOT "${exporter}" IN_LIST Reprojucer_supported_exporters)
+    message(FATAL_ERROR "Unsupported exporter: ${exporter}\n"
+      "Supported exporters: ${Reprojucer_supported_exporters}"
+    )
+  endif()
 
   if(NOT "${exporter}" IN_LIST JUCER_EXPORT_TARGETS)
     message(FATAL_ERROR "Call jucer_export_target(\"${exporter}\") before "
