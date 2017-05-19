@@ -407,8 +407,8 @@ function(jucer_export_target_configuration exporter NAME_TAG configuration_name)
   endif()
 
   if(NOT "${exporter}" IN_LIST JUCER_EXPORT_TARGETS)
-    message(FATAL_ERROR "Call jucer_export_target(\"${exporter}\") before "
-      "calling jucer_export_target_configuration(\"${exporter}\")"
+    message(FATAL_ERROR "You must call jucer_export_target(\"${exporter}\") before "
+      "calling jucer_export_target_configuration(\"${exporter}\")."
     )
   endif()
 
