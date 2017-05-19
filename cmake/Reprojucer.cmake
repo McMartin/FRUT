@@ -423,6 +423,12 @@ function(jucer_export_target_configuration exporter NAME_TAG configuration_name)
     "PREPROCESSOR_DEFINITIONS"
   )
 
+  if(exporter STREQUAL "Xcode (MacOSX)")
+    list(APPEND configuration_settings_tags
+      "OSX_BASE_SDK_VERSION"
+    )
+  endif()
+
   foreach(element ${ARGN})
     if(NOT DEFINED tag)
       set(tag ${element})
@@ -453,6 +459,15 @@ function(jucer_export_target_configuration exporter NAME_TAG configuration_name)
           $<$<CONFIG:${configuration_name}>:${value}>
         )
         set(JUCER_PREPROCESSOR_DEFINITIONS ${JUCER_PREPROCESSOR_DEFINITIONS} PARENT_SCOPE)
+
+      elseif(tag STREQUAL "OSX_BASE_SDK_VERSION")
+        if(value MATCHES "10\\.([5-9]|10|11|12) SDK")
+          set(CMAKE_OSX_SYSROOT "macosx10.${CMAKE_MATCH_1}" PARENT_SCOPE)
+        elseif(NOT value STREQUAL "Use Default")
+          message(FATAL_ERROR
+            "Unsupported value for OSX_BASE_SDK_VERSION: \"${value}\"\n"
+          )
+        endif()
 
       endif()
 

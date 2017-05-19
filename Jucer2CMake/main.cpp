@@ -17,6 +17,7 @@
 
 #include "JuceHeader.h"
 
+#include <array>
 #include <fstream>
 #include <functional>
 #include <iostream>
@@ -500,8 +501,36 @@ int main(int argc, char* argv[])
           }
 
           out << "  " << getSetting(configuration, "PREPROCESSOR_DEFINITIONS", "defines")
-              << "\n"
-              << ")\n"
+              << "\n";
+
+          if (exporter.getType().toString() == "XCODE_MAC")
+          {
+            const auto sdks = std::array<const char*, 8>{"10.5 SDK",
+              "10.6 SDK",
+              "10.7 SDK",
+              "10.8 SDK",
+              "10.9 SDK",
+              "10.10 SDK",
+              "10.11 SDK",
+              "10.12 SDK"};
+
+            const auto osxSDK =
+              configuration.getProperty("osxSDK").toString().toStdString();
+            if (osxSDK == "default")
+            {
+              out << "  OSX_BASE_SDK_VERSION \"Use Default\"\n";
+            }
+            else if (std::find(sdks.begin(), sdks.end(), osxSDK) != sdks.end())
+            {
+              out << "  OSX_BASE_SDK_VERSION \"" << osxSDK << "\"\n";
+            }
+            else
+            {
+              out << "  # OSX_BASE_SDK_VERSION\n";
+            }
+          }
+
+          out << ")\n"
               << "\n";
         }
       }
