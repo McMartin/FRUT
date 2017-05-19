@@ -471,6 +471,14 @@ endfunction()
 
 function(jucer_project_end)
 
+  foreach(exporter ${Reprojucer_supported_exporters})
+    list(FIND Reprojucer_supported_exporters "${exporter}" exporter_index)
+    list(GET Reprojucer_supported_exporters_conditions ${exporter_index} condition)
+    if(${condition} AND NOT "${exporter}" IN_LIST JUCER_EXPORT_TARGETS)
+      message(WARNING "You might want to call jucer_export_target(\"${exporter}\").")
+    endif()
+  endforeach()
+
   if(DEFINED JUCER_PROJECT_CONFIGURATIONS)
     set(CMAKE_CONFIGURATION_TYPES ${JUCER_PROJECT_CONFIGURATIONS} PARENT_SCOPE)
   endif()

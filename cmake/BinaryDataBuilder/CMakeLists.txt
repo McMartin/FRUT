@@ -114,6 +114,18 @@ jucer_project_module(
   PATH "${Projucer_jucer_DIR}/../../modules"
 )
 
+jucer_export_target(
+  "Xcode (MacOSX)"
+)
+
+jucer_export_target(
+  "Visual Studio 2015"
+)
+
+jucer_export_target(
+  "Visual Studio 2013"
+)
+
 jucer_project_end()
 
 
