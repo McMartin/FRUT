@@ -155,6 +155,8 @@ jucer_export_target_configuration(
   NAME "Debug"
   # HEADER_SEARCH_PATHS
   # PREPROCESSOR_DEFINITIONS
+  # OSX_BASE_SDK_VERSION
+  # OSX_DEPLOYMENT_TARGET
 )
 
 jucer_export_target_configuration(
@@ -162,6 +164,8 @@ jucer_export_target_configuration(
   NAME "Release"
   # HEADER_SEARCH_PATHS
   # PREPROCESSOR_DEFINITIONS
+  # OSX_BASE_SDK_VERSION
+  # OSX_DEPLOYMENT_TARGET
 )
 
 jucer_export_target(
