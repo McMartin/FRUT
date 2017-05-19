@@ -26,6 +26,11 @@ set(Reprojucer_supported_exporters
   "Visual Studio 2015"
   "Visual Studio 2013"
 )
+set(Reprojucer_supported_exporters_conditions
+  "APPLE"
+  "MSVC_VERSION\;EQUAL\;1900"
+  "MSVC_VERSION\;EQUAL\;1800"
+)
 
 
 function(jucer_project_begin)
@@ -348,11 +353,9 @@ function(jucer_export_target exporter)
   list(APPEND JUCER_EXPORT_TARGETS "${exporter}")
   set(JUCER_EXPORT_TARGETS ${JUCER_EXPORT_TARGETS} PARENT_SCOPE)
 
-  if(exporter STREQUAL "Xcode (MacOSX)" AND NOT APPLE)
-    return()
-  elseif(exporter STREQUAL "Visual Studio 2015" AND NOT MSVC_VERSION EQUAL 1900)
-    return()
-  elseif(exporter STREQUAL "Visual Studio 2013" AND NOT MSVC_VERSION EQUAL 1800)
+  list(FIND Reprojucer_supported_exporters "${exporter}" exporter_index)
+  list(GET Reprojucer_supported_exporters_conditions ${exporter_index} condition)
+  if(NOT ${condition})
     return()
   endif()
 
@@ -412,11 +415,9 @@ function(jucer_export_target_configuration exporter NAME_TAG configuration_name)
     )
   endif()
 
-  if(exporter STREQUAL "Xcode (MacOSX)" AND NOT APPLE)
-    return()
-  elseif(exporter STREQUAL "Visual Studio 2015" AND NOT MSVC_VERSION EQUAL 1900)
-    return()
-  elseif(exporter STREQUAL "Visual Studio 2013" AND NOT MSVC_VERSION EQUAL 1800)
+  list(FIND Reprojucer_supported_exporters "${exporter}" exporter_index)
+  list(GET Reprojucer_supported_exporters_conditions ${exporter_index} condition)
+  if(NOT ${condition})
     return()
   endif()
 
