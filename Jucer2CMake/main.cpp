@@ -528,6 +528,22 @@ int main(int argc, char* argv[])
             {
               out << "  # OSX_BASE_SDK_VERSION\n";
             }
+
+            const auto osxCompatibility =
+              configuration.getProperty("osxCompatibility").toString().toStdString();
+            if (osxCompatibility == "default")
+            {
+              out << "  OSX_DEPLOYMENT_TARGET \"Use Default\"\n";
+            }
+            else if (std::find(sdks.begin(), sdks.end(), osxCompatibility) != sdks.end())
+            {
+              out << "  OSX_DEPLOYMENT_TARGET \""
+                  << osxCompatibility.substr(0, osxCompatibility.length() - 4) << "\"\n";
+            }
+            else
+            {
+              out << "  # OSX_DEPLOYMENT_TARGET\n";
+            }
           }
 
           out << ")\n"

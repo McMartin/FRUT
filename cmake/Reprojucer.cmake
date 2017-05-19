@@ -426,6 +426,7 @@ function(jucer_export_target_configuration exporter NAME_TAG configuration_name)
   if(exporter STREQUAL "Xcode (MacOSX)")
     list(APPEND configuration_settings_tags
       "OSX_BASE_SDK_VERSION"
+      "OSX_DEPLOYMENT_TARGET"
     )
   endif()
 
@@ -466,6 +467,15 @@ function(jucer_export_target_configuration exporter NAME_TAG configuration_name)
         elseif(NOT value STREQUAL "Use Default")
           message(FATAL_ERROR
             "Unsupported value for OSX_BASE_SDK_VERSION: \"${value}\"\n"
+          )
+        endif()
+
+      elseif(tag STREQUAL "OSX_DEPLOYMENT_TARGET")
+        if(value MATCHES "10\\.([5-9]|10|11|12)")
+          set(CMAKE_OSX_DEPLOYMENT_TARGET "10.${CMAKE_MATCH_1}" PARENT_SCOPE)
+        elseif(NOT value STREQUAL "Use Default")
+          message(FATAL_ERROR
+            "Unsupported value for OSX_DEPLOYMENT_TARGET: \"${value}\"\n"
           )
         endif()
 
