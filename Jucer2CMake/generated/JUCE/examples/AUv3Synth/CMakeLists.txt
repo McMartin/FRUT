@@ -54,13 +54,13 @@ jucer_audio_plugin_settings(
   # VST_CATEGORY
 )
 
-jucer_project_files("AUv3Synth/Source/BinaryData"
-  "Source/BinaryData/power.png"
-)
-
 jucer_project_resources("AUv3Synth/Source/BinaryData"
   "Source/BinaryData/proaudio.path"
   "Source/BinaryData/singing.ogg"
+)
+
+jucer_project_xcode_resources("AUv3Synth/Source/BinaryData"
+  "Source/BinaryData/power.png"
 )
 
 jucer_project_files("AUv3Synth/Source"

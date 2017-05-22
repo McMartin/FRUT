@@ -237,6 +237,22 @@ function(jucer_project_resources source_group_name)
 endfunction()
 
 
+function(jucer_project_xcode_resources source_group_name)
+
+  foreach(path ${ARGN})
+    __abs_path_based_on_jucer_project_dir("${path}" path)
+    list(APPEND xcode_resource_files "${path}")
+  endforeach()
+
+  string(REPLACE "/" "\\" source_group_name ${source_group_name})
+  source_group(${source_group_name} FILES ${xcode_resource_files})
+
+  list(APPEND JUCER_PROJECT_XCODE_RESOURCES ${xcode_resource_files})
+  set(JUCER_PROJECT_XCODE_RESOURCES ${JUCER_PROJECT_XCODE_RESOURCES} PARENT_SCOPE)
+
+endfunction()
+
+
 function(jucer_project_module module_name PATH_TAG modules_folder)
 
   list(APPEND JUCER_PROJECT_MODULES ${module_name})
@@ -533,9 +549,14 @@ function(jucer_project_end)
   set(all_sources
     ${JUCER_PROJECT_SOURCES}
     ${JUCER_PROJECT_RESOURCES}
+    ${JUCER_PROJECT_XCODE_RESOURCES}
     "${CMAKE_CURRENT_BINARY_DIR}/JuceLibraryCode/AppConfig.h"
     "${CMAKE_CURRENT_BINARY_DIR}/JuceLibraryCode/JuceHeader.h"
     ${JUCER_PROJECT_BROWSABLE_FILES}
+  )
+
+  set_source_files_properties(${JUCER_PROJECT_XCODE_RESOURCES}
+    PROPERTIES MACOSX_PACKAGE_LOCATION "Resources"
   )
 
   if(JUCER_PROJECT_TYPE STREQUAL "Console Application")
@@ -582,6 +603,7 @@ function(jucer_project_end)
       add_library(${target_name}_Shared_Code STATIC
         ${SharedCode_sources}
         ${JUCER_PROJECT_RESOURCES}
+        ${JUCER_PROJECT_XCODE_RESOURCES}
         "${CMAKE_CURRENT_BINARY_DIR}/JuceLibraryCode/AppConfig.h"
         "${CMAKE_CURRENT_BINARY_DIR}/JuceLibraryCode/JuceHeader.h"
         ${JUCER_PROJECT_BROWSABLE_FILES}
@@ -592,7 +614,10 @@ function(jucer_project_end)
 
       if(JUCER_BUILD_VST)
         set(full_target_name ${target_name}_VST)
-        add_library(${full_target_name} MODULE ${VST_sources})
+        add_library(${full_target_name} MODULE
+          ${VST_sources}
+          ${JUCER_PROJECT_XCODE_RESOURCES}
+        )
         target_link_libraries(${full_target_name} ${target_name}_Shared_Code)
         __generate_plist_file(${full_target_name} "VST" "BNDL" "????" "")
         __set_bundle_properties(${full_target_name} "vst")
@@ -603,7 +628,10 @@ function(jucer_project_end)
 
       if(JUCER_BUILD_AUDIOUNIT)
         set(full_target_name ${target_name}_AU)
-        add_library(${full_target_name} MODULE ${AudioUnit_sources})
+        add_library(${full_target_name} MODULE
+          ${AudioUnit_sources}
+          ${JUCER_PROJECT_XCODE_RESOURCES}
+        )
         target_link_libraries(${full_target_name} ${target_name}_Shared_Code)
 
         if(NOT DEFINED JUCER_PLUGIN_AU_MAIN_TYPE)
