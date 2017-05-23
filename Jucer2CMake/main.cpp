@@ -374,6 +374,7 @@ int main(int argc, char* argv[])
           filePaths.clear();
           doNotCompileFilePaths.clear();
           resourcePaths.clear();
+          xcodeResourcePaths.clear();
 
           processGroup(fileOrGroup);
         }
