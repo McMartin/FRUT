@@ -267,7 +267,7 @@ int main(int argc, char* argv[])
 
   // jucer_project_files()
   {
-    const auto writeFileGroups = [&out](const std::string& fullGroupName,
+    const auto writeFiles = [&out](const std::string& fullGroupName,
       const std::vector<std::tuple<bool, bool, bool, std::string>>& files)
     {
       if (!files.empty())
@@ -298,7 +298,7 @@ int main(int argc, char* argv[])
     std::vector<std::string> groupNames;
 
     std::function<void(const juce::ValueTree&)> processGroup =
-      [&groupNames, &processGroup, &writeFileGroups](const juce::ValueTree& group)
+      [&groupNames, &processGroup, &writeFiles](const juce::ValueTree& group)
     {
       groupNames.push_back(group.getProperty("name").toString().toStdString());
 
@@ -319,14 +319,14 @@ int main(int argc, char* argv[])
         }
         else
         {
-          writeFileGroups(fullGroupName, files);
+          writeFiles(fullGroupName, files);
           files.clear();
 
           processGroup(fileOrGroup);
         }
       }
 
-      writeFileGroups(fullGroupName, files);
+      writeFiles(fullGroupName, files);
 
       groupNames.pop_back();
     };
