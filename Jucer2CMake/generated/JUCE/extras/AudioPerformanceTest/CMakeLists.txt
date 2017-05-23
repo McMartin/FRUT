@@ -36,8 +36,10 @@ jucer_project_settings(
 )
 
 jucer_project_files("AudioPerformanceTest/Source"
-  "Source/Main.cpp"
-  "Source/MainComponent.h"
+# Compile   Xcode     Binary
+#           Resource  Resource
+  x         .         .         "Source/Main.cpp"
+  .         .         .         "Source/MainComponent.h"
 )
 
 jucer_project_module(

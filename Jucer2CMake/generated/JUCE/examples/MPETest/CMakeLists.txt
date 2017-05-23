@@ -36,13 +36,15 @@ jucer_project_settings(
 )
 
 jucer_project_files("MPETest/Source"
-  "Source/Main.cpp"
-  "Source/MainComponent.h"
-  "Source/MPEDemoSynthVoice.h"
-  "Source/MPESetupComponent.h"
-  "Source/Visualiser.h"
-  "Source/ZoneColourPicker.h"
-  "Source/ZoneLayoutComponent.h"
+# Compile   Xcode     Binary
+#           Resource  Resource
+  x         .         .         "Source/Main.cpp"
+  .         .         .         "Source/MainComponent.h"
+  .         .         .         "Source/MPEDemoSynthVoice.h"
+  .         .         .         "Source/MPESetupComponent.h"
+  .         .         .         "Source/Visualiser.h"
+  .         .         .         "Source/ZoneColourPicker.h"
+  .         .         .         "Source/ZoneLayoutComponent.h"
 )
 
 jucer_project_module(

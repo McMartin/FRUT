@@ -55,7 +55,9 @@ jucer_audio_plugin_settings(
 )
 
 jucer_project_files("Arpeggiator/Source"
-  "Source/Arpeggiator.cpp"
+# Compile   Xcode     Binary
+#           Resource  Resource
+  x         .         .         "Source/Arpeggiator.cpp"
 )
 
 jucer_project_module(

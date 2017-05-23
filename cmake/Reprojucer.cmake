@@ -200,54 +200,57 @@ endfunction()
 
 function(jucer_project_files source_group_name)
 
-  foreach(path ${ARGN})
-    __abs_path_based_on_jucer_project_dir("${path}" path)
-    list(APPEND source_files "${path}")
-  endforeach()
+  function(__check_input input)
+    if(NOT input STREQUAL "x" AND NOT input STREQUAL ".")
+      message(FATAL_ERROR "Expected x or . token, got ${input} instead")
+    endif()
+  endfunction()
 
-  string(REPLACE "/" "\\" source_group_name ${source_group_name})
-  source_group(${source_group_name} FILES ${source_files})
+  foreach(element ${ARGN})
+    if(NOT DEFINED compile)
+      set(compile ${element})
+      __check_input("${compile}")
+    elseif(NOT DEFINED xcodeResource)
+      set(xcodeResource ${element})
+      __check_input("${xcodeResource}")
+    elseif(NOT DEFINED binaryResource)
+      set(binaryResource ${element})
+      __check_input("${binaryResource}")
+    else()
+      set(path ${element})
 
-  list(APPEND JUCER_PROJECT_SOURCES ${source_files})
-  set(JUCER_PROJECT_SOURCES ${JUCER_PROJECT_SOURCES} PARENT_SCOPE)
+      __abs_path_based_on_jucer_project_dir("${path}" path)
+      list(APPEND files "${path}")
 
-  foreach(src_file ${source_files})
-    get_filename_component(src_file_extension "${src_file}" EXT)
-    if(src_file_extension STREQUAL ".mm" AND NOT APPLE)
-      set_source_files_properties("${src_file}" PROPERTIES HEADER_FILE_ONLY TRUE)
+      if(xcodeResource STREQUAL "x")
+        list(APPEND JUCER_PROJECT_XCODE_RESOURCES ${path})
+      elseif(binaryResource STREQUAL "x")
+        list(APPEND JUCER_PROJECT_RESOURCES ${path})
+      else()
+        list(APPEND JUCER_PROJECT_SOURCES ${path})
+
+        get_filename_component(file_extension "${path}" EXT)
+
+        if(NOT file_extension STREQUAL ".h" AND compile STREQUAL ".")
+          set_source_files_properties("${path}" PROPERTIES HEADER_FILE_ONLY TRUE)
+        endif()
+
+        if(file_extension STREQUAL ".mm" AND NOT APPLE)
+          set_source_files_properties("${path}" PROPERTIES HEADER_FILE_ONLY TRUE)
+        endif()
+      endif()
+
+      unset(compile)
+      unset(xcodeResource)
+      unset(binaryResource)
     endif()
   endforeach()
 
-endfunction()
-
-
-function(jucer_project_resources source_group_name)
-
-  foreach(path ${ARGN})
-    __abs_path_based_on_jucer_project_dir("${path}" path)
-    list(APPEND resource_files "${path}")
-  endforeach()
-
   string(REPLACE "/" "\\" source_group_name ${source_group_name})
-  source_group(${source_group_name} FILES ${resource_files})
+  source_group(${source_group_name} FILES ${files})
 
-  list(APPEND JUCER_PROJECT_RESOURCES ${resource_files})
+  set(JUCER_PROJECT_SOURCES ${JUCER_PROJECT_SOURCES} PARENT_SCOPE)
   set(JUCER_PROJECT_RESOURCES ${JUCER_PROJECT_RESOURCES} PARENT_SCOPE)
-
-endfunction()
-
-
-function(jucer_project_xcode_resources source_group_name)
-
-  foreach(path ${ARGN})
-    __abs_path_based_on_jucer_project_dir("${path}" path)
-    list(APPEND xcode_resource_files "${path}")
-  endforeach()
-
-  string(REPLACE "/" "\\" source_group_name ${source_group_name})
-  source_group(${source_group_name} FILES ${xcode_resource_files})
-
-  list(APPEND JUCER_PROJECT_XCODE_RESOURCES ${xcode_resource_files})
   set(JUCER_PROJECT_XCODE_RESOURCES ${JUCER_PROJECT_XCODE_RESOURCES} PARENT_SCOPE)
 
 endfunction()

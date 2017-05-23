@@ -46,7 +46,7 @@ jucer_project_settings(
 )
 
 jucer_project_files("Jucer2CMake"
-  "${CMAKE_CURRENT_LIST_DIR}/main.cpp"
+  x . . "${CMAKE_CURRENT_LIST_DIR}/main.cpp"
 )
 
 jucer_project_module(

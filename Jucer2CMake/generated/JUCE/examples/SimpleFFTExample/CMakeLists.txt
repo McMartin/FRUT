@@ -36,8 +36,10 @@ jucer_project_settings(
 )
 
 jucer_project_files("SimpleFFTExample/Source"
-  "Source/SpectrogramComponent.h"
-  "Source/Main.cpp"
+# Compile   Xcode     Binary
+#           Resource  Resource
+  .         .         .         "Source/SpectrogramComponent.h"
+  x         .         .         "Source/Main.cpp"
 )
 
 jucer_project_module(

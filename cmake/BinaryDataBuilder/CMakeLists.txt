@@ -69,14 +69,14 @@ jucer_project_settings(
 )
 
 jucer_project_files("BinaryDataBuilder"
-  "${CMAKE_CURRENT_LIST_DIR}/main.cpp"
+  x . . "${CMAKE_CURRENT_LIST_DIR}/main.cpp"
 )
 
 jucer_project_files("BinaryDataBuilder/Source"
-  "${CMAKE_CURRENT_LIST_DIR}/Source/Project Saving/jucer_ResourceFile.cpp"
-  "${CMAKE_CURRENT_LIST_DIR}/Source/Utility/jucer_CodeHelpers.cpp"
-  "${CMAKE_CURRENT_LIST_DIR}/Source/Utility/jucer_FileHelpers.cpp"
-  "${CMAKE_CURRENT_LIST_DIR}/Source/Utility/jucer_MiscUtilities.cpp"
+  x . . "${CMAKE_CURRENT_LIST_DIR}/Source/Project Saving/jucer_ResourceFile.cpp"
+  x . . "${CMAKE_CURRENT_LIST_DIR}/Source/Utility/jucer_CodeHelpers.cpp"
+  x . . "${CMAKE_CURRENT_LIST_DIR}/Source/Utility/jucer_FileHelpers.cpp"
+  x . . "${CMAKE_CURRENT_LIST_DIR}/Source/Utility/jucer_MiscUtilities.cpp"
 )
 
 jucer_project_module(
