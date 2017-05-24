@@ -36,17 +36,19 @@ jucer_project_settings(
 )
 
 jucer_project_files("Plugin Host"
-  "Source/FilterGraph.cpp"
-  "Source/FilterGraph.h"
-  "Source/FilterIOConfiguration.cpp"
-  "Source/FilterIOConfiguration.h"
-  "Source/GraphEditorPanel.cpp"
-  "Source/GraphEditorPanel.h"
-  "Source/HostStartup.cpp"
-  "Source/InternalFilters.cpp"
-  "Source/InternalFilters.h"
-  "Source/MainHostWindow.cpp"
-  "Source/MainHostWindow.h"
+# Compile   Xcode     Binary
+#           Resource  Resource
+  x         .         .         "Source/FilterGraph.cpp"
+  .         .         .         "Source/FilterGraph.h"
+  x         .         .         "Source/FilterIOConfiguration.cpp"
+  .         .         .         "Source/FilterIOConfiguration.h"
+  x         .         .         "Source/GraphEditorPanel.cpp"
+  .         .         .         "Source/GraphEditorPanel.h"
+  x         .         .         "Source/HostStartup.cpp"
+  x         .         .         "Source/InternalFilters.cpp"
+  .         .         .         "Source/InternalFilters.h"
+  x         .         .         "Source/MainHostWindow.cpp"
+  .         .         .         "Source/MainHostWindow.h"
 )
 
 jucer_project_module(

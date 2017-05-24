@@ -36,10 +36,12 @@ jucer_project_settings(
 )
 
 jucer_project_files("PluckedStringsDemo/Source"
-  "Source/StringSynthesiser.h"
-  "Source/StringComponent.h"
-  "Source/StringDemoComponent.h"
-  "Source/Main.cpp"
+# Compile   Xcode     Binary
+#           Resource  Resource
+  .         .         .         "Source/StringSynthesiser.h"
+  .         .         .         "Source/StringComponent.h"
+  .         .         .         "Source/StringDemoComponent.h"
+  x         .         .         "Source/Main.cpp"
 )
 
 jucer_project_module(

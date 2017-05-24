@@ -35,14 +35,18 @@ jucer_project_settings(
   # PREPROCESSOR_DEFINITIONS
 )
 
-jucer_project_resources("OpenGLAppExample/Source/Resources"
-  "Source/Resources/teapot.obj"
+jucer_project_files("OpenGLAppExample/Source/Resources"
+# Compile   Xcode     Binary
+#           Resource  Resource
+  .         .         x         "Source/Resources/teapot.obj"
 )
 
 jucer_project_files("OpenGLAppExample/Source"
-  "Source/MainComponent.cpp"
-  "Source/Main.cpp"
-  "Source/Resources/WavefrontObjParser.h"
+# Compile   Xcode     Binary
+#           Resource  Resource
+  x         .         .         "Source/MainComponent.cpp"
+  x         .         .         "Source/Main.cpp"
+  .         .         .         "Source/Resources/WavefrontObjParser.h"
 )
 
 jucer_project_module(

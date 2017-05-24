@@ -55,11 +55,13 @@ jucer_audio_plugin_settings(
 )
 
 jucer_project_files("JuceDemoPlugin"
-  "Source/PluginEditor.cpp"
-  "Source/PluginEditor.h"
-  "Source/PluginProcessor.cpp"
-  "Source/PluginProcessor.h"
-  "Source/SinewaveSynth.h"
+# Compile   Xcode     Binary
+#           Resource  Resource
+  x         .         .         "Source/PluginEditor.cpp"
+  .         .         .         "Source/PluginEditor.h"
+  x         .         .         "Source/PluginProcessor.cpp"
+  .         .         .         "Source/PluginProcessor.h"
+  .         .         .         "Source/SinewaveSynth.h"
 )
 
 jucer_project_module(

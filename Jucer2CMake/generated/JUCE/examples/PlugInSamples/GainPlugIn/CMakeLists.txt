@@ -55,7 +55,9 @@ jucer_audio_plugin_settings(
 )
 
 jucer_project_files("GainPlugIn/Source"
-  "Source/GainProcessor.cpp"
+# Compile   Xcode     Binary
+#           Resource  Resource
+  x         .         .         "Source/GainProcessor.cpp"
 )
 
 jucer_project_module(

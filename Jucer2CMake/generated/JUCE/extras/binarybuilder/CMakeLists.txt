@@ -36,7 +36,9 @@ jucer_project_settings(
 )
 
 jucer_project_files("BinaryBuilder/Source"
-  "Source/Main.cpp"
+# Compile   Xcode     Binary
+#           Resource  Resource
+  x         .         .         "Source/Main.cpp"
 )
 
 jucer_project_module(

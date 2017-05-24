@@ -267,58 +267,27 @@ int main(int argc, char* argv[])
 
   // jucer_project_files()
   {
-    const auto writeFileGroups = [&out](const std::string& fullGroupName,
-      const std::vector<std::string>& filePaths,
-      const std::vector<std::string>& doNotCompileFilePaths,
-      const std::vector<std::string>& resourcePaths,
-      const std::vector<std::string>& xcodeResourcePaths)
+    const auto writeFiles = [&out](const std::string& fullGroupName,
+      const std::vector<std::tuple<bool, bool, bool, std::string>>& files)
     {
-      if (!filePaths.empty())
+      if (!files.empty())
       {
-        out << "jucer_project_files(\"" << fullGroupName << "\"\n";
+        const auto nineSpaces = "         ";
 
-        for (const auto& filePath : filePaths)
+        out << "jucer_project_files(\"" << fullGroupName << "\"\n"
+            << "# Compile   Xcode     Binary\n"
+            << "#           Resource  Resource\n";
+
+        for (const auto& file : files)
         {
-          out << "  \"" << filePath << "\"\n";
-        }
+          const auto compile = std::get<0>(file);
+          const auto xcodeResource = std::get<1>(file);
+          const auto binaryResource = std::get<2>(file);
+          const auto path = std::get<3>(file);
 
-        if (!doNotCompileFilePaths.empty())
-        {
-          out << ")\n"
-              << "set_source_files_properties(\n";
-
-          for (const auto& doNotCompileFilePath : doNotCompileFilePaths)
-          {
-            out << "  \"${JUCER_PROJECT_DIR}/" << doNotCompileFilePath << "\"\n";
-          }
-
-          out << "  PROPERTIES HEADER_FILE_ONLY TRUE\n";
-        }
-
-        out << ")\n"
-            << "\n";
-      }
-
-      if (!resourcePaths.empty())
-      {
-        out << "jucer_project_resources(\"" << fullGroupName << "\"\n";
-
-        for (const auto& resourcePath : resourcePaths)
-        {
-          out << "  \"" << resourcePath << "\"\n";
-        }
-
-        out << ")\n"
-            << "\n";
-      }
-
-      if (!xcodeResourcePaths.empty())
-      {
-        out << "jucer_project_xcode_resources(\"" << fullGroupName << "\"\n";
-
-        for (const auto& xcodeResourcePath : xcodeResourcePaths)
-        {
-          out << "  \"" << xcodeResourcePath << "\"\n";
+          out << "  " << (compile ? "x" : ".") << nineSpaces
+              << (xcodeResource ? "x" : ".") << nineSpaces << (binaryResource ? "x" : ".")
+              << nineSpaces << "\"" << path << "\"\n";
         }
 
         out << ")\n"
@@ -329,62 +298,35 @@ int main(int argc, char* argv[])
     std::vector<std::string> groupNames;
 
     std::function<void(const juce::ValueTree&)> processGroup =
-      [&groupNames, &processGroup, &writeFileGroups](const juce::ValueTree& group)
+      [&groupNames, &processGroup, &writeFiles](const juce::ValueTree& group)
     {
       groupNames.push_back(group.getProperty("name").toString().toStdString());
 
       const auto fullGroupName = join("/", groupNames);
 
-      std::vector<std::string> filePaths, doNotCompileFilePaths, resourcePaths,
-        xcodeResourcePaths;
+      std::vector<std::tuple<bool, bool, bool, std::string>> files;
 
       for (const auto& fileOrGroup : group)
       {
         if (fileOrGroup.hasType("FILE"))
         {
           const auto& file = fileOrGroup;
-          const auto path = file.getProperty("file").toString().toStdString();
 
-          if (int{file.getProperty("xcodeResource")} == 1)
-          {
-            xcodeResourcePaths.push_back(path);
-          }
-          else if (int{file.getProperty("resource")} == 1)
-          {
-            resourcePaths.push_back(path);
-          }
-          else
-          {
-            filePaths.push_back(path);
-
-            if (juce::File::createFileWithoutCheckingPath(path).hasFileExtension("cpp") &&
-                int{file.getProperty("compile")} == 0)
-            {
-              doNotCompileFilePaths.push_back(path);
-            }
-          }
+          files.emplace_back(int{file.getProperty("compile")} == 1,
+            int{file.getProperty("xcodeResource")} == 1,
+            int{file.getProperty("resource")} == 1,
+            file.getProperty("file").toString().toStdString());
         }
         else
         {
-          writeFileGroups(fullGroupName,
-            filePaths,
-            doNotCompileFilePaths,
-            resourcePaths,
-            xcodeResourcePaths);
-          filePaths.clear();
-          doNotCompileFilePaths.clear();
-          resourcePaths.clear();
-          xcodeResourcePaths.clear();
+          writeFiles(fullGroupName, files);
+          files.clear();
 
           processGroup(fileOrGroup);
         }
       }
 
-      writeFileGroups(fullGroupName,
-        filePaths,
-        doNotCompileFilePaths,
-        resourcePaths,
-        xcodeResourcePaths);
+      writeFiles(fullGroupName, files);
 
       groupNames.pop_back();
     };

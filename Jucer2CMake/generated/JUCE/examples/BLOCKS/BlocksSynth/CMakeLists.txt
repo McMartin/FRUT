@@ -36,14 +36,18 @@ jucer_project_settings(
 )
 
 jucer_project_files("BlocksSynth/Source/Audio"
-  "Source/Oscillators.h"
-  "Source/Audio.h"
+# Compile   Xcode     Binary
+#           Resource  Resource
+  .         .         .         "Source/Oscillators.h"
+  .         .         .         "Source/Audio.h"
 )
 
 jucer_project_files("BlocksSynth/Source"
-  "Source/Main.cpp"
-  "Source/MainComponent.h"
-  "Source/WaveshapeProgram.h"
+# Compile   Xcode     Binary
+#           Resource  Resource
+  x         .         .         "Source/Main.cpp"
+  .         .         .         "Source/MainComponent.h"
+  .         .         .         "Source/WaveshapeProgram.h"
 )
 
 jucer_project_module(

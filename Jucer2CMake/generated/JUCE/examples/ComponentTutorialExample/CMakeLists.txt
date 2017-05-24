@@ -36,11 +36,13 @@ jucer_project_settings(
 )
 
 jucer_project_files("ComponentTutorialExample/Source"
-  "Source/ToggleLightGridComponent.h"
-  "Source/ToggleLightComponent.h"
-  "Source/MainComponent.cpp"
-  "Source/MainComponent.h"
-  "Source/Main.cpp"
+# Compile   Xcode     Binary
+#           Resource  Resource
+  .         .         .         "Source/ToggleLightGridComponent.h"
+  .         .         .         "Source/ToggleLightComponent.h"
+  x         .         .         "Source/MainComponent.cpp"
+  .         .         .         "Source/MainComponent.h"
+  x         .         .         "Source/Main.cpp"
 )
 
 jucer_project_module(

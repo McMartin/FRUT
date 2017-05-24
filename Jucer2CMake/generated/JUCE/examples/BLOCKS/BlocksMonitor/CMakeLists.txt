@@ -36,9 +36,11 @@ jucer_project_settings(
 )
 
 jucer_project_files("BlocksMonitor/Source"
-  "Source/Main.cpp"
-  "Source/BlockComponents.h"
-  "Source/MainComponent.h"
+# Compile   Xcode     Binary
+#           Resource  Resource
+  x         .         .         "Source/Main.cpp"
+  .         .         .         "Source/BlockComponents.h"
+  .         .         .         "Source/MainComponent.h"
 )
 
 jucer_project_module(

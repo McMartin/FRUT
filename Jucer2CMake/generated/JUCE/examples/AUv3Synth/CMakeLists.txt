@@ -54,19 +54,20 @@ jucer_audio_plugin_settings(
   # VST_CATEGORY
 )
 
-jucer_project_resources("AUv3Synth/Source/BinaryData"
-  "Source/BinaryData/proaudio.path"
-  "Source/BinaryData/singing.ogg"
-)
-
-jucer_project_xcode_resources("AUv3Synth/Source/BinaryData"
-  "Source/BinaryData/power.png"
+jucer_project_files("AUv3Synth/Source/BinaryData"
+# Compile   Xcode     Binary
+#           Resource  Resource
+  .         x         .         "Source/BinaryData/power.png"
+  .         .         x         "Source/BinaryData/proaudio.path"
+  .         .         x         "Source/BinaryData/singing.ogg"
 )
 
 jucer_project_files("AUv3Synth/Source"
-  "Source/MaterialLookAndFeel.h"
-  "Source/AUv3SynthEditor.h"
-  "Source/AUv3SynthProcessor.cpp"
+# Compile   Xcode     Binary
+#           Resource  Resource
+  .         .         .         "Source/MaterialLookAndFeel.h"
+  .         .         .         "Source/AUv3SynthEditor.h"
+  x         .         .         "Source/AUv3SynthProcessor.cpp"
 )
 
 jucer_project_module(

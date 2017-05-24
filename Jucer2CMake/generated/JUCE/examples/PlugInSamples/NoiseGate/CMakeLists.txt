@@ -55,7 +55,9 @@ jucer_audio_plugin_settings(
 )
 
 jucer_project_files("NoiseGate/Source"
-  "Source/NoiseGate.cpp"
+# Compile   Xcode     Binary
+#           Resource  Resource
+  x         .         .         "Source/NoiseGate.cpp"
 )
 
 jucer_project_module(

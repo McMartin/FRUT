@@ -36,15 +36,19 @@ jucer_project_settings(
 )
 
 jucer_project_files("JUCE Network Graphics Demo/Source"
-  "Source/Demos.h"
-  "Source/Main.cpp"
-  "Source/MasterComponent.h"
-  "Source/SlaveComponent.h"
-  "Source/SharedCanvas.h"
+# Compile   Xcode     Binary
+#           Resource  Resource
+  .         .         .         "Source/Demos.h"
+  x         .         .         "Source/Main.cpp"
+  .         .         .         "Source/MasterComponent.h"
+  .         .         .         "Source/SlaveComponent.h"
+  .         .         .         "Source/SharedCanvas.h"
 )
 
-jucer_project_resources("JUCE Network Graphics Demo"
-  "Source/juce_icon.png"
+jucer_project_files("JUCE Network Graphics Demo"
+# Compile   Xcode     Binary
+#           Resource  Resource
+  .         .         x         "Source/juce_icon.png"
 )
 
 jucer_project_module(

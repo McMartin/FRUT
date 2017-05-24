@@ -36,9 +36,11 @@ jucer_project_settings(
 )
 
 jucer_project_files("OSCMonitor/Source"
-  "Source/OSCLogListBox.h"
-  "Source/MainComponent.h"
-  "Source/Main.cpp"
+# Compile   Xcode     Binary
+#           Resource  Resource
+  .         .         .         "Source/OSCLogListBox.h"
+  .         .         .         "Source/MainComponent.h"
+  x         .         .         "Source/Main.cpp"
 )
 
 jucer_project_module(
