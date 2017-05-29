@@ -395,11 +395,11 @@ int main(int argc, char* argv[])
 
   // jucer_export_target() and jucer_export_target_configuration()
   {
-    using Exporter = std::tuple<const char*, const char*, const char*>;
-    const std::vector<Exporter> supportedExporters = {
-      Exporter{"XCODE_MAC", "Xcode (MacOSX)", "~/SDKs/VST_SDK/VST3_SDK"},
-      Exporter{"VS2015", "Visual Studio 2015", "c:\\SDKs\\VST_SDK\\VST3_SDK"},
-      Exporter{"VS2013", "Visual Studio 2013", "c:\\SDKs\\VST_SDK\\VST3_SDK"}};
+    const std::vector<std::tuple<const char*, const char*, const char*>>
+      supportedExporters = {
+        std::make_tuple("XCODE_MAC", "Xcode (MacOSX)", "~/SDKs/VST_SDK/VST3_SDK"),
+        std::make_tuple("VS2015", "Visual Studio 2015", "c:\\SDKs\\VST_SDK\\VST3_SDK"),
+        std::make_tuple("VS2013", "Visual Studio 2013", "c:\\SDKs\\VST_SDK\\VST3_SDK")};
 
     for (const auto& element : supportedExporters)
     {
