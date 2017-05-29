@@ -407,6 +407,8 @@ int main(int argc, char* argv[])
                               .getChildWithName(std::get<0>(element));
       if (exporter.isValid())
       {
+        const auto exporterType = exporter.getType().toString();
+
         out << "jucer_export_target(\n"
             << "  \"" << std::get<1>(element) << "\"\n";
 
@@ -471,7 +473,7 @@ int main(int argc, char* argv[])
           out << "  " << getSetting(configuration, "PREPROCESSOR_DEFINITIONS", "defines")
               << "\n";
 
-          if (exporter.getType().toString() == "XCODE_MAC")
+          if (exporterType == "XCODE_MAC")
           {
             const auto sdks = std::array<const char*, 8>{"10.5 SDK",
               "10.6 SDK",
