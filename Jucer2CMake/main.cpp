@@ -523,5 +523,10 @@ int main(int argc, char* argv[])
 
   out << "jucer_project_end()" << std::endl;
 
+  std::cout << juce::File::getCurrentWorkingDirectory()
+                 .getChildFile("CMakeLists.txt")
+                 .getFullPathName()
+            << " has been successfully generated." << std::endl;
+
   return 0;
 }

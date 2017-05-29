@@ -35,3 +35,11 @@ build_script:
 
   - cmake --build . --config Debug
   - cmake --build . --config Release
+  - cd %APPVEYOR_BUILD_FOLDER%
+
+  - >
+    cmake
+    -DJUCE_ROOT="../JUCE"
+    -DJucer2CMake_EXE="ci/build/Jucer2CMake/Debug/Jucer2CMake.exe"
+    -P Jucer2CMake/generated/apply-Jucer2CMake-to-JUCE-jucers.cmake
+  - git diff --quiet
