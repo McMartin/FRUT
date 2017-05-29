@@ -482,7 +482,23 @@ function(jucer_export_target_configuration exporter NAME_TAG configuration_name)
 
       elseif(tag STREQUAL "OSX_BASE_SDK_VERSION")
         if(value MATCHES "10\\.([5-9]|10|11|12) SDK")
-          set(CMAKE_OSX_SYSROOT "macosx10.${CMAKE_MATCH_1}" PARENT_SCOPE)
+          if(CMAKE_GENERATOR STREQUAL "Xcode")
+            set(CMAKE_OSX_SYSROOT "macosx10.${CMAKE_MATCH_1}" PARENT_SCOPE)
+          else()
+            execute_process(
+              COMMAND "xcrun" "--sdk" "macosx10.${CMAKE_MATCH_1}" "--show-sdk-path"
+              OUTPUT_VARIABLE sysroot
+              OUTPUT_STRIP_TRAILING_WHITESPACE
+            )
+            if(NOT IS_DIRECTORY "${sysroot}")
+              message(WARNING
+                "Running `xcrun --sdk macosx10.${CMAKE_MATCH_1} --show-sdk-path` "
+                "didn't output a valid directory."
+              )
+            else()
+              set(CMAKE_OSX_SYSROOT ${sysroot} PARENT_SCOPE)
+            endif()
+          endif()
         elseif(NOT value STREQUAL "Use Default")
           message(FATAL_ERROR
             "Unsupported value for OSX_BASE_SDK_VERSION: \"${value}\"\n"
@@ -1018,7 +1034,7 @@ function(__set_common_target_properties target_name)
   target_compile_options(${target_name} PRIVATE ${JUCER_COMPILER_FLAGS})
 
   if(APPLE)
-    set_property(TARGET ${target_name} PROPERTY CXX_STANDARD 11)
+    set_target_properties(${target_name} PROPERTIES CXX_STANDARD 11)
     target_compile_definitions(${target_name} PRIVATE
       $<$<CONFIG:Debug>:_DEBUG=1>
       $<$<CONFIG:Debug>:DEBUG=1>
