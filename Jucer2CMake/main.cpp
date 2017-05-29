@@ -306,8 +306,10 @@ int main(int argc, char* argv[])
 
       std::vector<std::tuple<bool, bool, bool, std::string>> files;
 
-      for (const auto& fileOrGroup : group)
+      for (auto i = 0; i < group.getNumChildren(); ++i)
       {
+        const auto fileOrGroup = group.getChild(i);
+
         if (fileOrGroup.hasType("FILE"))
         {
           const auto& file = fileOrGroup;
@@ -337,8 +339,10 @@ int main(int argc, char* argv[])
   // jucer_project_module()
   {
     std::vector<std::string> moduleNames;
-    for (const auto& module : jucerProject.getChildWithName("MODULES"))
+    const auto modules = jucerProject.getChildWithName("MODULES");
+    for (auto i = 0; i < modules.getNumChildren(); ++i)
     {
+      const auto module = modules.getChild(i);
       moduleNames.push_back(module.getProperty("id").toString().toStdString());
     }
 
@@ -452,8 +456,11 @@ int main(int argc, char* argv[])
         out << ")\n"
             << "\n";
 
-        for (const auto& configuration : exporter.getChildWithName("CONFIGURATIONS"))
+        const auto configurations = exporter.getChildWithName("CONFIGURATIONS");
+        for (auto i = 0; i < configurations.getNumChildren(); ++i)
         {
+          const auto configuration = configurations.getChild(i);
+
           out << "jucer_export_target_configuration(\n"
               << "  \"" << std::get<1>(element) << "\"\n"
               << "  NAME \"" << configuration.getProperty("name").toString() << "\"\n";
