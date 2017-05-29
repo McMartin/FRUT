@@ -91,7 +91,7 @@ std::string getSetting(const juce::ValueTree& valueTree, const std::string& cmak
 
     if (!value.empty())
     {
-      return cmakeTag + " \"" + escape("\"", value) + "\"";
+      return cmakeTag + " \"" + escape("\\\";", value) + "\"";
     }
   }
 
