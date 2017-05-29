@@ -413,11 +413,12 @@ int main(int argc, char* argv[])
             << "  \"" << std::get<1>(element) << "\"\n";
 
         if (exporterType == "XCODE_MAC" &&
-            !exporter.getProperty("prebuildCommand").toString().isEmpty())
+            (!exporter.getProperty("prebuildCommand").toString().isEmpty() ||
+              !exporter.getProperty("postbuildCommand").toString().isEmpty()))
         {
           out << "  TARGET_PROJECT_FOLDER \""
               << exporter.getProperty("targetFolder").toString().toStdString()
-              << "\"  # only used by PREBUILD_SHELL_SCRIPT\n";
+              << "\"  # only used by PREBUILD_SHELL_SCRIPT and POSTBUILD_SHELL_SCRIPT\n";
         }
 
         if (jucerProject.getChildWithName("MODULES")
@@ -442,6 +443,9 @@ int main(int argc, char* argv[])
         if (exporterType == "XCODE_MAC")
         {
           out << "  " << getSetting(exporter, "PREBUILD_SHELL_SCRIPT", "prebuildCommand")
+              << "\n"
+              << "  "
+              << getSetting(exporter, "POSTBUILD_SHELL_SCRIPT", "postbuildCommand")
               << "\n";
         }
 
