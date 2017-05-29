@@ -29,3 +29,11 @@ script:
 
   - cmake --build . --config Debug
   - cmake --build . --config Release
+  - cd $TRAVIS_BUILD_DIR
+
+  - >
+    cmake
+    -DJUCE_ROOT="../JUCE"
+    -DJucer2CMake_EXE="ci/build/Jucer2CMake/Debug/Jucer2CMake"
+    -P Jucer2CMake/generated/apply-Jucer2CMake-to-JUCE-jucers.cmake
+  - git diff --quiet
