@@ -1018,7 +1018,7 @@ function(__set_common_target_properties target_name)
   target_compile_options(${target_name} PRIVATE ${JUCER_COMPILER_FLAGS})
 
   if(APPLE)
-    set_property(TARGET ${target_name} PROPERTY CXX_STANDARD 11)
+    set_target_properties(${target_name} PROPERTIES CXX_STANDARD 11)
     target_compile_definitions(${target_name} PRIVATE
       $<$<CONFIG:Debug>:_DEBUG=1>
       $<$<CONFIG:Debug>:DEBUG=1>
