@@ -412,6 +412,14 @@ int main(int argc, char* argv[])
         out << "jucer_export_target(\n"
             << "  \"" << std::get<1>(element) << "\"\n";
 
+        if (exporterType == "XCODE_MAC" &&
+            !exporter.getProperty("prebuildCommand").toString().isEmpty())
+        {
+          out << "  TARGET_PROJECT_FOLDER \""
+              << exporter.getProperty("targetFolder").toString().toStdString()
+              << "\"  # only used by PREBUILD_SHELL_SCRIPT\n";
+        }
+
         if (jucerProject.getChildWithName("MODULES")
               .getChildWithProperty("id", "juce_audio_processors")
               .isValid() &&
@@ -429,8 +437,15 @@ int main(int argc, char* argv[])
         out << "  " << getSetting(exporter, "EXTRA_PREPROCESSOR_DEFINITIONS", "extraDefs")
             << "\n"
             << "  " << getSetting(exporter, "EXTRA_COMPILER_FLAGS", "extraCompilerFlags")
-            << "\n"
-            << ")\n"
+            << "\n";
+
+        if (exporterType == "XCODE_MAC")
+        {
+          out << "  " << getSetting(exporter, "PREBUILD_SHELL_SCRIPT", "prebuildCommand")
+              << "\n";
+        }
+
+        out << ")\n"
             << "\n";
 
         for (const auto& configuration : exporter.getChildWithName("CONFIGURATIONS"))
