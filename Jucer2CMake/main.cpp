@@ -414,7 +414,10 @@ int main(int argc, char* argv[])
         const auto exporterType = exporter.getType().toString();
 
         out << "jucer_export_target(\n"
-            << "  \"" << std::get<1>(element) << "\"\n";
+            << "  \"" << std::get<1>(element) << "\"\n"
+            << "  TARGET_PROJECT_FOLDER \""
+            << escape("\\", exporter.getProperty("targetFolder").toString().toStdString())
+            << "\"\n";
 
         if (exporterType == "XCODE_MAC" &&
             (!exporter.getProperty("prebuildCommand").toString().isEmpty() ||

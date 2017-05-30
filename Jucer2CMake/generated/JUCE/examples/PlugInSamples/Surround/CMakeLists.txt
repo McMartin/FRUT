@@ -170,6 +170,7 @@ jucer_project_module(
 
 jucer_export_target(
   "Xcode (MacOSX)"
+  TARGET_PROJECT_FOLDER "Builds/MacOSX"
   # EXTRA_PREPROCESSOR_DEFINITIONS
   EXTRA_COMPILER_FLAGS "-Wall -Wshadow -Wno-missing-field-initializers -Wshadow -Wshorten-64-to-32 -Wstrict-aliasing -Wuninitialized -Wunused-parameter -Wconversion -Wsign-compare -Wint-conversion -Woverloaded-virtual -Wreorder -Wconstant-conversion -Wsign-conversion"
   # PREBUILD_SHELL_SCRIPT
@@ -196,6 +197,7 @@ jucer_export_target_configuration(
 
 jucer_export_target(
   "Visual Studio 2015"
+  TARGET_PROJECT_FOLDER "Builds/VisualStudio2015"
   # EXTRA_PREPROCESSOR_DEFINITIONS
   # EXTRA_COMPILER_FLAGS
 )
