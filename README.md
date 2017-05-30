@@ -12,7 +12,7 @@ It currently contains:
 JUCE project is defined in the Projucer,
 
 - `Jucer2Reprojucer`, a console application based on JUCE that converts `.jucer` project
-files into `CMakeLists.txt` files,
+files into `CMakeLists.txt` files that include and use `Reprojucer.cmake`,
 
 - several `CMakeLists.txt` files to build JUCE's `examples` and `extras` projects (in
 [Jucer2Reprojucer/generated/JUCE](Jucer2Reprojucer/generated/JUCE)).
