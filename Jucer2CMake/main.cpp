@@ -91,7 +91,7 @@ std::string getSetting(const juce::ValueTree& valueTree, const std::string& cmak
 
     if (!value.empty())
     {
-      return cmakeTag + " \"" + escape("\"", value) + "\"";
+      return cmakeTag + " \"" + escape("\\\";", value) + "\"";
     }
   }
 
@@ -395,11 +395,11 @@ int main(int argc, char* argv[])
 
   // jucer_export_target() and jucer_export_target_configuration()
   {
-    using Exporter = std::tuple<const char*, const char*, const char*>;
-    const std::vector<Exporter> supportedExporters = {
-      Exporter{"XCODE_MAC", "Xcode (MacOSX)", "~/SDKs/VST_SDK/VST3_SDK"},
-      Exporter{"VS2015", "Visual Studio 2015", "c:\\SDKs\\VST_SDK\\VST3_SDK"},
-      Exporter{"VS2013", "Visual Studio 2013", "c:\\SDKs\\VST_SDK\\VST3_SDK"}};
+    const std::vector<std::tuple<const char*, const char*, const char*>>
+      supportedExporters = {
+        std::make_tuple("XCODE_MAC", "Xcode (MacOSX)", "~/SDKs/VST_SDK/VST3_SDK"),
+        std::make_tuple("VS2015", "Visual Studio 2015", "c:\\SDKs\\VST_SDK\\VST3_SDK"),
+        std::make_tuple("VS2013", "Visual Studio 2013", "c:\\SDKs\\VST_SDK\\VST3_SDK")};
 
     for (const auto& element : supportedExporters)
     {
@@ -407,8 +407,19 @@ int main(int argc, char* argv[])
                               .getChildWithName(std::get<0>(element));
       if (exporter.isValid())
       {
+        const auto exporterType = exporter.getType().toString();
+
         out << "jucer_export_target(\n"
             << "  \"" << std::get<1>(element) << "\"\n";
+
+        if (exporterType == "XCODE_MAC" &&
+            (!exporter.getProperty("prebuildCommand").toString().isEmpty() ||
+              !exporter.getProperty("postbuildCommand").toString().isEmpty()))
+        {
+          out << "  TARGET_PROJECT_FOLDER \""
+              << exporter.getProperty("targetFolder").toString().toStdString()
+              << "\"  # only used by PREBUILD_SHELL_SCRIPT and POSTBUILD_SHELL_SCRIPT\n";
+        }
 
         if (jucerProject.getChildWithName("MODULES")
               .getChildWithProperty("id", "juce_audio_processors")
@@ -427,8 +438,18 @@ int main(int argc, char* argv[])
         out << "  " << getSetting(exporter, "EXTRA_PREPROCESSOR_DEFINITIONS", "extraDefs")
             << "\n"
             << "  " << getSetting(exporter, "EXTRA_COMPILER_FLAGS", "extraCompilerFlags")
-            << "\n"
-            << ")\n"
+            << "\n";
+
+        if (exporterType == "XCODE_MAC")
+        {
+          out << "  " << getSetting(exporter, "PREBUILD_SHELL_SCRIPT", "prebuildCommand")
+              << "\n"
+              << "  "
+              << getSetting(exporter, "POSTBUILD_SHELL_SCRIPT", "postbuildCommand")
+              << "\n";
+        }
+
+        out << ")\n"
             << "\n";
 
         for (const auto& configuration : exporter.getChildWithName("CONFIGURATIONS"))
@@ -471,7 +492,7 @@ int main(int argc, char* argv[])
           out << "  " << getSetting(configuration, "PREPROCESSOR_DEFINITIONS", "defines")
               << "\n";
 
-          if (exporter.getType().toString() == "XCODE_MAC")
+          if (exporterType == "XCODE_MAC")
           {
             const auto sdks = std::array<const char*, 8>{"10.5 SDK",
               "10.6 SDK",

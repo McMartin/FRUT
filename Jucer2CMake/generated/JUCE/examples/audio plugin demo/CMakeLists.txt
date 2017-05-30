@@ -163,6 +163,8 @@ jucer_export_target(
   "Xcode (MacOSX)"
   # EXTRA_PREPROCESSOR_DEFINITIONS
   # EXTRA_COMPILER_FLAGS
+  # PREBUILD_SHELL_SCRIPT
+  # POSTBUILD_SHELL_SCRIPT
 )
 
 jucer_export_target_configuration(

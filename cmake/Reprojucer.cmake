@@ -378,6 +378,14 @@ function(jucer_export_target exporter)
     "EXTRA_COMPILER_FLAGS"
   )
 
+  if(exporter STREQUAL "Xcode (MacOSX)")
+    list(APPEND export_target_settings_tags
+      "TARGET_PROJECT_FOLDER"
+      "PREBUILD_SHELL_SCRIPT"
+      "POSTBUILD_SHELL_SCRIPT"
+    )
+  endif()
+
   foreach(element ${ARGN})
     if(NOT DEFINED tag)
       set(tag ${element})
@@ -390,7 +398,12 @@ function(jucer_export_target exporter)
     else()
       set(value ${element})
 
-      if(tag STREQUAL "VST3_SDK_FOLDER")
+      if(tag STREQUAL "TARGET_PROJECT_FOLDER")
+        string(REPLACE "\\" "/" value "${value}")
+        __abs_path_based_on_jucer_project_dir("${value}" value)
+        set(JUCER_TARGET_PROJECT_FOLDER ${value} PARENT_SCOPE)
+
+      elseif(tag STREQUAL "VST3_SDK_FOLDER")
         string(REPLACE "\\" "/" value "${value}")
         __abs_path_based_on_jucer_project_dir("${value}" value)
         set(JUCER_VST3_SDK_FOLDER ${value} PARENT_SCOPE)
@@ -404,6 +417,20 @@ function(jucer_export_target exporter)
         string(REPLACE " " ";" value "${value}")
         list(APPEND JUCER_COMPILER_FLAGS ${value})
         set(JUCER_COMPILER_FLAGS ${JUCER_COMPILER_FLAGS} PARENT_SCOPE)
+
+      elseif(tag STREQUAL "PREBUILD_SHELL_SCRIPT")
+        set(script_content "${value}")
+        configure_file("${Reprojucer_templates_DIR}/script.sh" "prebuild.sh" @ONLY)
+        set(JUCER_PREBUILD_SHELL_SCRIPT
+          "${CMAKE_CURRENT_BINARY_DIR}/prebuild.sh" PARENT_SCOPE
+        )
+
+      elseif(tag STREQUAL "POSTBUILD_SHELL_SCRIPT")
+        set(script_content "${value}")
+        configure_file("${Reprojucer_templates_DIR}/script.sh" "postbuild.sh" @ONLY)
+        set(JUCER_POSTBUILD_SHELL_SCRIPT
+          "${CMAKE_CURRENT_BINARY_DIR}/postbuild.sh" PARENT_SCOPE
+        )
 
       endif()
 
@@ -1041,6 +1068,36 @@ function(__set_common_target_properties target_name)
       $<$<NOT:$<CONFIG:Debug>>:_NDEBUG=1>
       $<$<NOT:$<CONFIG:Debug>>:NDEBUG=1>
     )
+
+    if(DEFINED JUCER_PREBUILD_SHELL_SCRIPT)
+      if(NOT DEFINED JUCER_TARGET_PROJECT_FOLDER)
+        message(FATAL_ERROR "JUCER_TARGET_PROJECT_FOLDER must be defined. Give "
+          "TARGET_PROJECT_FOLDER when calling jucer_export_target(\"Xcode (MacOSX)\")."
+        )
+      endif()
+      if(NOT IS_DIRECTORY "${JUCER_TARGET_PROJECT_FOLDER}")
+        file(MAKE_DIRECTORY "${JUCER_TARGET_PROJECT_FOLDER}")
+      endif()
+      add_custom_command(TARGET ${target_name} PRE_BUILD
+        COMMAND "/bin/sh" ARGS "${JUCER_PREBUILD_SHELL_SCRIPT}"
+        WORKING_DIRECTORY "${JUCER_TARGET_PROJECT_FOLDER}"
+      )
+    endif()
+
+    if(DEFINED JUCER_POSTBUILD_SHELL_SCRIPT)
+      if(NOT DEFINED JUCER_TARGET_PROJECT_FOLDER)
+        message(FATAL_ERROR "JUCER_TARGET_PROJECT_FOLDER must be defined. Give "
+          "TARGET_PROJECT_FOLDER when calling jucer_export_target(\"Xcode (MacOSX)\")."
+        )
+      endif()
+      if(NOT IS_DIRECTORY "${JUCER_TARGET_PROJECT_FOLDER}")
+        file(MAKE_DIRECTORY "${JUCER_TARGET_PROJECT_FOLDER}")
+      endif()
+      add_custom_command(TARGET ${target_name} POST_BUILD
+        COMMAND "/bin/sh" ARGS "${JUCER_POSTBUILD_SHELL_SCRIPT}"
+        WORKING_DIRECTORY "${JUCER_TARGET_PROJECT_FOLDER}"
+      )
+    endif()
   endif()
 
 endfunction()
