@@ -381,6 +381,7 @@ function(jucer_export_target exporter)
   if(exporter STREQUAL "Xcode (MacOSX)")
     list(APPEND export_target_settings_tags
       "TARGET_PROJECT_FOLDER"
+      "EXTRA_FRAMEWORKS"
       "PREBUILD_SHELL_SCRIPT"
       "POSTBUILD_SHELL_SCRIPT"
     )
@@ -417,6 +418,12 @@ function(jucer_export_target exporter)
         string(REPLACE " " ";" value "${value}")
         list(APPEND JUCER_COMPILER_FLAGS ${value})
         set(JUCER_COMPILER_FLAGS ${JUCER_COMPILER_FLAGS} PARENT_SCOPE)
+
+      elseif(tag STREQUAL "EXTRA_FRAMEWORKS")
+        string(REPLACE "," ";" value "${value}")
+        string(REPLACE " " "" value "${value}")
+        list(APPEND JUCER_PROJECT_OSX_FRAMEWORKS ${value})
+        set(JUCER_PROJECT_OSX_FRAMEWORKS ${JUCER_PROJECT_OSX_FRAMEWORKS} PARENT_SCOPE)
 
       elseif(tag STREQUAL "PREBUILD_SHELL_SCRIPT")
         set(script_content "${value}")

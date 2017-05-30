@@ -446,7 +446,9 @@ int main(int argc, char* argv[])
 
         if (exporterType == "XCODE_MAC")
         {
-          out << "  " << getSetting(exporter, "PREBUILD_SHELL_SCRIPT", "prebuildCommand")
+          out << "  " << getSetting(exporter, "EXTRA_FRAMEWORKS", "extraFrameworks")
+              << "\n"
+              << "  " << getSetting(exporter, "PREBUILD_SHELL_SCRIPT", "prebuildCommand")
               << "\n"
               << "  "
               << getSetting(exporter, "POSTBUILD_SHELL_SCRIPT", "postbuildCommand")
