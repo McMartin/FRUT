@@ -21,22 +21,22 @@ cmake_minimum_required(VERSION 3.4)
 project(ci)
 
 
-add_subdirectory("../Jucer2CMake"
-  "Jucer2CMake"
+add_subdirectory("../Jucer2Reprojucer"
+  "Jucer2Reprojucer"
 )
 
-add_subdirectory("../Jucer2CMake/generated/JUCE/examples/audio plugin host"
+add_subdirectory("../Jucer2Reprojucer/generated/JUCE/examples/audio plugin host"
   "Plugin Host"
 )
 
-add_subdirectory("../Jucer2CMake/generated/JUCE/examples/NetworkGraphicsDemo"
+add_subdirectory("../Jucer2Reprojucer/generated/JUCE/examples/NetworkGraphicsDemo"
   "NetworkGraphicsDemo"
 )
 
-add_subdirectory("../Jucer2CMake/generated/JUCE/extras/Projucer"
+add_subdirectory("../Jucer2Reprojucer/generated/JUCE/extras/Projucer"
   "Projucer"
 )
 
-add_subdirectory("../Jucer2CMake/generated/JUCE/examples/audio plugin demo"
+add_subdirectory("../Jucer2Reprojucer/generated/JUCE/examples/audio plugin demo"
   "JuceDemoPlugin"
 )

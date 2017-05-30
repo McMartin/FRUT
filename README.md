@@ -11,11 +11,11 @@ It currently contains:
 - `Reprojucer.cmake`, a CMake module that provides high-level functions to reproduce how a
 JUCE project is defined in the Projucer,
 
-- `Jucer2CMake`, a console application based on JUCE that converts `.jucer` project files
-into `CMakeLists.txt` files,
+- `Jucer2Reprojucer`, a console application based on JUCE that converts `.jucer` project
+files into `CMakeLists.txt` files,
 
 - several `CMakeLists.txt` files to build JUCE's `examples` and `extras` projects (in
-[Jucer2CMake/generated/JUCE](Jucer2CMake/generated/JUCE)).
+[Jucer2Reprojucer/generated/JUCE](Jucer2Reprojucer/generated/JUCE)).
 
 
 ## Requirements
@@ -39,12 +39,12 @@ folder structure:
         └── MyGreatProject.jucer
 ```
 
-We first build `Jucer2CMake` with CMake. Since `Jucer2CMake` uses the JUCE modules
-`juce_core`, `juce_data_structures` and `juce_events`, we specify where to find JUCE by
-defining `JUCE_ROOT` when calling `cmake`.
+We first build `Jucer2Reprojucer` with CMake. Since `Jucer2Reprojucer` uses the JUCE
+modules `juce_core`, `juce_data_structures` and `juce_events`, we specify where to find
+JUCE by defining `JUCE_ROOT` when calling `cmake`.
 
 ```sh
-cd <root>/JUCE.cmake/Jucer2CMake
+cd <root>/JUCE.cmake/Jucer2Reprojucer
 
 mkdir build && cd build
 
@@ -61,7 +61,7 @@ Then we convert `MyGreatProject.jucer` to a new `CMakeLists.txt` file:
 ```sh
 cd <root>/MyGreatProject
 
-../JUCE.cmake/Jucer2CMake/build/Debug/Jucer2CMake MyGreatProject.jucer ../JUCE.cmake/cmake/Reprojucer.cmake
+../JUCE.cmake/Jucer2Reprojucer/build/Debug/Jucer2Reprojucer MyGreatProject.jucer ../JUCE.cmake/cmake/Reprojucer.cmake
 ```
 
 Now we can build `MyGreatProject` using CMake:
