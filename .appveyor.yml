@@ -40,6 +40,6 @@ build_script:
   - >
     cmake
     -DJUCE_ROOT="../JUCE"
-    -DJucer2CMake_EXE="ci/build/Jucer2CMake/Debug/Jucer2CMake.exe"
-    -P Jucer2CMake/generated/apply-Jucer2CMake-to-JUCE-jucers.cmake
+    -DJucer2Reprojucer_EXE="ci/build/Jucer2Reprojucer/Debug/Jucer2Reprojucer.exe"
+    -P Jucer2Reprojucer/generated/apply-Jucer2Reprojucer-to-JUCE-jucers.cmake
   - git diff --quiet
