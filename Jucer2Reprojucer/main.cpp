@@ -199,13 +199,22 @@ int main(int argc, char* argv[])
     };
 
     const auto projectType = jucerProject.getProperty("projectType").toString();
-    const auto projectTypeDescription =
-      projectType == "guiapp" ? "GUI Application"
-                              : projectType == "consoleapp"
-                                  ? "Console Application"
-                                  : projectType == "library"
-                                      ? "Static Library"
-                                      : projectType == "audioplug" ? "Audio Plug-in" : "";
+    const auto projectTypeDescription = [&projectType]() -> std::string
+    {
+      if (projectType == "guiapp")
+        return "GUI Application";
+
+      if (projectType == "consoleapp")
+        return "Console Application";
+
+      if (projectType == "library")
+        return "Static Library";
+
+      if (projectType == "audioplug")
+        return "Audio Plug-in";
+
+      return {};
+    }();
 
     out << "jucer_project_settings(\n"
         << "  " << projectSetting("PROJECT_NAME", "name") << "\n"
