@@ -553,6 +553,26 @@ int main(int argc, char* argv[])
             }
           }
 
+          if (exporterType == "VS2015" || exporterType == "VS2013")
+          {
+            const auto warningLevel = [&configuration]() -> std::string
+            {
+              switch (int{configuration.getProperty("winWarningLevel")})
+              {
+              case 2:
+                return "Low";
+              case 3:
+                return "Medium";
+              case 4:
+                return "High";
+              }
+
+              return "High";
+            }();
+
+            out << "  WARNING_LEVEL \"" << warningLevel << "\"\n";
+          }
+
           out << ")\n"
               << "\n";
         }
