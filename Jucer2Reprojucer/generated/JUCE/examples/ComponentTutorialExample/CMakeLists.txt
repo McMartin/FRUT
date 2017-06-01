@@ -107,6 +107,7 @@ jucer_export_target_configuration(
   # PREPROCESSOR_DEFINITIONS
   OSX_BASE_SDK_VERSION "Use Default"
   OSX_DEPLOYMENT_TARGET "Use Default"
+  OSX_ARCHITECTURE "Use Default"
 )
 
 jucer_export_target_configuration(
@@ -116,6 +117,7 @@ jucer_export_target_configuration(
   # PREPROCESSOR_DEFINITIONS
   OSX_BASE_SDK_VERSION "Use Default"
   OSX_DEPLOYMENT_TARGET "Use Default"
+  OSX_ARCHITECTURE "Use Default"
 )
 
 jucer_project_end()
