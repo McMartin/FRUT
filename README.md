@@ -50,7 +50,7 @@ mkdir build && cd build
 
 # On macOS
 cmake .. -G Xcode -DJUCE_ROOT=../../../JUCE
-# On Windows
+# On Linux and on Windows
 cmake .. -DJUCE_ROOT=../../../JUCE
 
 cmake --build .
@@ -61,7 +61,10 @@ Then we convert `MyGreatProject.jucer` to a new `CMakeLists.txt` file:
 ```sh
 cd <root>/MyGreatProject
 
+# On macOs and on Windows
 ../JUCE.cmake/Jucer2Reprojucer/build/Debug/Jucer2Reprojucer MyGreatProject.jucer ../JUCE.cmake/cmake/Reprojucer.cmake
+# On Linux
+../JUCE.cmake/Jucer2Reprojucer/build/Jucer2Reprojucer MyGreatProject.jucer ../JUCE.cmake/cmake/Reprojucer.cmake
 ```
 
 Now we can build `MyGreatProject` using CMake:
@@ -73,7 +76,7 @@ mkdir build && cd build
 
 # On macOs
 cmake .. -G Xcode -DMyGreatProject_jucer_FILE=../MyGreatProject.jucer
-# On Windows
+# On Linux and on Windows
 cmake .. -DMyGreatProject_jucer_FILE=../MyGreatProject.jucer
 
 cmake --build .

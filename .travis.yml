@@ -28,13 +28,19 @@ script-anchors:
   - &script-linux
     - mkdir ci/Debug_build/
     - cd ci/Debug_build
-    - cmake .. -DCMAKE_BUILD_TYPE=Debug -DJUCE_ROOT="../../../JUCE"
+    - >
+      cmake .. -DCMAKE_BUILD_TYPE=Debug
+      -DJUCE_ROOT="../../../JUCE"
+      -DNetworkGraphicsDemo_jucer_FILE="../../../JUCE/examples/NetworkGraphicsDemo/NetworkGraphicsDemo.jucer"
     - cmake --build .
     - cd $TRAVIS_BUILD_DIR
 
     - mkdir ci/Release_build/
     - cd ci/Release_build
-    - cmake .. -DCMAKE_BUILD_TYPE=Release -DJUCE_ROOT="../../../JUCE"
+    - >
+      cmake .. -DCMAKE_BUILD_TYPE=Release
+      -DJUCE_ROOT="../../../JUCE"
+      -DNetworkGraphicsDemo_jucer_FILE="../../../JUCE/examples/NetworkGraphicsDemo/NetworkGraphicsDemo.jucer"
     - cmake --build .
     - cd $TRAVIS_BUILD_DIR
 
@@ -73,6 +79,13 @@ matrix:
     - os: linux
       dist: trusty
       sudo: false
+      addons:
+        apt:
+          packages:
+            - libasound2-dev
+            - libxcursor-dev
+            - libxinerama-dev
+            - libxrandr-dev
       install: *install-linux
       script: *script-linux
 

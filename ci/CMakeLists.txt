@@ -29,11 +29,13 @@ if(NOT CMAKE_HOST_SYSTEM_NAME STREQUAL "Linux")
 add_subdirectory("../Jucer2Reprojucer/generated/JUCE/examples/audio plugin host"
   "Plugin Host"
 )
+endif()
 
 add_subdirectory("../Jucer2Reprojucer/generated/JUCE/examples/NetworkGraphicsDemo"
   "NetworkGraphicsDemo"
 )
 
+if(NOT CMAKE_HOST_SYSTEM_NAME STREQUAL "Linux")
 add_subdirectory("../Jucer2Reprojucer/generated/JUCE/extras/Projucer"
   "Projucer"
 )
