@@ -31,7 +31,7 @@ set(Reprojucer_supported_exporters_conditions
   "APPLE"
   "MSVC_VERSION\;EQUAL\;1900"
   "MSVC_VERSION\;EQUAL\;1800"
-  "CMAKE_HOST_SYSTEM_NAME;STREQUAL\"Linux\""
+  "CMAKE_HOST_SYSTEM_NAME\;STREQUAL\;\"Linux\""
 )
 
 
@@ -498,6 +498,7 @@ function(jucer_export_target_configuration exporter NAME_TAG configuration_name)
     list(APPEND configuration_settings_tags
       "OSX_BASE_SDK_VERSION"
       "OSX_DEPLOYMENT_TARGET"
+      "OSX_ARCHITECTURE"
     )
   endif()
 
@@ -572,20 +573,31 @@ function(jucer_export_target_configuration exporter NAME_TAG configuration_name)
           )
         endif()
 
+      elseif(tag STREQUAL "OSX_ARCHITECTURE")
+        if(value STREQUAL "Native architecture of build machine")
+          # Consider as default
+        elseif(value STREQUAL "Universal Binary (32-bit)")
+          list(APPEND JUCER_OSX_ARCHITECTURES ${configuration_name} "i386")
+        elseif(value STREQUAL "Universal Binary (32/64-bit)")
+          list(APPEND JUCER_OSX_ARCHITECTURES ${configuration_name} "x86_64 i386")
+        elseif(value STREQUAL "64-bit Intel")
+          list(APPEND JUCER_OSX_ARCHITECTURES ${configuration_name} "x86_64")
+        elseif(NOT value STREQUAL "Use Default")
+          message(FATAL_ERROR "Unsupported value for OSX_ARCHITECTURE: \"${value}\"\n")
+        endif()
+        set(JUCER_OSX_ARCHITECTURES ${JUCER_OSX_ARCHITECTURES} PARENT_SCOPE)
+
       elseif(tag STREQUAL "WARNING_LEVEL")
         if(value STREQUAL "Low")
-          set(warning_level 2)
+          set(level 2)
         elseif(value STREQUAL "Medium")
-          set(warning_level 3)
+          set(level 3)
         elseif(value STREQUAL "High")
-          set(warning_level 4)
+          set(level 4)
         else()
           message(FATAL_ERROR "Unsupported value for WARNING_LEVEL: \"${value}\"\n")
         endif()
-
-        list(APPEND JUCER_COMPILER_FLAGS
-          $<$<CONFIG:${configuration_name}>:/W${warning_level}>
-        )
+        list(APPEND JUCER_COMPILER_FLAGS $<$<CONFIG:${configuration_name}>:/W${level}>)
         set(JUCER_COMPILER_FLAGS ${JUCER_COMPILER_FLAGS} PARENT_SCOPE)
 
       endif()
@@ -606,6 +618,13 @@ function(jucer_project_end)
       message(WARNING "You might want to call jucer_export_target(\"${exporter}\").")
     endif()
   endforeach()
+
+  if(NOT DEFINED CMAKE_CONFIGURATION_TYPES)
+    if(CMAKE_BUILD_TYPE STREQUAL "")
+      message(STATUS "Setting CMAKE_BUILD_TYPE to \"Debug\" as it was not specified.")
+      set(CMAKE_BUILD_TYPE Debug)
+    endif()
+  endif()
 
   if(DEFINED JUCER_PROJECT_CONFIGURATIONS)
     set(CMAKE_CONFIGURATION_TYPES ${JUCER_PROJECT_CONFIGURATIONS} PARENT_SCOPE)
@@ -1115,6 +1134,22 @@ function(__set_common_target_properties target_name)
       $<$<NOT:$<CONFIG:Debug>>:_NDEBUG=1>
       $<$<NOT:$<CONFIG:Debug>>:NDEBUG=1>
     )
+
+    foreach(item ${JUCER_OSX_ARCHITECTURES})
+      if(NOT DEFINED configuration_name)
+        set(configuration_name ${item})
+      else()
+        string(TOUPPER "${configuration_name}" upper_configuration_name)
+        string(REPLACE " " ";" archs "${item}")
+
+        set_target_properties(${target_name} PROPERTIES
+          OSX_ARCHITECTURES_${upper_configuration_name}
+          "${archs}"
+        )
+
+        unset(configuration_name)
+      endif()
+    endforeach()
 
     if(DEFINED JUCER_PREBUILD_SHELL_SCRIPT)
       if(NOT DEFINED JUCER_TARGET_PROJECT_FOLDER)
