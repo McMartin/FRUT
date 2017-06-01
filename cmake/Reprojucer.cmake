@@ -604,6 +604,13 @@ function(jucer_project_end)
     endif()
   endforeach()
 
+  if(NOT DEFINED CMAKE_CONFIGURATION_TYPES)
+    if(CMAKE_BUILD_TYPE STREQUAL "")
+      message(STATUS "Setting CMAKE_BUILD_TYPE to \"Debug\" as it was not specified.")
+      set(CMAKE_BUILD_TYPE Debug)
+    endif()
+  endif()
+
   if(DEFINED JUCER_PROJECT_CONFIGURATIONS)
     set(CMAKE_CONFIGURATION_TYPES ${JUCER_PROJECT_CONFIGURATIONS} PARENT_SCOPE)
   endif()
