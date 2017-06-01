@@ -2,6 +2,8 @@ branches:
   only:
     - master
 
+language: cpp
+
 before_install:
   - git clone --depth=10 --quiet -- https://github.com/WeAreROLI/JUCE.git ../JUCE
   - cd ../JUCE
@@ -9,6 +11,13 @@ before_install:
   - cd $TRAVIS_BUILD_DIR
 
 install-anchors:
+  - &install-linux
+    - mkdir -p ${TRAVIS_BUILD_DIR}/ci/tmp/cmake
+    - >
+      wget --no-check-certificate --output-document=- http://www.cmake.org/files/v3.4/cmake-3.4.3-Linux-x86_64.tar.gz
+      | tar --extract --gzip --directory=${TRAVIS_BUILD_DIR}/ci/tmp/cmake --strip-components=1
+    - export PATH=${TRAVIS_BUILD_DIR}/ci/tmp/cmake/bin:$PATH
+
   - &install-osx
     - cmake --version
 
@@ -16,6 +25,26 @@ install-anchors:
     - cp -R ci/third-party/VST_SDK ~/SDKs
 
 script-anchors:
+  - &script-linux
+    - mkdir ci/Debug_build/
+    - cd ci/Debug_build
+    - cmake .. -DCMAKE_BUILD_TYPE=Debug -DJUCE_ROOT="../../../JUCE"
+    - cmake --build .
+    - cd $TRAVIS_BUILD_DIR
+
+    - mkdir ci/Release_build/
+    - cd ci/Release_build
+    - cmake .. -DCMAKE_BUILD_TYPE=Release -DJUCE_ROOT="../../../JUCE"
+    - cmake --build .
+    - cd $TRAVIS_BUILD_DIR
+
+    - >
+      cmake
+      -DJUCE_ROOT="../JUCE"
+      -DJucer2Reprojucer_EXE="ci/Debug_build/Jucer2Reprojucer/Jucer2Reprojucer"
+      -P Jucer2Reprojucer/generated/apply-Jucer2Reprojucer-to-JUCE-jucers.cmake
+    - git diff --quiet
+
   - &script-osx
     - mkdir ci/build
     - cd ci/build
@@ -41,6 +70,12 @@ script-anchors:
 
 matrix:
   include:
+    - os: linux
+      dist: trusty
+      sudo: false
+      install: *install-linux
+      script: *script-linux
+
     - os: osx
       install: *install-osx
       script: *script-osx
