@@ -25,11 +25,13 @@ set(Reprojucer_supported_exporters
   "Xcode (MacOSX)"
   "Visual Studio 2015"
   "Visual Studio 2013"
+  "Linux Makefile"
 )
 set(Reprojucer_supported_exporters_conditions
   "APPLE"
   "MSVC_VERSION\;EQUAL\;1900"
   "MSVC_VERSION\;EQUAL\;1800"
+  "CMAKE_HOST_SYSTEM_NAME;STREQUAL\"Linux\""
 )
 
 

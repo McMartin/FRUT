@@ -126,6 +126,10 @@ jucer_export_target(
   "Visual Studio 2013"
 )
 
+jucer_export_target(
+  "Linux Makefile"
+)
+
 jucer_project_end()
 
 
