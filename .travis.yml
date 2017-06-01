@@ -32,6 +32,7 @@ script-anchors:
       cmake .. -DCMAKE_BUILD_TYPE=Debug
       -DJUCE_ROOT="../../../JUCE"
       -DNetworkGraphicsDemo_jucer_FILE="../../../JUCE/examples/NetworkGraphicsDemo/NetworkGraphicsDemo.jucer"
+      -DProjucer_jucer_FILE="../../../JUCE/extras/Projucer/Projucer.jucer"
     - cmake --build .
     - cd $TRAVIS_BUILD_DIR
 
@@ -41,6 +42,7 @@ script-anchors:
       cmake .. -DCMAKE_BUILD_TYPE=Release
       -DJUCE_ROOT="../../../JUCE"
       -DNetworkGraphicsDemo_jucer_FILE="../../../JUCE/examples/NetworkGraphicsDemo/NetworkGraphicsDemo.jucer"
+      -DProjucer_jucer_FILE="../../../JUCE/extras/Projucer/Projucer.jucer"
     - cmake --build .
     - cd $TRAVIS_BUILD_DIR
 
