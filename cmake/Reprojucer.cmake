@@ -1109,12 +1109,7 @@ function(__set_common_target_properties target_name)
     ${JUCER_INCLUDE_DIRECTORIES}
   )
 
-  if(JUCER_FLAG_JUCE_PLUGINHOST_VST3)
-    if(NOT DEFINED JUCER_VST3_SDK_FOLDER)
-      message(FATAL_ERROR "JUCER_VST3_SDK_FOLDER must be defined. Give VST3_SDK_FOLDER "
-        "when calling jucer_export_target()."
-      )
-    endif()
+  if(JUCER_FLAG_JUCE_PLUGINHOST_VST3 AND DEFINED JUCER_VST3_SDK_FOLDER)
     if(NOT IS_DIRECTORY "${JUCER_VST3_SDK_FOLDER}")
       message(WARNING
         "JUCER_VST3_SDK_FOLDER: no such directory \"${JUCER_VST3_SDK_FOLDER}\""

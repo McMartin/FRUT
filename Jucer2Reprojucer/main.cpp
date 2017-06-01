@@ -435,6 +435,7 @@ int main(int argc, char* argv[])
               << "\"  # only used by PREBUILD_SHELL_SCRIPT and POSTBUILD_SHELL_SCRIPT\n";
         }
 
+        const auto defaultVst3Folder = std::string{std::get<2>(element)};
         const auto isVst3PluginHost =
           jucerProject.getChildWithName("MODULES")
             .getChildWithProperty("id", "juce_audio_processors")
@@ -442,7 +443,7 @@ int main(int argc, char* argv[])
           jucerProject.getChildWithName("JUCEOPTIONS")
               .getProperty("JUCE_PLUGINHOST_VST3") == "enabled";
 
-        if (isVst3PluginHost)
+        if (!defaultVst3Folder.empty() && isVst3PluginHost)
         {
           const auto vst3Folder =
             exporter.getProperty("vst3Folder").toString().toStdString();
