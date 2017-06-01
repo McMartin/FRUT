@@ -136,6 +136,7 @@ jucer_export_target_configuration(
   NAME "Debug"
   # HEADER_SEARCH_PATHS
   # PREPROCESSOR_DEFINITIONS
+  WARNING_LEVEL "High"
 )
 
 jucer_export_target_configuration(
@@ -143,6 +144,7 @@ jucer_export_target_configuration(
   NAME "Release"
   # HEADER_SEARCH_PATHS
   # PREPROCESSOR_DEFINITIONS
+  WARNING_LEVEL "High"
 )
 
 jucer_project_end()

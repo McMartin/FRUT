@@ -199,13 +199,22 @@ int main(int argc, char* argv[])
     };
 
     const auto projectType = jucerProject.getProperty("projectType").toString();
-    const auto projectTypeDescription =
-      projectType == "guiapp" ? "GUI Application"
-                              : projectType == "consoleapp"
-                                  ? "Console Application"
-                                  : projectType == "library"
-                                      ? "Static Library"
-                                      : projectType == "audioplug" ? "Audio Plug-in" : "";
+    const auto projectTypeDescription = [&projectType]() -> std::string
+    {
+      if (projectType == "guiapp")
+        return "GUI Application";
+
+      if (projectType == "consoleapp")
+        return "Console Application";
+
+      if (projectType == "library")
+        return "Static Library";
+
+      if (projectType == "audioplug")
+        return "Audio Plug-in";
+
+      return {};
+    }();
 
     out << "jucer_project_settings(\n"
         << "  " << projectSetting("PROJECT_NAME", "name") << "\n"
@@ -503,14 +512,14 @@ int main(int argc, char* argv[])
 
           if (exporterType == "XCODE_MAC")
           {
-            const auto sdks = std::array<const char*, 8>{"10.5 SDK",
+            const auto sdks = std::array<const char*, 8>{{"10.5 SDK",
               "10.6 SDK",
               "10.7 SDK",
               "10.8 SDK",
               "10.9 SDK",
               "10.10 SDK",
               "10.11 SDK",
-              "10.12 SDK"};
+              "10.12 SDK"}};
 
             const auto osxSDK =
               configuration.getProperty("osxSDK").toString().toStdString();
@@ -542,6 +551,26 @@ int main(int argc, char* argv[])
             {
               out << "  # OSX_DEPLOYMENT_TARGET\n";
             }
+          }
+
+          if (exporterType == "VS2015" || exporterType == "VS2013")
+          {
+            const auto warningLevel = [&configuration]() -> std::string
+            {
+              switch (int{configuration.getProperty("winWarningLevel")})
+              {
+              case 2:
+                return "Low";
+              case 3:
+                return "Medium";
+              case 4:
+                return "High";
+              }
+
+              return "High";
+            }();
+
+            out << "  WARNING_LEVEL \"" << warningLevel << "\"\n";
           }
 
           out << ")\n"

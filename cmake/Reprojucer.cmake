@@ -483,6 +483,12 @@ function(jucer_export_target_configuration exporter NAME_TAG configuration_name)
     )
   endif()
 
+  if(exporter STREQUAL "Visual Studio 2015" OR exporter STREQUAL "Visual Studio 2013")
+    list(APPEND configuration_settings_tags
+      "WARNING_LEVEL"
+    )
+  endif()
+
   foreach(element ${ARGN})
     if(NOT DEFINED tag)
       set(tag ${element})
@@ -547,6 +553,22 @@ function(jucer_export_target_configuration exporter NAME_TAG configuration_name)
             "Unsupported value for OSX_DEPLOYMENT_TARGET: \"${value}\"\n"
           )
         endif()
+
+      elseif(tag STREQUAL "WARNING_LEVEL")
+        if(value STREQUAL "Low")
+          set(warning_level 2)
+        elseif(value STREQUAL "Medium")
+          set(warning_level 3)
+        elseif(value STREQUAL "High")
+          set(warning_level 4)
+        else()
+          message(FATAL_ERROR "Unsupported value for WARNING_LEVEL: \"${value}\"\n")
+        endif()
+
+        list(APPEND JUCER_COMPILER_FLAGS
+          $<$<CONFIG:${configuration_name}>:/W${warning_level}>
+        )
+        set(JUCER_COMPILER_FLAGS ${JUCER_COMPILER_FLAGS} PARENT_SCOPE)
 
       endif()
 

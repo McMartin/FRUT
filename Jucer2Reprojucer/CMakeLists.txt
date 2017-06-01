@@ -66,14 +66,17 @@ jucer_project_module(
 
 jucer_export_target(
   "Xcode (MacOSX)"
+  EXTRA_COMPILER_FLAGS "-Werror -Weverything -Wno-cast-align -Wno-c++98-compat -Wno-c++98-compat-pedantic -Wno-covered-switch-default -Wno-date-time -Wno-deprecated -Wno-disabled-macro-expansion -Wno-documentation-unknown-command -Wno-extra-semi -Wno-float-equal -Wno-global-constructors -Wno-implicit-fallthrough -Wno-missing-noreturn -Wno-missing-variable-declarations -Wno-old-style-cast -Wno-padded -Wno-reserved-id-macro -Wno-switch-enum -Wno-undef -Wno-undefined-reinterpret-cast -Wno-weak-vtables"
 )
 
 jucer_export_target(
   "Visual Studio 2015"
+  EXTRA_COMPILER_FLAGS "/WX /W4"
 )
 
 jucer_export_target(
   "Visual Studio 2013"
+  EXTRA_COMPILER_FLAGS "/WX /W4"
 )
 
 jucer_project_end()
