@@ -31,7 +31,7 @@ set(Reprojucer_supported_exporters_conditions
   "APPLE"
   "MSVC_VERSION\;EQUAL\;1900"
   "MSVC_VERSION\;EQUAL\;1800"
-  "CMAKE_HOST_SYSTEM_NAME;STREQUAL\"Linux\""
+  "CMAKE_HOST_SYSTEM_NAME\;STREQUAL\;\"Linux\""
 )
 
 
