@@ -217,4 +217,24 @@ jucer_export_target_configuration(
   WARNING_LEVEL "High"
 )
 
+jucer_export_target(
+  "Linux Makefile"
+  # EXTRA_PREPROCESSOR_DEFINITIONS
+  EXTRA_COMPILER_FLAGS "-Wall -Wshadow -Wno-missing-field-initializers -Wshadow -Wshorten-64-to-32 -Wstrict-aliasing -Wuninitialized -Wunused-parameter -Wconversion -Wsign-compare -Wint-conversion -Woverloaded-virtual -Wreorder -Wconstant-conversion -Wsign-conversion"
+)
+
+jucer_export_target_configuration(
+  "Linux Makefile"
+  NAME "Debug"
+  # HEADER_SEARCH_PATHS
+  # PREPROCESSOR_DEFINITIONS
+)
+
+jucer_export_target_configuration(
+  "Linux Makefile"
+  NAME "Release"
+  # HEADER_SEARCH_PATHS
+  # PREPROCESSOR_DEFINITIONS
+)
+
 jucer_project_end()

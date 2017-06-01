@@ -232,4 +232,25 @@ jucer_export_target_configuration(
   WARNING_LEVEL "High"
 )
 
+jucer_export_target(
+  "Linux Makefile"
+  VST3_SDK_FOLDER ""
+  # EXTRA_PREPROCESSOR_DEFINITIONS
+  # EXTRA_COMPILER_FLAGS
+)
+
+jucer_export_target_configuration(
+  "Linux Makefile"
+  NAME "Debug"
+  # HEADER_SEARCH_PATHS
+  # PREPROCESSOR_DEFINITIONS
+)
+
+jucer_export_target_configuration(
+  "Linux Makefile"
+  NAME "Release"
+  # HEADER_SEARCH_PATHS
+  # PREPROCESSOR_DEFINITIONS
+)
+
 jucer_project_end()
