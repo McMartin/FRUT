@@ -412,7 +412,8 @@ int main(int argc, char* argv[])
       supportedExporters = {
         std::make_tuple("XCODE_MAC", "Xcode (MacOSX)", "~/SDKs/VST_SDK/VST3_SDK"),
         std::make_tuple("VS2015", "Visual Studio 2015", "c:\\SDKs\\VST_SDK\\VST3_SDK"),
-        std::make_tuple("VS2013", "Visual Studio 2013", "c:\\SDKs\\VST_SDK\\VST3_SDK")};
+        std::make_tuple("VS2013", "Visual Studio 2013", "c:\\SDKs\\VST_SDK\\VST3_SDK"),
+        std::make_tuple("LINUX_MAKE", "Linux Makefile", "")};
 
     for (const auto& element : supportedExporters)
     {

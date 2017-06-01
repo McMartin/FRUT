@@ -79,4 +79,8 @@ jucer_export_target(
   EXTRA_COMPILER_FLAGS "/WX /W4"
 )
 
+jucer_export_target(
+  "Linux Makefile"
+)
+
 jucer_project_end()

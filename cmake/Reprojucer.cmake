@@ -25,11 +25,13 @@ set(Reprojucer_supported_exporters
   "Xcode (MacOSX)"
   "Visual Studio 2015"
   "Visual Studio 2013"
+  "Linux Makefile"
 )
 set(Reprojucer_supported_exporters_conditions
   "APPLE"
   "MSVC_VERSION\;EQUAL\;1900"
   "MSVC_VERSION\;EQUAL\;1800"
+  "CMAKE_HOST_SYSTEM_NAME;STREQUAL\"Linux\""
 )
 
 
@@ -337,11 +339,27 @@ function(jucer_project_module module_name PATH_TAG modules_folder)
     endif()
   endforeach()
 
-  file(STRINGS "${module_header_file}" osx_frameworks_line REGEX "OSXFrameworks:")
-  string(REPLACE "OSXFrameworks:" "" osx_frameworks_line "${osx_frameworks_line}")
-  string(REPLACE " " ";" osx_frameworks "${osx_frameworks_line}")
-  list(APPEND JUCER_PROJECT_OSX_FRAMEWORKS ${osx_frameworks})
-  set(JUCER_PROJECT_OSX_FRAMEWORKS ${JUCER_PROJECT_OSX_FRAMEWORKS} PARENT_SCOPE)
+  if(APPLE)
+    file(STRINGS "${module_header_file}" osx_frameworks_line REGEX "OSXFrameworks:")
+    string(REPLACE "OSXFrameworks:" "" osx_frameworks_line "${osx_frameworks_line}")
+    string(REPLACE " " ";" osx_frameworks "${osx_frameworks_line}")
+    list(APPEND JUCER_PROJECT_OSX_FRAMEWORKS ${osx_frameworks})
+    set(JUCER_PROJECT_OSX_FRAMEWORKS ${JUCER_PROJECT_OSX_FRAMEWORKS} PARENT_SCOPE)
+  endif()
+
+  if(CMAKE_HOST_SYSTEM_NAME STREQUAL "Linux")
+    file(STRINGS "${module_header_file}" linux_libs_line REGEX "linuxLibs:")
+    string(REPLACE "linuxLibs:" "" linux_libs_line "${linux_libs_line}")
+    string(REPLACE " " ";" linux_libs "${linux_libs_line}")
+    list(APPEND JUCER_PROJECT_LINUX_LIBS ${linux_libs})
+    set(JUCER_PROJECT_LINUX_LIBS ${JUCER_PROJECT_LINUX_LIBS} PARENT_SCOPE)
+
+    file(STRINGS "${module_header_file}" linux_packages_line REGEX "linuxPackages:")
+    string(REPLACE "linuxPackages:" "" linux_packages_line "${linux_packages_line}")
+    string(REPLACE " " ";" linux_packages "${linux_packages_line}")
+    list(APPEND JUCER_PROJECT_LINUX_PACKAGES ${linux_packages})
+    set(JUCER_PROJECT_LINUX_PACKAGES ${JUCER_PROJECT_LINUX_PACKAGES} PARENT_SCOPE)
+  endif()
 
   file(GLOB_RECURSE browsable_files "${modules_folder}/${module_name}/*")
   foreach(file_path ${browsable_files})
@@ -1129,6 +1147,29 @@ function(__set_common_target_properties target_name)
     endif()
   endif()
 
+  if(CMAKE_HOST_SYSTEM_NAME STREQUAL "Linux")
+    set_target_properties(${target_name} PROPERTIES CXX_STANDARD 11)
+
+    set(linux_packages ${JUCER_PROJECT_LINUX_PACKAGES})
+    list(SORT linux_packages)
+    list(REMOVE_DUPLICATES linux_packages)
+    foreach(pkg ${linux_packages})
+      pkg_check_modules(${pkg} REQUIRED "${pkg}")
+      target_compile_options(${target_name} PRIVATE ${${pkg}_CFLAGS})
+      target_link_libraries(${target_name} ${${pkg}_LIBRARIES})
+    endforeach()
+
+    set(linux_libs ${JUCER_PROJECT_LINUX_LIBS})
+    list(SORT linux_libs)
+    list(REMOVE_DUPLICATES linux_libs)
+    foreach(item ${linux_libs})
+      if(item STREQUAL "pthread")
+        target_compile_options(${target_name} PRIVATE "-pthread")
+      endif()
+      target_link_libraries(${target_name} "-l${item}")
+    endforeach()
+  endif()
+
 endfunction()
 
 
@@ -1202,8 +1243,8 @@ function(__link_osx_frameworks target_name)
     if(JUCER_FLAG_JUCE_PLUGINHOST_AU)
       list(APPEND osx_frameworks "AudioUnit" "CoreAudioKit")
     endif()
-    list(REMOVE_DUPLICATES osx_frameworks)
     list(SORT osx_frameworks)
+    list(REMOVE_DUPLICATES osx_frameworks)
     foreach(framework_name ${osx_frameworks})
       find_library(${framework_name}_framework ${framework_name})
       target_link_libraries(${target_name} "${${framework_name}_framework}")
@@ -1298,3 +1339,8 @@ function(__four_chars_to_hex value out_hex_value)
   set(${out_hex_value} "${hex_value}" PARENT_SCOPE)
 
 endfunction()
+
+
+if(CMAKE_HOST_SYSTEM_NAME STREQUAL "Linux")
+  find_package(PkgConfig REQUIRED)
+endif()
