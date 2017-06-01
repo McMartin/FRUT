@@ -81,6 +81,7 @@ jucer_export_target(
 
 jucer_export_target(
   "Linux Makefile"
+  EXTRA_COMPILER_FLAGS "-Werror -Wall -Wextra"
 )
 
 jucer_project_end()
