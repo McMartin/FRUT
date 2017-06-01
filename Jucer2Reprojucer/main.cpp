@@ -512,14 +512,14 @@ int main(int argc, char* argv[])
 
           if (exporterType == "XCODE_MAC")
           {
-            const auto sdks = std::array<const char*, 8>{"10.5 SDK",
+            const auto sdks = std::array<const char*, 8>{{"10.5 SDK",
               "10.6 SDK",
               "10.7 SDK",
               "10.8 SDK",
               "10.9 SDK",
               "10.10 SDK",
               "10.11 SDK",
-              "10.12 SDK"};
+              "10.12 SDK"}};
 
             const auto osxSDK =
               configuration.getProperty("osxSDK").toString().toStdString();
