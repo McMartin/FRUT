@@ -498,6 +498,7 @@ function(jucer_export_target_configuration exporter NAME_TAG configuration_name)
     list(APPEND configuration_settings_tags
       "OSX_BASE_SDK_VERSION"
       "OSX_DEPLOYMENT_TARGET"
+      "OSX_ARCHITECTURE"
     )
   endif()
 
@@ -571,6 +572,20 @@ function(jucer_export_target_configuration exporter NAME_TAG configuration_name)
             "Unsupported value for OSX_DEPLOYMENT_TARGET: \"${value}\"\n"
           )
         endif()
+
+      elseif(tag STREQUAL "OSX_ARCHITECTURE")
+        if(value STREQUAL "Native architecture of build machine")
+          # Consider as default
+        elseif(value STREQUAL "Universal Binary (32-bit)")
+          list(APPEND JUCER_OSX_ARCHITECTURES ${configuration_name} "i386")
+        elseif(value STREQUAL "Universal Binary (32/64-bit)")
+          list(APPEND JUCER_OSX_ARCHITECTURES ${configuration_name} "x86_64 i386")
+        elseif(value STREQUAL "64-bit Intel")
+          list(APPEND JUCER_OSX_ARCHITECTURES ${configuration_name} "x86_64")
+        elseif(NOT value STREQUAL "Use Default")
+          message(FATAL_ERROR "Unsupported value for OSX_ARCHITECTURE: \"${value}\"\n")
+        endif()
+        set(JUCER_OSX_ARCHITECTURES ${JUCER_OSX_ARCHITECTURES} PARENT_SCOPE)
 
       elseif(tag STREQUAL "WARNING_LEVEL")
         if(value STREQUAL "Low")
@@ -1119,6 +1134,22 @@ function(__set_common_target_properties target_name)
       $<$<NOT:$<CONFIG:Debug>>:_NDEBUG=1>
       $<$<NOT:$<CONFIG:Debug>>:NDEBUG=1>
     )
+
+    foreach(item ${JUCER_OSX_ARCHITECTURES})
+      if(NOT DEFINED configuration_name)
+        set(configuration_name ${item})
+      else()
+        string(TOUPPER "${configuration_name}" upper_configuration_name)
+        string(REPLACE " " ";" archs "${item}")
+
+        set_target_properties(${target_name} PROPERTIES
+          OSX_ARCHITECTURES_${upper_configuration_name}
+          "${archs}"
+        )
+
+        unset(configuration_name)
+      endif()
+    endforeach()
 
     if(DEFINED JUCER_PREBUILD_SHELL_SCRIPT)
       if(NOT DEFINED JUCER_TARGET_PROJECT_FOLDER)

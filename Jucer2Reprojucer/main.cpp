@@ -552,6 +552,37 @@ int main(int argc, char* argv[])
             {
               out << "  # OSX_DEPLOYMENT_TARGET\n";
             }
+
+            const auto osxArchitecture = [&configuration]() -> std::string
+            {
+              const auto value = configuration.getProperty("osxArchitecture").toString();
+
+              if (value == "default")
+                return "Use Default";
+
+              if (value == "Native")
+                return "Native architecture of build machine";
+
+              if (value == "32BitUniversal")
+                return "Universal Binary (32-bit)";
+
+              if (value == "64BitUniversal")
+                return "Universal Binary (32/64-bit)";
+
+              if (value == "64BitIntel")
+                return "64-bit Intel";
+
+              return "";
+            }();
+
+            if (osxArchitecture.empty())
+            {
+              out << "  # OSX_ARCHITECTURE\n";
+            }
+            else
+            {
+              out << "  OSX_ARCHITECTURE \"" << osxArchitecture << "\"\n";
+            }
           }
 
           if (exporterType == "VS2015" || exporterType == "VS2013")
