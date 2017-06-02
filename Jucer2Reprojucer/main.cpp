@@ -99,6 +99,20 @@ std::string getSetting(const juce::ValueTree& valueTree, const std::string& cmak
 }
 
 
+void writeUserNotes(std::ostream& out, const juce::ValueTree& valueTree)
+{
+  const auto userNotes = valueTree.getProperty("userNotes").toString().toStdString();
+  if (!userNotes.empty())
+  {
+    out << "  # NOTES\n";
+    for (const auto& line : split("\n", userNotes))
+    {
+      out << "  #   " << line << "\n";
+    }
+  }
+}
+
+
 int main(int argc, char* argv[])
 {
   if (argc != 3)
@@ -226,8 +240,11 @@ int main(int argc, char* argv[])
         << "  " << projectSetting("BUNDLE_IDENTIFIER", "bundleIdentifier") << "\n"
         << "  BINARYDATACPP_SIZE_LIMIT \"Default\"\n"
         << "  " << projectSetting("BINARYDATA_NAMESPACE", "binaryDataNamespace") << "\n"
-        << "  " << projectSetting("PREPROCESSOR_DEFINITIONS", "defines") << "\n"
-        << ")\n"
+        << "  " << projectSetting("PREPROCESSOR_DEFINITIONS", "defines") << "\n";
+
+    writeUserNotes(out, jucerProject);
+
+    out << ")\n"
         << "\n";
 
     // jucer_audio_plugin_settings()
@@ -469,6 +486,8 @@ int main(int argc, char* argv[])
               << "\n";
         }
 
+        writeUserNotes(out, exporter);
+
         out << ")\n"
             << "\n";
 
@@ -608,6 +627,8 @@ int main(int argc, char* argv[])
 
             out << "  WARNING_LEVEL \"" << warningLevel << "\"\n";
           }
+
+          writeUserNotes(out, configuration);
 
           out << ")\n"
               << "\n";
