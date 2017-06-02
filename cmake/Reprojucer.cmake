@@ -793,6 +793,7 @@ function(jucer_project_end)
       endif()
     else()
       add_library(${target_name} MODULE ${all_sources})
+      set_target_properties(${target_name} PROPERTIES PREFIX "")
       __set_common_target_properties(${target_name})
     endif()
 

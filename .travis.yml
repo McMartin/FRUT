@@ -31,6 +31,7 @@ script-anchors:
     - >
       cmake .. -DCMAKE_BUILD_TYPE=Debug
       -DJUCE_ROOT="../../../JUCE"
+      -DJuceDemoPlugin_jucer_FILE="../../../JUCE/examples/audio plugin demo/JuceDemoPlugin.jucer"
       -DNetworkGraphicsDemo_jucer_FILE="../../../JUCE/examples/NetworkGraphicsDemo/NetworkGraphicsDemo.jucer"
       -DPlugin_Host_jucer_FILE="../../../JUCE/examples/audio plugin host/Plugin Host.jucer"
       -DProjucer_jucer_FILE="../../../JUCE/extras/Projucer/Projucer.jucer"
@@ -42,6 +43,7 @@ script-anchors:
     - >
       cmake .. -DCMAKE_BUILD_TYPE=Release
       -DJUCE_ROOT="../../../JUCE"
+      -DJuceDemoPlugin_jucer_FILE="../../../JUCE/examples/audio plugin demo/JuceDemoPlugin.jucer"
       -DNetworkGraphicsDemo_jucer_FILE="../../../JUCE/examples/NetworkGraphicsDemo/NetworkGraphicsDemo.jucer"
       -DPlugin_Host_jucer_FILE="../../../JUCE/examples/audio plugin host/Plugin Host.jucer"
       -DProjucer_jucer_FILE="../../../JUCE/extras/Projucer/Projucer.jucer"
