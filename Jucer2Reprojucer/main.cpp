@@ -595,7 +595,7 @@ int main(int argc, char* argv[])
               if (value == "64BitIntel")
                 return "64-bit Intel";
 
-              return "";
+              return {};
             }();
 
             if (osxArchitecture.empty())
