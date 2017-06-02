@@ -1183,6 +1183,7 @@ function(__set_common_target_properties target_name)
   endif()
 
   if(CMAKE_HOST_SYSTEM_NAME STREQUAL "Linux")
+    set_target_properties(${target_name} PROPERTIES CXX_EXTENSIONS OFF)
     set_target_properties(${target_name} PROPERTIES CXX_STANDARD 11)
 
     set(linux_packages ${JUCER_PROJECT_LINUX_PACKAGES})
