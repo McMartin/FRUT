@@ -486,6 +486,34 @@ int main(int argc, char* argv[])
               << "\n";
         }
 
+        if (exporterType == "LINUX_MAKE")
+        {
+          const auto cppLanguageStandard = [&exporter]() -> std::string
+          {
+            const auto value = exporter.getProperty("cppLanguageStandard").toString();
+
+            if (value == "-std=c++03")
+              return "C++03";
+
+            if (value == "-std=c++11")
+              return "C++11";
+
+            if (value == "-std=c++14")
+              return "C++14";
+
+            return {};
+          }();
+
+          if (cppLanguageStandard.empty())
+          {
+            out << "  # CXX_STANDARD_TO_USE\n";
+          }
+          else
+          {
+            out << "  CXX_STANDARD_TO_USE \"" << cppLanguageStandard << "\"\n";
+          }
+        }
+
         writeUserNotes(out, exporter);
 
         out << ")\n"
@@ -595,7 +623,7 @@ int main(int argc, char* argv[])
               if (value == "64BitIntel")
                 return "64-bit Intel";
 
-              return "";
+              return {};
             }();
 
             if (osxArchitecture.empty())
@@ -605,6 +633,44 @@ int main(int argc, char* argv[])
             else
             {
               out << "  OSX_ARCHITECTURE \"" << osxArchitecture << "\"\n";
+            }
+
+            const auto cppLanguageStandard = [&configuration]() -> std::string
+            {
+              const auto value =
+                configuration.getProperty("cppLanguageStandard").toString();
+
+              if (value == "")
+                return "Use Default";
+
+              if (value == "c++98")
+                return "C++98";
+
+              if (value == "gnu++98")
+                return "GNU++98";
+
+              if (value == "c++11")
+                return "C++11";
+
+              if (value == "gnu++11")
+                return "GNU++11";
+
+              if (value == "c++14")
+                return "C++14";
+
+              if (value == "gnu++14")
+                return "GNU++14";
+
+              return {};
+            }();
+
+            if (cppLanguageStandard.empty())
+            {
+              out << "  # CXX_LANGUAGE_STANDARD\n";
+            }
+            else
+            {
+              out << "  CXX_LANGUAGE_STANDARD \"" << cppLanguageStandard << "\"\n";
             }
           }
 

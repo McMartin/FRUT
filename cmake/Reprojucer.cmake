@@ -405,6 +405,12 @@ function(jucer_export_target exporter)
     )
   endif()
 
+  if(exporter STREQUAL "Linux Makefile")
+    list(APPEND export_target_settings_tags
+      "CXX_STANDARD_TO_USE"
+    )
+  endif()
+
   foreach(element ${ARGN})
     if(NOT DEFINED tag)
       set(tag ${element})
@@ -457,6 +463,15 @@ function(jucer_export_target exporter)
           "${CMAKE_CURRENT_BINARY_DIR}/postbuild.sh" PARENT_SCOPE
         )
 
+      elseif(tag STREQUAL "CXX_STANDARD_TO_USE")
+        if(value MATCHES "^C\\+\\+(03|11|14)$")
+          set(JUCER_CXX_LANGUAGE_STANDARD ${value} PARENT_SCOPE)
+        else()
+          message(FATAL_ERROR
+            "Unsupported value for CXX_STANDARD_TO_USE: \"${value}\"\n"
+          )
+        endif()
+
       endif()
 
       unset(tag)
@@ -499,6 +514,7 @@ function(jucer_export_target_configuration exporter NAME_TAG configuration_name)
       "OSX_BASE_SDK_VERSION"
       "OSX_DEPLOYMENT_TARGET"
       "OSX_ARCHITECTURE"
+      "CXX_LANGUAGE_STANDARD"
     )
   endif()
 
@@ -586,6 +602,15 @@ function(jucer_export_target_configuration exporter NAME_TAG configuration_name)
           message(FATAL_ERROR "Unsupported value for OSX_ARCHITECTURE: \"${value}\"\n")
         endif()
         set(JUCER_OSX_ARCHITECTURES ${JUCER_OSX_ARCHITECTURES} PARENT_SCOPE)
+
+      elseif(tag STREQUAL "CXX_LANGUAGE_STANDARD")
+        if(value MATCHES "^(C|GNU)\\+\\+(98|11|14)$")
+          set(JUCER_CXX_LANGUAGE_STANDARD ${value} PARENT_SCOPE)
+        elseif(NOT value STREQUAL "Use Default")
+          message(FATAL_ERROR
+            "Unsupported value for CXX_LANGUAGE_STANDARD: \"${value}\"\n"
+          )
+        endif()
 
       elseif(tag STREQUAL "WARNING_LEVEL")
         if(value STREQUAL "Low")
@@ -1123,7 +1148,24 @@ function(__set_common_target_properties target_name)
   target_compile_options(${target_name} PRIVATE ${JUCER_COMPILER_FLAGS})
 
   if(APPLE)
+    set_target_properties(${target_name} PROPERTIES CXX_EXTENSIONS OFF)
     set_target_properties(${target_name} PROPERTIES CXX_STANDARD 11)
+
+    if(DEFINED JUCER_CXX_LANGUAGE_STANDARD)
+      if(JUCER_CXX_LANGUAGE_STANDARD MATCHES "^GNU\\+\\+$")
+        set_target_properties(${target_name} PROPERTIES CXX_EXTENSIONS ON)
+      elseif(JUCER_CXX_LANGUAGE_STANDARD MATCHES "^C\\+\\+$")
+        set_target_properties(${target_name} PROPERTIES CXX_EXTENSIONS OFF)
+      endif()
+      if(JUCER_CXX_LANGUAGE_STANDARD MATCHES "98$")
+        set_target_properties(${target_name} PROPERTIES CXX_STANDARD 98)
+      elseif(JUCER_CXX_LANGUAGE_STANDARD MATCHES "11$")
+        set_target_properties(${target_name} PROPERTIES CXX_STANDARD 11)
+      elseif(JUCER_CXX_LANGUAGE_STANDARD MATCHES "14$")
+        set_target_properties(${target_name} PROPERTIES CXX_STANDARD 14)
+      endif()
+    endif()
+
     target_compile_definitions(${target_name} PRIVATE
       $<$<CONFIG:Debug>:_DEBUG=1>
       $<$<CONFIG:Debug>:DEBUG=1>
@@ -1181,6 +1223,16 @@ function(__set_common_target_properties target_name)
   if(CMAKE_HOST_SYSTEM_NAME STREQUAL "Linux")
     set_target_properties(${target_name} PROPERTIES CXX_EXTENSIONS OFF)
     set_target_properties(${target_name} PROPERTIES CXX_STANDARD 11)
+
+    if(DEFINED JUCER_CXX_LANGUAGE_STANDARD)
+      if(JUCER_CXX_LANGUAGE_STANDARD MATCHES "03$")
+        set_target_properties(${target_name} PROPERTIES CXX_STANDARD 98)
+      elseif(JUCER_CXX_LANGUAGE_STANDARD MATCHES "11$")
+        set_target_properties(${target_name} PROPERTIES CXX_STANDARD 11)
+      elseif(JUCER_CXX_LANGUAGE_STANDARD MATCHES "14$")
+        set_target_properties(${target_name} PROPERTIES CXX_STANDARD 14)
+      endif()
+    endif()
 
     set(linux_packages ${JUCER_PROJECT_LINUX_PACKAGES})
     list(SORT linux_packages)
