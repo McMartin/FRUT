@@ -692,6 +692,17 @@ int main(int argc, char* argv[])
             }();
 
             out << "  WARNING_LEVEL \"" << warningLevel << "\"\n";
+
+            if (configuration.hasProperty("warningsAreErrors"))
+            {
+              out << "  TREAT_WARNINGS_AS_ERRORS "
+                  << (bool{configuration.getProperty("warningsAreErrors")} ? "ON" : "OFF")
+                  << "\n";
+            }
+            else
+            {
+              out << "  # TREAT_WARNINGS_AS_ERRORS\n";
+            }
           }
 
           writeUserNotes(out, configuration);

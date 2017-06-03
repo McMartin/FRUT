@@ -521,6 +521,7 @@ function(jucer_export_target_configuration exporter NAME_TAG configuration_name)
   if(exporter STREQUAL "Visual Studio 2015" OR exporter STREQUAL "Visual Studio 2013")
     list(APPEND configuration_settings_tags
       "WARNING_LEVEL"
+      "TREAT_WARNINGS_AS_ERRORS"
     )
   endif()
 
@@ -624,6 +625,12 @@ function(jucer_export_target_configuration exporter NAME_TAG configuration_name)
         endif()
         list(APPEND JUCER_COMPILER_FLAGS $<$<CONFIG:${configuration_name}>:/W${level}>)
         set(JUCER_COMPILER_FLAGS ${JUCER_COMPILER_FLAGS} PARENT_SCOPE)
+
+      elseif(tag STREQUAL "TREAT_WARNINGS_AS_ERRORS")
+        if(value)
+          list(APPEND JUCER_COMPILER_FLAGS $<$<CONFIG:${configuration_name}>:/WX>)
+          set(JUCER_COMPILER_FLAGS ${JUCER_COMPILER_FLAGS} PARENT_SCOPE)
+        endif()
 
       endif()
 
