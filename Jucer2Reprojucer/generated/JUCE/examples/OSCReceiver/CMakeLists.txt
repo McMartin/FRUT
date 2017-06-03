@@ -141,6 +141,7 @@ jucer_export_target_configuration(
   # HEADER_SEARCH_PATHS
   # PREPROCESSOR_DEFINITIONS
   WARNING_LEVEL "High"
+  # TREAT_WARNINGS_AS_ERRORS
 )
 
 jucer_export_target_configuration(
@@ -149,6 +150,7 @@ jucer_export_target_configuration(
   # HEADER_SEARCH_PATHS
   # PREPROCESSOR_DEFINITIONS
   WARNING_LEVEL "High"
+  # TREAT_WARNINGS_AS_ERRORS
 )
 
 jucer_export_target(
