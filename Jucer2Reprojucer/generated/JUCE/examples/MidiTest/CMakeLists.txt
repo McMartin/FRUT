@@ -148,6 +148,7 @@ jucer_export_target_configuration(
   OSX_BASE_SDK_VERSION "Use Default"
   OSX_DEPLOYMENT_TARGET "10.9"
   OSX_ARCHITECTURE "Use Default"
+  CXX_LANGUAGE_STANDARD "Use Default"
 )
 
 jucer_export_target_configuration(
@@ -158,6 +159,7 @@ jucer_export_target_configuration(
   OSX_BASE_SDK_VERSION "Use Default"
   OSX_DEPLOYMENT_TARGET "10.9"
   OSX_ARCHITECTURE "Use Default"
+  CXX_LANGUAGE_STANDARD "Use Default"
 )
 
 jucer_export_target(
@@ -186,6 +188,7 @@ jucer_export_target(
   "Linux Makefile"
   # EXTRA_PREPROCESSOR_DEFINITIONS
   # EXTRA_COMPILER_FLAGS
+  # CXX_STANDARD_TO_USE
 )
 
 jucer_export_target_configuration(

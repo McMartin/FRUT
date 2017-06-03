@@ -185,6 +185,7 @@ jucer_export_target_configuration(
   OSX_BASE_SDK_VERSION "Use Default"
   OSX_DEPLOYMENT_TARGET "Use Default"
   OSX_ARCHITECTURE "Use Default"
+  CXX_LANGUAGE_STANDARD "Use Default"
 )
 
 jucer_export_target_configuration(
@@ -195,6 +196,7 @@ jucer_export_target_configuration(
   OSX_BASE_SDK_VERSION "Use Default"
   OSX_DEPLOYMENT_TARGET "Use Default"
   OSX_ARCHITECTURE "Use Default"
+  CXX_LANGUAGE_STANDARD "Use Default"
 )
 
 jucer_export_target(
@@ -223,6 +225,7 @@ jucer_export_target(
   "Linux Makefile"
   # EXTRA_PREPROCESSOR_DEFINITIONS
   EXTRA_COMPILER_FLAGS "-Wall -Wshadow -Wno-missing-field-initializers -Wshadow -Wshorten-64-to-32 -Wstrict-aliasing -Wuninitialized -Wunused-parameter -Wconversion -Wsign-compare -Wint-conversion -Woverloaded-virtual -Wreorder -Wconstant-conversion -Wsign-conversion"
+  # CXX_STANDARD_TO_USE
 )
 
 jucer_export_target_configuration(
