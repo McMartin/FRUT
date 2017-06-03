@@ -634,6 +634,44 @@ int main(int argc, char* argv[])
             {
               out << "  OSX_ARCHITECTURE \"" << osxArchitecture << "\"\n";
             }
+
+            const auto cppLanguageStandard = [&configuration]() -> std::string
+            {
+              const auto value =
+                configuration.getProperty("cppLanguageStandard").toString();
+
+              if (value == "")
+                return "Use Default";
+
+              if (value == "c++98")
+                return "C++98";
+
+              if (value == "gnu++98")
+                return "GNU++98";
+
+              if (value == "c++11")
+                return "C++11";
+
+              if (value == "gnu++11")
+                return "GNU++11";
+
+              if (value == "c++14")
+                return "C++14";
+
+              if (value == "gnu++14")
+                return "GNU++14";
+
+              return {};
+            }();
+
+            if (cppLanguageStandard.empty())
+            {
+              out << "  # CXX_LANGUAGE_STANDARD\n";
+            }
+            else
+            {
+              out << "  CXX_LANGUAGE_STANDARD \"" << cppLanguageStandard << "\"\n";
+            }
           }
 
           if (exporterType == "VS2015" || exporterType == "VS2013")
