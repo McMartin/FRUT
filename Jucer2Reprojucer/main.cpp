@@ -486,6 +486,34 @@ int main(int argc, char* argv[])
               << "\n";
         }
 
+        if (exporterType == "LINUX_MAKE")
+        {
+          const auto cppLanguageStandard = [&exporter]() -> std::string
+          {
+            const auto value = exporter.getProperty("cppLanguageStandard").toString();
+
+            if (value == "-std=c++03")
+              return "C++03";
+
+            if (value == "-std=c++11")
+              return "C++11";
+
+            if (value == "-std=c++14")
+              return "C++14";
+
+            return {};
+          }();
+
+          if (cppLanguageStandard.empty())
+          {
+            out << "  # CXX_STANDARD_TO_USE\n";
+          }
+          else
+          {
+            out << "  CXX_STANDARD_TO_USE \"" << cppLanguageStandard << "\"\n";
+          }
+        }
+
         writeUserNotes(out, exporter);
 
         out << ")\n"
