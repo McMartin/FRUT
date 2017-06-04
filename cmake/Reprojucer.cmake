@@ -391,7 +391,6 @@ function(jucer_export_target exporter)
   endif()
 
   set(export_target_settings_tags
-    "VST3_SDK_FOLDER"
     "EXTRA_PREPROCESSOR_DEFINITIONS"
     "EXTRA_COMPILER_FLAGS"
   )
@@ -402,6 +401,13 @@ function(jucer_export_target exporter)
       "EXTRA_FRAMEWORKS"
       "PREBUILD_SHELL_SCRIPT"
       "POSTBUILD_SHELL_SCRIPT"
+    )
+  endif()
+
+  if(exporter STREQUAL "Xcode (MacOSX)" OR exporter STREQUAL "Visual Studio 2015"
+      OR exporter STREQUAL "Visual Studio 2013")
+    list(APPEND export_target_settings_tags
+      "VST3_SDK_FOLDER"
     )
   endif()
 
