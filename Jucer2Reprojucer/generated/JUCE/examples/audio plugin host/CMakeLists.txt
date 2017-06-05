@@ -160,7 +160,7 @@ jucer_project_module(
 
 jucer_export_target(
   "Xcode (MacOSX)"
-  VST3_SDK_FOLDER "~/SDKs/VST_SDK/VST3_SDK"
+  # VST3_SDK_FOLDER
   # EXTRA_PREPROCESSOR_DEFINITIONS
   EXTRA_COMPILER_FLAGS "-Wall -Wshadow -Wno-missing-field-initializers -Wshadow -Wshorten-64-to-32 -Wstrict-aliasing -Wuninitialized -Wunused-parameter -Wconversion -Wsign-compare -Wint-conversion -Woverloaded-virtual -Wreorder -Wconstant-conversion -Wsign-conversion"
   # EXTRA_FRAMEWORKS
@@ -192,7 +192,7 @@ jucer_export_target_configuration(
 
 jucer_export_target(
   "Visual Studio 2015"
-  VST3_SDK_FOLDER "c:\\SDKs\\VST_SDK\\VST3_SDK"
+  # VST3_SDK_FOLDER
   # EXTRA_PREPROCESSOR_DEFINITIONS
   # EXTRA_COMPILER_FLAGS
 )
@@ -217,7 +217,7 @@ jucer_export_target_configuration(
 
 jucer_export_target(
   "Visual Studio 2013"
-  VST3_SDK_FOLDER "c:\\SDKs\\VST_SDK\\VST3_SDK"
+  # VST3_SDK_FOLDER
   # EXTRA_PREPROCESSOR_DEFINITIONS
   # EXTRA_COMPILER_FLAGS
 )

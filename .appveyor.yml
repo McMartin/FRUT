@@ -27,6 +27,7 @@ build_script:
   - >
     cmake ..
     -G "%GENERATOR%"
+    -DJUCER_VST3_SDK_FOLDER="C:/SDKs/VST_SDK/VST3_SDK"
     -DJUCE_ROOT="../../../JUCE"
     -DJuceDemoPlugin_jucer_FILE="../../../JUCE/examples/audio plugin demo/JuceDemoPlugin.jucer"
     -DNetworkGraphicsDemo_jucer_FILE="../../../JUCE/examples/NetworkGraphicsDemo/NetworkGraphicsDemo.jucer"
