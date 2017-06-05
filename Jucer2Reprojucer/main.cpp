@@ -17,7 +17,6 @@
 
 #include "JuceHeader.h"
 
-#include <array>
 #include <fstream>
 #include <functional>
 #include <iostream>
@@ -125,10 +124,10 @@ int main(int argc, char* argv[])
   }
 
   const auto args = std::vector<std::string>{argv, argv + argc};
-  const auto& jucerFilePath = args.at(1);
-  const auto& reprojucerFilePath = args.at(2);
 
-  const auto jucerFile = juce::File{jucerFilePath};
+  const auto& jucerFilePath = args.at(1);
+  const auto jucerFile = juce::File{
+    juce::File::getCurrentWorkingDirectory().getChildFile(juce::String{jucerFilePath})};
 
   const auto xml = std::unique_ptr<juce::XmlElement>{juce::XmlDocument::parse(jucerFile)};
   if (xml == nullptr || !xml->hasTagName("JUCERPROJECT"))
@@ -159,9 +158,12 @@ int main(int argc, char* argv[])
 
   // include(Reprojucer)
   {
+    const auto& reprojucerFilePath = args.at(2);
+
     out << "list(APPEND CMAKE_MODULE_PATH \""
         << "${CMAKE_CURRENT_LIST_DIR}/"
-        << juce::File{reprojucerFilePath}
+        << juce::File{juce::File::getCurrentWorkingDirectory().getChildFile(
+                        juce::String{reprojucerFilePath})}
              .getParentDirectory()
              .getRelativePathFrom(juce::File::getCurrentWorkingDirectory())
              .replace("\\", "/")
@@ -425,12 +427,11 @@ int main(int argc, char* argv[])
 
   // jucer_export_target() and jucer_export_target_configuration()
   {
-    const std::vector<std::tuple<const char*, const char*, const char*>>
-      supportedExporters = {
-        std::make_tuple("XCODE_MAC", "Xcode (MacOSX)", "~/SDKs/VST_SDK/VST3_SDK"),
-        std::make_tuple("VS2015", "Visual Studio 2015", "c:\\SDKs\\VST_SDK\\VST3_SDK"),
-        std::make_tuple("VS2013", "Visual Studio 2013", "c:\\SDKs\\VST_SDK\\VST3_SDK"),
-        std::make_tuple("LINUX_MAKE", "Linux Makefile", "")};
+    const auto supportedExporters = {
+      std::make_tuple("XCODE_MAC", "Xcode (MacOSX)", "~/SDKs/VST_SDK/VST3_SDK"),
+      std::make_tuple("VS2015", "Visual Studio 2015", "c:\\SDKs\\VST_SDK\\VST3_SDK"),
+      std::make_tuple("VS2013", "Visual Studio 2013", "c:\\SDKs\\VST_SDK\\VST3_SDK"),
+      std::make_tuple("LINUX_MAKE", "Linux Makefile", "")};
 
     for (const auto& element : supportedExporters)
     {
@@ -564,14 +565,14 @@ int main(int argc, char* argv[])
 
           if (exporterType == "XCODE_MAC")
           {
-            const auto sdks = std::array<const char*, 8>{{"10.5 SDK",
+            const auto sdks = {"10.5 SDK",
               "10.6 SDK",
               "10.7 SDK",
               "10.8 SDK",
               "10.9 SDK",
               "10.10 SDK",
               "10.11 SDK",
-              "10.12 SDK"}};
+              "10.12 SDK"};
 
             const auto osxSDK =
               configuration.getProperty("osxSDK").toString().toStdString();
