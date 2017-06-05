@@ -1153,6 +1153,12 @@ function(__set_common_target_properties target_name)
       message(WARNING
         "JUCER_VST3_SDK_FOLDER: no such directory \"${JUCER_VST3_SDK_FOLDER}\""
       )
+    else()
+      if(NOT EXISTS "${JUCER_VST3_SDK_FOLDER}/base/source/baseiids.cpp")
+        message(WARNING "JUCER_VST3_SDK_FOLDER: \"${JUCER_VST3_SDK_FOLDER}\" doesn't "
+          "seem to contain the VST3 SDK"
+        )
+      endif()
     endif()
     target_include_directories(${target_name} PRIVATE "${JUCER_VST3_SDK_FOLDER}")
   endif()
