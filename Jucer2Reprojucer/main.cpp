@@ -538,6 +538,19 @@ int main(int argc, char* argv[])
               << "\n";
         }
 
+        if (exporterType == "VS2015" || exporterType == "VS2013")
+        {
+          const auto toolset = exporter.getProperty("toolset").toString().toStdString();
+          if (toolset.empty())
+          {
+            out << "  PLATFORM_TOOLSET \"(default)\"\n";
+          }
+          else
+          {
+            out << "  PLATFORM_TOOLSET \"" << toolset << "\"\n";
+          }
+        }
+
         if (exporterType == "LINUX_MAKE")
         {
           const auto cppLanguageStandard = [&exporter]() -> std::string

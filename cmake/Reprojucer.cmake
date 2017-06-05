@@ -412,6 +412,12 @@ function(jucer_export_target exporter)
     )
   endif()
 
+  if(exporter STREQUAL "Visual Studio 2015" OR exporter STREQUAL "Visual Studio 2013")
+    list(APPEND export_target_settings_tags
+      "PLATFORM_TOOLSET"
+    )
+  endif()
+
   if(exporter STREQUAL "Linux Makefile")
     list(APPEND export_target_settings_tags
       "CXX_STANDARD_TO_USE"
@@ -474,6 +480,24 @@ function(jucer_export_target exporter)
         set(JUCER_POSTBUILD_SHELL_SCRIPT
           "${CMAKE_CURRENT_BINARY_DIR}/postbuild.sh" PARENT_SCOPE
         )
+
+      elseif(tag STREQUAL "PLATFORM_TOOLSET")
+        if((exporter STREQUAL "Visual Studio 2015"
+              AND (value STREQUAL "v140" OR value STREQUAL "v140_xp"
+                OR value STREQUAL "CTP_Nov2013"))
+            OR (exporter STREQUAL "Visual Studio 2013"
+              AND (value STREQUAL "v120" OR value STREQUAL "v120_xp"
+                OR value STREQUAL "Windows7" OR value STREQUAL "CTP_Nov2013")))
+          if(NOT value STREQUAL "${CMAKE_VS_PLATFORM_TOOLSET}")
+            message(FATAL_ERROR "You must call `cmake -T ${value}` in order to build with"
+              " the toolset \"${value}\"."
+            )
+          endif()
+        elseif(NOT value STREQUAL "(default)")
+          message(FATAL_ERROR
+            "Unsupported value for PLATFORM_TOOLSET: \"${value}\"\n"
+          )
+        endif()
 
       elseif(tag STREQUAL "CXX_STANDARD_TO_USE")
         if(value MATCHES "^C\\+\\+(03|11|14)$")
