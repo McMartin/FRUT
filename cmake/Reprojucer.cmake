@@ -391,6 +391,7 @@ function(jucer_export_target exporter)
   endif()
 
   set(export_target_settings_tags
+    "VST_SDK_FOLDER"
     "EXTRA_PREPROCESSOR_DEFINITIONS"
     "EXTRA_COMPILER_FLAGS"
   )
@@ -433,6 +434,11 @@ function(jucer_export_target exporter)
         string(REPLACE "\\" "/" value "${value}")
         __abs_path_based_on_jucer_project_dir("${value}" value)
         set(JUCER_TARGET_PROJECT_FOLDER ${value} PARENT_SCOPE)
+
+      elseif(tag STREQUAL "VST_SDK_FOLDER")
+        string(REPLACE "\\" "/" value "${value}")
+        __abs_path_based_on_jucer_project_dir("${value}" value)
+        set(JUCER_VST_SDK_FOLDER ${value} PARENT_SCOPE)
 
       elseif(tag STREQUAL "VST3_SDK_FOLDER")
         string(REPLACE "\\" "/" value "${value}")
@@ -1147,6 +1153,21 @@ function(__set_common_target_properties target_name)
     ${JUCER_PROJECT_MODULES_FOLDERS}
     ${JUCER_INCLUDE_DIRECTORIES}
   )
+
+  if(JUCER_FLAG_JUCE_PLUGINHOST_VST AND DEFINED JUCER_VST_SDK_FOLDER)
+    if(NOT IS_DIRECTORY "${JUCER_VST_SDK_FOLDER}")
+      message(WARNING
+        "JUCER_VST_SDK_FOLDER: no such directory \"${JUCER_VST_SDK_FOLDER}\""
+      )
+    else()
+      if(NOT EXISTS "${JUCER_VST_SDK_FOLDER}/public.sdk/source/vst2.x/audioeffectx.h")
+        message(WARNING "JUCER_VST_SDK_FOLDER: \"${JUCER_VST_SDK_FOLDER}\" doesn't "
+          "seem to contain the VST SDK"
+        )
+      endif()
+    endif()
+    target_include_directories(${target_name} PRIVATE "${JUCER_VST_SDK_FOLDER}")
+  endif()
 
   if(JUCER_FLAG_JUCE_PLUGINHOST_VST3 AND DEFINED JUCER_VST3_SDK_FOLDER)
     if(NOT IS_DIRECTORY "${JUCER_VST3_SDK_FOLDER}")
