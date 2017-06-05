@@ -494,6 +494,21 @@ int main(int argc, char* argv[])
               << "\"  # only used by PREBUILD_SHELL_SCRIPT and POSTBUILD_SHELL_SCRIPT\n";
         }
 
+        const auto hasVst2Interface =
+          std::find(kSupportedCommits.begin(), kSupportedCommits.end(), commitSha1) <=
+          std::find(kSupportedCommits.begin(), kSupportedCommits.end(), 0x9f31d64);
+        const auto isVstPluginHost =
+          jucerProject.getChildWithName("MODULES")
+            .getChildWithProperty("id", "juce_audio_processors")
+            .isValid() &&
+          jucerProject.getChildWithName("JUCEOPTIONS")
+              .getProperty("JUCE_PLUGINHOST_VST") == "enabled";
+
+        if (!hasVst2Interface && isVstPluginHost)
+        {
+          out << "  " << getSetting(exporter, "VST_SDK_FOLDER", "vstFolder") << "\n";
+        }
+
         const auto supportsVst3 = std::get<2>(element);
         const auto isVst3PluginHost =
           jucerProject.getChildWithName("MODULES")
