@@ -195,6 +195,7 @@ jucer_export_target(
   # VST3_SDK_FOLDER
   # EXTRA_PREPROCESSOR_DEFINITIONS
   # EXTRA_COMPILER_FLAGS
+  PLATFORM_TOOLSET "(default)"
 )
 
 jucer_export_target_configuration(
@@ -220,6 +221,7 @@ jucer_export_target(
   # VST3_SDK_FOLDER
   # EXTRA_PREPROCESSOR_DEFINITIONS
   # EXTRA_COMPILER_FLAGS
+  PLATFORM_TOOLSET "(default)"
 )
 
 jucer_export_target_configuration(
