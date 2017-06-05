@@ -18,6 +18,8 @@
 #include <initializer_list>
 
 
+static const auto kDefaultCommitSha1 = 0x75cd666;
+
 static const auto kSupportedCommits = {
   0x75cd666, /* o Partially reverted fix for new VST3 SDK 3.6.7 by removing any depe... */
   0x14d6096, /* o Added support for VST3 SDK 3.6.7                                      */

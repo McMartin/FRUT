@@ -71,7 +71,7 @@ jucer_export_target(
 
 jucer_export_target(
   "Visual Studio 2015"
-  EXTRA_COMPILER_FLAGS "/WX /W4"
+  EXTRA_COMPILER_FLAGS "/WX /W4 /wd4592"
 )
 
 jucer_export_target(

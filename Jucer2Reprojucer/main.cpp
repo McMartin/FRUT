@@ -116,11 +116,12 @@ void writeUserNotes(std::ostream& out, const juce::ValueTree& valueTree)
 
 int main(int argc, char* argv[])
 {
-  if (argc != 3)
+  if (argc != 3 && argc != 4)
   {
     std::cerr << "usage: Jucer2Reprojucer"
                  " <jucer_project_file>"
                  " <Reprojucer.cmake_file>"
+                 " [<JUCE_commit_sha1>]"
               << std::endl;
     return 1;
   }
@@ -142,6 +143,45 @@ int main(int argc, char* argv[])
   if (!jucerProject.hasType("JUCERPROJECT"))
   {
     printError(jucerFilePath + " is not a valid Jucer project.");
+    return 1;
+  }
+
+  const std::string juceCommitSha1 = args.size() == 4 ? args.at(3) : std::string{};
+  const auto commitSha1 = [&juceCommitSha1]() -> decltype(std::stoul(juceCommitSha1))
+  {
+    if (juceCommitSha1.empty())
+      return kDefaultCommitSha1;
+
+    if (juceCommitSha1.length() < 7)
+      return 0u;
+
+    try
+    {
+      static_assert(sizeof(decltype(std::stoul(juceCommitSha1))) >= 7 * 4 / 8,
+        "std::stoul won't be able to parse 7-digit hex values");
+      const auto hex = std::stoul(juceCommitSha1.substr(0, 7), nullptr, 16);
+
+      if (std::find(kSupportedCommits.begin(), kSupportedCommits.end(), hex) !=
+          kSupportedCommits.end())
+      {
+        return hex;
+      }
+
+      std::cout << "No commit found with the SHA-1 \"" << std::hex << hex
+                << "\", falling back to the default commit (" << kDefaultCommitSha1 << ")"
+                << std::endl;
+
+      return kDefaultCommitSha1;
+    }
+    catch (const std::invalid_argument&)
+    {
+      return 0u;
+    }
+  }();
+
+  if (!commitSha1)
+  {
+    printError("Invalid commit SHA-1 \"" + juceCommitSha1 + "\"");
     return 1;
   }
 
