@@ -128,7 +128,8 @@ int main(int argc, char* argv[])
   const auto& jucerFilePath = args.at(1);
   const auto& reprojucerFilePath = args.at(2);
 
-  const auto jucerFile = juce::File{jucerFilePath};
+  const auto jucerFile = juce::File{
+    juce::File::getCurrentWorkingDirectory().getChildFile(juce::String{jucerFilePath})};
 
   const auto xml = std::unique_ptr<juce::XmlElement>{juce::XmlDocument::parse(jucerFile)};
   if (xml == nullptr || !xml->hasTagName("JUCERPROJECT"))
@@ -161,7 +162,8 @@ int main(int argc, char* argv[])
   {
     out << "list(APPEND CMAKE_MODULE_PATH \""
         << "${CMAKE_CURRENT_LIST_DIR}/"
-        << juce::File{reprojucerFilePath}
+        << juce::File{juce::File::getCurrentWorkingDirectory().getChildFile(
+                        juce::String{reprojucerFilePath})}
              .getParentDirectory()
              .getRelativePathFrom(juce::File::getCurrentWorkingDirectory())
              .replace("\\", "/")
