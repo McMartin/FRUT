@@ -17,7 +17,6 @@
 
 #include "JuceHeader.h"
 
-#include <array>
 #include <fstream>
 #include <functional>
 #include <iostream>
@@ -428,12 +427,11 @@ int main(int argc, char* argv[])
 
   // jucer_export_target() and jucer_export_target_configuration()
   {
-    const std::vector<std::tuple<const char*, const char*, const char*>>
-      supportedExporters = {
-        std::make_tuple("XCODE_MAC", "Xcode (MacOSX)", "~/SDKs/VST_SDK/VST3_SDK"),
-        std::make_tuple("VS2015", "Visual Studio 2015", "c:\\SDKs\\VST_SDK\\VST3_SDK"),
-        std::make_tuple("VS2013", "Visual Studio 2013", "c:\\SDKs\\VST_SDK\\VST3_SDK"),
-        std::make_tuple("LINUX_MAKE", "Linux Makefile", "")};
+    const auto supportedExporters = {
+      std::make_tuple("XCODE_MAC", "Xcode (MacOSX)", "~/SDKs/VST_SDK/VST3_SDK"),
+      std::make_tuple("VS2015", "Visual Studio 2015", "c:\\SDKs\\VST_SDK\\VST3_SDK"),
+      std::make_tuple("VS2013", "Visual Studio 2013", "c:\\SDKs\\VST_SDK\\VST3_SDK"),
+      std::make_tuple("LINUX_MAKE", "Linux Makefile", "")};
 
     for (const auto& element : supportedExporters)
     {
@@ -567,14 +565,14 @@ int main(int argc, char* argv[])
 
           if (exporterType == "XCODE_MAC")
           {
-            const auto sdks = std::array<const char*, 8>{{"10.5 SDK",
+            const auto sdks = {"10.5 SDK",
               "10.6 SDK",
               "10.7 SDK",
               "10.8 SDK",
               "10.9 SDK",
               "10.10 SDK",
               "10.11 SDK",
-              "10.12 SDK"}};
+              "10.12 SDK"};
 
             const auto osxSDK =
               configuration.getProperty("osxSDK").toString().toStdString();
