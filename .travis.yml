@@ -21,9 +21,6 @@ install-anchors:
   - &install-osx
     - cmake --version
 
-    - mkdir ~/SDKs
-    - cp -R ci/third-party/VST_SDK ~/SDKs
-
 script-anchors:
   - &script-linux
     - mkdir ci/Debug_build/
@@ -63,7 +60,7 @@ script-anchors:
 
     - >
       cmake .. -G Xcode
-      -DJUCER_VST3_SDK_FOLDER="~/SDKs/VST_SDK/VST3_SDK"
+      -DJUCER_VST3_SDK_FOLDER="${TRAVIS_BUILD_DIR}/ci/third-party/VST_SDK/VST3_SDK"
       -DJUCE_ROOT="../../../JUCE"
       -DJuceDemoPlugin_jucer_FILE="../../../JUCE/examples/audio plugin demo/JuceDemoPlugin.jucer"
       -DNetworkGraphicsDemo_jucer_FILE="../../../JUCE/examples/NetworkGraphicsDemo/NetworkGraphicsDemo.jucer"
