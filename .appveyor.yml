@@ -17,9 +17,6 @@ install:
   - git reset --hard 75cd666a61f31eaa3ee6c6d9ad97bc404878a0d8
   - cd %APPVEYOR_BUILD_FOLDER%
 
-  - mkdir C:\SDKs\VST_SDK
-  - xcopy /S ci\third-party\VST_SDK C:\SDKs\VST_SDK
-
 build_script:
   - mkdir ci\build
   - cd ci\build
@@ -27,6 +24,7 @@ build_script:
   - >
     cmake ..
     -G "%GENERATOR%"
+    -DJUCER_VST3_SDK_FOLDER="%APPVEYOR_BUILD_FOLDER%/ci/third-party/VST_SDK/VST3_SDK"
     -DJUCE_ROOT="../../../JUCE"
     -DJuceDemoPlugin_jucer_FILE="../../../JUCE/examples/audio plugin demo/JuceDemoPlugin.jucer"
     -DNetworkGraphicsDemo_jucer_FILE="../../../JUCE/examples/NetworkGraphicsDemo/NetworkGraphicsDemo.jucer"
