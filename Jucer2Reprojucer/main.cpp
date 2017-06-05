@@ -125,9 +125,8 @@ int main(int argc, char* argv[])
   }
 
   const auto args = std::vector<std::string>{argv, argv + argc};
-  const auto& jucerFilePath = args.at(1);
-  const auto& reprojucerFilePath = args.at(2);
 
+  const auto& jucerFilePath = args.at(1);
   const auto jucerFile = juce::File{
     juce::File::getCurrentWorkingDirectory().getChildFile(juce::String{jucerFilePath})};
 
@@ -160,6 +159,8 @@ int main(int argc, char* argv[])
 
   // include(Reprojucer)
   {
+    const auto& reprojucerFilePath = args.at(2);
+
     out << "list(APPEND CMAKE_MODULE_PATH \""
         << "${CMAKE_CURRENT_LIST_DIR}/"
         << juce::File{juce::File::getCurrentWorkingDirectory().getChildFile(
