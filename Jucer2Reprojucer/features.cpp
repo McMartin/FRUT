@@ -17,6 +17,8 @@
 
 #include "features.hpp"
 
+#include <stdexcept>
+
 
 bool getFeature(Feature feature, unsigned long commitSha1)
 {
@@ -852,6 +854,11 @@ bool getFeature(Feature feature, unsigned long commitSha1)
     case Feature::hasVst2Interface:
       return false;
     }
+  }
+
+  if (commitSha1 == kDefaultCommitSha1)
+  {
+    throw std::logic_error{"kDefaultCommitSha1 is not a supported commit!"};
   }
 
   if (feature == Feature::isSupportedCommit)
