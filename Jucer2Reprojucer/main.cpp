@@ -15,7 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with JUCE.cmake.  If not, see <http://www.gnu.org/licenses/>.
 
-#include "commits.hpp"
+#include "features.hpp"
 
 #include "JuceHeader.h"
 
@@ -161,8 +161,7 @@ int main(int argc, char* argv[])
         "std::stoul won't be able to parse 7-digit hex values");
       const auto hex = std::stoul(juceCommitSha1.substr(0, 7), nullptr, 16);
 
-      if (std::find(kSupportedCommits.begin(), kSupportedCommits.end(), hex) !=
-          kSupportedCommits.end())
+      if (getFeature(Feature::isSupportedCommit, hex))
       {
         return hex;
       }
@@ -494,9 +493,7 @@ int main(int argc, char* argv[])
               << "\"  # only used by PREBUILD_SHELL_SCRIPT and POSTBUILD_SHELL_SCRIPT\n";
         }
 
-        const auto hasVst2Interface =
-          std::find(kSupportedCommits.begin(), kSupportedCommits.end(), commitSha1) <=
-          std::find(kSupportedCommits.begin(), kSupportedCommits.end(), 0x9f31d64);
+        const auto hasVst2Interface = getFeature(Feature::hasVst2Interface, commitSha1);
         const auto isVstPluginHost =
           jucerProject.getChildWithName("MODULES")
             .getChildWithProperty("id", "juce_audio_processors")
