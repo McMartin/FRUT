@@ -457,6 +457,7 @@ jucer_export_target(
   "Visual Studio 2015"
   # EXTRA_PREPROCESSOR_DEFINITIONS
   # EXTRA_COMPILER_FLAGS
+  PLATFORM_TOOLSET "v140"
 )
 
 jucer_export_target_configuration(
@@ -481,6 +482,7 @@ jucer_export_target(
   "Visual Studio 2013"
   # EXTRA_PREPROCESSOR_DEFINITIONS
   # EXTRA_COMPILER_FLAGS
+  PLATFORM_TOOLSET "v120"
 )
 
 jucer_export_target_configuration(
