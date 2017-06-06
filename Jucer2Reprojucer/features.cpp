@@ -246,6 +246,7 @@ bool getFeature(Feature feature, unsigned long commitSha1)
   case 0xde84462: /* | o BLOCKS example apps: some cleanup, enabled DUMP_TOPOLOGY flag  */
   case 0x7bb0fe4: /* | o Update copyright and make docstrings more compatible with D... */
   case 0xa85f026: /* | o BLOCKS documentation improvements                              */
+    return getFeature(feature, 0xefd4bb6);
   case 0x0464728: /* o | Fixed bug when maximum number of plug-in io channels is one    */
   case 0xa08cedb: /* o | Fix for HTTPS POST requests with keep-alive failing on OS X... */
   case 0x1066a6d: /* o | Added C++11 functions to Doxygen                               */
@@ -371,6 +372,7 @@ bool getFeature(Feature feature, unsigned long commitSha1)
   case 0xb0457a9: /* | o Fixed a typo in the VST wrapper                                */
   case 0x1b217d1: /* | o Zero out buffers if pulling audio returns an error in the A... */
   case 0x4fa0516: /* | o Revised multibus API and added support for multibus hosting    */
+    return getFeature(feature, 0xebf19aa);
   case 0x680d758: /* o |   JUCE version 4.2.4                                           */
                   /* |\ \                                                               */
                   /* | |/                                                               */
@@ -548,6 +550,7 @@ bool getFeature(Feature feature, unsigned long commitSha1)
   case 0xa700774: /* | o Tidied up a comment                                            */
   case 0xed67e40: /* | o Added a customisable callback object to PopupMenu              */
   case 0x0a4b2ae: /* | o Return parent row number if any of the tree view item's par... */
+    return getFeature(feature, 0x630ab88);
   case 0x3592d61: /* o | Add an issue template for GitHub.                              */
   case 0x572868f: /* o | Fix incorrect parameter id <-> index conversion when hostin... */
   case 0x41ab0d9: /* o | Never define JUCE_SUPPORT_CARBON on iOS                        */
@@ -675,6 +678,7 @@ bool getFeature(Feature feature, unsigned long commitSha1)
   case 0xc9c6aa0: /* o   Merge branch 'master' into develop                             */
                   /* |\                                                                 */
   case 0xfe37653: /* | o Fixed JUCE_BUILDNUMBER which was not correctly updated to 4... */
+    return getFeature(feature, 0x2c7a0e0);
   case 0x1bd850d: /* o | Minor tidy up of yesterday's VST3 preset commit                */
   case 0x7eb80b8: /* o | Ensure that AudioUnitUninitialize is called on the message ... */
   case 0x5098232: /* o | Tidy up a few warning                                          */
