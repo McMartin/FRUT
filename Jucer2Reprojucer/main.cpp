@@ -146,7 +146,7 @@ int main(int argc, char* argv[])
     return 1;
   }
 
-  const std::string juceCommitSha1 = args.size() == 4 ? args.at(3) : std::string{};
+  const auto juceCommitSha1 = args.size() == 4 ? args.at(3) : std::string{};
   const auto commitSha1 = [&juceCommitSha1]() -> decltype(std::stoul(juceCommitSha1))
   {
     if (juceCommitSha1.empty())
