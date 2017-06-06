@@ -46,6 +46,7 @@ jucer_project_settings(
 )
 
 jucer_project_files("Jucer2Reprojucer"
+  x . . "${CMAKE_CURRENT_LIST_DIR}/features.cpp"
   x . . "${CMAKE_CURRENT_LIST_DIR}/main.cpp"
 )
 
@@ -71,7 +72,7 @@ jucer_export_target(
 
 jucer_export_target(
   "Visual Studio 2015"
-  EXTRA_COMPILER_FLAGS "/WX /W4 /wd4592"
+  EXTRA_COMPILER_FLAGS "/WX /W4"
 )
 
 jucer_export_target(
