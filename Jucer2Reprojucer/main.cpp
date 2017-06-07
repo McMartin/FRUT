@@ -525,6 +525,9 @@ int main(int argc, char* argv[])
         out << "  " << getSetting(exporter, "EXTRA_PREPROCESSOR_DEFINITIONS", "extraDefs")
             << "\n"
             << "  " << getSetting(exporter, "EXTRA_COMPILER_FLAGS", "extraCompilerFlags")
+            << "\n"
+            << "  "
+            << getSetting(exporter, "EXTERNAL_LIBRARIES_TO_LINK", "externalLibraries")
             << "\n";
 
         if (exporterType == "XCODE_MAC")
