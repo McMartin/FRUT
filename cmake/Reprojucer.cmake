@@ -712,7 +712,7 @@ function(jucer_project_end)
   __generate_AppConfig_header("${upper_project_id}")
   __generate_JuceHeader_header("${upper_project_id}")
 
-  if(WIN32)
+  if(WIN32 AND NOT JUCER_PROJECT_TYPE STREQUAL "Static Library")
     string(REPLACE "." "," comma_separated_version_number "${JUCER_PROJECT_VERSION}")
     configure_file("${Reprojucer_templates_DIR}/resources.rc"
       "JuceLibraryCode/resources.rc"
