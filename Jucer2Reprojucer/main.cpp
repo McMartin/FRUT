@@ -526,6 +526,8 @@ int main(int argc, char* argv[])
             << "\n"
             << "  " << getSetting(exporter, "EXTRA_COMPILER_FLAGS", "extraCompilerFlags")
             << "\n"
+            << "  " << getSetting(exporter, "EXTRA_LINKER_FLAGS", "extraLinkerFlags")
+            << "\n"
             << "  "
             << getSetting(exporter, "EXTERNAL_LIBRARIES_TO_LINK", "externalLibraries")
             << "\n";
