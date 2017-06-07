@@ -453,6 +453,7 @@ function(jucer_export_target exporter)
         set(JUCER_PREPROCESSOR_DEFINITIONS ${JUCER_PREPROCESSOR_DEFINITIONS} PARENT_SCOPE)
 
       elseif(tag STREQUAL "EXTRA_COMPILER_FLAGS")
+        string(REPLACE "\n" " " value "${value}")
         string(REPLACE " " ";" value "${value}")
         list(APPEND JUCER_COMPILER_FLAGS ${value})
         set(JUCER_COMPILER_FLAGS ${JUCER_COMPILER_FLAGS} PARENT_SCOPE)
