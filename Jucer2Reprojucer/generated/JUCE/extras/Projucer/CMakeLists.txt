@@ -426,6 +426,7 @@ jucer_export_target(
   "Xcode (MacOSX)"
   # EXTRA_PREPROCESSOR_DEFINITIONS
   EXTRA_COMPILER_FLAGS "-Wall -Wshadow -Wno-missing-field-initializers -Wshadow -Wshorten-64-to-32 -Wstrict-aliasing -Wuninitialized -Wunused-parameter -Wconversion -Wsign-compare -Wint-conversion -Woverloaded-virtual -Wreorder -Wconstant-conversion -Wsign-conversion"
+  # EXTERNAL_LIBRARIES_TO_LINK
   EXTRA_FRAMEWORKS "AudioUnit\; Accelerate\; AVFoundation\; CoreAudio\; CoreAudioKit\; CoreMIDI\; DiscRecording\; QuartzCore\; AudioToolbox\; OpenGL\; QTKit\; QuickTime"
   # PREBUILD_SHELL_SCRIPT
   # POSTBUILD_SHELL_SCRIPT
@@ -457,6 +458,7 @@ jucer_export_target(
   "Visual Studio 2015"
   # EXTRA_PREPROCESSOR_DEFINITIONS
   # EXTRA_COMPILER_FLAGS
+  # EXTERNAL_LIBRARIES_TO_LINK
   PLATFORM_TOOLSET "v140"
 )
 
@@ -482,6 +484,7 @@ jucer_export_target(
   "Visual Studio 2013"
   # EXTRA_PREPROCESSOR_DEFINITIONS
   # EXTRA_COMPILER_FLAGS
+  # EXTERNAL_LIBRARIES_TO_LINK
   PLATFORM_TOOLSET "v120"
 )
 
@@ -507,6 +510,7 @@ jucer_export_target(
   "Linux Makefile"
   # EXTRA_PREPROCESSOR_DEFINITIONS
   EXTRA_COMPILER_FLAGS "-std=c++11"
+  # EXTERNAL_LIBRARIES_TO_LINK
   # CXX_STANDARD_TO_USE
 )
 
