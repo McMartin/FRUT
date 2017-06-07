@@ -25,7 +25,7 @@
 
 int main(int argc, char* argv[])
 {
-  if (argc < 3)
+  if (argc < 4)
   {
     std::cerr << "usage: BinaryDataBuilder"
               << " <BinaryData-files-output-dir>"
