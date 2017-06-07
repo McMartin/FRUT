@@ -150,6 +150,7 @@ jucer_export_target(
   "Xcode (MacOSX)"
   # EXTRA_PREPROCESSOR_DEFINITIONS
   EXTRA_COMPILER_FLAGS "-pedantic-errors -Wreorder -Wconstant-conversion -Wint-conversion -Woverloaded-virtual -Wuninitialized -Wunused-parameter -Wshorten-64-to-32 -Wstrict-aliasing -Wshadow -Wconversion -Wsign-compare -Wsign-conversion"
+  # EXTRA_LINKER_FLAGS
   # EXTERNAL_LIBRARIES_TO_LINK
   # EXTRA_FRAMEWORKS
   # PREBUILD_SHELL_SCRIPT
@@ -182,6 +183,7 @@ jucer_export_target(
   "Visual Studio 2015"
   # EXTRA_PREPROCESSOR_DEFINITIONS
   # EXTRA_COMPILER_FLAGS
+  # EXTRA_LINKER_FLAGS
   # EXTERNAL_LIBRARIES_TO_LINK
   PLATFORM_TOOLSET "(default)"
 )
@@ -208,6 +210,7 @@ jucer_export_target(
   "Linux Makefile"
   # EXTRA_PREPROCESSOR_DEFINITIONS
   # EXTRA_COMPILER_FLAGS
+  # EXTRA_LINKER_FLAGS
   # EXTERNAL_LIBRARIES_TO_LINK
   # CXX_STANDARD_TO_USE
 )
