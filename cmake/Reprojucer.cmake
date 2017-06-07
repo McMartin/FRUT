@@ -394,6 +394,7 @@ function(jucer_export_target exporter)
     "VST_SDK_FOLDER"
     "EXTRA_PREPROCESSOR_DEFINITIONS"
     "EXTRA_COMPILER_FLAGS"
+    "EXTRA_LINKER_FLAGS"
     "EXTERNAL_LIBRARIES_TO_LINK"
   )
 
@@ -453,9 +454,15 @@ function(jucer_export_target exporter)
         set(JUCER_PREPROCESSOR_DEFINITIONS ${JUCER_PREPROCESSOR_DEFINITIONS} PARENT_SCOPE)
 
       elseif(tag STREQUAL "EXTRA_COMPILER_FLAGS")
+        string(REPLACE "\n" " " value "${value}")
         string(REPLACE " " ";" value "${value}")
         list(APPEND JUCER_COMPILER_FLAGS ${value})
         set(JUCER_COMPILER_FLAGS ${JUCER_COMPILER_FLAGS} PARENT_SCOPE)
+
+      elseif(tag STREQUAL "EXTRA_LINKER_FLAGS")
+        string(REPLACE "\n" " " value "${value}")
+        list(APPEND JUCER_LINKER_FLAGS ${value})
+        set(JUCER_LINKER_FLAGS ${JUCER_LINKER_FLAGS} PARENT_SCOPE)
 
       elseif(tag STREQUAL "EXTERNAL_LIBRARIES_TO_LINK")
         string(REPLACE "\n" ";" value "${value}")
@@ -1211,7 +1218,7 @@ function(__set_common_target_properties target_name)
 
   target_compile_definitions(${target_name} PRIVATE ${JUCER_PREPROCESSOR_DEFINITIONS})
   target_compile_options(${target_name} PRIVATE ${JUCER_COMPILER_FLAGS})
-  target_link_libraries(${target_name} ${JUCER_LINK_LIBRARIES})
+  target_link_libraries(${target_name} ${JUCER_LINK_LIBRARIES} ${JUCER_LINKER_FLAGS})
 
   if(APPLE)
     set_target_properties(${target_name} PROPERTIES CXX_EXTENSIONS OFF)

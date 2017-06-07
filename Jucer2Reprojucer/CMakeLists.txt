@@ -66,7 +66,36 @@ jucer_project_module(
 
 jucer_export_target(
   "Xcode (MacOSX)"
-  EXTRA_COMPILER_FLAGS "-Werror -Weverything -Wno-c++98-compat -Wno-c++98-compat-pedantic -Wno-cast-align -Wno-covered-switch-default -Wno-date-time -Wno-deprecated -Wno-disabled-macro-expansion -Wno-documentation -Wno-documentation-unknown-command -Wno-exit-time-destructors -Wno-extra-semi -Wno-float-equal -Wno-global-constructors -Wno-implicit-fallthrough -Wno-missing-noreturn -Wno-missing-prototypes -Wno-missing-variable-declarations -Wno-old-style-cast -Wno-padded -Wno-reorder -Wno-reserved-id-macro -Wno-strict-selector-match -Wno-switch-enum -Wno-undeclared-selector -Wno-undef -Wno-undefined-reinterpret-cast -Wno-unknown-warning-option -Wno-weak-vtables"
+  EXTRA_COMPILER_FLAGS "-Werror -Weverything
+    -Wno-c++98-compat
+    -Wno-c++98-compat-pedantic
+    -Wno-cast-align
+    -Wno-covered-switch-default
+    -Wno-date-time
+    -Wno-deprecated
+    -Wno-disabled-macro-expansion
+    -Wno-documentation
+    -Wno-documentation-unknown-command
+    -Wno-exit-time-destructors
+    -Wno-extra-semi
+    -Wno-float-equal
+    -Wno-global-constructors
+    -Wno-implicit-fallthrough
+    -Wno-missing-noreturn
+    -Wno-missing-prototypes
+    -Wno-missing-variable-declarations
+    -Wno-old-style-cast
+    -Wno-padded
+    -Wno-reorder
+    -Wno-reserved-id-macro
+    -Wno-strict-selector-match
+    -Wno-switch-enum
+    -Wno-undeclared-selector
+    -Wno-undef
+    -Wno-undefined-reinterpret-cast
+    -Wno-unknown-warning-option
+    -Wno-weak-vtables
+  "
 )
 
 jucer_export_target(
