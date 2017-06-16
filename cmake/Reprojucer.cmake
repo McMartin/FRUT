@@ -698,7 +698,7 @@ function(jucer_project_end)
   if(NOT DEFINED CMAKE_CONFIGURATION_TYPES)
     if(CMAKE_BUILD_TYPE STREQUAL "")
       message(STATUS "Setting CMAKE_BUILD_TYPE to \"Debug\" as it was not specified.")
-      set(CMAKE_BUILD_TYPE Debug)
+      set(CMAKE_BUILD_TYPE Debug PARENT_SCOPE)
     endif()
   endif()
 
