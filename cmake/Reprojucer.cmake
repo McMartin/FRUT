@@ -738,8 +738,6 @@ function(jucer_project_end)
     ${JUCER_PROJECT_SOURCES}
     ${JUCER_PROJECT_RESOURCES}
     ${JUCER_PROJECT_XCODE_RESOURCES}
-    "${CMAKE_CURRENT_BINARY_DIR}/JuceLibraryCode/AppConfig.h"
-    "${CMAKE_CURRENT_BINARY_DIR}/JuceLibraryCode/JuceHeader.h"
     ${JUCER_PROJECT_BROWSABLE_FILES}
   )
 
@@ -1088,6 +1086,11 @@ function(__generate_AppConfig_header project_id)
   endif()
 
   configure_file("${Reprojucer_templates_DIR}/AppConfig.h" "JuceLibraryCode/AppConfig.h")
+  list(APPEND JUCER_PROJECT_SOURCES
+    "${CMAKE_CURRENT_BINARY_DIR}/JuceLibraryCode/AppConfig.h"
+  )
+
+  set(JUCER_PROJECT_SOURCES ${JUCER_PROJECT_SOURCES} PARENT_SCOPE)
 
 endfunction()
 
@@ -1161,7 +1164,6 @@ function(__generate_JuceHeader_header project_id)
         "${CMAKE_CURRENT_BINARY_DIR}/JuceLibraryCode/${filename}"
       )
     endforeach()
-    set(JUCER_PROJECT_SOURCES ${JUCER_PROJECT_SOURCES} PARENT_SCOPE)
     set(binary_data_include "#include \"BinaryData.h\"")
   endif()
 
@@ -1172,6 +1174,11 @@ function(__generate_JuceHeader_header project_id)
   configure_file("${Reprojucer_templates_DIR}/JuceHeader.h"
     "JuceLibraryCode/JuceHeader.h"
   )
+  list(APPEND JUCER_PROJECT_SOURCES
+    "${CMAKE_CURRENT_BINARY_DIR}/JuceLibraryCode/JuceHeader.h"
+  )
+
+  set(JUCER_PROJECT_SOURCES ${JUCER_PROJECT_SOURCES} PARENT_SCOPE)
 
 endfunction()
 
