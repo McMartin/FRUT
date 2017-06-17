@@ -25,6 +25,10 @@ add_subdirectory("../cmake/BinaryDataBuilder"
   "BinaryDataBuilder"
 )
 
+add_subdirectory("../cmake/IconBuilder"
+  "IconBuilder"
+)
+
 add_subdirectory("../Jucer2Reprojucer"
   "Jucer2Reprojucer"
 )

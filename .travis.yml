@@ -28,6 +28,7 @@ script-anchors:
     - >
       cmake .. -DCMAKE_BUILD_TYPE=Debug
       -DJUCE_ROOT="../../../JUCE"
+      -DJUCE_modules_DIRS="../../../JUCE/modules"
       -DJuceDemoPlugin_jucer_FILE="../../../JUCE/examples/audio plugin demo/JuceDemoPlugin.jucer"
       -DNetworkGraphicsDemo_jucer_FILE="../../../JUCE/examples/NetworkGraphicsDemo/NetworkGraphicsDemo.jucer"
       -DPlugin_Host_jucer_FILE="../../../JUCE/examples/audio plugin host/Plugin Host.jucer"
@@ -40,6 +41,7 @@ script-anchors:
     - >
       cmake .. -DCMAKE_BUILD_TYPE=Release
       -DJUCE_ROOT="../../../JUCE"
+      -DJUCE_modules_DIRS="../../../JUCE/modules"
       -DJuceDemoPlugin_jucer_FILE="../../../JUCE/examples/audio plugin demo/JuceDemoPlugin.jucer"
       -DNetworkGraphicsDemo_jucer_FILE="../../../JUCE/examples/NetworkGraphicsDemo/NetworkGraphicsDemo.jucer"
       -DPlugin_Host_jucer_FILE="../../../JUCE/examples/audio plugin host/Plugin Host.jucer"
@@ -62,6 +64,7 @@ script-anchors:
       cmake .. -G Xcode
       -DJUCER_VST3_SDK_FOLDER="${TRAVIS_BUILD_DIR}/ci/third-party/VST_SDK/VST3_SDK"
       -DJUCE_ROOT="../../../JUCE"
+      -DJUCE_modules_DIRS="../../../JUCE/modules"
       -DJuceDemoPlugin_jucer_FILE="../../../JUCE/examples/audio plugin demo/JuceDemoPlugin.jucer"
       -DNetworkGraphicsDemo_jucer_FILE="../../../JUCE/examples/NetworkGraphicsDemo/NetworkGraphicsDemo.jucer"
       -DPlugin_Host_jucer_FILE="../../../JUCE/examples/audio plugin host/Plugin Host.jucer"
