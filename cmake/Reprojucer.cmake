@@ -396,6 +396,8 @@ function(jucer_export_target exporter)
     "EXTRA_COMPILER_FLAGS"
     "EXTRA_LINKER_FLAGS"
     "EXTERNAL_LIBRARIES_TO_LINK"
+    "ICON_SMALL"
+    "ICON_LARGE"
   )
 
   if(exporter STREQUAL "Xcode (MacOSX)")
@@ -468,6 +470,18 @@ function(jucer_export_target exporter)
         string(REPLACE "\n" ";" value "${value}")
         list(APPEND JUCER_LINK_LIBRARIES ${value})
         set(JUCER_LINK_LIBRARIES ${JUCER_LINK_LIBRARIES} PARENT_SCOPE)
+
+      elseif(tag STREQUAL "ICON_SMALL")
+        if(NOT value STREQUAL "<None>")
+          __abs_path_based_on_jucer_project_dir("${value}" value)
+          set(JUCER_SMALL_ICON ${value} PARENT_SCOPE)
+        endif()
+
+      elseif(tag STREQUAL "ICON_LARGE")
+        if(NOT value STREQUAL "<None>")
+          __abs_path_based_on_jucer_project_dir("${value}" value)
+          set(JUCER_LARGE_ICON ${value} PARENT_SCOPE)
+        endif()
 
       elseif(tag STREQUAL "EXTRA_FRAMEWORKS")
         string(REPLACE "," ";" value "${value}")
@@ -712,7 +726,26 @@ function(jucer_project_end)
   __generate_AppConfig_header("${upper_project_id}")
   __generate_JuceHeader_header("${upper_project_id}")
 
+  if(DEFINED JUCER_SMALL_ICON OR DEFINED JUCER_LARGE_ICON)
+    if(APPLE)
+      __generate_icon_file("icns" icon_filename)
+    elseif(WIN32)
+      __generate_icon_file("ico" icon_filename)
+    endif()
+
+    if(DEFINED icon_filename)
+      set(JUCER_BUNDLE_ICON_FILE ${icon_filename})
+    endif()
+  endif()
+
   if(WIN32 AND NOT JUCER_PROJECT_TYPE STREQUAL "Static Library")
+    if(DEFINED icon_filename)
+      string(APPEND resources_rc_icon_settings
+        "\nIDI_ICON1 ICON DISCARDABLE \"${icon_filename}\""
+        "\nIDI_ICON2 ICON DISCARDABLE \"${icon_filename}\""
+      )
+    endif()
+
     string(REPLACE "." "," comma_separated_version_number "${JUCER_PROJECT_VERSION}")
     configure_file("${Reprojucer_templates_DIR}/resources.rc"
       "JuceLibraryCode/resources.rc"
@@ -738,8 +771,6 @@ function(jucer_project_end)
     ${JUCER_PROJECT_SOURCES}
     ${JUCER_PROJECT_RESOURCES}
     ${JUCER_PROJECT_XCODE_RESOURCES}
-    "${CMAKE_CURRENT_BINARY_DIR}/JuceLibraryCode/AppConfig.h"
-    "${CMAKE_CURRENT_BINARY_DIR}/JuceLibraryCode/JuceHeader.h"
     ${JUCER_PROJECT_BROWSABLE_FILES}
   )
 
@@ -1088,6 +1119,11 @@ function(__generate_AppConfig_header project_id)
   endif()
 
   configure_file("${Reprojucer_templates_DIR}/AppConfig.h" "JuceLibraryCode/AppConfig.h")
+  list(APPEND JUCER_PROJECT_SOURCES
+    "${CMAKE_CURRENT_BINARY_DIR}/JuceLibraryCode/AppConfig.h"
+  )
+
+  set(JUCER_PROJECT_SOURCES ${JUCER_PROJECT_SOURCES} PARENT_SCOPE)
 
 endfunction()
 
@@ -1161,7 +1197,6 @@ function(__generate_JuceHeader_header project_id)
         "${CMAKE_CURRENT_BINARY_DIR}/JuceLibraryCode/${filename}"
       )
     endforeach()
-    set(JUCER_PROJECT_SOURCES ${JUCER_PROJECT_SOURCES} PARENT_SCOPE)
     set(binary_data_include "#include \"BinaryData.h\"")
   endif()
 
@@ -1172,6 +1207,61 @@ function(__generate_JuceHeader_header project_id)
   configure_file("${Reprojucer_templates_DIR}/JuceHeader.h"
     "JuceLibraryCode/JuceHeader.h"
   )
+  list(APPEND JUCER_PROJECT_SOURCES
+    "${CMAKE_CURRENT_BINARY_DIR}/JuceLibraryCode/JuceHeader.h"
+  )
+
+  set(JUCER_PROJECT_SOURCES ${JUCER_PROJECT_SOURCES} PARENT_SCOPE)
+
+endfunction()
+
+
+function(__generate_icon_file icon_format out_icon_filename)
+
+  message(STATUS "Building IconBuilder for ${JUCER_PROJECT_NAME}")
+  try_compile(IconBuilder
+    "${Reprojucer.cmake_DIR}/IconBuilder/_build/${CMAKE_GENERATOR}"
+    "${Reprojucer.cmake_DIR}/IconBuilder"
+    IconBuilder install
+    CMAKE_FLAGS
+    "-DJUCE_modules_DIRS=${JUCER_PROJECT_MODULES_FOLDERS}"
+    "-DCMAKE_INSTALL_PREFIX=${CMAKE_CURRENT_BINARY_DIR}"
+  )
+  if(NOT IconBuilder)
+    message(FATAL_ERROR "Failed to build IconBuilder")
+  endif()
+  message(STATUS "IconBuilder has been successfully built")
+
+  set(IconBuilder_args "${icon_format}" "${CMAKE_CURRENT_BINARY_DIR}/JuceLibraryCode/")
+  if(DEFINED JUCER_SMALL_ICON)
+    list(APPEND IconBuilder_args "${JUCER_SMALL_ICON}")
+  else()
+    list(APPEND IconBuilder_args "<None>")
+  endif()
+  if(DEFINED JUCER_LARGE_ICON)
+    list(APPEND IconBuilder_args "${JUCER_LARGE_ICON}")
+  else()
+    list(APPEND IconBuilder_args "<None>")
+  endif()
+
+  execute_process(
+    COMMAND "${CMAKE_CURRENT_BINARY_DIR}/IconBuilder/IconBuilder"
+    ${IconBuilder_args}
+    OUTPUT_VARIABLE icon_filename
+    RESULT_VARIABLE IconBuilder_return_code
+  )
+  if(NOT IconBuilder_return_code EQUAL 0)
+    message(FATAL_ERROR "Error when executing IconBuilder")
+  endif()
+
+  if(NOT icon_filename STREQUAL "")
+    set(${out_icon_filename} ${icon_filename} PARENT_SCOPE)
+
+    list(APPEND JUCER_PROJECT_SOURCES
+      "${CMAKE_CURRENT_BINARY_DIR}/JuceLibraryCode/${icon_filename}"
+    )
+    set(JUCER_PROJECT_SOURCES ${JUCER_PROJECT_SOURCES} PARENT_SCOPE)
+  endif()
 
 endfunction()
 

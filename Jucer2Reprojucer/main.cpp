@@ -100,6 +100,31 @@ std::string getSetting(const juce::ValueTree& valueTree, const std::string& cmak
 }
 
 
+juce::ValueTree getChildWithPropertyRecursively(const juce::ValueTree& valueTree,
+  const juce::Identifier& propertyName, const juce::var& propertyValue)
+{
+  const auto child = valueTree.getChildWithProperty(propertyName, propertyValue);
+
+  if (child.isValid())
+  {
+    return child;
+  }
+
+  for (auto i = 0; i < valueTree.getNumChildren(); ++i)
+  {
+    const auto grandchild =
+      getChildWithPropertyRecursively(valueTree.getChild(i), propertyName, propertyValue);
+
+    if (grandchild.isValid())
+    {
+      return grandchild;
+    }
+  }
+
+  return {};
+}
+
+
 void writeUserNotes(std::ostream& out, const juce::ValueTree& valueTree)
 {
   const auto userNotes = valueTree.getProperty("userNotes").toString().toStdString();
@@ -531,6 +556,34 @@ int main(int argc, char* argv[])
             << "  "
             << getSetting(exporter, "EXTERNAL_LIBRARIES_TO_LINK", "externalLibraries")
             << "\n";
+
+        const auto mainGroup = jucerProject.getChildWithName("MAINGROUP");
+
+        const auto getIconFilePath = [&mainGroup, &exporter](
+          const juce::Identifier& propertyName) -> std::string
+        {
+          const auto fileId = exporter.getProperty(propertyName).toString();
+
+          if (!fileId.isEmpty())
+          {
+            const auto file = getChildWithPropertyRecursively(mainGroup, "id", fileId);
+
+            if (file.isValid())
+            {
+              return file.getProperty("file").toString().toStdString();
+            }
+          }
+
+          return {};
+        };
+
+        const auto smallIconPath = getIconFilePath("smallIcon");
+        const auto bigIconPath = getIconFilePath("bigIcon");
+
+        out << "  ICON_SMALL \"" << (smallIconPath.empty() ? "<None>" : smallIconPath)
+            << "\"\n"
+            << "  ICON_LARGE \"" << (bigIconPath.empty() ? "<None>" : bigIconPath)
+            << "\"\n";
 
         if (exporterType == "XCODE_MAC")
         {
