@@ -173,6 +173,8 @@ jucer_export_target(
   EXTRA_COMPILER_FLAGS "-Wall -Wshadow -Wno-missing-field-initializers -Wshadow -Wshorten-64-to-32 -Wstrict-aliasing -Wuninitialized -Wunused-parameter -Wconversion -Wsign-compare -Wint-conversion -Woverloaded-virtual -Wreorder -Wconstant-conversion -Wsign-conversion"
   # EXTRA_LINKER_FLAGS
   # EXTERNAL_LIBRARIES_TO_LINK
+  ICON_SMALL "<None>"
+  ICON_LARGE "<None>"
   # EXTRA_FRAMEWORKS
   # PREBUILD_SHELL_SCRIPT
   # POSTBUILD_SHELL_SCRIPT
@@ -206,6 +208,8 @@ jucer_export_target(
   # EXTRA_COMPILER_FLAGS
   # EXTRA_LINKER_FLAGS
   # EXTERNAL_LIBRARIES_TO_LINK
+  ICON_SMALL "<None>"
+  ICON_LARGE "<None>"
   PLATFORM_TOOLSET "(default)"
 )
 

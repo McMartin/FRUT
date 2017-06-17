@@ -428,6 +428,8 @@ jucer_export_target(
   EXTRA_COMPILER_FLAGS "-Wall -Wshadow -Wno-missing-field-initializers -Wshadow -Wshorten-64-to-32 -Wstrict-aliasing -Wuninitialized -Wunused-parameter -Wconversion -Wsign-compare -Wint-conversion -Woverloaded-virtual -Wreorder -Wconstant-conversion -Wsign-conversion"
   # EXTRA_LINKER_FLAGS
   # EXTERNAL_LIBRARIES_TO_LINK
+  ICON_SMALL "<None>"
+  ICON_LARGE "Source/BinaryData/juce_icon.png"
   EXTRA_FRAMEWORKS "AudioUnit\; Accelerate\; AVFoundation\; CoreAudio\; CoreAudioKit\; CoreMIDI\; DiscRecording\; QuartzCore\; AudioToolbox\; OpenGL\; QTKit\; QuickTime"
   # PREBUILD_SHELL_SCRIPT
   # POSTBUILD_SHELL_SCRIPT
@@ -461,6 +463,8 @@ jucer_export_target(
   # EXTRA_COMPILER_FLAGS
   # EXTRA_LINKER_FLAGS
   # EXTERNAL_LIBRARIES_TO_LINK
+  ICON_SMALL "<None>"
+  ICON_LARGE "Source/BinaryData/juce_icon.png"
   PLATFORM_TOOLSET "v140"
 )
 
@@ -488,6 +492,8 @@ jucer_export_target(
   # EXTRA_COMPILER_FLAGS
   # EXTRA_LINKER_FLAGS
   # EXTERNAL_LIBRARIES_TO_LINK
+  ICON_SMALL "<None>"
+  ICON_LARGE "Source/BinaryData/juce_icon.png"
   PLATFORM_TOOLSET "v120"
 )
 
@@ -515,6 +521,8 @@ jucer_export_target(
   EXTRA_COMPILER_FLAGS "-std=c++11"
   # EXTRA_LINKER_FLAGS
   # EXTERNAL_LIBRARIES_TO_LINK
+  ICON_SMALL "<None>"
+  ICON_LARGE "Source/BinaryData/juce_icon.png"
   # CXX_STANDARD_TO_USE
 )
 
