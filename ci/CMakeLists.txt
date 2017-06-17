@@ -21,6 +21,10 @@ cmake_minimum_required(VERSION 3.4)
 project(ci)
 
 
+add_subdirectory("../cmake/BinaryDataBuilder"
+  "BinaryDataBuilder"
+)
+
 add_subdirectory("../Jucer2Reprojucer"
   "Jucer2Reprojucer"
 )
