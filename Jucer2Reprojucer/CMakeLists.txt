@@ -70,6 +70,7 @@ jucer_export_target(
     -Wno-c++98-compat
     -Wno-c++98-compat-pedantic
     -Wno-cast-align
+    -Wno-comma
     -Wno-covered-switch-default
     -Wno-date-time
     -Wno-deprecated
@@ -84,6 +85,7 @@ jucer_export_target(
     -Wno-missing-noreturn
     -Wno-missing-prototypes
     -Wno-missing-variable-declarations
+    -Wno-nullable-to-nonnull-conversion
     -Wno-old-style-cast
     -Wno-padded
     -Wno-reorder
