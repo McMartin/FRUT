@@ -583,6 +583,12 @@ function(jucer_export_target_configuration exporter NAME_TAG configuration_name)
     )
   endif()
 
+  if(exporter STREQUAL "Linux Makefile")
+    list(APPEND configuration_settings_tags
+      "ARCHITECTURE"
+    )
+  endif()
+
   foreach(element ${ARGN})
     if(NOT DEFINED tag)
       set(tag ${element})
@@ -687,6 +693,27 @@ function(jucer_export_target_configuration exporter NAME_TAG configuration_name)
       elseif(tag STREQUAL "TREAT_WARNINGS_AS_ERRORS")
         if(value)
           list(APPEND JUCER_COMPILER_FLAGS $<$<CONFIG:${configuration_name}>:/WX>)
+          set(JUCER_COMPILER_FLAGS ${JUCER_COMPILER_FLAGS} PARENT_SCOPE)
+        endif()
+
+      elseif(tag STREQUAL "ARCHITECTURE")
+        if(value STREQUAL "(Default)")
+          set(architecture_flag "-march=native")
+        elseif(value STREQUAL "32-bit (-m32)")
+          set(architecture_flag "-m32")
+        elseif(value STREQUAL "64-bit (-m64)")
+          set(architecture_flag "-m64")
+        elseif(value STREQUAL "ARM v6")
+          set(architecture_flag "-march=armv6")
+        elseif(value STREQUAL "ARM v7")
+          set(architecture_flag "-march=armv7")
+        elseif(NOT value STREQUAL "<None>")
+          message(FATAL_ERROR "Unsupported value for ARCHITECTURE: \"${value}\"\n")
+        endif()
+        if(DEFINED architecture_flag)
+          list(APPEND JUCER_COMPILER_FLAGS
+            $<$<CONFIG:${configuration_name}>:${architecture_flag}>
+          )
           set(JUCER_COMPILER_FLAGS ${JUCER_COMPILER_FLAGS} PARENT_SCOPE)
         endif()
 
