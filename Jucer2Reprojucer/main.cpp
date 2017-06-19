@@ -324,7 +324,7 @@ int main(int argc, char* argv[])
       {
         if (jucerProject.hasProperty(property))
         {
-          const auto value = int{jucerProject.getProperty(property)};
+          const auto value = bool{jucerProject.getProperty(property)};
 
           return cmakeTag + " " + (value ? "ON" : "OFF");
         }
