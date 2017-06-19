@@ -420,6 +420,7 @@ function(jucer_export_target exporter)
   if(exporter STREQUAL "Linux Makefile")
     list(APPEND export_target_settings_tags
       "CXX_STANDARD_TO_USE"
+      "PKGCONFIG_LIBRARIES"
     )
   endif()
 
@@ -529,6 +530,11 @@ function(jucer_export_target exporter)
             "Unsupported value for CXX_STANDARD_TO_USE: \"${value}\"\n"
           )
         endif()
+
+      elseif(tag STREQUAL "PKGCONFIG_LIBRARIES")
+        string(REPLACE " " ";" value "${value}")
+        list(APPEND JUCER_PROJECT_LINUX_PACKAGES ${value})
+        set(JUCER_PROJECT_LINUX_PACKAGES ${JUCER_PROJECT_LINUX_PACKAGES} PARENT_SCOPE)
 
       endif()
 

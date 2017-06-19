@@ -635,6 +635,10 @@ int main(int argc, char* argv[])
           {
             out << "  CXX_STANDARD_TO_USE \"" << cppLanguageStandard << "\"\n";
           }
+
+          out << "  "
+              << getSetting(exporter, "PKGCONFIG_LIBRARIES", "linuxExtraPkgConfig")
+              << "\n";
         }
 
         writeUserNotes(out, exporter);

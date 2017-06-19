@@ -524,6 +524,7 @@ jucer_export_target(
   ICON_SMALL "<None>"
   ICON_LARGE "Source/BinaryData/juce_icon.png"
   # CXX_STANDARD_TO_USE
+  # PKGCONFIG_LIBRARIES
 )
 
 jucer_export_target_configuration(
