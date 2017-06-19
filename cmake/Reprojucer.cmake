@@ -689,7 +689,6 @@ function(jucer_export_target_configuration exporter NAME_TAG configuration_name)
       elseif(tag STREQUAL "RELAX_IEEE_COMPLIANCE" AND exporter STREQUAL "Xcode (MacOSX)")
         if(value)
           list(APPEND JUCER_COMPILER_FLAGS $<$<CONFIG:${configuration_name}>:-ffast-math>)
-          set(JUCER_COMPILER_FLAGS ${JUCER_COMPILER_FLAGS} PARENT_SCOPE)
         endif()
 
       elseif(tag STREQUAL "WARNING_LEVEL")
@@ -703,12 +702,10 @@ function(jucer_export_target_configuration exporter NAME_TAG configuration_name)
           message(FATAL_ERROR "Unsupported value for WARNING_LEVEL: \"${value}\"\n")
         endif()
         list(APPEND JUCER_COMPILER_FLAGS $<$<CONFIG:${configuration_name}>:/W${level}>)
-        set(JUCER_COMPILER_FLAGS ${JUCER_COMPILER_FLAGS} PARENT_SCOPE)
 
       elseif(tag STREQUAL "TREAT_WARNINGS_AS_ERRORS")
         if(value)
           list(APPEND JUCER_COMPILER_FLAGS $<$<CONFIG:${configuration_name}>:/WX>)
-          set(JUCER_COMPILER_FLAGS ${JUCER_COMPILER_FLAGS} PARENT_SCOPE)
         endif()
 
       elseif(tag STREQUAL "ARCHITECTURE" AND exporter MATCHES "Visual Studio 201(5|3)")
@@ -740,7 +737,6 @@ function(jucer_export_target_configuration exporter NAME_TAG configuration_name)
           AND exporter MATCHES "Visual Studio 201(5|3)")
         if(value)
           list(APPEND JUCER_COMPILER_FLAGS $<$<CONFIG:${configuration_name}>:/fp:fast>)
-          set(JUCER_COMPILER_FLAGS ${JUCER_COMPILER_FLAGS} PARENT_SCOPE)
         endif()
 
       elseif(tag STREQUAL "ARCHITECTURE" AND exporter STREQUAL "Linux Makefile")
@@ -761,7 +757,6 @@ function(jucer_export_target_configuration exporter NAME_TAG configuration_name)
           list(APPEND JUCER_COMPILER_FLAGS
             $<$<CONFIG:${configuration_name}>:${architecture_flag}>
           )
-          set(JUCER_COMPILER_FLAGS ${JUCER_COMPILER_FLAGS} PARENT_SCOPE)
         endif()
 
       endif()
@@ -769,6 +764,8 @@ function(jucer_export_target_configuration exporter NAME_TAG configuration_name)
       unset(tag)
     endif()
   endforeach()
+
+  set(JUCER_COMPILER_FLAGS ${JUCER_COMPILER_FLAGS} PARENT_SCOPE)
 
 endfunction()
 
