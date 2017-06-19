@@ -806,6 +806,10 @@ int main(int argc, char* argv[])
             {
               out << "  CXX_LANGUAGE_STANDARD \"" << cppLanguageStandard << "\"\n";
             }
+
+            out << "  "
+                << getOnOffSetting(configuration, "RELAX_IEEE_COMPLIANCE", "fastMath")
+                << "\n";
           }
 
           if (exporterType == "VS2015" || exporterType == "VS2013")
@@ -837,6 +841,10 @@ int main(int argc, char* argv[])
             {
               out << "  # TREAT_WARNINGS_AS_ERRORS\n";
             }
+
+            out << "  "
+                << getOnOffSetting(configuration, "RELAX_IEEE_COMPLIANCE", "fastMath")
+                << "\n";
           }
 
           if (exporterType == "LINUX_MAKE")

@@ -579,6 +579,7 @@ function(jucer_export_target_configuration exporter NAME_TAG configuration_name)
       "OSX_DEPLOYMENT_TARGET"
       "OSX_ARCHITECTURE"
       "CXX_LANGUAGE_STANDARD"
+      "RELAX_IEEE_COMPLIANCE"
     )
   endif()
 
@@ -587,6 +588,7 @@ function(jucer_export_target_configuration exporter NAME_TAG configuration_name)
       "WARNING_LEVEL"
       "TREAT_WARNINGS_AS_ERRORS"
       "ARCHITECTURE"
+      "RELAX_IEEE_COMPLIANCE"
     )
   endif()
 
@@ -684,6 +686,12 @@ function(jucer_export_target_configuration exporter NAME_TAG configuration_name)
           )
         endif()
 
+      elseif(tag STREQUAL "RELAX_IEEE_COMPLIANCE" AND exporter STREQUAL "Xcode (MacOSX)")
+        if(value)
+          list(APPEND JUCER_COMPILER_FLAGS $<$<CONFIG:${configuration_name}>:-ffast-math>)
+          set(JUCER_COMPILER_FLAGS ${JUCER_COMPILER_FLAGS} PARENT_SCOPE)
+        endif()
+
       elseif(tag STREQUAL "WARNING_LEVEL")
         if(value STREQUAL "Low")
           set(level 2)
@@ -726,6 +734,13 @@ function(jucer_export_target_configuration exporter NAME_TAG configuration_name)
           message(FATAL_ERROR "You must call `cmake -G\"${32_bit_generator}\"` or "
             "`cmake -G\"${32_bit_generator}\" -A Win32` in order to build for 32-bit."
           )
+        endif()
+
+      elseif(tag STREQUAL "RELAX_IEEE_COMPLIANCE"
+          AND exporter MATCHES "Visual Studio 201(5|3)")
+        if(value)
+          list(APPEND JUCER_COMPILER_FLAGS $<$<CONFIG:${configuration_name}>:/fp:fast>)
+          set(JUCER_COMPILER_FLAGS ${JUCER_COMPILER_FLAGS} PARENT_SCOPE)
         endif()
 
       elseif(tag STREQUAL "ARCHITECTURE" AND exporter STREQUAL "Linux Makefile")
