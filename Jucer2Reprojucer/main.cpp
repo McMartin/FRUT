@@ -828,6 +828,48 @@ int main(int argc, char* argv[])
             }
           }
 
+          if (exporterType == "LINUX_MAKE")
+          {
+            if (!configuration.hasProperty("linuxArchitecture"))
+            {
+              out << "  ARCHITECTURE \"(Default)\"\n";
+            }
+            else
+            {
+              const auto architecture = [&configuration]() -> std::string
+              {
+                const auto value =
+                  configuration.getProperty("linuxArchitecture").toString();
+
+                if (value == "")
+                  return "<None>";
+
+                if (value == "-m32")
+                  return "32-bit (-m32)";
+
+                if (value == "-m64")
+                  return "64-bit (-m64)";
+
+                if (value == "-march=armv6")
+                  return "ARM v6";
+
+                if (value == "-march=armv7")
+                  return "ARM v7";
+
+                return {};
+              }();
+
+              if (architecture.empty())
+              {
+                out << "  # ARCHITECTURE\n";
+              }
+              else
+              {
+                out << "  ARCHITECTURE \"" << architecture << "\"\n";
+              }
+            }
+          }
+
           writeUserNotes(out, configuration);
 
           out << ")\n"
