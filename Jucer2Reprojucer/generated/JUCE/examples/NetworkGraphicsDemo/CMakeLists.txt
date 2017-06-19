@@ -176,6 +176,7 @@ jucer_export_target_configuration(
   OSX_DEPLOYMENT_TARGET "10.9"
   OSX_ARCHITECTURE "Use Default"
   CXX_LANGUAGE_STANDARD "Use Default"
+  # RELAX_IEEE_COMPLIANCE
 )
 
 jucer_export_target_configuration(
@@ -187,6 +188,7 @@ jucer_export_target_configuration(
   OSX_DEPLOYMENT_TARGET "10.9"
   OSX_ARCHITECTURE "Use Default"
   CXX_LANGUAGE_STANDARD "Use Default"
+  # RELAX_IEEE_COMPLIANCE
 )
 
 jucer_export_target(
@@ -207,6 +209,7 @@ jucer_export_target_configuration(
   # PREPROCESSOR_DEFINITIONS
   WARNING_LEVEL "High"
   # TREAT_WARNINGS_AS_ERRORS
+  # RELAX_IEEE_COMPLIANCE
 )
 
 jucer_export_target_configuration(
@@ -216,6 +219,7 @@ jucer_export_target_configuration(
   # PREPROCESSOR_DEFINITIONS
   WARNING_LEVEL "High"
   # TREAT_WARNINGS_AS_ERRORS
+  # RELAX_IEEE_COMPLIANCE
 )
 
 jucer_export_target(
