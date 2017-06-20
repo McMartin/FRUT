@@ -579,6 +579,7 @@ function(jucer_export_target_configuration exporter NAME_TAG configuration_name)
       "OSX_DEPLOYMENT_TARGET"
       "OSX_ARCHITECTURE"
       "CXX_LANGUAGE_STANDARD"
+      "RELAX_IEEE_COMPLIANCE"
     )
   endif()
 
@@ -587,6 +588,7 @@ function(jucer_export_target_configuration exporter NAME_TAG configuration_name)
       "WARNING_LEVEL"
       "TREAT_WARNINGS_AS_ERRORS"
       "ARCHITECTURE"
+      "RELAX_IEEE_COMPLIANCE"
     )
   endif()
 
@@ -684,6 +686,11 @@ function(jucer_export_target_configuration exporter NAME_TAG configuration_name)
           )
         endif()
 
+      elseif(tag STREQUAL "RELAX_IEEE_COMPLIANCE" AND exporter STREQUAL "Xcode (MacOSX)")
+        if(value)
+          list(APPEND JUCER_COMPILER_FLAGS $<$<CONFIG:${configuration_name}>:-ffast-math>)
+        endif()
+
       elseif(tag STREQUAL "WARNING_LEVEL")
         if(value STREQUAL "Low")
           set(level 2)
@@ -695,12 +702,10 @@ function(jucer_export_target_configuration exporter NAME_TAG configuration_name)
           message(FATAL_ERROR "Unsupported value for WARNING_LEVEL: \"${value}\"\n")
         endif()
         list(APPEND JUCER_COMPILER_FLAGS $<$<CONFIG:${configuration_name}>:/W${level}>)
-        set(JUCER_COMPILER_FLAGS ${JUCER_COMPILER_FLAGS} PARENT_SCOPE)
 
       elseif(tag STREQUAL "TREAT_WARNINGS_AS_ERRORS")
         if(value)
           list(APPEND JUCER_COMPILER_FLAGS $<$<CONFIG:${configuration_name}>:/WX>)
-          set(JUCER_COMPILER_FLAGS ${JUCER_COMPILER_FLAGS} PARENT_SCOPE)
         endif()
 
       elseif(tag STREQUAL "ARCHITECTURE" AND exporter MATCHES "Visual Studio 201(5|3)")
@@ -728,6 +733,12 @@ function(jucer_export_target_configuration exporter NAME_TAG configuration_name)
           )
         endif()
 
+      elseif(tag STREQUAL "RELAX_IEEE_COMPLIANCE"
+          AND exporter MATCHES "Visual Studio 201(5|3)")
+        if(value)
+          list(APPEND JUCER_COMPILER_FLAGS $<$<CONFIG:${configuration_name}>:/fp:fast>)
+        endif()
+
       elseif(tag STREQUAL "ARCHITECTURE" AND exporter STREQUAL "Linux Makefile")
         if(value STREQUAL "(Default)")
           set(architecture_flag "-march=native")
@@ -746,7 +757,6 @@ function(jucer_export_target_configuration exporter NAME_TAG configuration_name)
           list(APPEND JUCER_COMPILER_FLAGS
             $<$<CONFIG:${configuration_name}>:${architecture_flag}>
           )
-          set(JUCER_COMPILER_FLAGS ${JUCER_COMPILER_FLAGS} PARENT_SCOPE)
         endif()
 
       endif()
@@ -754,6 +764,8 @@ function(jucer_export_target_configuration exporter NAME_TAG configuration_name)
       unset(tag)
     endif()
   endforeach()
+
+  set(JUCER_COMPILER_FLAGS ${JUCER_COMPILER_FLAGS} PARENT_SCOPE)
 
 endfunction()
 

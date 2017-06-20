@@ -100,6 +100,20 @@ std::string getSetting(const juce::ValueTree& valueTree, const std::string& cmak
 }
 
 
+std::string getOnOffSetting(const juce::ValueTree& valueTree, const std::string& cmakeTag,
+  const juce::Identifier& property)
+{
+  if (valueTree.hasProperty(property))
+  {
+    const auto value = bool{valueTree.getProperty(property)};
+
+    return cmakeTag + " " + (value ? "ON" : "OFF");
+  }
+
+  return "# " + cmakeTag;
+}
+
+
 juce::ValueTree getChildWithPropertyRecursively(const juce::ValueTree& valueTree,
   const juce::Identifier& propertyName, const juce::var& propertyValue)
 {
@@ -322,14 +336,7 @@ int main(int argc, char* argv[])
       const auto onOffProjectSetting = [&jucerProject](
         const std::string& cmakeTag, const juce::Identifier& property)
       {
-        if (jucerProject.hasProperty(property))
-        {
-          const auto value = int{jucerProject.getProperty(property)};
-
-          return cmakeTag + " " + (value ? "ON" : "OFF");
-        }
-
-        return "# " + cmakeTag;
+        return getOnOffSetting(jucerProject, cmakeTag, property);
       };
 
       out << "jucer_audio_plugin_settings(\n"
@@ -799,6 +806,10 @@ int main(int argc, char* argv[])
             {
               out << "  CXX_LANGUAGE_STANDARD \"" << cppLanguageStandard << "\"\n";
             }
+
+            out << "  "
+                << getOnOffSetting(configuration, "RELAX_IEEE_COMPLIANCE", "fastMath")
+                << "\n";
           }
 
           if (exporterType == "VS2015" || exporterType == "VS2013")
@@ -830,6 +841,10 @@ int main(int argc, char* argv[])
             {
               out << "  # TREAT_WARNINGS_AS_ERRORS\n";
             }
+
+            out << "  "
+                << getOnOffSetting(configuration, "RELAX_IEEE_COMPLIANCE", "fastMath")
+                << "\n";
           }
 
           if (exporterType == "LINUX_MAKE")
