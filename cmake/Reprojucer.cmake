@@ -841,9 +841,12 @@ function(jucer_project_end)
   set(all_sources
     ${JUCER_PROJECT_SOURCES}
     ${JUCER_PROJECT_RESOURCES}
-    ${JUCER_PROJECT_XCODE_RESOURCES}
     ${JUCER_PROJECT_BROWSABLE_FILES}
   )
+
+  if(APPLE)
+    list(APPEND all_sources ${JUCER_PROJECT_XCODE_RESOURCES})
+  endif()
 
   set_source_files_properties(${JUCER_PROJECT_XCODE_RESOURCES}
     PROPERTIES MACOSX_PACKAGE_LOCATION "Resources"
