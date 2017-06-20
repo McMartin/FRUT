@@ -586,6 +586,7 @@ function(jucer_export_target_configuration exporter NAME_TAG configuration_name)
     list(APPEND configuration_settings_tags
       "WARNING_LEVEL"
       "TREAT_WARNINGS_AS_ERRORS"
+      "ARCHITECTURE"
     )
   endif()
 
@@ -702,7 +703,32 @@ function(jucer_export_target_configuration exporter NAME_TAG configuration_name)
           set(JUCER_COMPILER_FLAGS ${JUCER_COMPILER_FLAGS} PARENT_SCOPE)
         endif()
 
-      elseif(tag STREQUAL "ARCHITECTURE")
+      elseif(tag STREQUAL "ARCHITECTURE" AND exporter MATCHES "Visual Studio 201(5|3)")
+        if(value STREQUAL "32-bit")
+          set(wants_x64 FALSE)
+        elseif(value STREQUAL "x64")
+          set(wants_x64 TRUE)
+        else()
+          message(FATAL_ERROR "Unsupported value for ARCHITECTURE: \"${value}\"")
+        endif()
+        if(CMAKE_GENERATOR_PLATFORM STREQUAL "x64" OR CMAKE_GENERATOR MATCHES "Win64")
+          set(is_x64 TRUE)
+        else()
+          set(is_x64 FALSE)
+        endif()
+        if(wants_x64 AND NOT is_x64)
+          message(FATAL_ERROR "You must call `cmake -G\"${CMAKE_GENERATOR} Win64\"` or "
+            "`cmake -G\"${CMAKE_GENERATOR}\" -A x64` in order to build for 64-bit."
+          )
+        elseif(NOT wants_x64 AND is_x64)
+          string(FIND "${CMAKE_GENERATOR}" " Win64" length REVERSE)
+          string(SUBSTRING "${CMAKE_GENERATOR}" 0 ${length} 32_bit_generator)
+          message(FATAL_ERROR "You must call `cmake -G\"${32_bit_generator}\"` or "
+            "`cmake -G\"${32_bit_generator}\" -A Win32` in order to build for 32-bit."
+          )
+        endif()
+
+      elseif(tag STREQUAL "ARCHITECTURE" AND exporter STREQUAL "Linux Makefile")
         if(value STREQUAL "(Default)")
           set(architecture_flag "-march=native")
         elseif(value STREQUAL "32-bit (-m32)")
