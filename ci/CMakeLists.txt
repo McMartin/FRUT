@@ -37,14 +37,18 @@ add_subdirectory("../Jucer2Reprojucer/generated/JUCE/examples/audio plugin host"
   "Plugin Host"
 )
 
+if(NOT MSVC_VERSION EQUAL 1900)
 add_subdirectory("../Jucer2Reprojucer/generated/JUCE/examples/NetworkGraphicsDemo"
   "NetworkGraphicsDemo"
 )
+endif()
 
 add_subdirectory("../Jucer2Reprojucer/generated/JUCE/extras/Projucer"
   "Projucer"
 )
 
+if(NOT MSVC_VERSION EQUAL 1800)
 add_subdirectory("../Jucer2Reprojucer/generated/JUCE/examples/audio plugin demo"
   "JuceDemoPlugin"
 )
+endif()
