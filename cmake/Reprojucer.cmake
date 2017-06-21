@@ -559,6 +559,12 @@ function(jucer_export_target_configuration exporter NAME_TAG configuration_name)
     )
   endif()
 
+  if(NOT NAME_TAG STREQUAL "NAME")
+    message(FATAL_ERROR
+      "Invalid second argument. Expected \"NAME\", but got \"${NAME_TAG}\" instead."
+    )
+  endif()
+
   list(FIND Reprojucer_supported_exporters "${exporter}" exporter_index)
   list(GET Reprojucer_supported_exporters_conditions ${exporter_index} condition)
   if(NOT ${condition})
