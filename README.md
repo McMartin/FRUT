@@ -1,5 +1,6 @@
 [![Build status][appveyor-badge]][appveyor]
 [![Build Status][travis-ci-badge]][travis-ci]
+[![Join the chat at https://gitter.im/JUCE-cmake/Lobby][gitter-badge]][gitter]
 
 # JUCE.cmake
 
@@ -99,6 +100,8 @@ See the [LICENSE](LICENSE) file for more details.
 [cmake]: https://cmake.org/
 [github-juce-cmake]: https://github.com/McMartin/JUCE.cmake
 [github-juce]: https://github.com/WeAreROLI/JUCE
+[gitter-badge]: https://badges.gitter.im/JUCE-cmake/Lobby.svg
+[gitter]: https://gitter.im/JUCE-cmake/Lobby?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge
 [juce]: https://juce.com/
 [projucer]: https://www.juce.com/projucer
 [travis-ci-badge]: https://travis-ci.org/McMartin/JUCE.cmake.svg?branch=master
