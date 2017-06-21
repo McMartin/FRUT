@@ -35,6 +35,36 @@ set(Reprojucer_supported_exporters_conditions
 )
 
 
+function(__set_Reprojucer_current_exporter)
+
+  foreach(exporter_index RANGE 3)
+    list(GET Reprojucer_supported_exporters_conditions ${exporter_index} condition)
+    if(${condition})
+      if(DEFINED current_exporter)
+        message(FATAL_ERROR "There is already a current exporter: ${current_exporter}")
+      else()
+        list(GET Reprojucer_supported_exporters ${exporter_index} exporter)
+        set(current_exporter ${exporter})
+      endif()
+    endif()
+  endforeach()
+
+  if(NOT DEFINED current_exporter)
+    message(FATAL_ERROR "Reprojucer.cmake doesn't support any export target for your "
+      "current platform. It supports the following export targets: "
+      "${Reprojucer_supported_exporters}. If you think Reprojucer.cmake should support "
+      "another export target, please create an issue on GitHub: "
+      "https://github.com/McMartin/JUCE.cmake/issues/new"
+    )
+  endif()
+
+  set(Reprojucer_current_exporter ${current_exporter} PARENT_SCOPE)
+
+endfunction()
+
+__set_Reprojucer_current_exporter()
+
+
 function(jucer_project_begin)
 
   set(project_property_tags

@@ -84,6 +84,15 @@ cmake --build .
 ```
 
 
+## Supported export targets
+
+`Reprojucer.cmake` and `Jucer2Reprojucer` support the following Projucer export targets:
+- Xcode (MacOSX)
+- Visual Studio 2015
+- Visual Studio 2013
+- Linux Makefiles
+
+
 ## License
 
 JUCE.cmake is free software: you can redistribute it and/or modify it under the terms of
