@@ -824,8 +824,11 @@ function(jucer_project_end)
 
   if(NOT DEFINED CMAKE_CONFIGURATION_TYPES)
     if(CMAKE_BUILD_TYPE STREQUAL "")
-      message(STATUS "Setting CMAKE_BUILD_TYPE to \"Debug\" as it was not specified.")
-      set(CMAKE_BUILD_TYPE Debug PARENT_SCOPE)
+      list(GET JUCER_PROJECT_CONFIGURATIONS 0 first_configuration)
+      message(STATUS
+        "Setting CMAKE_BUILD_TYPE to \"${first_configuration}\" as it was not specified."
+      )
+      set(CMAKE_BUILD_TYPE ${first_configuration} PARENT_SCOPE)
     endif()
   endif()
 
