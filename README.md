@@ -4,12 +4,12 @@
 # JUCE.cmake
 
 `JUCE.cmake` is a collection of tools dedicated to building [JUCE][juce] projects using
-[CMake][cmake] instead of the [Projucer][projucer].
+[CMake][cmake] instead of [Projucer][projucer].
 
 It currently contains:
 
 - `Reprojucer.cmake`, a CMake module that provides high-level functions to reproduce how a
-JUCE project is defined in the Projucer,
+JUCE project is defined in Projucer,
 
 - `Jucer2Reprojucer`, a console application based on JUCE that converts `.jucer` project
 files into `CMakeLists.txt` files that include and use `Reprojucer.cmake`,
