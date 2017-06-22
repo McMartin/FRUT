@@ -31,8 +31,38 @@ set(Reprojucer_supported_exporters_conditions
   "APPLE"
   "MSVC_VERSION\;EQUAL\;1900"
   "MSVC_VERSION\;EQUAL\;1800"
-  "CMAKE_HOST_SYSTEM_NAME\;STREQUAL\;\"Linux\""
+  "CMAKE_HOST_SYSTEM_NAME\;STREQUAL\;Linux"
 )
+
+
+function(__set_Reprojucer_current_exporter)
+
+  foreach(exporter_index RANGE 3)
+    list(GET Reprojucer_supported_exporters_conditions ${exporter_index} condition)
+    if(${condition})
+      if(DEFINED current_exporter)
+        message(FATAL_ERROR "There is already a current exporter: ${current_exporter}")
+      else()
+        list(GET Reprojucer_supported_exporters ${exporter_index} exporter)
+        set(current_exporter ${exporter})
+      endif()
+    endif()
+  endforeach()
+
+  if(NOT DEFINED current_exporter)
+    message(FATAL_ERROR "Reprojucer.cmake doesn't support any export target for your "
+      "current platform. It supports the following export targets: "
+      "${Reprojucer_supported_exporters}. If you think Reprojucer.cmake should support "
+      "another export target, please create an issue on GitHub: "
+      "https://github.com/McMartin/JUCE.cmake/issues/new"
+    )
+  endif()
+
+  set(Reprojucer_current_exporter ${current_exporter} PARENT_SCOPE)
+
+endfunction()
+
+__set_Reprojucer_current_exporter()
 
 
 function(jucer_project_begin)
@@ -559,6 +589,12 @@ function(jucer_export_target_configuration exporter NAME_TAG configuration_name)
     )
   endif()
 
+  if(NOT NAME_TAG STREQUAL "NAME")
+    message(FATAL_ERROR
+      "Invalid second argument. Expected \"NAME\", but got \"${NAME_TAG}\" instead."
+    )
+  endif()
+
   list(FIND Reprojucer_supported_exporters "${exporter}" exporter_index)
   list(GET Reprojucer_supported_exporters_conditions ${exporter_index} condition)
   if(NOT ${condition})
@@ -772,24 +808,35 @@ endfunction()
 
 function(jucer_project_end)
 
-  foreach(exporter ${Reprojucer_supported_exporters})
-    list(FIND Reprojucer_supported_exporters "${exporter}" exporter_index)
-    list(GET Reprojucer_supported_exporters_conditions ${exporter_index} condition)
-    if(${condition} AND NOT "${exporter}" IN_LIST JUCER_EXPORT_TARGETS)
-      message(WARNING "You might want to call jucer_export_target(\"${exporter}\").")
-    endif()
-  endforeach()
+  if(NOT "${Reprojucer_current_exporter}" IN_LIST JUCER_EXPORT_TARGETS)
+    message(FATAL_ERROR
+      "You must call jucer_export_target(\"${Reprojucer_current_exporter}\") before "
+      "calling jucer_project_end()."
+    )
+  endif()
+
+  if(NOT JUCER_PROJECT_CONFIGURATIONS)
+    message(FATAL_ERROR "You must call "
+      "jucer_export_target_configuration(\"${Reprojucer_current_exporter}\") before "
+      "calling jucer_project_end()."
+    )
+  endif()
 
   if(NOT DEFINED CMAKE_CONFIGURATION_TYPES)
     if(CMAKE_BUILD_TYPE STREQUAL "")
-      message(STATUS "Setting CMAKE_BUILD_TYPE to \"Debug\" as it was not specified.")
-      set(CMAKE_BUILD_TYPE Debug PARENT_SCOPE)
+      list(GET JUCER_PROJECT_CONFIGURATIONS 0 first_configuration)
+      message(STATUS
+        "Setting CMAKE_BUILD_TYPE to \"${first_configuration}\" as it was not specified."
+      )
+      set(CMAKE_BUILD_TYPE ${first_configuration} PARENT_SCOPE)
+    elseif(NOT "${CMAKE_BUILD_TYPE}" IN_LIST JUCER_PROJECT_CONFIGURATIONS)
+      message(FATAL_ERROR "Undefined build configuration: ${CMAKE_BUILD_TYPE}\n"
+        "Defined build configurations: ${JUCER_PROJECT_CONFIGURATIONS}"
+      )
     endif()
   endif()
 
-  if(DEFINED JUCER_PROJECT_CONFIGURATIONS)
-    set(CMAKE_CONFIGURATION_TYPES ${JUCER_PROJECT_CONFIGURATIONS} PARENT_SCOPE)
-  endif()
+  set(CMAKE_CONFIGURATION_TYPES ${JUCER_PROJECT_CONFIGURATIONS} PARENT_SCOPE)
 
   project(${JUCER_PROJECT_NAME})
 

@@ -100,9 +100,29 @@ jucer_export_target(
   "
 )
 
+jucer_export_target_configuration(
+  "Xcode (MacOSX)"
+  NAME "Debug"
+)
+
+jucer_export_target_configuration(
+  "Xcode (MacOSX)"
+  NAME "Release"
+)
+
 jucer_export_target(
   "Visual Studio 2015"
   EXTRA_COMPILER_FLAGS "/WX /W4 /wd4592"
+)
+
+jucer_export_target_configuration(
+  "Visual Studio 2015"
+  NAME "Debug"
+)
+
+jucer_export_target_configuration(
+  "Visual Studio 2015"
+  NAME "Release"
 )
 
 jucer_export_target(
@@ -110,9 +130,29 @@ jucer_export_target(
   EXTRA_COMPILER_FLAGS "/WX /W4"
 )
 
+jucer_export_target_configuration(
+  "Visual Studio 2013"
+  NAME "Debug"
+)
+
+jucer_export_target_configuration(
+  "Visual Studio 2013"
+  NAME "Release"
+)
+
 jucer_export_target(
   "Linux Makefile"
   EXTRA_COMPILER_FLAGS "-Werror -Wall -Wextra"
+)
+
+jucer_export_target_configuration(
+  "Linux Makefile"
+  NAME "Debug"
+)
+
+jucer_export_target_configuration(
+  "Linux Makefile"
+  NAME "Release"
 )
 
 jucer_project_end()
