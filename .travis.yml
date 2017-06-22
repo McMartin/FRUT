@@ -90,6 +90,7 @@ matrix:
         apt:
           packages:
             - libasound2-dev
+            - libgl1-mesa-dev
             - libxcursor-dev
             - libxinerama-dev
             - libxrandr-dev
