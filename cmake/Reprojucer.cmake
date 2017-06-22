@@ -575,7 +575,9 @@ function(jucer_export_target exporter)
 endfunction()
 
 
-function(jucer_export_target_configuration exporter NAME_TAG configuration_name)
+function(jucer_export_target_configuration
+  exporter NAME_TAG configuration_name DEBUG_MODE_TAG is_debug
+)
 
   if(NOT "${exporter}" IN_LIST Reprojucer_supported_exporters)
     message(FATAL_ERROR "Unsupported exporter: ${exporter}\n"
@@ -592,6 +594,12 @@ function(jucer_export_target_configuration exporter NAME_TAG configuration_name)
   if(NOT NAME_TAG STREQUAL "NAME")
     message(FATAL_ERROR
       "Invalid second argument. Expected \"NAME\", but got \"${NAME_TAG}\" instead."
+    )
+  endif()
+
+  if(NOT DEBUG_MODE_TAG STREQUAL "DEBUG_MODE")
+    message(FATAL_ERROR "Invalid fourth argument. Expected \"DEBUG_MODE\", "
+      "but got \"${DEBUG_MODE_TAG}\" instead."
     )
   endif()
 

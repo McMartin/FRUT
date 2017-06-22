@@ -660,7 +660,9 @@ int main(int argc, char* argv[])
 
           out << "jucer_export_target_configuration(\n"
               << "  \"" << std::get<1>(element) << "\"\n"
-              << "  NAME \"" << configuration.getProperty("name").toString() << "\"\n";
+              << "  NAME \"" << configuration.getProperty("name").toString() << "\"\n"
+              << "  DEBUG_MODE "
+              << (bool{configuration.getProperty("isDebug")} ? "ON" : "OFF") << "\n";
 
           const auto headerPath =
             configuration.getProperty("headerPath").toString().toStdString();
