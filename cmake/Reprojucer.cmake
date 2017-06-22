@@ -1010,7 +1010,9 @@ function(jucer_project_end)
           </array>"
         )
 
-        __generate_plist_file(${full_target_name} "AU" "BNDL" "????" "${audio_components_entries}")
+        __generate_plist_file(${full_target_name}
+          "AU" "BNDL" "????" "${audio_components_entries}"
+        )
         __set_bundle_properties(${full_target_name} "component")
         __set_common_target_properties(${full_target_name})
         __set_JucePlugin_Build_defines(${full_target_name} "AudioUnitPlugIn")
@@ -1544,7 +1546,9 @@ function(__set_common_target_properties target_name)
 endfunction()
 
 
-function(__generate_plist_file target_name plist_suffix package_type bundle_signature extra_plist_entries)
+function(__generate_plist_file
+  target_name plist_suffix package_type bundle_signature extra_plist_entries
+)
 
   set(plist_filename "Info-${plist_suffix}.plist")
   if(CMAKE_GENERATOR STREQUAL "Xcode")
