@@ -575,7 +575,9 @@ function(jucer_export_target exporter)
 endfunction()
 
 
-function(jucer_export_target_configuration exporter NAME_TAG configuration_name)
+function(jucer_export_target_configuration
+  exporter NAME_TAG configuration_name DEBUG_MODE_TAG is_debug
+)
 
   if(NOT "${exporter}" IN_LIST Reprojucer_supported_exporters)
     message(FATAL_ERROR "Unsupported exporter: ${exporter}\n"
@@ -595,6 +597,12 @@ function(jucer_export_target_configuration exporter NAME_TAG configuration_name)
     )
   endif()
 
+  if(NOT DEBUG_MODE_TAG STREQUAL "DEBUG_MODE")
+    message(FATAL_ERROR "Invalid fourth argument. Expected \"DEBUG_MODE\", "
+      "but got \"${DEBUG_MODE_TAG}\" instead."
+    )
+  endif()
+
   list(FIND Reprojucer_supported_exporters "${exporter}" exporter_index)
   list(GET Reprojucer_supported_exporters_conditions ${exporter_index} condition)
   if(NOT ${condition})
@@ -603,6 +611,8 @@ function(jucer_export_target_configuration exporter NAME_TAG configuration_name)
 
   list(APPEND JUCER_PROJECT_CONFIGURATIONS ${configuration_name})
   set(JUCER_PROJECT_CONFIGURATIONS ${JUCER_PROJECT_CONFIGURATIONS} PARENT_SCOPE)
+
+  set(JUCER_CONFIGURATION_IS_DEBUG_${configuration_name} ${is_debug} PARENT_SCOPE)
 
   set(configuration_settings_tags
     "HEADER_SEARCH_PATHS"
@@ -1010,7 +1020,9 @@ function(jucer_project_end)
           </array>"
         )
 
-        __generate_plist_file(${full_target_name} "AU" "BNDL" "????" "${audio_components_entries}")
+        __generate_plist_file(${full_target_name}
+          "AU" "BNDL" "????" "${audio_components_entries}"
+        )
         __set_bundle_properties(${full_target_name} "component")
         __set_common_target_properties(${full_target_name})
         __set_JucePlugin_Build_defines(${full_target_name} "AudioUnitPlugIn")
@@ -1450,12 +1462,19 @@ function(__set_common_target_properties target_name)
       endif()
     endif()
 
-    target_compile_definitions(${target_name} PRIVATE
-      $<$<CONFIG:Debug>:_DEBUG=1>
-      $<$<CONFIG:Debug>:DEBUG=1>
-      $<$<NOT:$<CONFIG:Debug>>:_NDEBUG=1>
-      $<$<NOT:$<CONFIG:Debug>>:NDEBUG=1>
-    )
+    foreach(configuration_name ${JUCER_PROJECT_CONFIGURATIONS})
+      if(${JUCER_CONFIGURATION_IS_DEBUG_${configuration_name}})
+        target_compile_definitions(${target_name} PRIVATE
+          $<$<CONFIG:${configuration_name}>:_DEBUG=1>
+          $<$<CONFIG:${configuration_name}>:DEBUG=1>
+        )
+      else()
+        target_compile_definitions(${target_name} PRIVATE
+          $<$<CONFIG:${configuration_name}>:_NDEBUG=1>
+          $<$<CONFIG:${configuration_name}>:NDEBUG=1>
+        )
+      endif()
+    endforeach()
 
     foreach(item ${JUCER_OSX_ARCHITECTURES})
       if(NOT DEFINED configuration_name)
@@ -1502,9 +1521,22 @@ function(__set_common_target_properties target_name)
         WORKING_DIRECTORY "${JUCER_TARGET_PROJECT_FOLDER}"
       )
     endif()
-  endif()
 
-  if(CMAKE_HOST_SYSTEM_NAME STREQUAL "Linux")
+  elseif(WIN32)
+    foreach(configuration_name ${JUCER_PROJECT_CONFIGURATIONS})
+      if(${JUCER_CONFIGURATION_IS_DEBUG_${configuration_name}})
+        target_compile_definitions(${target_name} PRIVATE
+          $<$<CONFIG:${configuration_name}>:DEBUG>
+          $<$<CONFIG:${configuration_name}>:_DEBUG>
+        )
+      else()
+        target_compile_definitions(${target_name} PRIVATE
+          $<$<CONFIG:${configuration_name}>:NDEBUG>
+        )
+      endif()
+    endforeach()
+
+  elseif(CMAKE_HOST_SYSTEM_NAME STREQUAL "Linux")
     set_target_properties(${target_name} PROPERTIES CXX_EXTENSIONS OFF)
     set_target_properties(${target_name} PROPERTIES CXX_STANDARD 11)
 
@@ -1517,6 +1549,19 @@ function(__set_common_target_properties target_name)
         set_target_properties(${target_name} PROPERTIES CXX_STANDARD 14)
       endif()
     endif()
+
+    foreach(configuration_name ${JUCER_PROJECT_CONFIGURATIONS})
+      if(${JUCER_CONFIGURATION_IS_DEBUG_${configuration_name}})
+        target_compile_definitions(${target_name} PRIVATE
+          $<$<CONFIG:${configuration_name}>:DEBUG=1>
+          $<$<CONFIG:${configuration_name}>:_DEBUG=1>
+        )
+      else()
+        target_compile_definitions(${target_name} PRIVATE
+          $<$<CONFIG:${configuration_name}>:NDEBUG=1>
+        )
+      endif()
+    endforeach()
 
     set(linux_packages ${JUCER_PROJECT_LINUX_PACKAGES})
     list(SORT linux_packages)
@@ -1544,7 +1589,9 @@ function(__set_common_target_properties target_name)
 endfunction()
 
 
-function(__generate_plist_file target_name plist_suffix package_type bundle_signature extra_plist_entries)
+function(__generate_plist_file
+  target_name plist_suffix package_type bundle_signature extra_plist_entries
+)
 
   set(plist_filename "Info-${plist_suffix}.plist")
   if(CMAKE_GENERATOR STREQUAL "Xcode")
