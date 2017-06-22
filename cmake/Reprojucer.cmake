@@ -612,6 +612,8 @@ function(jucer_export_target_configuration
   list(APPEND JUCER_PROJECT_CONFIGURATIONS ${configuration_name})
   set(JUCER_PROJECT_CONFIGURATIONS ${JUCER_PROJECT_CONFIGURATIONS} PARENT_SCOPE)
 
+  set(JUCER_CONFIGURATION_IS_DEBUG_${configuration_name} ${is_debug} PARENT_SCOPE)
+
   set(configuration_settings_tags
     "HEADER_SEARCH_PATHS"
     "PREPROCESSOR_DEFINITIONS"
@@ -1460,12 +1462,19 @@ function(__set_common_target_properties target_name)
       endif()
     endif()
 
-    target_compile_definitions(${target_name} PRIVATE
-      $<$<CONFIG:Debug>:_DEBUG=1>
-      $<$<CONFIG:Debug>:DEBUG=1>
-      $<$<NOT:$<CONFIG:Debug>>:_NDEBUG=1>
-      $<$<NOT:$<CONFIG:Debug>>:NDEBUG=1>
-    )
+    foreach(configuration_name ${JUCER_PROJECT_CONFIGURATIONS})
+      if(${JUCER_CONFIGURATION_IS_DEBUG_${configuration_name}})
+        target_compile_definitions(${target_name} PRIVATE
+          $<$<CONFIG:${configuration_name}>:_DEBUG=1>
+          $<$<CONFIG:${configuration_name}>:DEBUG=1>
+        )
+      else()
+        target_compile_definitions(${target_name} PRIVATE
+          $<$<CONFIG:${configuration_name}>:_NDEBUG=1>
+          $<$<CONFIG:${configuration_name}>:NDEBUG=1>
+        )
+      endif()
+    endforeach()
 
     foreach(item ${JUCER_OSX_ARCHITECTURES})
       if(NOT DEFINED configuration_name)
