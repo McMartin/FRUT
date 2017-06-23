@@ -45,6 +45,8 @@ int main(int argc, char* argv[])
 
   const ProjectExporter projectExporter{smallIconImageFile, largeIconImageFile};
 
+  juce::ScopedJuceInitialiser_GUI scopedJuceGui;
+
   if (iconFormat == "icns")
   {
     OwnedArray<Drawable> images;
