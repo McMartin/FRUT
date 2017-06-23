@@ -156,6 +156,7 @@ jucer_export_target_configuration(
   # PREPROCESSOR_DEFINITIONS
   WARNING_LEVEL "High"
   # TREAT_WARNINGS_AS_ERRORS
+  # ARCHITECTURE "32-bit"
   # RELAX_IEEE_COMPLIANCE
 )
 
@@ -167,6 +168,7 @@ jucer_export_target_configuration(
   # PREPROCESSOR_DEFINITIONS
   WARNING_LEVEL "High"
   # TREAT_WARNINGS_AS_ERRORS
+  # ARCHITECTURE "32-bit"
   # RELAX_IEEE_COMPLIANCE
 )
 

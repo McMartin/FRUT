@@ -844,6 +844,18 @@ int main(int argc, char* argv[])
               out << "  # TREAT_WARNINGS_AS_ERRORS\n";
             }
 
+            const auto winArchitecture =
+              configuration.getProperty("winArchitecture").toString();
+
+            if (winArchitecture.isEmpty())
+            {
+              out << "  # ARCHITECTURE\n";
+            }
+            else
+            {
+              out << "  # ARCHITECTURE \"" << winArchitecture << "\"\n";
+            }
+
             out << "  "
                 << getOnOffSetting(configuration, "RELAX_IEEE_COMPLIANCE", "fastMath")
                 << "\n";
