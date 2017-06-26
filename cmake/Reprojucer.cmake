@@ -621,6 +621,8 @@ function(jucer_export_target_configuration
 
   if(exporter STREQUAL "Xcode (MacOSX)")
     list(APPEND configuration_settings_tags
+      "VST_BINARY_LOCATION"
+      "AU_BINARY_LOCATION"
       "OSX_BASE_SDK_VERSION"
       "OSX_DEPLOYMENT_TARGET"
       "OSX_ARCHITECTURE"
@@ -674,6 +676,12 @@ function(jucer_export_target_configuration
           $<$<CONFIG:${configuration_name}>:${value}>
         )
         set(JUCER_PREPROCESSOR_DEFINITIONS ${JUCER_PREPROCESSOR_DEFINITIONS} PARENT_SCOPE)
+
+      elseif(tag STREQUAL "VST_BINARY_LOCATION")
+        set(JUCER_VST_BINARY_LOCATION_${configuration_name} ${value} PARENT_SCOPE)
+
+      elseif(tag STREQUAL "AU_BINARY_LOCATION")
+        set(JUCER_AU_BINARY_LOCATION_${configuration_name} ${value} PARENT_SCOPE)
 
       elseif(tag STREQUAL "OSX_BASE_SDK_VERSION")
         if(value MATCHES "10\\.([5-9]|10|11|12) SDK")
@@ -972,6 +980,7 @@ function(jucer_project_end)
         __generate_plist_file(${vst_target_name} "VST" "BNDL" "????" "")
         __set_bundle_properties(${vst_target_name} "vst")
         __set_common_target_properties(${vst_target_name})
+        __set_plugin_output_directory_property(${vst_target_name} "VST" "VST" ".vst")
         __set_JucePlugin_Build_defines(${vst_target_name} "VSTPlugIn")
         __link_osx_frameworks(${vst_target_name} ${JUCER_PROJECT_OSX_FRAMEWORKS})
       endif()
@@ -1025,6 +1034,9 @@ function(jucer_project_end)
         )
         __set_bundle_properties(${au_target_name} "component")
         __set_common_target_properties(${au_target_name})
+        __set_plugin_output_directory_property(${au_target_name}
+          "AU" "Components" ".component"
+        )
         __set_JucePlugin_Build_defines(${au_target_name} "AudioUnitPlugIn")
         set(au_plugin_osx_frameworks
           ${JUCER_PROJECT_OSX_FRAMEWORKS} "AudioUnit" "CoreAudioKit"
@@ -1620,6 +1632,42 @@ function(__set_bundle_properties target_name extension)
     BUNDLE TRUE
     BUNDLE_EXTENSION "${extension}"
     XCODE_ATTRIBUTE_WRAPPER_EXTENSION "${extension}"
+  )
+
+endfunction()
+
+
+function(__set_plugin_output_directory_property
+  target_name plugin_type plugins_dir plugin_extension
+)
+
+  foreach(configuration_name ${JUCER_PROJECT_CONFIGURATIONS})
+    if(DEFINED JUCER_${plugin_type}_BINARY_LOCATION_${configuration_name})
+      set(output_dir ${JUCER_${plugin_type}_BINARY_LOCATION_${configuration_name}})
+    else()
+      set(output_dir "$ENV{HOME}/Library/Audio/Plug-Ins/${plugins_dir}")
+    endif()
+    string(APPEND all_confs_output_dir
+      "$<$<CONFIG:${configuration_name}>:${output_dir}>"
+    )
+  endforeach()
+
+  set_target_properties(${target_name} PROPERTIES
+    LIBRARY_OUTPUT_DIRECTORY ${all_confs_output_dir}
+  )
+
+  get_target_property(output_name ${target_name} OUTPUT_NAME)
+  if(CMAKE_GENERATOR STREQUAL "Xcode")
+    set(regular_output_dir "${CMAKE_CURRENT_BINARY_DIR}/$<CONFIG>")
+  else()
+    set(regular_output_dir "${CMAKE_CURRENT_BINARY_DIR}")
+  endif()
+
+  add_custom_command(TARGET ${target_name} POST_BUILD
+    COMMAND "${CMAKE_COMMAND}"
+    ARGS "-E" "create_symlink"
+    "${all_confs_output_dir}/${output_name}${plugin_extension}"
+    "${regular_output_dir}/${output_name}${plugin_extension}"
   )
 
 endfunction()

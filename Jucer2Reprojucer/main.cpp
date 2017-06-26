@@ -700,6 +700,22 @@ int main(int argc, char* argv[])
 
           if (exporterType == "XCODE_MAC")
           {
+            if (jucerProject.getProperty("buildVST"))
+            {
+              out << "  "
+                  << getSetting(
+                       configuration, "VST_BINARY_LOCATION", "xcodeVstBinaryLocation")
+                  << "\n";
+            }
+
+            if (jucerProject.getProperty("buildAU"))
+            {
+              out << "  " << getSetting(configuration,
+                               "AU_BINARY_LOCATION",
+                               "xcodeAudioUnitBinaryLocation")
+                  << "\n";
+            }
+
             const auto sdks = {"10.5 SDK",
               "10.6 SDK",
               "10.7 SDK",
