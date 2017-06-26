@@ -963,26 +963,26 @@ function(jucer_project_end)
       __set_JucePlugin_Build_defines(${target_name}_Shared_Code "SharedCodeTarget")
 
       if(JUCER_BUILD_VST)
-        set(full_target_name ${target_name}_VST)
-        add_library(${full_target_name} MODULE
+        set(vst_target_name ${target_name}_VST)
+        add_library(${vst_target_name} MODULE
           ${VST_sources}
           ${JUCER_PROJECT_XCODE_RESOURCES}
         )
-        target_link_libraries(${full_target_name} ${target_name}_Shared_Code)
-        __generate_plist_file(${full_target_name} "VST" "BNDL" "????" "")
-        __set_bundle_properties(${full_target_name} "vst")
-        __set_common_target_properties(${full_target_name})
-        __set_JucePlugin_Build_defines(${full_target_name} "VSTPlugIn")
-        __link_osx_frameworks(${target_name}_VST ${JUCER_PROJECT_OSX_FRAMEWORKS})
+        target_link_libraries(${vst_target_name} ${target_name}_Shared_Code)
+        __generate_plist_file(${vst_target_name} "VST" "BNDL" "????" "")
+        __set_bundle_properties(${vst_target_name} "vst")
+        __set_common_target_properties(${vst_target_name})
+        __set_JucePlugin_Build_defines(${vst_target_name} "VSTPlugIn")
+        __link_osx_frameworks(${vst_target_name} ${JUCER_PROJECT_OSX_FRAMEWORKS})
       endif()
 
       if(JUCER_BUILD_AUDIOUNIT)
-        set(full_target_name ${target_name}_AU)
-        add_library(${full_target_name} MODULE
+        set(au_target_name ${target_name}_AU)
+        add_library(${au_target_name} MODULE
           ${AudioUnit_sources}
           ${JUCER_PROJECT_XCODE_RESOURCES}
         )
-        target_link_libraries(${full_target_name} ${target_name}_Shared_Code)
+        target_link_libraries(${au_target_name} ${target_name}_Shared_Code)
 
         if(NOT DEFINED JUCER_PLUGIN_AU_MAIN_TYPE)
           if(JUCER_MIDI_EFFECT_PLUGIN)
@@ -1020,16 +1020,16 @@ function(jucer_project_end)
           </array>"
         )
 
-        __generate_plist_file(${full_target_name}
+        __generate_plist_file(${au_target_name}
           "AU" "BNDL" "????" "${audio_components_entries}"
         )
-        __set_bundle_properties(${full_target_name} "component")
-        __set_common_target_properties(${full_target_name})
-        __set_JucePlugin_Build_defines(${full_target_name} "AudioUnitPlugIn")
+        __set_bundle_properties(${au_target_name} "component")
+        __set_common_target_properties(${au_target_name})
+        __set_JucePlugin_Build_defines(${au_target_name} "AudioUnitPlugIn")
         set(au_plugin_osx_frameworks
           ${JUCER_PROJECT_OSX_FRAMEWORKS} "AudioUnit" "CoreAudioKit"
         )
-        __link_osx_frameworks(${target_name}_AU ${au_plugin_osx_frameworks})
+        __link_osx_frameworks(${au_target_name} ${au_plugin_osx_frameworks})
       endif()
     else()
       add_library(${target_name} MODULE ${all_sources})
