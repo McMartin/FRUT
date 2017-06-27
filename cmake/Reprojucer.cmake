@@ -642,8 +642,18 @@ function(jucer_export_target_configuration
     list(APPEND configuration_settings_tags
       "WARNING_LEVEL"
       "TREAT_WARNINGS_AS_ERRORS"
+      "RUNTIME_LIBRARY"
       "ARCHITECTURE"
       "RELAX_IEEE_COMPLIANCE"
+    )
+
+    if(is_debug)
+      set(default_runtime_library_flag "/MTd")
+    else()
+      set(default_runtime_library_flag "/MT")
+    endif()
+    list(APPEND JUCER_COMPILER_FLAGS
+      "$<$<CONFIG:${configuration_name}>:${default_runtime_library_flag}>"
     )
   endif()
 
@@ -767,6 +777,20 @@ function(jucer_export_target_configuration
       elseif(tag STREQUAL "TREAT_WARNINGS_AS_ERRORS")
         if(value)
           list(APPEND JUCER_COMPILER_FLAGS $<$<CONFIG:${configuration_name}>:/WX>)
+        endif()
+
+      elseif(tag STREQUAL "RUNTIME_LIBRARY")
+        if(value STREQUAL "Use DLL runtime")
+          if(is_debug)
+            set(runtime_library_flag "/MDd")
+          else()
+            set(runtime_library_flag "/MD")
+          endif()
+          list(APPEND JUCER_COMPILER_FLAGS
+            $<$<CONFIG:${configuration_name}>:${runtime_library_flag}>
+          )
+        elseif(NOT value STREQUAL "Use static runtime" AND NOT value STREQUAL "(Default)")
+          message(FATAL_ERROR "Unsupported value for RUNTIME_LIBRARY: \"${value}\"\n")
         endif()
 
       elseif(tag STREQUAL "ARCHITECTURE" AND exporter MATCHES "Visual Studio 201(5|3)")
