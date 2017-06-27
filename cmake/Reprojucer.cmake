@@ -643,6 +643,7 @@ function(jucer_export_target_configuration
       "WARNING_LEVEL"
       "TREAT_WARNINGS_AS_ERRORS"
       "RUNTIME_LIBRARY"
+      "WHOLE_PROGRAM_OPTIMISATION"
       "ARCHITECTURE"
       "RELAX_IEEE_COMPLIANCE"
     )
@@ -791,6 +792,15 @@ function(jucer_export_target_configuration
           )
         elseif(NOT value STREQUAL "Use static runtime" AND NOT value STREQUAL "(Default)")
           message(FATAL_ERROR "Unsupported value for RUNTIME_LIBRARY: \"${value}\"\n")
+        endif()
+
+      elseif(tag STREQUAL "WHOLE_PROGRAM_OPTIMISATION")
+        if(value STREQUAL "Always disable")
+          set(JUCER_ALWAYS_DISABLE_WPO_${configuration_name} TRUE PARENT_SCOPE)
+        elseif(NOT value STREQUAL "Enable when possible")
+          message(FATAL_ERROR
+            "Unsupported value for WHOLE_PROGRAM_OPTIMISATION: \"${value}\""
+          )
         endif()
 
       elseif(tag STREQUAL "ARCHITECTURE" AND exporter MATCHES "Visual Studio 201(5|3)")
@@ -1576,6 +1586,12 @@ function(__set_common_target_properties target_name)
         target_compile_definitions(${target_name} PRIVATE
           $<$<CONFIG:${configuration_name}>:NDEBUG>
         )
+
+        if(NOT JUCER_ALWAYS_DISABLE_WPO_${configuration_name})
+          target_compile_options(${target_name} PRIVATE
+            $<$<CONFIG:${configuration_name}>:/GL>
+          )
+        endif()
       endif()
     endforeach()
 
