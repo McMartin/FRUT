@@ -860,6 +860,31 @@ int main(int argc, char* argv[])
               out << "  # TREAT_WARNINGS_AS_ERRORS\n";
             }
 
+            const auto runtimeLibrary = [&configuration]() -> std::string
+            {
+              const auto value = configuration.getProperty("useRuntimeLibDLL").toString();
+
+              if (value == "")
+                return "(Default)";
+
+              if (value == "0")
+                return "Use static runtime";
+
+              if (value == "1")
+                return "Use DLL runtime";
+
+              return {};
+            }();
+
+            if (runtimeLibrary.empty())
+            {
+              out << "  # RUNTIME_LIBRARY\n";
+            }
+            else
+            {
+              out << "  RUNTIME_LIBRARY \"" << runtimeLibrary << "\"\n";
+            }
+
             const auto winArchitecture =
               configuration.getProperty("winArchitecture").toString();
 
