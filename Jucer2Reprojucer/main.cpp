@@ -992,6 +992,18 @@ int main(int argc, char* argv[])
                 << getSetting(configuration, "POSTBUILD_COMMAND", "postbuildCommand")
                 << "\n";
 
+            const auto characterSet =
+              configuration.getProperty("characterSet").toString();
+
+            if (characterSet.isEmpty())
+            {
+              out << "  CHARACTER_SET \"Default\"\n";
+            }
+            else
+            {
+              out << "  CHARACTER_SET \"" << characterSet << "\"\n";
+            }
+
             const auto winArchitecture =
               configuration.getProperty("winArchitecture").toString();
 
