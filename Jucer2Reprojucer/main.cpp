@@ -1029,6 +1029,10 @@ int main(int argc, char* argv[])
             }
 
             out << "  "
+                << getOnOffSetting(
+                     configuration, "INCREMENTAL_LINKING", "enableIncrementalLinking")
+                << "\n"
+                << "  "
                 << getSetting(configuration, "PREBUILD_COMMAND", "prebuildCommand")
                 << "\n"
                 << "  "
