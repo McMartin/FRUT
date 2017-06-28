@@ -885,6 +885,19 @@ int main(int argc, char* argv[])
               out << "  RUNTIME_LIBRARY \"" << runtimeLibrary << "\"\n";
             }
 
+            if (configuration.getProperty("wholeProgramOptimisation").toString() == "")
+            {
+              out << "  WHOLE_PROGRAM_OPTIMISATION \"Enable when possible\"\n";
+            }
+            else if (int{configuration.getProperty("wholeProgramOptimisation")} > 0)
+            {
+              out << "  WHOLE_PROGRAM_OPTIMISATION \"Always disable\"\n";
+            }
+            else
+            {
+              out << "  # WHOLE_PROGRAM_OPTIMISATION\n";
+            }
+
             const auto winArchitecture =
               configuration.getProperty("winArchitecture").toString();
 

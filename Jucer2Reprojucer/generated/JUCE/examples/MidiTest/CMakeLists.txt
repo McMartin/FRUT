@@ -190,6 +190,7 @@ jucer_export_target_configuration(
   WARNING_LEVEL "High"
   # TREAT_WARNINGS_AS_ERRORS
   RUNTIME_LIBRARY "(Default)"
+  WHOLE_PROGRAM_OPTIMISATION "Enable when possible"
   # ARCHITECTURE "32-bit"
   # RELAX_IEEE_COMPLIANCE
 )
@@ -203,6 +204,7 @@ jucer_export_target_configuration(
   WARNING_LEVEL "High"
   # TREAT_WARNINGS_AS_ERRORS
   RUNTIME_LIBRARY "(Default)"
+  WHOLE_PROGRAM_OPTIMISATION "Enable when possible"
   # ARCHITECTURE "32-bit"
   # RELAX_IEEE_COMPLIANCE
 )
