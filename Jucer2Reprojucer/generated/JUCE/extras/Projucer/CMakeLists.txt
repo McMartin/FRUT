@@ -490,6 +490,7 @@ jucer_export_target_configuration(
   WHOLE_PROGRAM_OPTIMISATION "Enable when possible"
   # PREBUILD_COMMAND
   # POSTBUILD_COMMAND
+  CHARACTER_SET "Default"
   # ARCHITECTURE "x64"
   # RELAX_IEEE_COMPLIANCE
 )
@@ -508,6 +509,7 @@ jucer_export_target_configuration(
   WHOLE_PROGRAM_OPTIMISATION "Enable when possible"
   # PREBUILD_COMMAND
   # POSTBUILD_COMMAND
+  CHARACTER_SET "Default"
   # ARCHITECTURE "x64"
   # RELAX_IEEE_COMPLIANCE
 )
@@ -537,6 +539,7 @@ jucer_export_target_configuration(
   WHOLE_PROGRAM_OPTIMISATION "Always disable"
   # PREBUILD_COMMAND
   # POSTBUILD_COMMAND
+  CHARACTER_SET "Default"
   # ARCHITECTURE "x64"
   # RELAX_IEEE_COMPLIANCE
 )
@@ -555,6 +558,7 @@ jucer_export_target_configuration(
   WHOLE_PROGRAM_OPTIMISATION "Enable when possible"
   # PREBUILD_COMMAND
   # POSTBUILD_COMMAND
+  CHARACTER_SET "Default"
   # ARCHITECTURE "x64"
   # RELAX_IEEE_COMPLIANCE
 )
