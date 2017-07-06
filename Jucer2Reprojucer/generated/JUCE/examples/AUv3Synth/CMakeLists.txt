@@ -182,6 +182,7 @@ jucer_export_target_configuration(
   "Xcode (MacOSX)"
   NAME "Debug"
   DEBUG_MODE ON
+  BINARY_NAME "AUv3Synth"
   # HEADER_SEARCH_PATHS
   # PREPROCESSOR_DEFINITIONS
   # VST_BINARY_LOCATION
@@ -196,6 +197,7 @@ jucer_export_target_configuration(
   "Xcode (MacOSX)"
   NAME "Release"
   DEBUG_MODE OFF
+  BINARY_NAME "AUv3Synth"
   # HEADER_SEARCH_PATHS
   # PREPROCESSOR_DEFINITIONS
   # VST_BINARY_LOCATION
