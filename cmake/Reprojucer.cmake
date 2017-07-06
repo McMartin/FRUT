@@ -622,6 +622,7 @@ function(jucer_export_target_configuration
   set(JUCER_CONFIGURATION_IS_DEBUG_${configuration_name} ${is_debug} PARENT_SCOPE)
 
   set(configuration_settings_tags
+    "BINARY_NAME"
     "HEADER_SEARCH_PATHS"
     "PREPROCESSOR_DEFINITIONS"
   )
@@ -676,7 +677,10 @@ function(jucer_export_target_configuration
     else()
       set(value ${element})
 
-      if(tag STREQUAL "HEADER_SEARCH_PATHS")
+      if(tag STREQUAL "BINARY_NAME")
+        set(JUCER_BINARY_NAME_${configuration_name} ${value} PARENT_SCOPE)
+
+      elseif(tag STREQUAL "HEADER_SEARCH_PATHS")
         string(REPLACE "\\" "/" value "${value}")
         string(REPLACE "\n" ";" value "${value}")
         foreach(path ${value})
@@ -1454,7 +1458,15 @@ endfunction()
 
 function(__set_common_target_properties target_name)
 
-  set_target_properties(${target_name} PROPERTIES OUTPUT_NAME "${JUCER_PROJECT_NAME}")
+  foreach(configuration_name ${JUCER_PROJECT_CONFIGURATIONS})
+    if(JUCER_BINARY_NAME_${configuration_name})
+      set(output_name "${JUCER_BINARY_NAME_${configuration_name}}")
+    else()
+      set(output_name "${JUCER_PROJECT_NAME}")
+    endif()
+    string(APPEND all_confs_output_name $<$<CONFIG:${configuration_name}>:${output_name}>)
+  endforeach()
+  set_target_properties(${target_name} PROPERTIES OUTPUT_NAME "${all_confs_output_name}")
 
   target_include_directories(${target_name} PRIVATE
     "${CMAKE_CURRENT_BINARY_DIR}/JuceLibraryCode"

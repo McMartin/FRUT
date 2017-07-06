@@ -664,6 +664,8 @@ int main(int argc, char* argv[])
               << "  DEBUG_MODE "
               << (bool{configuration.getProperty("isDebug")} ? "ON" : "OFF") << "\n";
 
+          out << "  " << getSetting(configuration, "BINARY_NAME", "targetName") << "\n";
+
           const auto headerPath =
             configuration.getProperty("headerPath").toString().toStdString();
           if (headerPath.empty())
