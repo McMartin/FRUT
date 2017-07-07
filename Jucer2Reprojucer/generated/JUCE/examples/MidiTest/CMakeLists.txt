@@ -202,6 +202,7 @@ jucer_export_target_configuration(
   WHOLE_PROGRAM_OPTIMISATION "Enable when possible"
   # PREBUILD_COMMAND
   # POSTBUILD_COMMAND
+  GENERATE_MANIFEST ON
   CHARACTER_SET "Default"
   # ARCHITECTURE "32-bit"
   # RELAX_IEEE_COMPLIANCE
@@ -222,6 +223,7 @@ jucer_export_target_configuration(
   WHOLE_PROGRAM_OPTIMISATION "Enable when possible"
   # PREBUILD_COMMAND
   # POSTBUILD_COMMAND
+  GENERATE_MANIFEST ON
   CHARACTER_SET "Default"
   # ARCHITECTURE "32-bit"
   # RELAX_IEEE_COMPLIANCE
