@@ -522,14 +522,14 @@ function(jucer_export_target exporter)
 
       elseif(tag STREQUAL "PREBUILD_SHELL_SCRIPT")
         set(script_content "${value}")
-        configure_file("${Reprojucer_templates_DIR}/script.sh" "prebuild.sh" @ONLY)
+        configure_file("${Reprojucer_templates_DIR}/script.in" "prebuild.sh" @ONLY)
         set(JUCER_PREBUILD_SHELL_SCRIPT
           "${CMAKE_CURRENT_BINARY_DIR}/prebuild.sh" PARENT_SCOPE
         )
 
       elseif(tag STREQUAL "POSTBUILD_SHELL_SCRIPT")
         set(script_content "${value}")
-        configure_file("${Reprojucer_templates_DIR}/script.sh" "postbuild.sh" @ONLY)
+        configure_file("${Reprojucer_templates_DIR}/script.in" "postbuild.sh" @ONLY)
         set(JUCER_POSTBUILD_SHELL_SCRIPT
           "${CMAKE_CURRENT_BINARY_DIR}/postbuild.sh" PARENT_SCOPE
         )
