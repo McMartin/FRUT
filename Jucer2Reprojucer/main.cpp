@@ -1009,6 +1009,10 @@ int main(int argc, char* argv[])
             }
 
             out << "  "
+                << getSetting(
+                     configuration, "CODE_SIGNING_IDENTITY", "codeSigningIdentity")
+                << "\n"
+                << "  "
                 << getOnOffSetting(configuration, "RELAX_IEEE_COMPLIANCE", "fastMath")
                 << "\n"
                 << "  "
