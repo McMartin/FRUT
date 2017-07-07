@@ -108,6 +108,7 @@ jucer_export_target_configuration(
   "Xcode (MacOSX)"
   NAME "Debug"
   DEBUG_MODE ON
+  BINARY_NAME "ComponentTutorialExample"
   # HEADER_SEARCH_PATHS
   # PREPROCESSOR_DEFINITIONS
   OSX_BASE_SDK_VERSION "Use Default"
@@ -121,6 +122,7 @@ jucer_export_target_configuration(
   "Xcode (MacOSX)"
   NAME "Release"
   DEBUG_MODE OFF
+  BINARY_NAME "ComponentTutorialExample"
   # HEADER_SEARCH_PATHS
   # PREPROCESSOR_DEFINITIONS
   OSX_BASE_SDK_VERSION "Use Default"

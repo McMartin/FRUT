@@ -184,6 +184,7 @@ jucer_export_target_configuration(
   "Xcode (MacOSX)"
   NAME "Debug"
   DEBUG_MODE ON
+  BINARY_NAME "GainPlugIn"
   # HEADER_SEARCH_PATHS
   # PREPROCESSOR_DEFINITIONS
   # VST_BINARY_LOCATION
@@ -199,6 +200,7 @@ jucer_export_target_configuration(
   "Xcode (MacOSX)"
   NAME "Release"
   DEBUG_MODE OFF
+  BINARY_NAME "GainPlugIn"
   # HEADER_SEARCH_PATHS
   # PREPROCESSOR_DEFINITIONS
   # VST_BINARY_LOCATION
@@ -225,6 +227,7 @@ jucer_export_target_configuration(
   "Visual Studio 2015"
   NAME "Debug"
   DEBUG_MODE ON
+  BINARY_NAME "GainPlugIn"
   # HEADER_SEARCH_PATHS
   # PREPROCESSOR_DEFINITIONS
   WARNING_LEVEL "High"
@@ -239,6 +242,7 @@ jucer_export_target_configuration(
   "Visual Studio 2015"
   NAME "Release"
   DEBUG_MODE OFF
+  BINARY_NAME "GainPlugIn"
   # HEADER_SEARCH_PATHS
   # PREPROCESSOR_DEFINITIONS
   WARNING_LEVEL "High"

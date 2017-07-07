@@ -165,6 +165,7 @@ jucer_export_target_configuration(
   "Xcode (MacOSX)"
   NAME "Debug"
   DEBUG_MODE ON
+  BINARY_NAME "OSCMonitor"
   # HEADER_SEARCH_PATHS
   # PREPROCESSOR_DEFINITIONS
   OSX_BASE_SDK_VERSION "Use Default"
@@ -178,6 +179,7 @@ jucer_export_target_configuration(
   "Xcode (MacOSX)"
   NAME "Release"
   DEBUG_MODE OFF
+  BINARY_NAME "OSCMonitor"
   # HEADER_SEARCH_PATHS
   # PREPROCESSOR_DEFINITIONS
   OSX_BASE_SDK_VERSION "Use Default"
@@ -202,6 +204,7 @@ jucer_export_target_configuration(
   "Visual Studio 2015"
   NAME "Debug"
   DEBUG_MODE ON
+  BINARY_NAME "OSCMonitor"
   # HEADER_SEARCH_PATHS
   # PREPROCESSOR_DEFINITIONS
   WARNING_LEVEL "High"
@@ -216,6 +219,7 @@ jucer_export_target_configuration(
   "Visual Studio 2015"
   NAME "Release"
   DEBUG_MODE OFF
+  BINARY_NAME "OSCMonitor"
   # HEADER_SEARCH_PATHS
   # PREPROCESSOR_DEFINITIONS
   WARNING_LEVEL "High"
@@ -242,6 +246,7 @@ jucer_export_target_configuration(
   "Linux Makefile"
   NAME "Debug"
   DEBUG_MODE ON
+  BINARY_NAME "OSCMonitor"
   # HEADER_SEARCH_PATHS
   # PREPROCESSOR_DEFINITIONS
   ARCHITECTURE "(Default)"
@@ -251,6 +256,7 @@ jucer_export_target_configuration(
   "Linux Makefile"
   NAME "Release"
   DEBUG_MODE OFF
+  BINARY_NAME "OSCMonitor"
   # HEADER_SEARCH_PATHS
   # PREPROCESSOR_DEFINITIONS
   ARCHITECTURE "(Default)"
