@@ -551,6 +551,7 @@ int main(int argc, char* argv[])
       if (exporter.isValid())
       {
         const auto exporterType = exporter.getType().toString();
+        const auto configurations = exporter.getChildWithName("CONFIGURATIONS");
 
         out << "jucer_export_target(\n"
             << "  \"" << std::get<1>(element) << "\"\n";
@@ -562,6 +563,31 @@ int main(int argc, char* argv[])
           out << "  TARGET_PROJECT_FOLDER \""
               << exporter.getProperty("targetFolder").toString()
               << "\"  # only used by PREBUILD_SHELL_SCRIPT and POSTBUILD_SHELL_SCRIPT\n";
+        }
+
+        if (exporterType == "VS2015" || exporterType == "VS2013")
+        {
+          const auto needsTargetFolder = [&configurations]()
+          {
+            for (auto i = 0; i < configurations.getNumChildren(); ++i)
+            {
+              const auto configuration = configurations.getChild(i);
+
+              if (configuration.hasProperty("prebuildCommand") ||
+                  configuration.hasProperty("postbuildCommand"))
+              {
+                return true;
+              }
+            }
+            return false;
+          }();
+
+          if (needsTargetFolder)
+          {
+            out << "  TARGET_PROJECT_FOLDER \""
+                << exporter.getProperty("targetFolder").toString()
+                << "\" # only used by PREBUILD_COMMAND and POSTBUILD_COMMAND\n";
+          }
         }
 
         const auto hasVst2Interface =
@@ -691,7 +717,6 @@ int main(int argc, char* argv[])
         out << ")\n"
             << "\n";
 
-        const auto configurations = exporter.getChildWithName("CONFIGURATIONS");
         for (auto i = 0; i < configurations.getNumChildren(); ++i)
         {
           const auto configuration = configurations.getChild(i);
@@ -959,6 +984,13 @@ int main(int argc, char* argv[])
             {
               out << "  # WHOLE_PROGRAM_OPTIMISATION\n";
             }
+
+            out << "  "
+                << getSetting(configuration, "PREBUILD_COMMAND", "prebuildCommand")
+                << "\n"
+                << "  "
+                << getSetting(configuration, "POSTBUILD_COMMAND", "postbuildCommand")
+                << "\n";
 
             const auto winArchitecture =
               configuration.getProperty("winArchitecture").toString();

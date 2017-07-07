@@ -442,6 +442,7 @@ function(jucer_export_target exporter)
 
   if(exporter STREQUAL "Visual Studio 2015" OR exporter STREQUAL "Visual Studio 2013")
     list(APPEND export_target_settings_tags
+      "TARGET_PROJECT_FOLDER"
       "VST3_SDK_FOLDER"
       "PLATFORM_TOOLSET"
     )
@@ -646,6 +647,8 @@ function(jucer_export_target_configuration
       "TREAT_WARNINGS_AS_ERRORS"
       "RUNTIME_LIBRARY"
       "WHOLE_PROGRAM_OPTIMISATION"
+      "PREBUILD_COMMAND"
+      "POSTBUILD_COMMAND"
       "ARCHITECTURE"
       "RELAX_IEEE_COMPLIANCE"
     )
@@ -839,6 +842,24 @@ function(jucer_export_target_configuration
             "Unsupported value for WHOLE_PROGRAM_OPTIMISATION: \"${value}\""
           )
         endif()
+
+      elseif(tag STREQUAL "PREBUILD_COMMAND")
+        set(script_content "${value}")
+        configure_file("${Reprojucer_templates_DIR}/script.in"
+          "prebuild_${configuration_name}.cmd" @ONLY
+        )
+        set(JUCER_PREBUILD_COMMAND_${configuration_name}
+          "${CMAKE_CURRENT_BINARY_DIR}/prebuild_${configuration_name}.cmd" PARENT_SCOPE
+        )
+
+      elseif(tag STREQUAL "POSTBUILD_COMMAND")
+        set(script_content "${value}")
+        configure_file("${Reprojucer_templates_DIR}/script.in"
+          "postbuild_${configuration_name}.cmd" @ONLY
+        )
+        set(JUCER_POSTBUILD_COMMAND_${configuration_name}
+          "${CMAKE_CURRENT_BINARY_DIR}/postbuild_${configuration_name}.cmd" PARENT_SCOPE
+        )
 
       elseif(tag STREQUAL "ARCHITECTURE" AND exporter MATCHES "Visual Studio 201(5|3)")
         if(value STREQUAL "32-bit")
@@ -1647,7 +1668,51 @@ function(__set_common_target_properties target_name)
           )
         endif()
       endif()
+
+      if(DEFINED JUCER_PREBUILD_COMMAND_${configuration_name})
+        set(prebuild_command ${JUCER_PREBUILD_COMMAND_${configuration_name}})
+        string(APPEND all_confs_prebuild_command
+          $<$<CONFIG:${configuration_name}>:${prebuild_command}>
+        )
+      endif()
+
+      if(DEFINED JUCER_POSTBUILD_COMMAND_${configuration_name})
+        set(postbuild_command ${JUCER_POSTBUILD_COMMAND_${configuration_name}})
+        string(APPEND all_confs_postbuild_command
+          $<$<CONFIG:${configuration_name}>:${postbuild_command}>
+        )
+      endif()
     endforeach()
+
+    if(all_confs_prebuild_command)
+      if(NOT DEFINED JUCER_TARGET_PROJECT_FOLDER)
+        message(FATAL_ERROR "JUCER_TARGET_PROJECT_FOLDER must be defined. Give "
+          "TARGET_PROJECT_FOLDER when calling jucer_export_target()."
+        )
+      endif()
+      if(NOT IS_DIRECTORY "${JUCER_TARGET_PROJECT_FOLDER}")
+        file(MAKE_DIRECTORY "${JUCER_TARGET_PROJECT_FOLDER}")
+      endif()
+      add_custom_command(TARGET ${target_name} PRE_BUILD
+        COMMAND "${all_confs_prebuild_command}"
+        WORKING_DIRECTORY "${JUCER_TARGET_PROJECT_FOLDER}"
+      )
+    endif()
+
+    if(all_confs_postbuild_command)
+      if(NOT DEFINED JUCER_TARGET_PROJECT_FOLDER)
+        message(FATAL_ERROR "JUCER_TARGET_PROJECT_FOLDER must be defined. Give "
+          "TARGET_PROJECT_FOLDER when calling jucer_export_target()."
+        )
+      endif()
+      if(NOT IS_DIRECTORY "${JUCER_TARGET_PROJECT_FOLDER}")
+        file(MAKE_DIRECTORY "${JUCER_TARGET_PROJECT_FOLDER}")
+      endif()
+      add_custom_command(TARGET ${target_name} POST_BUILD
+        COMMAND "${all_confs_postbuild_command}"
+        WORKING_DIRECTORY "${JUCER_TARGET_PROJECT_FOLDER}"
+      )
+    endif()
 
   elseif(CMAKE_HOST_SYSTEM_NAME STREQUAL "Linux")
     set_target_properties(${target_name} PROPERTIES CXX_EXTENSIONS OFF)
