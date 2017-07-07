@@ -1002,6 +1002,9 @@ int main(int argc, char* argv[])
                 << "  "
                 << getOnOffSetting(
                      configuration, "LINK_TIME_OPTIMISATION", "linkTimeOptimisation")
+                << "\n"
+                << "  " << getOnOffSetting(
+                             configuration, "STRIP_LOCAL_SYMBOLS", "stripLocalSymbols")
                 << "\n";
           }
 
