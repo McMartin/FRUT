@@ -560,7 +560,7 @@ int main(int argc, char* argv[])
               !exporter.getProperty("postbuildCommand").toString().isEmpty()))
         {
           out << "  TARGET_PROJECT_FOLDER \""
-              << exporter.getProperty("targetFolder").toString().toStdString()
+              << exporter.getProperty("targetFolder").toString()
               << "\"  # only used by PREBUILD_SHELL_SCRIPT and POSTBUILD_SHELL_SCRIPT\n";
         }
 
