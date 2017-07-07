@@ -185,6 +185,7 @@ jucer_export_target_configuration(
   BINARY_NAME "AUv3Synth"
   # HEADER_SEARCH_PATHS
   # PREPROCESSOR_DEFINITIONS
+  OPTIMISATION "-O0 (no optimisation)"
   # VST_BINARY_LOCATION
   OSX_BASE_SDK_VERSION "Use Default"
   OSX_DEPLOYMENT_TARGET "Use Default"
@@ -200,6 +201,7 @@ jucer_export_target_configuration(
   BINARY_NAME "AUv3Synth"
   # HEADER_SEARCH_PATHS
   # PREPROCESSOR_DEFINITIONS
+  OPTIMISATION "-O3 (fastest with safe optimisations)"
   # VST_BINARY_LOCATION
   OSX_BASE_SDK_VERSION "Use Default"
   OSX_DEPLOYMENT_TARGET "Use Default"

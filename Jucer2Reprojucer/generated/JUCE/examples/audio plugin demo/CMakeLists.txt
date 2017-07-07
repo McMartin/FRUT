@@ -179,6 +179,7 @@ jucer_export_target_configuration(
   BINARY_NAME "JuceDemoPlugin"
   # HEADER_SEARCH_PATHS
   # PREPROCESSOR_DEFINITIONS
+  OPTIMISATION "-O0 (no optimisation)"
   # VST_BINARY_LOCATION
   # AU_BINARY_LOCATION
   OSX_BASE_SDK_VERSION "Use Default"
@@ -195,6 +196,7 @@ jucer_export_target_configuration(
   BINARY_NAME "JuceDemoPlugin"
   # HEADER_SEARCH_PATHS
   # PREPROCESSOR_DEFINITIONS
+  OPTIMISATION "-O3 (fastest with safe optimisations)"
   # VST_BINARY_LOCATION
   # AU_BINARY_LOCATION
   OSX_BASE_SDK_VERSION "Use Default"
@@ -222,6 +224,7 @@ jucer_export_target_configuration(
   BINARY_NAME "JuceDemoPlugin"
   # HEADER_SEARCH_PATHS
   # PREPROCESSOR_DEFINITIONS
+  OPTIMISATION "No optimisation"
   WARNING_LEVEL "High"
   # TREAT_WARNINGS_AS_ERRORS
   RUNTIME_LIBRARY "(Default)"
@@ -237,6 +240,7 @@ jucer_export_target_configuration(
   BINARY_NAME "JuceDemoPlugin"
   # HEADER_SEARCH_PATHS
   # PREPROCESSOR_DEFINITIONS
+  OPTIMISATION "Maximise speed"
   WARNING_LEVEL "High"
   # TREAT_WARNINGS_AS_ERRORS
   RUNTIME_LIBRARY "(Default)"
@@ -264,6 +268,7 @@ jucer_export_target_configuration(
   BINARY_NAME "JuceDemoPlugin"
   # HEADER_SEARCH_PATHS
   # PREPROCESSOR_DEFINITIONS
+  OPTIMISATION "-O0 (no optimisation)"
   ARCHITECTURE "(Default)"
 )
 
@@ -274,6 +279,7 @@ jucer_export_target_configuration(
   BINARY_NAME "JuceDemoPlugin"
   # HEADER_SEARCH_PATHS
   # PREPROCESSOR_DEFINITIONS
+  OPTIMISATION "-O3 (fastest with safe optimisations)"
   ARCHITECTURE "(Default)"
 )
 
