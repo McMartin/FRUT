@@ -638,6 +638,7 @@ function(jucer_export_target_configuration
       "OSX_DEPLOYMENT_TARGET"
       "OSX_ARCHITECTURE"
       "CXX_LANGUAGE_STANDARD"
+      "CXX_LIBRARY"
       "RELAX_IEEE_COMPLIANCE"
     )
   endif()
@@ -811,6 +812,15 @@ function(jucer_export_target_configuration
           message(FATAL_ERROR
             "Unsupported value for CXX_LANGUAGE_STANDARD: \"${value}\"\n"
           )
+        endif()
+
+      elseif(tag STREQUAL "CXX_LIBRARY")
+        if(value STREQUAL "LLVM libc++")
+          set(JUCER_CXX_LIBRARY_${configuration_name} "libc++" PARENT_SCOPE)
+        elseif(value STREQUAL "GNU libstdc++")
+          set(JUCER_CXX_LIBRARY_${configuration_name} "libstdc++" PARENT_SCOPE)
+        elseif(NOT value STREQUAL "Use Default")
+          message(FATAL_ERROR "Unsupported value for CXX_LIBRARY: \"${value}\"")
         endif()
 
       elseif(tag STREQUAL "RELAX_IEEE_COMPLIANCE" AND exporter STREQUAL "Xcode (MacOSX)")
@@ -1629,6 +1639,13 @@ function(__set_common_target_properties target_name)
         target_compile_definitions(${target_name} PRIVATE
           $<$<CONFIG:${configuration_name}>:_NDEBUG=1>
           $<$<CONFIG:${configuration_name}>:NDEBUG=1>
+        )
+      endif()
+
+      if(DEFINED JUCER_CXX_LIBRARY_${configuration_name})
+        set(cxx_library ${JUCER_CXX_LIBRARY_${configuration_name}})
+        target_compile_options(${target_name} PRIVATE
+          $<$<CONFIG:${configuration_name}>:-stdlib=${cxx_library}>
         )
       endif()
 
