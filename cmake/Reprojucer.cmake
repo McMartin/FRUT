@@ -1609,7 +1609,7 @@ function(__set_common_target_properties target_name)
         file(MAKE_DIRECTORY "${JUCER_TARGET_PROJECT_FOLDER}")
       endif()
       add_custom_command(TARGET ${target_name} PRE_BUILD
-        COMMAND "/bin/sh" ARGS "${JUCER_PREBUILD_SHELL_SCRIPT}"
+        COMMAND "/bin/sh" "${JUCER_PREBUILD_SHELL_SCRIPT}"
         WORKING_DIRECTORY "${JUCER_TARGET_PROJECT_FOLDER}"
       )
     endif()
@@ -1624,7 +1624,7 @@ function(__set_common_target_properties target_name)
         file(MAKE_DIRECTORY "${JUCER_TARGET_PROJECT_FOLDER}")
       endif()
       add_custom_command(TARGET ${target_name} POST_BUILD
-        COMMAND "/bin/sh" ARGS "${JUCER_POSTBUILD_SHELL_SCRIPT}"
+        COMMAND "/bin/sh" "${JUCER_POSTBUILD_SHELL_SCRIPT}"
         WORKING_DIRECTORY "${JUCER_TARGET_PROJECT_FOLDER}"
       )
     endif()
@@ -1765,8 +1765,7 @@ function(__set_plugin_output_directory_property
   endif()
 
   add_custom_command(TARGET ${target_name} POST_BUILD
-    COMMAND "${CMAKE_COMMAND}"
-    ARGS "-E" "create_symlink"
+    COMMAND "${CMAKE_COMMAND}" "-E" "create_symlink"
     "${all_confs_output_dir}/${output_name}${plugin_extension}"
     "${regular_output_dir}/${output_name}${plugin_extension}"
   )
