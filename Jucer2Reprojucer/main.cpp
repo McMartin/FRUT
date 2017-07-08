@@ -738,6 +738,10 @@ int main(int argc, char* argv[])
                    || (juce::CharacterFunctions::isLetter(path[0]) && path[1] == ':');
           };
 
+          const auto jucerFileDir = jucerFile.getParentDirectory();
+          const auto targetProjectDir =
+            jucerFileDir.getChildFile(exporter.getProperty("targetFolder").toString());
+
           const auto headerPath =
             configuration.getProperty("headerPath").toString().toStdString();
           if (headerPath.empty())
@@ -746,10 +750,6 @@ int main(int argc, char* argv[])
           }
           else
           {
-            const auto jucerFileDir = jucerFile.getParentDirectory();
-            const auto targetProjectDir =
-              jucerFileDir.getChildFile(exporter.getProperty("targetFolder").toString());
-
             std::vector<std::string> absOrRelToJucerFileDirPaths;
 
             for (const auto& path : split("\n", headerPath))
@@ -773,6 +773,40 @@ int main(int argc, char* argv[])
             }
 
             out << "  HEADER_SEARCH_PATHS \""
+                << escape("\\", join("\n", absOrRelToJucerFileDirPaths)) << "\"\n";
+          }
+
+          const auto libraryPath =
+            configuration.getProperty("libraryPath").toString().toStdString();
+          if (libraryPath.empty())
+          {
+            out << "  # EXTRA_LIBRARY_SEARCH_PATHS\n";
+          }
+          else
+          {
+            std::vector<std::string> absOrRelToJucerFileDirPaths;
+
+            for (const auto& path : split("\n", libraryPath))
+            {
+              if (path.empty())
+              {
+                continue;
+              }
+
+              if (isAbsolutePath(path))
+              {
+                absOrRelToJucerFileDirPaths.push_back(path);
+              }
+              else
+              {
+                absOrRelToJucerFileDirPaths.push_back(
+                  targetProjectDir.getChildFile(juce::String{path})
+                    .getRelativePathFrom(jucerFileDir)
+                    .toStdString());
+              }
+            }
+
+            out << "  EXTRA_LIBRARY_SEARCH_PATHS \""
                 << escape("\\", join("\n", absOrRelToJucerFileDirPaths)) << "\"\n";
           }
 

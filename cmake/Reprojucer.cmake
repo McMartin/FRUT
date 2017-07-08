@@ -625,6 +625,7 @@ function(jucer_export_target_configuration
   set(configuration_settings_tags
     "BINARY_NAME"
     "HEADER_SEARCH_PATHS"
+    "EXTRA_LIBRARY_SEARCH_PATHS"
     "PREPROCESSOR_DEFINITIONS"
     "OPTIMISATION"
   )
@@ -696,6 +697,17 @@ function(jucer_export_target_configuration
           $<$<CONFIG:${configuration_name}>:${include_directories}>
         )
         set(JUCER_INCLUDE_DIRECTORIES ${JUCER_INCLUDE_DIRECTORIES} PARENT_SCOPE)
+
+      elseif(tag STREQUAL "EXTRA_LIBRARY_SEARCH_PATHS")
+        string(REPLACE "\\" "/" value "${value}")
+        string(REPLACE "\n" ";" value "${value}")
+        foreach(path ${value})
+          __abs_path_based_on_jucer_project_dir("${path}" path)
+          list(APPEND library_search_paths "${path}")
+        endforeach()
+        set(JUCER_EXTRA_LIBRARY_SEARCH_PATHS_${configuration_name}
+          ${library_search_paths} PARENT_SCOPE
+        )
 
       elseif(tag STREQUAL "PREPROCESSOR_DEFINITIONS")
         string(REPLACE "\n" ";" value "${value}")
@@ -1611,6 +1623,12 @@ function(__set_common_target_properties target_name)
           $<$<CONFIG:${configuration_name}>:NDEBUG=1>
         )
       endif()
+
+      foreach(path ${JUCER_EXTRA_LIBRARY_SEARCH_PATHS_${configuration_name}})
+        target_link_libraries(${target_name}
+          $<$<CONFIG:${configuration_name}>:-L${path}>
+        )
+      endforeach()
     endforeach()
 
     foreach(item ${JUCER_OSX_ARCHITECTURES})
@@ -1677,6 +1695,12 @@ function(__set_common_target_properties target_name)
           )
         endif()
       endif()
+
+      foreach(path ${JUCER_EXTRA_LIBRARY_SEARCH_PATHS_${configuration_name}})
+        target_link_libraries(${target_name}
+          $<$<CONFIG:${configuration_name}>:-LIBPATH:${path}>
+        )
+      endforeach()
 
       if(DEFINED JUCER_PREBUILD_COMMAND_${configuration_name})
         set(prebuild_command ${JUCER_PREBUILD_COMMAND_${configuration_name}})
@@ -1762,6 +1786,12 @@ function(__set_common_target_properties target_name)
           $<$<CONFIG:${configuration_name}>:NDEBUG=1>
         )
       endif()
+
+      foreach(path ${JUCER_EXTRA_LIBRARY_SEARCH_PATHS_${configuration_name}})
+        target_link_libraries(${target_name}
+          $<$<CONFIG:${configuration_name}>:-L${path}>
+        )
+      endforeach()
     endforeach()
 
     set(linux_packages ${JUCER_PROJECT_LINUX_PACKAGES})
