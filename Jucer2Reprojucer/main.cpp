@@ -731,6 +731,13 @@ int main(int argc, char* argv[])
 
           out << "  " << getSetting(configuration, "BINARY_NAME", "targetName") << "\n";
 
+          const auto isAbsolutePath = [](const juce::String& path)
+          {
+            return path.startsWithChar('/') || path.startsWithChar('~')
+                   || path.startsWithChar('$')
+                   || (juce::CharacterFunctions::isLetter(path[0]) && path[1] == ':');
+          };
+
           const auto headerPath =
             configuration.getProperty("headerPath").toString().toStdString();
           if (headerPath.empty())
@@ -743,7 +750,7 @@ int main(int argc, char* argv[])
             const auto targetProjectDir =
               jucerFileDir.getChildFile(exporter.getProperty("targetFolder").toString());
 
-            std::vector<std::string> pathsRelativeToJucerFileDir;
+            std::vector<std::string> absOrRelToJucerFileDirPaths;
 
             for (const auto& path : split("\n", headerPath))
             {
@@ -752,14 +759,21 @@ int main(int argc, char* argv[])
                 continue;
               }
 
-              pathsRelativeToJucerFileDir.push_back(
-                targetProjectDir.getChildFile(juce::String{path})
-                  .getRelativePathFrom(jucerFileDir)
-                  .toStdString());
+              if (isAbsolutePath(path))
+              {
+                absOrRelToJucerFileDirPaths.push_back(path);
+              }
+              else
+              {
+                absOrRelToJucerFileDirPaths.push_back(
+                  targetProjectDir.getChildFile(juce::String{path})
+                    .getRelativePathFrom(jucerFileDir)
+                    .toStdString());
+              }
             }
 
             out << "  HEADER_SEARCH_PATHS \""
-                << escape("\\", join("\n", pathsRelativeToJucerFileDir)) << "\"\n";
+                << escape("\\", join("\n", absOrRelToJucerFileDirPaths)) << "\"\n";
           }
 
           out << "  " << getSetting(configuration, "PREPROCESSOR_DEFINITIONS", "defines")
