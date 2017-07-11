@@ -649,6 +649,7 @@ function(jucer_export_target_configuration
       "WHOLE_PROGRAM_OPTIMISATION"
       "PREBUILD_COMMAND"
       "POSTBUILD_COMMAND"
+      "CHARACTER_SET"
       "ARCHITECTURE"
       "RELAX_IEEE_COMPLIANCE"
     )
@@ -860,6 +861,14 @@ function(jucer_export_target_configuration
         set(JUCER_POSTBUILD_COMMAND_${configuration_name}
           "${CMAKE_CURRENT_BINARY_DIR}/postbuild_${configuration_name}.cmd" PARENT_SCOPE
         )
+
+      elseif(tag STREQUAL "CHARACTER_SET")
+        if(value STREQUAL "Default" OR value STREQUAL "MultiByte"
+            OR value STREQUAL "Unicode")
+          set(JUCER_CHARACTER_SET_${configuration_name} ${value} PARENT_SCOPE)
+        else()
+          message(FATAL_ERROR "Unsupported value for CHARACTER_SET: \"${value}\"")
+        endif()
 
       elseif(tag STREQUAL "ARCHITECTURE" AND exporter MATCHES "Visual Studio 201(5|3)")
         if(value STREQUAL "32-bit")
@@ -1680,6 +1689,20 @@ function(__set_common_target_properties target_name)
         set(postbuild_command ${JUCER_POSTBUILD_COMMAND_${configuration_name}})
         string(APPEND all_confs_postbuild_command
           $<$<CONFIG:${configuration_name}>:${postbuild_command}>
+        )
+      endif()
+
+      if(NOT DEFINED JUCER_CHARACTER_SET_${configuration_name}
+          OR JUCER_CHARACTER_SET_${configuration_name} STREQUAL "Default")
+        target_compile_definitions(${target_name} PRIVATE
+          $<$<CONFIG:${configuration_name}>:_SBCS>
+        )
+      elseif(JUCER_CHARACTER_SET_${configuration_name} STREQUAL "MultiByte")
+        # Nothing to do, this is CMake's default
+      elseif(JUCER_CHARACTER_SET_${configuration_name} STREQUAL "Unicode")
+        target_compile_definitions(${target_name} PRIVATE
+          $<$<CONFIG:${configuration_name}>:_UNICODE>
+          $<$<CONFIG:${configuration_name}>:UNICODE>
         )
       endif()
     endforeach()
