@@ -184,6 +184,7 @@ jucer_export_target_configuration(
   DEBUG_MODE ON
   BINARY_NAME "AUv3Synth"
   # HEADER_SEARCH_PATHS
+  # EXTRA_LIBRARY_SEARCH_PATHS
   # PREPROCESSOR_DEFINITIONS
   OPTIMISATION "-O0 (no optimisation)"
   # VST_BINARY_LOCATION
@@ -200,6 +201,7 @@ jucer_export_target_configuration(
   DEBUG_MODE OFF
   BINARY_NAME "AUv3Synth"
   # HEADER_SEARCH_PATHS
+  # EXTRA_LIBRARY_SEARCH_PATHS
   # PREPROCESSOR_DEFINITIONS
   OPTIMISATION "-O3 (fastest with safe optimisations)"
   # VST_BINARY_LOCATION

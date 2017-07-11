@@ -4,6 +4,7 @@ AlignAfterOpenBracket: false
 AllowShortFunctionsOnASingleLine: false
 BinPackArguments: false
 BreakBeforeBraces: Allman
+BreakBeforeBinaryOperators: NonAssignment
 BreakConstructorInitializersBeforeComma: true
 ColumnLimit: 90
 ConstructorInitializerIndentWidth: 2

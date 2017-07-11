@@ -236,6 +236,7 @@ jucer_export_target_configuration(
   DEBUG_MODE ON
   BINARY_NAME "JuceDemo"
   # HEADER_SEARCH_PATHS
+  # EXTRA_LIBRARY_SEARCH_PATHS
   # PREPROCESSOR_DEFINITIONS
   OPTIMISATION "-O0 (no optimisation)"
   OSX_BASE_SDK_VERSION "Use Default"
@@ -251,6 +252,7 @@ jucer_export_target_configuration(
   DEBUG_MODE OFF
   BINARY_NAME "JuceDemo"
   # HEADER_SEARCH_PATHS
+  # EXTRA_LIBRARY_SEARCH_PATHS
   # PREPROCESSOR_DEFINITIONS
   OPTIMISATION "-O3 (fastest with safe optimisations)"
   OSX_BASE_SDK_VERSION "Use Default"
@@ -277,6 +279,7 @@ jucer_export_target_configuration(
   DEBUG_MODE ON
   BINARY_NAME "JuceDemo"
   # HEADER_SEARCH_PATHS
+  # EXTRA_LIBRARY_SEARCH_PATHS
   # PREPROCESSOR_DEFINITIONS
   OPTIMISATION "No optimisation"
   WARNING_LEVEL "High"
@@ -296,6 +299,7 @@ jucer_export_target_configuration(
   DEBUG_MODE OFF
   BINARY_NAME "JuceDemo"
   # HEADER_SEARCH_PATHS
+  # EXTRA_LIBRARY_SEARCH_PATHS
   # PREPROCESSOR_DEFINITIONS
   OPTIMISATION "Maximise speed"
   WARNING_LEVEL "High"
@@ -326,6 +330,7 @@ jucer_export_target_configuration(
   DEBUG_MODE ON
   BINARY_NAME "JuceDemo"
   # HEADER_SEARCH_PATHS
+  # EXTRA_LIBRARY_SEARCH_PATHS
   # PREPROCESSOR_DEFINITIONS
   OPTIMISATION "No optimisation"
   WARNING_LEVEL "High"
@@ -345,6 +350,7 @@ jucer_export_target_configuration(
   DEBUG_MODE OFF
   BINARY_NAME "JuceDemo"
   # HEADER_SEARCH_PATHS
+  # EXTRA_LIBRARY_SEARCH_PATHS
   # PREPROCESSOR_DEFINITIONS
   OPTIMISATION "Maximise speed"
   WARNING_LEVEL "High"
@@ -376,6 +382,7 @@ jucer_export_target_configuration(
   DEBUG_MODE ON
   BINARY_NAME "JuceDemo"
   # HEADER_SEARCH_PATHS
+  EXTRA_LIBRARY_SEARCH_PATHS "/usr/X11R6/lib/"
   # PREPROCESSOR_DEFINITIONS
   OPTIMISATION "-O0 (no optimisation)"
   ARCHITECTURE "(Default)"
@@ -387,6 +394,7 @@ jucer_export_target_configuration(
   DEBUG_MODE OFF
   BINARY_NAME "JuceDemo"
   # HEADER_SEARCH_PATHS
+  EXTRA_LIBRARY_SEARCH_PATHS "/usr/X11R6/lib/"
   # PREPROCESSOR_DEFINITIONS
   OPTIMISATION "-O3 (fastest with safe optimisations)"
   ARCHITECTURE "(Default)"

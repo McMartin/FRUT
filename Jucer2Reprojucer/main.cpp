@@ -238,8 +238,8 @@ int main(int argc, char* argv[])
         "std::stoul won't be able to parse 7-digit hex values");
       const auto hex = std::stoul(juceCommitSha1.substr(0, 7), nullptr, 16);
 
-      if (std::find(kSupportedCommits.begin(), kSupportedCommits.end(), hex) !=
-          kSupportedCommits.end())
+      if (std::find(kSupportedCommits.begin(), kSupportedCommits.end(), hex)
+          != kSupportedCommits.end())
       {
         return hex;
       }
@@ -556,9 +556,9 @@ int main(int argc, char* argv[])
         out << "jucer_export_target(\n"
             << "  \"" << std::get<1>(element) << "\"\n";
 
-        if (exporterType == "XCODE_MAC" &&
-            (!exporter.getProperty("prebuildCommand").toString().isEmpty() ||
-              !exporter.getProperty("postbuildCommand").toString().isEmpty()))
+        if (exporterType == "XCODE_MAC"
+            && (!exporter.getProperty("prebuildCommand").toString().isEmpty()
+                 || !exporter.getProperty("postbuildCommand").toString().isEmpty()))
         {
           out << "  TARGET_PROJECT_FOLDER \""
               << exporter.getProperty("targetFolder").toString()
@@ -591,14 +591,15 @@ int main(int argc, char* argv[])
         }
 
         const auto hasVst2Interface =
-          std::find(kSupportedCommits.begin(), kSupportedCommits.end(), commitSha1) <=
-          std::find(kSupportedCommits.begin(), kSupportedCommits.end(), 0x9f31d64);
+          std::find(kSupportedCommits.begin(), kSupportedCommits.end(), commitSha1)
+          <= std::find(kSupportedCommits.begin(), kSupportedCommits.end(), 0x9f31d64);
         const auto isVstPluginHost =
           jucerProject.getChildWithName("MODULES")
             .getChildWithProperty("id", "juce_audio_processors")
-            .isValid() &&
-          jucerProject.getChildWithName("JUCEOPTIONS")
-              .getProperty("JUCE_PLUGINHOST_VST") == "enabled";
+            .isValid()
+          && jucerProject.getChildWithName("JUCEOPTIONS")
+                 .getProperty("JUCE_PLUGINHOST_VST")
+               == "enabled";
 
         if (!hasVst2Interface && isVstPluginHost)
         {
@@ -609,9 +610,10 @@ int main(int argc, char* argv[])
         const auto isVst3PluginHost =
           jucerProject.getChildWithName("MODULES")
             .getChildWithProperty("id", "juce_audio_processors")
-            .isValid() &&
-          jucerProject.getChildWithName("JUCEOPTIONS")
-              .getProperty("JUCE_PLUGINHOST_VST3") == "enabled";
+            .isValid()
+          && jucerProject.getChildWithName("JUCEOPTIONS")
+                 .getProperty("JUCE_PLUGINHOST_VST3")
+               == "enabled";
 
         if (supportsVst3 && isVst3PluginHost)
         {
@@ -729,6 +731,17 @@ int main(int argc, char* argv[])
 
           out << "  " << getSetting(configuration, "BINARY_NAME", "targetName") << "\n";
 
+          const auto isAbsolutePath = [](const juce::String& path)
+          {
+            return path.startsWithChar('/') || path.startsWithChar('~')
+                   || path.startsWithChar('$')
+                   || (juce::CharacterFunctions::isLetter(path[0]) && path[1] == ':');
+          };
+
+          const auto jucerFileDir = jucerFile.getParentDirectory();
+          const auto targetProjectDir =
+            jucerFileDir.getChildFile(exporter.getProperty("targetFolder").toString());
+
           const auto headerPath =
             configuration.getProperty("headerPath").toString().toStdString();
           if (headerPath.empty())
@@ -737,11 +750,7 @@ int main(int argc, char* argv[])
           }
           else
           {
-            const auto jucerFileDir = jucerFile.getParentDirectory();
-            const auto targetProjectDir =
-              jucerFileDir.getChildFile(exporter.getProperty("targetFolder").toString());
-
-            std::vector<std::string> pathsRelativeToJucerFileDir;
+            std::vector<std::string> absOrRelToJucerFileDirPaths;
 
             for (const auto& path : split("\n", headerPath))
             {
@@ -750,14 +759,55 @@ int main(int argc, char* argv[])
                 continue;
               }
 
-              pathsRelativeToJucerFileDir.push_back(
-                targetProjectDir.getChildFile(juce::String{path})
-                  .getRelativePathFrom(jucerFileDir)
-                  .toStdString());
+              if (isAbsolutePath(path))
+              {
+                absOrRelToJucerFileDirPaths.push_back(path);
+              }
+              else
+              {
+                absOrRelToJucerFileDirPaths.push_back(
+                  targetProjectDir.getChildFile(juce::String{path})
+                    .getRelativePathFrom(jucerFileDir)
+                    .toStdString());
+              }
             }
 
             out << "  HEADER_SEARCH_PATHS \""
-                << escape("\\", join("\n", pathsRelativeToJucerFileDir)) << "\"\n";
+                << escape("\\", join("\n", absOrRelToJucerFileDirPaths)) << "\"\n";
+          }
+
+          const auto libraryPath =
+            configuration.getProperty("libraryPath").toString().toStdString();
+          if (libraryPath.empty())
+          {
+            out << "  # EXTRA_LIBRARY_SEARCH_PATHS\n";
+          }
+          else
+          {
+            std::vector<std::string> absOrRelToJucerFileDirPaths;
+
+            for (const auto& path : split("\n", libraryPath))
+            {
+              if (path.empty())
+              {
+                continue;
+              }
+
+              if (isAbsolutePath(path))
+              {
+                absOrRelToJucerFileDirPaths.push_back(path);
+              }
+              else
+              {
+                absOrRelToJucerFileDirPaths.push_back(
+                  targetProjectDir.getChildFile(juce::String{path})
+                    .getRelativePathFrom(jucerFileDir)
+                    .toStdString());
+              }
+            }
+
+            out << "  EXTRA_LIBRARY_SEARCH_PATHS \""
+                << escape("\\", join("\n", absOrRelToJucerFileDirPaths)) << "\"\n";
           }
 
           out << "  " << getSetting(configuration, "PREPROCESSOR_DEFINITIONS", "defines")
