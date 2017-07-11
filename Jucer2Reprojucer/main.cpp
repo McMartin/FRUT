@@ -573,8 +573,8 @@ int main(int argc, char* argv[])
             {
               const auto configuration = configurations.getChild(i);
 
-              if (configuration.hasProperty("prebuildCommand") ||
-                  configuration.hasProperty("postbuildCommand"))
+              if (configuration.hasProperty("prebuildCommand")
+                  || configuration.hasProperty("postbuildCommand"))
               {
                 return true;
               }
