@@ -74,6 +74,7 @@ jucer_export_target_configuration(
   BINARY_NAME "BinaryBuilder"
   # HEADER_SEARCH_PATHS
   # PREPROCESSOR_DEFINITIONS
+  OPTIMISATION "-O0 (no optimisation)"
   # OSX_BASE_SDK_VERSION
   # OSX_DEPLOYMENT_TARGET
   OSX_ARCHITECTURE "Use Default"
@@ -88,6 +89,7 @@ jucer_export_target_configuration(
   BINARY_NAME "BinaryBuilder"
   # HEADER_SEARCH_PATHS
   # PREPROCESSOR_DEFINITIONS
+  OPTIMISATION "-Os (minimise code size)"
   # OSX_BASE_SDK_VERSION
   # OSX_DEPLOYMENT_TARGET
   OSX_ARCHITECTURE "Use Default"
@@ -114,6 +116,7 @@ jucer_export_target_configuration(
   BINARY_NAME "BinaryBuilder"
   # HEADER_SEARCH_PATHS
   # PREPROCESSOR_DEFINITIONS
+  OPTIMISATION "-O0 (no optimisation)"
   ARCHITECTURE "(Default)"
 )
 
@@ -124,6 +127,7 @@ jucer_export_target_configuration(
   BINARY_NAME "BinaryBuilder"
   # HEADER_SEARCH_PATHS
   # PREPROCESSOR_DEFINITIONS
+  OPTIMISATION "-Os (minimise code size)"
   ARCHITECTURE "(Default)"
 )
 

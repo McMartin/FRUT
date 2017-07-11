@@ -625,6 +625,7 @@ function(jucer_export_target_configuration
     "BINARY_NAME"
     "HEADER_SEARCH_PATHS"
     "PREPROCESSOR_DEFINITIONS"
+    "OPTIMISATION"
   )
 
   if(exporter STREQUAL "Xcode (MacOSX)")
@@ -698,6 +699,38 @@ function(jucer_export_target_configuration
           $<$<CONFIG:${configuration_name}>:${value}>
         )
         set(JUCER_PREPROCESSOR_DEFINITIONS ${JUCER_PREPROCESSOR_DEFINITIONS} PARENT_SCOPE)
+
+      elseif(tag STREQUAL "OPTIMISATION")
+        if(exporter MATCHES "Visual Studio 201(5|3)")
+          if(value STREQUAL "No optimisation")
+            set(optimisation_flag "/Od")
+          elseif(value STREQUAL "Minimise size")
+            set(optimisation_flag "/O1")
+          elseif(value STREQUAL "Maximise speed")
+            set(optimisation_flag "/Ox")
+          else()
+            message(FATAL_ERROR "Unsupported value for OPTIMISATION: \"${value}\"")
+          endif()
+        else()
+          if(value STREQUAL "-O0 (no optimisation)")
+            set(optimisation_flag "-O0")
+          elseif(value STREQUAL "-Os (minimise code size)")
+            set(optimisation_flag "-Os")
+          elseif(value STREQUAL "-O3 (fastest with safe optimisations)")
+            set(optimisation_flag "-O3")
+          elseif(value STREQUAL "-O1 (fast)")
+            set(optimisation_flag "-O1")
+          elseif(value STREQUAL "-O2 (faster)")
+            set(optimisation_flag "-O2")
+          elseif(value STREQUAL "-Ofast (uses aggressive optimisations)")
+            set(optimisation_flag "-Ofast")
+          else()
+            message(FATAL_ERROR "Unsupported value for OPTIMISATION: \"${value}\"")
+          endif()
+        endif()
+        set(JUCER_OPTIMISATION_FLAG_${configuration_name}
+          "${optimisation_flag}" PARENT_SCOPE
+        )
 
       elseif(tag STREQUAL "VST_BINARY_LOCATION")
         set(JUCER_VST_BINARY_LOCATION_${configuration_name} ${value} PARENT_SCOPE)
@@ -1503,6 +1536,15 @@ function(__set_common_target_properties target_name)
     endif()
     target_include_directories(${target_name} PRIVATE "${JUCER_VST3_SDK_FOLDER}")
   endif()
+
+  foreach(configuration_name ${JUCER_PROJECT_CONFIGURATIONS})
+    if(JUCER_OPTIMISATION_FLAG_${configuration_name})
+      set(optimisation_flag ${JUCER_OPTIMISATION_FLAG_${configuration_name}})
+      target_compile_options(${target_name} PRIVATE
+        $<$<CONFIG:${configuration_name}>:${optimisation_flag}>
+      )
+    endif()
+  endforeach()
 
   target_compile_definitions(${target_name} PRIVATE ${JUCER_PREPROCESSOR_DEFINITIONS})
   target_compile_options(${target_name} PRIVATE ${JUCER_COMPILER_FLAGS})
