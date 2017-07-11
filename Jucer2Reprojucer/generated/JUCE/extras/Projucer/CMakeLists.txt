@@ -488,6 +488,8 @@ jucer_export_target_configuration(
   # TREAT_WARNINGS_AS_ERRORS
   RUNTIME_LIBRARY "Use DLL runtime"
   WHOLE_PROGRAM_OPTIMISATION "Enable when possible"
+  # PREBUILD_COMMAND
+  # POSTBUILD_COMMAND
   # ARCHITECTURE "x64"
   # RELAX_IEEE_COMPLIANCE
 )
@@ -504,6 +506,8 @@ jucer_export_target_configuration(
   # TREAT_WARNINGS_AS_ERRORS
   RUNTIME_LIBRARY "Use static runtime"
   WHOLE_PROGRAM_OPTIMISATION "Enable when possible"
+  # PREBUILD_COMMAND
+  # POSTBUILD_COMMAND
   # ARCHITECTURE "x64"
   # RELAX_IEEE_COMPLIANCE
 )
@@ -531,6 +535,8 @@ jucer_export_target_configuration(
   # TREAT_WARNINGS_AS_ERRORS
   RUNTIME_LIBRARY "Use DLL runtime"
   WHOLE_PROGRAM_OPTIMISATION "Always disable"
+  # PREBUILD_COMMAND
+  # POSTBUILD_COMMAND
   # ARCHITECTURE "x64"
   # RELAX_IEEE_COMPLIANCE
 )
@@ -547,6 +553,8 @@ jucer_export_target_configuration(
   # TREAT_WARNINGS_AS_ERRORS
   RUNTIME_LIBRARY "Use static runtime"
   WHOLE_PROGRAM_OPTIMISATION "Enable when possible"
+  # PREBUILD_COMMAND
+  # POSTBUILD_COMMAND
   # ARCHITECTURE "x64"
   # RELAX_IEEE_COMPLIANCE
 )
