@@ -1723,8 +1723,16 @@ function(__set_common_target_properties target_name)
       if(DEFINED JUCER_GENERATE_MANIFEST_${configuration_name})
         if(NOT JUCER_GENERATE_MANIFEST_${configuration_name})
           string(TOUPPER "${configuration_name}" upper_configuration_name)
+          get_target_property(link_flags
+            ${target_name} LINK_FLAGS_${upper_configuration_name}
+          )
+          if(link_flags)
+            string(APPEND link_flags " /MANIFEST:NO")
+          else()
+            set(link_flags "/MANIFEST:NO")
+          endif()
           set_target_properties(${target_name} PROPERTIES
-            LINK_FLAGS_${upper_configuration_name} /MANIFEST:NO
+            LINK_FLAGS_${upper_configuration_name} "${link_flags}"
           )
         endif()
       endif()
