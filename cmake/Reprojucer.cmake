@@ -650,6 +650,7 @@ function(jucer_export_target_configuration
       "WHOLE_PROGRAM_OPTIMISATION"
       "PREBUILD_COMMAND"
       "POSTBUILD_COMMAND"
+      "GENERATE_MANIFEST"
       "CHARACTER_SET"
       "ARCHITECTURE"
       "RELAX_IEEE_COMPLIANCE"
@@ -873,6 +874,9 @@ function(jucer_export_target_configuration
         set(JUCER_POSTBUILD_COMMAND_${configuration_name}
           "${CMAKE_CURRENT_BINARY_DIR}/postbuild_${configuration_name}.cmd" PARENT_SCOPE
         )
+
+      elseif(tag STREQUAL "GENERATE_MANIFEST")
+        set(JUCER_GENERATE_MANIFEST_${configuration_name} ${value} PARENT_SCOPE)
 
       elseif(tag STREQUAL "CHARACTER_SET")
         if(value STREQUAL "Default" OR value STREQUAL "MultiByte"
@@ -1714,6 +1718,15 @@ function(__set_common_target_properties target_name)
         string(APPEND all_confs_postbuild_command
           $<$<CONFIG:${configuration_name}>:${postbuild_command}>
         )
+      endif()
+
+      if(DEFINED JUCER_GENERATE_MANIFEST_${configuration_name})
+        if(NOT JUCER_GENERATE_MANIFEST_${configuration_name})
+          string(TOUPPER "${configuration_name}" upper_configuration_name)
+          set_target_properties(${target_name} PROPERTIES
+            LINK_FLAGS_${upper_configuration_name} /MANIFEST:NO
+          )
+        endif()
       endif()
 
       if(NOT DEFINED JUCER_CHARACTER_SET_${configuration_name}
