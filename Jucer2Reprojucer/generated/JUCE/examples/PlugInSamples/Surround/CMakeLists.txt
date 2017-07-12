@@ -241,6 +241,7 @@ jucer_export_target_configuration(
   # TREAT_WARNINGS_AS_ERRORS
   RUNTIME_LIBRARY "Use static runtime"
   WHOLE_PROGRAM_OPTIMISATION "Enable when possible"
+  # INCREMENTAL_LINKING
   # PREBUILD_COMMAND
   # POSTBUILD_COMMAND
   GENERATE_MANIFEST ON
@@ -262,6 +263,7 @@ jucer_export_target_configuration(
   # TREAT_WARNINGS_AS_ERRORS
   RUNTIME_LIBRARY "Use static runtime"
   WHOLE_PROGRAM_OPTIMISATION "Enable when possible"
+  # INCREMENTAL_LINKING
   # PREBUILD_COMMAND
   # POSTBUILD_COMMAND
   GENERATE_MANIFEST ON

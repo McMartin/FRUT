@@ -984,18 +984,11 @@ int main(int argc, char* argv[])
               return "High";
             }();
 
-            out << "  WARNING_LEVEL \"" << warningLevel << "\"\n";
-
-            if (configuration.hasProperty("warningsAreErrors"))
-            {
-              out << "  TREAT_WARNINGS_AS_ERRORS "
-                  << (bool{configuration.getProperty("warningsAreErrors")} ? "ON" : "OFF")
-                  << "\n";
-            }
-            else
-            {
-              out << "  # TREAT_WARNINGS_AS_ERRORS\n";
-            }
+            out << "  WARNING_LEVEL \"" << warningLevel << "\"\n"
+                << "  "
+                << getOnOffSetting(
+                     configuration, "TREAT_WARNINGS_AS_ERRORS", "warningsAreErrors")
+                << "\n";
 
             const auto runtimeLibrary = [&configuration]() -> std::string
             {
@@ -1036,6 +1029,10 @@ int main(int argc, char* argv[])
             }
 
             out << "  "
+                << getOnOffSetting(
+                     configuration, "INCREMENTAL_LINKING", "enableIncrementalLinking")
+                << "\n"
+                << "  "
                 << getSetting(configuration, "PREBUILD_COMMAND", "prebuildCommand")
                 << "\n"
                 << "  "

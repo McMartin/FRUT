@@ -648,6 +648,7 @@ function(jucer_export_target_configuration
       "TREAT_WARNINGS_AS_ERRORS"
       "RUNTIME_LIBRARY"
       "WHOLE_PROGRAM_OPTIMISATION"
+      "INCREMENTAL_LINKING"
       "PREBUILD_COMMAND"
       "POSTBUILD_COMMAND"
       "GENERATE_MANIFEST"
@@ -856,6 +857,9 @@ function(jucer_export_target_configuration
             "Unsupported value for WHOLE_PROGRAM_OPTIMISATION: \"${value}\""
           )
         endif()
+
+      elseif(tag STREQUAL "INCREMENTAL_LINKING")
+        set(JUCER_INCREMENTAL_LINKING_${configuration_name} ${value} PARENT_SCOPE)
 
       elseif(tag STREQUAL "PREBUILD_COMMAND")
         set(script_content "${value}")
@@ -1706,6 +1710,23 @@ function(__set_common_target_properties target_name)
         )
       endforeach()
 
+      if(DEFINED JUCER_INCREMENTAL_LINKING_${configuration_name})
+        if(JUCER_INCREMENTAL_LINKING_${configuration_name})
+          string(TOUPPER "${configuration_name}" upper_configuration_name)
+          get_target_property(link_flags
+            ${target_name} LINK_FLAGS_${upper_configuration_name}
+          )
+          if(link_flags)
+            string(APPEND link_flags " /INCREMENTAL")
+          else()
+            set(link_flags "/INCREMENTAL")
+          endif()
+          set_target_properties(${target_name} PROPERTIES
+            LINK_FLAGS_${upper_configuration_name} "${link_flags}"
+          )
+        endif()
+      endif()
+
       if(DEFINED JUCER_PREBUILD_COMMAND_${configuration_name})
         set(prebuild_command ${JUCER_PREBUILD_COMMAND_${configuration_name}})
         string(APPEND all_confs_prebuild_command
@@ -1723,8 +1744,16 @@ function(__set_common_target_properties target_name)
       if(DEFINED JUCER_GENERATE_MANIFEST_${configuration_name})
         if(NOT JUCER_GENERATE_MANIFEST_${configuration_name})
           string(TOUPPER "${configuration_name}" upper_configuration_name)
+          get_target_property(link_flags
+            ${target_name} LINK_FLAGS_${upper_configuration_name}
+          )
+          if(link_flags)
+            string(APPEND link_flags " /MANIFEST:NO")
+          else()
+            set(link_flags "/MANIFEST:NO")
+          endif()
           set_target_properties(${target_name} PROPERTIES
-            LINK_FLAGS_${upper_configuration_name} /MANIFEST:NO
+            LINK_FLAGS_${upper_configuration_name} "${link_flags}"
           )
         endif()
       endif()
