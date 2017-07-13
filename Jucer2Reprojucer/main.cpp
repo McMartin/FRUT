@@ -351,6 +351,15 @@ int main(int argc, char* argv[])
       return {};
     }();
 
+    const auto maxBinaryFileSize = [&jucerProject]() -> std::string
+    {
+      if (jucerProject.getProperty("maxBinaryFileSize").toString().isEmpty())
+        return "Default";
+
+      const auto value = int{jucerProject.getProperty("maxBinaryFileSize")};
+      return juce::File::descriptionOfSizeInBytes(value).toStdString();
+    }();
+
     out << "jucer_project_settings(\n"
         << "  " << projectSetting("PROJECT_NAME", "name") << "\n"
         << "  " << projectSetting("PROJECT_VERSION", "version") << "\n"
@@ -359,7 +368,7 @@ int main(int argc, char* argv[])
         << "  " << projectSetting("COMPANY_EMAIL", "companyEmail") << "\n"
         << "  PROJECT_TYPE \"" << projectTypeDescription << "\"\n"
         << "  " << projectSetting("BUNDLE_IDENTIFIER", "bundleIdentifier") << "\n"
-        << "  BINARYDATACPP_SIZE_LIMIT \"Default\"\n"
+        << "  BINARYDATACPP_SIZE_LIMIT \"" << maxBinaryFileSize << "\"\n"
         << "  " << projectSetting("BINARYDATA_NAMESPACE", "binaryDataNamespace") << "\n"
         << "  " << projectSetting("PREPROCESSOR_DEFINITIONS", "defines") << "\n";
 
