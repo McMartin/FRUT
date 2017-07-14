@@ -24,23 +24,37 @@ install-anchors:
 
 script-anchors:
   - &script-linux
-    - mkdir ${TRAVIS_BUILD_DIR}/ci/Debug_build
-    - cd ${TRAVIS_BUILD_DIR}/ci/Debug_build
+    - mkdir ${TRAVIS_BUILD_DIR}/ci/ReprojucerHelpers/Debug_build
+    - cd ${TRAVIS_BUILD_DIR}/ci/ReprojucerHelpers/Debug_build
     - >
       cmake .. -DCMAKE_BUILD_TYPE=Debug
       -DJUCE_ROOT="${JUCE_ROOT}"
       -DJUCE_modules_DIRS="${JUCE_ROOT}/modules"
+      -DProjucer_jucer_FILE="${JUCE_ROOT}/extras/Projucer/Projucer.jucer"
+    - cmake --build .
+
+    - mkdir ${TRAVIS_BUILD_DIR}/ci/ReprojucerHelpers/Release_build
+    - cd ${TRAVIS_BUILD_DIR}/ci/ReprojucerHelpers/Release_build
+    - >
+      cmake .. -DCMAKE_BUILD_TYPE=Release
+      -DJUCE_ROOT="${JUCE_ROOT}"
+      -DJUCE_modules_DIRS="${JUCE_ROOT}/modules"
+      -DProjucer_jucer_FILE="${JUCE_ROOT}/extras/Projucer/Projucer.jucer"
+    - cmake --build .
+
+    - mkdir ${TRAVIS_BUILD_DIR}/ci/JuceProjects/Debug_build
+    - cd ${TRAVIS_BUILD_DIR}/ci/JuceProjects/Debug_build
+    - >
+      cmake .. -DCMAKE_BUILD_TYPE=Debug
       -DJuceDemoPlugin_jucer_FILE="${JUCE_ROOT}/examples/audio plugin demo/JuceDemoPlugin.jucer"
       -DPlugin_Host_jucer_FILE="${JUCE_ROOT}/examples/audio plugin host/Plugin Host.jucer"
       -DProjucer_jucer_FILE="${JUCE_ROOT}/extras/Projucer/Projucer.jucer"
     - cmake --build .
 
-    - mkdir ${TRAVIS_BUILD_DIR}/ci/Release_build
-    - cd ${TRAVIS_BUILD_DIR}/ci/Release_build
+    - mkdir ${TRAVIS_BUILD_DIR}/ci/JuceProjects/Release_build
+    - cd ${TRAVIS_BUILD_DIR}/ci/JuceProjects/Release_build
     - >
       cmake .. -DCMAKE_BUILD_TYPE=Release
-      -DJUCE_ROOT="${JUCE_ROOT}"
-      -DJUCE_modules_DIRS="${JUCE_ROOT}/modules"
       -DJuceDemoPlugin_jucer_FILE="${JUCE_ROOT}/examples/audio plugin demo/JuceDemoPlugin.jucer"
       -DPlugin_Host_jucer_FILE="${JUCE_ROOT}/examples/audio plugin host/Plugin Host.jucer"
       -DProjucer_jucer_FILE="${JUCE_ROOT}/extras/Projucer/Projucer.jucer"
@@ -55,13 +69,21 @@ script-anchors:
     - git diff --quiet
 
   - &script-osx
-    - mkdir ${TRAVIS_BUILD_DIR}/ci/build
-    - cd ${TRAVIS_BUILD_DIR}/ci/build
+    - mkdir ${TRAVIS_BUILD_DIR}/ci/ReprojucerHelpers/build
+    - cd ${TRAVIS_BUILD_DIR}/ci/ReprojucerHelpers/build
+    - >
+      cmake .. -G Xcode
+      -DJUCE_ROOT="${JUCE_ROOT}"
+      -DJUCE_modules_DIRS="${JUCE_ROOT}/modules"
+      -DProjucer_jucer_FILE="${JUCE_ROOT}/extras/Projucer/Projucer.jucer"
+    - cmake --build . --config Debug
+    - cmake --build . --config Release
+
+    - mkdir ${TRAVIS_BUILD_DIR}/ci/JuceProjects/build
+    - cd ${TRAVIS_BUILD_DIR}/ci/JuceProjects/build
     - >
       cmake .. -G Xcode
       -DJUCER_VST3_SDK_FOLDER="${TRAVIS_BUILD_DIR}/ci/third-party/VST_SDK/VST3_SDK"
-      -DJUCE_ROOT="${JUCE_ROOT}"
-      -DJUCE_modules_DIRS="${JUCE_ROOT}/modules"
       -DJuceDemoPlugin_jucer_FILE="${JUCE_ROOT}/examples/audio plugin demo/JuceDemoPlugin.jucer"
       -DPlugin_Host_jucer_FILE="${JUCE_ROOT}/examples/audio plugin host/Plugin Host.jucer"
       -DProjucer_jucer_FILE="${JUCE_ROOT}/extras/Projucer/Projucer.jucer"
