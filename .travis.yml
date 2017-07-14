@@ -30,7 +30,6 @@ script-anchors:
       -DJUCE_ROOT="../../../JUCE"
       -DJUCE_modules_DIRS="../../../JUCE/modules"
       -DJuceDemoPlugin_jucer_FILE="../../../JUCE/examples/audio plugin demo/JuceDemoPlugin.jucer"
-      -DNetworkGraphicsDemo_jucer_FILE="../../../JUCE/examples/NetworkGraphicsDemo/NetworkGraphicsDemo.jucer"
       -DPlugin_Host_jucer_FILE="../../../JUCE/examples/audio plugin host/Plugin Host.jucer"
       -DProjucer_jucer_FILE="../../../JUCE/extras/Projucer/Projucer.jucer"
     - cmake --build .
@@ -43,7 +42,6 @@ script-anchors:
       -DJUCE_ROOT="../../../JUCE"
       -DJUCE_modules_DIRS="../../../JUCE/modules"
       -DJuceDemoPlugin_jucer_FILE="../../../JUCE/examples/audio plugin demo/JuceDemoPlugin.jucer"
-      -DNetworkGraphicsDemo_jucer_FILE="../../../JUCE/examples/NetworkGraphicsDemo/NetworkGraphicsDemo.jucer"
       -DPlugin_Host_jucer_FILE="../../../JUCE/examples/audio plugin host/Plugin Host.jucer"
       -DProjucer_jucer_FILE="../../../JUCE/extras/Projucer/Projucer.jucer"
     - cmake --build .
@@ -66,7 +64,6 @@ script-anchors:
       -DJUCE_ROOT="../../../JUCE"
       -DJUCE_modules_DIRS="../../../JUCE/modules"
       -DJuceDemoPlugin_jucer_FILE="../../../JUCE/examples/audio plugin demo/JuceDemoPlugin.jucer"
-      -DNetworkGraphicsDemo_jucer_FILE="../../../JUCE/examples/NetworkGraphicsDemo/NetworkGraphicsDemo.jucer"
       -DPlugin_Host_jucer_FILE="../../../JUCE/examples/audio plugin host/Plugin Host.jucer"
       -DProjucer_jucer_FILE="../../../JUCE/extras/Projucer/Projucer.jucer"
 
