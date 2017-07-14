@@ -24,6 +24,8 @@ install-anchors:
 
 script-anchors:
   - &script-linux
+    - set -e
+
     - mkdir ${TRAVIS_BUILD_DIR}/ci/ReprojucerHelpers/Debug_build
     - cd ${TRAVIS_BUILD_DIR}/ci/ReprojucerHelpers/Debug_build
     - >
@@ -68,7 +70,11 @@ script-anchors:
       -DProjucer_jucer_FILE="${JUCE_ROOT}/extras/Projucer/Projucer.jucer"
     - cmake --build .
 
+    - set +e
+
   - &script-osx
+    - set -e
+
     - mkdir ${TRAVIS_BUILD_DIR}/ci/ReprojucerHelpers/build
     - cd ${TRAVIS_BUILD_DIR}/ci/ReprojucerHelpers/build
     - >
@@ -97,6 +103,8 @@ script-anchors:
       -DProjucer_jucer_FILE="${JUCE_ROOT}/extras/Projucer/Projucer.jucer"
     - cmake --build . --config Debug
     - cmake --build . --config Release
+
+    - set +e
 
 matrix:
   include:
