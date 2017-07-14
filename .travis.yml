@@ -24,8 +24,8 @@ install-anchors:
 
 script-anchors:
   - &script-linux
-    - mkdir ci/Debug_build/
-    - cd ci/Debug_build
+    - mkdir ${TRAVIS_BUILD_DIR}/ci/Debug_build
+    - cd ${TRAVIS_BUILD_DIR}/ci/Debug_build
     - >
       cmake .. -DCMAKE_BUILD_TYPE=Debug
       -DJUCE_ROOT="${JUCE_ROOT}"
@@ -34,10 +34,9 @@ script-anchors:
       -DPlugin_Host_jucer_FILE="${JUCE_ROOT}/examples/audio plugin host/Plugin Host.jucer"
       -DProjucer_jucer_FILE="${JUCE_ROOT}/extras/Projucer/Projucer.jucer"
     - cmake --build .
-    - cd $TRAVIS_BUILD_DIR
 
-    - mkdir ci/Release_build/
-    - cd ci/Release_build
+    - mkdir ${TRAVIS_BUILD_DIR}/ci/Release_build
+    - cd ${TRAVIS_BUILD_DIR}/ci/Release_build
     - >
       cmake .. -DCMAKE_BUILD_TYPE=Release
       -DJUCE_ROOT="${JUCE_ROOT}"
@@ -46,8 +45,8 @@ script-anchors:
       -DPlugin_Host_jucer_FILE="${JUCE_ROOT}/examples/audio plugin host/Plugin Host.jucer"
       -DProjucer_jucer_FILE="${JUCE_ROOT}/extras/Projucer/Projucer.jucer"
     - cmake --build .
-    - cd $TRAVIS_BUILD_DIR
 
+    - cd ${TRAVIS_BUILD_DIR}
     - >
       cmake
       -DJUCE_ROOT="${JUCE_ROOT}"
@@ -56,9 +55,8 @@ script-anchors:
     - git diff --quiet
 
   - &script-osx
-    - mkdir ci/build
-    - cd ci/build
-
+    - mkdir ${TRAVIS_BUILD_DIR}/ci/build
+    - cd ${TRAVIS_BUILD_DIR}/ci/build
     - >
       cmake .. -G Xcode
       -DJUCER_VST3_SDK_FOLDER="${TRAVIS_BUILD_DIR}/ci/third-party/VST_SDK/VST3_SDK"
@@ -67,11 +65,10 @@ script-anchors:
       -DJuceDemoPlugin_jucer_FILE="${JUCE_ROOT}/examples/audio plugin demo/JuceDemoPlugin.jucer"
       -DPlugin_Host_jucer_FILE="${JUCE_ROOT}/examples/audio plugin host/Plugin Host.jucer"
       -DProjucer_jucer_FILE="${JUCE_ROOT}/extras/Projucer/Projucer.jucer"
-
     - cmake --build . --config Debug
     - cmake --build . --config Release
-    - cd $TRAVIS_BUILD_DIR
 
+    - cd ${TRAVIS_BUILD_DIR}
     - >
       cmake
       -DJUCE_ROOT="${JUCE_ROOT}"
