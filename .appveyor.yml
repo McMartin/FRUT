@@ -12,8 +12,8 @@ environment:
 install:
   - cmake --version
 
-  - git clone --depth=10 --quiet -- https://github.com/WeAreROLI/JUCE.git ../JUCE
-  - cd ../JUCE
+  - git clone --depth=10 --quiet -- https://github.com/WeAreROLI/JUCE.git ci/tmp/JUCE
+  - cd ci/tmp/JUCE
   - git reset --hard 75cd666a61f31eaa3ee6c6d9ad97bc404878a0d8
   - cd %APPVEYOR_BUILD_FOLDER%
 
@@ -25,11 +25,11 @@ build_script:
     cmake ..
     -G "%GENERATOR%"
     -DJUCER_VST3_SDK_FOLDER="%APPVEYOR_BUILD_FOLDER%/ci/third-party/VST_SDK/VST3_SDK"
-    -DJUCE_ROOT="../../../JUCE"
-    -DJUCE_modules_DIRS="../../../JUCE/modules"
-    -DJuceDemoPlugin_jucer_FILE="../../../JUCE/examples/audio plugin demo/JuceDemoPlugin.jucer"
-    -DPlugin_Host_jucer_FILE="../../../JUCE/examples/audio plugin host/Plugin Host.jucer"
-    -DProjucer_jucer_FILE="../../../JUCE/extras/Projucer/Projucer.jucer"
+    -DJUCE_ROOT="../tmp/JUCE"
+    -DJUCE_modules_DIRS="../tmp/JUCE/modules"
+    -DJuceDemoPlugin_jucer_FILE="../tmp/JUCE/examples/audio plugin demo/JuceDemoPlugin.jucer"
+    -DPlugin_Host_jucer_FILE="../tmp/JUCE/examples/audio plugin host/Plugin Host.jucer"
+    -DProjucer_jucer_FILE="../tmp/JUCE/extras/Projucer/Projucer.jucer"
 
   - cmake --build . --config Debug
   - cmake --build . --config Release
@@ -37,7 +37,7 @@ build_script:
 
   - >
     cmake
-    -DJUCE_ROOT="../JUCE"
+    -DJUCE_ROOT="ci/tmp/JUCE"
     -DJucer2Reprojucer_EXE="ci/build/Jucer2Reprojucer/Debug/Jucer2Reprojucer.exe"
     -P Jucer2Reprojucer/generated/apply-Jucer2Reprojucer-to-JUCE-jucers.cmake
   - git diff --quiet
