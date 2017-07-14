@@ -29,6 +29,14 @@ build_script:
   - cmake --build . --config Debug
   - cmake --build . --config Release
 
+  - cd %APPVEYOR_BUILD_FOLDER%
+  - >
+    cmake
+    -DJUCE_ROOT="%JUCE_ROOT%"
+    -DJucer2Reprojucer_EXE="ci/ReprojucerHelpers/build/Jucer2Reprojucer/Debug/Jucer2Reprojucer.exe"
+    -P Jucer2Reprojucer/generated/apply-Jucer2Reprojucer-to-JUCE-jucers.cmake
+  - git diff --quiet
+
   - mkdir %APPVEYOR_BUILD_FOLDER%\ci\JuceProjects\build
   - cd %APPVEYOR_BUILD_FOLDER%\ci\JuceProjects\build
   - >
@@ -39,11 +47,3 @@ build_script:
     -DProjucer_jucer_FILE="%JUCE_ROOT%/extras/Projucer/Projucer.jucer"
   - cmake --build . --config Debug
   - cmake --build . --config Release
-
-  - cd %APPVEYOR_BUILD_FOLDER%
-  - >
-    cmake
-    -DJUCE_ROOT="%JUCE_ROOT%"
-    -DJucer2Reprojucer_EXE="ci/ReprojucerHelpers/build/Jucer2Reprojucer/Debug/Jucer2Reprojucer.exe"
-    -P Jucer2Reprojucer/generated/apply-Jucer2Reprojucer-to-JUCE-jucers.cmake
-  - git diff --quiet

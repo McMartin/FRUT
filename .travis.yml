@@ -42,6 +42,14 @@ script-anchors:
       -DProjucer_jucer_FILE="${JUCE_ROOT}/extras/Projucer/Projucer.jucer"
     - cmake --build .
 
+    - cd ${TRAVIS_BUILD_DIR}
+    - >
+      cmake
+      -DJUCE_ROOT="${JUCE_ROOT}"
+      -DJucer2Reprojucer_EXE="ci/ReprojucerHelpers/Debug_build/Jucer2Reprojucer/Jucer2Reprojucer"
+      -P Jucer2Reprojucer/generated/apply-Jucer2Reprojucer-to-JUCE-jucers.cmake
+    - git diff --quiet
+
     - mkdir ${TRAVIS_BUILD_DIR}/ci/JuceProjects/Debug_build
     - cd ${TRAVIS_BUILD_DIR}/ci/JuceProjects/Debug_build
     - >
@@ -60,14 +68,6 @@ script-anchors:
       -DProjucer_jucer_FILE="${JUCE_ROOT}/extras/Projucer/Projucer.jucer"
     - cmake --build .
 
-    - cd ${TRAVIS_BUILD_DIR}
-    - >
-      cmake
-      -DJUCE_ROOT="${JUCE_ROOT}"
-      -DJucer2Reprojucer_EXE="ci/Debug_build/Jucer2Reprojucer/Jucer2Reprojucer"
-      -P Jucer2Reprojucer/generated/apply-Jucer2Reprojucer-to-JUCE-jucers.cmake
-    - git diff --quiet
-
   - &script-osx
     - mkdir ${TRAVIS_BUILD_DIR}/ci/ReprojucerHelpers/build
     - cd ${TRAVIS_BUILD_DIR}/ci/ReprojucerHelpers/build
@@ -79,6 +79,14 @@ script-anchors:
     - cmake --build . --config Debug
     - cmake --build . --config Release
 
+    - cd ${TRAVIS_BUILD_DIR}
+    - >
+      cmake
+      -DJUCE_ROOT="${JUCE_ROOT}"
+      -DJucer2Reprojucer_EXE="ci/ReprojucerHelpers/build/Jucer2Reprojucer/Debug/Jucer2Reprojucer"
+      -P Jucer2Reprojucer/generated/apply-Jucer2Reprojucer-to-JUCE-jucers.cmake
+    - git diff --quiet
+
     - mkdir ${TRAVIS_BUILD_DIR}/ci/JuceProjects/build
     - cd ${TRAVIS_BUILD_DIR}/ci/JuceProjects/build
     - >
@@ -89,14 +97,6 @@ script-anchors:
       -DProjucer_jucer_FILE="${JUCE_ROOT}/extras/Projucer/Projucer.jucer"
     - cmake --build . --config Debug
     - cmake --build . --config Release
-
-    - cd ${TRAVIS_BUILD_DIR}
-    - >
-      cmake
-      -DJUCE_ROOT="${JUCE_ROOT}"
-      -DJucer2Reprojucer_EXE="ci/build/Jucer2Reprojucer/Debug/Jucer2Reprojucer"
-      -P Jucer2Reprojucer/generated/apply-Jucer2Reprojucer-to-JUCE-jucers.cmake
-    - git diff --quiet
 
 matrix:
   include:
