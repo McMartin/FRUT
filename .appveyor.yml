@@ -19,6 +19,7 @@ install:
   - cd %APPVEYOR_BUILD_FOLDER%
 
 build_script:
+  # Configure and build BinaryDataBuilder, IconBuilder and Jucer2Reprojucer
   - mkdir %APPVEYOR_BUILD_FOLDER%\ci\ReprojucerHelpers\build
   - cd %APPVEYOR_BUILD_FOLDER%\ci\ReprojucerHelpers\build
   - >
@@ -28,6 +29,7 @@ build_script:
     -DProjucer_jucer_FILE="%JUCE_ROOT%/extras/Projucer/Projucer.jucer"
   - cmake --build . --config Debug
 
+  # Check that generated CMakeLists.txt files are up-to-date
   - cd %APPVEYOR_BUILD_FOLDER%
   - >
     cmake
@@ -36,6 +38,7 @@ build_script:
     -P Jucer2Reprojucer/generated/apply-Jucer2Reprojucer-to-JUCE-jucers.cmake
   - git diff --quiet
 
+  # Configure and build JUCE's Plugin Host, JuceDemoPlugin and Projucer
   - mkdir %APPVEYOR_BUILD_FOLDER%\ci\JuceProjects\build
   - cd %APPVEYOR_BUILD_FOLDER%\ci\JuceProjects\build
   - >
