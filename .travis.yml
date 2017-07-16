@@ -27,7 +27,7 @@ script-anchors:
     - set -e
 
     # Configure and build BinaryDataBuilder, IconBuilder and Jucer2Reprojucer
-    - mkdir ${TRAVIS_BUILD_DIR}/ci/ReprojucerHelpers/Debug_build
+    - mkdir ${TRAVIS_BUILD_DIR}/ci/ReprojucerHelpers/{Debug_build,Release_build}
     - cd ${TRAVIS_BUILD_DIR}/ci/ReprojucerHelpers/Debug_build
     - >
       cmake .. -DCMAKE_BUILD_TYPE=Debug
@@ -35,8 +35,6 @@ script-anchors:
       -DJUCE_modules_DIRS="${JUCE_ROOT}/modules"
       -DProjucer_jucer_FILE="${JUCE_ROOT}/extras/Projucer/Projucer.jucer"
     - cmake --build .
-
-    - mkdir ${TRAVIS_BUILD_DIR}/ci/ReprojucerHelpers/Release_build
     - cd ${TRAVIS_BUILD_DIR}/ci/ReprojucerHelpers/Release_build
     - >
       cmake .. -DCMAKE_BUILD_TYPE=Release
@@ -54,7 +52,7 @@ script-anchors:
     - git diff --quiet
 
     # Configure and build JUCE's Plugin Host, JuceDemoPlugin and Projucer
-    - mkdir ${TRAVIS_BUILD_DIR}/ci/JuceProjects/Debug_build
+    - mkdir ${TRAVIS_BUILD_DIR}/ci/JuceProjects/{Debug_build,Release_build}
     - cd ${TRAVIS_BUILD_DIR}/ci/JuceProjects/Debug_build
     - >
       cmake .. -DCMAKE_BUILD_TYPE=Debug
@@ -62,8 +60,6 @@ script-anchors:
       -DPlugin_Host_jucer_FILE="${JUCE_ROOT}/examples/audio plugin host/Plugin Host.jucer"
       -DProjucer_jucer_FILE="${JUCE_ROOT}/extras/Projucer/Projucer.jucer"
     - cmake --build .
-
-    - mkdir ${TRAVIS_BUILD_DIR}/ci/JuceProjects/Release_build
     - cd ${TRAVIS_BUILD_DIR}/ci/JuceProjects/Release_build
     - >
       cmake .. -DCMAKE_BUILD_TYPE=Release
