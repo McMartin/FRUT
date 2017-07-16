@@ -12,33 +12,38 @@ environment:
 install:
   - cmake --version
 
-  - git clone --depth=10 --quiet -- https://github.com/WeAreROLI/JUCE.git ../JUCE
-  - cd ../JUCE
+  - set JUCE_ROOT="%APPVEYOR_BUILD_FOLDER%/ci/tmp/JUCE"
+  - git clone --depth=10 --quiet -- https://github.com/WeAreROLI/JUCE.git %JUCE_ROOT%
+  - cd %JUCE_ROOT%
   - git reset --hard 75cd666a61f31eaa3ee6c6d9ad97bc404878a0d8
   - cd %APPVEYOR_BUILD_FOLDER%
 
 build_script:
-  - mkdir ci\build
-  - cd ci\build
-
+  - mkdir %APPVEYOR_BUILD_FOLDER%\ci\ReprojucerHelpers\build
+  - cd %APPVEYOR_BUILD_FOLDER%\ci\ReprojucerHelpers\build
   - >
-    cmake ..
-    -G "%GENERATOR%"
-    -DJUCER_VST3_SDK_FOLDER="%APPVEYOR_BUILD_FOLDER%/ci/third-party/VST_SDK/VST3_SDK"
-    -DJUCE_ROOT="../../../JUCE"
-    -DJUCE_modules_DIRS="../../../JUCE/modules"
-    -DJuceDemoPlugin_jucer_FILE="../../../JUCE/examples/audio plugin demo/JuceDemoPlugin.jucer"
-    -DNetworkGraphicsDemo_jucer_FILE="../../../JUCE/examples/NetworkGraphicsDemo/NetworkGraphicsDemo.jucer"
-    -DPlugin_Host_jucer_FILE="../../../JUCE/examples/audio plugin host/Plugin Host.jucer"
-    -DProjucer_jucer_FILE="../../../JUCE/extras/Projucer/Projucer.jucer"
-
+    cmake .. -G "%GENERATOR%"
+    -DJUCE_ROOT="%JUCE_ROOT%"
+    -DJUCE_modules_DIRS="%JUCE_ROOT%/modules"
+    -DProjucer_jucer_FILE="%JUCE_ROOT%/extras/Projucer/Projucer.jucer"
   - cmake --build . --config Debug
   - cmake --build . --config Release
-  - cd %APPVEYOR_BUILD_FOLDER%
 
+  - cd %APPVEYOR_BUILD_FOLDER%
   - >
     cmake
-    -DJUCE_ROOT="../JUCE"
-    -DJucer2Reprojucer_EXE="ci/build/Jucer2Reprojucer/Debug/Jucer2Reprojucer.exe"
+    -DJUCE_ROOT="%JUCE_ROOT%"
+    -DJucer2Reprojucer_EXE="ci/ReprojucerHelpers/build/Jucer2Reprojucer/Debug/Jucer2Reprojucer.exe"
     -P Jucer2Reprojucer/generated/apply-Jucer2Reprojucer-to-JUCE-jucers.cmake
   - git diff --quiet
+
+  - mkdir %APPVEYOR_BUILD_FOLDER%\ci\JuceProjects\build
+  - cd %APPVEYOR_BUILD_FOLDER%\ci\JuceProjects\build
+  - >
+    cmake .. -G "%GENERATOR%"
+    -DJUCER_VST3_SDK_FOLDER="%APPVEYOR_BUILD_FOLDER%/ci/third-party/VST_SDK/VST3_SDK"
+    -DJuceDemoPlugin_jucer_FILE="%JUCE_ROOT%/examples/audio plugin demo/JuceDemoPlugin.jucer"
+    -DPlugin_Host_jucer_FILE="%JUCE_ROOT%/examples/audio plugin host/Plugin Host.jucer"
+    -DProjucer_jucer_FILE="%JUCE_ROOT%/extras/Projucer/Projucer.jucer"
+  - cmake --build . --config Debug
+  - cmake --build . --config Release
