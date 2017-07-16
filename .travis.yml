@@ -26,7 +26,8 @@ script-anchors:
   - &script-linux
     - set -e
 
-    - mkdir ${TRAVIS_BUILD_DIR}/ci/ReprojucerHelpers/Debug_build
+    # Configure and build BinaryDataBuilder, IconBuilder and Jucer2Reprojucer
+    - mkdir ${TRAVIS_BUILD_DIR}/ci/ReprojucerHelpers/{Debug_build,Release_build}
     - cd ${TRAVIS_BUILD_DIR}/ci/ReprojucerHelpers/Debug_build
     - >
       cmake .. -DCMAKE_BUILD_TYPE=Debug
@@ -34,16 +35,14 @@ script-anchors:
       -DJUCE_modules_DIRS="${JUCE_ROOT}/modules"
       -DProjucer_jucer_FILE="${JUCE_ROOT}/extras/Projucer/Projucer.jucer"
     - cmake --build .
-
-    - mkdir ${TRAVIS_BUILD_DIR}/ci/ReprojucerHelpers/Release_build
     - cd ${TRAVIS_BUILD_DIR}/ci/ReprojucerHelpers/Release_build
     - >
       cmake .. -DCMAKE_BUILD_TYPE=Release
       -DJUCE_ROOT="${JUCE_ROOT}"
       -DJUCE_modules_DIRS="${JUCE_ROOT}/modules"
       -DProjucer_jucer_FILE="${JUCE_ROOT}/extras/Projucer/Projucer.jucer"
-    - cmake --build .
 
+    # Check that generated CMakeLists.txt files are up-to-date
     - cd ${TRAVIS_BUILD_DIR}
     - >
       cmake
@@ -52,7 +51,15 @@ script-anchors:
       -P Jucer2Reprojucer/generated/apply-Jucer2Reprojucer-to-JUCE-jucers.cmake
     - git diff --quiet
 
-    - mkdir ${TRAVIS_BUILD_DIR}/ci/JuceProjects/Debug_build
+    # Configure all JUCE projects
+    - mkdir ${TRAVIS_BUILD_DIR}/Jucer2Reprojucer/generated/JUCE/{Debug_build,Release_build}
+    - cd ${TRAVIS_BUILD_DIR}/Jucer2Reprojucer/generated/JUCE/Debug_build
+    - cmake .. -DCMAKE_BUILD_TYPE=Debug -DJUCE_ROOT="${JUCE_ROOT}"
+    - cd ${TRAVIS_BUILD_DIR}/Jucer2Reprojucer/generated/JUCE/Release_build
+    - cmake .. -DCMAKE_BUILD_TYPE=Release -DJUCE_ROOT="${JUCE_ROOT}"
+
+    # Configure and build JUCE's Plugin Host, JuceDemoPlugin and Projucer
+    - mkdir ${TRAVIS_BUILD_DIR}/ci/JuceProjects/{Debug_build,Release_build}
     - cd ${TRAVIS_BUILD_DIR}/ci/JuceProjects/Debug_build
     - >
       cmake .. -DCMAKE_BUILD_TYPE=Debug
@@ -60,21 +67,19 @@ script-anchors:
       -DPlugin_Host_jucer_FILE="${JUCE_ROOT}/examples/audio plugin host/Plugin Host.jucer"
       -DProjucer_jucer_FILE="${JUCE_ROOT}/extras/Projucer/Projucer.jucer"
     - cmake --build .
-
-    - mkdir ${TRAVIS_BUILD_DIR}/ci/JuceProjects/Release_build
     - cd ${TRAVIS_BUILD_DIR}/ci/JuceProjects/Release_build
     - >
       cmake .. -DCMAKE_BUILD_TYPE=Release
       -DJuceDemoPlugin_jucer_FILE="${JUCE_ROOT}/examples/audio plugin demo/JuceDemoPlugin.jucer"
       -DPlugin_Host_jucer_FILE="${JUCE_ROOT}/examples/audio plugin host/Plugin Host.jucer"
       -DProjucer_jucer_FILE="${JUCE_ROOT}/extras/Projucer/Projucer.jucer"
-    - cmake --build .
 
     - set +e
 
   - &script-osx
     - set -e
 
+    # Configure and build BinaryDataBuilder, IconBuilder and Jucer2Reprojucer
     - mkdir ${TRAVIS_BUILD_DIR}/ci/ReprojucerHelpers/build
     - cd ${TRAVIS_BUILD_DIR}/ci/ReprojucerHelpers/build
     - >
@@ -83,8 +88,8 @@ script-anchors:
       -DJUCE_modules_DIRS="${JUCE_ROOT}/modules"
       -DProjucer_jucer_FILE="${JUCE_ROOT}/extras/Projucer/Projucer.jucer"
     - cmake --build . --config Debug
-    - cmake --build . --config Release
 
+    # Check that generated CMakeLists.txt files are up-to-date
     - cd ${TRAVIS_BUILD_DIR}
     - >
       cmake
@@ -93,6 +98,15 @@ script-anchors:
       -P Jucer2Reprojucer/generated/apply-Jucer2Reprojucer-to-JUCE-jucers.cmake
     - git diff --quiet
 
+    # Configure all JUCE projects
+    - mkdir ${TRAVIS_BUILD_DIR}/Jucer2Reprojucer/generated/JUCE/build
+    - cd ${TRAVIS_BUILD_DIR}/Jucer2Reprojucer/generated/JUCE/build
+    - >
+      cmake .. -G Xcode
+      -DJUCE_ROOT="${JUCE_ROOT}"
+      -DJUCER_VST3_SDK_FOLDER="${TRAVIS_BUILD_DIR}/ci/third-party/VST_SDK/VST3_SDK"
+
+    # Configure and build JUCE's Plugin Host, JuceDemoPlugin and Projucer
     - mkdir ${TRAVIS_BUILD_DIR}/ci/JuceProjects/build
     - cd ${TRAVIS_BUILD_DIR}/ci/JuceProjects/build
     - >
@@ -102,7 +116,6 @@ script-anchors:
       -DPlugin_Host_jucer_FILE="${JUCE_ROOT}/examples/audio plugin host/Plugin Host.jucer"
       -DProjucer_jucer_FILE="${JUCE_ROOT}/extras/Projucer/Projucer.jucer"
     - cmake --build . --config Debug
-    - cmake --build . --config Release
 
     - set +e
 
