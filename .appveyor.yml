@@ -27,7 +27,6 @@ build_script:
     -DJUCE_modules_DIRS="%JUCE_ROOT%/modules"
     -DProjucer_jucer_FILE="%JUCE_ROOT%/extras/Projucer/Projucer.jucer"
   - cmake --build . --config Debug
-  - cmake --build . --config Release
 
   - cd %APPVEYOR_BUILD_FOLDER%
   - >
@@ -46,4 +45,3 @@ build_script:
     -DPlugin_Host_jucer_FILE="%JUCE_ROOT%/examples/audio plugin host/Plugin Host.jucer"
     -DProjucer_jucer_FILE="%JUCE_ROOT%/extras/Projucer/Projucer.jucer"
   - cmake --build . --config Debug
-  - cmake --build . --config Release

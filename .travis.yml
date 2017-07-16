@@ -42,7 +42,6 @@ script-anchors:
       -DJUCE_ROOT="${JUCE_ROOT}"
       -DJUCE_modules_DIRS="${JUCE_ROOT}/modules"
       -DProjucer_jucer_FILE="${JUCE_ROOT}/extras/Projucer/Projucer.jucer"
-    - cmake --build .
 
     - cd ${TRAVIS_BUILD_DIR}
     - >
@@ -68,7 +67,6 @@ script-anchors:
       -DJuceDemoPlugin_jucer_FILE="${JUCE_ROOT}/examples/audio plugin demo/JuceDemoPlugin.jucer"
       -DPlugin_Host_jucer_FILE="${JUCE_ROOT}/examples/audio plugin host/Plugin Host.jucer"
       -DProjucer_jucer_FILE="${JUCE_ROOT}/extras/Projucer/Projucer.jucer"
-    - cmake --build .
 
     - set +e
 
@@ -83,7 +81,6 @@ script-anchors:
       -DJUCE_modules_DIRS="${JUCE_ROOT}/modules"
       -DProjucer_jucer_FILE="${JUCE_ROOT}/extras/Projucer/Projucer.jucer"
     - cmake --build . --config Debug
-    - cmake --build . --config Release
 
     - cd ${TRAVIS_BUILD_DIR}
     - >
@@ -102,7 +99,6 @@ script-anchors:
       -DPlugin_Host_jucer_FILE="${JUCE_ROOT}/examples/audio plugin host/Plugin Host.jucer"
       -DProjucer_jucer_FILE="${JUCE_ROOT}/extras/Projucer/Projucer.jucer"
     - cmake --build . --config Debug
-    - cmake --build . --config Release
 
     - set +e
 
