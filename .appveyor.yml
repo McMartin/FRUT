@@ -38,6 +38,14 @@ build_script:
     -P Jucer2Reprojucer/generated/apply-Jucer2Reprojucer-to-JUCE-jucers.cmake
   - git diff --quiet
 
+  # Configure all JUCE projects
+  - mkdir %APPVEYOR_BUILD_FOLDER%\Jucer2Reprojucer\generated\JUCE\build
+  - cd %APPVEYOR_BUILD_FOLDER%\Jucer2Reprojucer\generated\JUCE\build
+  - >
+    cmake .. -G "%GENERATOR%"
+    -DJUCE_ROOT="%JUCE_ROOT%"
+    -DJUCER_VST3_SDK_FOLDER="%APPVEYOR_BUILD_FOLDER%/ci/third-party/VST_SDK/VST3_SDK"
+
   # Configure and build JUCE's Plugin Host, JuceDemoPlugin and Projucer
   - mkdir %APPVEYOR_BUILD_FOLDER%\ci\JuceProjects\build
   - cd %APPVEYOR_BUILD_FOLDER%\ci\JuceProjects\build
