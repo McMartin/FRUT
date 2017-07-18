@@ -971,6 +971,31 @@ int main(int argc, char* argv[])
               out << "  CXX_LANGUAGE_STANDARD \"" << cppLanguageStandard << "\"\n";
             }
 
+            const auto cppLibType = [&configuration]() -> std::string
+            {
+              const auto value = configuration.getProperty("cppLibType").toString();
+
+              if (value == "")
+                return "Use Default";
+
+              if (value == "libc++")
+                return "LLVM libc++";
+
+              if (value == "libstdc++")
+                return "GNU libstdc++";
+
+              return {};
+            }();
+
+            if (cppLibType.empty())
+            {
+              out << "  # CXX_LIBRARY\n";
+            }
+            else
+            {
+              out << "  CXX_LIBRARY \"" << cppLibType << "\"\n";
+            }
+
             out << "  "
                 << getOnOffSetting(configuration, "RELAX_IEEE_COMPLIANCE", "fastMath")
                 << "\n";

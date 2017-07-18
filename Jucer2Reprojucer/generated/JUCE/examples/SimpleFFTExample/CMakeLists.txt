@@ -156,6 +156,7 @@ jucer_export_target_configuration(
   OSX_DEPLOYMENT_TARGET "Use Default"
   OSX_ARCHITECTURE "Use Default"
   CXX_LANGUAGE_STANDARD "Use Default"
+  CXX_LIBRARY "Use Default"
   # RELAX_IEEE_COMPLIANCE
 )
 
@@ -172,6 +173,7 @@ jucer_export_target_configuration(
   OSX_DEPLOYMENT_TARGET "Use Default"
   OSX_ARCHITECTURE "Use Default"
   CXX_LANGUAGE_STANDARD "Use Default"
+  CXX_LIBRARY "Use Default"
   # RELAX_IEEE_COMPLIANCE
 )
 
