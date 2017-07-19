@@ -26,6 +26,17 @@ endif()
 get_filename_component(JUCE_ROOT "${JUCE_ROOT}" ABSOLUTE)
 
 
+if(NOT DEFINED generated_JUCE_ROOT)
+  message(FATAL_ERROR "generated_JUCE_ROOT must be defined")
+endif()
+
+if(NOT IS_DIRECTORY ${generated_JUCE_ROOT})
+  message(FATAL_ERROR "No such directory: ${generated_JUCE_ROOT}")
+endif()
+
+get_filename_component(generated_JUCE_ROOT "${generated_JUCE_ROOT}" ABSOLUTE)
+
+
 if(NOT DEFINED Jucer2Reprojucer_EXE)
   message(FATAL_ERROR "Jucer2Reprojucer_EXE must be defined")
 endif()
@@ -40,9 +51,7 @@ get_filename_component(Jucer2Reprojucer_EXE "${Jucer2Reprojucer_EXE}" ABSOLUTE)
 file(GLOB_RECURSE jucer_files RELATIVE "${JUCE_ROOT}" "${JUCE_ROOT}/*.jucer")
 
 foreach(jucer_file ${jucer_files})
-  get_filename_component(working_dir
-    "${CMAKE_CURRENT_LIST_DIR}/JUCE/${jucer_file}" DIRECTORY
-  )
+  get_filename_component(working_dir "${generated_JUCE_ROOT}/${jucer_file}" DIRECTORY)
 
   execute_process(WORKING_DIRECTORY ${working_dir}
     COMMAND
