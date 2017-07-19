@@ -1752,14 +1752,14 @@ function(__set_common_target_properties target_name)
 
       if(DEFINED JUCER_PREBUILD_COMMAND_${configuration_name})
         set(prebuild_command ${JUCER_PREBUILD_COMMAND_${configuration_name}})
-        string(APPEND all_confs_prebuild_command
+        list(APPEND all_confs_prebuild_command
           $<$<CONFIG:${configuration_name}>:${prebuild_command}>
         )
       endif()
 
       if(DEFINED JUCER_POSTBUILD_COMMAND_${configuration_name})
         set(postbuild_command ${JUCER_POSTBUILD_COMMAND_${configuration_name}})
-        string(APPEND all_confs_postbuild_command
+        list(APPEND all_confs_postbuild_command
           $<$<CONFIG:${configuration_name}>:${postbuild_command}>
         )
       endif()
@@ -1806,7 +1806,7 @@ function(__set_common_target_properties target_name)
         file(MAKE_DIRECTORY "${JUCER_TARGET_PROJECT_FOLDER}")
       endif()
       add_custom_command(TARGET ${target_name} PRE_BUILD
-        COMMAND "${all_confs_prebuild_command}"
+        COMMAND ${all_confs_prebuild_command}
         WORKING_DIRECTORY "${JUCER_TARGET_PROJECT_FOLDER}"
       )
     endif()
@@ -1821,7 +1821,7 @@ function(__set_common_target_properties target_name)
         file(MAKE_DIRECTORY "${JUCER_TARGET_PROJECT_FOLDER}")
       endif()
       add_custom_command(TARGET ${target_name} POST_BUILD
-        COMMAND "${all_confs_postbuild_command}"
+        COMMAND ${all_confs_postbuild_command}
         WORKING_DIRECTORY "${JUCER_TARGET_PROJECT_FOLDER}"
       )
     endif()
