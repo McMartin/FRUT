@@ -5,8 +5,8 @@ branches:
 language: cpp
 
 before_install:
-  - export JUCE_ROOT=${TRAVIS_BUILD_DIR}/ci/tmp/JUCE
-  - git clone --branch=4.3.1 --depth=1 --single-branch -- https://github.com/WeAreROLI/JUCE.git $JUCE_ROOT
+  - export JUCE_ROOT=${TRAVIS_BUILD_DIR}/ci/tmp/JUCE-${JUCE_VERSION}
+  - git clone --branch=${JUCE_VERSION} --depth=1 --single-branch -- https://github.com/WeAreROLI/JUCE.git $JUCE_ROOT
 
 install-anchors:
   - &install-linux
@@ -52,15 +52,22 @@ script-anchors:
     # Configure all JUCE projects
     - mkdir ${TRAVIS_BUILD_DIR}/Jucer2Reprojucer/generated/JUCE-${JUCE_VERSION}/{Debug_build,Release_build}
     - cd ${TRAVIS_BUILD_DIR}/Jucer2Reprojucer/generated/JUCE-${JUCE_VERSION}/Debug_build
-    - cmake .. -DCMAKE_BUILD_TYPE=Debug -DJUCE_ROOT="${JUCE_ROOT}"
+    - >
+      cmake .. -DCMAKE_BUILD_TYPE=Debug
+      -DJUCE_ROOT="${JUCE_ROOT}"
+      -DJUCER_VST_SDK_FOLDER="${TRAVIS_BUILD_DIR}/ci/third-party/vstsdk366_27_06_2016_build_61/VST3 SDK"
     - cd ${TRAVIS_BUILD_DIR}/Jucer2Reprojucer/generated/JUCE-${JUCE_VERSION}/Release_build
-    - cmake .. -DCMAKE_BUILD_TYPE=Release -DJUCE_ROOT="${JUCE_ROOT}"
+    - >
+      cmake .. -DCMAKE_BUILD_TYPE=Release
+      -DJUCE_ROOT="${JUCE_ROOT}"
+      -DJUCER_VST_SDK_FOLDER="${TRAVIS_BUILD_DIR}/ci/third-party/vstsdk366_27_06_2016_build_61/VST3 SDK"
 
     # Configure and build JUCE's Plugin Host, JuceDemoPlugin and Projucer
     - mkdir ${TRAVIS_BUILD_DIR}/ci/JuceProjects-${JUCE_VERSION}/{Debug_build,Release_build}
     - cd ${TRAVIS_BUILD_DIR}/ci/JuceProjects-${JUCE_VERSION}/Debug_build
     - >
       cmake .. -DCMAKE_BUILD_TYPE=Debug
+      -DJUCER_VST_SDK_FOLDER="${TRAVIS_BUILD_DIR}/ci/third-party/vstsdk366_27_06_2016_build_61/VST3 SDK"
       -DJuceDemoPlugin_jucer_FILE="${JUCE_ROOT}/examples/audio plugin demo/JuceDemoPlugin.jucer"
       -DPlugin_Host_jucer_FILE="${JUCE_ROOT}/examples/audio plugin host/Plugin Host.jucer"
       -DProjucer_jucer_FILE="${JUCE_ROOT}/extras/Projucer/Projucer.jucer"
@@ -68,6 +75,7 @@ script-anchors:
     - cd ${TRAVIS_BUILD_DIR}/ci/JuceProjects-${JUCE_VERSION}/Release_build
     - >
       cmake .. -DCMAKE_BUILD_TYPE=Release
+      -DJUCER_VST_SDK_FOLDER="${TRAVIS_BUILD_DIR}/ci/third-party/vstsdk366_27_06_2016_build_61/VST3 SDK"
       -DJuceDemoPlugin_jucer_FILE="${JUCE_ROOT}/examples/audio plugin demo/JuceDemoPlugin.jucer"
       -DPlugin_Host_jucer_FILE="${JUCE_ROOT}/examples/audio plugin host/Plugin Host.jucer"
       -DProjucer_jucer_FILE="${JUCE_ROOT}/extras/Projucer/Projucer.jucer"
@@ -103,6 +111,7 @@ script-anchors:
     - >
       cmake .. -G Xcode
       -DJUCE_ROOT="${JUCE_ROOT}"
+      -DJUCER_VST_SDK_FOLDER="${TRAVIS_BUILD_DIR}/ci/third-party/vstsdk366_27_06_2016_build_61/VST3 SDK"
       -DJUCER_VST3_SDK_FOLDER="${TRAVIS_BUILD_DIR}/ci/third-party/VST_SDK/VST3_SDK"
 
     # Configure and build JUCE's Plugin Host, JuceDemoPlugin and Projucer
@@ -110,6 +119,7 @@ script-anchors:
     - cd ${TRAVIS_BUILD_DIR}/ci/JuceProjects-${JUCE_VERSION}/build
     - >
       cmake .. -G Xcode
+      -DJUCER_VST_SDK_FOLDER="${TRAVIS_BUILD_DIR}/ci/third-party/vstsdk366_27_06_2016_build_61/VST3 SDK"
       -DJUCER_VST3_SDK_FOLDER="${TRAVIS_BUILD_DIR}/ci/third-party/vstsdk366_27_06_2016_build_61/VST3 SDK"
       -DJuceDemoPlugin_jucer_FILE="${JUCE_ROOT}/examples/audio plugin demo/JuceDemoPlugin.jucer"
       -DPlugin_Host_jucer_FILE="${JUCE_ROOT}/examples/audio plugin host/Plugin Host.jucer"
@@ -123,7 +133,8 @@ matrix:
     - os: linux
       dist: trusty
       sudo: false
-      addons:
+      env: JUCE_VERSION=4.2.0
+      addons: &addons-linux
         apt:
           packages:
             - libasound2-dev
@@ -134,6 +145,20 @@ matrix:
       install: *install-linux
       script: *script-linux
 
+    - os: linux
+      dist: trusty
+      sudo: false
+      env: JUCE_VERSION=4.3.1
+      addons: *addons-linux
+      install: *install-linux
+      script: *script-linux
+
     - os: osx
+      env: JUCE_VERSION=4.2.0
+      install: *install-osx
+      script: *script-osx
+
+    - os: osx
+      env: JUCE_VERSION=4.3.1
       install: *install-osx
       script: *script-osx

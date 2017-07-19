@@ -7,13 +7,22 @@ clone_depth: 50
 environment:
   matrix:
     - GENERATOR: "Visual Studio 12 2013"
+      JUCE_VERSION: "4.2.0"
+
+    - GENERATOR: "Visual Studio 12 2013"
+      JUCE_VERSION: "4.3.1"
+
     - GENERATOR: "Visual Studio 14 2015"
+      JUCE_VERSION: "4.2.0"
+
+    - GENERATOR: "Visual Studio 14 2015"
+      JUCE_VERSION: "4.3.1"
 
 install:
   - cmake --version
 
-  - set JUCE_ROOT="%APPVEYOR_BUILD_FOLDER%/ci/tmp/JUCE"
-  - git clone --branch=4.3.1 --depth=1 --single-branch -- https://github.com/WeAreROLI/JUCE.git %JUCE_ROOT%
+  - set JUCE_ROOT="%APPVEYOR_BUILD_FOLDER%/ci/tmp/JUCE-%JUCE_VERSION%"
+  - git clone --branch=%JUCE_VERSION% --depth=1 --single-branch -- https://github.com/WeAreROLI/JUCE.git %JUCE_ROOT%
 
 build_script:
   # Configure and build BinaryDataBuilder, IconBuilder and Jucer2Reprojucer
@@ -42,6 +51,7 @@ build_script:
   - >
     cmake .. -G "%GENERATOR%"
     -DJUCE_ROOT="%JUCE_ROOT%"
+    -DJUCER_VST_SDK_FOLDER="%APPVEYOR_BUILD_FOLDER%/ci/third-party/vstsdk366_27_06_2016_build_61/VST3 SDK"
     -DJUCER_VST3_SDK_FOLDER="%APPVEYOR_BUILD_FOLDER%/ci/third-party/vstsdk366_27_06_2016_build_61/VST3 SDK"
 
   # Configure and build JUCE's Plugin Host, JuceDemoPlugin and Projucer
@@ -49,6 +59,7 @@ build_script:
   - cd %APPVEYOR_BUILD_FOLDER%\ci\JuceProjects-%JUCE_VERSION%\build
   - >
     cmake .. -G "%GENERATOR%"
+    -DJUCER_VST_SDK_FOLDER="%APPVEYOR_BUILD_FOLDER%/ci/third-party/vstsdk366_27_06_2016_build_61/VST3 SDK"
     -DJUCER_VST3_SDK_FOLDER="%APPVEYOR_BUILD_FOLDER%/ci/third-party/vstsdk366_27_06_2016_build_61/VST3 SDK"
     -DJuceDemoPlugin_jucer_FILE="%JUCE_ROOT%/examples/audio plugin demo/JuceDemoPlugin.jucer"
     -DPlugin_Host_jucer_FILE="%JUCE_ROOT%/examples/audio plugin host/Plugin Host.jucer"
