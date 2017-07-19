@@ -25,12 +25,12 @@ add_subdirectory("../../Jucer2Reprojucer/generated/JUCE-4.3.1/examples/audio plu
   "Plugin Host"
 )
 
-add_subdirectory("../../Jucer2Reprojucer/generated/JUCE-4.3.1/extras/Projucer"
-  "Projucer"
-)
-
 if(NOT MSVC_VERSION EQUAL 1800)
 add_subdirectory("../../Jucer2Reprojucer/generated/JUCE-4.3.1/examples/audio plugin demo"
   "JuceDemoPlugin"
 )
 endif()
+
+add_subdirectory("../../Jucer2Reprojucer/generated/JUCE-4.3.1/extras/Projucer"
+  "Projucer"
+)
