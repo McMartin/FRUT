@@ -111,7 +111,7 @@ script-anchors:
     - cd ${TRAVIS_BUILD_DIR}/ci/JuceProjects/build
     - >
       cmake .. -G Xcode
-      -DJUCER_VST3_SDK_FOLDER="${TRAVIS_BUILD_DIR}/ci/third-party/VST_SDK/VST3_SDK"
+      -DJUCER_VST3_SDK_FOLDER="${TRAVIS_BUILD_DIR}/ci/third-party/vstsdk367_03_03_2017_build_352/VST_SDK/VST3_SDK"
       -DJuceDemoPlugin_jucer_FILE="${JUCE_ROOT}/examples/audio plugin demo/JuceDemoPlugin.jucer"
       -DPlugin_Host_jucer_FILE="${JUCE_ROOT}/examples/audio plugin host/Plugin Host.jucer"
       -DProjucer_jucer_FILE="${JUCE_ROOT}/extras/Projucer/Projucer.jucer"
