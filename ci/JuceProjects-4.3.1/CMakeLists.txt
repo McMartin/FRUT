@@ -18,19 +18,19 @@
 cmake_minimum_required(VERSION 3.4)
 
 
-project(JuceProjects)
+project(JuceProjects-4.3.1)
 
 
-add_subdirectory("../../Jucer2Reprojucer/generated/JUCE/examples/audio plugin host"
+add_subdirectory("../../Jucer2Reprojucer/generated/JUCE-4.3.1/examples/audio plugin host"
   "Plugin Host"
 )
 
-add_subdirectory("../../Jucer2Reprojucer/generated/JUCE/extras/Projucer"
+add_subdirectory("../../Jucer2Reprojucer/generated/JUCE-4.3.1/extras/Projucer"
   "Projucer"
 )
 
 if(NOT MSVC_VERSION EQUAL 1800)
-add_subdirectory("../../Jucer2Reprojucer/generated/JUCE/examples/audio plugin demo"
+add_subdirectory("../../Jucer2Reprojucer/generated/JUCE-4.3.1/examples/audio plugin demo"
   "JuceDemoPlugin"
 )
 endif()
