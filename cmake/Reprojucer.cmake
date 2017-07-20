@@ -1923,6 +1923,18 @@ function(__set_bundle_properties target_name extension)
     XCODE_ATTRIBUTE_WRAPPER_EXTENSION "${extension}"
   )
 
+  foreach(configuration_name ${JUCER_PROJECT_CONFIGURATIONS})
+    list(APPEND copy_pkginfo_command
+      "$<$<CONFIG:${configuration_name}>:${CMAKE_COMMAND}>"
+      "$<$<CONFIG:${configuration_name}>:-E>"
+      "$<$<CONFIG:${configuration_name}>:copy_if_different>"
+      "$<$<CONFIG:${configuration_name}>:${Reprojucer_templates_DIR}/PkgInfo>"
+      "$<$<CONFIG:${configuration_name}>:$<TARGET_FILE_DIR:${target_name}>/..>"
+    )
+  endforeach()
+
+  add_custom_command(TARGET ${target_name} PRE_BUILD COMMAND ${copy_pkginfo_command})
+
 endfunction()
 
 
