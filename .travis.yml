@@ -5,11 +5,8 @@ branches:
 language: cpp
 
 before_install:
-  - export JUCE_ROOT=${TRAVIS_BUILD_DIR}/ci/tmp/JUCE
-  - git clone --depth=10 --quiet -- https://github.com/WeAreROLI/JUCE.git $JUCE_ROOT
-  - cd $JUCE_ROOT
-  - git reset --hard 75cd666a61f31eaa3ee6c6d9ad97bc404878a0d8
-  - cd $TRAVIS_BUILD_DIR
+  - export JUCE_ROOT=${TRAVIS_BUILD_DIR}/ci/tmp/JUCE-${JUCE_VERSION}
+  - git clone --branch=${JUCE_VERSION} --depth=1 --single-branch -- https://github.com/WeAreROLI/JUCE.git $JUCE_ROOT
 
 install-anchors:
   - &install-linux
@@ -48,28 +45,37 @@ script-anchors:
       cmake
       -DJUCE_ROOT="${JUCE_ROOT}"
       -DJucer2Reprojucer_EXE="ci/ReprojucerHelpers/Debug_build/Jucer2Reprojucer/Jucer2Reprojucer"
+      -Dgenerated_JUCE_ROOT="Jucer2Reprojucer/generated/JUCE-${JUCE_VERSION}"
       -P Jucer2Reprojucer/generated/apply-Jucer2Reprojucer-to-JUCE-jucers.cmake
     - git diff --quiet
 
     # Configure all JUCE projects
-    - mkdir ${TRAVIS_BUILD_DIR}/Jucer2Reprojucer/generated/JUCE/{Debug_build,Release_build}
-    - cd ${TRAVIS_BUILD_DIR}/Jucer2Reprojucer/generated/JUCE/Debug_build
-    - cmake .. -DCMAKE_BUILD_TYPE=Debug -DJUCE_ROOT="${JUCE_ROOT}"
-    - cd ${TRAVIS_BUILD_DIR}/Jucer2Reprojucer/generated/JUCE/Release_build
-    - cmake .. -DCMAKE_BUILD_TYPE=Release -DJUCE_ROOT="${JUCE_ROOT}"
-
-    # Configure and build JUCE's Plugin Host, JuceDemoPlugin and Projucer
-    - mkdir ${TRAVIS_BUILD_DIR}/ci/JuceProjects/{Debug_build,Release_build}
-    - cd ${TRAVIS_BUILD_DIR}/ci/JuceProjects/Debug_build
+    - mkdir ${TRAVIS_BUILD_DIR}/Jucer2Reprojucer/generated/JUCE-${JUCE_VERSION}/{Debug_build,Release_build}
+    - cd ${TRAVIS_BUILD_DIR}/Jucer2Reprojucer/generated/JUCE-${JUCE_VERSION}/Debug_build
     - >
       cmake .. -DCMAKE_BUILD_TYPE=Debug
+      -DJUCE_ROOT="${JUCE_ROOT}"
+      -DJUCER_VST_SDK_FOLDER="${TRAVIS_BUILD_DIR}/ci/third-party/vstsdk366_27_06_2016_build_61/VST3 SDK"
+    - cd ${TRAVIS_BUILD_DIR}/Jucer2Reprojucer/generated/JUCE-${JUCE_VERSION}/Release_build
+    - >
+      cmake .. -DCMAKE_BUILD_TYPE=Release
+      -DJUCE_ROOT="${JUCE_ROOT}"
+      -DJUCER_VST_SDK_FOLDER="${TRAVIS_BUILD_DIR}/ci/third-party/vstsdk366_27_06_2016_build_61/VST3 SDK"
+
+    # Configure and build JUCE's Plugin Host, JuceDemoPlugin and Projucer
+    - mkdir ${TRAVIS_BUILD_DIR}/ci/JuceProjects-${JUCE_VERSION}/{Debug_build,Release_build}
+    - cd ${TRAVIS_BUILD_DIR}/ci/JuceProjects-${JUCE_VERSION}/Debug_build
+    - >
+      cmake .. -DCMAKE_BUILD_TYPE=Debug
+      -DJUCER_VST_SDK_FOLDER="${TRAVIS_BUILD_DIR}/ci/third-party/vstsdk366_27_06_2016_build_61/VST3 SDK"
       -DJuceDemoPlugin_jucer_FILE="${JUCE_ROOT}/examples/audio plugin demo/JuceDemoPlugin.jucer"
       -DPlugin_Host_jucer_FILE="${JUCE_ROOT}/examples/audio plugin host/Plugin Host.jucer"
       -DProjucer_jucer_FILE="${JUCE_ROOT}/extras/Projucer/Projucer.jucer"
     - cmake --build .
-    - cd ${TRAVIS_BUILD_DIR}/ci/JuceProjects/Release_build
+    - cd ${TRAVIS_BUILD_DIR}/ci/JuceProjects-${JUCE_VERSION}/Release_build
     - >
       cmake .. -DCMAKE_BUILD_TYPE=Release
+      -DJUCER_VST_SDK_FOLDER="${TRAVIS_BUILD_DIR}/ci/third-party/vstsdk366_27_06_2016_build_61/VST3 SDK"
       -DJuceDemoPlugin_jucer_FILE="${JUCE_ROOT}/examples/audio plugin demo/JuceDemoPlugin.jucer"
       -DPlugin_Host_jucer_FILE="${JUCE_ROOT}/examples/audio plugin host/Plugin Host.jucer"
       -DProjucer_jucer_FILE="${JUCE_ROOT}/extras/Projucer/Projucer.jucer"
@@ -95,23 +101,26 @@ script-anchors:
       cmake
       -DJUCE_ROOT="${JUCE_ROOT}"
       -DJucer2Reprojucer_EXE="ci/ReprojucerHelpers/build/Jucer2Reprojucer/Debug/Jucer2Reprojucer"
+      -Dgenerated_JUCE_ROOT="Jucer2Reprojucer/generated/JUCE-${JUCE_VERSION}"
       -P Jucer2Reprojucer/generated/apply-Jucer2Reprojucer-to-JUCE-jucers.cmake
     - git diff --quiet
 
     # Configure all JUCE projects
-    - mkdir ${TRAVIS_BUILD_DIR}/Jucer2Reprojucer/generated/JUCE/build
-    - cd ${TRAVIS_BUILD_DIR}/Jucer2Reprojucer/generated/JUCE/build
+    - mkdir ${TRAVIS_BUILD_DIR}/Jucer2Reprojucer/generated/JUCE-${JUCE_VERSION}/build
+    - cd ${TRAVIS_BUILD_DIR}/Jucer2Reprojucer/generated/JUCE-${JUCE_VERSION}/build
     - >
       cmake .. -G Xcode
       -DJUCE_ROOT="${JUCE_ROOT}"
+      -DJUCER_VST_SDK_FOLDER="${TRAVIS_BUILD_DIR}/ci/third-party/vstsdk366_27_06_2016_build_61/VST3 SDK"
       -DJUCER_VST3_SDK_FOLDER="${TRAVIS_BUILD_DIR}/ci/third-party/VST_SDK/VST3_SDK"
 
     # Configure and build JUCE's Plugin Host, JuceDemoPlugin and Projucer
-    - mkdir ${TRAVIS_BUILD_DIR}/ci/JuceProjects/build
-    - cd ${TRAVIS_BUILD_DIR}/ci/JuceProjects/build
+    - mkdir ${TRAVIS_BUILD_DIR}/ci/JuceProjects-${JUCE_VERSION}/build
+    - cd ${TRAVIS_BUILD_DIR}/ci/JuceProjects-${JUCE_VERSION}/build
     - >
       cmake .. -G Xcode
-      -DJUCER_VST3_SDK_FOLDER="${TRAVIS_BUILD_DIR}/ci/third-party/VST_SDK/VST3_SDK"
+      -DJUCER_VST_SDK_FOLDER="${TRAVIS_BUILD_DIR}/ci/third-party/vstsdk366_27_06_2016_build_61/VST3 SDK"
+      -DJUCER_VST3_SDK_FOLDER="${TRAVIS_BUILD_DIR}/ci/third-party/vstsdk366_27_06_2016_build_61/VST3 SDK"
       -DJuceDemoPlugin_jucer_FILE="${JUCE_ROOT}/examples/audio plugin demo/JuceDemoPlugin.jucer"
       -DPlugin_Host_jucer_FILE="${JUCE_ROOT}/examples/audio plugin host/Plugin Host.jucer"
       -DProjucer_jucer_FILE="${JUCE_ROOT}/extras/Projucer/Projucer.jucer"
@@ -124,7 +133,8 @@ matrix:
     - os: linux
       dist: trusty
       sudo: false
-      addons:
+      env: JUCE_VERSION=4.2.0
+      addons: &addons-linux
         apt:
           packages:
             - libasound2-dev
@@ -135,6 +145,20 @@ matrix:
       install: *install-linux
       script: *script-linux
 
+    - os: linux
+      dist: trusty
+      sudo: false
+      env: JUCE_VERSION=4.3.1
+      addons: *addons-linux
+      install: *install-linux
+      script: *script-linux
+
     - os: osx
+      env: JUCE_VERSION=4.2.0
+      install: *install-osx
+      script: *script-osx
+
+    - os: osx
+      env: JUCE_VERSION=4.3.1
       install: *install-osx
       script: *script-osx
