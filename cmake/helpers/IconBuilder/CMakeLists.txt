@@ -19,25 +19,8 @@ add_executable(IconBuilder
   "${CMAKE_CURRENT_LIST_DIR}/main.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/Source/Project Saving/jucer_ProjectExporter.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/Source/Utility/jucer_FileHelpers.cpp"
+  $<TARGET_OBJECTS:juce_gui_basics_and_deps>
 )
-
-if(APPLE)
-  target_sources(IconBuilder PRIVATE
-    "${JUCE_modules_DIR}/juce_core/juce_core.mm"
-    "${JUCE_modules_DIR}/juce_data_structures/juce_data_structures.mm"
-    "${JUCE_modules_DIR}/juce_events/juce_events.mm"
-    "${JUCE_modules_DIR}/juce_graphics/juce_graphics.mm"
-    "${JUCE_modules_DIR}/juce_gui_basics/juce_gui_basics.mm"
-  )
-else()
-  target_sources(IconBuilder PRIVATE
-    "${JUCE_modules_DIR}/juce_core/juce_core.cpp"
-    "${JUCE_modules_DIR}/juce_data_structures/juce_data_structures.cpp"
-    "${JUCE_modules_DIR}/juce_events/juce_events.cpp"
-    "${JUCE_modules_DIR}/juce_graphics/juce_graphics.cpp"
-    "${JUCE_modules_DIR}/juce_gui_basics/juce_gui_basics.cpp"
-  )
-endif()
 
 
 install(TARGETS IconBuilder DESTINATION ".")

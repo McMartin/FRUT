@@ -91,5 +91,28 @@ if(CMAKE_HOST_SYSTEM_NAME STREQUAL "Linux")
 endif()
 
 
+if(APPLE)
+  set(ext "mm")
+else()
+  set(ext "cpp")
+endif()
+
+add_library(juce_gui_basics_and_deps OBJECT
+  "${JUCE_modules_DIR}/juce_core/juce_core.${ext}"
+  "${JUCE_modules_DIR}/juce_data_structures/juce_data_structures.${ext}"
+  "${JUCE_modules_DIR}/juce_events/juce_events.${ext}"
+  "${JUCE_modules_DIR}/juce_graphics/juce_graphics.${ext}"
+  "${JUCE_modules_DIR}/juce_gui_basics/juce_gui_basics.${ext}"
+)
+
+add_library(juce_cryptography OBJECT
+  "${JUCE_modules_DIR}/juce_cryptography/juce_cryptography.${ext}"
+)
+
+add_library(juce_gui_extra OBJECT
+  "${JUCE_modules_DIR}/juce_gui_extra/juce_gui_extra.${ext}"
+)
+
+
 add_subdirectory(BinaryDataBuilder)
 add_subdirectory(IconBuilder)

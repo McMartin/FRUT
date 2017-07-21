@@ -21,29 +21,10 @@ add_executable(BinaryDataBuilder
   "${CMAKE_CURRENT_LIST_DIR}/Source/Utility/jucer_CodeHelpers.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/Source/Utility/jucer_FileHelpers.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/Source/Utility/jucer_MiscUtilities.cpp"
+  $<TARGET_OBJECTS:juce_cryptography>
+  $<TARGET_OBJECTS:juce_gui_basics_and_deps>
+  $<TARGET_OBJECTS:juce_gui_extra>
 )
-
-if(APPLE)
-  target_sources(BinaryDataBuilder PRIVATE
-    "${JUCE_modules_DIR}/juce_core/juce_core.mm"
-    "${JUCE_modules_DIR}/juce_cryptography/juce_cryptography.mm"
-    "${JUCE_modules_DIR}/juce_data_structures/juce_data_structures.mm"
-    "${JUCE_modules_DIR}/juce_events/juce_events.mm"
-    "${JUCE_modules_DIR}/juce_graphics/juce_graphics.mm"
-    "${JUCE_modules_DIR}/juce_gui_basics/juce_gui_basics.mm"
-    "${JUCE_modules_DIR}/juce_gui_extra/juce_gui_extra.mm"
-  )
-else()
-  target_sources(BinaryDataBuilder PRIVATE
-    "${JUCE_modules_DIR}/juce_core/juce_core.cpp"
-    "${JUCE_modules_DIR}/juce_cryptography/juce_cryptography.cpp"
-    "${JUCE_modules_DIR}/juce_data_structures/juce_data_structures.cpp"
-    "${JUCE_modules_DIR}/juce_events/juce_events.cpp"
-    "${JUCE_modules_DIR}/juce_graphics/juce_graphics.cpp"
-    "${JUCE_modules_DIR}/juce_gui_basics/juce_gui_basics.cpp"
-    "${JUCE_modules_DIR}/juce_gui_extra/juce_gui_extra.cpp"
-  )
-endif()
 
 
 install(TARGETS BinaryDataBuilder DESTINATION ".")
