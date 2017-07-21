@@ -22,21 +22,35 @@ list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/../../cmake")
 include(Reprojucer)
 
 
-if(NOT DEFINED Projucer_jucer_FILE)
-  message(FATAL_ERROR "Projucer_jucer_FILE must be defined")
+if(NOT DEFINED JUCE_modules_DIRS)
+  message(FATAL_ERROR "JUCE_modules_DIRS must be defined")
+endif()
+list(REMOVE_DUPLICATES JUCE_modules_DIRS)
+
+foreach(modules_dir ${JUCE_modules_DIRS})
+  if (EXISTS "${modules_dir}/juce_core/juce_core.h"
+    AND EXISTS "${modules_dir}/juce_cryptography/juce_cryptography.h"
+    AND EXISTS "${modules_dir}/juce_data_structures/juce_data_structures.h"
+    AND EXISTS "${modules_dir}/juce_events/juce_events.h"
+    AND EXISTS "${modules_dir}/juce_graphics/juce_graphics.h"
+    AND EXISTS "${modules_dir}/juce_gui_basics/juce_gui_basics.h"
+    AND EXISTS "${modules_dir}/juce_gui_extra/juce_gui_extra.h"
+  )
+    set(JUCE_modules_DIR ${modules_dir})
+    break()
+  endif()
+endforeach()
+
+if(NOT DEFINED JUCE_modules_DIR)
+  message(FATAL_ERROR "Could not find juce_core, juce_cryptography, juce_data_structures,"
+    " juce_events, juce_graphics, juce_gui_basics and juce_gui_extra when searching in"
+    " the following directories: ${JUCE_modules_DIRS}"
+  )
 endif()
 
-get_filename_component(Projucer_jucer_FILE
-  "${Projucer_jucer_FILE}" ABSOLUTE
+get_filename_component(JUCE_modules_DIR
+  "${JUCE_modules_DIR}" ABSOLUTE
   BASE_DIR "${CMAKE_BINARY_DIR}"
-)
-
-if(NOT EXISTS "${Projucer_jucer_FILE}")
-  message(FATAL_ERROR "No such file: ${Projucer_jucer_FILE}")
-endif()
-
-get_filename_component(Projucer_jucer_DIR
-  "${Projucer_jucer_FILE}" DIRECTORY
 )
 
 
@@ -61,37 +75,37 @@ jucer_project_files("BinaryDataBuilder/Source"
 
 jucer_project_module(
   juce_core
-  PATH "${Projucer_jucer_DIR}/../../modules"
+  PATH "${JUCE_modules_DIR}"
 )
 
 jucer_project_module(
   juce_cryptography
-  PATH "${Projucer_jucer_DIR}/../../modules"
+  PATH "${JUCE_modules_DIR}"
 )
 
 jucer_project_module(
   juce_data_structures
-  PATH "${Projucer_jucer_DIR}/../../modules"
+  PATH "${JUCE_modules_DIR}"
 )
 
 jucer_project_module(
   juce_events
-  PATH "${Projucer_jucer_DIR}/../../modules"
+  PATH "${JUCE_modules_DIR}"
 )
 
 jucer_project_module(
   juce_graphics
-  PATH "${Projucer_jucer_DIR}/../../modules"
+  PATH "${JUCE_modules_DIR}"
 )
 
 jucer_project_module(
   juce_gui_basics
-  PATH "${Projucer_jucer_DIR}/../../modules"
+  PATH "${JUCE_modules_DIR}"
 )
 
 jucer_project_module(
   juce_gui_extra
-  PATH "${Projucer_jucer_DIR}/../../modules"
+  PATH "${JUCE_modules_DIR}"
 )
 
 jucer_export_target(
