@@ -641,6 +641,7 @@ function(jucer_export_target_configuration
       "CXX_LIBRARY"
       "RELAX_IEEE_COMPLIANCE"
       "LINK_TIME_OPTIMISATION"
+      "STRIP_LOCAL_SYMBOLS"
     )
   endif()
 
@@ -833,6 +834,9 @@ function(jucer_export_target_configuration
         if(value)
           list(APPEND JUCER_COMPILER_FLAGS $<$<CONFIG:${configuration_name}>:-flto>)
         endif()
+
+      elseif(tag STREQUAL "STRIP_LOCAL_SYMBOLS")
+        set(JUCER_STRIP_LOCAL_SYMBOLS_${configuration_name} ${value} PARENT_SCOPE)
 
       elseif(tag STREQUAL "WARNING_LEVEL")
         if(value STREQUAL "Low")
@@ -1635,6 +1639,8 @@ function(__set_common_target_properties target_name)
       endif()
     endif()
 
+    get_target_property(target_type ${target_name} TYPE)
+
     foreach(configuration_name ${JUCER_PROJECT_CONFIGURATIONS})
       if(${JUCER_CONFIGURATION_IS_DEBUG_${configuration_name}})
         target_compile_definitions(${target_name} PRIVATE
@@ -1660,7 +1666,25 @@ function(__set_common_target_properties target_name)
           $<$<CONFIG:${configuration_name}>:-L${path}>
         )
       endforeach()
+
+      if(target_type STREQUAL EXECUTABLE OR target_type STREQUAL MODULE_LIBRARY)
+        if(${JUCER_STRIP_LOCAL_SYMBOLS_${configuration_name}})
+          find_program(strip_exe "strip")
+          if(NOT strip_exe)
+            message(FATAL_ERROR "Could not find strip program")
+          endif()
+          list(APPEND strip_command
+            "$<$<CONFIG:${configuration_name}>:${strip_exe}>"
+            "$<$<CONFIG:${configuration_name}>:-x>"
+            "$<$<CONFIG:${configuration_name}>:$<TARGET_FILE:${target_name}>>"
+          )
+        endif()
+      endif()
     endforeach()
+
+    if(strip_command)
+      add_custom_command(TARGET ${target_name} POST_BUILD COMMAND ${strip_command})
+    endif()
 
     foreach(item ${JUCER_OSX_ARCHITECTURES})
       if(NOT DEFINED configuration_name)
@@ -1752,14 +1776,14 @@ function(__set_common_target_properties target_name)
 
       if(DEFINED JUCER_PREBUILD_COMMAND_${configuration_name})
         set(prebuild_command ${JUCER_PREBUILD_COMMAND_${configuration_name}})
-        string(APPEND all_confs_prebuild_command
+        list(APPEND all_confs_prebuild_command
           $<$<CONFIG:${configuration_name}>:${prebuild_command}>
         )
       endif()
 
       if(DEFINED JUCER_POSTBUILD_COMMAND_${configuration_name})
         set(postbuild_command ${JUCER_POSTBUILD_COMMAND_${configuration_name}})
-        string(APPEND all_confs_postbuild_command
+        list(APPEND all_confs_postbuild_command
           $<$<CONFIG:${configuration_name}>:${postbuild_command}>
         )
       endif()
@@ -1806,7 +1830,7 @@ function(__set_common_target_properties target_name)
         file(MAKE_DIRECTORY "${JUCER_TARGET_PROJECT_FOLDER}")
       endif()
       add_custom_command(TARGET ${target_name} PRE_BUILD
-        COMMAND "${all_confs_prebuild_command}"
+        COMMAND ${all_confs_prebuild_command}
         WORKING_DIRECTORY "${JUCER_TARGET_PROJECT_FOLDER}"
       )
     endif()
@@ -1821,7 +1845,7 @@ function(__set_common_target_properties target_name)
         file(MAKE_DIRECTORY "${JUCER_TARGET_PROJECT_FOLDER}")
       endif()
       add_custom_command(TARGET ${target_name} POST_BUILD
-        COMMAND "${all_confs_postbuild_command}"
+        COMMAND ${all_confs_postbuild_command}
         WORKING_DIRECTORY "${JUCER_TARGET_PROJECT_FOLDER}"
       )
     endif()

@@ -113,6 +113,7 @@ jucer_export_target_configuration(
   CXX_LIBRARY "Use Default"
   # RELAX_IEEE_COMPLIANCE
   # LINK_TIME_OPTIMISATION
+  # STRIP_LOCAL_SYMBOLS
 )
 
 jucer_export_target_configuration(
@@ -131,6 +132,7 @@ jucer_export_target_configuration(
   CXX_LIBRARY "Use Default"
   # RELAX_IEEE_COMPLIANCE
   # LINK_TIME_OPTIMISATION
+  # STRIP_LOCAL_SYMBOLS
 )
 
 jucer_export_target(
