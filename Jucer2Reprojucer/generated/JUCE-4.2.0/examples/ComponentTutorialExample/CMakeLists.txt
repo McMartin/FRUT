@@ -117,6 +117,7 @@ jucer_export_target_configuration(
   CXX_LANGUAGE_STANDARD "Use Default"
   CXX_LIBRARY "Use Default"
   # RELAX_IEEE_COMPLIANCE
+  # LINK_TIME_OPTIMISATION
 )
 
 jucer_export_target_configuration(
@@ -134,6 +135,7 @@ jucer_export_target_configuration(
   CXX_LANGUAGE_STANDARD "Use Default"
   CXX_LIBRARY "Use Default"
   # RELAX_IEEE_COMPLIANCE
+  # LINK_TIME_OPTIMISATION
 )
 
 jucer_project_end()

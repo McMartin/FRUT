@@ -998,6 +998,10 @@ int main(int argc, char* argv[])
 
             out << "  "
                 << getOnOffSetting(configuration, "RELAX_IEEE_COMPLIANCE", "fastMath")
+                << "\n"
+                << "  "
+                << getOnOffSetting(
+                     configuration, "LINK_TIME_OPTIMISATION", "linkTimeOptimisation")
                 << "\n";
           }
 

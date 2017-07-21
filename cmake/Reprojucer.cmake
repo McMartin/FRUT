@@ -640,6 +640,7 @@ function(jucer_export_target_configuration
       "CXX_LANGUAGE_STANDARD"
       "CXX_LIBRARY"
       "RELAX_IEEE_COMPLIANCE"
+      "LINK_TIME_OPTIMISATION"
     )
   endif()
 
@@ -826,6 +827,11 @@ function(jucer_export_target_configuration
       elseif(tag STREQUAL "RELAX_IEEE_COMPLIANCE" AND exporter STREQUAL "Xcode (MacOSX)")
         if(value)
           list(APPEND JUCER_COMPILER_FLAGS $<$<CONFIG:${configuration_name}>:-ffast-math>)
+        endif()
+
+      elseif(tag STREQUAL "LINK_TIME_OPTIMISATION")
+        if(value)
+          list(APPEND JUCER_COMPILER_FLAGS $<$<CONFIG:${configuration_name}>:-flto>)
         endif()
 
       elseif(tag STREQUAL "WARNING_LEVEL")
