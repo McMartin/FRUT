@@ -1427,9 +1427,9 @@ function(__generate_JuceHeader_header project_id)
   if(resources_count GREATER 0)
     message(STATUS "Building BinaryDataBuilder for ${JUCER_PROJECT_NAME}")
     try_compile(BinaryDataBuilder
-      "${Reprojucer.cmake_DIR}/BinaryDataBuilder/_build/${CMAKE_GENERATOR}"
-      "${Reprojucer.cmake_DIR}/BinaryDataBuilder"
-      BinaryDataBuilder install
+      "${Reprojucer.cmake_DIR}/helpers/_build/${CMAKE_GENERATOR}"
+      "${Reprojucer.cmake_DIR}/helpers"
+      helpers install-BinaryDataBuilder
       CMAKE_FLAGS
       "-DJUCE_modules_DIRS=${JUCER_PROJECT_MODULES_FOLDERS}"
       "-DCMAKE_INSTALL_PREFIX=${CMAKE_CURRENT_BINARY_DIR}/helpers"
@@ -1498,9 +1498,9 @@ function(__generate_icon_file icon_format out_icon_filename)
 
   message(STATUS "Building IconBuilder for ${JUCER_PROJECT_NAME}")
   try_compile(IconBuilder
-    "${Reprojucer.cmake_DIR}/IconBuilder/_build/${CMAKE_GENERATOR}"
-    "${Reprojucer.cmake_DIR}/IconBuilder"
-    IconBuilder install
+    "${Reprojucer.cmake_DIR}/helpers/_build/${CMAKE_GENERATOR}"
+    "${Reprojucer.cmake_DIR}/helpers"
+    helpers install-IconBuilder
     CMAKE_FLAGS
     "-DJUCE_modules_DIRS=${JUCER_PROJECT_MODULES_FOLDERS}"
     "-DCMAKE_INSTALL_PREFIX=${CMAKE_CURRENT_BINARY_DIR}/helpers"

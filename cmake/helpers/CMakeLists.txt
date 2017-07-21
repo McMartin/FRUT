@@ -18,13 +18,7 @@
 cmake_minimum_required(VERSION 3.4)
 
 
-project(ReprojucerHelpers)
+project(helpers)
 
-
-add_subdirectory("../../cmake/helpers"
-  "helpers"
-)
-
-add_subdirectory("../../Jucer2Reprojucer"
-  "Jucer2Reprojucer"
-)
+add_subdirectory(BinaryDataBuilder)
+add_subdirectory(IconBuilder)

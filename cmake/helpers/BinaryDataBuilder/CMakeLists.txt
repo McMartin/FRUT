@@ -1,4 +1,4 @@
-# Copyright (c) 2017 Alain Martin
+# Copyright (c) 2016 Alain Martin
 #
 # This file is part of JUCE.cmake.
 #
@@ -15,9 +15,6 @@
 # You should have received a copy of the GNU General Public License
 # along with JUCE.cmake.  If not, see <http://www.gnu.org/licenses/>.
 
-cmake_minimum_required(VERSION 3.4)
-
-
 if(NOT DEFINED JUCE_modules_DIRS)
   message(FATAL_ERROR "JUCE_modules_DIRS must be defined")
 endif()
@@ -25,10 +22,12 @@ list(REMOVE_DUPLICATES JUCE_modules_DIRS)
 
 foreach(modules_dir ${JUCE_modules_DIRS})
   if (EXISTS "${modules_dir}/juce_core/juce_core.h"
+    AND EXISTS "${modules_dir}/juce_cryptography/juce_cryptography.h"
     AND EXISTS "${modules_dir}/juce_data_structures/juce_data_structures.h"
     AND EXISTS "${modules_dir}/juce_events/juce_events.h"
     AND EXISTS "${modules_dir}/juce_graphics/juce_graphics.h"
     AND EXISTS "${modules_dir}/juce_gui_basics/juce_gui_basics.h"
+    AND EXISTS "${modules_dir}/juce_gui_extra/juce_gui_extra.h"
   )
     set(JUCE_modules_DIR ${modules_dir})
     break()
@@ -36,9 +35,9 @@ foreach(modules_dir ${JUCE_modules_DIRS})
 endforeach()
 
 if(NOT DEFINED JUCE_modules_DIR)
-  message(FATAL_ERROR "Could not find juce_core, juce_data_structures, juce_events, "
-    "juce_graphics and juce_gui_basics when searching in the following directories: "
-    "${JUCE_modules_DIRS}"
+  message(FATAL_ERROR "Could not find juce_core, juce_cryptography, juce_data_structures,"
+    " juce_events, juce_graphics, juce_gui_basics and juce_gui_extra when searching in"
+    " the following directories: ${JUCE_modules_DIRS}"
   )
 endif()
 
@@ -48,47 +47,53 @@ get_filename_component(JUCE_modules_DIR
 )
 
 
-project(IconBuilder)
-
-add_executable(IconBuilder
+add_executable(BinaryDataBuilder
   "${CMAKE_CURRENT_LIST_DIR}/main.cpp"
-  "${CMAKE_CURRENT_LIST_DIR}/Source/Project Saving/jucer_ProjectExporter.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/Source/Project Saving/jucer_ResourceFile.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/Source/Utility/jucer_CodeHelpers.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/Source/Utility/jucer_FileHelpers.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/Source/Utility/jucer_MiscUtilities.cpp"
 )
 
 if(APPLE)
-  target_sources(IconBuilder PRIVATE
+  target_sources(BinaryDataBuilder PRIVATE
     "${JUCE_modules_DIR}/juce_core/juce_core.mm"
+    "${JUCE_modules_DIR}/juce_cryptography/juce_cryptography.mm"
     "${JUCE_modules_DIR}/juce_data_structures/juce_data_structures.mm"
     "${JUCE_modules_DIR}/juce_events/juce_events.mm"
     "${JUCE_modules_DIR}/juce_graphics/juce_graphics.mm"
     "${JUCE_modules_DIR}/juce_gui_basics/juce_gui_basics.mm"
+    "${JUCE_modules_DIR}/juce_gui_extra/juce_gui_extra.mm"
   )
 else()
-  target_sources(IconBuilder PRIVATE
+  target_sources(BinaryDataBuilder PRIVATE
     "${JUCE_modules_DIR}/juce_core/juce_core.cpp"
+    "${JUCE_modules_DIR}/juce_cryptography/juce_cryptography.cpp"
     "${JUCE_modules_DIR}/juce_data_structures/juce_data_structures.cpp"
     "${JUCE_modules_DIR}/juce_events/juce_events.cpp"
     "${JUCE_modules_DIR}/juce_graphics/juce_graphics.cpp"
     "${JUCE_modules_DIR}/juce_gui_basics/juce_gui_basics.cpp"
+    "${JUCE_modules_DIR}/juce_gui_extra/juce_gui_extra.cpp"
   )
 endif()
 
-target_include_directories(IconBuilder PRIVATE
+target_include_directories(BinaryDataBuilder PRIVATE
   "${JUCE_modules_DIR}"
 )
 
-target_compile_definitions(IconBuilder PRIVATE
+target_compile_definitions(BinaryDataBuilder PRIVATE
   JUCE_GLOBAL_MODULE_SETTINGS_INCLUDED
   JUCE_MODULE_AVAILABLE_juce_core=1
+  JUCE_MODULE_AVAILABLE_juce_cryptography=1
   JUCE_MODULE_AVAILABLE_juce_data_structures=1
   JUCE_MODULE_AVAILABLE_juce_events=1
   JUCE_MODULE_AVAILABLE_juce_graphics=1
   JUCE_MODULE_AVAILABLE_juce_gui_basics=1
+  JUCE_MODULE_AVAILABLE_juce_gui_extra=1
   JUCE_STANDALONE_APPLICATION=1
 )
 
-set_target_properties(IconBuilder PROPERTIES
+set_target_properties(BinaryDataBuilder PROPERTIES
   CXX_EXTENSIONS OFF
   CXX_STANDARD 11
   CXX_STANDARD_REQUIRED ON
@@ -102,16 +107,23 @@ if(CMAKE_HOST_SYSTEM_NAME STREQUAL "Linux")
     if(NOT ${package}_FOUND)
       message(FATAL_ERROR "pkg-config could not find ${package}")
     endif()
-    target_compile_options(IconBuilder PRIVATE ${${package}_CFLAGS})
-    target_link_libraries(IconBuilder PRIVATE ${${package}_LIBRARIES})
+    target_compile_options(BinaryDataBuilder PRIVATE ${${package}_CFLAGS})
+    target_link_libraries(BinaryDataBuilder PRIVATE ${${package}_LIBRARIES})
   endfunction()
 
   use_package(freetype2)
   use_package(x11)
   use_package(xext)
 
-  target_link_libraries(IconBuilder PRIVATE dl pthread)
+  target_link_libraries(BinaryDataBuilder PRIVATE dl pthread)
 endif()
 
 
-install(TARGETS IconBuilder DESTINATION ".")
+install(TARGETS BinaryDataBuilder DESTINATION ".")
+
+add_custom_target(install-BinaryDataBuilder
+  ${CMAKE_COMMAND}
+  -DCMAKE_INSTALL_CONFIG_NAME=$<CONFIG>
+  -P ${CMAKE_CURRENT_BINARY_DIR}/cmake_install.cmake
+  DEPENDS BinaryDataBuilder
+)
