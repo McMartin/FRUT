@@ -17,7 +17,11 @@
 
 #pragma once
 
-#include "JuceHeader.h"
+#include <juce_core/juce_core.h>
+#include <juce_cryptography/juce_cryptography.h>
+#include <juce_graphics/juce_graphics.h>
+#include <juce_gui_extra/juce_gui_extra.h>
+using namespace juce;
 
 #include "Utility/jucer_CodeHelpers.h"
 #include "Utility/jucer_FileHelpers.h"

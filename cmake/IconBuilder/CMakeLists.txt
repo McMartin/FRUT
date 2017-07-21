@@ -18,10 +18,6 @@
 cmake_minimum_required(VERSION 3.4)
 
 
-list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/../../cmake")
-include(Reprojucer)
-
-
 if(NOT DEFINED JUCE_modules_DIRS)
   message(FATAL_ERROR "JUCE_modules_DIRS must be defined")
 endif()
@@ -52,110 +48,70 @@ get_filename_component(JUCE_modules_DIR
 )
 
 
-jucer_project_begin()
+project(IconBuilder)
 
-jucer_project_settings(
-  PROJECT_NAME "IconBuilder"
-  PROJECT_VERSION "1.0.0"
-  PROJECT_TYPE "Console Application"
+add_executable(IconBuilder
+  "${CMAKE_CURRENT_LIST_DIR}/main.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/Source/Project Saving/jucer_ProjectExporter.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/Source/Utility/jucer_FileHelpers.cpp"
 )
 
-jucer_project_files("IconBuilder"
-  x . . "${CMAKE_CURRENT_LIST_DIR}/main.cpp"
-  x . . "${CMAKE_CURRENT_LIST_DIR}/Source/Project Saving/jucer_ProjectExporter.cpp"
-  x . . "${CMAKE_CURRENT_LIST_DIR}/Source/Utility/jucer_FileHelpers.cpp"
+if(APPLE)
+  target_sources(IconBuilder PRIVATE
+    "${JUCE_modules_DIR}/juce_core/juce_core.mm"
+    "${JUCE_modules_DIR}/juce_data_structures/juce_data_structures.mm"
+    "${JUCE_modules_DIR}/juce_events/juce_events.mm"
+    "${JUCE_modules_DIR}/juce_graphics/juce_graphics.mm"
+    "${JUCE_modules_DIR}/juce_gui_basics/juce_gui_basics.mm"
+  )
+else()
+  target_sources(IconBuilder PRIVATE
+    "${JUCE_modules_DIR}/juce_core/juce_core.cpp"
+    "${JUCE_modules_DIR}/juce_data_structures/juce_data_structures.cpp"
+    "${JUCE_modules_DIR}/juce_events/juce_events.cpp"
+    "${JUCE_modules_DIR}/juce_graphics/juce_graphics.cpp"
+    "${JUCE_modules_DIR}/juce_gui_basics/juce_gui_basics.cpp"
+  )
+endif()
+
+target_include_directories(IconBuilder PRIVATE
+  "${JUCE_modules_DIR}"
 )
 
-jucer_project_module(
-  juce_core
-  PATH "${JUCE_modules_DIR}"
+target_compile_definitions(IconBuilder PRIVATE
+  JUCE_GLOBAL_MODULE_SETTINGS_INCLUDED
+  JUCE_MODULE_AVAILABLE_juce_core=1
+  JUCE_MODULE_AVAILABLE_juce_data_structures=1
+  JUCE_MODULE_AVAILABLE_juce_events=1
+  JUCE_MODULE_AVAILABLE_juce_graphics=1
+  JUCE_MODULE_AVAILABLE_juce_gui_basics=1
+  JUCE_STANDALONE_APPLICATION=1
 )
 
-jucer_project_module(
-  juce_data_structures
-  PATH "${JUCE_modules_DIR}"
+set_target_properties(IconBuilder PROPERTIES
+  CXX_EXTENSIONS OFF
+  CXX_STANDARD 11
+  CXX_STANDARD_REQUIRED ON
 )
 
-jucer_project_module(
-  juce_events
-  PATH "${JUCE_modules_DIR}"
-)
+if(CMAKE_HOST_SYSTEM_NAME STREQUAL "Linux")
+  find_package(PkgConfig REQUIRED)
 
-jucer_project_module(
-  juce_graphics
-  PATH "${JUCE_modules_DIR}"
-)
+  function(use_package package)
+    pkg_check_modules(${package} "${package}")
+    if(NOT ${package}_FOUND)
+      message(FATAL_ERROR "pkg-config could not find ${package}")
+    endif()
+    target_compile_options(IconBuilder PRIVATE ${${package}_CFLAGS})
+    target_link_libraries(IconBuilder PRIVATE ${${package}_LIBRARIES})
+  endfunction()
 
-jucer_project_module(
-  juce_gui_basics
-  PATH "${JUCE_modules_DIR}"
-)
+  use_package(freetype2)
+  use_package(x11)
+  use_package(xext)
 
-jucer_export_target(
-  "Xcode (MacOSX)"
-)
-
-jucer_export_target_configuration(
-  "Xcode (MacOSX)"
-  NAME "Debug"
-  DEBUG_MODE ON
-)
-
-jucer_export_target_configuration(
-  "Xcode (MacOSX)"
-  NAME "Release"
-  DEBUG_MODE OFF
-)
-
-jucer_export_target(
-  "Visual Studio 2015"
-)
-
-jucer_export_target_configuration(
-  "Visual Studio 2015"
-  NAME "Debug"
-  DEBUG_MODE ON
-)
-
-jucer_export_target_configuration(
-  "Visual Studio 2015"
-  NAME "Release"
-  DEBUG_MODE OFF
-)
-
-jucer_export_target(
-  "Visual Studio 2013"
-)
-
-jucer_export_target_configuration(
-  "Visual Studio 2013"
-  NAME "Debug"
-  DEBUG_MODE ON
-)
-
-jucer_export_target_configuration(
-  "Visual Studio 2013"
-  NAME "Release"
-  DEBUG_MODE OFF
-)
-
-jucer_export_target(
-  "Linux Makefile"
-)
-
-jucer_export_target_configuration(
-  "Linux Makefile"
-  NAME "Debug"
-  DEBUG_MODE ON
-)
-
-jucer_export_target_configuration(
-  "Linux Makefile"
-  NAME "Release"
-  DEBUG_MODE OFF
-)
-
-jucer_project_end()
+  target_link_libraries(IconBuilder PRIVATE dl pthread)
+endif()
 
 
 install(TARGETS IconBuilder DESTINATION "IconBuilder")

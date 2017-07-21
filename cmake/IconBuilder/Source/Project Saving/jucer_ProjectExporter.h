@@ -17,7 +17,7 @@
 
 #pragma once
 
-#include "JuceHeader.h"
+#include "../jucer_Headers.h"
 
 
 class ProjectExporter
