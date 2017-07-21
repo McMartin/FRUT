@@ -39,22 +39,6 @@ get_filename_component(Projucer_jucer_DIR
   "${Projucer_jucer_FILE}" DIRECTORY
 )
 
-file(COPY
-  "${Projucer_jucer_DIR}/Source/Project Saving/jucer_ResourceFile.cpp"
-  "${Projucer_jucer_DIR}/Source/Project Saving/jucer_ResourceFile.h"
-  DESTINATION "${CMAKE_CURRENT_LIST_DIR}/Source/Project Saving"
-)
-
-file(COPY
-  "${Projucer_jucer_DIR}/Source/Utility/jucer_CodeHelpers.cpp"
-  "${Projucer_jucer_DIR}/Source/Utility/jucer_CodeHelpers.h"
-  "${Projucer_jucer_DIR}/Source/Utility/jucer_FileHelpers.cpp"
-  "${Projucer_jucer_DIR}/Source/Utility/jucer_FileHelpers.h"
-  "${Projucer_jucer_DIR}/Source/Utility/jucer_MiscUtilities.cpp"
-  "${Projucer_jucer_DIR}/Source/Utility/jucer_MiscUtilities.h"
-  DESTINATION "${CMAKE_CURRENT_LIST_DIR}/Source/Utility"
-)
-
 
 jucer_project_begin()
 
