@@ -48,40 +48,6 @@ public:
     return binaryDataFilesOuputDir.getChildFile("BinaryData.h");
   }
 
-  class Item
-  {
-  public:
-    bool isGroup() const
-    {
-      return false;
-    }
-
-    int getNumChildren() const
-    {
-      return 0;
-    }
-
-    Item getChild(int) const
-    {
-      return {};
-    }
-
-    bool shouldBeAddedToBinaryResources() const
-    {
-      return false;
-    }
-
-    File getFile() const
-    {
-      return {};
-    }
-  };
-
-  Item getMainGroup()
-  {
-    return {};
-  }
-
 private:
   const File binaryDataFilesOuputDir;
 };
