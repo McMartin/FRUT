@@ -15,36 +15,6 @@
 # You should have received a copy of the GNU General Public License
 # along with JUCE.cmake.  If not, see <http://www.gnu.org/licenses/>.
 
-if(NOT DEFINED JUCE_modules_DIRS)
-  message(FATAL_ERROR "JUCE_modules_DIRS must be defined")
-endif()
-list(REMOVE_DUPLICATES JUCE_modules_DIRS)
-
-foreach(modules_dir ${JUCE_modules_DIRS})
-  if (EXISTS "${modules_dir}/juce_core/juce_core.h"
-    AND EXISTS "${modules_dir}/juce_data_structures/juce_data_structures.h"
-    AND EXISTS "${modules_dir}/juce_events/juce_events.h"
-    AND EXISTS "${modules_dir}/juce_graphics/juce_graphics.h"
-    AND EXISTS "${modules_dir}/juce_gui_basics/juce_gui_basics.h"
-  )
-    set(JUCE_modules_DIR ${modules_dir})
-    break()
-  endif()
-endforeach()
-
-if(NOT DEFINED JUCE_modules_DIR)
-  message(FATAL_ERROR "Could not find juce_core, juce_data_structures, juce_events, "
-    "juce_graphics and juce_gui_basics when searching in the following directories: "
-    "${JUCE_modules_DIRS}"
-  )
-endif()
-
-get_filename_component(JUCE_modules_DIR
-  "${JUCE_modules_DIR}" ABSOLUTE
-  BASE_DIR "${CMAKE_BINARY_DIR}"
-)
-
-
 add_executable(IconBuilder
   "${CMAKE_CURRENT_LIST_DIR}/main.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/Source/Project Saving/jucer_ProjectExporter.cpp"
@@ -67,45 +37,6 @@ else()
     "${JUCE_modules_DIR}/juce_graphics/juce_graphics.cpp"
     "${JUCE_modules_DIR}/juce_gui_basics/juce_gui_basics.cpp"
   )
-endif()
-
-target_include_directories(IconBuilder PRIVATE
-  "${JUCE_modules_DIR}"
-)
-
-target_compile_definitions(IconBuilder PRIVATE
-  JUCE_GLOBAL_MODULE_SETTINGS_INCLUDED
-  JUCE_MODULE_AVAILABLE_juce_core=1
-  JUCE_MODULE_AVAILABLE_juce_data_structures=1
-  JUCE_MODULE_AVAILABLE_juce_events=1
-  JUCE_MODULE_AVAILABLE_juce_graphics=1
-  JUCE_MODULE_AVAILABLE_juce_gui_basics=1
-  JUCE_STANDALONE_APPLICATION=1
-)
-
-set_target_properties(IconBuilder PROPERTIES
-  CXX_EXTENSIONS OFF
-  CXX_STANDARD 11
-  CXX_STANDARD_REQUIRED ON
-)
-
-if(CMAKE_HOST_SYSTEM_NAME STREQUAL "Linux")
-  find_package(PkgConfig REQUIRED)
-
-  function(use_package package)
-    pkg_check_modules(${package} "${package}")
-    if(NOT ${package}_FOUND)
-      message(FATAL_ERROR "pkg-config could not find ${package}")
-    endif()
-    target_compile_options(IconBuilder PRIVATE ${${package}_CFLAGS})
-    target_link_libraries(IconBuilder PRIVATE ${${package}_LIBRARIES})
-  endfunction()
-
-  use_package(freetype2)
-  use_package(x11)
-  use_package(xext)
-
-  target_link_libraries(IconBuilder PRIVATE dl pthread)
 endif()
 
 
