@@ -1432,7 +1432,7 @@ function(__generate_JuceHeader_header project_id)
       BinaryDataBuilder install
       CMAKE_FLAGS
       "-DJUCE_modules_DIRS=${JUCER_PROJECT_MODULES_FOLDERS}"
-      "-DCMAKE_INSTALL_PREFIX=${CMAKE_CURRENT_BINARY_DIR}"
+      "-DCMAKE_INSTALL_PREFIX=${CMAKE_CURRENT_BINARY_DIR}/helpers"
     )
     if(NOT BinaryDataBuilder)
       message(FATAL_ERROR "Failed to build BinaryDataBuilder")
@@ -1461,7 +1461,7 @@ function(__generate_JuceHeader_header project_id)
       list(APPEND BinaryDataBuilder_args "${resource_abs_path}")
     endforeach()
     execute_process(
-      COMMAND "${CMAKE_CURRENT_BINARY_DIR}/BinaryDataBuilder/BinaryDataBuilder"
+      COMMAND "${CMAKE_CURRENT_BINARY_DIR}/helpers/BinaryDataBuilder"
       ${BinaryDataBuilder_args}
       OUTPUT_VARIABLE binary_data_filenames
       RESULT_VARIABLE BinaryDataBuilder_return_code
@@ -1503,7 +1503,7 @@ function(__generate_icon_file icon_format out_icon_filename)
     IconBuilder install
     CMAKE_FLAGS
     "-DJUCE_modules_DIRS=${JUCER_PROJECT_MODULES_FOLDERS}"
-    "-DCMAKE_INSTALL_PREFIX=${CMAKE_CURRENT_BINARY_DIR}"
+    "-DCMAKE_INSTALL_PREFIX=${CMAKE_CURRENT_BINARY_DIR}/helpers"
   )
   if(NOT IconBuilder)
     message(FATAL_ERROR "Failed to build IconBuilder")
@@ -1523,7 +1523,7 @@ function(__generate_icon_file icon_format out_icon_filename)
   endif()
 
   execute_process(
-    COMMAND "${CMAKE_CURRENT_BINARY_DIR}/IconBuilder/IconBuilder"
+    COMMAND "${CMAKE_CURRENT_BINARY_DIR}/helpers/IconBuilder"
     ${IconBuilder_args}
     OUTPUT_VARIABLE icon_filename
     RESULT_VARIABLE IconBuilder_return_code

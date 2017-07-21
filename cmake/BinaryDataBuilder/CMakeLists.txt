@@ -124,4 +124,4 @@ if(CMAKE_HOST_SYSTEM_NAME STREQUAL "Linux")
 endif()
 
 
-install(TARGETS BinaryDataBuilder DESTINATION "BinaryDataBuilder")
+install(TARGETS BinaryDataBuilder DESTINATION ".")

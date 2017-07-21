@@ -114,4 +114,4 @@ if(CMAKE_HOST_SYSTEM_NAME STREQUAL "Linux")
 endif()
 
 
-install(TARGETS IconBuilder DESTINATION "IconBuilder")
+install(TARGETS IconBuilder DESTINATION ".")
