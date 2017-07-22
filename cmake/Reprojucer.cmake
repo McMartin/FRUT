@@ -1954,14 +1954,17 @@ function(__set_plugin_output_directory_property
   target_name plugin_type plugins_dir plugin_extension
 )
 
+  set(default_output_dir "$ENV{HOME}/Library/Audio/Plug-Ins/${plugins_dir}")
+
   foreach(configuration_name ${JUCER_PROJECT_CONFIGURATIONS})
     if(DEFINED JUCER_${plugin_type}_BINARY_LOCATION_${configuration_name})
       set(output_dir ${JUCER_${plugin_type}_BINARY_LOCATION_${configuration_name}})
     else()
-      set(output_dir "$ENV{HOME}/Library/Audio/Plug-Ins/${plugins_dir}")
+      set(output_dir ${default_output_dir})
     endif()
     string(APPEND all_confs_output_dir "$<$<CONFIG:${configuration_name}>:${output_dir}>")
   endforeach()
+  string(APPEND all_confs_output_dir $<$<CONFIG:>:${default_output_dir}>)
 
   set_target_properties(${target_name} PROPERTIES
     LIBRARY_OUTPUT_DIRECTORY ${all_confs_output_dir}
