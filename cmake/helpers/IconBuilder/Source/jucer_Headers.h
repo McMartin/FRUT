@@ -17,37 +17,9 @@
 
 #pragma once
 
-#include "JuceHeader.h"
+#include <juce_core/juce_core.h>
+#include <juce_graphics/juce_graphics.h>
+#include <juce_gui_basics/juce_gui_basics.h>
+using namespace juce;
 
-
-class ProjectExporter
-{
-
-public:
-  ProjectExporter(const File& smallIcon, const File& bigIcon)
-    : mSmallIcon{smallIcon}
-    , mBigIcon{bigIcon}
-  {
-  }
-
-  Drawable* getBigIcon() const
-  {
-    return Drawable::createFromImageFile(mBigIcon);
-  }
-
-  Drawable* getSmallIcon() const
-  {
-    return Drawable::createFromImageFile(mSmallIcon);
-  }
-
-  Image getBestIconForSize(int size, bool returnNullIfNothingBigEnough) const;
-
-  static Image rescaleImageForIcon(Drawable&, int iconSize);
-
-#include "jucer_ProjectExport_MSVC.h"
-#include "jucer_ProjectExport_XCode.h"
-
-private:
-  const File mSmallIcon;
-  const File mBigIcon;
-};
+#include "Utility/jucer_FileHelpers.h"

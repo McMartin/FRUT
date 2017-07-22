@@ -15,16 +15,19 @@
 # You should have received a copy of the GNU General Public License
 # along with JUCE.cmake.  If not, see <http://www.gnu.org/licenses/>.
 
-cmake_minimum_required(VERSION 3.4)
-
-
-project(ReprojucerHelpers)
-
-
-add_subdirectory("../../cmake/helpers"
-  "helpers"
+add_executable(IconBuilder
+  "${CMAKE_CURRENT_LIST_DIR}/main.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/Source/Project Saving/jucer_ProjectExporter.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/Source/Utility/jucer_FileHelpers.cpp"
+  $<TARGET_OBJECTS:juce_gui_basics_and_deps>
 )
 
-add_subdirectory("../../Jucer2Reprojucer"
-  "Jucer2Reprojucer"
+
+install(TARGETS IconBuilder DESTINATION ".")
+
+add_custom_target(install-IconBuilder
+  ${CMAKE_COMMAND}
+  -DCMAKE_INSTALL_CONFIG_NAME=$<CONFIG>
+  -P ${CMAKE_CURRENT_BINARY_DIR}/cmake_install.cmake
+  DEPENDS IconBuilder
 )

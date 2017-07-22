@@ -17,6 +17,37 @@
 
 #pragma once
 
-#include "JuceHeader.h"
+#include "../jucer_Headers.h"
 
-#include "Utility/jucer_FileHelpers.h"
+
+class ProjectExporter
+{
+
+public:
+  ProjectExporter(const File& smallIcon, const File& bigIcon)
+    : mSmallIcon{smallIcon}
+    , mBigIcon{bigIcon}
+  {
+  }
+
+  Drawable* getBigIcon() const
+  {
+    return Drawable::createFromImageFile(mBigIcon);
+  }
+
+  Drawable* getSmallIcon() const
+  {
+    return Drawable::createFromImageFile(mSmallIcon);
+  }
+
+  Image getBestIconForSize(int size, bool returnNullIfNothingBigEnough) const;
+
+  static Image rescaleImageForIcon(Drawable&, int iconSize);
+
+#include "jucer_ProjectExport_MSVC.h"
+#include "jucer_ProjectExport_XCode.h"
+
+private:
+  const File mSmallIcon;
+  const File mBigIcon;
+};
