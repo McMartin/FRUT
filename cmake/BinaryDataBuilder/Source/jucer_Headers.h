@@ -1,4 +1,4 @@
-// Copyright (c) 2016 Alain Martin
+// Copyright (c) 2017 Alain Martin
 //
 // This file is part of JUCE.cmake.
 //
@@ -17,6 +17,8 @@
 
 #pragma once
 
-#include "../Utility/jucer_CodeHelpers.h"
-#include "../Utility/jucer_FileHelpers.h"
-#include "../Utility/jucer_MiscUtilities.h"
+#include "JuceHeader.h"
+
+#include "Utility/jucer_CodeHelpers.h"
+#include "Utility/jucer_FileHelpers.h"
+#include "Utility/jucer_MiscUtilities.h"

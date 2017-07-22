@@ -30,14 +30,12 @@ script-anchors:
       cmake .. -DCMAKE_BUILD_TYPE=Debug
       -DJUCE_ROOT="${JUCE_ROOT}"
       -DJUCE_modules_DIRS="${JUCE_ROOT}/modules"
-      -DProjucer_jucer_FILE="${JUCE_ROOT}/extras/Projucer/Projucer.jucer"
     - cmake --build .
     - cd ${TRAVIS_BUILD_DIR}/ci/ReprojucerHelpers/Release_build
     - >
       cmake .. -DCMAKE_BUILD_TYPE=Release
       -DJUCE_ROOT="${JUCE_ROOT}"
       -DJUCE_modules_DIRS="${JUCE_ROOT}/modules"
-      -DProjucer_jucer_FILE="${JUCE_ROOT}/extras/Projucer/Projucer.jucer"
 
     # Check that generated CMakeLists.txt files are up-to-date
     - cd ${TRAVIS_BUILD_DIR}
@@ -92,7 +90,6 @@ script-anchors:
       cmake .. -G Xcode
       -DJUCE_ROOT="${JUCE_ROOT}"
       -DJUCE_modules_DIRS="${JUCE_ROOT}/modules"
-      -DProjucer_jucer_FILE="${JUCE_ROOT}/extras/Projucer/Projucer.jucer"
     - cmake --build . --config Debug
 
     # Check that generated CMakeLists.txt files are up-to-date

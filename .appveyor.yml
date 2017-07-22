@@ -32,7 +32,6 @@ build_script:
     cmake .. -G "%GENERATOR%"
     -DJUCE_ROOT="%JUCE_ROOT%"
     -DJUCE_modules_DIRS="%JUCE_ROOT%/modules"
-    -DProjucer_jucer_FILE="%JUCE_ROOT%/extras/Projucer/Projucer.jucer"
   - cmake --build . --config Debug
 
   # Check that generated CMakeLists.txt files are up-to-date
