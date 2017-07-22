@@ -50,6 +50,11 @@ get_filename_component(Jucer2Reprojucer_EXE "${Jucer2Reprojucer_EXE}" ABSOLUTE)
 
 file(GLOB_RECURSE jucer_files RELATIVE "${JUCE_ROOT}" "${JUCE_ROOT}/*.jucer")
 
+execute_process(COMMAND git rev-parse HEAD
+  WORKING_DIRECTORY ${JUCE_ROOT}
+  OUTPUT_VARIABLE JUCE_commit_sha
+)
+
 foreach(jucer_file ${jucer_files})
   get_filename_component(working_dir "${generated_JUCE_ROOT}/${jucer_file}" DIRECTORY)
 
@@ -58,5 +63,6 @@ foreach(jucer_file ${jucer_files})
     "${Jucer2Reprojucer_EXE}"
     "${JUCE_ROOT}/${jucer_file}"
     "${CMAKE_CURRENT_LIST_DIR}/../../cmake/Reprojucer.cmake"
+    ${JUCE_commit_sha}
   )
 endforeach()

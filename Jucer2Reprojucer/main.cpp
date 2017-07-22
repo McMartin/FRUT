@@ -325,6 +325,8 @@ int main(int argc, char* argv[])
         << "\n";
   }
 
+  const auto projectType = jucerProject.getProperty("projectType").toString();
+
   // jucer_project_settings()
   {
     const auto projectSetting = [&jucerProject](
@@ -333,7 +335,6 @@ int main(int argc, char* argv[])
       return getSetting(jucerProject, cmakeTag, property);
     };
 
-    const auto projectType = jucerProject.getProperty("projectType").toString();
     const auto projectTypeDescription = [&projectType]() -> std::string
     {
       if (projectType == "guiapp")
@@ -602,6 +603,8 @@ int main(int argc, char* argv[])
         const auto hasVst2Interface =
           std::find(kSupportedCommits.begin(), kSupportedCommits.end(), commitSha1)
           <= std::find(kSupportedCommits.begin(), kSupportedCommits.end(), 0x9f31d64);
+        const auto isVstAudioPlugin =
+          projectType == "audioplug" && bool{jucerProject.getProperty("buildVST")};
         const auto isVstPluginHost =
           jucerProject.getChildWithName("MODULES")
             .getChildWithProperty("id", "juce_audio_processors")
@@ -610,7 +613,7 @@ int main(int argc, char* argv[])
                  .getProperty("JUCE_PLUGINHOST_VST")
                == "enabled";
 
-        if (!hasVst2Interface && isVstPluginHost)
+        if (!hasVst2Interface && (isVstAudioPlugin || isVstPluginHost))
         {
           out << "  " << getSetting(exporter, "VST_SDK_FOLDER", "vstFolder") << "\n";
         }

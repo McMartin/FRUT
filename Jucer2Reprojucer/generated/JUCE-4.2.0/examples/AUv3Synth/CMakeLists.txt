@@ -163,6 +163,7 @@ jucer_project_module(
 
 jucer_export_target(
   "Xcode (MacOSX)"
+  # VST_SDK_FOLDER
   # EXTRA_PREPROCESSOR_DEFINITIONS
   # EXTRA_COMPILER_FLAGS
   # EXTRA_LINKER_FLAGS
