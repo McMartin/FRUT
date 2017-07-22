@@ -1963,9 +1963,7 @@ function(__set_plugin_output_directory_property
     else()
       set(output_dir "$ENV{HOME}/Library/Audio/Plug-Ins/${plugins_dir}")
     endif()
-    string(APPEND all_confs_output_dir
-      "$<$<CONFIG:${configuration_name}>:${output_dir}>"
-    )
+    string(APPEND all_confs_output_dir "$<$<CONFIG:${configuration_name}>:${output_dir}>")
   endforeach()
 
   set_target_properties(${target_name} PROPERTIES
