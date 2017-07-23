@@ -2068,6 +2068,7 @@ function(__set_common_target_properties target_name)
 
     set(linux_packages ${JUCER_PROJECT_LINUX_PACKAGES})
     if(linux_packages)
+      find_package(PkgConfig REQUIRED)
       list(SORT linux_packages)
       list(REMOVE_DUPLICATES linux_packages)
       foreach(pkg ${linux_packages})
@@ -2343,8 +2344,3 @@ function(__four_chars_to_hex value out_hex_value)
   set(${out_hex_value} "${hex_value}" PARENT_SCOPE)
 
 endfunction()
-
-
-if(CMAKE_HOST_SYSTEM_NAME STREQUAL "Linux")
-  find_package(PkgConfig REQUIRED)
-endif()
