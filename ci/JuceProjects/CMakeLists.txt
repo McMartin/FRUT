@@ -26,21 +26,38 @@ endif()
 project(JuceProjects-${JUCE_VERSION})
 
 
+if(JUCE_VERSION STREQUAL 4.2.0)
+  set(JUCER_VST_SDK_FOLDER
+    "${CMAKE_CURRENT_LIST_DIR}/../third-party/vstsdk366_27_06_2016_build_61/VST3 SDK"
+  )
+endif()
+
+if(APPLE OR WIN32)
+  set(JUCER_VST3_SDK_FOLDER
+    "${CMAKE_CURRENT_LIST_DIR}/../third-party/vstsdk366_27_06_2016_build_61/VST3 SDK"
+  )
+endif()
+
+
+set(JUCE_ROOT "${CMAKE_CURRENT_LIST_DIR}/../tmp/JUCE-${JUCE_VERSION}")
 set(generated_JUCE_ROOT
   "${CMAKE_CURRENT_LIST_DIR}/../../Jucer2Reprojucer/generated/JUCE-${JUCE_VERSION}"
 )
 
 
+set(Plugin_Host_jucer_FILE "${JUCE_ROOT}/examples/audio plugin host/Plugin Host.jucer")
 add_subdirectory("${generated_JUCE_ROOT}/examples/audio plugin host"
   "Plugin Host"
 )
 
+set(JuceDemoPlugin_jucer_FILE "${JUCE_ROOT}/examples/audio plugin demo/JuceDemoPlugin.jucer")
 if(NOT MSVC_VERSION EQUAL 1800)
   add_subdirectory("${generated_JUCE_ROOT}/examples/audio plugin demo"
     "JuceDemoPlugin"
   )
 endif()
 
+set(Projucer_jucer_FILE "${JUCE_ROOT}/extras/Projucer/Projucer.jucer")
 if(NOT JUCE_VERSION STREQUAL "4.2.0"
     OR (NOT MSVC_VERSION EQUAL 1800 AND NOT MSVC_VERSION EQUAL 1900))
   add_subdirectory("${generated_JUCE_ROOT}/extras/Projucer"
