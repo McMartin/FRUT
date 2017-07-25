@@ -5,8 +5,8 @@ branches:
 language: cpp
 
 before_install:
-  - export JUCE_ROOT=${TRAVIS_BUILD_DIR}/ci/tmp/JUCE-${JUCE_VERSION}
-  - git clone --branch=${JUCE_VERSION} --depth=1 --single-branch -- https://github.com/WeAreROLI/JUCE.git $JUCE_ROOT
+  - export JUCE_ROOT="${TRAVIS_BUILD_DIR}/ci/tmp/JUCE-${JUCE_VERSION}"
+  - git clone --branch=${JUCE_VERSION} --depth=1 --single-branch -- https://github.com/WeAreROLI/JUCE.git "${JUCE_ROOT}"
 
 install-anchors:
   - &install-linux

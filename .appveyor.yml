@@ -22,7 +22,7 @@ install:
   - cmake --version
 
   - set JUCE_ROOT="%APPVEYOR_BUILD_FOLDER%/ci/tmp/JUCE-%JUCE_VERSION%"
-  - git clone --branch=%JUCE_VERSION% --depth=1 --single-branch -- https://github.com/WeAreROLI/JUCE.git %JUCE_ROOT%
+  - git clone --branch=%JUCE_VERSION% --depth=1 --single-branch -- https://github.com/WeAreROLI/JUCE.git "%JUCE_ROOT%"
 
 build_script:
   # Configure and build BinaryDataBuilder, IconBuilder and Jucer2Reprojucer
