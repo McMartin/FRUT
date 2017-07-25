@@ -45,11 +45,11 @@ build_script:
   - git diff --quiet
 
   # Configure all JUCE projects
-  - mkdir %APPVEYOR_BUILD_FOLDER%\Jucer2Reprojucer\generated\JUCE-%JUCE_VERSION%\build
-  - cd %APPVEYOR_BUILD_FOLDER%\Jucer2Reprojucer\generated\JUCE-%JUCE_VERSION%\build
+  - mkdir %APPVEYOR_BUILD_FOLDER%\ci\AllJuceProjects\build
+  - cd %APPVEYOR_BUILD_FOLDER%\ci\AllJuceProjects\build
   - >
     cmake .. -G "%GENERATOR%"
-    -DJUCE_ROOT="%JUCE_ROOT%"
+    -DJUCE_VERSION="%JUCE_VERSION%"
     -DJUCER_VST_SDK_FOLDER="%APPVEYOR_BUILD_FOLDER%/ci/third-party/vstsdk366_27_06_2016_build_61/VST3 SDK"
     -DJUCER_VST3_SDK_FOLDER="%APPVEYOR_BUILD_FOLDER%/ci/third-party/vstsdk366_27_06_2016_build_61/VST3 SDK"
 
