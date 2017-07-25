@@ -1554,6 +1554,8 @@ function(__set_common_target_properties target_name)
     endif()
     string(APPEND all_confs_output_name $<$<CONFIG:${configuration_name}>:${output_name}>)
   endforeach()
+  # OUTPUT_NAME must be defined in all cases, including when $<CONFIG> is empty
+  string(APPEND all_confs_output_name $<$<CONFIG:>:${JUCER_PROJECT_NAME}>)
   set_target_properties(${target_name} PROPERTIES OUTPUT_NAME "${all_confs_output_name}")
 
   target_include_directories(${target_name} PRIVATE
@@ -1938,17 +1940,12 @@ function(__set_bundle_properties target_name extension)
     XCODE_ATTRIBUTE_WRAPPER_EXTENSION "${extension}"
   )
 
-  foreach(configuration_name ${JUCER_PROJECT_CONFIGURATIONS})
-    list(APPEND copy_pkginfo_command
-      "$<$<CONFIG:${configuration_name}>:${CMAKE_COMMAND}>"
-      "$<$<CONFIG:${configuration_name}>:-E>"
-      "$<$<CONFIG:${configuration_name}>:copy_if_different>"
-      "$<$<CONFIG:${configuration_name}>:${Reprojucer_templates_DIR}/PkgInfo>"
-      "$<$<CONFIG:${configuration_name}>:$<TARGET_FILE_DIR:${target_name}>/..>"
-    )
-  endforeach()
-
-  add_custom_command(TARGET ${target_name} PRE_BUILD COMMAND ${copy_pkginfo_command})
+  add_custom_command(TARGET ${target_name} PRE_BUILD
+    COMMAND
+    "${CMAKE_COMMAND}" "-E" "copy_if_different"
+    "${Reprojucer_templates_DIR}/PkgInfo"
+    "$<TARGET_FILE_DIR:${target_name}>/.."
+  )
 
 endfunction()
 
@@ -1957,16 +1954,17 @@ function(__set_plugin_output_directory_property
   target_name plugin_type plugins_dir plugin_extension
 )
 
+  set(default_output_dir "$ENV{HOME}/Library/Audio/Plug-Ins/${plugins_dir}")
+
   foreach(configuration_name ${JUCER_PROJECT_CONFIGURATIONS})
     if(DEFINED JUCER_${plugin_type}_BINARY_LOCATION_${configuration_name})
       set(output_dir ${JUCER_${plugin_type}_BINARY_LOCATION_${configuration_name}})
     else()
-      set(output_dir "$ENV{HOME}/Library/Audio/Plug-Ins/${plugins_dir}")
+      set(output_dir ${default_output_dir})
     endif()
-    string(APPEND all_confs_output_dir
-      "$<$<CONFIG:${configuration_name}>:${output_dir}>"
-    )
+    string(APPEND all_confs_output_dir "$<$<CONFIG:${configuration_name}>:${output_dir}>")
   endforeach()
+  string(APPEND all_confs_output_dir $<$<CONFIG:>:${default_output_dir}>)
 
   set_target_properties(${target_name} PROPERTIES
     LIBRARY_OUTPUT_DIRECTORY ${all_confs_output_dir}
