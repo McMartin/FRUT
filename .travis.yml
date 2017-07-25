@@ -61,18 +61,20 @@ script-anchors:
       -DJUCER_VST_SDK_FOLDER="${TRAVIS_BUILD_DIR}/ci/third-party/vstsdk366_27_06_2016_build_61/VST3 SDK"
 
     # Configure and build JUCE's Plugin Host, JuceDemoPlugin and Projucer
-    - mkdir ${TRAVIS_BUILD_DIR}/ci/JuceProjects-${JUCE_VERSION}/{Debug_build,Release_build}
-    - cd ${TRAVIS_BUILD_DIR}/ci/JuceProjects-${JUCE_VERSION}/Debug_build
+    - mkdir ${TRAVIS_BUILD_DIR}/ci/JuceProjects/{Debug_build,Release_build}
+    - cd ${TRAVIS_BUILD_DIR}/ci/JuceProjects/Debug_build
     - >
       cmake .. -DCMAKE_BUILD_TYPE=Debug
+      -DJUCE_VERSION=${JUCE_VERSION}
       -DJUCER_VST_SDK_FOLDER="${TRAVIS_BUILD_DIR}/ci/third-party/vstsdk366_27_06_2016_build_61/VST3 SDK"
       -DJuceDemoPlugin_jucer_FILE="${JUCE_ROOT}/examples/audio plugin demo/JuceDemoPlugin.jucer"
       -DPlugin_Host_jucer_FILE="${JUCE_ROOT}/examples/audio plugin host/Plugin Host.jucer"
       -DProjucer_jucer_FILE="${JUCE_ROOT}/extras/Projucer/Projucer.jucer"
     - cmake --build .
-    - cd ${TRAVIS_BUILD_DIR}/ci/JuceProjects-${JUCE_VERSION}/Release_build
+    - cd ${TRAVIS_BUILD_DIR}/ci/JuceProjects/Release_build
     - >
       cmake .. -DCMAKE_BUILD_TYPE=Release
+      -DJUCE_VERSION=${JUCE_VERSION}
       -DJUCER_VST_SDK_FOLDER="${TRAVIS_BUILD_DIR}/ci/third-party/vstsdk366_27_06_2016_build_61/VST3 SDK"
       -DJuceDemoPlugin_jucer_FILE="${JUCE_ROOT}/examples/audio plugin demo/JuceDemoPlugin.jucer"
       -DPlugin_Host_jucer_FILE="${JUCE_ROOT}/examples/audio plugin host/Plugin Host.jucer"
@@ -112,10 +114,11 @@ script-anchors:
       -DJUCER_VST3_SDK_FOLDER="${TRAVIS_BUILD_DIR}/ci/third-party/vstsdk366_27_06_2016_build_61/VST3 SDK"
 
     # Configure and build JUCE's Plugin Host, JuceDemoPlugin and Projucer
-    - mkdir ${TRAVIS_BUILD_DIR}/ci/JuceProjects-${JUCE_VERSION}/build
-    - cd ${TRAVIS_BUILD_DIR}/ci/JuceProjects-${JUCE_VERSION}/build
+    - mkdir ${TRAVIS_BUILD_DIR}/ci/JuceProjects/build
+    - cd ${TRAVIS_BUILD_DIR}/ci/JuceProjects/build
     - >
       cmake .. -G Xcode
+      -DJUCE_VERSION=${JUCE_VERSION}
       -DJUCER_VST_SDK_FOLDER="${TRAVIS_BUILD_DIR}/ci/third-party/vstsdk366_27_06_2016_build_61/VST3 SDK"
       -DJUCER_VST3_SDK_FOLDER="${TRAVIS_BUILD_DIR}/ci/third-party/vstsdk366_27_06_2016_build_61/VST3 SDK"
       -DJuceDemoPlugin_jucer_FILE="${JUCE_ROOT}/examples/audio plugin demo/JuceDemoPlugin.jucer"

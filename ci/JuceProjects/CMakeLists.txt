@@ -18,11 +18,16 @@
 cmake_minimum_required(VERSION 3.4)
 
 
-project(JuceProjects-4.2.0)
+if(NOT DEFINED JUCE_VERSION)
+  message(FATAL_ERROR "JUCE_VERSION must be defined")
+endif()
+
+
+project(JuceProjects-${JUCE_VERSION})
 
 
 set(generated_JUCE_ROOT
-  "${CMAKE_CURRENT_LIST_DIR}/../../Jucer2Reprojucer/generated/JUCE-4.2.0"
+  "${CMAKE_CURRENT_LIST_DIR}/../../Jucer2Reprojucer/generated/JUCE-${JUCE_VERSION}"
 )
 
 
@@ -31,13 +36,14 @@ add_subdirectory("${generated_JUCE_ROOT}/examples/audio plugin host"
 )
 
 if(NOT MSVC_VERSION EQUAL 1800)
-add_subdirectory("${generated_JUCE_ROOT}/examples/audio plugin demo"
-  "JuceDemoPlugin"
-)
+  add_subdirectory("${generated_JUCE_ROOT}/examples/audio plugin demo"
+    "JuceDemoPlugin"
+  )
 endif()
 
-if(NOT MSVC_VERSION EQUAL 1800 AND NOT MSVC_VERSION EQUAL 1900)
-add_subdirectory("${generated_JUCE_ROOT}/extras/Projucer"
-  "Projucer"
-)
+if(NOT JUCE_VERSION STREQUAL "4.2.0"
+    OR (NOT MSVC_VERSION EQUAL 1800 AND NOT MSVC_VERSION EQUAL 1900))
+  add_subdirectory("${generated_JUCE_ROOT}/extras/Projucer"
+    "Projucer"
+  )
 endif()
