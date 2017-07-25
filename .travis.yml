@@ -109,7 +109,7 @@ script-anchors:
       cmake .. -G Xcode
       -DJUCE_ROOT="${JUCE_ROOT}"
       -DJUCER_VST_SDK_FOLDER="${TRAVIS_BUILD_DIR}/ci/third-party/vstsdk366_27_06_2016_build_61/VST3 SDK"
-      -DJUCER_VST3_SDK_FOLDER="${TRAVIS_BUILD_DIR}/ci/third-party/VST_SDK/VST3_SDK"
+      -DJUCER_VST3_SDK_FOLDER="${TRAVIS_BUILD_DIR}/ci/third-party/vstsdk366_27_06_2016_build_61/VST3 SDK"
 
     # Configure and build JUCE's Plugin Host, JuceDemoPlugin and Projucer
     - mkdir ${TRAVIS_BUILD_DIR}/ci/JuceProjects-${JUCE_VERSION}/build
