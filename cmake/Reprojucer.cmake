@@ -1010,15 +1010,26 @@ function(jucer_project_end)
   if(DEFINED JUCER_OSX_BASE_SDK_VERSION_${CMAKE_BUILD_TYPE})
     set(osx_base_sdk_version ${JUCER_OSX_BASE_SDK_VERSION_${CMAKE_BUILD_TYPE}})
   else()
+    set(config_to_value)
     foreach(configuration_name ${JUCER_PROJECT_CONFIGURATIONS})
       if(DEFINED JUCER_OSX_BASE_SDK_VERSION_${configuration_name})
         list(APPEND all_confs_osx_base_sdk_version
           ${JUCER_OSX_BASE_SDK_VERSION_${configuration_name}}
         )
+        string(APPEND config_to_value "  ${configuration_name}: "
+          "\"${JUCER_OSX_BASE_SDK_VERSION_${configuration_name}}\"\n"
+        )
       endif()
     endforeach()
     if(all_confs_osx_base_sdk_version)
       list(GET all_confs_osx_base_sdk_version 0 osx_base_sdk_version)
+      list(REMOVE_DUPLICATES all_confs_osx_base_sdk_version)
+      list(LENGTH all_confs_osx_base_sdk_version all_confs_osx_base_sdk_version_length)
+      if(NOT all_confs_osx_base_sdk_version_length EQUAL 1)
+        message(STATUS "Different values for OSX_BASE_SDK_VERSION:\n${config_to_value}"
+          "Falling back to the first value: \"${osx_base_sdk_version}\"."
+        )
+      endif()
     endif()
   endif()
   if(osx_base_sdk_version AND NOT osx_base_sdk_version STREQUAL "default")
@@ -1044,15 +1055,26 @@ function(jucer_project_end)
   if(DEFINED JUCER_OSX_DEPLOYMENT_TARGET_${CMAKE_BUILD_TYPE})
     set(osx_deployment_target ${JUCER_OSX_DEPLOYMENT_TARGET_${CMAKE_BUILD_TYPE}})
   else()
+    set(config_to_value)
     foreach(configuration_name ${JUCER_PROJECT_CONFIGURATIONS})
       if(DEFINED JUCER_OSX_DEPLOYMENT_TARGET_${configuration_name})
         list(APPEND all_confs_osx_deployment_target
           ${JUCER_OSX_DEPLOYMENT_TARGET_${configuration_name}}
         )
+        string(APPEND config_to_value "  ${configuration_name}: "
+          "\"${JUCER_OSX_DEPLOYMENT_TARGET_${configuration_name}}\"\n"
+        )
       endif()
     endforeach()
     if(all_confs_osx_deployment_target)
       list(GET all_confs_osx_deployment_target 0 osx_deployment_target)
+      list(REMOVE_DUPLICATES all_confs_osx_deployment_target)
+      list(LENGTH all_confs_osx_deployment_target all_confs_osx_deployment_target_length)
+      if(NOT all_confs_osx_deployment_target_length EQUAL 1)
+        message(STATUS "Different values for OSX_DEPLOYMENT_TARGET:\n${config_to_value}"
+          "Falling back to the first value: \"${osx_deployment_target}\"."
+        )
+      endif()
     endif()
   endif()
   if(osx_deployment_target AND NOT osx_deployment_target STREQUAL "default")
