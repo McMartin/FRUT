@@ -771,24 +771,12 @@ function(jucer_export_target_configuration
 
       elseif(tag STREQUAL "OSX_BASE_SDK_VERSION")
         if(value MATCHES "10\\.([5-9]|10|11|12) SDK")
-          if(CMAKE_GENERATOR STREQUAL "Xcode")
-            set(CMAKE_OSX_SYSROOT "macosx10.${CMAKE_MATCH_1}" PARENT_SCOPE)
-          else()
-            execute_process(
-              COMMAND "xcrun" "--sdk" "macosx10.${CMAKE_MATCH_1}" "--show-sdk-path"
-              OUTPUT_VARIABLE sysroot
-              OUTPUT_STRIP_TRAILING_WHITESPACE
-            )
-            if(NOT IS_DIRECTORY "${sysroot}")
-              message(WARNING
-                "Running `xcrun --sdk macosx10.${CMAKE_MATCH_1} --show-sdk-path` "
-                "didn't output a valid directory."
-              )
-            else()
-              set(CMAKE_OSX_SYSROOT ${sysroot} PARENT_SCOPE)
-            endif()
-          endif()
-        elseif(NOT value STREQUAL "Use Default")
+          set(JUCER_OSX_BASE_SDK_VERSION_${configuration_name}
+            "10.${CMAKE_MATCH_1}" PARENT_SCOPE
+          )
+        elseif(value STREQUAL "Use Default")
+          set(JUCER_OSX_BASE_SDK_VERSION_${configuration_name} "default" PARENT_SCOPE)
+        else()
           message(FATAL_ERROR
             "Unsupported value for OSX_BASE_SDK_VERSION: \"${value}\"\n"
           )
@@ -796,8 +784,12 @@ function(jucer_export_target_configuration
 
       elseif(tag STREQUAL "OSX_DEPLOYMENT_TARGET")
         if(value MATCHES "10\\.([5-9]|10|11|12)")
-          set(CMAKE_OSX_DEPLOYMENT_TARGET "10.${CMAKE_MATCH_1}" PARENT_SCOPE)
-        elseif(NOT value STREQUAL "Use Default")
+          set(JUCER_OSX_DEPLOYMENT_TARGET_${configuration_name}
+            "10.${CMAKE_MATCH_1}" PARENT_SCOPE
+          )
+        elseif(value STREQUAL "Use Default")
+          set(JUCER_OSX_DEPLOYMENT_TARGET_${configuration_name} "default" PARENT_SCOPE)
+        else()
           message(FATAL_ERROR
             "Unsupported value for OSX_DEPLOYMENT_TARGET: \"${value}\"\n"
           )
@@ -1004,6 +996,7 @@ function(jucer_project_end)
       message(STATUS
         "Setting CMAKE_BUILD_TYPE to \"${first_configuration}\" as it was not specified."
       )
+      set(CMAKE_BUILD_TYPE ${first_configuration})
       set(CMAKE_BUILD_TYPE ${first_configuration} PARENT_SCOPE)
     elseif(NOT "${CMAKE_BUILD_TYPE}" IN_LIST JUCER_PROJECT_CONFIGURATIONS)
       message(FATAL_ERROR "Undefined build configuration: ${CMAKE_BUILD_TYPE}\n"
@@ -1013,6 +1006,58 @@ function(jucer_project_end)
   endif()
 
   set(CMAKE_CONFIGURATION_TYPES ${JUCER_PROJECT_CONFIGURATIONS} PARENT_SCOPE)
+
+  if(DEFINED JUCER_OSX_BASE_SDK_VERSION_${CMAKE_BUILD_TYPE})
+    set(osx_base_sdk_version ${JUCER_OSX_BASE_SDK_VERSION_${CMAKE_BUILD_TYPE}})
+  else()
+    foreach(configuration_name ${JUCER_PROJECT_CONFIGURATIONS})
+      if(DEFINED JUCER_OSX_BASE_SDK_VERSION_${configuration_name})
+        list(APPEND all_confs_osx_base_sdk_version
+          ${JUCER_OSX_BASE_SDK_VERSION_${configuration_name}}
+        )
+      endif()
+    endforeach()
+    if(all_confs_osx_base_sdk_version)
+      list(GET all_confs_osx_base_sdk_version 0 osx_base_sdk_version)
+    endif()
+  endif()
+  if(osx_base_sdk_version AND NOT osx_base_sdk_version STREQUAL "default")
+    if(CMAKE_GENERATOR STREQUAL "Xcode")
+      set(CMAKE_OSX_SYSROOT "macosx${osx_base_sdk_version}")
+    else()
+      execute_process(
+        COMMAND "xcrun" "--sdk" "macosx${osx_base_sdk_version}" "--show-sdk-path"
+        OUTPUT_VARIABLE sysroot
+        OUTPUT_STRIP_TRAILING_WHITESPACE
+      )
+      if(NOT IS_DIRECTORY "${sysroot}")
+        message(WARNING
+          "Running `xcrun --sdk macosx${osx_base_sdk_version} --show-sdk-path` "
+          "didn't output a valid directory."
+        )
+      else()
+        set(CMAKE_OSX_SYSROOT ${sysroot} PARENT_SCOPE)
+      endif()
+    endif()
+  endif()
+
+  if(DEFINED JUCER_OSX_DEPLOYMENT_TARGET_${CMAKE_BUILD_TYPE})
+    set(osx_deployment_target ${JUCER_OSX_DEPLOYMENT_TARGET_${CMAKE_BUILD_TYPE}})
+  else()
+    foreach(configuration_name ${JUCER_PROJECT_CONFIGURATIONS})
+      if(DEFINED JUCER_OSX_DEPLOYMENT_TARGET_${configuration_name})
+        list(APPEND all_confs_osx_deployment_target
+          ${JUCER_OSX_DEPLOYMENT_TARGET_${configuration_name}}
+        )
+      endif()
+    endforeach()
+    if(all_confs_osx_deployment_target)
+      list(GET all_confs_osx_deployment_target 0 osx_deployment_target)
+    endif()
+  endif()
+  if(osx_deployment_target AND NOT osx_deployment_target STREQUAL "default")
+    set(CMAKE_OSX_DEPLOYMENT_TARGET "${osx_deployment_target}" PARENT_SCOPE)
+  endif()
 
   project(${JUCER_PROJECT_NAME})
 
