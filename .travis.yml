@@ -20,7 +20,7 @@ install-anchors:
     - cmake --version
 
 script-anchors:
-  - &script-linux
+  - &script-Makefiles
     - set -e
 
     # Configure and build BinaryDataBuilder, IconBuilder and Jucer2Reprojucer
@@ -64,7 +64,7 @@ script-anchors:
 
     - set +e
 
-  - &script-osx
+  - &script-Xcode
     - set -e
 
     # Configure and build BinaryDataBuilder, IconBuilder and Jucer2Reprojucer
@@ -114,7 +114,7 @@ matrix:
             - libxinerama-dev
             - libxrandr-dev
       install: *install-linux
-      script: *script-linux
+      script: *script-Makefiles
 
     - os: linux
       dist: trusty
@@ -122,14 +122,24 @@ matrix:
       env: JUCE_VERSION=4.3.1
       addons: *addons-linux
       install: *install-linux
-      script: *script-linux
+      script: *script-Makefiles
 
     - os: osx
-      env: JUCE_VERSION=4.2.0
+      env: JUCE_VERSION=4.2.0 GENERATOR=Makefiles
       install: *install-osx
-      script: *script-osx
+      script: *script-Makefiles
 
     - os: osx
-      env: JUCE_VERSION=4.3.1
+      env: JUCE_VERSION=4.3.1 GENERATOR=Makefiles
       install: *install-osx
-      script: *script-osx
+      script: *script-Makefiles
+
+    - os: osx
+      env: JUCE_VERSION=4.2.0 GENERATOR=Xcode
+      install: *install-osx
+      script: *script-Xcode
+
+    - os: osx
+      env: JUCE_VERSION=4.3.1 GENERATOR=Xcode
+      install: *install-osx
+      script: *script-Xcode
