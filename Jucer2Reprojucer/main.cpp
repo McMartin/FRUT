@@ -672,7 +672,11 @@ int main(int argc, char* argv[])
 
         if (exporterType == "XCODE_MAC")
         {
-          out << "  " << getSetting(exporter, "EXTRA_FRAMEWORKS", "extraFrameworks")
+          out << "  " << getSetting(exporter,
+                           "CUSTOM_XCODE_RESOURCE_FOLDERS",
+                           "customXcodeResourceFolders")
+              << "\n"
+              << "  " << getSetting(exporter, "EXTRA_FRAMEWORKS", "extraFrameworks")
               << "\n"
               << "  " << getSetting(exporter, "PREBUILD_SHELL_SCRIPT", "prebuildCommand")
               << "\n"

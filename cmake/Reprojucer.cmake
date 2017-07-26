@@ -434,6 +434,7 @@ function(jucer_export_target exporter)
     list(APPEND export_target_settings_tags
       "TARGET_PROJECT_FOLDER"
       "VST3_SDK_FOLDER"
+      "CUSTOM_XCODE_RESOURCE_FOLDERS"
       "EXTRA_FRAMEWORKS"
       "PREBUILD_SHELL_SCRIPT"
       "POSTBUILD_SHELL_SCRIPT"
@@ -514,6 +515,15 @@ function(jucer_export_target exporter)
           __abs_path_based_on_jucer_project_dir("${value}" value)
           set(JUCER_LARGE_ICON ${value} PARENT_SCOPE)
         endif()
+
+      elseif(tag STREQUAL "CUSTOM_XCODE_RESOURCE_FOLDERS")
+        string(REPLACE "\n" ";" value "${value}")
+        set(resource_folders)
+        foreach(folder ${value})
+          __abs_path_based_on_jucer_project_dir("${folder}" abs_folder)
+          list(APPEND resource_folders "${abs_folder}")
+        endforeach()
+        set(JUCER_CUSTOM_XCODE_RESOURCE_FOLDERS ${resource_folders} PARENT_SCOPE)
 
       elseif(tag STREQUAL "EXTRA_FRAMEWORKS")
         string(REPLACE "," ";" value "${value}")
@@ -1077,6 +1087,7 @@ function(jucer_project_end)
     set_target_properties(${target_name} PROPERTIES WIN32_EXECUTABLE TRUE)
     __set_common_target_properties(${target_name})
     __link_osx_frameworks(${target_name} ${JUCER_PROJECT_OSX_FRAMEWORKS})
+    __add_xcode_resources(${target_name} ${JUCER_CUSTOM_XCODE_RESOURCE_FOLDERS})
 
   elseif(JUCER_PROJECT_TYPE STREQUAL "Static Library")
     add_library(${target_name} STATIC ${all_sources})
@@ -1131,6 +1142,7 @@ function(jucer_project_end)
         __set_plugin_output_directory_property(${vst_target_name} "VST" "VST" ".vst")
         __set_JucePlugin_Build_defines(${vst_target_name} "VSTPlugIn")
         __link_osx_frameworks(${vst_target_name} ${JUCER_PROJECT_OSX_FRAMEWORKS})
+        __add_xcode_resources(${vst_target_name} ${JUCER_CUSTOM_XCODE_RESOURCE_FOLDERS})
       endif()
 
       if(JUCER_BUILD_AUDIOUNIT)
@@ -1190,6 +1202,7 @@ function(jucer_project_end)
           ${JUCER_PROJECT_OSX_FRAMEWORKS} "AudioUnit" "CoreAudioKit"
         )
         __link_osx_frameworks(${au_target_name} ${au_plugin_osx_frameworks})
+        __add_xcode_resources(${au_target_name} ${JUCER_CUSTOM_XCODE_RESOURCE_FOLDERS})
       endif()
     else()
       add_library(${target_name} MODULE ${all_sources})
@@ -2027,6 +2040,21 @@ function(__link_osx_frameworks target_name)
     foreach(framework_name ${osx_frameworks})
       find_library(${framework_name}_framework ${framework_name})
       target_link_libraries(${target_name} "${${framework_name}_framework}")
+    endforeach()
+  endif()
+
+endfunction()
+
+
+function(__add_xcode_resources target_name)
+
+  set(resource_folders ${ARGN})
+
+  if(APPLE)
+    foreach(folder ${resource_folders})
+      add_custom_command(TARGET ${target_name} PRE_BUILD
+        COMMAND rsync -r "${folder}" "$<TARGET_FILE_DIR:${target_name}>/../Resources"
+      )
     endforeach()
   endif()
 
