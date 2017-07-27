@@ -5,8 +5,8 @@ branches:
 language: cpp
 
 before_install:
-  - export JUCE_ROOT=${TRAVIS_BUILD_DIR}/ci/tmp/JUCE-${JUCE_VERSION}
-  - git clone --branch=${JUCE_VERSION} --depth=1 --single-branch -- https://github.com/WeAreROLI/JUCE.git $JUCE_ROOT
+  - export JUCE_ROOT="${TRAVIS_BUILD_DIR}/ci/tmp/JUCE-${JUCE_VERSION}"
+  - git clone --branch=${JUCE_VERSION} --depth=1 --single-branch -- https://github.com/WeAreROLI/JUCE.git "${JUCE_ROOT}"
 
 install-anchors:
   - &install-linux
@@ -20,7 +20,7 @@ install-anchors:
     - cmake --version
 
 script-anchors:
-  - &script-linux
+  - &script-Makefiles
     - set -e
 
     # Configure and build BinaryDataBuilder, IconBuilder and Jucer2Reprojucer
@@ -48,39 +48,23 @@ script-anchors:
     - git diff --quiet
 
     # Configure all JUCE projects
-    - mkdir ${TRAVIS_BUILD_DIR}/Jucer2Reprojucer/generated/JUCE-${JUCE_VERSION}/{Debug_build,Release_build}
-    - cd ${TRAVIS_BUILD_DIR}/Jucer2Reprojucer/generated/JUCE-${JUCE_VERSION}/Debug_build
-    - >
-      cmake .. -DCMAKE_BUILD_TYPE=Debug
-      -DJUCE_ROOT="${JUCE_ROOT}"
-      -DJUCER_VST_SDK_FOLDER="${TRAVIS_BUILD_DIR}/ci/third-party/vstsdk366_27_06_2016_build_61/VST3 SDK"
-    - cd ${TRAVIS_BUILD_DIR}/Jucer2Reprojucer/generated/JUCE-${JUCE_VERSION}/Release_build
-    - >
-      cmake .. -DCMAKE_BUILD_TYPE=Release
-      -DJUCE_ROOT="${JUCE_ROOT}"
-      -DJUCER_VST_SDK_FOLDER="${TRAVIS_BUILD_DIR}/ci/third-party/vstsdk366_27_06_2016_build_61/VST3 SDK"
+    - mkdir ${TRAVIS_BUILD_DIR}/ci/AllJuceProjects/{Debug_build,Release_build}
+    - cd ${TRAVIS_BUILD_DIR}/ci/AllJuceProjects/Debug_build
+    - cmake .. -DCMAKE_BUILD_TYPE=Debug -DJUCE_VERSION="${JUCE_VERSION}"
+    - cd ${TRAVIS_BUILD_DIR}/ci/AllJuceProjects/Release_build
+    - cmake .. -DCMAKE_BUILD_TYPE=Release -DJUCE_VERSION="${JUCE_VERSION}"
 
     # Configure and build JUCE's Plugin Host, JuceDemoPlugin and Projucer
-    - mkdir ${TRAVIS_BUILD_DIR}/ci/JuceProjects-${JUCE_VERSION}/{Debug_build,Release_build}
-    - cd ${TRAVIS_BUILD_DIR}/ci/JuceProjects-${JUCE_VERSION}/Debug_build
-    - >
-      cmake .. -DCMAKE_BUILD_TYPE=Debug
-      -DJUCER_VST_SDK_FOLDER="${TRAVIS_BUILD_DIR}/ci/third-party/vstsdk366_27_06_2016_build_61/VST3 SDK"
-      -DJuceDemoPlugin_jucer_FILE="${JUCE_ROOT}/examples/audio plugin demo/JuceDemoPlugin.jucer"
-      -DPlugin_Host_jucer_FILE="${JUCE_ROOT}/examples/audio plugin host/Plugin Host.jucer"
-      -DProjucer_jucer_FILE="${JUCE_ROOT}/extras/Projucer/Projucer.jucer"
+    - mkdir ${TRAVIS_BUILD_DIR}/ci/JuceProjects/{Debug_build,Release_build}
+    - cd ${TRAVIS_BUILD_DIR}/ci/JuceProjects/Debug_build
+    - cmake .. -DCMAKE_BUILD_TYPE=Debug -DJUCE_VERSION=${JUCE_VERSION}
     - cmake --build .
-    - cd ${TRAVIS_BUILD_DIR}/ci/JuceProjects-${JUCE_VERSION}/Release_build
-    - >
-      cmake .. -DCMAKE_BUILD_TYPE=Release
-      -DJUCER_VST_SDK_FOLDER="${TRAVIS_BUILD_DIR}/ci/third-party/vstsdk366_27_06_2016_build_61/VST3 SDK"
-      -DJuceDemoPlugin_jucer_FILE="${JUCE_ROOT}/examples/audio plugin demo/JuceDemoPlugin.jucer"
-      -DPlugin_Host_jucer_FILE="${JUCE_ROOT}/examples/audio plugin host/Plugin Host.jucer"
-      -DProjucer_jucer_FILE="${JUCE_ROOT}/extras/Projucer/Projucer.jucer"
+    - cd ${TRAVIS_BUILD_DIR}/ci/JuceProjects/Release_build
+    - cmake .. -DCMAKE_BUILD_TYPE=Release -DJUCE_VERSION=${JUCE_VERSION}
 
     - set +e
 
-  - &script-osx
+  - &script-Xcode
     - set -e
 
     # Configure and build BinaryDataBuilder, IconBuilder and Jucer2Reprojucer
@@ -103,24 +87,14 @@ script-anchors:
     - git diff --quiet
 
     # Configure all JUCE projects
-    - mkdir ${TRAVIS_BUILD_DIR}/Jucer2Reprojucer/generated/JUCE-${JUCE_VERSION}/build
-    - cd ${TRAVIS_BUILD_DIR}/Jucer2Reprojucer/generated/JUCE-${JUCE_VERSION}/build
-    - >
-      cmake .. -G Xcode
-      -DJUCE_ROOT="${JUCE_ROOT}"
-      -DJUCER_VST_SDK_FOLDER="${TRAVIS_BUILD_DIR}/ci/third-party/vstsdk366_27_06_2016_build_61/VST3 SDK"
-      -DJUCER_VST3_SDK_FOLDER="${TRAVIS_BUILD_DIR}/ci/third-party/VST_SDK/VST3_SDK"
+    - mkdir ${TRAVIS_BUILD_DIR}/ci/AllJuceProjects/build
+    - cd ${TRAVIS_BUILD_DIR}/ci/AllJuceProjects/build
+    - cmake .. -G Xcode -DJUCE_VERSION="${JUCE_VERSION}"
 
     # Configure and build JUCE's Plugin Host, JuceDemoPlugin and Projucer
-    - mkdir ${TRAVIS_BUILD_DIR}/ci/JuceProjects-${JUCE_VERSION}/build
-    - cd ${TRAVIS_BUILD_DIR}/ci/JuceProjects-${JUCE_VERSION}/build
-    - >
-      cmake .. -G Xcode
-      -DJUCER_VST_SDK_FOLDER="${TRAVIS_BUILD_DIR}/ci/third-party/vstsdk366_27_06_2016_build_61/VST3 SDK"
-      -DJUCER_VST3_SDK_FOLDER="${TRAVIS_BUILD_DIR}/ci/third-party/vstsdk366_27_06_2016_build_61/VST3 SDK"
-      -DJuceDemoPlugin_jucer_FILE="${JUCE_ROOT}/examples/audio plugin demo/JuceDemoPlugin.jucer"
-      -DPlugin_Host_jucer_FILE="${JUCE_ROOT}/examples/audio plugin host/Plugin Host.jucer"
-      -DProjucer_jucer_FILE="${JUCE_ROOT}/extras/Projucer/Projucer.jucer"
+    - mkdir ${TRAVIS_BUILD_DIR}/ci/JuceProjects/build
+    - cd ${TRAVIS_BUILD_DIR}/ci/JuceProjects/build
+    - cmake .. -G Xcode -DJUCE_VERSION=${JUCE_VERSION}
     - cmake --build . --config Debug
 
     - set +e
@@ -140,7 +114,7 @@ matrix:
             - libxinerama-dev
             - libxrandr-dev
       install: *install-linux
-      script: *script-linux
+      script: *script-Makefiles
 
     - os: linux
       dist: trusty
@@ -148,14 +122,24 @@ matrix:
       env: JUCE_VERSION=4.3.1
       addons: *addons-linux
       install: *install-linux
-      script: *script-linux
+      script: *script-Makefiles
 
     - os: osx
-      env: JUCE_VERSION=4.2.0
+      env: JUCE_VERSION=4.2.0 GENERATOR=Makefiles
       install: *install-osx
-      script: *script-osx
+      script: *script-Makefiles
 
     - os: osx
-      env: JUCE_VERSION=4.3.1
+      env: JUCE_VERSION=4.3.1 GENERATOR=Makefiles
       install: *install-osx
-      script: *script-osx
+      script: *script-Makefiles
+
+    - os: osx
+      env: JUCE_VERSION=4.2.0 GENERATOR=Xcode
+      install: *install-osx
+      script: *script-Xcode
+
+    - os: osx
+      env: JUCE_VERSION=4.3.1 GENERATOR=Xcode
+      install: *install-osx
+      script: *script-Xcode
