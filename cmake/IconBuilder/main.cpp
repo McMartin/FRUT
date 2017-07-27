@@ -15,8 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with JUCE.cmake.  If not, see <http://www.gnu.org/licenses/>.
 
-#include "JuceHeader.h"
-
+#include "Source/jucer_Headers.h"
 #include "Source/Project Saving/jucer_ProjectExporter.h"
 #include "Source/Utility/jucer_FileHelpers.h"
 
