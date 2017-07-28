@@ -14,7 +14,7 @@
     <key>CFBundleDisplayName</key>
     <string>@JUCER_PROJECT_NAME@</string>
     <key>CFBundlePackageType</key>
-    <string>@package_type@</string>
+    <string>@bundle_package_type@</string>
     <key>CFBundleSignature</key>
     <string>@bundle_signature@</string>
     <key>CFBundleShortVersionString</key>

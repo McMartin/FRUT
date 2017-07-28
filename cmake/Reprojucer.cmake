@@ -1990,7 +1990,7 @@ endfunction()
 
 
 function(__generate_plist_file
-  target_name plist_suffix package_type bundle_signature extra_plist_entries
+  target_name plist_suffix bundle_package_type bundle_signature extra_plist_entries
 )
 
   set(plist_filename "Info-${plist_suffix}.plist")
