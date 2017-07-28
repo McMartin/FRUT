@@ -4,11 +4,11 @@
 <plist>
   <dict>
     <key>CFBundleExecutable</key>
-    <string>${MACOSX_BUNDLE_BUNDLE_NAME}</string>
+    <string>@bundle_executable@</string>
     <key>CFBundleIconFile</key>
     <string>@JUCER_BUNDLE_ICON_FILE@</string>
     <key>CFBundleIdentifier</key>
-    <string>${MACOSX_BUNDLE_GUI_IDENTIFIER}</string>
+    <string>@bundle_identifier@</string>
     <key>CFBundleName</key>
     <string>@JUCER_PROJECT_NAME@</string>
     <key>CFBundleDisplayName</key>

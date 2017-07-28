@@ -1995,21 +1995,23 @@ function(__generate_plist_file
 
   set(plist_filename "Info-${plist_suffix}.plist")
   if(CMAKE_GENERATOR STREQUAL "Xcode")
-    configure_file("${Reprojucer_templates_DIR}/Info-Xcode.plist"
-      "${plist_filename}" @ONLY
-    )
+    set(bundle_executable "\${EXECUTABLE_NAME}")
+    set(bundle_identifier "\$(PRODUCT_BUNDLE_IDENTIFIER)")
     set_target_properties(${target_name} PROPERTIES
       XCODE_ATTRIBUTE_INFOPLIST_FILE "${CMAKE_CURRENT_BINARY_DIR}/${plist_filename}"
       XCODE_ATTRIBUTE_PRODUCT_BUNDLE_IDENTIFIER "${JUCER_BUNDLE_IDENTIFIER}"
     )
   else()
-    configure_file("${Reprojucer_templates_DIR}/Info.plist" "${plist_filename}" @ONLY)
+    set(bundle_executable "\${MACOSX_BUNDLE_BUNDLE_NAME}")
+    set(bundle_identifier "\${MACOSX_BUNDLE_GUI_IDENTIFIER}")
     set_target_properties(${target_name} PROPERTIES
       MACOSX_BUNDLE_BUNDLE_NAME "${JUCER_PROJECT_NAME}"
       MACOSX_BUNDLE_GUI_IDENTIFIER "${JUCER_BUNDLE_IDENTIFIER}"
       MACOSX_BUNDLE_INFO_PLIST "${CMAKE_CURRENT_BINARY_DIR}/${plist_filename}"
     )
   endif()
+
+  configure_file("${Reprojucer_templates_DIR}/Info.plist" "${plist_filename}" @ONLY)
 
 endfunction()
 
