@@ -1234,6 +1234,8 @@ function(jucer_project_end)
           set(au_main_type_code "${JUCER_PLUGIN_AU_MAIN_TYPE}")
         endif()
 
+        __version_to_dec("${JUCER_PROJECT_VERSION}" dec_version)
+
         set(audio_components_entries
           "<key>AudioComponents</key>
           <array>
@@ -1251,7 +1253,7 @@ function(jucer_project_end)
               <key>type</key>
               <string>${au_main_type_code}</string>
               <key>version</key>
-              <integer>${JUCER_PROJECT_VERSION_AS_HEX}</integer>
+              <integer>${dec_version}</integer>
             </dict>
           </array>"
         )
@@ -2167,7 +2169,7 @@ function(__dec_to_hex dec_value out_hex_value)
 endfunction()
 
 
-function(__version_to_hex version out_hex_value)
+function(__version_to_dec version out_dec_value)
 
   string(REPLACE "." ";" segments "${version}")
   list(LENGTH segments segments_size)
@@ -2184,6 +2186,14 @@ function(__version_to_hex version out_hex_value)
     math(EXPR dec_value "${dec_value} << 8 + ${revision}")
   endif()
 
+  set(${out_dec_value} "${dec_value}" PARENT_SCOPE)
+
+endfunction()
+
+
+function(__version_to_hex version out_hex_value)
+
+  __version_to_dec("${version}" dec_value)
   __dec_to_hex("${dec_value}" hex_value)
   set(${out_hex_value} "${hex_value}" PARENT_SCOPE)
 
