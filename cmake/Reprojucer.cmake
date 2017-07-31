@@ -1236,26 +1236,26 @@ function(jucer_project_end)
 
         __version_to_dec("${JUCER_PROJECT_VERSION}" dec_version)
 
-        set(audio_components_entries
-          "<key>AudioComponents</key>
-          <array>
-            <dict>
-              <key>name</key>
-              <string>${JUCER_PLUGIN_MANUFACTURER}: ${JUCER_PLUGIN_NAME}</string>
-              <key>description</key>
-              <string>${JUCER_PLUGIN_DESCRIPTION}</string>
-              <key>factoryFunction</key>
-              <string>${JUCER_PLUGIN_AU_EXPORT_PREFIX}Factory</string>
-              <key>manufacturer</key>
-              <string>${JUCER_PLUGIN_MANUFACTURER_CODE}</string>
-              <key>type</key>
-              <string>${au_main_type_code}</string>
-              <key>subtype</key>
-              <string>${JUCER_PLUGIN_CODE}</string>
-              <key>version</key>
-              <integer>${dec_version}</integer>
-            </dict>
-          </array>"
+        set(audio_components_entries "
+    <key>AudioComponents</key>
+    <array>
+      <dict>
+        <key>name</key>
+        <string>${JUCER_PLUGIN_MANUFACTURER}: ${JUCER_PLUGIN_NAME}</string>
+        <key>description</key>
+        <string>${JUCER_PLUGIN_DESCRIPTION}</string>
+        <key>factoryFunction</key>
+        <string>${JUCER_PLUGIN_AU_EXPORT_PREFIX}Factory</string>
+        <key>manufacturer</key>
+        <string>${JUCER_PLUGIN_MANUFACTURER_CODE}</string>
+        <key>type</key>
+        <string>${au_main_type_code}</string>
+        <key>subtype</key>
+        <string>${JUCER_PLUGIN_CODE}</string>
+        <key>version</key>
+        <integer>${dec_version}</integer>
+      </dict>
+    </array>"
         )
 
         __generate_plist_file(${au_target_name}

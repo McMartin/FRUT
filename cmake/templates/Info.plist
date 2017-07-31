@@ -24,7 +24,6 @@
     <key>NSHumanReadableCopyright</key>
     <string>@JUCER_COMPANY_NAME@</string>
     <key>NSHighResolutionCapable</key>
-    <true/>
-    @extra_plist_entries@
+    <true/>@extra_plist_entries@
   </dict>
 </plist>
