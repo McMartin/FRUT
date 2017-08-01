@@ -29,6 +29,10 @@ add_subdirectory("../../cmake/IconBuilder"
   "IconBuilder"
 )
 
+add_subdirectory("../../cmake/PListMerger"
+  "PListMerger"
+)
+
 add_subdirectory("../../Jucer2Reprojucer"
   "Jucer2Reprojucer"
 )
