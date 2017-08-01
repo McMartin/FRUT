@@ -436,6 +436,7 @@ function(jucer_export_target exporter)
       "VST3_SDK_FOLDER"
       "CUSTOM_XCODE_RESOURCE_FOLDERS"
       "EXTRA_FRAMEWORKS"
+      "CUSTOM_PLIST"
       "PREBUILD_SHELL_SCRIPT"
       "POSTBUILD_SHELL_SCRIPT"
     )
@@ -540,6 +541,9 @@ function(jucer_export_target exporter)
         string(REPLACE " " "" value "${value}")
         list(APPEND JUCER_PROJECT_OSX_FRAMEWORKS ${value})
         set(JUCER_PROJECT_OSX_FRAMEWORKS ${JUCER_PROJECT_OSX_FRAMEWORKS} PARENT_SCOPE)
+
+      elseif(tag STREQUAL "CUSTOM_PLIST")
+        set(JUCER_CUSTOM_PLIST "${value}" PARENT_SCOPE)
 
       elseif(tag STREQUAL "PREBUILD_SHELL_SCRIPT")
         set(script_content "${value}")
@@ -1136,6 +1140,67 @@ function(jucer_project_end)
     PROPERTIES HEADER_FILE_ONLY TRUE
   )
 
+  set(main_plist_entries "
+    <key>CFBundleExecutable</key>
+    <string>@bundle_executable@</string>
+    <key>CFBundleIconFile</key>
+    <string>@JUCER_BUNDLE_ICON_FILE@</string>
+    <key>CFBundleIdentifier</key>
+    <string>@bundle_identifier@</string>
+    <key>CFBundleName</key>
+    <string>@JUCER_PROJECT_NAME@</string>
+    <key>CFBundleDisplayName</key>
+    <string>@JUCER_PROJECT_NAME@</string>
+    <key>CFBundlePackageType</key>
+    <string>@bundle_package_type@</string>
+    <key>CFBundleSignature</key>
+    <string>@bundle_signature@</string>
+    <key>CFBundleShortVersionString</key>
+    <string>@JUCER_PROJECT_VERSION@</string>
+    <key>CFBundleVersion</key>
+    <string>@JUCER_PROJECT_VERSION@</string>
+    <key>NSHumanReadableCopyright</key>
+    <string>@JUCER_COMPANY_NAME@</string>
+    <key>NSHighResolutionCapable</key>
+    <true/>"
+  )
+
+  if(JUCER_CUSTOM_PLIST)
+    message(STATUS "Building PListMerger for ${JUCER_PROJECT_NAME}")
+    try_compile(PListMerger
+      "${Reprojucer.cmake_DIR}/PListMerger/_build/${CMAKE_GENERATOR}"
+      "${Reprojucer.cmake_DIR}/PListMerger"
+      PListMerger install
+      CMAKE_FLAGS
+      "-DJUCE_modules_DIRS=${JUCER_PROJECT_MODULES_FOLDERS}"
+      "-DCMAKE_INSTALL_PREFIX=${CMAKE_CURRENT_BINARY_DIR}"
+    )
+    if(NOT PListMerger)
+      message(FATAL_ERROR "Failed to build PListMerger")
+    endif()
+    message(STATUS "PListMerger has been successfully built")
+
+    execute_process(
+      COMMAND
+      "${CMAKE_CURRENT_BINARY_DIR}/PListMerger/PListMerger"
+      "${JUCER_CUSTOM_PLIST}"
+      "<plist><dict>${main_plist_entries}</dict></plist>"
+      OUTPUT_VARIABLE PListMerger_output
+      OUTPUT_STRIP_TRAILING_WHITESPACE
+      RESULT_VARIABLE PListMerger_return_code
+    )
+    if(NOT PListMerger_return_code EQUAL 0)
+      message(FATAL_ERROR "Error when executing PListMerger")
+    endif()
+
+    if(WIN32)
+      string(REPLACE "\r\n" "\n" PListMerger_output "${PListMerger_output}")
+    endif()
+    string(REPLACE "<plist>\n  <dict>" "" PListMerger_output "${PListMerger_output}")
+    string(REPLACE "\n  </dict>\n</plist>" "" PListMerger_output "${PListMerger_output}")
+    set(main_plist_entries "${PListMerger_output}")
+  endif()
+
   string(REGEX REPLACE "[^A-Za-z0-9_.+-]" "_" target_name "${JUCER_PROJECT_NAME}")
 
   set(all_sources
@@ -1195,8 +1260,8 @@ function(jucer_project_end)
       )
     endif()
 
-    __generate_plist_file(${target_name}
-      "App" "APPL" "????" "${bundle_document_types_entries}"
+    __generate_plist_file(${target_name} "App" "APPL" "????"
+      "${main_plist_entries}" "${bundle_document_types_entries}"
     )
     set_target_properties(${target_name} PROPERTIES WIN32_EXECUTABLE TRUE)
     __set_common_target_properties(${target_name})
@@ -1250,7 +1315,9 @@ function(jucer_project_end)
           ${JUCER_PROJECT_XCODE_RESOURCES}
         )
         target_link_libraries(${vst_target_name} ${target_name}_Shared_Code)
-        __generate_plist_file(${vst_target_name} "VST" "BNDL" "????" "")
+        __generate_plist_file(${vst_target_name} "VST" "BNDL" "????"
+          "${main_plist_entries}" ""
+        )
         __set_bundle_properties(${vst_target_name} "vst")
         __set_common_target_properties(${vst_target_name})
         __set_plugin_output_directory_property(${vst_target_name} "VST" "VST" ".vst")
@@ -1305,8 +1372,8 @@ function(jucer_project_end)
     </array>"
         )
 
-        __generate_plist_file(${au_target_name}
-          "AU" "BNDL" "????" "${audio_components_entries}"
+        __generate_plist_file(${au_target_name} "AU" "BNDL" "????"
+          "${main_plist_entries}" "${audio_components_entries}"
         )
         __set_bundle_properties(${au_target_name} "component")
         __set_common_target_properties(${au_target_name})
@@ -2037,7 +2104,9 @@ endfunction()
 
 
 function(__generate_plist_file
-  target_name plist_suffix bundle_package_type bundle_signature extra_plist_entries
+  target_name plist_suffix
+  bundle_package_type bundle_signature
+  main_plist_entries extra_plist_entries
 )
 
   set(plist_filename "Info-${plist_suffix}.plist")
@@ -2058,6 +2127,7 @@ function(__generate_plist_file
     )
   endif()
 
+  string(CONFIGURE "${main_plist_entries}" main_plist_entries @ONLY)
   string(CONFIGURE "${extra_plist_entries}" extra_plist_entries @ONLY)
   configure_file("${Reprojucer_templates_DIR}/Info.plist" "${plist_filename}" @ONLY)
 
