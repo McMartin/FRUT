@@ -424,6 +424,25 @@ jucer_export_target(
   ICON_LARGE "Source/BinaryData/juce_icon.png"
   # CUSTOM_XCODE_RESOURCE_FOLDERS
   DOCUMENT_FILE_EXTENSIONS ".jucer"
+  CUSTOM_PLIST "<plist>
+<dict>
+	<key>NSAppTransportSecurity</key>
+	<dict>
+		<key>NSAllowsArbitraryLoads</key>
+		<true/>
+		<key>NSExceptionDomains</key>
+		<dict>
+			<key>amazonaws.com</key>
+			<dict>
+				<key>NSExceptionAllowsInsecureHTTPLoads</key>
+				<true/>
+				<key>NSIncludesSubdomains</key>
+				<true/>
+			</dict>
+		</dict>
+	</dict>
+</dict>
+</plist>"
   # EXTRA_FRAMEWORKS
   # PREBUILD_SHELL_SCRIPT
   # POSTBUILD_SHELL_SCRIPT
