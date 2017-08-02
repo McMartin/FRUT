@@ -1234,26 +1234,28 @@ function(jucer_project_end)
           set(au_main_type_code "${JUCER_PLUGIN_AU_MAIN_TYPE}")
         endif()
 
-        set(audio_components_entries
-          "<key>AudioComponents</key>
-          <array>
-            <dict>
-              <key>description</key>
-              <string>${JUCER_PLUGIN_DESCRIPTION}</string>
-              <key>factoryFunction</key>
-              <string>${JUCER_PLUGIN_AU_EXPORT_PREFIX}Factory</string>
-              <key>manufacturer</key>
-              <string>${JUCER_PLUGIN_MANUFACTURER_CODE}</string>
-              <key>name</key>
-              <string>${JUCER_PLUGIN_MANUFACTURER}: ${JUCER_PLUGIN_NAME}</string>
-              <key>subtype</key>
-              <string>${JUCER_PLUGIN_CODE}</string>
-              <key>type</key>
-              <string>${au_main_type_code}</string>
-              <key>version</key>
-              <integer>${JUCER_PROJECT_VERSION_AS_HEX}</integer>
-            </dict>
-          </array>"
+        __version_to_dec("${JUCER_PROJECT_VERSION}" dec_version)
+
+        set(audio_components_entries "
+    <key>AudioComponents</key>
+    <array>
+      <dict>
+        <key>name</key>
+        <string>${JUCER_PLUGIN_MANUFACTURER}: ${JUCER_PLUGIN_NAME}</string>
+        <key>description</key>
+        <string>${JUCER_PLUGIN_DESCRIPTION}</string>
+        <key>factoryFunction</key>
+        <string>${JUCER_PLUGIN_AU_EXPORT_PREFIX}Factory</string>
+        <key>manufacturer</key>
+        <string>${JUCER_PLUGIN_MANUFACTURER_CODE}</string>
+        <key>type</key>
+        <string>${au_main_type_code}</string>
+        <key>subtype</key>
+        <string>${JUCER_PLUGIN_CODE}</string>
+        <key>version</key>
+        <integer>${dec_version}</integer>
+      </dict>
+    </array>"
         )
 
         __generate_plist_file(${au_target_name}
@@ -1988,26 +1990,28 @@ endfunction()
 
 
 function(__generate_plist_file
-  target_name plist_suffix package_type bundle_signature extra_plist_entries
+  target_name plist_suffix bundle_package_type bundle_signature extra_plist_entries
 )
 
   set(plist_filename "Info-${plist_suffix}.plist")
   if(CMAKE_GENERATOR STREQUAL "Xcode")
-    configure_file("${Reprojucer_templates_DIR}/Info-Xcode.plist"
-      "${plist_filename}" @ONLY
-    )
+    set(bundle_executable "\${EXECUTABLE_NAME}")
+    set(bundle_identifier "\$(PRODUCT_BUNDLE_IDENTIFIER)")
     set_target_properties(${target_name} PROPERTIES
       XCODE_ATTRIBUTE_INFOPLIST_FILE "${CMAKE_CURRENT_BINARY_DIR}/${plist_filename}"
       XCODE_ATTRIBUTE_PRODUCT_BUNDLE_IDENTIFIER "${JUCER_BUNDLE_IDENTIFIER}"
     )
   else()
-    configure_file("${Reprojucer_templates_DIR}/Info.plist" "${plist_filename}" @ONLY)
+    set(bundle_executable "\${MACOSX_BUNDLE_BUNDLE_NAME}")
+    set(bundle_identifier "\${MACOSX_BUNDLE_GUI_IDENTIFIER}")
     set_target_properties(${target_name} PROPERTIES
       MACOSX_BUNDLE_BUNDLE_NAME "${JUCER_PROJECT_NAME}"
       MACOSX_BUNDLE_GUI_IDENTIFIER "${JUCER_BUNDLE_IDENTIFIER}"
       MACOSX_BUNDLE_INFO_PLIST "${CMAKE_CURRENT_BINARY_DIR}/${plist_filename}"
     )
   endif()
+
+  configure_file("${Reprojucer_templates_DIR}/Info.plist" "${plist_filename}" @ONLY)
 
 endfunction()
 
@@ -2167,7 +2171,7 @@ function(__dec_to_hex dec_value out_hex_value)
 endfunction()
 
 
-function(__version_to_hex version out_hex_value)
+function(__version_to_dec version out_dec_value)
 
   string(REPLACE "." ";" segments "${version}")
   list(LENGTH segments segments_size)
@@ -2184,6 +2188,14 @@ function(__version_to_hex version out_hex_value)
     math(EXPR dec_value "${dec_value} << 8 + ${revision}")
   endif()
 
+  set(${out_dec_value} "${dec_value}" PARENT_SCOPE)
+
+endfunction()
+
+
+function(__version_to_hex version out_hex_value)
+
+  __version_to_dec("${version}" dec_value)
   __dec_to_hex("${dec_value}" hex_value)
   set(${out_hex_value} "${hex_value}" PARENT_SCOPE)
 
