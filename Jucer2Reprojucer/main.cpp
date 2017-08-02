@@ -684,7 +684,8 @@ int main(int argc, char* argv[])
                 << "\n";
           }
 
-          out << "  " << getSetting(exporter, "EXTRA_FRAMEWORKS", "extraFrameworks")
+          out << "  " << getSetting(exporter, "CUSTOM_PLIST", "customPList") << "\n"
+              << "  " << getSetting(exporter, "EXTRA_FRAMEWORKS", "extraFrameworks")
               << "\n"
               << "  " << getSetting(exporter, "PREBUILD_SHELL_SCRIPT", "prebuildCommand")
               << "\n"

@@ -227,6 +227,15 @@ jucer_export_target(
   ICON_LARGE "Resources/juce_icon.png"
   # CUSTOM_XCODE_RESOURCE_FOLDERS
   # DOCUMENT_FILE_EXTENSIONS
+  CUSTOM_PLIST "<plist>
+<dict>
+	<key>NSAppTransportSecurity</key>
+	<dict>
+		<key>NSAllowsArbitraryLoads</key>
+		<true/>
+	</dict>
+</dict>
+</plist>"
   # EXTRA_FRAMEWORKS
   # PREBUILD_SHELL_SCRIPT
   # POSTBUILD_SHELL_SCRIPT
