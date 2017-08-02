@@ -439,6 +439,12 @@ function(jucer_export_target exporter)
       "PREBUILD_SHELL_SCRIPT"
       "POSTBUILD_SHELL_SCRIPT"
     )
+
+    if(JUCER_PROJECT_TYPE STREQUAL "GUI Application")
+      list(APPEND export_target_settings_tags
+        "DOCUMENT_FILE_EXTENSIONS"
+      )
+    endif()
   endif()
 
   if(exporter STREQUAL "Visual Studio 2015" OR exporter STREQUAL "Visual Studio 2013")
@@ -524,6 +530,10 @@ function(jucer_export_target exporter)
           list(APPEND resource_folders "${abs_folder}")
         endforeach()
         set(JUCER_CUSTOM_XCODE_RESOURCE_FOLDERS ${resource_folders} PARENT_SCOPE)
+
+      elseif(tag STREQUAL "DOCUMENT_FILE_EXTENSIONS")
+        string(REPLACE "," ";" value "${value}")
+        set(JUCER_DOCUMENT_FILE_EXTENSIONS ${value} PARENT_SCOPE)
 
       elseif(tag STREQUAL "EXTRA_FRAMEWORKS")
         string(REPLACE "," ";" value "${value}")
@@ -1150,7 +1160,44 @@ function(jucer_project_end)
   elseif(JUCER_PROJECT_TYPE STREQUAL "GUI Application")
     add_executable(${target_name} ${all_sources})
     set_target_properties(${target_name} PROPERTIES MACOSX_BUNDLE TRUE)
-    __generate_plist_file(${target_name} "App" "APPL" "????" "")
+
+    if(JUCER_DOCUMENT_FILE_EXTENSIONS)
+      foreach(type_extension ${JUCER_DOCUMENT_FILE_EXTENSIONS})
+        if(type_extension MATCHES "^\\.")
+          string(SUBSTRING "${type_extension}" 1 -1 type_extension)
+        endif()
+        string(APPEND bundle_type_extensions
+          "\n          <string>${type_extension}</string>"
+        )
+      endforeach()
+      list(GET JUCER_DOCUMENT_FILE_EXTENSIONS 0 first_type_extension)
+      if(first_type_extension MATCHES "^\\.")
+        string(SUBSTRING "${first_type_extension}" 1 -1 first_type_extension)
+      endif()
+
+      set(bundle_document_types_entries "
+    <key>CFBundleDocumentTypes</key>
+    <array>
+      <dict>
+        <key>CFBundleTypeExtensions</key>
+        <array>${bundle_type_extensions}
+        </array>
+        <key>CFBundleTypeName</key>
+        <string>${first_type_extension}</string>
+        <key>CFBundleTypeRole</key>
+        <string>Editor</string>
+        <key>CFBundleTypeIconFile</key>
+        <string>Icon</string>
+        <key>NSPersistentStoreTypeKey</key>
+        <string>XML</string>
+      </dict>
+    </array>"
+      )
+    endif()
+
+    __generate_plist_file(${target_name}
+      "App" "APPL" "????" "${bundle_document_types_entries}"
+    )
     set_target_properties(${target_name} PROPERTIES WIN32_EXECUTABLE TRUE)
     __set_common_target_properties(${target_name})
     __link_osx_frameworks(${target_name} ${JUCER_PROJECT_OSX_FRAMEWORKS})

@@ -431,6 +431,7 @@ jucer_export_target(
   ICON_SMALL "<None>"
   ICON_LARGE "Source/BinaryData/juce_icon.png"
   # CUSTOM_XCODE_RESOURCE_FOLDERS
+  DOCUMENT_FILE_EXTENSIONS ".jucer"
   EXTRA_FRAMEWORKS "AudioUnit\; Accelerate\; AVFoundation\; CoreAudio\; CoreAudioKit\; CoreMIDI\; DiscRecording\; QuartzCore\; AudioToolbox\; OpenGL\; QTKit\; QuickTime"
   # PREBUILD_SHELL_SCRIPT
   # POSTBUILD_SHELL_SCRIPT

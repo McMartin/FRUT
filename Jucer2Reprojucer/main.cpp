@@ -675,8 +675,16 @@ int main(int argc, char* argv[])
           out << "  " << getSetting(exporter,
                            "CUSTOM_XCODE_RESOURCE_FOLDERS",
                            "customXcodeResourceFolders")
-              << "\n"
-              << "  " << getSetting(exporter, "EXTRA_FRAMEWORKS", "extraFrameworks")
+              << "\n";
+
+          if (projectType == "guiapp")
+          {
+            out << "  "
+                << getSetting(exporter, "DOCUMENT_FILE_EXTENSIONS", "documentExtensions")
+                << "\n";
+          }
+
+          out << "  " << getSetting(exporter, "EXTRA_FRAMEWORKS", "extraFrameworks")
               << "\n"
               << "  " << getSetting(exporter, "PREBUILD_SHELL_SCRIPT", "prebuildCommand")
               << "\n"
