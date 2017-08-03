@@ -192,12 +192,11 @@ std::string getMsvcOptimisation(int optimisationLevel)
 
 int main(int argc, char* argv[])
 {
-  if (argc != 3 && argc != 4)
+  if (argc != 3)
   {
     std::cerr << "usage: Jucer2Reprojucer"
                  " <jucer_project_file>"
                  " <Reprojucer.cmake_file>"
-                 " [<JUCE_commit_sha1>]"
               << std::endl;
     return 1;
   }
