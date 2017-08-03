@@ -626,9 +626,7 @@ int main(int argc, char* argv[])
           }
         }
 
-        const auto hasVst2Interface =
-          std::find(kSupportedCommits.begin(), kSupportedCommits.end(), commitSha1)
-          <= std::find(kSupportedCommits.begin(), kSupportedCommits.end(), 0x9f31d64);
+        const auto hasVst2Interface = jucerVersion > Version{4, 2, 3};
         const auto isVstAudioPlugin =
           projectType == "audioplug" && bool{jucerProject.getProperty("buildVST")};
         const auto isVstPluginHost =
