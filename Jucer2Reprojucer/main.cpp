@@ -19,6 +19,7 @@
 
 #include "JuceHeader.h"
 
+#include <cstdlib>
 #include <fstream>
 #include <functional>
 #include <iostream>
@@ -222,6 +223,31 @@ int main(int argc, char* argv[])
     printError(jucerFilePath + " is not a valid Jucer project.");
     return 1;
   }
+
+  const auto jucerVersionTokens =
+    split(".", jucerProject.getProperty("jucerVersion").toString().toStdString());
+  if (jucerVersionTokens.size() != 3u)
+  {
+    printError(jucerFilePath + " is not a valid Jucer project.");
+    return 1;
+  }
+
+  using Version = std::tuple<int, int, int>;
+
+  const auto jucerVersion = [&jucerVersionTokens, &jucerFilePath]()
+  {
+    try
+    {
+      return Version{std::stoi(jucerVersionTokens.at(0)),
+        std::stoi(jucerVersionTokens.at(1)),
+        std::stoi(jucerVersionTokens.at(2))};
+    }
+    catch (const std::invalid_argument&)
+    {
+      printError(jucerFilePath + " is not a valid Jucer project.");
+      std::exit(1);
+    }
+  }();
 
   const std::string juceCommitSha1 = args.size() == 4 ? args.at(3) : std::string{};
   const auto commitSha1 = [&juceCommitSha1]() -> decltype(std::stoul(juceCommitSha1))
