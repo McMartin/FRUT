@@ -75,7 +75,7 @@ int main(int argc, char* argv[])
       return 1;
     }
 
-    keysInFirstPlist.push_back(std::move(key));
+    keysInFirstPlist.push_back(key);
 
     childElement = childElement->getNextElement();
     if (childElement == nullptr)
