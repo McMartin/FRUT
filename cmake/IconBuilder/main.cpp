@@ -46,15 +46,10 @@ int main(int argc, char* argv[])
     return 1;
   }
 
-  const auto iconFile =
-    File{args.at(2)}.getChildFile(iconFormat == "icns" ? "Icon.icns" : "icon.ico");
-
   const auto smallIconImageFile = args.at(3) == "<None>" ? File{} : File{args.at(3)};
   const auto largeIconImageFile = args.at(4) == "<None>" ? File{} : File{args.at(4)};
 
   const auto projectExporter = ProjectExporter{smallIconImageFile, largeIconImageFile};
-
-  MemoryOutputStream outStream;
 
   if (iconFormat == "icns")
   {
@@ -74,6 +69,9 @@ int main(int argc, char* argv[])
 
     if (images.size() > 0)
     {
+      const auto iconFile = File{args.at(2)}.getChildFile("Icon.icns");
+
+      MemoryOutputStream outStream;
       projectExporter.writeIcnsFile(images, outStream);
 
       if (!FileHelpers::overwriteFileWithNewDataIfDifferent(iconFile, outStream))
@@ -100,6 +98,9 @@ int main(int argc, char* argv[])
 
     if (images.size() > 0)
     {
+      const auto iconFile = File{args.at(2)}.getChildFile("icon.ico");
+
+      MemoryOutputStream outStream;
       projectExporter.writeIconFile(images, outStream);
 
       if (!FileHelpers::overwriteFileWithNewDataIfDifferent(iconFile, outStream))
