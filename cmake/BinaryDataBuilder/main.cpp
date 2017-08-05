@@ -39,7 +39,18 @@ int main(int argc, char* argv[])
 
   Project project{args.at(1)};
 
-  const auto maxSize = std::stoi(args.at(2));
+  const auto maxSize = [&args]()
+  {
+    try
+    {
+      return std::stoi(args.at(2));
+    }
+    catch (const std::invalid_argument&)
+    {
+      std::cerr << "Invalid size limit" << std::endl;
+      std::exit(1);
+    }
+  }();
 
   const auto& dataNamespace = args.at(3);
 
