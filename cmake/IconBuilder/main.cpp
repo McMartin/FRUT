@@ -43,7 +43,7 @@ int main(int argc, char* argv[])
   const auto smallIconImageFile = args.at(3) == "<None>" ? File{} : File{args.at(3)};
   const auto largeIconImageFile = args.at(4) == "<None>" ? File{} : File{args.at(4)};
 
-  const auto projectExporter = ProjectExporter{smallIconImageFile, largeIconImageFile};
+  const ProjectExporter projectExporter{smallIconImageFile, largeIconImageFile};
 
   if (iconFormat == "icns")
   {
