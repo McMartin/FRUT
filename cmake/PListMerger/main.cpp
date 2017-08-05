@@ -139,7 +139,8 @@ int main(int argc, char* argv[])
     }
   }
 
-  std::cout << firstPlistElement->createDocument(juce::String{}, false, false);
+  std::cout << firstPlistElement->createDocument(juce::String{}, false, false)
+            << std::flush;
 
   return 0;
 }
