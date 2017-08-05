@@ -90,14 +90,14 @@ int main(int argc, char* argv[])
     juce::XmlDocument::parse(args.at(2));
   if (!secondPlistElement || !secondPlistElement->hasTagName("plist"))
   {
-    std::cerr << "Invalid second plist content, expected <plist> tag" << std::endl;
+    std::cerr << "Invalid second plist content, expected <plist> element" << std::endl;
     return 1;
   }
 
   auto secondDictElement = secondPlistElement->getChildByName("dict");
   if (!secondDictElement)
   {
-    std::cerr << "Invalid second plist content, expected <dict> tag" << std::endl;
+    std::cerr << "Invalid second plist content, expected <dict> element" << std::endl;
     return 1;
   }
 
