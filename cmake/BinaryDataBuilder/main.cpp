@@ -52,10 +52,8 @@ int main(int argc, char* argv[])
     }
   }();
 
-  const auto& dataNamespace = args.at(3);
-
   ResourceFile resourceFile{project};
-  resourceFile.setClassName(dataNamespace);
+  resourceFile.setClassName(args.at(3));
 
   for (auto i = 4u; i < args.size(); ++i)
   {
