@@ -40,12 +40,6 @@ int main(int argc, char* argv[])
 
   const auto iconFormat = args.at(1);
 
-  if (iconFormat != "icns" && iconFormat != "ico")
-  {
-    std::cerr << "Unsupported icon format \"" << iconFormat << "\"!" << std::endl;
-    return 1;
-  }
-
   const auto smallIconImageFile = args.at(3) == "<None>" ? File{} : File{args.at(3)};
   const auto largeIconImageFile = args.at(4) == "<None>" ? File{} : File{args.at(4)};
 
@@ -82,7 +76,7 @@ int main(int argc, char* argv[])
       std::cout << iconFile.getFileName() << std::flush;
     }
   }
-  else
+  else if (iconFormat == "ico")
   {
     Array<Image> images;
 
@@ -110,6 +104,11 @@ int main(int argc, char* argv[])
 
       std::cout << iconFile.getFileName() << std::flush;
     }
+  }
+  else
+  {
+    std::cerr << "Unsupported icon format \"" << iconFormat << "\"" << std::endl;
+    return 1;
   }
 
   return 0;
