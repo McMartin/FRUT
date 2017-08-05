@@ -65,7 +65,7 @@ int main(int argc, char* argv[])
       return 1;
     }
 
-    auto key = childElement->getFirstChildElement()->getText().toStdString();
+    const auto key = childElement->getFirstChildElement()->getText().toStdString();
 
     if (std::find(keysInFirstPlist.begin(), keysInFirstPlist.end(), key)
         != keysInFirstPlist.end())
@@ -114,7 +114,7 @@ int main(int argc, char* argv[])
       return 1;
     }
 
-    auto key = childElement->getFirstChildElement()->getText().toStdString();
+    const auto key = childElement->getFirstChildElement()->getText().toStdString();
 
     const auto isKeyAlreadyInFirstPlist =
       std::find(keysInFirstPlist.begin(), keysInFirstPlist.end(), key)
