@@ -38,7 +38,7 @@ int main(int argc, char* argv[])
 
   std::vector<std::string> args{argv, argv + argc};
 
-  const auto iconFormat = args.at(1);
+  const auto& iconFormat = args.at(1);
 
   const auto smallIconImageFile = args.at(3) == "<None>" ? File{} : File{args.at(3)};
   const auto largeIconImageFile = args.at(4) == "<None>" ? File{} : File{args.at(4)};
