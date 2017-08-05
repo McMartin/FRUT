@@ -53,7 +53,7 @@ int main(int argc, char* argv[])
 
   Array<File> binaryDataFiles;
 
-  auto result = resourceFile.write(binaryDataFiles, maxSize);
+  const auto result = resourceFile.write(binaryDataFiles, maxSize);
 
   if (!result.wasOk())
   {
