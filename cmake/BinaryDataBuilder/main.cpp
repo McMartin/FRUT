@@ -39,9 +39,9 @@ int main(int argc, char* argv[])
 
   Project project{args.at(1)};
 
-  const int maxSize = std::stoi(args.at(2));
+  const auto maxSize = std::stoi(args.at(2));
 
-  const std::string& dataNamespace = args.at(3);
+  const auto& dataNamespace = args.at(3);
 
   ResourceFile resourceFile{project};
   resourceFile.setClassName(dataNamespace);
@@ -61,7 +61,7 @@ int main(int argc, char* argv[])
     return 1;
   }
 
-  for (const File& file : binaryDataFiles)
+  for (const auto& file : binaryDataFiles)
   {
     std::cout << file.getFileName() << ";";
   }
