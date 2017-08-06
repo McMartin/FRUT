@@ -91,7 +91,7 @@ if(APPLE)
 endif()
 
 if(CMAKE_HOST_SYSTEM_NAME STREQUAL "Linux")
-  target_compile_options(BinaryDataBuilder PRIVATE -pthread)
+  target_compile_options(PListMerger PRIVATE -pthread)
   target_link_libraries(PListMerger PRIVATE dl pthread)
 endif()
 
