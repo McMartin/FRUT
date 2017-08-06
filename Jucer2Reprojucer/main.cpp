@@ -15,10 +15,9 @@
 // You should have received a copy of the GNU General Public License
 // along with JUCE.cmake.  If not, see <http://www.gnu.org/licenses/>.
 
-#include "commits.hpp"
-
 #include "JuceHeader.h"
 
+#include <cstdlib>
 #include <fstream>
 #include <functional>
 #include <iostream>
@@ -193,12 +192,11 @@ std::string getMsvcOptimisation(int optimisationLevel)
 
 int main(int argc, char* argv[])
 {
-  if (argc != 3 && argc != 4)
+  if (argc != 3)
   {
     std::cerr << "usage: Jucer2Reprojucer"
                  " <jucer_project_file>"
                  " <Reprojucer.cmake_file>"
-                 " [<JUCE_commit_sha1>]"
               << std::endl;
     return 1;
   }
@@ -223,44 +221,30 @@ int main(int argc, char* argv[])
     return 1;
   }
 
-  const std::string juceCommitSha1 = args.size() == 4 ? args.at(3) : std::string{};
-  const auto commitSha1 = [&juceCommitSha1]() -> decltype(std::stoul(juceCommitSha1))
+  const auto jucerVersionTokens =
+    split(".", jucerProject.getProperty("jucerVersion").toString().toStdString());
+  if (jucerVersionTokens.size() != 3u)
   {
-    if (juceCommitSha1.empty())
-      return kDefaultCommitSha1;
+    printError(jucerFilePath + " is not a valid Jucer project.");
+    return 1;
+  }
 
-    if (juceCommitSha1.length() < 7)
-      return 0u;
+  using Version = std::tuple<int, int, int>;
 
+  const auto jucerVersion = [&jucerVersionTokens, &jucerFilePath]()
+  {
     try
     {
-      static_assert(sizeof(decltype(std::stoul(juceCommitSha1))) >= 7 * 4 / 8,
-        "std::stoul won't be able to parse 7-digit hex values");
-      const auto hex = std::stoul(juceCommitSha1.substr(0, 7), nullptr, 16);
-
-      if (std::find(kSupportedCommits.begin(), kSupportedCommits.end(), hex)
-          != kSupportedCommits.end())
-      {
-        return hex;
-      }
-
-      std::cout << "No commit found with the SHA-1 \"" << std::hex << hex
-                << "\", falling back to the default commit (" << kDefaultCommitSha1 << ")"
-                << std::endl;
-
-      return kDefaultCommitSha1;
+      return Version{std::stoi(jucerVersionTokens.at(0)),
+        std::stoi(jucerVersionTokens.at(1)),
+        std::stoi(jucerVersionTokens.at(2))};
     }
     catch (const std::invalid_argument&)
     {
-      return 0u;
+      printError(jucerFilePath + " is not a valid Jucer project.");
+      std::exit(1);
     }
   }();
-
-  if (!commitSha1)
-  {
-    printError("Invalid commit SHA-1 \"" + juceCommitSha1 + "\"");
-    return 1;
-  }
 
   std::ofstream out{"CMakeLists.txt"};
 
@@ -600,9 +584,7 @@ int main(int argc, char* argv[])
           }
         }
 
-        const auto hasVst2Interface =
-          std::find(kSupportedCommits.begin(), kSupportedCommits.end(), commitSha1)
-          <= std::find(kSupportedCommits.begin(), kSupportedCommits.end(), 0x9f31d64);
+        const auto hasVst2Interface = jucerVersion > Version{4, 2, 3};
         const auto isVstAudioPlugin =
           projectType == "audioplug" && bool{jucerProject.getProperty("buildVST")};
         const auto isVstPluginHost =
