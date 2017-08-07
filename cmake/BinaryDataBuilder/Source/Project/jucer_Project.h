@@ -22,7 +22,7 @@ class Project
 {
 
 public:
-  Project(String outputDir)
+  Project(const String& outputDir)
     : binaryDataFilesOuputDir{outputDir}
   {
   }
