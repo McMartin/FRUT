@@ -1,5 +1,5 @@
-#ifndef __JUCE_APPCONFIG_@project_id@__
-#define __JUCE_APPCONFIG_@project_id@__
+#ifndef __JUCE_APPCONFIG_@upper_project_id@__
+#define __JUCE_APPCONFIG_@upper_project_id@__
 
 //==============================================================================
 @module_available_defines@
@@ -16,4 +16,4 @@
 
 @config_flags_defines@
 @audio_plugin_settings_defines@
-#endif  // __JUCE_APPCONFIG_@project_id@__
+#endif  // __JUCE_APPCONFIG_@upper_project_id@__

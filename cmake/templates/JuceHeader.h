@@ -1,5 +1,5 @@
-#ifndef __APPHEADERFILE_@project_id@__
-#define __APPHEADERFILE_@project_id@__
+#ifndef __APPHEADERFILE_@upper_project_id@__
+#define __APPHEADERFILE_@upper_project_id@__
 
 #include "AppConfig.h"
 
@@ -21,4 +21,4 @@ namespace ProjectInfo
 }
 #endif
 
-#endif   // __APPHEADERFILE_@project_id@__
+#endif   // __APPHEADERFILE_@upper_project_id@__
