@@ -1635,6 +1635,11 @@ function(__generate_JuceHeader_header)
     endif()
     message(STATUS "BinaryDataBuilder has been successfully built")
 
+    if(NOT JUCER_PROJECT_ID)
+      set(project_uid "JUCE.cmake")
+    else()
+      set(project_uid "${JUCER_PROJECT_ID}")
+    endif()
     if(NOT DEFINED JUCER_BINARYDATACPP_SIZE_LIMIT)
       set(JUCER_BINARYDATACPP_SIZE_LIMIT 10240)
     endif()
@@ -1649,6 +1654,7 @@ function(__generate_JuceHeader_header)
     endif()
     set(BinaryDataBuilder_args
       "${CMAKE_CURRENT_BINARY_DIR}/JuceLibraryCode/"
+      "${project_uid}"
       ${size_limit_in_bytes}
       "${JUCER_BINARYDATA_NAMESPACE}"
     )
