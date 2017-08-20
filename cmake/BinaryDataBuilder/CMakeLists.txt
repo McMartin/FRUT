@@ -56,7 +56,7 @@ if(CMAKE_BUILD_TYPE STREQUAL "")
 endif()
 
 
-project(BinaryDataBuilder)
+project(BinaryDataBuilder VERSION 0.1.0)
 
 add_executable(BinaryDataBuilder
   "${CMAKE_CURRENT_LIST_DIR}/main.cpp"
@@ -111,6 +111,7 @@ set_target_properties(BinaryDataBuilder PROPERTIES
   CXX_EXTENSIONS OFF
   CXX_STANDARD 11
   CXX_STANDARD_REQUIRED ON
+  OUTPUT_NAME BinaryDataBuilder-${PROJECT_VERSION}
 )
 
 if(APPLE)

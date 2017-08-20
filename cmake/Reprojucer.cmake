@@ -1181,7 +1181,7 @@ function(jucer_project_end)
 
     execute_process(
       COMMAND
-      "${CMAKE_CURRENT_BINARY_DIR}/PListMerger/PListMerger"
+      "${CMAKE_CURRENT_BINARY_DIR}/PListMerger/PListMerger-0.1.0"
       "${JUCER_CUSTOM_PLIST}"
       "<plist><dict>${main_plist_entries}</dict></plist>"
       OUTPUT_VARIABLE PListMerger_output
@@ -1663,7 +1663,7 @@ function(__generate_JuceHeader_header)
       list(APPEND BinaryDataBuilder_args "${resource_abs_path}")
     endforeach()
     execute_process(
-      COMMAND "${CMAKE_CURRENT_BINARY_DIR}/BinaryDataBuilder/BinaryDataBuilder"
+      COMMAND "${CMAKE_CURRENT_BINARY_DIR}/BinaryDataBuilder/BinaryDataBuilder-0.1.0"
       ${BinaryDataBuilder_args}
       OUTPUT_VARIABLE binary_data_filenames
       RESULT_VARIABLE BinaryDataBuilder_return_code
@@ -1726,7 +1726,7 @@ function(__generate_icon_file icon_format out_icon_filename)
   endif()
 
   execute_process(
-    COMMAND "${CMAKE_CURRENT_BINARY_DIR}/IconBuilder/IconBuilder"
+    COMMAND "${CMAKE_CURRENT_BINARY_DIR}/IconBuilder/IconBuilder-0.1.0"
     ${IconBuilder_args}
     OUTPUT_VARIABLE icon_filename
     RESULT_VARIABLE IconBuilder_return_code

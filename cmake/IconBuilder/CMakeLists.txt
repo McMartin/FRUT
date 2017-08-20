@@ -54,7 +54,7 @@ if(CMAKE_BUILD_TYPE STREQUAL "")
 endif()
 
 
-project(IconBuilder)
+project(IconBuilder VERSION 0.1.0)
 
 add_executable(IconBuilder
   "${CMAKE_CURRENT_LIST_DIR}/main.cpp"
@@ -101,6 +101,7 @@ set_target_properties(IconBuilder PROPERTIES
   CXX_EXTENSIONS OFF
   CXX_STANDARD 11
   CXX_STANDARD_REQUIRED ON
+  OUTPUT_NAME IconBuilder-${PROJECT_VERSION}
 )
 
 if(APPLE)
