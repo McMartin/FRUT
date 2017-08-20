@@ -25,10 +25,11 @@
 
 int main(int argc, char* argv[])
 {
-  if (argc < 4)
+  if (argc < 5)
   {
     std::cerr << "usage: BinaryDataBuilder"
               << " <BinaryData-files-output-dir>"
+              << " <Project-UID>"
               << " <BinaryData.cpp-size-limit>"
               << " <BinaryData-namespace>"
               << " <resource-files>..." << std::endl;
@@ -37,13 +38,13 @@ int main(int argc, char* argv[])
 
   std::vector<std::string> args{argv, argv + argc};
 
-  Project project{args.at(1)};
+  Project project{args.at(1), args.at(2)};
 
   const auto maxSize = [&args]()
   {
     try
     {
-      return std::stoi(args.at(2));
+      return std::stoi(args.at(3));
     }
     catch (const std::invalid_argument&)
     {
@@ -53,9 +54,9 @@ int main(int argc, char* argv[])
   }();
 
   ResourceFile resourceFile{project};
-  resourceFile.setClassName(args.at(3));
+  resourceFile.setClassName(args.at(4));
 
-  for (auto i = 4u; i < args.size(); ++i)
+  for (auto i = 5u; i < args.size(); ++i)
   {
     resourceFile.addFile(File{args.at(i)});
   }

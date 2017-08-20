@@ -22,14 +22,15 @@ class Project
 {
 
 public:
-  Project(String outputDir)
+  Project(const String& outputDir, const String& uid)
     : binaryDataFilesOuputDir{outputDir}
+    , projectUID{uid}
   {
   }
 
-  String getProjectUID() const
+  const String& getProjectUID() const
   {
-    return {"JUCE.cmake"};
+    return projectUID;
   }
 
   File getBinaryDataCppFile(int index) const
@@ -50,4 +51,5 @@ public:
 
 private:
   const File binaryDataFilesOuputDir;
+  const String projectUID;
 };

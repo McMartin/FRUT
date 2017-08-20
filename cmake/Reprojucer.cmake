@@ -1097,9 +1097,8 @@ function(jucer_project_end)
 
   project(${JUCER_PROJECT_NAME})
 
-  string(TOUPPER "${JUCER_PROJECT_ID}" upper_project_id)
-  __generate_AppConfig_header("${upper_project_id}")
-  __generate_JuceHeader_header("${upper_project_id}")
+  __generate_AppConfig_header()
+  __generate_JuceHeader_header()
 
   if(DEFINED JUCER_SMALL_ICON OR DEFINED JUCER_LARGE_ICON)
     if(APPLE)
@@ -1415,7 +1414,7 @@ function(__abs_path_based_on_jucer_project_dir in_path out_path)
 endfunction()
 
 
-function(__generate_AppConfig_header project_id)
+function(__generate_AppConfig_header)
 
   set(max_right_padding 0)
   foreach(module_name ${JUCER_PROJECT_MODULES})
@@ -1607,6 +1606,7 @@ function(__generate_AppConfig_header project_id)
     endforeach()
   endif()
 
+  string(TOUPPER "${JUCER_PROJECT_ID}" upper_project_id)
   configure_file("${Reprojucer_templates_DIR}/AppConfig.h" "JuceLibraryCode/AppConfig.h")
   list(APPEND JUCER_PROJECT_SOURCES
     "${CMAKE_CURRENT_BINARY_DIR}/JuceLibraryCode/AppConfig.h"
@@ -1617,7 +1617,7 @@ function(__generate_AppConfig_header project_id)
 endfunction()
 
 
-function(__generate_JuceHeader_header project_id)
+function(__generate_JuceHeader_header)
 
   list(LENGTH JUCER_PROJECT_RESOURCES resources_count)
   if(resources_count GREATER 0)
@@ -1635,6 +1635,11 @@ function(__generate_JuceHeader_header project_id)
     endif()
     message(STATUS "BinaryDataBuilder has been successfully built")
 
+    if(NOT JUCER_PROJECT_ID)
+      set(project_uid "JUCE.cmake")
+    else()
+      set(project_uid "${JUCER_PROJECT_ID}")
+    endif()
     if(NOT DEFINED JUCER_BINARYDATACPP_SIZE_LIMIT)
       set(JUCER_BINARYDATACPP_SIZE_LIMIT 10240)
     endif()
@@ -1649,6 +1654,7 @@ function(__generate_JuceHeader_header project_id)
     endif()
     set(BinaryDataBuilder_args
       "${CMAKE_CURRENT_BINARY_DIR}/JuceLibraryCode/"
+      "${project_uid}"
       ${size_limit_in_bytes}
       "${JUCER_BINARYDATA_NAMESPACE}"
     )
@@ -1678,6 +1684,7 @@ function(__generate_JuceHeader_header project_id)
     string(APPEND modules_includes "#include <${module_name}/${module_name}.h>\n")
   endforeach()
 
+  string(TOUPPER "${JUCER_PROJECT_ID}" upper_project_id)
   configure_file("${Reprojucer_templates_DIR}/JuceHeader.h"
     "JuceLibraryCode/JuceHeader.h"
   )
