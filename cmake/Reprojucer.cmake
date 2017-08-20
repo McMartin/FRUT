@@ -1165,19 +1165,19 @@ function(jucer_project_end)
   )
 
   if(JUCER_CUSTOM_PLIST)
-    message(STATUS "Building PListMerger for ${JUCER_PROJECT_NAME}")
-    try_compile(PListMerger
-      "${Reprojucer.cmake_DIR}/PListMerger/_build/${CMAKE_GENERATOR}"
-      "${Reprojucer.cmake_DIR}/PListMerger"
-      PListMerger install
-      CMAKE_FLAGS
-      "-DJUCE_modules_DIRS=${JUCER_PROJECT_MODULES_FOLDERS}"
-      "-DCMAKE_INSTALL_PREFIX=${CMAKE_CURRENT_BINARY_DIR}"
-    )
-    if(NOT PListMerger)
-      message(FATAL_ERROR "Failed to build PListMerger")
-    endif()
-    message(STATUS "PListMerger has been successfully built")
+      message(STATUS "Building PListMerger for ${JUCER_PROJECT_NAME}")
+      try_compile(PListMerger
+        "${Reprojucer.cmake_DIR}/PListMerger/_build/${CMAKE_GENERATOR}"
+        "${Reprojucer.cmake_DIR}/PListMerger"
+        PListMerger install
+        CMAKE_FLAGS
+        "-DJUCE_modules_DIRS=${JUCER_PROJECT_MODULES_FOLDERS}"
+        "-DCMAKE_INSTALL_PREFIX=${CMAKE_CURRENT_BINARY_DIR}"
+      )
+      if(NOT PListMerger)
+        message(FATAL_ERROR "Failed to build PListMerger")
+      endif()
+      message(STATUS "PListMerger has been successfully built")
 
     execute_process(
       COMMAND
@@ -1621,19 +1621,19 @@ function(__generate_JuceHeader_header)
 
   list(LENGTH JUCER_PROJECT_RESOURCES resources_count)
   if(resources_count GREATER 0)
-    message(STATUS "Building BinaryDataBuilder for ${JUCER_PROJECT_NAME}")
-    try_compile(BinaryDataBuilder
-      "${Reprojucer.cmake_DIR}/BinaryDataBuilder/_build/${CMAKE_GENERATOR}"
-      "${Reprojucer.cmake_DIR}/BinaryDataBuilder"
-      BinaryDataBuilder install
-      CMAKE_FLAGS
-      "-DJUCE_modules_DIRS=${JUCER_PROJECT_MODULES_FOLDERS}"
-      "-DCMAKE_INSTALL_PREFIX=${CMAKE_CURRENT_BINARY_DIR}"
-    )
-    if(NOT BinaryDataBuilder)
-      message(FATAL_ERROR "Failed to build BinaryDataBuilder")
-    endif()
-    message(STATUS "BinaryDataBuilder has been successfully built")
+      message(STATUS "Building BinaryDataBuilder for ${JUCER_PROJECT_NAME}")
+      try_compile(BinaryDataBuilder
+        "${Reprojucer.cmake_DIR}/BinaryDataBuilder/_build/${CMAKE_GENERATOR}"
+        "${Reprojucer.cmake_DIR}/BinaryDataBuilder"
+        BinaryDataBuilder install
+        CMAKE_FLAGS
+        "-DJUCE_modules_DIRS=${JUCER_PROJECT_MODULES_FOLDERS}"
+        "-DCMAKE_INSTALL_PREFIX=${CMAKE_CURRENT_BINARY_DIR}"
+      )
+      if(NOT BinaryDataBuilder)
+        message(FATAL_ERROR "Failed to build BinaryDataBuilder")
+      endif()
+      message(STATUS "BinaryDataBuilder has been successfully built")
 
     if(NOT JUCER_PROJECT_ID)
       set(project_uid "JUCE.cmake")
@@ -1699,19 +1699,19 @@ endfunction()
 
 function(__generate_icon_file icon_format out_icon_filename)
 
-  message(STATUS "Building IconBuilder for ${JUCER_PROJECT_NAME}")
-  try_compile(IconBuilder
-    "${Reprojucer.cmake_DIR}/IconBuilder/_build/${CMAKE_GENERATOR}"
-    "${Reprojucer.cmake_DIR}/IconBuilder"
-    IconBuilder install
-    CMAKE_FLAGS
-    "-DJUCE_modules_DIRS=${JUCER_PROJECT_MODULES_FOLDERS}"
-    "-DCMAKE_INSTALL_PREFIX=${CMAKE_CURRENT_BINARY_DIR}"
-  )
-  if(NOT IconBuilder)
-    message(FATAL_ERROR "Failed to build IconBuilder")
-  endif()
-  message(STATUS "IconBuilder has been successfully built")
+    message(STATUS "Building IconBuilder for ${JUCER_PROJECT_NAME}")
+    try_compile(IconBuilder
+      "${Reprojucer.cmake_DIR}/IconBuilder/_build/${CMAKE_GENERATOR}"
+      "${Reprojucer.cmake_DIR}/IconBuilder"
+      IconBuilder install
+      CMAKE_FLAGS
+      "-DJUCE_modules_DIRS=${JUCER_PROJECT_MODULES_FOLDERS}"
+      "-DCMAKE_INSTALL_PREFIX=${CMAKE_CURRENT_BINARY_DIR}"
+    )
+    if(NOT IconBuilder)
+      message(FATAL_ERROR "Failed to build IconBuilder")
+    endif()
+    message(STATUS "IconBuilder has been successfully built")
 
   set(IconBuilder_args "${icon_format}" "${CMAKE_CURRENT_BINARY_DIR}/JuceLibraryCode/")
   if(DEFINED JUCER_SMALL_ICON)
