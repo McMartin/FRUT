@@ -97,4 +97,4 @@ if(CMAKE_HOST_SYSTEM_NAME STREQUAL "Linux")
 endif()
 
 
-install(TARGETS PListMerger DESTINATION "PListMerger")
+install(TARGETS PListMerger DESTINATION ".")
