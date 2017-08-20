@@ -1165,23 +1165,37 @@ function(jucer_project_end)
   )
 
   if(JUCER_CUSTOM_PLIST)
-    message(STATUS "Building PListMerger for ${JUCER_PROJECT_NAME}")
-    try_compile(PListMerger
-      "${Reprojucer.cmake_DIR}/PListMerger/_build/${CMAKE_GENERATOR}"
-      "${Reprojucer.cmake_DIR}/PListMerger"
-      PListMerger install
-      CMAKE_FLAGS
-      "-DJUCE_modules_DIRS=${JUCER_PROJECT_MODULES_FOLDERS}"
-      "-DCMAKE_INSTALL_PREFIX=${CMAKE_CURRENT_BINARY_DIR}"
+    set(PListMerger_version "0.1.0")
+    find_program(PListMerger_exe "PListMerger-${PListMerger_version}"
+      PATHS "${Reprojucer.cmake_DIR}/bin"
+      NO_DEFAULT_PATH
     )
-    if(NOT PListMerger)
-      message(FATAL_ERROR "Failed to build PListMerger")
+    if(NOT PListMerger_exe)
+      message(STATUS "Building PListMerger")
+      try_compile(PListMerger
+        "${Reprojucer.cmake_DIR}/PListMerger/_build/${CMAKE_GENERATOR}"
+        "${Reprojucer.cmake_DIR}/PListMerger"
+        PListMerger install
+        CMAKE_FLAGS
+        "-DJUCE_modules_DIRS=${JUCER_PROJECT_MODULES_FOLDERS}"
+        "-DCMAKE_INSTALL_PREFIX=${Reprojucer.cmake_DIR}/bin"
+      )
+      if(NOT PListMerger)
+        message(FATAL_ERROR "Failed to build PListMerger")
+      endif()
+      message(STATUS "PListMerger has been successfully built")
+      find_program(PListMerger_exe "PListMerger-${PListMerger_version}"
+        PATHS "${Reprojucer.cmake_DIR}/bin"
+        NO_DEFAULT_PATH
+      )
+      if(NOT PListMerger_exe)
+        message(FATAL_ERROR "Could not find PListMerger-${PListMerger_version}")
+      endif()
     endif()
-    message(STATUS "PListMerger has been successfully built")
 
     execute_process(
       COMMAND
-      "${CMAKE_CURRENT_BINARY_DIR}/PListMerger/PListMerger"
+      "${PListMerger_exe}"
       "${JUCER_CUSTOM_PLIST}"
       "<plist><dict>${main_plist_entries}</dict></plist>"
       OUTPUT_VARIABLE PListMerger_output
@@ -1621,19 +1635,35 @@ function(__generate_JuceHeader_header)
 
   list(LENGTH JUCER_PROJECT_RESOURCES resources_count)
   if(resources_count GREATER 0)
-    message(STATUS "Building BinaryDataBuilder for ${JUCER_PROJECT_NAME}")
-    try_compile(BinaryDataBuilder
-      "${Reprojucer.cmake_DIR}/BinaryDataBuilder/_build/${CMAKE_GENERATOR}"
-      "${Reprojucer.cmake_DIR}/BinaryDataBuilder"
-      BinaryDataBuilder install
-      CMAKE_FLAGS
-      "-DJUCE_modules_DIRS=${JUCER_PROJECT_MODULES_FOLDERS}"
-      "-DCMAKE_INSTALL_PREFIX=${CMAKE_CURRENT_BINARY_DIR}"
+    set(BinaryDataBuilder_version "0.1.0")
+    find_program(BinaryDataBuilder_exe "BinaryDataBuilder-${BinaryDataBuilder_version}"
+      PATHS "${Reprojucer.cmake_DIR}/bin"
+      NO_DEFAULT_PATH
     )
-    if(NOT BinaryDataBuilder)
-      message(FATAL_ERROR "Failed to build BinaryDataBuilder")
+    if(NOT BinaryDataBuilder_exe)
+      message(STATUS "Building BinaryDataBuilder")
+      try_compile(BinaryDataBuilder
+        "${Reprojucer.cmake_DIR}/BinaryDataBuilder/_build/${CMAKE_GENERATOR}"
+        "${Reprojucer.cmake_DIR}/BinaryDataBuilder"
+        BinaryDataBuilder install
+        CMAKE_FLAGS
+        "-DJUCE_modules_DIRS=${JUCER_PROJECT_MODULES_FOLDERS}"
+        "-DCMAKE_INSTALL_PREFIX=${Reprojucer.cmake_DIR}/bin"
+      )
+      if(NOT BinaryDataBuilder)
+        message(FATAL_ERROR "Failed to build BinaryDataBuilder")
+      endif()
+      message(STATUS "BinaryDataBuilder has been successfully built")
+      find_program(BinaryDataBuilder_exe "BinaryDataBuilder-${BinaryDataBuilder_version}"
+        PATHS "${Reprojucer.cmake_DIR}/bin"
+        NO_DEFAULT_PATH
+      )
+      if(NOT BinaryDataBuilder_exe)
+        message(FATAL_ERROR
+          "Could not find BinaryDataBuilder-${BinaryDataBuilder_version}"
+        )
+      endif()
     endif()
-    message(STATUS "BinaryDataBuilder has been successfully built")
 
     if(NOT JUCER_PROJECT_ID)
       set(project_uid "JUCE.cmake")
@@ -1663,8 +1693,7 @@ function(__generate_JuceHeader_header)
       list(APPEND BinaryDataBuilder_args "${resource_abs_path}")
     endforeach()
     execute_process(
-      COMMAND "${CMAKE_CURRENT_BINARY_DIR}/BinaryDataBuilder/BinaryDataBuilder"
-      ${BinaryDataBuilder_args}
+      COMMAND "${BinaryDataBuilder_exe}" ${BinaryDataBuilder_args}
       OUTPUT_VARIABLE binary_data_filenames
       RESULT_VARIABLE BinaryDataBuilder_return_code
     )
@@ -1699,19 +1728,33 @@ endfunction()
 
 function(__generate_icon_file icon_format out_icon_filename)
 
-  message(STATUS "Building IconBuilder for ${JUCER_PROJECT_NAME}")
-  try_compile(IconBuilder
-    "${Reprojucer.cmake_DIR}/IconBuilder/_build/${CMAKE_GENERATOR}"
-    "${Reprojucer.cmake_DIR}/IconBuilder"
-    IconBuilder install
-    CMAKE_FLAGS
-    "-DJUCE_modules_DIRS=${JUCER_PROJECT_MODULES_FOLDERS}"
-    "-DCMAKE_INSTALL_PREFIX=${CMAKE_CURRENT_BINARY_DIR}"
+  set(IconBuilder_version "0.1.0")
+  find_program(IconBuilder_exe "IconBuilder-${IconBuilder_version}"
+    PATHS "${Reprojucer.cmake_DIR}/bin"
+    NO_DEFAULT_PATH
   )
-  if(NOT IconBuilder)
-    message(FATAL_ERROR "Failed to build IconBuilder")
+  if(NOT IconBuilder_exe)
+    message(STATUS "Building IconBuilder")
+    try_compile(IconBuilder
+      "${Reprojucer.cmake_DIR}/IconBuilder/_build/${CMAKE_GENERATOR}"
+      "${Reprojucer.cmake_DIR}/IconBuilder"
+      IconBuilder install
+      CMAKE_FLAGS
+      "-DJUCE_modules_DIRS=${JUCER_PROJECT_MODULES_FOLDERS}"
+      "-DCMAKE_INSTALL_PREFIX=${Reprojucer.cmake_DIR}/bin"
+    )
+    if(NOT IconBuilder)
+      message(FATAL_ERROR "Failed to build IconBuilder")
+    endif()
+    message(STATUS "IconBuilder has been successfully built")
+    find_program(IconBuilder_exe "IconBuilder-${IconBuilder_version}"
+      PATHS "${Reprojucer.cmake_DIR}/bin"
+      NO_DEFAULT_PATH
+    )
+    if(NOT IconBuilder_exe)
+      message(FATAL_ERROR "Could not find IconBuilder-${IconBuilder_version}")
+    endif()
   endif()
-  message(STATUS "IconBuilder has been successfully built")
 
   set(IconBuilder_args "${icon_format}" "${CMAKE_CURRENT_BINARY_DIR}/JuceLibraryCode/")
   if(DEFINED JUCER_SMALL_ICON)
@@ -1726,8 +1769,7 @@ function(__generate_icon_file icon_format out_icon_filename)
   endif()
 
   execute_process(
-    COMMAND "${CMAKE_CURRENT_BINARY_DIR}/IconBuilder/IconBuilder"
-    ${IconBuilder_args}
+    COMMAND "${IconBuilder_exe}" ${IconBuilder_args}
     OUTPUT_VARIABLE icon_filename
     RESULT_VARIABLE IconBuilder_return_code
   )
