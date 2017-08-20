@@ -65,7 +65,7 @@ int main(int argc, char* argv[])
       return 1;
     }
 
-    auto key = childElement->getFirstChildElement()->getText().toStdString();
+    const auto key = childElement->getFirstChildElement()->getText().toStdString();
 
     if (std::find(keysInFirstPlist.begin(), keysInFirstPlist.end(), key)
         != keysInFirstPlist.end())
@@ -75,7 +75,7 @@ int main(int argc, char* argv[])
       return 1;
     }
 
-    keysInFirstPlist.push_back(std::move(key));
+    keysInFirstPlist.push_back(key);
 
     childElement = childElement->getNextElement();
     if (childElement == nullptr)
@@ -90,14 +90,14 @@ int main(int argc, char* argv[])
     juce::XmlDocument::parse(args.at(2));
   if (!secondPlistElement || !secondPlistElement->hasTagName("plist"))
   {
-    std::cerr << "Invalid second plist content, expected <plist> tag" << std::endl;
+    std::cerr << "Invalid second plist content, expected <plist> element" << std::endl;
     return 1;
   }
 
   auto secondDictElement = secondPlistElement->getChildByName("dict");
   if (!secondDictElement)
   {
-    std::cerr << "Invalid second plist content, expected <dict> tag" << std::endl;
+    std::cerr << "Invalid second plist content, expected <dict> element" << std::endl;
     return 1;
   }
 
@@ -114,7 +114,7 @@ int main(int argc, char* argv[])
       return 1;
     }
 
-    auto key = childElement->getFirstChildElement()->getText().toStdString();
+    const auto key = childElement->getFirstChildElement()->getText().toStdString();
 
     const auto isKeyAlreadyInFirstPlist =
       std::find(keysInFirstPlist.begin(), keysInFirstPlist.end(), key)
@@ -139,7 +139,8 @@ int main(int argc, char* argv[])
     }
   }
 
-  std::cout << firstPlistElement->createDocument(juce::String{}, false, false);
+  std::cout << firstPlistElement->createDocument(juce::String{}, false, false)
+            << std::flush;
 
   return 0;
 }

@@ -39,12 +39,21 @@ int main(int argc, char* argv[])
 
   Project project{args.at(1)};
 
-  const int maxSize = std::stoi(args.at(2));
-
-  const std::string& dataNamespace = args.at(3);
+  const auto maxSize = [&args]()
+  {
+    try
+    {
+      return std::stoi(args.at(2));
+    }
+    catch (const std::invalid_argument&)
+    {
+      std::cerr << "Invalid size limit" << std::endl;
+      std::exit(1);
+    }
+  }();
 
   ResourceFile resourceFile{project};
-  resourceFile.setClassName(dataNamespace);
+  resourceFile.setClassName(args.at(3));
 
   for (auto i = 4u; i < args.size(); ++i)
   {
@@ -53,7 +62,7 @@ int main(int argc, char* argv[])
 
   Array<File> binaryDataFiles;
 
-  auto result = resourceFile.write(binaryDataFiles, maxSize);
+  const auto result = resourceFile.write(binaryDataFiles, maxSize);
 
   if (!result.wasOk())
   {
@@ -61,7 +70,7 @@ int main(int argc, char* argv[])
     return 1;
   }
 
-  for (const File& file : binaryDataFiles)
+  for (const auto& file : binaryDataFiles)
   {
     std::cout << file.getFileName() << ";";
   }

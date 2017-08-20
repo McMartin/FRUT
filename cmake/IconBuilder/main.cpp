@@ -38,23 +38,12 @@ int main(int argc, char* argv[])
 
   std::vector<std::string> args{argv, argv + argc};
 
-  const auto iconFormat = args.at(1);
-
-  if (iconFormat != "icns" && iconFormat != "ico")
-  {
-    std::cerr << "Unsupported icon format \"" << iconFormat << "\"!" << std::endl;
-    return 1;
-  }
-
-  const auto iconFile =
-    File{args.at(2)}.getChildFile(iconFormat == "icns" ? "Icon.icns" : "icon.ico");
+  const auto& iconFormat = args.at(1);
 
   const auto smallIconImageFile = args.at(3) == "<None>" ? File{} : File{args.at(3)};
   const auto largeIconImageFile = args.at(4) == "<None>" ? File{} : File{args.at(4)};
 
-  const auto projectExporter = ProjectExporter{smallIconImageFile, largeIconImageFile};
-
-  MemoryOutputStream outStream;
+  const ProjectExporter projectExporter{smallIconImageFile, largeIconImageFile};
 
   if (iconFormat == "icns")
   {
@@ -74,6 +63,9 @@ int main(int argc, char* argv[])
 
     if (images.size() > 0)
     {
+      const auto iconFile = File{args.at(2)}.getChildFile("Icon.icns");
+
+      MemoryOutputStream outStream;
       projectExporter.writeIcnsFile(images, outStream);
 
       if (!FileHelpers::overwriteFileWithNewDataIfDifferent(iconFile, outStream))
@@ -84,7 +76,7 @@ int main(int argc, char* argv[])
       std::cout << iconFile.getFileName() << std::flush;
     }
   }
-  else
+  else if (iconFormat == "ico")
   {
     Array<Image> images;
 
@@ -100,6 +92,9 @@ int main(int argc, char* argv[])
 
     if (images.size() > 0)
     {
+      const auto iconFile = File{args.at(2)}.getChildFile("icon.ico");
+
+      MemoryOutputStream outStream;
       projectExporter.writeIconFile(images, outStream);
 
       if (!FileHelpers::overwriteFileWithNewDataIfDifferent(iconFile, outStream))
@@ -109,6 +104,11 @@ int main(int argc, char* argv[])
 
       std::cout << iconFile.getFileName() << std::flush;
     }
+  }
+  else
+  {
+    std::cerr << "Unsupported icon format \"" << iconFormat << "\"" << std::endl;
+    return 1;
   }
 
   return 0;

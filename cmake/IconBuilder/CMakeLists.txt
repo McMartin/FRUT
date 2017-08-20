@@ -127,7 +127,7 @@ if(CMAKE_HOST_SYSTEM_NAME STREQUAL "Linux")
   use_package(x11)
   use_package(xext)
 
-  target_compile_options(BinaryDataBuilder PRIVATE -pthread)
+  target_compile_options(IconBuilder PRIVATE -pthread)
   target_link_libraries(IconBuilder PRIVATE dl pthread)
 endif()
 
