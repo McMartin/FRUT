@@ -15,8 +15,12 @@ JUCE project is defined in Projucer,
 - `Jucer2Reprojucer`, a console application based on JUCE that converts `.jucer` project
 files into `CMakeLists.txt` files that include and use `Reprojucer.cmake`,
 
-- several `CMakeLists.txt` files to build JUCE's `examples` and `extras` projects (in
-[Jucer2Reprojucer/generated/JUCE](Jucer2Reprojucer/generated/JUCE)).
+- several `CMakeLists.txt` files generated from existing `.jucer` project files,
+including:
+  - `examples` and `extras` projects from [JUCE 4.2.0][github-juce-4.2.0] (in
+[Jucer2Reprojucer/generated/JUCE-4.2.0](Jucer2Reprojucer/generated/JUCE-4.2.0))
+  - `examples` and `extras` projects from [JUCE 4.3.1][github-juce-4.3.1] (in
+[Jucer2Reprojucer/generated/JUCE-4.3.1](Jucer2Reprojucer/generated/JUCE-4.3.1))
 
 
 ## Requirements
@@ -107,6 +111,8 @@ See the [LICENSE](LICENSE) file for more details.
 [appveyor-badge]: https://ci.appveyor.com/api/projects/status/github/McMartin/JUCE.cmake?branch=master&svg=true
 [appveyor]: https://ci.appveyor.com/project/McMartin/juce-cmake
 [cmake]: https://cmake.org/
+[github-juce-4.2.0]: https://github.com/WeAreROLI/JUCE/tree/4.2.0
+[github-juce-4.3.1]: https://github.com/WeAreROLI/JUCE/tree/4.3.1
 [github-juce-cmake]: https://github.com/McMartin/JUCE.cmake
 [github-juce]: https://github.com/WeAreROLI/JUCE
 [gitter-badge]: https://badges.gitter.im/JUCE-cmake/Lobby.svg
