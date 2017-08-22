@@ -57,6 +57,6 @@ foreach(jucer_file ${jucer_files})
     COMMAND
     "${Jucer2Reprojucer_EXE}"
     "${JUCE_ROOT}/${jucer_file}"
-    "${CMAKE_CURRENT_LIST_DIR}/../../cmake/Reprojucer.cmake"
+    "${CMAKE_CURRENT_LIST_DIR}/../cmake/Reprojucer.cmake"
   )
 endforeach()
