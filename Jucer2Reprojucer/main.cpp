@@ -736,7 +736,9 @@ int main(int argc, char* argv[])
               << "  DEBUG_MODE "
               << (bool{configuration.getProperty("isDebug")} ? "ON" : "OFF") << "\n";
 
-          out << "  " << getSetting(configuration, "BINARY_NAME", "targetName") << "\n";
+          out << "  " << getSetting(configuration, "BINARY_NAME", "targetName") << "\n"
+              << "  " << getSetting(configuration, "BINARY_LOCATION", "binaryPath")
+              << "\n";
 
           const auto isAbsolutePath = [](const juce::String& path)
           {

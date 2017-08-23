@@ -151,6 +151,7 @@ jucer_export_target_configuration(
   NAME "Debug"
   DEBUG_MODE ON
   BINARY_NAME "AudioPerformanceTest"
+  # BINARY_LOCATION
   # HEADER_SEARCH_PATHS
   # EXTRA_LIBRARY_SEARCH_PATHS
   # PREPROCESSOR_DEFINITIONS
@@ -170,6 +171,7 @@ jucer_export_target_configuration(
   NAME "Release"
   DEBUG_MODE OFF
   BINARY_NAME "AudioPerformanceTest"
+  # BINARY_LOCATION
   # HEADER_SEARCH_PATHS
   # EXTRA_LIBRARY_SEARCH_PATHS
   # PREPROCESSOR_DEFINITIONS
@@ -200,6 +202,7 @@ jucer_export_target_configuration(
   NAME "Debug"
   DEBUG_MODE ON
   BINARY_NAME "AudioPerformanceTest"
+  # BINARY_LOCATION
   # HEADER_SEARCH_PATHS
   # EXTRA_LIBRARY_SEARCH_PATHS
   # PREPROCESSOR_DEFINITIONS
@@ -222,6 +225,7 @@ jucer_export_target_configuration(
   NAME "Release"
   DEBUG_MODE OFF
   BINARY_NAME "AudioPerformanceTest"
+  # BINARY_LOCATION
   # HEADER_SEARCH_PATHS
   # EXTRA_LIBRARY_SEARCH_PATHS
   # PREPROCESSOR_DEFINITIONS
@@ -256,6 +260,7 @@ jucer_export_target_configuration(
   NAME "Debug"
   DEBUG_MODE ON
   BINARY_NAME "AudioPerformanceTest"
+  # BINARY_LOCATION
   # HEADER_SEARCH_PATHS
   EXTRA_LIBRARY_SEARCH_PATHS "/usr/X11R6/lib/"
   # PREPROCESSOR_DEFINITIONS
@@ -268,6 +273,7 @@ jucer_export_target_configuration(
   NAME "Release"
   DEBUG_MODE OFF
   BINARY_NAME "AudioPerformanceTest"
+  # BINARY_LOCATION
   # HEADER_SEARCH_PATHS
   EXTRA_LIBRARY_SEARCH_PATHS "/usr/X11R6/lib/"
   # PREPROCESSOR_DEFINITIONS

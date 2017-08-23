@@ -163,6 +163,7 @@ jucer_export_target_configuration(
   NAME "Debug"
   DEBUG_MODE ON
   BINARY_NAME "AnimationAppExample"
+  # BINARY_LOCATION
   # HEADER_SEARCH_PATHS
   # EXTRA_LIBRARY_SEARCH_PATHS
   # PREPROCESSOR_DEFINITIONS
@@ -182,6 +183,7 @@ jucer_export_target_configuration(
   NAME "Release"
   DEBUG_MODE OFF
   BINARY_NAME "AnimationAppExample"
+  # BINARY_LOCATION
   # HEADER_SEARCH_PATHS
   # EXTRA_LIBRARY_SEARCH_PATHS
   # PREPROCESSOR_DEFINITIONS
