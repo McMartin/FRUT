@@ -601,7 +601,7 @@ endfunction()
 
 
 function(jucer_export_target_configuration
-  exporter NAME_TAG configuration_name DEBUG_MODE_TAG is_debug
+  exporter NAME_TAG config DEBUG_MODE_TAG is_debug
 )
 
   if(NOT "${exporter}" IN_LIST Reprojucer_supported_exporters)
@@ -634,17 +634,17 @@ function(jucer_export_target_configuration
     return()
   endif()
 
-  if("${configuration_name}" IN_LIST JUCER_PROJECT_CONFIGURATIONS)
+  if("${config}" IN_LIST JUCER_PROJECT_CONFIGURATIONS)
     message(FATAL_ERROR
       "You cannot call jucer_export_target_configuration("
-      "\"${exporter}\" NAME \"${configuration_name}\") twice."
+      "\"${exporter}\" NAME \"${config}\") twice."
     )
   endif()
 
-  list(APPEND JUCER_PROJECT_CONFIGURATIONS ${configuration_name})
+  list(APPEND JUCER_PROJECT_CONFIGURATIONS ${config})
   set(JUCER_PROJECT_CONFIGURATIONS ${JUCER_PROJECT_CONFIGURATIONS} PARENT_SCOPE)
 
-  set(JUCER_CONFIGURATION_IS_DEBUG_${configuration_name} ${is_debug} PARENT_SCOPE)
+  set(JUCER_CONFIGURATION_IS_DEBUG_${config} ${is_debug} PARENT_SCOPE)
 
   set(configuration_settings_tags
     "BINARY_NAME"
@@ -690,7 +690,7 @@ function(jucer_export_target_configuration
       set(default_runtime_library_flag "/MT")
     endif()
     list(APPEND JUCER_COMPILER_FLAGS
-      "$<$<CONFIG:${configuration_name}>:${default_runtime_library_flag}>"
+      "$<$<CONFIG:${config}>:${default_runtime_library_flag}>"
     )
   endif()
 
@@ -713,7 +713,7 @@ function(jucer_export_target_configuration
       set(value ${element})
 
       if(tag STREQUAL "BINARY_NAME")
-        set(JUCER_BINARY_NAME_${configuration_name} ${value} PARENT_SCOPE)
+        set(JUCER_BINARY_NAME_${config} ${value} PARENT_SCOPE)
 
       elseif(tag STREQUAL "HEADER_SEARCH_PATHS")
         string(REPLACE "\\" "/" value "${value}")
@@ -723,7 +723,7 @@ function(jucer_export_target_configuration
           list(APPEND include_directories "${path}")
         endforeach()
         list(APPEND JUCER_INCLUDE_DIRECTORIES
-          $<$<CONFIG:${configuration_name}>:${include_directories}>
+          $<$<CONFIG:${config}>:${include_directories}>
         )
         set(JUCER_INCLUDE_DIRECTORIES ${JUCER_INCLUDE_DIRECTORIES} PARENT_SCOPE)
 
@@ -734,15 +734,13 @@ function(jucer_export_target_configuration
           __abs_path_based_on_jucer_project_dir("${path}" path)
           list(APPEND library_search_paths "${path}")
         endforeach()
-        set(JUCER_EXTRA_LIBRARY_SEARCH_PATHS_${configuration_name}
+        set(JUCER_EXTRA_LIBRARY_SEARCH_PATHS_${config}
           ${library_search_paths} PARENT_SCOPE
         )
 
       elseif(tag STREQUAL "PREPROCESSOR_DEFINITIONS")
         string(REPLACE "\n" ";" value "${value}")
-        list(APPEND JUCER_PREPROCESSOR_DEFINITIONS
-          $<$<CONFIG:${configuration_name}>:${value}>
-        )
+        list(APPEND JUCER_PREPROCESSOR_DEFINITIONS $<$<CONFIG:${config}>:${value}>)
         set(JUCER_PREPROCESSOR_DEFINITIONS ${JUCER_PREPROCESSOR_DEFINITIONS} PARENT_SCOPE)
 
       elseif(tag STREQUAL "OPTIMISATION")
@@ -773,23 +771,19 @@ function(jucer_export_target_configuration
             message(FATAL_ERROR "Unsupported value for OPTIMISATION: \"${value}\"")
           endif()
         endif()
-        set(JUCER_OPTIMISATION_FLAG_${configuration_name}
-          "${optimisation_flag}" PARENT_SCOPE
-        )
+        set(JUCER_OPTIMISATION_FLAG_${config} "${optimisation_flag}" PARENT_SCOPE)
 
       elseif(tag STREQUAL "VST_BINARY_LOCATION")
-        set(JUCER_VST_BINARY_LOCATION_${configuration_name} ${value} PARENT_SCOPE)
+        set(JUCER_VST_BINARY_LOCATION_${config} ${value} PARENT_SCOPE)
 
       elseif(tag STREQUAL "AU_BINARY_LOCATION")
-        set(JUCER_AU_BINARY_LOCATION_${configuration_name} ${value} PARENT_SCOPE)
+        set(JUCER_AU_BINARY_LOCATION_${config} ${value} PARENT_SCOPE)
 
       elseif(tag STREQUAL "OSX_BASE_SDK_VERSION")
         if(value MATCHES "10\\.([5-9]|10|11|12) SDK")
-          set(JUCER_OSX_BASE_SDK_VERSION_${configuration_name}
-            "10.${CMAKE_MATCH_1}" PARENT_SCOPE
-          )
+          set(JUCER_OSX_BASE_SDK_VERSION_${config} "10.${CMAKE_MATCH_1}" PARENT_SCOPE)
         elseif(value STREQUAL "Use Default")
-          set(JUCER_OSX_BASE_SDK_VERSION_${configuration_name} "default" PARENT_SCOPE)
+          set(JUCER_OSX_BASE_SDK_VERSION_${config} "default" PARENT_SCOPE)
         else()
           message(FATAL_ERROR
             "Unsupported value for OSX_BASE_SDK_VERSION: \"${value}\"\n"
@@ -798,11 +792,9 @@ function(jucer_export_target_configuration
 
       elseif(tag STREQUAL "OSX_DEPLOYMENT_TARGET")
         if(value MATCHES "10\\.([5-9]|10|11|12)")
-          set(JUCER_OSX_DEPLOYMENT_TARGET_${configuration_name}
-            "10.${CMAKE_MATCH_1}" PARENT_SCOPE
-          )
+          set(JUCER_OSX_DEPLOYMENT_TARGET_${config} "10.${CMAKE_MATCH_1}" PARENT_SCOPE)
         elseif(value STREQUAL "Use Default")
-          set(JUCER_OSX_DEPLOYMENT_TARGET_${configuration_name} "default" PARENT_SCOPE)
+          set(JUCER_OSX_DEPLOYMENT_TARGET_${config} "default" PARENT_SCOPE)
         else()
           message(FATAL_ERROR
             "Unsupported value for OSX_DEPLOYMENT_TARGET: \"${value}\"\n"
@@ -813,11 +805,11 @@ function(jucer_export_target_configuration
         if(value STREQUAL "Native architecture of build machine")
           # Consider as default
         elseif(value STREQUAL "Universal Binary (32-bit)")
-          list(APPEND JUCER_OSX_ARCHITECTURES ${configuration_name} "i386")
+          list(APPEND JUCER_OSX_ARCHITECTURES ${config} "i386")
         elseif(value STREQUAL "Universal Binary (32/64-bit)")
-          list(APPEND JUCER_OSX_ARCHITECTURES ${configuration_name} "x86_64 i386")
+          list(APPEND JUCER_OSX_ARCHITECTURES ${config} "x86_64 i386")
         elseif(value STREQUAL "64-bit Intel")
-          list(APPEND JUCER_OSX_ARCHITECTURES ${configuration_name} "x86_64")
+          list(APPEND JUCER_OSX_ARCHITECTURES ${config} "x86_64")
         elseif(NOT value STREQUAL "Use Default")
           message(FATAL_ERROR "Unsupported value for OSX_ARCHITECTURE: \"${value}\"\n")
         endif()
@@ -834,25 +826,25 @@ function(jucer_export_target_configuration
 
       elseif(tag STREQUAL "CXX_LIBRARY")
         if(value STREQUAL "LLVM libc++")
-          set(JUCER_CXX_LIBRARY_${configuration_name} "libc++" PARENT_SCOPE)
+          set(JUCER_CXX_LIBRARY_${config} "libc++" PARENT_SCOPE)
         elseif(value STREQUAL "GNU libstdc++")
-          set(JUCER_CXX_LIBRARY_${configuration_name} "libstdc++" PARENT_SCOPE)
+          set(JUCER_CXX_LIBRARY_${config} "libstdc++" PARENT_SCOPE)
         elseif(NOT value STREQUAL "Use Default")
           message(FATAL_ERROR "Unsupported value for CXX_LIBRARY: \"${value}\"")
         endif()
 
       elseif(tag STREQUAL "RELAX_IEEE_COMPLIANCE" AND exporter STREQUAL "Xcode (MacOSX)")
         if(value)
-          list(APPEND JUCER_COMPILER_FLAGS $<$<CONFIG:${configuration_name}>:-ffast-math>)
+          list(APPEND JUCER_COMPILER_FLAGS $<$<CONFIG:${config}>:-ffast-math>)
         endif()
 
       elseif(tag STREQUAL "LINK_TIME_OPTIMISATION")
         if(value)
-          list(APPEND JUCER_COMPILER_FLAGS $<$<CONFIG:${configuration_name}>:-flto>)
+          list(APPEND JUCER_COMPILER_FLAGS $<$<CONFIG:${config}>:-flto>)
         endif()
 
       elseif(tag STREQUAL "STRIP_LOCAL_SYMBOLS")
-        set(JUCER_STRIP_LOCAL_SYMBOLS_${configuration_name} ${value} PARENT_SCOPE)
+        set(JUCER_STRIP_LOCAL_SYMBOLS_${config} ${value} PARENT_SCOPE)
 
       elseif(tag STREQUAL "WARNING_LEVEL")
         if(value STREQUAL "Low")
@@ -864,11 +856,11 @@ function(jucer_export_target_configuration
         else()
           message(FATAL_ERROR "Unsupported value for WARNING_LEVEL: \"${value}\"\n")
         endif()
-        list(APPEND JUCER_COMPILER_FLAGS $<$<CONFIG:${configuration_name}>:/W${level}>)
+        list(APPEND JUCER_COMPILER_FLAGS $<$<CONFIG:${config}>:/W${level}>)
 
       elseif(tag STREQUAL "TREAT_WARNINGS_AS_ERRORS")
         if(value)
-          list(APPEND JUCER_COMPILER_FLAGS $<$<CONFIG:${configuration_name}>:/WX>)
+          list(APPEND JUCER_COMPILER_FLAGS $<$<CONFIG:${config}>:/WX>)
         endif()
 
       elseif(tag STREQUAL "RUNTIME_LIBRARY")
@@ -878,16 +870,14 @@ function(jucer_export_target_configuration
           else()
             set(runtime_library_flag "/MD")
           endif()
-          list(APPEND JUCER_COMPILER_FLAGS
-            $<$<CONFIG:${configuration_name}>:${runtime_library_flag}>
-          )
+          list(APPEND JUCER_COMPILER_FLAGS $<$<CONFIG:${config}>:${runtime_library_flag}>)
         elseif(NOT value STREQUAL "Use static runtime" AND NOT value STREQUAL "(Default)")
           message(FATAL_ERROR "Unsupported value for RUNTIME_LIBRARY: \"${value}\"\n")
         endif()
 
       elseif(tag STREQUAL "WHOLE_PROGRAM_OPTIMISATION")
         if(value STREQUAL "Always disable")
-          set(JUCER_ALWAYS_DISABLE_WPO_${configuration_name} TRUE PARENT_SCOPE)
+          set(JUCER_ALWAYS_DISABLE_WPO_${config} TRUE PARENT_SCOPE)
         elseif(NOT value STREQUAL "Enable when possible")
           message(FATAL_ERROR
             "Unsupported value for WHOLE_PROGRAM_OPTIMISATION: \"${value}\""
@@ -895,33 +885,33 @@ function(jucer_export_target_configuration
         endif()
 
       elseif(tag STREQUAL "INCREMENTAL_LINKING")
-        set(JUCER_INCREMENTAL_LINKING_${configuration_name} ${value} PARENT_SCOPE)
+        set(JUCER_INCREMENTAL_LINKING_${config} ${value} PARENT_SCOPE)
 
       elseif(tag STREQUAL "PREBUILD_COMMAND")
         set(script_content "${value}")
         configure_file("${Reprojucer_templates_DIR}/script.in"
-          "prebuild_${configuration_name}.cmd" @ONLY
+          "prebuild_${config}.cmd" @ONLY
         )
-        set(JUCER_PREBUILD_COMMAND_${configuration_name}
-          "${CMAKE_CURRENT_BINARY_DIR}/prebuild_${configuration_name}.cmd" PARENT_SCOPE
+        set(JUCER_PREBUILD_COMMAND_${config}
+          "${CMAKE_CURRENT_BINARY_DIR}/prebuild_${config}.cmd" PARENT_SCOPE
         )
 
       elseif(tag STREQUAL "POSTBUILD_COMMAND")
         set(script_content "${value}")
         configure_file("${Reprojucer_templates_DIR}/script.in"
-          "postbuild_${configuration_name}.cmd" @ONLY
+          "postbuild_${config}.cmd" @ONLY
         )
-        set(JUCER_POSTBUILD_COMMAND_${configuration_name}
-          "${CMAKE_CURRENT_BINARY_DIR}/postbuild_${configuration_name}.cmd" PARENT_SCOPE
+        set(JUCER_POSTBUILD_COMMAND_${config}
+          "${CMAKE_CURRENT_BINARY_DIR}/postbuild_${config}.cmd" PARENT_SCOPE
         )
 
       elseif(tag STREQUAL "GENERATE_MANIFEST")
-        set(JUCER_GENERATE_MANIFEST_${configuration_name} ${value} PARENT_SCOPE)
+        set(JUCER_GENERATE_MANIFEST_${config} ${value} PARENT_SCOPE)
 
       elseif(tag STREQUAL "CHARACTER_SET")
         if(value STREQUAL "Default" OR value STREQUAL "MultiByte"
             OR value STREQUAL "Unicode")
-          set(JUCER_CHARACTER_SET_${configuration_name} ${value} PARENT_SCOPE)
+          set(JUCER_CHARACTER_SET_${config} ${value} PARENT_SCOPE)
         else()
           message(FATAL_ERROR "Unsupported value for CHARACTER_SET: \"${value}\"")
         endif()
@@ -954,7 +944,7 @@ function(jucer_export_target_configuration
       elseif(tag STREQUAL "RELAX_IEEE_COMPLIANCE"
           AND exporter MATCHES "Visual Studio 201(5|3)")
         if(value)
-          list(APPEND JUCER_COMPILER_FLAGS $<$<CONFIG:${configuration_name}>:/fp:fast>)
+          list(APPEND JUCER_COMPILER_FLAGS $<$<CONFIG:${config}>:/fp:fast>)
         endif()
 
       elseif(tag STREQUAL "ARCHITECTURE" AND exporter STREQUAL "Linux Makefile")
@@ -972,9 +962,7 @@ function(jucer_export_target_configuration
           message(FATAL_ERROR "Unsupported value for ARCHITECTURE: \"${value}\"\n")
         endif()
         if(DEFINED architecture_flag)
-          list(APPEND JUCER_COMPILER_FLAGS
-            $<$<CONFIG:${configuration_name}>:${architecture_flag}>
-          )
+          list(APPEND JUCER_COMPILER_FLAGS $<$<CONFIG:${config}>:${architecture_flag}>)
         endif()
 
       endif()
@@ -1025,13 +1013,13 @@ function(jucer_project_end)
     set(osx_base_sdk_version ${JUCER_OSX_BASE_SDK_VERSION_${CMAKE_BUILD_TYPE}})
   else()
     set(config_to_value)
-    foreach(configuration_name ${JUCER_PROJECT_CONFIGURATIONS})
-      if(DEFINED JUCER_OSX_BASE_SDK_VERSION_${configuration_name})
+    foreach(config ${JUCER_PROJECT_CONFIGURATIONS})
+      if(DEFINED JUCER_OSX_BASE_SDK_VERSION_${config})
         list(APPEND all_confs_osx_base_sdk_version
-          ${JUCER_OSX_BASE_SDK_VERSION_${configuration_name}}
+          ${JUCER_OSX_BASE_SDK_VERSION_${config}}
         )
-        string(APPEND config_to_value "  ${configuration_name}: "
-          "\"${JUCER_OSX_BASE_SDK_VERSION_${configuration_name}}\"\n"
+        string(APPEND config_to_value "  ${config}: "
+          "\"${JUCER_OSX_BASE_SDK_VERSION_${config}}\"\n"
         )
       endif()
     endforeach()
@@ -1070,13 +1058,13 @@ function(jucer_project_end)
     set(osx_deployment_target ${JUCER_OSX_DEPLOYMENT_TARGET_${CMAKE_BUILD_TYPE}})
   else()
     set(config_to_value)
-    foreach(configuration_name ${JUCER_PROJECT_CONFIGURATIONS})
-      if(DEFINED JUCER_OSX_DEPLOYMENT_TARGET_${configuration_name})
+    foreach(config ${JUCER_PROJECT_CONFIGURATIONS})
+      if(DEFINED JUCER_OSX_DEPLOYMENT_TARGET_${config})
         list(APPEND all_confs_osx_deployment_target
-          ${JUCER_OSX_DEPLOYMENT_TARGET_${configuration_name}}
+          ${JUCER_OSX_DEPLOYMENT_TARGET_${config}}
         )
-        string(APPEND config_to_value "  ${configuration_name}: "
-          "\"${JUCER_OSX_DEPLOYMENT_TARGET_${configuration_name}}\"\n"
+        string(APPEND config_to_value "  ${config}: "
+          "\"${JUCER_OSX_DEPLOYMENT_TARGET_${config}}\"\n"
         )
       endif()
     endforeach()
@@ -1791,13 +1779,13 @@ endfunction()
 
 function(__set_common_target_properties target_name)
 
-  foreach(configuration_name ${JUCER_PROJECT_CONFIGURATIONS})
-    if(JUCER_BINARY_NAME_${configuration_name})
-      set(output_name "${JUCER_BINARY_NAME_${configuration_name}}")
+  foreach(config ${JUCER_PROJECT_CONFIGURATIONS})
+    if(JUCER_BINARY_NAME_${config})
+      set(output_name "${JUCER_BINARY_NAME_${config}}")
     else()
       set(output_name "${JUCER_PROJECT_NAME}")
     endif()
-    string(APPEND all_confs_output_name $<$<CONFIG:${configuration_name}>:${output_name}>)
+    string(APPEND all_confs_output_name $<$<CONFIG:${config}>:${output_name}>)
   endforeach()
   # OUTPUT_NAME must be defined in all cases, including when $<CONFIG> is empty
   string(APPEND all_confs_output_name $<$<CONFIG:>:${JUCER_PROJECT_NAME}>)
@@ -1839,11 +1827,11 @@ function(__set_common_target_properties target_name)
     target_include_directories(${target_name} PRIVATE "${JUCER_VST3_SDK_FOLDER}")
   endif()
 
-  foreach(configuration_name ${JUCER_PROJECT_CONFIGURATIONS})
-    if(JUCER_OPTIMISATION_FLAG_${configuration_name})
-      set(optimisation_flag ${JUCER_OPTIMISATION_FLAG_${configuration_name}})
+  foreach(config ${JUCER_PROJECT_CONFIGURATIONS})
+    if(JUCER_OPTIMISATION_FLAG_${config})
+      set(optimisation_flag ${JUCER_OPTIMISATION_FLAG_${config}})
       target_compile_options(${target_name} PRIVATE
-        $<$<CONFIG:${configuration_name}>:${optimisation_flag}>
+        $<$<CONFIG:${config}>:${optimisation_flag}>
       )
     endif()
   endforeach()
@@ -1873,42 +1861,42 @@ function(__set_common_target_properties target_name)
 
     get_target_property(target_type ${target_name} TYPE)
 
-    foreach(configuration_name ${JUCER_PROJECT_CONFIGURATIONS})
-      if(${JUCER_CONFIGURATION_IS_DEBUG_${configuration_name}})
+    foreach(config ${JUCER_PROJECT_CONFIGURATIONS})
+      if(${JUCER_CONFIGURATION_IS_DEBUG_${config}})
         target_compile_definitions(${target_name} PRIVATE
-          $<$<CONFIG:${configuration_name}>:_DEBUG=1>
-          $<$<CONFIG:${configuration_name}>:DEBUG=1>
+          $<$<CONFIG:${config}>:_DEBUG=1>
+          $<$<CONFIG:${config}>:DEBUG=1>
         )
       else()
         target_compile_definitions(${target_name} PRIVATE
-          $<$<CONFIG:${configuration_name}>:_NDEBUG=1>
-          $<$<CONFIG:${configuration_name}>:NDEBUG=1>
+          $<$<CONFIG:${config}>:_NDEBUG=1>
+          $<$<CONFIG:${config}>:NDEBUG=1>
         )
       endif()
 
-      if(DEFINED JUCER_CXX_LIBRARY_${configuration_name})
-        set(cxx_library ${JUCER_CXX_LIBRARY_${configuration_name}})
+      if(DEFINED JUCER_CXX_LIBRARY_${config})
+        set(cxx_library ${JUCER_CXX_LIBRARY_${config}})
         target_compile_options(${target_name} PRIVATE
-          $<$<CONFIG:${configuration_name}>:-stdlib=${cxx_library}>
+          $<$<CONFIG:${config}>:-stdlib=${cxx_library}>
         )
       endif()
 
-      foreach(path ${JUCER_EXTRA_LIBRARY_SEARCH_PATHS_${configuration_name}})
+      foreach(path ${JUCER_EXTRA_LIBRARY_SEARCH_PATHS_${config}})
         target_link_libraries(${target_name}
-          $<$<CONFIG:${configuration_name}>:-L${path}>
+          $<$<CONFIG:${config}>:-L${path}>
         )
       endforeach()
 
       if(target_type STREQUAL EXECUTABLE OR target_type STREQUAL MODULE_LIBRARY)
-        if(${JUCER_STRIP_LOCAL_SYMBOLS_${configuration_name}})
+        if(${JUCER_STRIP_LOCAL_SYMBOLS_${config}})
           find_program(strip_exe "strip")
           if(NOT strip_exe)
             message(FATAL_ERROR "Could not find strip program")
           endif()
           list(APPEND strip_command
-            "$<$<CONFIG:${configuration_name}>:${strip_exe}>"
-            "$<$<CONFIG:${configuration_name}>:-x>"
-            "$<$<CONFIG:${configuration_name}>:$<TARGET_FILE:${target_name}>>"
+            "$<$<CONFIG:${config}>:${strip_exe}>"
+            "$<$<CONFIG:${config}>:-x>"
+            "$<$<CONFIG:${config}>:$<TARGET_FILE:${target_name}>>"
           )
         endif()
       endif()
@@ -1919,18 +1907,18 @@ function(__set_common_target_properties target_name)
     endif()
 
     foreach(item ${JUCER_OSX_ARCHITECTURES})
-      if(NOT DEFINED configuration_name)
-        set(configuration_name ${item})
+      if(NOT DEFINED config)
+        set(config ${item})
       else()
-        string(TOUPPER "${configuration_name}" upper_configuration_name)
+        string(TOUPPER "${config}" upper_config)
         string(REPLACE " " ";" archs "${item}")
 
         set_target_properties(${target_name} PROPERTIES
-          OSX_ARCHITECTURES_${upper_configuration_name}
+          OSX_ARCHITECTURES_${upper_config}
           "${archs}"
         )
 
-        unset(configuration_name)
+        unset(config)
       endif()
     endforeach()
 
@@ -1965,35 +1953,35 @@ function(__set_common_target_properties target_name)
     endif()
 
   elseif(WIN32)
-    foreach(configuration_name ${JUCER_PROJECT_CONFIGURATIONS})
-      if(${JUCER_CONFIGURATION_IS_DEBUG_${configuration_name}})
+    foreach(config ${JUCER_PROJECT_CONFIGURATIONS})
+      if(${JUCER_CONFIGURATION_IS_DEBUG_${config}})
         target_compile_definitions(${target_name} PRIVATE
-          $<$<CONFIG:${configuration_name}>:DEBUG>
-          $<$<CONFIG:${configuration_name}>:_DEBUG>
+          $<$<CONFIG:${config}>:DEBUG>
+          $<$<CONFIG:${config}>:_DEBUG>
         )
       else()
         target_compile_definitions(${target_name} PRIVATE
-          $<$<CONFIG:${configuration_name}>:NDEBUG>
+          $<$<CONFIG:${config}>:NDEBUG>
         )
 
-        if(NOT JUCER_ALWAYS_DISABLE_WPO_${configuration_name})
+        if(NOT JUCER_ALWAYS_DISABLE_WPO_${config})
           target_compile_options(${target_name} PRIVATE
-            $<$<CONFIG:${configuration_name}>:/GL>
+            $<$<CONFIG:${config}>:/GL>
           )
         endif()
       endif()
 
-      foreach(path ${JUCER_EXTRA_LIBRARY_SEARCH_PATHS_${configuration_name}})
+      foreach(path ${JUCER_EXTRA_LIBRARY_SEARCH_PATHS_${config}})
         target_link_libraries(${target_name}
-          $<$<CONFIG:${configuration_name}>:-LIBPATH:${path}>
+          $<$<CONFIG:${config}>:-LIBPATH:${path}>
         )
       endforeach()
 
-      if(DEFINED JUCER_INCREMENTAL_LINKING_${configuration_name})
-        if(JUCER_INCREMENTAL_LINKING_${configuration_name})
-          string(TOUPPER "${configuration_name}" upper_configuration_name)
+      if(DEFINED JUCER_INCREMENTAL_LINKING_${config})
+        if(JUCER_INCREMENTAL_LINKING_${config})
+          string(TOUPPER "${config}" upper_config)
           get_target_property(link_flags
-            ${target_name} LINK_FLAGS_${upper_configuration_name}
+            ${target_name} LINK_FLAGS_${upper_config}
           )
           if(link_flags)
             string(APPEND link_flags " /INCREMENTAL")
@@ -2001,30 +1989,30 @@ function(__set_common_target_properties target_name)
             set(link_flags "/INCREMENTAL")
           endif()
           set_target_properties(${target_name} PROPERTIES
-            LINK_FLAGS_${upper_configuration_name} "${link_flags}"
+            LINK_FLAGS_${upper_config} "${link_flags}"
           )
         endif()
       endif()
 
-      if(DEFINED JUCER_PREBUILD_COMMAND_${configuration_name})
-        set(prebuild_command ${JUCER_PREBUILD_COMMAND_${configuration_name}})
+      if(DEFINED JUCER_PREBUILD_COMMAND_${config})
+        set(prebuild_command ${JUCER_PREBUILD_COMMAND_${config}})
         list(APPEND all_confs_prebuild_command
-          $<$<CONFIG:${configuration_name}>:${prebuild_command}>
+          $<$<CONFIG:${config}>:${prebuild_command}>
         )
       endif()
 
-      if(DEFINED JUCER_POSTBUILD_COMMAND_${configuration_name})
-        set(postbuild_command ${JUCER_POSTBUILD_COMMAND_${configuration_name}})
+      if(DEFINED JUCER_POSTBUILD_COMMAND_${config})
+        set(postbuild_command ${JUCER_POSTBUILD_COMMAND_${config}})
         list(APPEND all_confs_postbuild_command
-          $<$<CONFIG:${configuration_name}>:${postbuild_command}>
+          $<$<CONFIG:${config}>:${postbuild_command}>
         )
       endif()
 
-      if(DEFINED JUCER_GENERATE_MANIFEST_${configuration_name})
-        if(NOT JUCER_GENERATE_MANIFEST_${configuration_name})
-          string(TOUPPER "${configuration_name}" upper_configuration_name)
+      if(DEFINED JUCER_GENERATE_MANIFEST_${config})
+        if(NOT JUCER_GENERATE_MANIFEST_${config})
+          string(TOUPPER "${config}" upper_config)
           get_target_property(link_flags
-            ${target_name} LINK_FLAGS_${upper_configuration_name}
+            ${target_name} LINK_FLAGS_${upper_config}
           )
           if(link_flags)
             string(APPEND link_flags " /MANIFEST:NO")
@@ -2032,22 +2020,22 @@ function(__set_common_target_properties target_name)
             set(link_flags "/MANIFEST:NO")
           endif()
           set_target_properties(${target_name} PROPERTIES
-            LINK_FLAGS_${upper_configuration_name} "${link_flags}"
+            LINK_FLAGS_${upper_config} "${link_flags}"
           )
         endif()
       endif()
 
-      if(NOT DEFINED JUCER_CHARACTER_SET_${configuration_name}
-          OR JUCER_CHARACTER_SET_${configuration_name} STREQUAL "Default")
+      if(NOT DEFINED JUCER_CHARACTER_SET_${config}
+          OR JUCER_CHARACTER_SET_${config} STREQUAL "Default")
         target_compile_definitions(${target_name} PRIVATE
-          $<$<CONFIG:${configuration_name}>:_SBCS>
+          $<$<CONFIG:${config}>:_SBCS>
         )
-      elseif(JUCER_CHARACTER_SET_${configuration_name} STREQUAL "MultiByte")
+      elseif(JUCER_CHARACTER_SET_${config} STREQUAL "MultiByte")
         # Nothing to do, this is CMake's default
-      elseif(JUCER_CHARACTER_SET_${configuration_name} STREQUAL "Unicode")
+      elseif(JUCER_CHARACTER_SET_${config} STREQUAL "Unicode")
         target_compile_definitions(${target_name} PRIVATE
-          $<$<CONFIG:${configuration_name}>:_UNICODE>
-          $<$<CONFIG:${configuration_name}>:UNICODE>
+          $<$<CONFIG:${config}>:_UNICODE>
+          $<$<CONFIG:${config}>:UNICODE>
         )
       endif()
     endforeach()
@@ -2096,21 +2084,21 @@ function(__set_common_target_properties target_name)
       endif()
     endif()
 
-    foreach(configuration_name ${JUCER_PROJECT_CONFIGURATIONS})
-      if(${JUCER_CONFIGURATION_IS_DEBUG_${configuration_name}})
+    foreach(config ${JUCER_PROJECT_CONFIGURATIONS})
+      if(${JUCER_CONFIGURATION_IS_DEBUG_${config}})
         target_compile_definitions(${target_name} PRIVATE
-          $<$<CONFIG:${configuration_name}>:DEBUG=1>
-          $<$<CONFIG:${configuration_name}>:_DEBUG=1>
+          $<$<CONFIG:${config}>:DEBUG=1>
+          $<$<CONFIG:${config}>:_DEBUG=1>
         )
       else()
         target_compile_definitions(${target_name} PRIVATE
-          $<$<CONFIG:${configuration_name}>:NDEBUG=1>
+          $<$<CONFIG:${config}>:NDEBUG=1>
         )
       endif()
 
-      foreach(path ${JUCER_EXTRA_LIBRARY_SEARCH_PATHS_${configuration_name}})
+      foreach(path ${JUCER_EXTRA_LIBRARY_SEARCH_PATHS_${config}})
         target_link_libraries(${target_name}
-          $<$<CONFIG:${configuration_name}>:-L${path}>
+          $<$<CONFIG:${config}>:-L${path}>
         )
       endforeach()
     endforeach()
@@ -2208,13 +2196,13 @@ function(__set_plugin_output_directory_property
 
   set(default_output_dir "$ENV{HOME}/Library/Audio/Plug-Ins/${plugins_dir}")
 
-  foreach(configuration_name ${JUCER_PROJECT_CONFIGURATIONS})
-    if(DEFINED JUCER_${plugin_type}_BINARY_LOCATION_${configuration_name})
-      set(output_dir ${JUCER_${plugin_type}_BINARY_LOCATION_${configuration_name}})
+  foreach(config ${JUCER_PROJECT_CONFIGURATIONS})
+    if(DEFINED JUCER_${plugin_type}_BINARY_LOCATION_${config})
+      set(output_dir ${JUCER_${plugin_type}_BINARY_LOCATION_${config}})
     else()
       set(output_dir ${default_output_dir})
     endif()
-    string(APPEND all_confs_output_dir "$<$<CONFIG:${configuration_name}>:${output_dir}>")
+    string(APPEND all_confs_output_dir "$<$<CONFIG:${config}>:${output_dir}>")
   endforeach()
   string(APPEND all_confs_output_dir $<$<CONFIG:>:${default_output_dir}>)
 
