@@ -2194,33 +2194,29 @@ function(__set_plugin_output_directory_property
   target_name plugin_type plugins_dir plugin_extension
 )
 
-  set(default_output_dir "$ENV{HOME}/Library/Audio/Plug-Ins/${plugins_dir}")
+  set(default_destination "$ENV{HOME}/Library/Audio/Plug-Ins/${plugins_dir}")
 
   foreach(config ${JUCER_PROJECT_CONFIGURATIONS})
     if(DEFINED JUCER_${plugin_type}_BINARY_LOCATION_${config})
-      set(output_dir ${JUCER_${plugin_type}_BINARY_LOCATION_${config}})
+      set(destination ${JUCER_${plugin_type}_BINARY_LOCATION_${config}})
     else()
-      set(output_dir ${default_output_dir})
+      set(destination ${default_destination})
     endif()
-    string(APPEND all_confs_output_dir "$<$<CONFIG:${config}>:${output_dir}>")
+    string(APPEND all_confs_destination "$<$<CONFIG:${config}>:${destination}>")
   endforeach()
-  string(APPEND all_confs_output_dir $<$<CONFIG:>:${default_output_dir}>)
 
-  set_target_properties(${target_name} PROPERTIES
-    LIBRARY_OUTPUT_DIRECTORY ${all_confs_output_dir}
+  set(component "_install_${target_name}_to_${plugin_type}_binary_location")
+
+  install(TARGETS ${target_name} COMPONENT ${component}
+    DESTINATION ${all_confs_destination}
   )
 
-  get_target_property(output_name ${target_name} OUTPUT_NAME)
-  if(CMAKE_GENERATOR STREQUAL "Xcode")
-    set(regular_output_dir "${CMAKE_CURRENT_BINARY_DIR}/$<CONFIG>")
-  else()
-    set(regular_output_dir "${CMAKE_CURRENT_BINARY_DIR}")
-  endif()
-
   add_custom_command(TARGET ${target_name} POST_BUILD
-    COMMAND "${CMAKE_COMMAND}" "-E" "create_symlink"
-    "${all_confs_output_dir}/${output_name}${plugin_extension}"
-    "${regular_output_dir}/${output_name}${plugin_extension}"
+    COMMAND
+    "${CMAKE_COMMAND}"
+    "-DCMAKE_INSTALL_CONFIG_NAME=$<CONFIG>"
+    "-DCMAKE_INSTALL_COMPONENT=${component}"
+    "-P" "${CMAKE_CURRENT_BINARY_DIR}/cmake_install.cmake"
   )
 
 endfunction()
