@@ -125,8 +125,8 @@ function(jucer_project_settings)
     "PREPROCESSOR_DEFINITIONS"
   )
 
-  set(project_types
-    "GUI Application" "Console Application" "Static Library" "Audio Plug-in"
+  set(project_types "GUI Application" "Console Application" "Static Library"
+    "Dynamic Library" "Audio Plug-in"
   )
 
   set(size_limit_descs "Default" "20.0 MB" "10.0 MB" "6.0 MB" "2.0 MB" "1.0 MB" "512.0 KB"
@@ -1278,6 +1278,10 @@ function(jucer_project_end)
     add_library(${target_name} STATIC ${all_sources})
     __set_common_target_properties(${target_name})
 
+  elseif(JUCER_PROJECT_TYPE STREQUAL "Dynamic Library")
+    add_library(${target_name} SHARED ${all_sources})
+    __set_common_target_properties(${target_name})
+
   elseif(JUCER_PROJECT_TYPE STREQUAL "Audio Plug-in")
     if(APPLE)
       foreach(src_file ${JUCER_PROJECT_SOURCES})
@@ -1466,7 +1470,10 @@ function(__generate_AppConfig_header)
 
   set(is_standalone_application 1)
 
-  if(JUCER_PROJECT_TYPE STREQUAL "Audio Plug-in")
+  if(JUCER_PROJECT_TYPE STREQUAL "Dynamic Library")
+    set(is_standalone_application 0)
+
+  elseif(JUCER_PROJECT_TYPE STREQUAL "Audio Plug-in")
     set(is_standalone_application 0)
 
     # See ProjectSaver::writePluginCharacteristicsFile()
