@@ -1996,9 +1996,7 @@ function(__set_common_target_properties target_name)
       if(DEFINED JUCER_INCREMENTAL_LINKING_${config})
         if(JUCER_INCREMENTAL_LINKING_${config})
           string(TOUPPER "${config}" upper_config)
-          get_target_property(link_flags
-            ${target_name} LINK_FLAGS_${upper_config}
-          )
+          get_target_property(link_flags ${target_name} LINK_FLAGS_${upper_config})
           if(link_flags)
             string(APPEND link_flags " /INCREMENTAL")
           else()
@@ -2027,9 +2025,7 @@ function(__set_common_target_properties target_name)
       if(DEFINED JUCER_GENERATE_MANIFEST_${config})
         if(NOT JUCER_GENERATE_MANIFEST_${config})
           string(TOUPPER "${config}" upper_config)
-          get_target_property(link_flags
-            ${target_name} LINK_FLAGS_${upper_config}
-          )
+          get_target_property(link_flags ${target_name} LINK_FLAGS_${upper_config})
           if(link_flags)
             string(APPEND link_flags " /MANIFEST:NO")
           else()
