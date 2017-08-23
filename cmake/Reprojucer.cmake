@@ -1787,25 +1787,25 @@ endfunction()
 function(__set_common_target_properties target_name)
 
   foreach(config ${JUCER_PROJECT_CONFIGURATIONS})
-    if(DEFINED JUCER_BINARY_LOCATION_${config})
-      string(TOUPPER "${config}" upper_config)
-      set(output_directory "${JUCER_BINARY_LOCATION_${config}}")
-      set_target_properties(${target_name} PROPERTIES
-        LIBRARY_OUTPUT_DIRECTORY_${upper_config} "${output_directory}"
-        RUNTIME_OUTPUT_DIRECTORY_${upper_config} "${output_directory}"
-      )
-    endif()
+    string(TOUPPER "${config}" upper_config)
 
     if(JUCER_BINARY_NAME_${config})
       set(output_name "${JUCER_BINARY_NAME_${config}}")
     else()
       set(output_name "${JUCER_PROJECT_NAME}")
     endif()
-    string(APPEND all_confs_output_name $<$<CONFIG:${config}>:${output_name}>)
+    set_target_properties(${target_name} PROPERTIES
+      OUTPUT_NAME_${upper_config} "${output_name}"
+    )
+
+    if(DEFINED JUCER_BINARY_LOCATION_${config})
+      set(output_directory "${JUCER_BINARY_LOCATION_${config}}")
+      set_target_properties(${target_name} PROPERTIES
+        LIBRARY_OUTPUT_DIRECTORY_${upper_config} "${output_directory}"
+        RUNTIME_OUTPUT_DIRECTORY_${upper_config} "${output_directory}"
+      )
+    endif()
   endforeach()
-  # OUTPUT_NAME must be defined in all cases, including when $<CONFIG> is empty
-  string(APPEND all_confs_output_name $<$<CONFIG:>:${JUCER_PROJECT_NAME}>)
-  set_target_properties(${target_name} PROPERTIES OUTPUT_NAME "${all_confs_output_name}")
 
   target_include_directories(${target_name} PRIVATE
     "${CMAKE_CURRENT_BINARY_DIR}/JuceLibraryCode"
