@@ -1321,7 +1321,7 @@ function(jucer_project_end)
         )
         __set_bundle_properties(${vst_target_name} "vst")
         __set_common_target_properties(${vst_target_name})
-        __set_plugin_output_directory_property(${vst_target_name} "VST" "VST" ".vst")
+        __install_to_plugin_binary_location(${vst_target_name} "VST" "VST")
         __set_JucePlugin_Build_defines(${vst_target_name} "VSTPlugIn")
         __link_osx_frameworks(${vst_target_name} ${JUCER_PROJECT_OSX_FRAMEWORKS})
         __add_xcode_resources(${vst_target_name} ${JUCER_CUSTOM_XCODE_RESOURCE_FOLDERS})
@@ -1378,9 +1378,7 @@ function(jucer_project_end)
         )
         __set_bundle_properties(${au_target_name} "component")
         __set_common_target_properties(${au_target_name})
-        __set_plugin_output_directory_property(${au_target_name}
-          "AU" "Components" ".component"
-        )
+        __install_to_plugin_binary_location(${au_target_name} "AU" "Components")
         __set_JucePlugin_Build_defines(${au_target_name} "AudioUnitPlugIn")
         set(au_plugin_osx_frameworks
           ${JUCER_PROJECT_OSX_FRAMEWORKS} "AudioUnit" "CoreAudioKit"
@@ -2190,9 +2188,7 @@ function(__set_bundle_properties target_name extension)
 endfunction()
 
 
-function(__set_plugin_output_directory_property
-  target_name plugin_type plugins_dir plugin_extension
-)
+function(__install_to_plugin_binary_location target_name plugin_type plugins_dir)
 
   set(default_destination "$ENV{HOME}/Library/Audio/Plug-Ins/${plugins_dir}")
 
