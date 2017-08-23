@@ -1791,8 +1791,8 @@ function(__set_common_target_properties target_name)
       string(TOUPPER "${config}" upper_config)
       set(output_directory "${JUCER_BINARY_LOCATION_${config}}")
       set_target_properties(${target_name} PROPERTIES
-        LIBRARY_OUTPUT_DIRECTORY_${upper_config} ${output_directory}
-        RUNTIME_OUTPUT_DIRECTORY_${upper_config} ${output_directory}
+        LIBRARY_OUTPUT_DIRECTORY_${upper_config} "${output_directory}"
+        RUNTIME_OUTPUT_DIRECTORY_${upper_config} "${output_directory}"
       )
     endif()
 
@@ -1930,8 +1930,7 @@ function(__set_common_target_properties target_name)
         string(REPLACE " " ";" archs "${item}")
 
         set_target_properties(${target_name} PROPERTIES
-          OSX_ARCHITECTURES_${upper_config}
-          "${archs}"
+          OSX_ARCHITECTURES_${upper_config} "${archs}"
         )
 
         unset(config)
