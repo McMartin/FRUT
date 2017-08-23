@@ -648,6 +648,7 @@ function(jucer_export_target_configuration
 
   set(configuration_settings_tags
     "BINARY_NAME"
+    "BINARY_LOCATION"
     "HEADER_SEARCH_PATHS"
     "EXTRA_LIBRARY_SEARCH_PATHS"
     "PREPROCESSOR_DEFINITIONS"
@@ -714,6 +715,10 @@ function(jucer_export_target_configuration
 
       if(tag STREQUAL "BINARY_NAME")
         set(JUCER_BINARY_NAME_${config} ${value} PARENT_SCOPE)
+
+      elseif(tag STREQUAL "BINARY_LOCATION")
+        get_filename_component(abs_path "${value}" ABSOLUTE)
+        set(JUCER_BINARY_LOCATION_${config} ${abs_path} PARENT_SCOPE)
 
       elseif(tag STREQUAL "HEADER_SEARCH_PATHS")
         string(REPLACE "\\" "/" value "${value}")
@@ -1782,6 +1787,15 @@ endfunction()
 function(__set_common_target_properties target_name)
 
   foreach(config ${JUCER_PROJECT_CONFIGURATIONS})
+    if(DEFINED JUCER_BINARY_LOCATION_${config})
+      string(TOUPPER "${config}" upper_config)
+      set(output_directory "${JUCER_BINARY_LOCATION_${config}}")
+      set_target_properties(${target_name} PROPERTIES
+        LIBRARY_OUTPUT_DIRECTORY_${upper_config} ${output_directory}
+        RUNTIME_OUTPUT_DIRECTORY_${upper_config} ${output_directory}
+      )
+    endif()
+
     if(JUCER_BINARY_NAME_${config})
       set(output_name "${JUCER_BINARY_NAME_${config}}")
     else()
