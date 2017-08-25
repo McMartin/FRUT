@@ -192,6 +192,7 @@ function(jucer_audio_plugin_settings)
 
   set(plugin_setting_tags
     "BUILD_VST"
+    "BUILD_VST3"
     "BUILD_AUDIOUNIT"
     "PLUGIN_NAME"
     "PLUGIN_DESCRIPTION"
@@ -658,6 +659,7 @@ function(jucer_export_target_configuration
   if(exporter STREQUAL "Xcode (MacOSX)")
     list(APPEND configuration_settings_tags
       "VST_BINARY_LOCATION"
+      "VST3_BINARY_LOCATION"
       "AU_BINARY_LOCATION"
       "OSX_BASE_SDK_VERSION"
       "OSX_DEPLOYMENT_TARGET"
@@ -780,6 +782,9 @@ function(jucer_export_target_configuration
 
       elseif(tag STREQUAL "VST_BINARY_LOCATION")
         set(JUCER_VST_BINARY_LOCATION_${config} ${value} PARENT_SCOPE)
+
+      elseif(tag STREQUAL "VST3_BINARY_LOCATION")
+        set(JUCER_VST3_BINARY_LOCATION_${config} ${value} PARENT_SCOPE)
 
       elseif(tag STREQUAL "AU_BINARY_LOCATION")
         set(JUCER_AU_BINARY_LOCATION_${config} ${value} PARENT_SCOPE)
@@ -1338,6 +1343,26 @@ function(jucer_project_end)
         __add_xcode_resources(${vst_target_name} ${JUCER_CUSTOM_XCODE_RESOURCE_FOLDERS})
       endif()
 
+      if(JUCER_BUILD_VST3)
+        set(vst3_target_name ${target_name}_VST3)
+        add_library(${vst3_target_name} MODULE
+          ${VST3_sources}
+          ${JUCER_PROJECT_XCODE_RESOURCES}
+        )
+        target_link_libraries(${vst3_target_name} ${target_name}_Shared_Code)
+        __generate_plist_file(${vst3_target_name} "VST3" "BNDL" "????"
+          "${main_plist_entries}" ""
+        )
+        __set_bundle_properties(${vst3_target_name} "vst3")
+        __set_common_target_properties(${vst3_target_name})
+        __install_to_plugin_binary_location(${vst_target_name} "VST3"
+          "$ENV{HOME}/Library/Audio/Plug-Ins/VST3"
+        )
+        __set_JucePlugin_Build_defines(${vst3_target_name} "VST3PlugIn")
+        __link_osx_frameworks(${vst3_target_name} ${JUCER_PROJECT_OSX_FRAMEWORKS})
+        __add_xcode_resources(${vst3_target_name} ${JUCER_CUSTOM_XCODE_RESOURCE_FOLDERS})
+      endif()
+
       if(JUCER_BUILD_AUDIOUNIT)
         set(au_target_name ${target_name}_AU)
         add_library(${au_target_name} MODULE
@@ -1481,6 +1506,9 @@ function(__generate_AppConfig_header)
 
     __bool_to_int("${JUCER_BUILD_VST}" Build_VST_value)
     list(APPEND plugin_settings "Build_VST" "${Build_VST_value}")
+
+    __bool_to_int("${JUCER_BUILD_VST3}" Build_VST3_value)
+    list(APPEND plugin_settings "Build_VST3" "${Build_VST3_value}")
 
     __bool_to_int("${JUCER_BUILD_AUDIOUNIT}" Build_AU_value)
     list(APPEND plugin_settings "Build_AU" "${Build_AU_value}")
@@ -1835,7 +1863,8 @@ function(__set_common_target_properties target_name)
     target_include_directories(${target_name} PRIVATE "${JUCER_VST_SDK_FOLDER}")
   endif()
 
-  if(JUCER_FLAG_JUCE_PLUGINHOST_VST3 AND DEFINED JUCER_VST3_SDK_FOLDER)
+  if((JUCER_BUILD_VST3 OR JUCER_FLAG_JUCE_PLUGINHOST_VST3)
+      AND DEFINED JUCER_VST3_SDK_FOLDER)
     if(NOT IS_DIRECTORY "${JUCER_VST3_SDK_FOLDER}")
       message(WARNING
         "JUCER_VST3_SDK_FOLDER: no such directory \"${JUCER_VST3_SDK_FOLDER}\""
