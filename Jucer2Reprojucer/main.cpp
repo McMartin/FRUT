@@ -846,7 +846,7 @@ int main(int argc, char* argv[])
 
           if (exporterType == "XCODE_MAC")
           {
-            if (jucerProject.getProperty("buildVST"))
+            if (isVstAudioPlugin)
             {
               out << "  "
                   << getSetting(
