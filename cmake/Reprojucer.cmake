@@ -1504,6 +1504,33 @@ function(jucer_project_end)
         __link_osx_frameworks(${auv3_target} ${auv3_plugin_osx_frameworks})
         __add_xcode_resources(${auv3_target} ${JUCER_CUSTOM_XCODE_RESOURCE_FOLDERS})
       endif()
+
+      if(JUCER_BUILD_AUDIOUNIT_V3)
+        set(standalone_target ${target}_AUv3_Standalone)
+        add_executable(${standalone_target} MACOSX_BUNDLE
+          ${Standalone_sources}
+          ${JUCER_PROJECT_XCODE_RESOURCES}
+        )
+        target_link_libraries(${standalone_target} ${shared_code_target})
+        add_dependencies(${standalone_target} ${auv3_target})
+        __generate_plist_file(${standalone_target} "AUv3_Standalone" "APPL" "????"
+          "${main_plist_entries}" ""
+        )
+        __set_common_target_properties(${standalone_target})
+        __set_JucePlugin_Build_defines(${standalone_target} "StandalonePlugIn")
+        __link_osx_frameworks(${standalone_target} ${JUCER_PROJECT_OSX_FRAMEWORKS})
+        __add_xcode_resources(${standalone_target} ${JUCER_CUSTOM_XCODE_RESOURCE_FOLDERS})
+        install(TARGETS ${auv3_target} COMPONENT _embed_app_extension_in_standalone_app
+          DESTINATION "$<TARGET_FILE_DIR:${standalone_target}>/../PlugIns"
+        )
+        add_custom_command(TARGET ${standalone_target} POST_BUILD
+          COMMAND
+          "${CMAKE_COMMAND}"
+          "-DCMAKE_INSTALL_CONFIG_NAME=$<CONFIG>"
+          "-DCMAKE_INSTALL_COMPONENT=_embed_app_extension_in_standalone_app"
+          "-P" "${CMAKE_CURRENT_BINARY_DIR}/cmake_install.cmake"
+        )
+      endif()
     else()
       add_library(${target} MODULE ${all_sources})
       set_target_properties(${target} PROPERTIES PREFIX "")
@@ -1595,6 +1622,9 @@ function(__generate_AppConfig_header)
 
     __bool_to_int("${JUCER_BUILD_AUDIOUNIT_V3}" Build_AUv3_value)
     list(APPEND plugin_settings "Build_AUv3" "${Build_AUv3_value}")
+
+    __bool_to_int("${JUCER_BUILD_AUDIOUNIT_V3}" Build_STANDALONE_value)
+    list(APPEND plugin_settings "Build_STANDALONE" "${Build_STANDALONE_value}")
 
     list(APPEND plugin_settings "Name" "\"${JUCER_PLUGIN_NAME}\"")
     list(APPEND plugin_settings "Desc" "\"${JUCER_PLUGIN_DESCRIPTION}\"")
@@ -2352,9 +2382,9 @@ function(__set_JucePlugin_Build_defines target target_type)
 
   # See XCodeProjectExporter::Target::getTargetSettings()
   # in JUCE/extras/Projucer/Source/Project Saving/jucer_ProjectExport_XCode.h
-  set(plugin_types     VST VST3 AudioUnit AudioUnitv3  RTAS AAX Standalone)
-  set(setting_suffixes VST VST3 AUDIOUNIT AUDIOUNIT_V3 RTAS AAX STANDALONE)
-  set(define_suffixes  VST VST3 AU        AUv3         RTAS AAX Standalone)
+  set(plugin_types     VST VST3 AudioUnit AudioUnitv3  RTAS AAX Standalone  )
+  set(setting_suffixes VST VST3 AUDIOUNIT AUDIOUNIT_V3 RTAS AAX AUDIOUNIT_V3)
+  set(define_suffixes  VST VST3 AU        AUv3         RTAS AAX Standalone  )
 
   foreach(index RANGE 6)
     list(GET setting_suffixes ${index} setting_suffix)
