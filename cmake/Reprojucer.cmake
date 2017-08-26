@@ -194,6 +194,7 @@ function(jucer_audio_plugin_settings)
     "BUILD_VST"
     "BUILD_VST3"
     "BUILD_AUDIOUNIT"
+    "BUILD_AUDIOUNIT_V3"
     "PLUGIN_NAME"
     "PLUGIN_DESCRIPTION"
     "PLUGIN_MANUFACTURER"
@@ -1412,6 +1413,97 @@ function(jucer_project_end)
         __link_osx_frameworks(${au_target} ${au_plugin_osx_frameworks})
         __add_xcode_resources(${au_target} ${JUCER_CUSTOM_XCODE_RESOURCE_FOLDERS})
       endif()
+
+      if(JUCER_BUILD_AUDIOUNIT_V3)
+        set(auv3_target ${target}_AUv3_AppExtension)
+        add_library(${auv3_target} MODULE
+          ${AudioUnitv3_sources}
+          ${JUCER_PROJECT_XCODE_RESOURCES}
+        )
+        target_link_libraries(${auv3_target} ${shared_code_target})
+
+        __get_au_main_type_code(au_main_type_code)
+        __version_to_dec("${JUCER_PROJECT_VERSION}" dec_version)
+        if(JUCER_PLUGIN_IS_A_SYNTH)
+          set(tag "Synth")
+        else()
+          set(tag "Effects")
+        endif()
+
+        set(ns_extension_entries "
+    <key>NSExtension</key>
+    <dict>
+      <key>NSExtensionPrincipalClass</key>
+      <string>@JUCER_PLUGIN_AU_EXPORT_PREFIX@FactoryAUv3</string>
+      <key>NSExtensionPointIdentifier</key>
+      <string>com.apple.AudioUnit-UI</string>
+      <key>NSExtensionAttributes</key>
+      <dict>
+        <key>AudioComponents</key>
+        <array>
+          <dict>
+            <key>name</key>
+            <string>@JUCER_PLUGIN_MANUFACTURER@: @JUCER_PLUGIN_NAME@</string>
+            <key>description</key>
+            <string>@JUCER_PLUGIN_DESCRIPTION@</string>
+            <key>factoryFunction</key>
+            <string>@JUCER_PLUGIN_AU_EXPORT_PREFIX@FactoryAUv3</string>
+            <key>manufacturer</key>
+            <string>@JUCER_PLUGIN_MANUFACTURER_CODE@</string>
+            <key>type</key>
+            <string>${au_main_type_code}</string>
+            <key>subtype</key>
+            <string>@JUCER_PLUGIN_CODE@</string>
+            <key>version</key>
+            <integer>${dec_version}</integer>
+            <key>sandboxSafe</key>
+            <true/>
+            <key>tags</key>
+            <array>
+              <string>${tag}</string>
+            </array>
+          </dict>
+        </array>
+      </dict>
+    </dict>"
+        )
+
+        __generate_plist_file(${auv3_target} "AUv3_AppExtension" "XPC!" "????"
+          "${main_plist_entries}" "${ns_extension_entries}"
+        )
+
+        # com.yourcompany.NewProject -> com.yourcompany.NewProject.NewProjectAUv3
+        string(REPLACE "." ";" bundle_id_parts "${JUCER_BUNDLE_IDENTIFIER}")
+        list(LENGTH bundle_id_parts bundle_id_parts_length)
+        math(EXPR bundle_id_parts_last_index "${bundle_id_parts_length} - 1")
+        list(GET bundle_id_parts ${bundle_id_parts_last_index} bundle_id_last_part)
+        list(APPEND bundle_id_parts "${bundle_id_last_part}AUv3")
+        string(REPLACE ";" "." bundle_id "${bundle_id_parts}")
+        if(CMAKE_GENERATOR STREQUAL "Xcode")
+          set_target_properties(${auv3_target} PROPERTIES
+            XCODE_ATTRIBUTE_PRODUCT_BUNDLE_IDENTIFIER "${bundle_id}"
+          )
+        else()
+          set_target_properties(${auv3_target} PROPERTIES
+            MACOSX_BUNDLE_GUI_IDENTIFIER "${bundle_id}"
+          )
+        endif()
+
+        # Cannot use __set_bundle_properties() since Projucer sets xcodeIsBundle=false
+        # for this target, though it is a bundle...
+        set_target_properties(${auv3_target} PROPERTIES
+          BUNDLE TRUE
+          BUNDLE_EXTENSION "appex"
+          XCODE_ATTRIBUTE_WRAPPER_EXTENSION "appex"
+        )
+        __set_common_target_properties(${auv3_target})
+        __set_JucePlugin_Build_defines(${auv3_target} "AudioUnitv3PlugIn")
+        set(auv3_plugin_osx_frameworks
+          ${JUCER_PROJECT_OSX_FRAMEWORKS} "AudioUnit" "CoreAudioKit" "AVFoundation"
+        )
+        __link_osx_frameworks(${auv3_target} ${auv3_plugin_osx_frameworks})
+        __add_xcode_resources(${auv3_target} ${JUCER_CUSTOM_XCODE_RESOURCE_FOLDERS})
+      endif()
     else()
       add_library(${target} MODULE ${all_sources})
       set_target_properties(${target} PROPERTIES PREFIX "")
@@ -1500,6 +1592,9 @@ function(__generate_AppConfig_header)
 
     __bool_to_int("${JUCER_BUILD_AUDIOUNIT}" Build_AU_value)
     list(APPEND plugin_settings "Build_AU" "${Build_AU_value}")
+
+    __bool_to_int("${JUCER_BUILD_AUDIOUNIT_V3}" Build_AUv3_value)
+    list(APPEND plugin_settings "Build_AUv3" "${Build_AUv3_value}")
 
     list(APPEND plugin_settings "Name" "\"${JUCER_PLUGIN_NAME}\"")
     list(APPEND plugin_settings "Desc" "\"${JUCER_PLUGIN_DESCRIPTION}\"")

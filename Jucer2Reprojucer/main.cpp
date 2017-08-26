@@ -375,6 +375,7 @@ int main(int argc, char* argv[])
           << "  " << onOffProjectSetting("BUILD_VST", "buildVST") << "\n"
           << "  " << onOffProjectSetting("BUILD_VST3", "buildVST3") << "\n"
           << "  " << onOffProjectSetting("BUILD_AUDIOUNIT", "buildAU") << "\n"
+          << "  " << onOffProjectSetting("BUILD_AUDIOUNIT_V3", "buildAUv3") << "\n"
           << "  " << projectSetting("PLUGIN_NAME", "pluginName") << "\n"
           << "  " << projectSetting("PLUGIN_DESCRIPTION", "pluginDesc") << "\n"
           << "  " << projectSetting("PLUGIN_MANUFACTURER", "pluginManufacturer") << "\n"
