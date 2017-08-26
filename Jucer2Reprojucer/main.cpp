@@ -373,6 +373,7 @@ int main(int argc, char* argv[])
 
       out << "jucer_audio_plugin_settings(\n"
           << "  " << onOffProjectSetting("BUILD_VST", "buildVST") << "\n"
+          << "  " << onOffProjectSetting("BUILD_VST3", "buildVST3") << "\n"
           << "  " << onOffProjectSetting("BUILD_AUDIOUNIT", "buildAU") << "\n"
           << "  " << projectSetting("PLUGIN_NAME", "pluginName") << "\n"
           << "  " << projectSetting("PLUGIN_DESCRIPTION", "pluginDesc") << "\n"
@@ -601,6 +602,8 @@ int main(int argc, char* argv[])
         }
 
         const auto supportsVst3 = std::get<2>(element);
+        const auto isVst3AudioPlugin =
+          projectType == "audioplug" && bool{jucerProject.getProperty("buildVST3")};
         const auto isVst3PluginHost =
           jucerProject.getChildWithName("MODULES")
             .getChildWithProperty("id", "juce_audio_processors")
@@ -609,7 +612,7 @@ int main(int argc, char* argv[])
                  .getProperty("JUCE_PLUGINHOST_VST3")
                == "enabled";
 
-        if (supportsVst3 && isVst3PluginHost)
+        if (supportsVst3 && (isVst3AudioPlugin || isVst3PluginHost))
         {
           out << "  " << getSetting(exporter, "VST3_SDK_FOLDER", "vst3Folder") << "\n";
         }
@@ -846,11 +849,19 @@ int main(int argc, char* argv[])
 
           if (exporterType == "XCODE_MAC")
           {
-            if (jucerProject.getProperty("buildVST"))
+            if (isVstAudioPlugin)
             {
               out << "  "
                   << getSetting(
                        configuration, "VST_BINARY_LOCATION", "xcodeVstBinaryLocation")
+                  << "\n";
+            }
+
+            if (isVst3AudioPlugin)
+            {
+              out << "  "
+                  << getSetting(
+                       configuration, "VST3_BINARY_LOCATION", "xcodeVst3BinaryLocation")
                   << "\n";
             }
 

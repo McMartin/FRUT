@@ -37,6 +37,7 @@ jucer_project_settings(
 
 jucer_audio_plugin_settings(
   BUILD_VST ON
+  BUILD_VST3 ON
   BUILD_AUDIOUNIT ON
   PLUGIN_NAME "Surround"
   PLUGIN_DESCRIPTION "Surround"
@@ -169,6 +170,7 @@ jucer_project_module(
 jucer_export_target(
   "Xcode (MacOSX)"
   # VST_SDK_FOLDER
+  # VST3_SDK_FOLDER
   # EXTRA_PREPROCESSOR_DEFINITIONS
   EXTRA_COMPILER_FLAGS "-Wall -Wshadow -Wno-missing-field-initializers -Wshadow -Wshorten-64-to-32 -Wstrict-aliasing -Wuninitialized -Wunused-parameter -Wconversion -Wsign-compare -Wint-conversion -Woverloaded-virtual -Wreorder -Wconstant-conversion -Wsign-conversion"
   # EXTRA_LINKER_FLAGS
@@ -193,6 +195,7 @@ jucer_export_target_configuration(
   # PREPROCESSOR_DEFINITIONS
   OPTIMISATION "-O0 (no optimisation)"
   # VST_BINARY_LOCATION
+  # VST3_BINARY_LOCATION
   # AU_BINARY_LOCATION
   OSX_BASE_SDK_VERSION "Use Default"
   OSX_DEPLOYMENT_TARGET "Use Default"
@@ -215,6 +218,7 @@ jucer_export_target_configuration(
   # PREPROCESSOR_DEFINITIONS
   OPTIMISATION "-O3 (fastest with safe optimisations)"
   # VST_BINARY_LOCATION
+  # VST3_BINARY_LOCATION
   # AU_BINARY_LOCATION
   OSX_BASE_SDK_VERSION "Use Default"
   OSX_DEPLOYMENT_TARGET "Use Default"
@@ -229,6 +233,7 @@ jucer_export_target_configuration(
 jucer_export_target(
   "Visual Studio 2015"
   # VST_SDK_FOLDER
+  # VST3_SDK_FOLDER
   # EXTRA_PREPROCESSOR_DEFINITIONS
   # EXTRA_COMPILER_FLAGS
   # EXTRA_LINKER_FLAGS

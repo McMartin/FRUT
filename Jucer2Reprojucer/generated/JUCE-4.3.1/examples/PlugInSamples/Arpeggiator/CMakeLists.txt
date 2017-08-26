@@ -37,6 +37,7 @@ jucer_project_settings(
 
 jucer_audio_plugin_settings(
   BUILD_VST ON
+  BUILD_VST3 OFF
   BUILD_AUDIOUNIT ON
   PLUGIN_NAME "Arpeggiator"
   PLUGIN_DESCRIPTION "Arpeggiator"
