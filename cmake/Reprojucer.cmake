@@ -1212,7 +1212,7 @@ function(jucer_project_end)
     set(main_plist_entries "${PListMerger_output}")
   endif()
 
-  string(REGEX REPLACE "[^A-Za-z0-9_.+-]" "_" target_name "${JUCER_PROJECT_NAME}")
+  string(REGEX REPLACE "[^A-Za-z0-9_.+-]" "_" target "${JUCER_PROJECT_NAME}")
 
   set(all_sources
     ${JUCER_PROJECT_SOURCES}
@@ -1229,13 +1229,13 @@ function(jucer_project_end)
   )
 
   if(JUCER_PROJECT_TYPE STREQUAL "Console Application")
-    add_executable(${target_name} ${all_sources})
-    __set_common_target_properties(${target_name})
-    __link_osx_frameworks(${target_name} ${JUCER_PROJECT_OSX_FRAMEWORKS})
+    add_executable(${target} ${all_sources})
+    __set_common_target_properties(${target})
+    __link_osx_frameworks(${target} ${JUCER_PROJECT_OSX_FRAMEWORKS})
 
   elseif(JUCER_PROJECT_TYPE STREQUAL "GUI Application")
-    add_executable(${target_name} ${all_sources})
-    set_target_properties(${target_name} PROPERTIES MACOSX_BUNDLE TRUE)
+    add_executable(${target} ${all_sources})
+    set_target_properties(${target} PROPERTIES MACOSX_BUNDLE TRUE)
 
     if(JUCER_DOCUMENT_FILE_EXTENSIONS)
       foreach(type_extension ${JUCER_DOCUMENT_FILE_EXTENSIONS})
@@ -1271,21 +1271,21 @@ function(jucer_project_end)
       )
     endif()
 
-    __generate_plist_file(${target_name} "App" "APPL" "????"
+    __generate_plist_file(${target} "App" "APPL" "????"
       "${main_plist_entries}" "${bundle_document_types_entries}"
     )
-    set_target_properties(${target_name} PROPERTIES WIN32_EXECUTABLE TRUE)
-    __set_common_target_properties(${target_name})
-    __link_osx_frameworks(${target_name} ${JUCER_PROJECT_OSX_FRAMEWORKS})
-    __add_xcode_resources(${target_name} ${JUCER_CUSTOM_XCODE_RESOURCE_FOLDERS})
+    set_target_properties(${target} PROPERTIES WIN32_EXECUTABLE TRUE)
+    __set_common_target_properties(${target})
+    __link_osx_frameworks(${target} ${JUCER_PROJECT_OSX_FRAMEWORKS})
+    __add_xcode_resources(${target} ${JUCER_CUSTOM_XCODE_RESOURCE_FOLDERS})
 
   elseif(JUCER_PROJECT_TYPE STREQUAL "Static Library")
-    add_library(${target_name} STATIC ${all_sources})
-    __set_common_target_properties(${target_name})
+    add_library(${target} STATIC ${all_sources})
+    __set_common_target_properties(${target})
 
   elseif(JUCER_PROJECT_TYPE STREQUAL "Dynamic Library")
-    add_library(${target_name} SHARED ${all_sources})
-    __set_common_target_properties(${target_name})
+    add_library(${target} SHARED ${all_sources})
+    __set_common_target_properties(${target})
 
   elseif(JUCER_PROJECT_TYPE STREQUAL "Audio Plug-in")
     if(APPLE)
@@ -1311,7 +1311,7 @@ function(jucer_project_end)
         endif()
       endforeach()
 
-      add_library(${target_name}_Shared_Code STATIC
+      add_library(${target}_Shared_Code STATIC
         ${SharedCode_sources}
         ${JUCER_PROJECT_RESOURCES}
         ${JUCER_PROJECT_XCODE_RESOURCES}
@@ -1319,57 +1319,57 @@ function(jucer_project_end)
         "${CMAKE_CURRENT_BINARY_DIR}/JuceLibraryCode/JuceHeader.h"
         ${JUCER_PROJECT_BROWSABLE_FILES}
       )
-      __set_common_target_properties(${target_name}_Shared_Code)
-      target_compile_definitions(${target_name}_Shared_Code PRIVATE "JUCE_SHARED_CODE=1")
-      __set_JucePlugin_Build_defines(${target_name}_Shared_Code "SharedCodeTarget")
+      __set_common_target_properties(${target}_Shared_Code)
+      target_compile_definitions(${target}_Shared_Code PRIVATE "JUCE_SHARED_CODE=1")
+      __set_JucePlugin_Build_defines(${target}_Shared_Code "SharedCodeTarget")
 
       if(JUCER_BUILD_VST)
-        set(vst_target_name ${target_name}_VST)
-        add_library(${vst_target_name} MODULE
+        set(vst_target ${target}_VST)
+        add_library(${vst_target} MODULE
           ${VST_sources}
           ${JUCER_PROJECT_XCODE_RESOURCES}
         )
-        target_link_libraries(${vst_target_name} ${target_name}_Shared_Code)
-        __generate_plist_file(${vst_target_name} "VST" "BNDL" "????"
+        target_link_libraries(${vst_target} ${target}_Shared_Code)
+        __generate_plist_file(${vst_target} "VST" "BNDL" "????"
           "${main_plist_entries}" ""
         )
-        __set_bundle_properties(${vst_target_name} "vst")
-        __set_common_target_properties(${vst_target_name})
-        __install_to_plugin_binary_location(${vst_target_name} "VST"
+        __set_bundle_properties(${vst_target} "vst")
+        __set_common_target_properties(${vst_target})
+        __install_to_plugin_binary_location(${vst_target} "VST"
           "$ENV{HOME}/Library/Audio/Plug-Ins/VST"
         )
-        __set_JucePlugin_Build_defines(${vst_target_name} "VSTPlugIn")
-        __link_osx_frameworks(${vst_target_name} ${JUCER_PROJECT_OSX_FRAMEWORKS})
-        __add_xcode_resources(${vst_target_name} ${JUCER_CUSTOM_XCODE_RESOURCE_FOLDERS})
+        __set_JucePlugin_Build_defines(${vst_target} "VSTPlugIn")
+        __link_osx_frameworks(${vst_target} ${JUCER_PROJECT_OSX_FRAMEWORKS})
+        __add_xcode_resources(${vst_target} ${JUCER_CUSTOM_XCODE_RESOURCE_FOLDERS})
       endif()
 
       if(JUCER_BUILD_VST3)
-        set(vst3_target_name ${target_name}_VST3)
-        add_library(${vst3_target_name} MODULE
+        set(vst3_target ${target}_VST3)
+        add_library(${vst3_target} MODULE
           ${VST3_sources}
           ${JUCER_PROJECT_XCODE_RESOURCES}
         )
-        target_link_libraries(${vst3_target_name} ${target_name}_Shared_Code)
-        __generate_plist_file(${vst3_target_name} "VST3" "BNDL" "????"
+        target_link_libraries(${vst3_target} ${target}_Shared_Code)
+        __generate_plist_file(${vst3_target} "VST3" "BNDL" "????"
           "${main_plist_entries}" ""
         )
-        __set_bundle_properties(${vst3_target_name} "vst3")
-        __set_common_target_properties(${vst3_target_name})
-        __install_to_plugin_binary_location(${vst_target_name} "VST3"
+        __set_bundle_properties(${vst3_target} "vst3")
+        __set_common_target_properties(${vst3_target})
+        __install_to_plugin_binary_location(${vst_target} "VST3"
           "$ENV{HOME}/Library/Audio/Plug-Ins/VST3"
         )
-        __set_JucePlugin_Build_defines(${vst3_target_name} "VST3PlugIn")
-        __link_osx_frameworks(${vst3_target_name} ${JUCER_PROJECT_OSX_FRAMEWORKS})
-        __add_xcode_resources(${vst3_target_name} ${JUCER_CUSTOM_XCODE_RESOURCE_FOLDERS})
+        __set_JucePlugin_Build_defines(${vst3_target} "VST3PlugIn")
+        __link_osx_frameworks(${vst3_target} ${JUCER_PROJECT_OSX_FRAMEWORKS})
+        __add_xcode_resources(${vst3_target} ${JUCER_CUSTOM_XCODE_RESOURCE_FOLDERS})
       endif()
 
       if(JUCER_BUILD_AUDIOUNIT)
-        set(au_target_name ${target_name}_AU)
-        add_library(${au_target_name} MODULE
+        set(au_target ${target}_AU)
+        add_library(${au_target} MODULE
           ${AudioUnit_sources}
           ${JUCER_PROJECT_XCODE_RESOURCES}
         )
-        target_link_libraries(${au_target_name} ${target_name}_Shared_Code)
+        target_link_libraries(${au_target} ${target}_Shared_Code)
 
         if(NOT DEFINED JUCER_PLUGIN_AU_MAIN_TYPE)
           if(JUCER_MIDI_EFFECT_PLUGIN)
@@ -1409,25 +1409,25 @@ function(jucer_project_end)
     </array>"
         )
 
-        __generate_plist_file(${au_target_name} "AU" "BNDL" "????"
+        __generate_plist_file(${au_target} "AU" "BNDL" "????"
           "${main_plist_entries}" "${audio_components_entries}"
         )
-        __set_bundle_properties(${au_target_name} "component")
-        __set_common_target_properties(${au_target_name})
-        __install_to_plugin_binary_location(${au_target_name} "AU"
+        __set_bundle_properties(${au_target} "component")
+        __set_common_target_properties(${au_target})
+        __install_to_plugin_binary_location(${au_target} "AU"
           "$ENV{HOME}/Library/Audio/Plug-Ins/Components"
         )
-        __set_JucePlugin_Build_defines(${au_target_name} "AudioUnitPlugIn")
+        __set_JucePlugin_Build_defines(${au_target} "AudioUnitPlugIn")
         set(au_plugin_osx_frameworks
           ${JUCER_PROJECT_OSX_FRAMEWORKS} "AudioUnit" "CoreAudioKit"
         )
-        __link_osx_frameworks(${au_target_name} ${au_plugin_osx_frameworks})
-        __add_xcode_resources(${au_target_name} ${JUCER_CUSTOM_XCODE_RESOURCE_FOLDERS})
+        __link_osx_frameworks(${au_target} ${au_plugin_osx_frameworks})
+        __add_xcode_resources(${au_target} ${JUCER_CUSTOM_XCODE_RESOURCE_FOLDERS})
       endif()
     else()
-      add_library(${target_name} MODULE ${all_sources})
-      set_target_properties(${target_name} PROPERTIES PREFIX "")
-      __set_common_target_properties(${target_name})
+      add_library(${target} MODULE ${all_sources})
+      set_target_properties(${target} PROPERTIES PREFIX "")
+      __set_common_target_properties(${target})
     endif()
 
   else()
@@ -1819,7 +1819,7 @@ function(__generate_icon_file icon_format out_icon_filename)
 endfunction()
 
 
-function(__set_common_target_properties target_name)
+function(__set_common_target_properties target)
 
   foreach(config ${JUCER_PROJECT_CONFIGURATIONS})
     string(TOUPPER "${config}" upper_config)
@@ -1829,20 +1829,20 @@ function(__set_common_target_properties target_name)
     else()
       set(output_name "${JUCER_PROJECT_NAME}")
     endif()
-    set_target_properties(${target_name} PROPERTIES
+    set_target_properties(${target} PROPERTIES
       OUTPUT_NAME_${upper_config} "${output_name}"
     )
 
     if(DEFINED JUCER_BINARY_LOCATION_${config})
       set(output_directory "${JUCER_BINARY_LOCATION_${config}}")
-      set_target_properties(${target_name} PROPERTIES
+      set_target_properties(${target} PROPERTIES
         LIBRARY_OUTPUT_DIRECTORY_${upper_config} "${output_directory}"
         RUNTIME_OUTPUT_DIRECTORY_${upper_config} "${output_directory}"
       )
     endif()
   endforeach()
 
-  target_include_directories(${target_name} PRIVATE
+  target_include_directories(${target} PRIVATE
     "${CMAKE_CURRENT_BINARY_DIR}/JuceLibraryCode"
     ${JUCER_PROJECT_MODULES_FOLDERS}
     ${JUCER_INCLUDE_DIRECTORIES}
@@ -1860,7 +1860,7 @@ function(__set_common_target_properties target_name)
         )
       endif()
     endif()
-    target_include_directories(${target_name} PRIVATE "${JUCER_VST_SDK_FOLDER}")
+    target_include_directories(${target} PRIVATE "${JUCER_VST_SDK_FOLDER}")
   endif()
 
   if((JUCER_BUILD_VST3 OR JUCER_FLAG_JUCE_PLUGINHOST_VST3)
@@ -1876,51 +1876,51 @@ function(__set_common_target_properties target_name)
         )
       endif()
     endif()
-    target_include_directories(${target_name} PRIVATE "${JUCER_VST3_SDK_FOLDER}")
+    target_include_directories(${target} PRIVATE "${JUCER_VST3_SDK_FOLDER}")
   endif()
 
   foreach(config ${JUCER_PROJECT_CONFIGURATIONS})
     if(JUCER_OPTIMISATION_FLAG_${config})
       set(optimisation_flag ${JUCER_OPTIMISATION_FLAG_${config}})
-      target_compile_options(${target_name} PRIVATE
+      target_compile_options(${target} PRIVATE
         $<$<CONFIG:${config}>:${optimisation_flag}>
       )
     endif()
   endforeach()
 
-  target_compile_definitions(${target_name} PRIVATE ${JUCER_PREPROCESSOR_DEFINITIONS})
-  target_compile_options(${target_name} PRIVATE ${JUCER_COMPILER_FLAGS})
-  target_link_libraries(${target_name} ${JUCER_LINK_LIBRARIES} ${JUCER_LINKER_FLAGS})
+  target_compile_definitions(${target} PRIVATE ${JUCER_PREPROCESSOR_DEFINITIONS})
+  target_compile_options(${target} PRIVATE ${JUCER_COMPILER_FLAGS})
+  target_link_libraries(${target} ${JUCER_LINK_LIBRARIES} ${JUCER_LINKER_FLAGS})
 
   if(APPLE)
-    set_target_properties(${target_name} PROPERTIES CXX_EXTENSIONS OFF)
-    set_target_properties(${target_name} PROPERTIES CXX_STANDARD 11)
+    set_target_properties(${target} PROPERTIES CXX_EXTENSIONS OFF)
+    set_target_properties(${target} PROPERTIES CXX_STANDARD 11)
 
     if(DEFINED JUCER_CXX_LANGUAGE_STANDARD)
       if(JUCER_CXX_LANGUAGE_STANDARD MATCHES "^GNU\\+\\+$")
-        set_target_properties(${target_name} PROPERTIES CXX_EXTENSIONS ON)
+        set_target_properties(${target} PROPERTIES CXX_EXTENSIONS ON)
       elseif(JUCER_CXX_LANGUAGE_STANDARD MATCHES "^C\\+\\+$")
-        set_target_properties(${target_name} PROPERTIES CXX_EXTENSIONS OFF)
+        set_target_properties(${target} PROPERTIES CXX_EXTENSIONS OFF)
       endif()
       if(JUCER_CXX_LANGUAGE_STANDARD MATCHES "98$")
-        set_target_properties(${target_name} PROPERTIES CXX_STANDARD 98)
+        set_target_properties(${target} PROPERTIES CXX_STANDARD 98)
       elseif(JUCER_CXX_LANGUAGE_STANDARD MATCHES "11$")
-        set_target_properties(${target_name} PROPERTIES CXX_STANDARD 11)
+        set_target_properties(${target} PROPERTIES CXX_STANDARD 11)
       elseif(JUCER_CXX_LANGUAGE_STANDARD MATCHES "14$")
-        set_target_properties(${target_name} PROPERTIES CXX_STANDARD 14)
+        set_target_properties(${target} PROPERTIES CXX_STANDARD 14)
       endif()
     endif()
 
-    get_target_property(target_type ${target_name} TYPE)
+    get_target_property(target_type ${target} TYPE)
 
     foreach(config ${JUCER_PROJECT_CONFIGURATIONS})
       if(${JUCER_CONFIGURATION_IS_DEBUG_${config}})
-        target_compile_definitions(${target_name} PRIVATE
+        target_compile_definitions(${target} PRIVATE
           $<$<CONFIG:${config}>:_DEBUG=1>
           $<$<CONFIG:${config}>:DEBUG=1>
         )
       else()
-        target_compile_definitions(${target_name} PRIVATE
+        target_compile_definitions(${target} PRIVATE
           $<$<CONFIG:${config}>:_NDEBUG=1>
           $<$<CONFIG:${config}>:NDEBUG=1>
         )
@@ -1928,13 +1928,13 @@ function(__set_common_target_properties target_name)
 
       if(DEFINED JUCER_CXX_LIBRARY_${config})
         set(cxx_library ${JUCER_CXX_LIBRARY_${config}})
-        target_compile_options(${target_name} PRIVATE
+        target_compile_options(${target} PRIVATE
           $<$<CONFIG:${config}>:-stdlib=${cxx_library}>
         )
       endif()
 
       foreach(path ${JUCER_EXTRA_LIBRARY_SEARCH_PATHS_${config}})
-        target_link_libraries(${target_name}
+        target_link_libraries(${target}
           $<$<CONFIG:${config}>:-L${path}>
         )
       endforeach()
@@ -1948,14 +1948,14 @@ function(__set_common_target_properties target_name)
           list(APPEND strip_command
             "$<$<CONFIG:${config}>:${strip_exe}>"
             "$<$<CONFIG:${config}>:-x>"
-            "$<$<CONFIG:${config}>:$<TARGET_FILE:${target_name}>>"
+            "$<$<CONFIG:${config}>:$<TARGET_FILE:${target}>>"
           )
         endif()
       endif()
     endforeach()
 
     if(strip_command)
-      add_custom_command(TARGET ${target_name} POST_BUILD COMMAND ${strip_command})
+      add_custom_command(TARGET ${target} POST_BUILD COMMAND ${strip_command})
     endif()
 
     foreach(item ${JUCER_OSX_ARCHITECTURES})
@@ -1965,7 +1965,7 @@ function(__set_common_target_properties target_name)
         string(TOUPPER "${config}" upper_config)
         string(REPLACE " " ";" archs "${item}")
 
-        set_target_properties(${target_name} PROPERTIES
+        set_target_properties(${target} PROPERTIES
           OSX_ARCHITECTURES_${upper_config} "${archs}"
         )
 
@@ -1982,7 +1982,7 @@ function(__set_common_target_properties target_name)
       if(NOT IS_DIRECTORY "${JUCER_TARGET_PROJECT_FOLDER}")
         file(MAKE_DIRECTORY "${JUCER_TARGET_PROJECT_FOLDER}")
       endif()
-      add_custom_command(TARGET ${target_name} PRE_BUILD
+      add_custom_command(TARGET ${target} PRE_BUILD
         COMMAND "/bin/sh" "${JUCER_PREBUILD_SHELL_SCRIPT}"
         WORKING_DIRECTORY "${JUCER_TARGET_PROJECT_FOLDER}"
       )
@@ -1997,7 +1997,7 @@ function(__set_common_target_properties target_name)
       if(NOT IS_DIRECTORY "${JUCER_TARGET_PROJECT_FOLDER}")
         file(MAKE_DIRECTORY "${JUCER_TARGET_PROJECT_FOLDER}")
       endif()
-      add_custom_command(TARGET ${target_name} POST_BUILD
+      add_custom_command(TARGET ${target} POST_BUILD
         COMMAND "/bin/sh" "${JUCER_POSTBUILD_SHELL_SCRIPT}"
         WORKING_DIRECTORY "${JUCER_TARGET_PROJECT_FOLDER}"
       )
@@ -2006,24 +2006,24 @@ function(__set_common_target_properties target_name)
   elseif(WIN32)
     foreach(config ${JUCER_PROJECT_CONFIGURATIONS})
       if(${JUCER_CONFIGURATION_IS_DEBUG_${config}})
-        target_compile_definitions(${target_name} PRIVATE
+        target_compile_definitions(${target} PRIVATE
           $<$<CONFIG:${config}>:DEBUG>
           $<$<CONFIG:${config}>:_DEBUG>
         )
       else()
-        target_compile_definitions(${target_name} PRIVATE
+        target_compile_definitions(${target} PRIVATE
           $<$<CONFIG:${config}>:NDEBUG>
         )
 
         if(NOT JUCER_ALWAYS_DISABLE_WPO_${config})
-          target_compile_options(${target_name} PRIVATE
+          target_compile_options(${target} PRIVATE
             $<$<CONFIG:${config}>:/GL>
           )
         endif()
       endif()
 
       foreach(path ${JUCER_EXTRA_LIBRARY_SEARCH_PATHS_${config}})
-        target_link_libraries(${target_name}
+        target_link_libraries(${target}
           $<$<CONFIG:${config}>:-LIBPATH:${path}>
         )
       endforeach()
@@ -2031,13 +2031,13 @@ function(__set_common_target_properties target_name)
       if(DEFINED JUCER_INCREMENTAL_LINKING_${config})
         if(JUCER_INCREMENTAL_LINKING_${config})
           string(TOUPPER "${config}" upper_config)
-          get_target_property(link_flags ${target_name} LINK_FLAGS_${upper_config})
+          get_target_property(link_flags ${target} LINK_FLAGS_${upper_config})
           if(link_flags)
             string(APPEND link_flags " /INCREMENTAL")
           else()
             set(link_flags "/INCREMENTAL")
           endif()
-          set_target_properties(${target_name} PROPERTIES
+          set_target_properties(${target} PROPERTIES
             LINK_FLAGS_${upper_config} "${link_flags}"
           )
         endif()
@@ -2060,13 +2060,13 @@ function(__set_common_target_properties target_name)
       if(DEFINED JUCER_GENERATE_MANIFEST_${config})
         if(NOT JUCER_GENERATE_MANIFEST_${config})
           string(TOUPPER "${config}" upper_config)
-          get_target_property(link_flags ${target_name} LINK_FLAGS_${upper_config})
+          get_target_property(link_flags ${target} LINK_FLAGS_${upper_config})
           if(link_flags)
             string(APPEND link_flags " /MANIFEST:NO")
           else()
             set(link_flags "/MANIFEST:NO")
           endif()
-          set_target_properties(${target_name} PROPERTIES
+          set_target_properties(${target} PROPERTIES
             LINK_FLAGS_${upper_config} "${link_flags}"
           )
         endif()
@@ -2074,13 +2074,13 @@ function(__set_common_target_properties target_name)
 
       if(NOT DEFINED JUCER_CHARACTER_SET_${config}
           OR JUCER_CHARACTER_SET_${config} STREQUAL "Default")
-        target_compile_definitions(${target_name} PRIVATE
+        target_compile_definitions(${target} PRIVATE
           $<$<CONFIG:${config}>:_SBCS>
         )
       elseif(JUCER_CHARACTER_SET_${config} STREQUAL "MultiByte")
         # Nothing to do, this is CMake's default
       elseif(JUCER_CHARACTER_SET_${config} STREQUAL "Unicode")
-        target_compile_definitions(${target_name} PRIVATE
+        target_compile_definitions(${target} PRIVATE
           $<$<CONFIG:${config}>:_UNICODE>
           $<$<CONFIG:${config}>:UNICODE>
         )
@@ -2096,7 +2096,7 @@ function(__set_common_target_properties target_name)
       if(NOT IS_DIRECTORY "${JUCER_TARGET_PROJECT_FOLDER}")
         file(MAKE_DIRECTORY "${JUCER_TARGET_PROJECT_FOLDER}")
       endif()
-      add_custom_command(TARGET ${target_name} PRE_BUILD
+      add_custom_command(TARGET ${target} PRE_BUILD
         COMMAND ${all_confs_prebuild_command}
         WORKING_DIRECTORY "${JUCER_TARGET_PROJECT_FOLDER}"
       )
@@ -2111,40 +2111,40 @@ function(__set_common_target_properties target_name)
       if(NOT IS_DIRECTORY "${JUCER_TARGET_PROJECT_FOLDER}")
         file(MAKE_DIRECTORY "${JUCER_TARGET_PROJECT_FOLDER}")
       endif()
-      add_custom_command(TARGET ${target_name} POST_BUILD
+      add_custom_command(TARGET ${target} POST_BUILD
         COMMAND ${all_confs_postbuild_command}
         WORKING_DIRECTORY "${JUCER_TARGET_PROJECT_FOLDER}"
       )
     endif()
 
   elseif(CMAKE_HOST_SYSTEM_NAME STREQUAL "Linux")
-    set_target_properties(${target_name} PROPERTIES CXX_EXTENSIONS OFF)
-    set_target_properties(${target_name} PROPERTIES CXX_STANDARD 11)
+    set_target_properties(${target} PROPERTIES CXX_EXTENSIONS OFF)
+    set_target_properties(${target} PROPERTIES CXX_STANDARD 11)
 
     if(DEFINED JUCER_CXX_LANGUAGE_STANDARD)
       if(JUCER_CXX_LANGUAGE_STANDARD MATCHES "03$")
-        set_target_properties(${target_name} PROPERTIES CXX_STANDARD 98)
+        set_target_properties(${target} PROPERTIES CXX_STANDARD 98)
       elseif(JUCER_CXX_LANGUAGE_STANDARD MATCHES "11$")
-        set_target_properties(${target_name} PROPERTIES CXX_STANDARD 11)
+        set_target_properties(${target} PROPERTIES CXX_STANDARD 11)
       elseif(JUCER_CXX_LANGUAGE_STANDARD MATCHES "14$")
-        set_target_properties(${target_name} PROPERTIES CXX_STANDARD 14)
+        set_target_properties(${target} PROPERTIES CXX_STANDARD 14)
       endif()
     endif()
 
     foreach(config ${JUCER_PROJECT_CONFIGURATIONS})
       if(${JUCER_CONFIGURATION_IS_DEBUG_${config}})
-        target_compile_definitions(${target_name} PRIVATE
+        target_compile_definitions(${target} PRIVATE
           $<$<CONFIG:${config}>:DEBUG=1>
           $<$<CONFIG:${config}>:_DEBUG=1>
         )
       else()
-        target_compile_definitions(${target_name} PRIVATE
+        target_compile_definitions(${target} PRIVATE
           $<$<CONFIG:${config}>:NDEBUG=1>
         )
       endif()
 
       foreach(path ${JUCER_EXTRA_LIBRARY_SEARCH_PATHS_${config}})
-        target_link_libraries(${target_name}
+        target_link_libraries(${target}
           $<$<CONFIG:${config}>:-L${path}>
         )
       endforeach()
@@ -2160,15 +2160,15 @@ function(__set_common_target_properties target_name)
         if(NOT ${pkg}_FOUND)
           message(FATAL_ERROR "pkg-config could not find ${pkg}")
         endif()
-        target_compile_options(${target_name} PRIVATE ${${pkg}_CFLAGS})
-        target_link_libraries(${target_name} ${${pkg}_LIBRARIES})
+        target_compile_options(${target} PRIVATE ${${pkg}_CFLAGS})
+        target_link_libraries(${target} ${${pkg}_LIBRARIES})
       endforeach()
     else()
       if("juce_graphics" IN_LIST JUCER_PROJECT_MODULES)
-        target_include_directories(${target_name} PRIVATE "/usr/include/freetype2")
+        target_include_directories(${target} PRIVATE "/usr/include/freetype2")
       endif()
       if(JUCER_FLAG_JUCE_USE_CURL)
-        target_link_libraries(${target_name} "-lcurl")
+        target_link_libraries(${target} "-lcurl")
       endif()
     endif()
 
@@ -2178,9 +2178,9 @@ function(__set_common_target_properties target_name)
       list(REMOVE_DUPLICATES linux_libs)
       foreach(item ${linux_libs})
         if(item STREQUAL "pthread")
-          target_compile_options(${target_name} PRIVATE "-pthread")
+          target_compile_options(${target} PRIVATE "-pthread")
         endif()
-        target_link_libraries(${target_name} "-l${item}")
+        target_link_libraries(${target} "-l${item}")
       endforeach()
     endif()
   endif()
@@ -2189,7 +2189,7 @@ endfunction()
 
 
 function(__generate_plist_file
-  target_name plist_suffix
+  target plist_suffix
   bundle_package_type bundle_signature
   main_plist_entries extra_plist_entries
 )
@@ -2198,14 +2198,14 @@ function(__generate_plist_file
   if(CMAKE_GENERATOR STREQUAL "Xcode")
     set(bundle_executable "\${EXECUTABLE_NAME}")
     set(bundle_identifier "\$(PRODUCT_BUNDLE_IDENTIFIER)")
-    set_target_properties(${target_name} PROPERTIES
+    set_target_properties(${target} PROPERTIES
       XCODE_ATTRIBUTE_INFOPLIST_FILE "${CMAKE_CURRENT_BINARY_DIR}/${plist_filename}"
       XCODE_ATTRIBUTE_PRODUCT_BUNDLE_IDENTIFIER "${JUCER_BUNDLE_IDENTIFIER}"
     )
   else()
     set(bundle_executable "\${MACOSX_BUNDLE_BUNDLE_NAME}")
     set(bundle_identifier "\${MACOSX_BUNDLE_GUI_IDENTIFIER}")
-    set_target_properties(${target_name} PROPERTIES
+    set_target_properties(${target} PROPERTIES
       MACOSX_BUNDLE_BUNDLE_NAME "${JUCER_PROJECT_NAME}"
       MACOSX_BUNDLE_GUI_IDENTIFIER "${JUCER_BUNDLE_IDENTIFIER}"
       MACOSX_BUNDLE_INFO_PLIST "${CMAKE_CURRENT_BINARY_DIR}/${plist_filename}"
@@ -2219,25 +2219,25 @@ function(__generate_plist_file
 endfunction()
 
 
-function(__set_bundle_properties target_name extension)
+function(__set_bundle_properties target extension)
 
-  set_target_properties(${target_name} PROPERTIES
+  set_target_properties(${target} PROPERTIES
     BUNDLE TRUE
     BUNDLE_EXTENSION "${extension}"
     XCODE_ATTRIBUTE_WRAPPER_EXTENSION "${extension}"
   )
 
-  add_custom_command(TARGET ${target_name} PRE_BUILD
+  add_custom_command(TARGET ${target} PRE_BUILD
     COMMAND
     "${CMAKE_COMMAND}" "-E" "copy_if_different"
     "${Reprojucer_templates_DIR}/PkgInfo"
-    "$<TARGET_FILE_DIR:${target_name}>/.."
+    "$<TARGET_FILE_DIR:${target}>/.."
   )
 
 endfunction()
 
 
-function(__install_to_plugin_binary_location target_name plugin_type default_destination)
+function(__install_to_plugin_binary_location target plugin_type default_destination)
 
   foreach(config ${JUCER_PROJECT_CONFIGURATIONS})
     if(DEFINED JUCER_${plugin_type}_BINARY_LOCATION_${config})
@@ -2248,13 +2248,13 @@ function(__install_to_plugin_binary_location target_name plugin_type default_des
     string(APPEND all_confs_destination "$<$<CONFIG:${config}>:${destination}>")
   endforeach()
 
-  set(component "_install_${target_name}_to_${plugin_type}_binary_location")
+  set(component "_install_${target}_to_${plugin_type}_binary_location")
 
-  install(TARGETS ${target_name} COMPONENT ${component}
+  install(TARGETS ${target} COMPONENT ${component}
     DESTINATION ${all_confs_destination}
   )
 
-  add_custom_command(TARGET ${target_name} POST_BUILD
+  add_custom_command(TARGET ${target} POST_BUILD
     COMMAND
     "${CMAKE_COMMAND}"
     "-DCMAKE_INSTALL_CONFIG_NAME=$<CONFIG>"
@@ -2265,7 +2265,7 @@ function(__install_to_plugin_binary_location target_name plugin_type default_des
 endfunction()
 
 
-function(__set_JucePlugin_Build_defines target_name target_type)
+function(__set_JucePlugin_Build_defines target target_type)
 
   # See XCodeProjectExporter::Target::getTargetSettings()
   # in JUCE/extras/Projucer/Source/Project Saving/jucer_ProjectExport_XCode.h
@@ -2280,11 +2280,11 @@ function(__set_JucePlugin_Build_defines target_name target_type)
 
     if(JUCER_BUILD_${setting_suffix} AND (target_type STREQUAL "SharedCodeTarget"
         OR target_type STREQUAL "${plugin_type}PlugIn"))
-      target_compile_definitions(${target_name} PRIVATE
+      target_compile_definitions(${target} PRIVATE
         "JucePlugin_Build_${define_suffix}=1"
       )
     else()
-      target_compile_definitions(${target_name} PRIVATE
+      target_compile_definitions(${target} PRIVATE
         "JucePlugin_Build_${define_suffix}=0"
       )
     endif()
@@ -2293,7 +2293,7 @@ function(__set_JucePlugin_Build_defines target_name target_type)
 endfunction()
 
 
-function(__link_osx_frameworks target_name)
+function(__link_osx_frameworks target)
 
   set(osx_frameworks ${ARGN})
 
@@ -2305,21 +2305,21 @@ function(__link_osx_frameworks target_name)
     list(REMOVE_DUPLICATES osx_frameworks)
     foreach(framework_name ${osx_frameworks})
       find_library(${framework_name}_framework ${framework_name})
-      target_link_libraries(${target_name} "${${framework_name}_framework}")
+      target_link_libraries(${target} "${${framework_name}_framework}")
     endforeach()
   endif()
 
 endfunction()
 
 
-function(__add_xcode_resources target_name)
+function(__add_xcode_resources target)
 
   set(resource_folders ${ARGN})
 
   if(APPLE)
     foreach(folder ${resource_folders})
-      add_custom_command(TARGET ${target_name} PRE_BUILD
-        COMMAND rsync -r "${folder}" "$<TARGET_FILE_DIR:${target_name}>/../Resources"
+      add_custom_command(TARGET ${target} PRE_BUILD
+        COMMAND rsync -r "${folder}" "$<TARGET_FILE_DIR:${target}>/../Resources"
       )
     endforeach()
   endif()
