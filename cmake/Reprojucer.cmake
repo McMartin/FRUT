@@ -1311,7 +1311,8 @@ function(jucer_project_end)
         endif()
       endforeach()
 
-      add_library(${target}_Shared_Code STATIC
+      set(shared_code_target ${target}_Shared_Code)
+      add_library(${shared_code_target} STATIC
         ${SharedCode_sources}
         ${JUCER_PROJECT_RESOURCES}
         ${JUCER_PROJECT_XCODE_RESOURCES}
@@ -1319,9 +1320,9 @@ function(jucer_project_end)
         "${CMAKE_CURRENT_BINARY_DIR}/JuceLibraryCode/JuceHeader.h"
         ${JUCER_PROJECT_BROWSABLE_FILES}
       )
-      __set_common_target_properties(${target}_Shared_Code)
-      target_compile_definitions(${target}_Shared_Code PRIVATE "JUCE_SHARED_CODE=1")
-      __set_JucePlugin_Build_defines(${target}_Shared_Code "SharedCodeTarget")
+      __set_common_target_properties(${shared_code_target})
+      target_compile_definitions(${shared_code_target} PRIVATE "JUCE_SHARED_CODE=1")
+      __set_JucePlugin_Build_defines(${shared_code_target} "SharedCodeTarget")
 
       if(JUCER_BUILD_VST)
         set(vst_target ${target}_VST)
@@ -1329,7 +1330,7 @@ function(jucer_project_end)
           ${VST_sources}
           ${JUCER_PROJECT_XCODE_RESOURCES}
         )
-        target_link_libraries(${vst_target} ${target}_Shared_Code)
+        target_link_libraries(${vst_target} ${shared_code_target})
         __generate_plist_file(${vst_target} "VST" "BNDL" "????"
           "${main_plist_entries}" ""
         )
@@ -1349,7 +1350,7 @@ function(jucer_project_end)
           ${VST3_sources}
           ${JUCER_PROJECT_XCODE_RESOURCES}
         )
-        target_link_libraries(${vst3_target} ${target}_Shared_Code)
+        target_link_libraries(${vst3_target} ${shared_code_target})
         __generate_plist_file(${vst3_target} "VST3" "BNDL" "????"
           "${main_plist_entries}" ""
         )
@@ -1369,7 +1370,7 @@ function(jucer_project_end)
           ${AudioUnit_sources}
           ${JUCER_PROJECT_XCODE_RESOURCES}
         )
-        target_link_libraries(${au_target} ${target}_Shared_Code)
+        target_link_libraries(${au_target} ${shared_code_target})
 
         if(NOT DEFINED JUCER_PLUGIN_AU_MAIN_TYPE)
           if(JUCER_MIDI_EFFECT_PLUGIN)
