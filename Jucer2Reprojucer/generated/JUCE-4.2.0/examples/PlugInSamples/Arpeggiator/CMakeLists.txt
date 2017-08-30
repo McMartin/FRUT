@@ -39,6 +39,7 @@ jucer_audio_plugin_settings(
   BUILD_VST ON
   BUILD_VST3 ON
   BUILD_AUDIOUNIT ON
+  BUILD_AUDIOUNIT_V3 OFF
   PLUGIN_NAME "Arpeggiator"
   PLUGIN_DESCRIPTION "Arpeggiator"
   PLUGIN_MANUFACTURER "ROLI Ltd."

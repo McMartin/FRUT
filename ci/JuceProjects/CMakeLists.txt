@@ -63,6 +63,13 @@ if(NOT MSVC_VERSION EQUAL 1800)
   )
 endif()
 
+set(AUv3Synth_jucer_FILE "${JUCE_ROOT}/examples/AUv3Synth/AUv3Synth.jucer")
+if(APPLE)
+  add_subdirectory("${generated_JUCE_ROOT}/examples/AUv3Synth"
+    "AUv3Synth"
+  )
+endif()
+
 set(Projucer_jucer_FILE "${JUCE_ROOT}/extras/Projucer/Projucer.jucer")
 if(NOT JUCE_VERSION STREQUAL "4.2.0"
     OR (NOT MSVC_VERSION EQUAL 1800 AND NOT MSVC_VERSION EQUAL 1900))
