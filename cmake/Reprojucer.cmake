@@ -806,15 +806,14 @@ function(jucer_export_target_configuration
         if(value STREQUAL "Native architecture of build machine")
           # Consider as default
         elseif(value STREQUAL "Universal Binary (32-bit)")
-          list(APPEND JUCER_OSX_ARCHITECTURES ${config} "i386")
+          set(JUCER_OSX_ARCHITECTURES_${config} "i386" PARENT_SCOPE)
         elseif(value STREQUAL "Universal Binary (32/64-bit)")
-          list(APPEND JUCER_OSX_ARCHITECTURES ${config} "x86_64 i386")
+          set(JUCER_OSX_ARCHITECTURES_${config} "x86_64" "i386" PARENT_SCOPE)
         elseif(value STREQUAL "64-bit Intel")
-          list(APPEND JUCER_OSX_ARCHITECTURES ${config} "x86_64")
+          set(JUCER_OSX_ARCHITECTURES_${config} "x86_64" PARENT_SCOPE)
         elseif(NOT value STREQUAL "Use Default")
           message(FATAL_ERROR "Unsupported value for OSX_ARCHITECTURE: \"${value}\"\n")
         endif()
-        set(JUCER_OSX_ARCHITECTURES ${JUCER_OSX_ARCHITECTURES} PARENT_SCOPE)
 
       elseif(tag STREQUAL "CXX_LANGUAGE_STANDARD")
         if(value MATCHES "^(C|GNU)\\+\\+(98|11|14)$")
@@ -2059,6 +2058,13 @@ function(__set_common_target_properties target)
         )
       endif()
 
+      if(DEFINED JUCER_OSX_ARCHITECTURES_${config})
+        string(TOUPPER "${config}" upper_config)
+        set_target_properties(${target} PROPERTIES
+          OSX_ARCHITECTURES_${upper_config} "${JUCER_OSX_ARCHITECTURES_${config}}"
+        )
+      endif()
+
       foreach(path ${JUCER_EXTRA_LIBRARY_SEARCH_PATHS_${config}})
         target_link_libraries(${target}
           $<$<CONFIG:${config}>:-L${path}>
@@ -2083,21 +2089,6 @@ function(__set_common_target_properties target)
     if(strip_command)
       add_custom_command(TARGET ${target} POST_BUILD COMMAND ${strip_command})
     endif()
-
-    foreach(item ${JUCER_OSX_ARCHITECTURES})
-      if(NOT DEFINED config)
-        set(config ${item})
-      else()
-        string(TOUPPER "${config}" upper_config)
-        string(REPLACE " " ";" archs "${item}")
-
-        set_target_properties(${target} PROPERTIES
-          OSX_ARCHITECTURES_${upper_config} "${archs}"
-        )
-
-        unset(config)
-      endif()
-    endforeach()
 
     if(DEFINED JUCER_PREBUILD_SHELL_SCRIPT)
       if(NOT DEFINED JUCER_TARGET_PROJECT_FOLDER)
