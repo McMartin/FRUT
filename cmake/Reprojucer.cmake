@@ -920,8 +920,8 @@ function(jucer_export_target_configuration
         set(JUCER_GENERATE_MANIFEST_${config} ${value} PARENT_SCOPE)
 
       elseif(tag STREQUAL "CHARACTER_SET")
-        if(value STREQUAL "Default" OR value STREQUAL "MultiByte"
-            OR value STREQUAL "Unicode")
+        set(character_sets "Default" "MultiByte" "Unicode")
+        if("${value}" IN_LIST character_sets)
           set(JUCER_CHARACTER_SET_${config} ${value} PARENT_SCOPE)
         else()
           message(FATAL_ERROR "Unsupported value for CHARACTER_SET: \"${value}\"")
