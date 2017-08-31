@@ -722,9 +722,9 @@ function(jucer_export_target_configuration
         string(REPLACE "\n" ";" value "${value}")
         foreach(path ${value})
           __abs_path_based_on_jucer_project_dir("${path}" path)
-          list(APPEND include_directories "${path}")
+          list(APPEND header_search_paths "${path}")
         endforeach()
-        set(JUCER_INCLUDE_DIRECTORIES_${config} ${include_directories} PARENT_SCOPE)
+        set(JUCER_HEADER_SEARCH_PATHS_${config} ${header_search_paths} PARENT_SCOPE)
 
       elseif(tag STREQUAL "EXTRA_LIBRARY_SEARCH_PATHS")
         string(REPLACE "\\" "/" value "${value}")
@@ -1962,8 +1962,8 @@ function(__set_common_target_properties target)
     ${JUCER_PROJECT_MODULES_FOLDERS}
   )
   foreach(config ${JUCER_PROJECT_CONFIGURATIONS})
-    set(directories ${JUCER_INCLUDE_DIRECTORIES_${config}})
-    target_include_directories(${target} PRIVATE $<$<CONFIG:${config}>:${directories}>)
+    set(search_paths ${JUCER_HEADER_SEARCH_PATHS_${config}})
+    target_include_directories(${target} PRIVATE $<$<CONFIG:${config}>:${search_paths}>)
   endforeach()
 
   if((JUCER_BUILD_VST OR JUCER_FLAG_JUCE_PLUGINHOST_VST) AND DEFINED JUCER_VST_SDK_FOLDER)
