@@ -954,8 +954,6 @@ function(jucer_export_target_configuration
     endif()
   endforeach()
 
-  set(JUCER_COMPILER_FLAGS ${JUCER_COMPILER_FLAGS} PARENT_SCOPE)
-
 endfunction()
 
 
@@ -1997,7 +1995,6 @@ function(__set_common_target_properties target)
     target_compile_definitions(${target} PRIVATE $<$<CONFIG:${config}>:${definitions}>)
   endforeach()
 
-  target_compile_options(${target} PRIVATE ${JUCER_COMPILER_FLAGS})
   target_link_libraries(${target} ${JUCER_EXTERNAL_LIBRARIES_TO_LINK})
 
   if(APPLE)
