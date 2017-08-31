@@ -847,7 +847,7 @@ function(jucer_export_target_configuration
         else()
           message(FATAL_ERROR "Unsupported value for WARNING_LEVEL: \"${value}\"\n")
         endif()
-        list(APPEND JUCER_COMPILER_FLAGS $<$<CONFIG:${config}>:/W${level}>)
+        set(JUCER_WARNING_LEVEL_FLAG_${config} "/W${level}" PARENT_SCOPE)
 
       elseif(tag STREQUAL "TREAT_WARNINGS_AS_ERRORS")
         if(value)
@@ -2147,6 +2147,15 @@ function(__set_common_target_properties target)
       endif()
       target_compile_options(${target} PRIVATE
         $<$<CONFIG:${config}>:${runtime_library_flag}>
+      )
+
+      if(DEFINED JUCER_WARNING_LEVEL_FLAG_${config})
+        set(warning_level_flag ${JUCER_WARNING_LEVEL_FLAG_${config}})
+      else()
+        set(warning_level_flag "/W4")
+      endif()
+      target_compile_options(${target} PRIVATE
+        $<$<CONFIG:${config}>:${warning_level_flag}>
       )
 
       foreach(path ${JUCER_EXTRA_LIBRARY_SEARCH_PATHS_${config}})
