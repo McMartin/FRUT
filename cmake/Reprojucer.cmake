@@ -585,8 +585,7 @@ function(jucer_export_target exporter)
 
       elseif(tag STREQUAL "PKGCONFIG_LIBRARIES")
         string(REPLACE " " ";" value "${value}")
-        list(APPEND JUCER_PROJECT_LINUX_PACKAGES ${value})
-        set(JUCER_PROJECT_LINUX_PACKAGES ${JUCER_PROJECT_LINUX_PACKAGES} PARENT_SCOPE)
+        set(JUCER_PKGCONFIG_LIBRARIES ${value} PARENT_SCOPE)
 
       endif()
 
@@ -2277,7 +2276,7 @@ function(__set_common_target_properties target)
       endforeach()
     endforeach()
 
-    set(linux_packages ${JUCER_PROJECT_LINUX_PACKAGES})
+    set(linux_packages ${JUCER_PROJECT_LINUX_PACKAGES} ${JUCER_PKGCONFIG_LIBRARIES})
     if(linux_packages)
       find_package(PkgConfig REQUIRED)
       list(SORT linux_packages)
