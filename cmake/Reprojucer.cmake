@@ -413,8 +413,8 @@ function(jucer_export_target exporter)
       "Supported exporters: ${Reprojucer_supported_exporters}"
     )
   endif()
-  list(APPEND JUCER_EXPORT_TARGETS "${exporter}")
-  set(JUCER_EXPORT_TARGETS ${JUCER_EXPORT_TARGETS} PARENT_SCOPE)
+  list(APPEND JUCER_PROJECT_EXPORT_TARGETS "${exporter}")
+  set(JUCER_PROJECT_EXPORT_TARGETS ${JUCER_PROJECT_EXPORT_TARGETS} PARENT_SCOPE)
 
   list(FIND Reprojucer_supported_exporters "${exporter}" exporter_index)
   list(GET Reprojucer_supported_exporters_conditions ${exporter_index} condition)
@@ -612,7 +612,7 @@ function(jucer_export_target_configuration
     )
   endif()
 
-  if(NOT "${exporter}" IN_LIST JUCER_EXPORT_TARGETS)
+  if(NOT "${exporter}" IN_LIST JUCER_PROJECT_EXPORT_TARGETS)
     message(FATAL_ERROR "You must call jucer_export_target(\"${exporter}\") before "
       "calling jucer_export_target_configuration(\"${exporter}\")."
     )
@@ -989,7 +989,7 @@ endfunction()
 
 function(jucer_project_end)
 
-  if(NOT "${Reprojucer_current_exporter}" IN_LIST JUCER_EXPORT_TARGETS)
+  if(NOT "${Reprojucer_current_exporter}" IN_LIST JUCER_PROJECT_EXPORT_TARGETS)
     message(FATAL_ERROR
       "You must call jucer_export_target(\"${Reprojucer_current_exporter}\") before "
       "calling jucer_project_end()."
