@@ -494,8 +494,7 @@ function(jucer_export_target exporter)
 
       elseif(tag STREQUAL "EXTRA_PREPROCESSOR_DEFINITIONS")
         string(REPLACE "\n" ";" value "${value}")
-        list(APPEND JUCER_PREPROCESSOR_DEFINITIONS ${value})
-        set(JUCER_PREPROCESSOR_DEFINITIONS ${JUCER_PREPROCESSOR_DEFINITIONS} PARENT_SCOPE)
+        set(JUCER_EXTRA_PREPROCESSOR_DEFINITIONS ${value} PARENT_SCOPE)
 
       elseif(tag STREQUAL "EXTRA_COMPILER_FLAGS")
         string(REPLACE "\n" " " value "${value}")
@@ -748,8 +747,7 @@ function(jucer_export_target_configuration
 
       elseif(tag STREQUAL "PREPROCESSOR_DEFINITIONS")
         string(REPLACE "\n" ";" value "${value}")
-        list(APPEND JUCER_PREPROCESSOR_DEFINITIONS $<$<CONFIG:${config}>:${value}>)
-        set(JUCER_PREPROCESSOR_DEFINITIONS ${JUCER_PREPROCESSOR_DEFINITIONS} PARENT_SCOPE)
+        set(JUCER_PREPROCESSOR_DEFINITIONS_${config} ${value} PARENT_SCOPE)
 
       elseif(tag STREQUAL "OPTIMISATION")
         if(exporter MATCHES "Visual Studio 201(5|3)")
@@ -2001,7 +1999,15 @@ function(__set_common_target_properties target)
     endif()
   endforeach()
 
-  target_compile_definitions(${target} PRIVATE ${JUCER_PREPROCESSOR_DEFINITIONS})
+  target_compile_definitions(${target} PRIVATE
+    ${JUCER_PREPROCESSOR_DEFINITIONS}
+    ${JUCER_EXTRA_PREPROCESSOR_DEFINITIONS}
+  )
+  foreach(config ${JUCER_PROJECT_CONFIGURATIONS})
+    set(definitions ${JUCER_PREPROCESSOR_DEFINITIONS_${config}})
+    target_compile_definitions(${target} PRIVATE $<$<CONFIG:${config}>:${definitions}>)
+  endforeach()
+
   target_compile_options(${target} PRIVATE ${JUCER_COMPILER_FLAGS})
   target_link_libraries(${target} ${JUCER_LINK_LIBRARIES} ${JUCER_LINKER_FLAGS})
 
