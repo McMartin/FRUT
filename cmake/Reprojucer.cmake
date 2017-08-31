@@ -958,9 +958,7 @@ function(jucer_export_target_configuration
         elseif(NOT value STREQUAL "<None>")
           message(FATAL_ERROR "Unsupported value for ARCHITECTURE: \"${value}\"\n")
         endif()
-        if(DEFINED architecture_flag)
-          list(APPEND JUCER_COMPILER_FLAGS $<$<CONFIG:${config}>:${architecture_flag}>)
-        endif()
+        set(JUCER_ARCHITECTURE_FLAG_${config} ${architecture_flag} PARENT_SCOPE)
 
       endif()
 
@@ -2278,6 +2276,15 @@ function(__set_common_target_properties target)
           $<$<CONFIG:${config}>:NDEBUG=1>
         )
       endif()
+
+      if(DEFINED JUCER_ARCHITECTURE_FLAG_${config})
+        set(architecture_flag ${JUCER_ARCHITECTURE_FLAG_${config}})
+      else()
+        set(architecture_flag "-march=native")
+      endif()
+      target_compile_options(${target} PRIVATE
+        $<$<CONFIG:${config}>:${architecture_flag}>
+      )
 
       foreach(path ${JUCER_EXTRA_LIBRARY_SEARCH_PATHS_${config}})
         target_link_libraries(${target}
