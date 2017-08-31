@@ -507,8 +507,7 @@ function(jucer_export_target exporter)
 
       elseif(tag STREQUAL "EXTERNAL_LIBRARIES_TO_LINK")
         string(REPLACE "\n" ";" value "${value}")
-        list(APPEND JUCER_LINK_LIBRARIES ${value})
-        set(JUCER_LINK_LIBRARIES ${JUCER_LINK_LIBRARIES} PARENT_SCOPE)
+        set(JUCER_EXTERNAL_LIBRARIES_TO_LINK ${value} PARENT_SCOPE)
 
       elseif(tag STREQUAL "ICON_SMALL")
         if(NOT value STREQUAL "<None>")
@@ -2007,7 +2006,7 @@ function(__set_common_target_properties target)
   endforeach()
 
   target_compile_options(${target} PRIVATE ${JUCER_COMPILER_FLAGS})
-  target_link_libraries(${target} ${JUCER_LINK_LIBRARIES})
+  target_link_libraries(${target} ${JUCER_EXTERNAL_LIBRARIES_TO_LINK})
 
   if(APPLE)
     set_target_properties(${target} PROPERTIES CXX_EXTENSIONS OFF)
