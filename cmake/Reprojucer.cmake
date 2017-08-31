@@ -681,15 +681,6 @@ function(jucer_export_target_configuration
       "ARCHITECTURE"
       "RELAX_IEEE_COMPLIANCE"
     )
-
-    if(is_debug)
-      set(default_runtime_library_flag "/MTd")
-    else()
-      set(default_runtime_library_flag "/MT")
-    endif()
-    list(APPEND JUCER_COMPILER_FLAGS
-      "$<$<CONFIG:${config}>:${default_runtime_library_flag}>"
-    )
   endif()
 
   if(exporter STREQUAL "Linux Makefile")
@@ -866,14 +857,20 @@ function(jucer_export_target_configuration
       elseif(tag STREQUAL "RUNTIME_LIBRARY")
         if(value STREQUAL "Use DLL runtime")
           if(is_debug)
-            set(runtime_library_flag "/MDd")
+            set(flag "/MDd")
           else()
-            set(runtime_library_flag "/MD")
+            set(flag "/MD")
           endif()
-          list(APPEND JUCER_COMPILER_FLAGS $<$<CONFIG:${config}>:${runtime_library_flag}>)
-        elseif(NOT value STREQUAL "Use static runtime" AND NOT value STREQUAL "(Default)")
+        elseif(value STREQUAL "Use static runtime")
+          if(is_debug)
+            set(flag "/MTd")
+          else()
+            set(flag "/MT")
+          endif()
+        elseif(NOT value STREQUAL "(Default)")
           message(FATAL_ERROR "Unsupported value for RUNTIME_LIBRARY: \"${value}\"\n")
         endif()
+        set(JUCER_RUNTIME_LIBRARY_FLAG_${config} ${flag} PARENT_SCOPE)
 
       elseif(tag STREQUAL "WHOLE_PROGRAM_OPTIMISATION")
         if(value STREQUAL "Always disable")
@@ -2138,6 +2135,19 @@ function(__set_common_target_properties target)
           )
         endif()
       endif()
+
+      if(DEFINED JUCER_RUNTIME_LIBRARY_FLAG_${config})
+        set(runtime_library_flag ${JUCER_RUNTIME_LIBRARY_FLAG_${config}})
+      else()
+        if(JUCER_CONFIGURATION_IS_DEBUG_${config})
+          set(runtime_library_flag "/MTd")
+        else()
+          set(runtime_library_flag "/MT")
+        endif()
+      endif()
+      target_compile_options(${target} PRIVATE
+        $<$<CONFIG:${config}>:${runtime_library_flag}>
+      )
 
       foreach(path ${JUCER_EXTRA_LIBRARY_SEARCH_PATHS_${config}})
         target_link_libraries(${target}
