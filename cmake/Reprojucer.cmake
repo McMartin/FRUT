@@ -808,7 +808,7 @@ function(jucer_export_target_configuration
 
       elseif(tag STREQUAL "CXX_LANGUAGE_STANDARD")
         if(value MATCHES "^(C|GNU)\\+\\+(98|11|14)$")
-          set(JUCER_CXX_LANGUAGE_STANDARD ${value} PARENT_SCOPE)
+          set(JUCER_CXX_LANGUAGE_STANDARD_${config} ${value} PARENT_SCOPE)
         elseif(NOT value STREQUAL "Use Default")
           message(FATAL_ERROR
             "Unsupported value for CXX_LANGUAGE_STANDARD: \"${value}\"\n"
@@ -2001,17 +2001,36 @@ function(__set_common_target_properties target)
     set_target_properties(${target} PROPERTIES CXX_EXTENSIONS OFF)
     set_target_properties(${target} PROPERTIES CXX_STANDARD 11)
 
-    if(DEFINED JUCER_CXX_LANGUAGE_STANDARD)
-      if(JUCER_CXX_LANGUAGE_STANDARD MATCHES "^GNU\\+\\+")
+    set(config_to_value)
+    foreach(config ${JUCER_PROJECT_CONFIGURATIONS})
+      if(DEFINED JUCER_CXX_LANGUAGE_STANDARD_${config})
+        list(APPEND all_confs_cxx_language_standard
+          ${JUCER_CXX_LANGUAGE_STANDARD_${config}}
+        )
+        string(APPEND config_to_value "  ${config}: "
+          "\"${JUCER_CXX_LANGUAGE_STANDARD_${config}}\"\n"
+        )
+      endif()
+    endforeach()
+    if(all_confs_cxx_language_standard)
+      list(GET all_confs_cxx_language_standard 0 cxx_language_standard)
+      list(REMOVE_DUPLICATES all_confs_cxx_language_standard)
+      list(LENGTH all_confs_cxx_language_standard all_confs_cxx_language_standard_length)
+      if(NOT all_confs_cxx_language_standard_length EQUAL 1)
+        message(STATUS "Different values for CXX_LANGUAGE_STANDARD:\n${config_to_value}"
+          "Falling back to the first value: \"${cxx_language_standard}\"."
+        )
+      endif()
+      if(cxx_language_standard MATCHES "^GNU\\+\\+")
         set_target_properties(${target} PROPERTIES CXX_EXTENSIONS ON)
-      elseif(JUCER_CXX_LANGUAGE_STANDARD MATCHES "^C\\+\\+")
+      elseif(cxx_language_standard MATCHES "^C\\+\\+")
         set_target_properties(${target} PROPERTIES CXX_EXTENSIONS OFF)
       endif()
-      if(JUCER_CXX_LANGUAGE_STANDARD MATCHES "98$")
+      if(cxx_language_standard MATCHES "98$")
         set_target_properties(${target} PROPERTIES CXX_STANDARD 98)
-      elseif(JUCER_CXX_LANGUAGE_STANDARD MATCHES "11$")
+      elseif(cxx_language_standard MATCHES "11$")
         set_target_properties(${target} PROPERTIES CXX_STANDARD 11)
-      elseif(JUCER_CXX_LANGUAGE_STANDARD MATCHES "14$")
+      elseif(cxx_language_standard MATCHES "14$")
         set_target_properties(${target} PROPERTIES CXX_STANDARD 14)
       endif()
     endif()
