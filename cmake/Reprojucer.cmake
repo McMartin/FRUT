@@ -2197,20 +2197,6 @@ function(__set_common_target_properties target)
         endif()
       endif()
 
-      if(DEFINED JUCER_PREBUILD_COMMAND_${config})
-        set(prebuild_command ${JUCER_PREBUILD_COMMAND_${config}})
-        list(APPEND all_confs_prebuild_command
-          $<$<CONFIG:${config}>:${prebuild_command}>
-        )
-      endif()
-
-      if(DEFINED JUCER_POSTBUILD_COMMAND_${config})
-        set(postbuild_command ${JUCER_POSTBUILD_COMMAND_${config}})
-        list(APPEND all_confs_postbuild_command
-          $<$<CONFIG:${config}>:${postbuild_command}>
-        )
-      endif()
-
       if(DEFINED JUCER_GENERATE_MANIFEST_${config})
         if(NOT JUCER_GENERATE_MANIFEST_${config})
           string(TOUPPER "${config}" upper_config)
@@ -2237,6 +2223,20 @@ function(__set_common_target_properties target)
         target_compile_definitions(${target} PRIVATE
           $<$<CONFIG:${config}>:_UNICODE>
           $<$<CONFIG:${config}>:UNICODE>
+        )
+      endif()
+
+      if(DEFINED JUCER_PREBUILD_COMMAND_${config})
+        set(prebuild_command ${JUCER_PREBUILD_COMMAND_${config}})
+        list(APPEND all_confs_prebuild_command
+          $<$<CONFIG:${config}>:${prebuild_command}>
+        )
+      endif()
+
+      if(DEFINED JUCER_POSTBUILD_COMMAND_${config})
+        set(postbuild_command ${JUCER_POSTBUILD_COMMAND_${config}})
+        list(APPEND all_confs_postbuild_command
+          $<$<CONFIG:${config}>:${postbuild_command}>
         )
       endif()
     endforeach()
