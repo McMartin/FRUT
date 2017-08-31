@@ -724,10 +724,7 @@ function(jucer_export_target_configuration
           __abs_path_based_on_jucer_project_dir("${path}" path)
           list(APPEND include_directories "${path}")
         endforeach()
-        list(APPEND JUCER_INCLUDE_DIRECTORIES
-          $<$<CONFIG:${config}>:${include_directories}>
-        )
-        set(JUCER_INCLUDE_DIRECTORIES ${JUCER_INCLUDE_DIRECTORIES} PARENT_SCOPE)
+        set(JUCER_INCLUDE_DIRECTORIES_${config} ${include_directories} PARENT_SCOPE)
 
       elseif(tag STREQUAL "EXTRA_LIBRARY_SEARCH_PATHS")
         string(REPLACE "\\" "/" value "${value}")
@@ -1963,8 +1960,11 @@ function(__set_common_target_properties target)
   target_include_directories(${target} PRIVATE
     "${CMAKE_CURRENT_BINARY_DIR}/JuceLibraryCode"
     ${JUCER_PROJECT_MODULES_FOLDERS}
-    ${JUCER_INCLUDE_DIRECTORIES}
   )
+  foreach(config ${JUCER_PROJECT_CONFIGURATIONS})
+    set(directories ${JUCER_INCLUDE_DIRECTORIES_${config}})
+    target_include_directories(${target} PRIVATE $<$<CONFIG:${config}>:${directories}>)
+  endforeach()
 
   if((JUCER_BUILD_VST OR JUCER_FLAG_JUCE_PLUGINHOST_VST) AND DEFINED JUCER_VST_SDK_FOLDER)
     if(NOT IS_DIRECTORY "${JUCER_VST_SDK_FOLDER}")
