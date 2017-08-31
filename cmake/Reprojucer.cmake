@@ -2146,6 +2146,20 @@ function(__set_common_target_properties target)
         endif()
       endif()
 
+      if(NOT DEFINED JUCER_CHARACTER_SET_${config}
+          OR JUCER_CHARACTER_SET_${config} STREQUAL "Default")
+        target_compile_definitions(${target} PRIVATE
+          $<$<CONFIG:${config}>:_SBCS>
+        )
+      elseif(JUCER_CHARACTER_SET_${config} STREQUAL "MultiByte")
+        # Nothing to do, this is CMake's default
+      elseif(JUCER_CHARACTER_SET_${config} STREQUAL "Unicode")
+        target_compile_definitions(${target} PRIVATE
+          $<$<CONFIG:${config}>:_UNICODE>
+          $<$<CONFIG:${config}>:UNICODE>
+        )
+      endif()
+
       if(DEFINED JUCER_RUNTIME_LIBRARY_FLAG_${config})
         set(runtime_library_flag ${JUCER_RUNTIME_LIBRARY_FLAG_${config}})
       else()
@@ -2210,20 +2224,6 @@ function(__set_common_target_properties target)
             LINK_FLAGS_${upper_config} "${link_flags}"
           )
         endif()
-      endif()
-
-      if(NOT DEFINED JUCER_CHARACTER_SET_${config}
-          OR JUCER_CHARACTER_SET_${config} STREQUAL "Default")
-        target_compile_definitions(${target} PRIVATE
-          $<$<CONFIG:${config}>:_SBCS>
-        )
-      elseif(JUCER_CHARACTER_SET_${config} STREQUAL "MultiByte")
-        # Nothing to do, this is CMake's default
-      elseif(JUCER_CHARACTER_SET_${config} STREQUAL "Unicode")
-        target_compile_definitions(${target} PRIVATE
-          $<$<CONFIG:${config}>:_UNICODE>
-          $<$<CONFIG:${config}>:UNICODE>
-        )
       endif()
 
       if(DEFINED JUCER_PREBUILD_COMMAND_${config})
