@@ -779,7 +779,7 @@ function(jucer_export_target_configuration
             message(FATAL_ERROR "Unsupported value for OPTIMISATION: \"${value}\"")
           endif()
         endif()
-        set(JUCER_OPTIMISATION_FLAG_${config} "${optimisation_flag}" PARENT_SCOPE)
+        set(JUCER_OPTIMISATION_FLAG_${config} ${optimisation_flag} PARENT_SCOPE)
 
       elseif(tag STREQUAL "VST_BINARY_LOCATION")
         set(JUCER_VST_BINARY_LOCATION_${config} ${value} PARENT_SCOPE)
