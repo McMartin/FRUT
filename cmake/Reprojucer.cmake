@@ -537,8 +537,7 @@ function(jucer_export_target exporter)
       elseif(tag STREQUAL "EXTRA_FRAMEWORKS")
         string(REPLACE "," ";" value "${value}")
         string(REPLACE " " "" value "${value}")
-        list(APPEND JUCER_PROJECT_OSX_FRAMEWORKS ${value})
-        set(JUCER_PROJECT_OSX_FRAMEWORKS ${JUCER_PROJECT_OSX_FRAMEWORKS} PARENT_SCOPE)
+        set(JUCER_EXTRA_FRAMEWORKS ${value} PARENT_SCOPE)
 
       elseif(tag STREQUAL "CUSTOM_PLIST")
         set(JUCER_CUSTOM_PLIST "${value}" PARENT_SCOPE)
@@ -1227,7 +1226,9 @@ function(jucer_project_end)
   if(JUCER_PROJECT_TYPE STREQUAL "Console Application")
     add_executable(${target} ${all_sources})
     __set_common_target_properties(${target})
-    __link_osx_frameworks(${target} ${JUCER_PROJECT_OSX_FRAMEWORKS})
+    __link_osx_frameworks(${target}
+      ${JUCER_PROJECT_OSX_FRAMEWORKS} ${JUCER_EXTRA_FRAMEWORKS}
+    )
 
   elseif(JUCER_PROJECT_TYPE STREQUAL "GUI Application")
     add_executable(${target} ${all_sources})
@@ -1272,7 +1273,9 @@ function(jucer_project_end)
     )
     set_target_properties(${target} PROPERTIES WIN32_EXECUTABLE TRUE)
     __set_common_target_properties(${target})
-    __link_osx_frameworks(${target} ${JUCER_PROJECT_OSX_FRAMEWORKS})
+    __link_osx_frameworks(${target}
+      ${JUCER_PROJECT_OSX_FRAMEWORKS} ${JUCER_EXTRA_FRAMEWORKS}
+    )
     __add_xcode_resources(${target} ${JUCER_CUSTOM_XCODE_RESOURCE_FOLDERS})
 
   elseif(JUCER_PROJECT_TYPE STREQUAL "Static Library")
@@ -1336,7 +1339,9 @@ function(jucer_project_end)
           "$ENV{HOME}/Library/Audio/Plug-Ins/VST"
         )
         __set_JucePlugin_Build_defines(${vst_target} "VSTPlugIn")
-        __link_osx_frameworks(${vst_target} ${JUCER_PROJECT_OSX_FRAMEWORKS})
+        __link_osx_frameworks(${vst_target}
+          ${JUCER_PROJECT_OSX_FRAMEWORKS} ${JUCER_EXTRA_FRAMEWORKS}
+        )
         __add_xcode_resources(${vst_target} ${JUCER_CUSTOM_XCODE_RESOURCE_FOLDERS})
       endif()
 
@@ -1356,7 +1361,9 @@ function(jucer_project_end)
           "$ENV{HOME}/Library/Audio/Plug-Ins/VST3"
         )
         __set_JucePlugin_Build_defines(${vst3_target} "VST3PlugIn")
-        __link_osx_frameworks(${vst3_target} ${JUCER_PROJECT_OSX_FRAMEWORKS})
+        __link_osx_frameworks(${vst3_target}
+          ${JUCER_PROJECT_OSX_FRAMEWORKS} ${JUCER_EXTRA_FRAMEWORKS}
+        )
         __add_xcode_resources(${vst3_target} ${JUCER_CUSTOM_XCODE_RESOURCE_FOLDERS})
       endif()
 
@@ -1403,7 +1410,8 @@ function(jucer_project_end)
         )
         __set_JucePlugin_Build_defines(${au_target} "AudioUnitPlugIn")
         set(au_plugin_osx_frameworks
-          ${JUCER_PROJECT_OSX_FRAMEWORKS} "AudioUnit" "CoreAudioKit"
+          ${JUCER_PROJECT_OSX_FRAMEWORKS} ${JUCER_EXTRA_FRAMEWORKS}
+          "AudioUnit" "CoreAudioKit"
         )
         __link_osx_frameworks(${au_target} ${au_plugin_osx_frameworks})
         __add_xcode_resources(${au_target} ${JUCER_CUSTOM_XCODE_RESOURCE_FOLDERS})
@@ -1494,7 +1502,8 @@ function(jucer_project_end)
         __set_common_target_properties(${auv3_target})
         __set_JucePlugin_Build_defines(${auv3_target} "AudioUnitv3PlugIn")
         set(auv3_plugin_osx_frameworks
-          ${JUCER_PROJECT_OSX_FRAMEWORKS} "AudioUnit" "CoreAudioKit" "AVFoundation"
+          ${JUCER_PROJECT_OSX_FRAMEWORKS} ${JUCER_EXTRA_FRAMEWORKS}
+          "AudioUnit" "CoreAudioKit" "AVFoundation"
         )
         __link_osx_frameworks(${auv3_target} ${auv3_plugin_osx_frameworks})
         __add_xcode_resources(${auv3_target} ${JUCER_CUSTOM_XCODE_RESOURCE_FOLDERS})
@@ -1513,7 +1522,9 @@ function(jucer_project_end)
         )
         __set_common_target_properties(${standalone_target})
         __set_JucePlugin_Build_defines(${standalone_target} "StandalonePlugIn")
-        __link_osx_frameworks(${standalone_target} ${JUCER_PROJECT_OSX_FRAMEWORKS})
+        __link_osx_frameworks(${standalone_target}
+          ${JUCER_PROJECT_OSX_FRAMEWORKS} ${JUCER_EXTRA_FRAMEWORKS}
+        )
         __add_xcode_resources(${standalone_target} ${JUCER_CUSTOM_XCODE_RESOURCE_FOLDERS})
         install(TARGETS ${auv3_target} COMPONENT _embed_app_extension_in_standalone_app
           DESTINATION "$<TARGET_FILE_DIR:${standalone_target}>/../PlugIns"
