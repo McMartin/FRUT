@@ -824,15 +824,11 @@ function(jucer_export_target_configuration
           message(FATAL_ERROR "Unsupported value for CXX_LIBRARY: \"${value}\"")
         endif()
 
-      elseif(tag STREQUAL "RELAX_IEEE_COMPLIANCE" AND exporter STREQUAL "Xcode (MacOSX)")
-        if(value)
-          list(APPEND JUCER_COMPILER_FLAGS $<$<CONFIG:${config}>:-ffast-math>)
-        endif()
+      elseif(tag STREQUAL "RELAX_IEEE_COMPLIANCE")
+        set(JUCER_RELAX_IEEE_COMPLIANCE_${config} ${value} PARENT_SCOPE)
 
       elseif(tag STREQUAL "LINK_TIME_OPTIMISATION")
-        if(value)
-          list(APPEND JUCER_COMPILER_FLAGS $<$<CONFIG:${config}>:-flto>)
-        endif()
+        set(JUCER_LINK_TIME_OPTIMISATION_${config} ${value} PARENT_SCOPE)
 
       elseif(tag STREQUAL "STRIP_LOCAL_SYMBOLS")
         set(JUCER_STRIP_LOCAL_SYMBOLS_${config} ${value} PARENT_SCOPE)
@@ -850,9 +846,7 @@ function(jucer_export_target_configuration
         set(JUCER_WARNING_LEVEL_FLAG_${config} "/W${level}" PARENT_SCOPE)
 
       elseif(tag STREQUAL "TREAT_WARNINGS_AS_ERRORS")
-        if(value)
-          list(APPEND JUCER_COMPILER_FLAGS $<$<CONFIG:${config}>:/WX>)
-        endif()
+        set(JUCER_TREAT_WARNINGS_AS_ERRORS_${config} ${value} PARENT_SCOPE)
 
       elseif(tag STREQUAL "RUNTIME_LIBRARY")
         if(value STREQUAL "Use DLL runtime")
@@ -936,12 +930,6 @@ function(jucer_export_target_configuration
           message(FATAL_ERROR "You must call `cmake -G\"${32_bit_generator}\"` or "
             "`cmake -G\"${32_bit_generator}\" -A Win32` in order to build for 32-bit."
           )
-        endif()
-
-      elseif(tag STREQUAL "RELAX_IEEE_COMPLIANCE"
-          AND exporter MATCHES "Visual Studio 201(5|3)")
-        if(value)
-          list(APPEND JUCER_COMPILER_FLAGS $<$<CONFIG:${config}>:/fp:fast>)
         endif()
 
       elseif(tag STREQUAL "ARCHITECTURE" AND exporter STREQUAL "Linux Makefile")
@@ -2053,6 +2041,14 @@ function(__set_common_target_properties target)
         )
       endif()
 
+      if(JUCER_RELAX_IEEE_COMPLIANCE_${config})
+        target_compile_options(${target} PRIVATE $<$<CONFIG:${config}>:-ffast-math>)
+      endif()
+
+      if(JUCER_LINK_TIME_OPTIMISATION_${config})
+        target_compile_options(${target} PRIVATE $<$<CONFIG:${config}>:-flto>)
+      endif()
+
       if(DEFINED JUCER_OSX_ARCHITECTURES_${config})
         string(TOUPPER "${config}" upper_config)
         set_target_properties(${target} PROPERTIES
@@ -2155,6 +2151,14 @@ function(__set_common_target_properties target)
       target_compile_options(${target} PRIVATE
         $<$<CONFIG:${config}>:${warning_level_flag}>
       )
+
+      if(JUCER_TREAT_WARNINGS_AS_ERRORS_${config})
+        target_compile_options(${target} PRIVATE $<$<CONFIG:${config}>:/WX>)
+      endif()
+
+      if(JUCER_RELAX_IEEE_COMPLIANCE_${config})
+        target_compile_options(${target} PRIVATE $<$<CONFIG:${config}>:/fp:fast>)
+      endif()
 
       foreach(path ${JUCER_EXTRA_LIBRARY_SEARCH_PATHS_${config}})
         target_link_libraries(${target}
