@@ -503,8 +503,7 @@ function(jucer_export_target exporter)
 
       elseif(tag STREQUAL "EXTRA_LINKER_FLAGS")
         string(REPLACE "\n" " " value "${value}")
-        list(APPEND JUCER_LINKER_FLAGS ${value})
-        set(JUCER_LINKER_FLAGS ${JUCER_LINKER_FLAGS} PARENT_SCOPE)
+        set(JUCER_EXTRA_LINKER_FLAGS ${value} PARENT_SCOPE)
 
       elseif(tag STREQUAL "EXTERNAL_LIBRARIES_TO_LINK")
         string(REPLACE "\n" ";" value "${value}")
@@ -2008,7 +2007,7 @@ function(__set_common_target_properties target)
   endforeach()
 
   target_compile_options(${target} PRIVATE ${JUCER_COMPILER_FLAGS})
-  target_link_libraries(${target} ${JUCER_LINK_LIBRARIES} ${JUCER_LINKER_FLAGS})
+  target_link_libraries(${target} ${JUCER_LINK_LIBRARIES})
 
   if(APPLE)
     set_target_properties(${target} PROPERTIES CXX_EXTENSIONS OFF)
@@ -2304,6 +2303,7 @@ function(__set_common_target_properties target)
   endif()
 
   target_compile_options(${target} PRIVATE ${JUCER_EXTRA_COMPILER_FLAGS})
+  target_link_libraries(${target} ${JUCER_EXTRA_LINKER_FLAGS})
 
 endfunction()
 
