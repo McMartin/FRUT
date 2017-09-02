@@ -2127,7 +2127,7 @@ function(__set_common_target_properties target)
       )
     endif()
 
-  elseif(WIN32)
+  elseif(MSVC)
     foreach(config ${JUCER_PROJECT_CONFIGURATIONS})
       if(${JUCER_CONFIGURATION_IS_DEBUG_${config}})
         target_compile_definitions(${target} PRIVATE
