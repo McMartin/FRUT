@@ -413,8 +413,8 @@ function(jucer_export_target exporter)
       "Supported exporters: ${Reprojucer_supported_exporters}"
     )
   endif()
-  list(APPEND JUCER_EXPORT_TARGETS "${exporter}")
-  set(JUCER_EXPORT_TARGETS ${JUCER_EXPORT_TARGETS} PARENT_SCOPE)
+  list(APPEND JUCER_PROJECT_EXPORT_TARGETS "${exporter}")
+  set(JUCER_PROJECT_EXPORT_TARGETS ${JUCER_PROJECT_EXPORT_TARGETS} PARENT_SCOPE)
 
   list(FIND Reprojucer_supported_exporters "${exporter}" exporter_index)
   list(GET Reprojucer_supported_exporters_conditions ${exporter_index} condition)
@@ -494,24 +494,20 @@ function(jucer_export_target exporter)
 
       elseif(tag STREQUAL "EXTRA_PREPROCESSOR_DEFINITIONS")
         string(REPLACE "\n" ";" value "${value}")
-        list(APPEND JUCER_PREPROCESSOR_DEFINITIONS ${value})
-        set(JUCER_PREPROCESSOR_DEFINITIONS ${JUCER_PREPROCESSOR_DEFINITIONS} PARENT_SCOPE)
+        set(JUCER_EXTRA_PREPROCESSOR_DEFINITIONS ${value} PARENT_SCOPE)
 
       elseif(tag STREQUAL "EXTRA_COMPILER_FLAGS")
         string(REPLACE "\n" " " value "${value}")
         string(REPLACE " " ";" value "${value}")
-        list(APPEND JUCER_COMPILER_FLAGS ${value})
-        set(JUCER_COMPILER_FLAGS ${JUCER_COMPILER_FLAGS} PARENT_SCOPE)
+        set(JUCER_EXTRA_COMPILER_FLAGS ${value} PARENT_SCOPE)
 
       elseif(tag STREQUAL "EXTRA_LINKER_FLAGS")
         string(REPLACE "\n" " " value "${value}")
-        list(APPEND JUCER_LINKER_FLAGS ${value})
-        set(JUCER_LINKER_FLAGS ${JUCER_LINKER_FLAGS} PARENT_SCOPE)
+        set(JUCER_EXTRA_LINKER_FLAGS ${value} PARENT_SCOPE)
 
       elseif(tag STREQUAL "EXTERNAL_LIBRARIES_TO_LINK")
         string(REPLACE "\n" ";" value "${value}")
-        list(APPEND JUCER_LINK_LIBRARIES ${value})
-        set(JUCER_LINK_LIBRARIES ${JUCER_LINK_LIBRARIES} PARENT_SCOPE)
+        set(JUCER_EXTERNAL_LIBRARIES_TO_LINK ${value} PARENT_SCOPE)
 
       elseif(tag STREQUAL "ICON_SMALL")
         if(NOT value STREQUAL "<None>")
@@ -541,8 +537,7 @@ function(jucer_export_target exporter)
       elseif(tag STREQUAL "EXTRA_FRAMEWORKS")
         string(REPLACE "," ";" value "${value}")
         string(REPLACE " " "" value "${value}")
-        list(APPEND JUCER_PROJECT_OSX_FRAMEWORKS ${value})
-        set(JUCER_PROJECT_OSX_FRAMEWORKS ${JUCER_PROJECT_OSX_FRAMEWORKS} PARENT_SCOPE)
+        set(JUCER_EXTRA_FRAMEWORKS ${value} PARENT_SCOPE)
 
       elseif(tag STREQUAL "CUSTOM_PLIST")
         set(JUCER_CUSTOM_PLIST "${value}" PARENT_SCOPE)
@@ -590,8 +585,7 @@ function(jucer_export_target exporter)
 
       elseif(tag STREQUAL "PKGCONFIG_LIBRARIES")
         string(REPLACE " " ";" value "${value}")
-        list(APPEND JUCER_PROJECT_LINUX_PACKAGES ${value})
-        set(JUCER_PROJECT_LINUX_PACKAGES ${JUCER_PROJECT_LINUX_PACKAGES} PARENT_SCOPE)
+        set(JUCER_PKGCONFIG_LIBRARIES ${value} PARENT_SCOPE)
 
       endif()
 
@@ -612,7 +606,7 @@ function(jucer_export_target_configuration
     )
   endif()
 
-  if(NOT "${exporter}" IN_LIST JUCER_EXPORT_TARGETS)
+  if(NOT "${exporter}" IN_LIST JUCER_PROJECT_EXPORT_TARGETS)
     message(FATAL_ERROR "You must call jucer_export_target(\"${exporter}\") before "
       "calling jucer_export_target_configuration(\"${exporter}\")."
     )
@@ -687,15 +681,6 @@ function(jucer_export_target_configuration
       "ARCHITECTURE"
       "RELAX_IEEE_COMPLIANCE"
     )
-
-    if(is_debug)
-      set(default_runtime_library_flag "/MTd")
-    else()
-      set(default_runtime_library_flag "/MT")
-    endif()
-    list(APPEND JUCER_COMPILER_FLAGS
-      "$<$<CONFIG:${config}>:${default_runtime_library_flag}>"
-    )
   endif()
 
   if(exporter STREQUAL "Linux Makefile")
@@ -728,12 +713,9 @@ function(jucer_export_target_configuration
         string(REPLACE "\n" ";" value "${value}")
         foreach(path ${value})
           __abs_path_based_on_jucer_project_dir("${path}" path)
-          list(APPEND include_directories "${path}")
+          list(APPEND header_search_paths "${path}")
         endforeach()
-        list(APPEND JUCER_INCLUDE_DIRECTORIES
-          $<$<CONFIG:${config}>:${include_directories}>
-        )
-        set(JUCER_INCLUDE_DIRECTORIES ${JUCER_INCLUDE_DIRECTORIES} PARENT_SCOPE)
+        set(JUCER_HEADER_SEARCH_PATHS_${config} ${header_search_paths} PARENT_SCOPE)
 
       elseif(tag STREQUAL "EXTRA_LIBRARY_SEARCH_PATHS")
         string(REPLACE "\\" "/" value "${value}")
@@ -748,8 +730,7 @@ function(jucer_export_target_configuration
 
       elseif(tag STREQUAL "PREPROCESSOR_DEFINITIONS")
         string(REPLACE "\n" ";" value "${value}")
-        list(APPEND JUCER_PREPROCESSOR_DEFINITIONS $<$<CONFIG:${config}>:${value}>)
-        set(JUCER_PREPROCESSOR_DEFINITIONS ${JUCER_PREPROCESSOR_DEFINITIONS} PARENT_SCOPE)
+        set(JUCER_PREPROCESSOR_DEFINITIONS_${config} ${value} PARENT_SCOPE)
 
       elseif(tag STREQUAL "OPTIMISATION")
         if(exporter MATCHES "Visual Studio 201(5|3)")
@@ -779,7 +760,7 @@ function(jucer_export_target_configuration
             message(FATAL_ERROR "Unsupported value for OPTIMISATION: \"${value}\"")
           endif()
         endif()
-        set(JUCER_OPTIMISATION_FLAG_${config} "${optimisation_flag}" PARENT_SCOPE)
+        set(JUCER_OPTIMISATION_FLAG_${config} ${optimisation_flag} PARENT_SCOPE)
 
       elseif(tag STREQUAL "VST_BINARY_LOCATION")
         set(JUCER_VST_BINARY_LOCATION_${config} ${value} PARENT_SCOPE)
@@ -816,19 +797,18 @@ function(jucer_export_target_configuration
         if(value STREQUAL "Native architecture of build machine")
           # Consider as default
         elseif(value STREQUAL "Universal Binary (32-bit)")
-          list(APPEND JUCER_OSX_ARCHITECTURES ${config} "i386")
+          set(JUCER_OSX_ARCHITECTURES_${config} "i386" PARENT_SCOPE)
         elseif(value STREQUAL "Universal Binary (32/64-bit)")
-          list(APPEND JUCER_OSX_ARCHITECTURES ${config} "x86_64 i386")
+          set(JUCER_OSX_ARCHITECTURES_${config} "x86_64" "i386" PARENT_SCOPE)
         elseif(value STREQUAL "64-bit Intel")
-          list(APPEND JUCER_OSX_ARCHITECTURES ${config} "x86_64")
+          set(JUCER_OSX_ARCHITECTURES_${config} "x86_64" PARENT_SCOPE)
         elseif(NOT value STREQUAL "Use Default")
           message(FATAL_ERROR "Unsupported value for OSX_ARCHITECTURE: \"${value}\"\n")
         endif()
-        set(JUCER_OSX_ARCHITECTURES ${JUCER_OSX_ARCHITECTURES} PARENT_SCOPE)
 
       elseif(tag STREQUAL "CXX_LANGUAGE_STANDARD")
         if(value MATCHES "^(C|GNU)\\+\\+(98|11|14)$")
-          set(JUCER_CXX_LANGUAGE_STANDARD ${value} PARENT_SCOPE)
+          set(JUCER_CXX_LANGUAGE_STANDARD_${config} ${value} PARENT_SCOPE)
         elseif(NOT value STREQUAL "Use Default")
           message(FATAL_ERROR
             "Unsupported value for CXX_LANGUAGE_STANDARD: \"${value}\"\n"
@@ -844,15 +824,11 @@ function(jucer_export_target_configuration
           message(FATAL_ERROR "Unsupported value for CXX_LIBRARY: \"${value}\"")
         endif()
 
-      elseif(tag STREQUAL "RELAX_IEEE_COMPLIANCE" AND exporter STREQUAL "Xcode (MacOSX)")
-        if(value)
-          list(APPEND JUCER_COMPILER_FLAGS $<$<CONFIG:${config}>:-ffast-math>)
-        endif()
+      elseif(tag STREQUAL "RELAX_IEEE_COMPLIANCE")
+        set(JUCER_RELAX_IEEE_COMPLIANCE_${config} ${value} PARENT_SCOPE)
 
       elseif(tag STREQUAL "LINK_TIME_OPTIMISATION")
-        if(value)
-          list(APPEND JUCER_COMPILER_FLAGS $<$<CONFIG:${config}>:-flto>)
-        endif()
+        set(JUCER_LINK_TIME_OPTIMISATION_${config} ${value} PARENT_SCOPE)
 
       elseif(tag STREQUAL "STRIP_LOCAL_SYMBOLS")
         set(JUCER_STRIP_LOCAL_SYMBOLS_${config} ${value} PARENT_SCOPE)
@@ -867,24 +843,28 @@ function(jucer_export_target_configuration
         else()
           message(FATAL_ERROR "Unsupported value for WARNING_LEVEL: \"${value}\"\n")
         endif()
-        list(APPEND JUCER_COMPILER_FLAGS $<$<CONFIG:${config}>:/W${level}>)
+        set(JUCER_WARNING_LEVEL_FLAG_${config} "/W${level}" PARENT_SCOPE)
 
       elseif(tag STREQUAL "TREAT_WARNINGS_AS_ERRORS")
-        if(value)
-          list(APPEND JUCER_COMPILER_FLAGS $<$<CONFIG:${config}>:/WX>)
-        endif()
+        set(JUCER_TREAT_WARNINGS_AS_ERRORS_${config} ${value} PARENT_SCOPE)
 
       elseif(tag STREQUAL "RUNTIME_LIBRARY")
         if(value STREQUAL "Use DLL runtime")
           if(is_debug)
-            set(runtime_library_flag "/MDd")
+            set(flag "/MDd")
           else()
-            set(runtime_library_flag "/MD")
+            set(flag "/MD")
           endif()
-          list(APPEND JUCER_COMPILER_FLAGS $<$<CONFIG:${config}>:${runtime_library_flag}>)
-        elseif(NOT value STREQUAL "Use static runtime" AND NOT value STREQUAL "(Default)")
+        elseif(value STREQUAL "Use static runtime")
+          if(is_debug)
+            set(flag "/MTd")
+          else()
+            set(flag "/MT")
+          endif()
+        elseif(NOT value STREQUAL "(Default)")
           message(FATAL_ERROR "Unsupported value for RUNTIME_LIBRARY: \"${value}\"\n")
         endif()
+        set(JUCER_RUNTIME_LIBRARY_FLAG_${config} ${flag} PARENT_SCOPE)
 
       elseif(tag STREQUAL "WHOLE_PROGRAM_OPTIMISATION")
         if(value STREQUAL "Always disable")
@@ -920,8 +900,8 @@ function(jucer_export_target_configuration
         set(JUCER_GENERATE_MANIFEST_${config} ${value} PARENT_SCOPE)
 
       elseif(tag STREQUAL "CHARACTER_SET")
-        if(value STREQUAL "Default" OR value STREQUAL "MultiByte"
-            OR value STREQUAL "Unicode")
+        set(character_sets "Default" "MultiByte" "Unicode")
+        if("${value}" IN_LIST character_sets)
           set(JUCER_CHARACTER_SET_${config} ${value} PARENT_SCOPE)
         else()
           message(FATAL_ERROR "Unsupported value for CHARACTER_SET: \"${value}\"")
@@ -952,12 +932,6 @@ function(jucer_export_target_configuration
           )
         endif()
 
-      elseif(tag STREQUAL "RELAX_IEEE_COMPLIANCE"
-          AND exporter MATCHES "Visual Studio 201(5|3)")
-        if(value)
-          list(APPEND JUCER_COMPILER_FLAGS $<$<CONFIG:${config}>:/fp:fast>)
-        endif()
-
       elseif(tag STREQUAL "ARCHITECTURE" AND exporter STREQUAL "Linux Makefile")
         if(value STREQUAL "(Default)")
           set(architecture_flag "-march=native")
@@ -972,9 +946,7 @@ function(jucer_export_target_configuration
         elseif(NOT value STREQUAL "<None>")
           message(FATAL_ERROR "Unsupported value for ARCHITECTURE: \"${value}\"\n")
         endif()
-        if(DEFINED architecture_flag)
-          list(APPEND JUCER_COMPILER_FLAGS $<$<CONFIG:${config}>:${architecture_flag}>)
-        endif()
+        set(JUCER_ARCHITECTURE_FLAG_${config} ${architecture_flag} PARENT_SCOPE)
 
       endif()
 
@@ -982,14 +954,12 @@ function(jucer_export_target_configuration
     endif()
   endforeach()
 
-  set(JUCER_COMPILER_FLAGS ${JUCER_COMPILER_FLAGS} PARENT_SCOPE)
-
 endfunction()
 
 
 function(jucer_project_end)
 
-  if(NOT "${Reprojucer_current_exporter}" IN_LIST JUCER_EXPORT_TARGETS)
+  if(NOT "${Reprojucer_current_exporter}" IN_LIST JUCER_PROJECT_EXPORT_TARGETS)
     message(FATAL_ERROR
       "You must call jucer_export_target(\"${Reprojucer_current_exporter}\") before "
       "calling jucer_project_end()."
@@ -1232,7 +1202,9 @@ function(jucer_project_end)
   if(JUCER_PROJECT_TYPE STREQUAL "Console Application")
     add_executable(${target} ${all_sources})
     __set_common_target_properties(${target})
-    __link_osx_frameworks(${target} ${JUCER_PROJECT_OSX_FRAMEWORKS})
+    __link_osx_frameworks(${target}
+      ${JUCER_PROJECT_OSX_FRAMEWORKS} ${JUCER_EXTRA_FRAMEWORKS}
+    )
 
   elseif(JUCER_PROJECT_TYPE STREQUAL "GUI Application")
     add_executable(${target} ${all_sources})
@@ -1277,7 +1249,9 @@ function(jucer_project_end)
     )
     set_target_properties(${target} PROPERTIES WIN32_EXECUTABLE TRUE)
     __set_common_target_properties(${target})
-    __link_osx_frameworks(${target} ${JUCER_PROJECT_OSX_FRAMEWORKS})
+    __link_osx_frameworks(${target}
+      ${JUCER_PROJECT_OSX_FRAMEWORKS} ${JUCER_EXTRA_FRAMEWORKS}
+    )
     __add_xcode_resources(${target} ${JUCER_CUSTOM_XCODE_RESOURCE_FOLDERS})
 
   elseif(JUCER_PROJECT_TYPE STREQUAL "Static Library")
@@ -1341,7 +1315,9 @@ function(jucer_project_end)
           "$ENV{HOME}/Library/Audio/Plug-Ins/VST"
         )
         __set_JucePlugin_Build_defines(${vst_target} "VSTPlugIn")
-        __link_osx_frameworks(${vst_target} ${JUCER_PROJECT_OSX_FRAMEWORKS})
+        __link_osx_frameworks(${vst_target}
+          ${JUCER_PROJECT_OSX_FRAMEWORKS} ${JUCER_EXTRA_FRAMEWORKS}
+        )
         __add_xcode_resources(${vst_target} ${JUCER_CUSTOM_XCODE_RESOURCE_FOLDERS})
       endif()
 
@@ -1361,7 +1337,9 @@ function(jucer_project_end)
           "$ENV{HOME}/Library/Audio/Plug-Ins/VST3"
         )
         __set_JucePlugin_Build_defines(${vst3_target} "VST3PlugIn")
-        __link_osx_frameworks(${vst3_target} ${JUCER_PROJECT_OSX_FRAMEWORKS})
+        __link_osx_frameworks(${vst3_target}
+          ${JUCER_PROJECT_OSX_FRAMEWORKS} ${JUCER_EXTRA_FRAMEWORKS}
+        )
         __add_xcode_resources(${vst3_target} ${JUCER_CUSTOM_XCODE_RESOURCE_FOLDERS})
       endif()
 
@@ -1408,7 +1386,8 @@ function(jucer_project_end)
         )
         __set_JucePlugin_Build_defines(${au_target} "AudioUnitPlugIn")
         set(au_plugin_osx_frameworks
-          ${JUCER_PROJECT_OSX_FRAMEWORKS} "AudioUnit" "CoreAudioKit"
+          ${JUCER_PROJECT_OSX_FRAMEWORKS} ${JUCER_EXTRA_FRAMEWORKS}
+          "AudioUnit" "CoreAudioKit"
         )
         __link_osx_frameworks(${au_target} ${au_plugin_osx_frameworks})
         __add_xcode_resources(${au_target} ${JUCER_CUSTOM_XCODE_RESOURCE_FOLDERS})
@@ -1499,7 +1478,8 @@ function(jucer_project_end)
         __set_common_target_properties(${auv3_target})
         __set_JucePlugin_Build_defines(${auv3_target} "AudioUnitv3PlugIn")
         set(auv3_plugin_osx_frameworks
-          ${JUCER_PROJECT_OSX_FRAMEWORKS} "AudioUnit" "CoreAudioKit" "AVFoundation"
+          ${JUCER_PROJECT_OSX_FRAMEWORKS} ${JUCER_EXTRA_FRAMEWORKS}
+          "AudioUnit" "CoreAudioKit" "AVFoundation"
         )
         __link_osx_frameworks(${auv3_target} ${auv3_plugin_osx_frameworks})
         __add_xcode_resources(${auv3_target} ${JUCER_CUSTOM_XCODE_RESOURCE_FOLDERS})
@@ -1518,7 +1498,9 @@ function(jucer_project_end)
         )
         __set_common_target_properties(${standalone_target})
         __set_JucePlugin_Build_defines(${standalone_target} "StandalonePlugIn")
-        __link_osx_frameworks(${standalone_target} ${JUCER_PROJECT_OSX_FRAMEWORKS})
+        __link_osx_frameworks(${standalone_target}
+          ${JUCER_PROJECT_OSX_FRAMEWORKS} ${JUCER_EXTRA_FRAMEWORKS}
+        )
         __add_xcode_resources(${standalone_target} ${JUCER_CUSTOM_XCODE_RESOURCE_FOLDERS})
         install(TARGETS ${auv3_target} COMPONENT _embed_app_extension_in_standalone_app
           DESTINATION "$<TARGET_FILE_DIR:${standalone_target}>/../PlugIns"
@@ -1958,8 +1940,11 @@ function(__set_common_target_properties target)
   target_include_directories(${target} PRIVATE
     "${CMAKE_CURRENT_BINARY_DIR}/JuceLibraryCode"
     ${JUCER_PROJECT_MODULES_FOLDERS}
-    ${JUCER_INCLUDE_DIRECTORIES}
   )
+  foreach(config ${JUCER_PROJECT_CONFIGURATIONS})
+    set(search_paths ${JUCER_HEADER_SEARCH_PATHS_${config}})
+    target_include_directories(${target} PRIVATE $<$<CONFIG:${config}>:${search_paths}>)
+  endforeach()
 
   if((JUCER_BUILD_VST OR JUCER_FLAG_JUCE_PLUGINHOST_VST) AND DEFINED JUCER_VST_SDK_FOLDER)
     if(NOT IS_DIRECTORY "${JUCER_VST_SDK_FOLDER}")
@@ -2001,25 +1986,51 @@ function(__set_common_target_properties target)
     endif()
   endforeach()
 
-  target_compile_definitions(${target} PRIVATE ${JUCER_PREPROCESSOR_DEFINITIONS})
-  target_compile_options(${target} PRIVATE ${JUCER_COMPILER_FLAGS})
-  target_link_libraries(${target} ${JUCER_LINK_LIBRARIES} ${JUCER_LINKER_FLAGS})
+  target_compile_definitions(${target} PRIVATE
+    ${JUCER_PREPROCESSOR_DEFINITIONS}
+    ${JUCER_EXTRA_PREPROCESSOR_DEFINITIONS}
+  )
+  foreach(config ${JUCER_PROJECT_CONFIGURATIONS})
+    set(definitions ${JUCER_PREPROCESSOR_DEFINITIONS_${config}})
+    target_compile_definitions(${target} PRIVATE $<$<CONFIG:${config}>:${definitions}>)
+  endforeach()
+
+  target_link_libraries(${target} ${JUCER_EXTERNAL_LIBRARIES_TO_LINK})
 
   if(APPLE)
     set_target_properties(${target} PROPERTIES CXX_EXTENSIONS OFF)
     set_target_properties(${target} PROPERTIES CXX_STANDARD 11)
 
-    if(DEFINED JUCER_CXX_LANGUAGE_STANDARD)
-      if(JUCER_CXX_LANGUAGE_STANDARD MATCHES "^GNU\\+\\+$")
+    set(config_to_value)
+    foreach(config ${JUCER_PROJECT_CONFIGURATIONS})
+      if(DEFINED JUCER_CXX_LANGUAGE_STANDARD_${config})
+        list(APPEND all_confs_cxx_language_standard
+          ${JUCER_CXX_LANGUAGE_STANDARD_${config}}
+        )
+        string(APPEND config_to_value "  ${config}: "
+          "\"${JUCER_CXX_LANGUAGE_STANDARD_${config}}\"\n"
+        )
+      endif()
+    endforeach()
+    if(all_confs_cxx_language_standard)
+      list(GET all_confs_cxx_language_standard 0 cxx_language_standard)
+      list(REMOVE_DUPLICATES all_confs_cxx_language_standard)
+      list(LENGTH all_confs_cxx_language_standard all_confs_cxx_language_standard_length)
+      if(NOT all_confs_cxx_language_standard_length EQUAL 1)
+        message(STATUS "Different values for CXX_LANGUAGE_STANDARD:\n${config_to_value}"
+          "Falling back to the first value: \"${cxx_language_standard}\"."
+        )
+      endif()
+      if(cxx_language_standard MATCHES "^GNU\\+\\+")
         set_target_properties(${target} PROPERTIES CXX_EXTENSIONS ON)
-      elseif(JUCER_CXX_LANGUAGE_STANDARD MATCHES "^C\\+\\+$")
+      elseif(cxx_language_standard MATCHES "^C\\+\\+")
         set_target_properties(${target} PROPERTIES CXX_EXTENSIONS OFF)
       endif()
-      if(JUCER_CXX_LANGUAGE_STANDARD MATCHES "98$")
+      if(cxx_language_standard MATCHES "98$")
         set_target_properties(${target} PROPERTIES CXX_STANDARD 98)
-      elseif(JUCER_CXX_LANGUAGE_STANDARD MATCHES "11$")
+      elseif(cxx_language_standard MATCHES "11$")
         set_target_properties(${target} PROPERTIES CXX_STANDARD 11)
-      elseif(JUCER_CXX_LANGUAGE_STANDARD MATCHES "14$")
+      elseif(cxx_language_standard MATCHES "14$")
         set_target_properties(${target} PROPERTIES CXX_STANDARD 14)
       endif()
     endif()
@@ -2043,6 +2054,21 @@ function(__set_common_target_properties target)
         set(cxx_library ${JUCER_CXX_LIBRARY_${config}})
         target_compile_options(${target} PRIVATE
           $<$<CONFIG:${config}>:-stdlib=${cxx_library}>
+        )
+      endif()
+
+      if(JUCER_RELAX_IEEE_COMPLIANCE_${config})
+        target_compile_options(${target} PRIVATE $<$<CONFIG:${config}>:-ffast-math>)
+      endif()
+
+      if(JUCER_LINK_TIME_OPTIMISATION_${config})
+        target_compile_options(${target} PRIVATE $<$<CONFIG:${config}>:-flto>)
+      endif()
+
+      if(DEFINED JUCER_OSX_ARCHITECTURES_${config})
+        string(TOUPPER "${config}" upper_config)
+        set_target_properties(${target} PROPERTIES
+          OSX_ARCHITECTURES_${upper_config} "${JUCER_OSX_ARCHITECTURES_${config}}"
         )
       endif()
 
@@ -2070,21 +2096,6 @@ function(__set_common_target_properties target)
     if(strip_command)
       add_custom_command(TARGET ${target} POST_BUILD COMMAND ${strip_command})
     endif()
-
-    foreach(item ${JUCER_OSX_ARCHITECTURES})
-      if(NOT DEFINED config)
-        set(config ${item})
-      else()
-        string(TOUPPER "${config}" upper_config)
-        string(REPLACE " " ";" archs "${item}")
-
-        set_target_properties(${target} PROPERTIES
-          OSX_ARCHITECTURES_${upper_config} "${archs}"
-        )
-
-        unset(config)
-      endif()
-    endforeach()
 
     if(DEFINED JUCER_PREBUILD_SHELL_SCRIPT)
       if(NOT DEFINED JUCER_TARGET_PROJECT_FOLDER)
@@ -2116,7 +2127,7 @@ function(__set_common_target_properties target)
       )
     endif()
 
-  elseif(WIN32)
+  elseif(MSVC)
     foreach(config ${JUCER_PROJECT_CONFIGURATIONS})
       if(${JUCER_CONFIGURATION_IS_DEBUG_${config}})
         target_compile_definitions(${target} PRIVATE
@@ -2133,6 +2144,50 @@ function(__set_common_target_properties target)
             $<$<CONFIG:${config}>:/GL>
           )
         endif()
+      endif()
+
+      if(NOT DEFINED JUCER_CHARACTER_SET_${config}
+          OR JUCER_CHARACTER_SET_${config} STREQUAL "Default")
+        target_compile_definitions(${target} PRIVATE
+          $<$<CONFIG:${config}>:_SBCS>
+        )
+      elseif(JUCER_CHARACTER_SET_${config} STREQUAL "MultiByte")
+        # Nothing to do, this is CMake's default
+      elseif(JUCER_CHARACTER_SET_${config} STREQUAL "Unicode")
+        target_compile_definitions(${target} PRIVATE
+          $<$<CONFIG:${config}>:_UNICODE>
+          $<$<CONFIG:${config}>:UNICODE>
+        )
+      endif()
+
+      if(DEFINED JUCER_RUNTIME_LIBRARY_FLAG_${config})
+        set(runtime_library_flag ${JUCER_RUNTIME_LIBRARY_FLAG_${config}})
+      else()
+        if(JUCER_CONFIGURATION_IS_DEBUG_${config})
+          set(runtime_library_flag "/MTd")
+        else()
+          set(runtime_library_flag "/MT")
+        endif()
+      endif()
+      target_compile_options(${target} PRIVATE
+        $<$<CONFIG:${config}>:${runtime_library_flag}>
+      )
+
+      if(DEFINED JUCER_WARNING_LEVEL_FLAG_${config})
+        set(warning_level_flag ${JUCER_WARNING_LEVEL_FLAG_${config}})
+      else()
+        set(warning_level_flag "/W4")
+      endif()
+      target_compile_options(${target} PRIVATE
+        $<$<CONFIG:${config}>:${warning_level_flag}>
+      )
+
+      if(JUCER_TREAT_WARNINGS_AS_ERRORS_${config})
+        target_compile_options(${target} PRIVATE $<$<CONFIG:${config}>:/WX>)
+      endif()
+
+      if(JUCER_RELAX_IEEE_COMPLIANCE_${config})
+        target_compile_options(${target} PRIVATE $<$<CONFIG:${config}>:/fp:fast>)
       endif()
 
       foreach(path ${JUCER_EXTRA_LIBRARY_SEARCH_PATHS_${config}})
@@ -2156,20 +2211,6 @@ function(__set_common_target_properties target)
         endif()
       endif()
 
-      if(DEFINED JUCER_PREBUILD_COMMAND_${config})
-        set(prebuild_command ${JUCER_PREBUILD_COMMAND_${config}})
-        list(APPEND all_confs_prebuild_command
-          $<$<CONFIG:${config}>:${prebuild_command}>
-        )
-      endif()
-
-      if(DEFINED JUCER_POSTBUILD_COMMAND_${config})
-        set(postbuild_command ${JUCER_POSTBUILD_COMMAND_${config}})
-        list(APPEND all_confs_postbuild_command
-          $<$<CONFIG:${config}>:${postbuild_command}>
-        )
-      endif()
-
       if(DEFINED JUCER_GENERATE_MANIFEST_${config})
         if(NOT JUCER_GENERATE_MANIFEST_${config})
           string(TOUPPER "${config}" upper_config)
@@ -2185,17 +2226,17 @@ function(__set_common_target_properties target)
         endif()
       endif()
 
-      if(NOT DEFINED JUCER_CHARACTER_SET_${config}
-          OR JUCER_CHARACTER_SET_${config} STREQUAL "Default")
-        target_compile_definitions(${target} PRIVATE
-          $<$<CONFIG:${config}>:_SBCS>
+      if(DEFINED JUCER_PREBUILD_COMMAND_${config})
+        set(prebuild_command ${JUCER_PREBUILD_COMMAND_${config}})
+        list(APPEND all_confs_prebuild_command
+          $<$<CONFIG:${config}>:${prebuild_command}>
         )
-      elseif(JUCER_CHARACTER_SET_${config} STREQUAL "MultiByte")
-        # Nothing to do, this is CMake's default
-      elseif(JUCER_CHARACTER_SET_${config} STREQUAL "Unicode")
-        target_compile_definitions(${target} PRIVATE
-          $<$<CONFIG:${config}>:_UNICODE>
-          $<$<CONFIG:${config}>:UNICODE>
+      endif()
+
+      if(DEFINED JUCER_POSTBUILD_COMMAND_${config})
+        set(postbuild_command ${JUCER_POSTBUILD_COMMAND_${config}})
+        list(APPEND all_confs_postbuild_command
+          $<$<CONFIG:${config}>:${postbuild_command}>
         )
       endif()
     endforeach()
@@ -2256,6 +2297,15 @@ function(__set_common_target_properties target)
         )
       endif()
 
+      if(DEFINED JUCER_ARCHITECTURE_FLAG_${config})
+        set(architecture_flag ${JUCER_ARCHITECTURE_FLAG_${config}})
+      else()
+        set(architecture_flag "-march=native")
+      endif()
+      target_compile_options(${target} PRIVATE
+        $<$<CONFIG:${config}>:${architecture_flag}>
+      )
+
       foreach(path ${JUCER_EXTRA_LIBRARY_SEARCH_PATHS_${config}})
         target_link_libraries(${target}
           $<$<CONFIG:${config}>:-L${path}>
@@ -2263,7 +2313,7 @@ function(__set_common_target_properties target)
       endforeach()
     endforeach()
 
-    set(linux_packages ${JUCER_PROJECT_LINUX_PACKAGES})
+    set(linux_packages ${JUCER_PROJECT_LINUX_PACKAGES} ${JUCER_PKGCONFIG_LIBRARIES})
     if(linux_packages)
       find_package(PkgConfig REQUIRED)
       list(SORT linux_packages)
@@ -2297,6 +2347,9 @@ function(__set_common_target_properties target)
       endforeach()
     endif()
   endif()
+
+  target_compile_options(${target} PRIVATE ${JUCER_EXTRA_COMPILER_FLAGS})
+  target_link_libraries(${target} ${JUCER_EXTRA_LINKER_FLAGS})
 
 endfunction()
 
