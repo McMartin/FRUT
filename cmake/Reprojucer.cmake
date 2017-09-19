@@ -1305,7 +1305,7 @@ function(jucer_project_end)
           ${VST_sources}
           ${JUCER_PROJECT_XCODE_RESOURCES}
         )
-        target_link_libraries(${vst_target} ${shared_code_target})
+        target_link_libraries(${vst_target} PRIVATE ${shared_code_target})
         __generate_plist_file(${vst_target} "VST" "BNDL" "????"
           "${main_plist_entries}" ""
         )
@@ -1327,7 +1327,7 @@ function(jucer_project_end)
           ${VST3_sources}
           ${JUCER_PROJECT_XCODE_RESOURCES}
         )
-        target_link_libraries(${vst3_target} ${shared_code_target})
+        target_link_libraries(${vst3_target} PRIVATE ${shared_code_target})
         __generate_plist_file(${vst3_target} "VST3" "BNDL" "????"
           "${main_plist_entries}" ""
         )
@@ -1349,7 +1349,7 @@ function(jucer_project_end)
           ${AudioUnit_sources}
           ${JUCER_PROJECT_XCODE_RESOURCES}
         )
-        target_link_libraries(${au_target} ${shared_code_target})
+        target_link_libraries(${au_target} PRIVATE ${shared_code_target})
 
         __get_au_main_type_code(au_main_type_code)
         __version_to_dec("${JUCER_PROJECT_VERSION}" dec_version)
@@ -1399,7 +1399,7 @@ function(jucer_project_end)
           ${AudioUnitv3_sources}
           ${JUCER_PROJECT_XCODE_RESOURCES}
         )
-        target_link_libraries(${auv3_target} ${shared_code_target})
+        target_link_libraries(${auv3_target} PRIVATE ${shared_code_target})
 
         __get_au_main_type_code(au_main_type_code)
         __version_to_dec("${JUCER_PROJECT_VERSION}" dec_version)
@@ -1491,7 +1491,7 @@ function(jucer_project_end)
           ${Standalone_sources}
           ${JUCER_PROJECT_XCODE_RESOURCES}
         )
-        target_link_libraries(${standalone_target} ${shared_code_target})
+        target_link_libraries(${standalone_target} PRIVATE ${shared_code_target})
         add_dependencies(${standalone_target} ${auv3_target})
         __generate_plist_file(${standalone_target} "AUv3_Standalone" "APPL" "????"
           "${main_plist_entries}" ""
@@ -1995,7 +1995,7 @@ function(__set_common_target_properties target)
     target_compile_definitions(${target} PRIVATE $<$<CONFIG:${config}>:${definitions}>)
   endforeach()
 
-  target_link_libraries(${target} ${JUCER_EXTERNAL_LIBRARIES_TO_LINK})
+  target_link_libraries(${target} PRIVATE ${JUCER_EXTERNAL_LIBRARIES_TO_LINK})
 
   if(APPLE)
     set_target_properties(${target} PROPERTIES CXX_EXTENSIONS OFF)
@@ -2073,9 +2073,7 @@ function(__set_common_target_properties target)
       endif()
 
       foreach(path ${JUCER_EXTRA_LIBRARY_SEARCH_PATHS_${config}})
-        target_link_libraries(${target}
-          $<$<CONFIG:${config}>:-L${path}>
-        )
+        target_link_libraries(${target} PRIVATE $<$<CONFIG:${config}>:-L${path}>)
       endforeach()
 
       if(target_type STREQUAL EXECUTABLE OR target_type STREQUAL MODULE_LIBRARY)
@@ -2191,9 +2189,7 @@ function(__set_common_target_properties target)
       endif()
 
       foreach(path ${JUCER_EXTRA_LIBRARY_SEARCH_PATHS_${config}})
-        target_link_libraries(${target}
-          $<$<CONFIG:${config}>:-LIBPATH:${path}>
-        )
+        target_link_libraries(${target} PRIVATE $<$<CONFIG:${config}>:-LIBPATH:${path}>)
       endforeach()
 
       if(DEFINED JUCER_INCREMENTAL_LINKING_${config})
@@ -2307,9 +2303,7 @@ function(__set_common_target_properties target)
       )
 
       foreach(path ${JUCER_EXTRA_LIBRARY_SEARCH_PATHS_${config}})
-        target_link_libraries(${target}
-          $<$<CONFIG:${config}>:-L${path}>
-        )
+        target_link_libraries(${target} PRIVATE $<$<CONFIG:${config}>:-L${path}>)
       endforeach()
     endforeach()
 
@@ -2324,14 +2318,14 @@ function(__set_common_target_properties target)
           message(FATAL_ERROR "pkg-config could not find ${pkg}")
         endif()
         target_compile_options(${target} PRIVATE ${${pkg}_CFLAGS})
-        target_link_libraries(${target} ${${pkg}_LIBRARIES})
+        target_link_libraries(${target} PRIVATE ${${pkg}_LIBRARIES})
       endforeach()
     else()
       if("juce_graphics" IN_LIST JUCER_PROJECT_MODULES)
         target_include_directories(${target} PRIVATE "/usr/include/freetype2")
       endif()
       if(JUCER_FLAG_JUCE_USE_CURL)
-        target_link_libraries(${target} "-lcurl")
+        target_link_libraries(${target} PRIVATE "-lcurl")
       endif()
     endif()
 
@@ -2343,13 +2337,13 @@ function(__set_common_target_properties target)
         if(item STREQUAL "pthread")
           target_compile_options(${target} PRIVATE "-pthread")
         endif()
-        target_link_libraries(${target} "-l${item}")
+        target_link_libraries(${target} PRIVATE "-l${item}")
       endforeach()
     endif()
   endif()
 
   target_compile_options(${target} PRIVATE ${JUCER_EXTRA_COMPILER_FLAGS})
-  target_link_libraries(${target} ${JUCER_EXTRA_LINKER_FLAGS})
+  target_link_libraries(${target} PRIVATE ${JUCER_EXTRA_LINKER_FLAGS})
 
 endfunction()
 
@@ -2471,7 +2465,7 @@ function(__link_osx_frameworks target)
     list(REMOVE_DUPLICATES osx_frameworks)
     foreach(framework_name ${osx_frameworks})
       find_library(${framework_name}_framework ${framework_name})
-      target_link_libraries(${target} "${${framework_name}_framework}")
+      target_link_libraries(${target} PRIVATE "${${framework_name}_framework}")
     endforeach()
   endif()
 
