@@ -36,57 +36,49 @@ Let's consider that you have a copy of [JUCE][github-juce], a copy of
 [JUCE.cmake][github-juce-cmake] and a JUCE project called `MyGreatProject` following this
 folder structure:
 
-```
-    <root>
-    ├── JUCE/
-    ├── JUCE.cmake/
-    └── MyGreatProject/
-        ├── Source/
-        └── MyGreatProject.jucer
-```
+        <root>
+        ├── JUCE/
+        ├── JUCE.cmake/
+        └── MyGreatProject/
+            ├── Source/
+            └── MyGreatProject.jucer
 
 We first build `Jucer2Reprojucer` with CMake. Since `Jucer2Reprojucer` uses the JUCE
 modules `juce_core`, `juce_data_structures` and `juce_events`, we specify where to find
 JUCE by defining `JUCE_ROOT` when calling `cmake`.
 
-```sh
-cd <root>/JUCE.cmake/Jucer2Reprojucer
+    cd <root>/JUCE.cmake/Jucer2Reprojucer
 
-mkdir build && cd build
+    mkdir build && cd build
 
-# On macOS
-cmake .. -G Xcode -DJUCE_ROOT=../../../JUCE
-# On Linux and on Windows
-cmake .. -DJUCE_ROOT=../../../JUCE
+    # On macOS
+    cmake .. -G Xcode -DJUCE_ROOT=../../../JUCE
+    # On Linux and on Windows
+    cmake .. -DJUCE_ROOT=../../../JUCE
 
-cmake --build .
-```
+    cmake --build .
 
 Then we convert `MyGreatProject.jucer` to a new `CMakeLists.txt` file:
 
-```sh
-cd <root>/MyGreatProject
+    cd <root>/MyGreatProject
 
-# On macOs and on Windows
-../JUCE.cmake/Jucer2Reprojucer/build/Debug/Jucer2Reprojucer MyGreatProject.jucer ../JUCE.cmake/cmake/Reprojucer.cmake
-# On Linux
-../JUCE.cmake/Jucer2Reprojucer/build/Jucer2Reprojucer MyGreatProject.jucer ../JUCE.cmake/cmake/Reprojucer.cmake
-```
+    # On macOs and on Windows
+    ../JUCE.cmake/Jucer2Reprojucer/build/Debug/Jucer2Reprojucer MyGreatProject.jucer ../JUCE.cmake/cmake/Reprojucer.cmake
+    # On Linux
+    ../JUCE.cmake/Jucer2Reprojucer/build/Jucer2Reprojucer MyGreatProject.jucer ../JUCE.cmake/cmake/Reprojucer.cmake
 
 Now we can build `MyGreatProject` using CMake:
 
-```sh
-cd <root>/MyGreatProject
+    cd <root>/MyGreatProject
 
-mkdir build && cd build
+    mkdir build && cd build
 
-# On macOs
-cmake .. -G Xcode -DMyGreatProject_jucer_FILE=../MyGreatProject.jucer
-# On Linux and on Windows
-cmake .. -DMyGreatProject_jucer_FILE=../MyGreatProject.jucer
+    # On macOs
+    cmake .. -G Xcode -DMyGreatProject_jucer_FILE=../MyGreatProject.jucer
+    # On Linux and on Windows
+    cmake .. -DMyGreatProject_jucer_FILE=../MyGreatProject.jucer
 
-cmake --build .
-```
+    cmake --build .
 
 
 ## Supported export targets
