@@ -2,6 +2,7 @@
 [![Build Status][travis-ci-badge]][travis-ci]
 [![Join the chat at https://gitter.im/JUCE-cmake/Lobby][gitter-badge]][gitter]
 
+
 # JUCE.cmake
 
 `JUCE.cmake` is a collection of tools dedicated to building [JUCE][juce] projects using
