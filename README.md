@@ -34,9 +34,8 @@ including:
 
 ## Getting started
 
-Let's consider that you have a copy of [JUCE][github-juce], a copy of
-[JUCE.cmake][github-juce-cmake] and a JUCE project called `MyGreatProject` following this
-folder structure:
+Let's consider that you have a copy of [JUCE][github-juce], a copy of [JUCE.cmake][github-
+juce-cmake] and a JUCE project called `MyGreatProject` following this folder structure:
 
         <root>
         ├── JUCE/
