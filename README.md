@@ -18,8 +18,10 @@ files into `CMakeLists.txt` files that include and use `Reprojucer.cmake`,
 
 - several `CMakeLists.txt` files generated from existing `.jucer` project files,
 including:
+
   - `examples` and `extras` projects from [JUCE 4.2.0][github-juce-4.2.0] (in
 [Jucer2Reprojucer/generated/JUCE-4.2.0](Jucer2Reprojucer/generated/JUCE-4.2.0))
+
   - `examples` and `extras` projects from [JUCE 4.3.1][github-juce-4.3.1] (in
 [Jucer2Reprojucer/generated/JUCE-4.3.1](Jucer2Reprojucer/generated/JUCE-4.3.1))
 
