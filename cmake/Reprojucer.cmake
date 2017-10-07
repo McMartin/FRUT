@@ -423,6 +423,7 @@ function(jucer_export_target exporter)
   endif()
 
   set(export_target_settings_tags
+    "TARGET_PROJECT_FOLDER"
     "VST_SDK_FOLDER"
     "EXTRA_PREPROCESSOR_DEFINITIONS"
     "EXTRA_COMPILER_FLAGS"
@@ -434,7 +435,6 @@ function(jucer_export_target exporter)
 
   if(exporter STREQUAL "Xcode (MacOSX)")
     list(APPEND export_target_settings_tags
-      "TARGET_PROJECT_FOLDER"
       "VST3_SDK_FOLDER"
       "CUSTOM_XCODE_RESOURCE_FOLDERS"
       "EXTRA_FRAMEWORKS"
@@ -452,7 +452,6 @@ function(jucer_export_target exporter)
 
   if(exporter STREQUAL "Visual Studio 2015" OR exporter STREQUAL "Visual Studio 2013")
     list(APPEND export_target_settings_tags
-      "TARGET_PROJECT_FOLDER"
       "VST3_SDK_FOLDER"
       "PLATFORM_TOOLSET"
     )
