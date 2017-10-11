@@ -244,21 +244,21 @@ function(jucer_project_files source_group_name)
     if(NOT DEFINED compile)
       set(compile ${element})
       __check_input("${compile}")
-    elseif(NOT DEFINED xcodeResource)
-      set(xcodeResource ${element})
-      __check_input("${xcodeResource}")
-    elseif(NOT DEFINED binaryResource)
-      set(binaryResource ${element})
-      __check_input("${binaryResource}")
+    elseif(NOT DEFINED xcode_resource)
+      set(xcode_resource ${element})
+      __check_input("${xcode_resource}")
+    elseif(NOT DEFINED binary_resource)
+      set(binary_resource ${element})
+      __check_input("${binary_resource}")
     else()
       set(path ${element})
 
       __abs_path_based_on_jucer_project_dir("${path}" path)
       list(APPEND files "${path}")
 
-      if(xcodeResource STREQUAL "x")
+      if(xcode_resource STREQUAL "x")
         list(APPEND JUCER_PROJECT_XCODE_RESOURCES ${path})
-      elseif(binaryResource STREQUAL "x")
+      elseif(binary_resource STREQUAL "x")
         list(APPEND JUCER_PROJECT_RESOURCES ${path})
       else()
         list(APPEND JUCER_PROJECT_SOURCES ${path})
@@ -275,8 +275,8 @@ function(jucer_project_files source_group_name)
       endif()
 
       unset(compile)
-      unset(xcodeResource)
-      unset(binaryResource)
+      unset(xcode_resource)
+      unset(binary_resource)
     endif()
   endforeach()
 
@@ -423,6 +423,7 @@ function(jucer_export_target exporter)
   endif()
 
   set(export_target_settings_tags
+    "TARGET_PROJECT_FOLDER"
     "VST_SDK_FOLDER"
     "EXTRA_PREPROCESSOR_DEFINITIONS"
     "EXTRA_COMPILER_FLAGS"
@@ -434,7 +435,6 @@ function(jucer_export_target exporter)
 
   if(exporter STREQUAL "Xcode (MacOSX)")
     list(APPEND export_target_settings_tags
-      "TARGET_PROJECT_FOLDER"
       "VST3_SDK_FOLDER"
       "CUSTOM_XCODE_RESOURCE_FOLDERS"
       "EXTRA_FRAMEWORKS"
@@ -452,7 +452,6 @@ function(jucer_export_target exporter)
 
   if(exporter STREQUAL "Visual Studio 2015" OR exporter STREQUAL "Visual Studio 2013")
     list(APPEND export_target_settings_tags
-      "TARGET_PROJECT_FOLDER"
       "VST3_SDK_FOLDER"
       "PLATFORM_TOOLSET"
     )
