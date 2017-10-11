@@ -2224,14 +2224,14 @@ function(__set_common_target_properties target)
 
       if(DEFINED JUCER_PREBUILD_COMMAND_${config})
         set(prebuild_command ${JUCER_PREBUILD_COMMAND_${config}})
-        list(APPEND all_confs_prebuild_command
+        string(APPEND all_confs_prebuild_command
           $<$<CONFIG:${config}>:${prebuild_command}>
         )
       endif()
 
       if(DEFINED JUCER_POSTBUILD_COMMAND_${config})
         set(postbuild_command ${JUCER_POSTBUILD_COMMAND_${config}})
-        list(APPEND all_confs_postbuild_command
+        string(APPEND all_confs_postbuild_command
           $<$<CONFIG:${config}>:${postbuild_command}>
         )
       endif()
