@@ -1024,7 +1024,7 @@ function(jucer_project_end)
   endif()
 
   if(NOT DEFINED CMAKE_CONFIGURATION_TYPES)
-    if(CMAKE_BUILD_TYPE STREQUAL "")
+    if("${CMAKE_BUILD_TYPE}" STREQUAL "")
       list(GET JUCER_PROJECT_CONFIGURATIONS 0 first_configuration)
       message(STATUS
         "Setting CMAKE_BUILD_TYPE to \"${first_configuration}\" as it was not specified."
@@ -1978,7 +1978,7 @@ function(__generate_icon_file icon_format out_icon_filename)
     message(FATAL_ERROR "Error when executing IconBuilder")
   endif()
 
-  if(NOT icon_filename STREQUAL "")
+  if(NOT "${icon_filename}" STREQUAL "")
     set(${out_icon_filename} ${icon_filename} PARENT_SCOPE)
 
     list(APPEND JUCER_PROJECT_SOURCES
