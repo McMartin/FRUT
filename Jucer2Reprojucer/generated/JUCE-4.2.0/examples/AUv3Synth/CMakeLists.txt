@@ -178,6 +178,7 @@ jucer_export_target(
   # EXTRA_FRAMEWORKS
   # PREBUILD_SHELL_SCRIPT
   # POSTBUILD_SHELL_SCRIPT
+  # DEVELOPMENT_TEAM_ID
 )
 
 jucer_export_target_configuration(
