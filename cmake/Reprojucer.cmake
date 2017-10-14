@@ -18,8 +18,8 @@
 cmake_minimum_required(VERSION 3.4)
 
 
-set(Reprojucer.cmake_DIR "${CMAKE_CURRENT_LIST_DIR}")
-set(Reprojucer_templates_DIR "${Reprojucer.cmake_DIR}/templates")
+set(Reprojucer_DIR "${CMAKE_CURRENT_LIST_DIR}")
+set(Reprojucer_templates_DIR "${Reprojucer_DIR}/templates")
 
 set(Reprojucer_supported_exporters
   "Xcode (MacOSX)"
@@ -1146,25 +1146,25 @@ function(jucer_project_end)
   if(JUCER_CUSTOM_PLIST)
     set(PListMerger_version "0.1.0")
     find_program(PListMerger_exe "PListMerger-${PListMerger_version}"
-      PATHS "${Reprojucer.cmake_DIR}/bin"
+      PATHS "${Reprojucer_DIR}/bin"
       NO_DEFAULT_PATH
     )
     if(NOT PListMerger_exe)
       message(STATUS "Building PListMerger")
       try_compile(PListMerger
-        "${Reprojucer.cmake_DIR}/PListMerger/_build/${CMAKE_GENERATOR}"
-        "${Reprojucer.cmake_DIR}/PListMerger"
+        "${Reprojucer_DIR}/PListMerger/_build/${CMAKE_GENERATOR}"
+        "${Reprojucer_DIR}/PListMerger"
         PListMerger install
         CMAKE_FLAGS
         "-DJUCE_modules_DIRS=${JUCER_PROJECT_MODULES_FOLDERS}"
-        "-DCMAKE_INSTALL_PREFIX=${Reprojucer.cmake_DIR}/bin"
+        "-DCMAKE_INSTALL_PREFIX=${Reprojucer_DIR}/bin"
       )
       if(NOT PListMerger)
         message(FATAL_ERROR "Failed to build PListMerger")
       endif()
       message(STATUS "PListMerger has been successfully built")
       find_program(PListMerger_exe "PListMerger-${PListMerger_version}"
-        PATHS "${Reprojucer.cmake_DIR}/bin"
+        PATHS "${Reprojucer_DIR}/bin"
         NO_DEFAULT_PATH
       )
       if(NOT PListMerger_exe)
@@ -1772,25 +1772,25 @@ function(__generate_JuceHeader_header)
   if(resources_count GREATER 0)
     set(BinaryDataBuilder_version "0.1.0")
     find_program(BinaryDataBuilder_exe "BinaryDataBuilder-${BinaryDataBuilder_version}"
-      PATHS "${Reprojucer.cmake_DIR}/bin"
+      PATHS "${Reprojucer_DIR}/bin"
       NO_DEFAULT_PATH
     )
     if(NOT BinaryDataBuilder_exe)
       message(STATUS "Building BinaryDataBuilder")
       try_compile(BinaryDataBuilder
-        "${Reprojucer.cmake_DIR}/BinaryDataBuilder/_build/${CMAKE_GENERATOR}"
-        "${Reprojucer.cmake_DIR}/BinaryDataBuilder"
+        "${Reprojucer_DIR}/BinaryDataBuilder/_build/${CMAKE_GENERATOR}"
+        "${Reprojucer_DIR}/BinaryDataBuilder"
         BinaryDataBuilder install
         CMAKE_FLAGS
         "-DJUCE_modules_DIRS=${JUCER_PROJECT_MODULES_FOLDERS}"
-        "-DCMAKE_INSTALL_PREFIX=${Reprojucer.cmake_DIR}/bin"
+        "-DCMAKE_INSTALL_PREFIX=${Reprojucer_DIR}/bin"
       )
       if(NOT BinaryDataBuilder)
         message(FATAL_ERROR "Failed to build BinaryDataBuilder")
       endif()
       message(STATUS "BinaryDataBuilder has been successfully built")
       find_program(BinaryDataBuilder_exe "BinaryDataBuilder-${BinaryDataBuilder_version}"
-        PATHS "${Reprojucer.cmake_DIR}/bin"
+        PATHS "${Reprojucer_DIR}/bin"
         NO_DEFAULT_PATH
       )
       if(NOT BinaryDataBuilder_exe)
@@ -1865,25 +1865,25 @@ function(__generate_icon_file icon_format out_icon_filename)
 
   set(IconBuilder_version "0.1.0")
   find_program(IconBuilder_exe "IconBuilder-${IconBuilder_version}"
-    PATHS "${Reprojucer.cmake_DIR}/bin"
+    PATHS "${Reprojucer_DIR}/bin"
     NO_DEFAULT_PATH
   )
   if(NOT IconBuilder_exe)
     message(STATUS "Building IconBuilder")
     try_compile(IconBuilder
-      "${Reprojucer.cmake_DIR}/IconBuilder/_build/${CMAKE_GENERATOR}"
-      "${Reprojucer.cmake_DIR}/IconBuilder"
+      "${Reprojucer_DIR}/IconBuilder/_build/${CMAKE_GENERATOR}"
+      "${Reprojucer_DIR}/IconBuilder"
       IconBuilder install
       CMAKE_FLAGS
       "-DJUCE_modules_DIRS=${JUCER_PROJECT_MODULES_FOLDERS}"
-      "-DCMAKE_INSTALL_PREFIX=${Reprojucer.cmake_DIR}/bin"
+      "-DCMAKE_INSTALL_PREFIX=${Reprojucer_DIR}/bin"
     )
     if(NOT IconBuilder)
       message(FATAL_ERROR "Failed to build IconBuilder")
     endif()
     message(STATUS "IconBuilder has been successfully built")
     find_program(IconBuilder_exe "IconBuilder-${IconBuilder_version}"
-      PATHS "${Reprojucer.cmake_DIR}/bin"
+      PATHS "${Reprojucer_DIR}/bin"
       NO_DEFAULT_PATH
     )
     if(NOT IconBuilder_exe)
