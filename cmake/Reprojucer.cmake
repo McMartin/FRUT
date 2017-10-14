@@ -2404,7 +2404,7 @@ function(__install_to_plugin_binary_location target plugin_type default_destinat
     else()
       set(destination ${default_destination})
     endif()
-    string(APPEND all_confs_destination "$<$<CONFIG:${config}>:${destination}>")
+    string(APPEND all_confs_destination $<$<CONFIG:${config}>:${destination}>)
   endforeach()
 
   set(component "_install_${target}_to_${plugin_type}_binary_location")
