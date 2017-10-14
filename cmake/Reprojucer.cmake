@@ -568,18 +568,14 @@ function(jucer_export_target exporter)
             )
           endif()
         elseif(NOT value STREQUAL "(default)")
-          message(FATAL_ERROR
-            "Unsupported value for PLATFORM_TOOLSET: \"${value}\"\n"
-          )
+          message(FATAL_ERROR "Unsupported value for PLATFORM_TOOLSET: \"${value}\"")
         endif()
 
       elseif(tag STREQUAL "CXX_STANDARD_TO_USE")
         if(value MATCHES "^C\\+\\+(03|11|14)$")
           set(JUCER_CXX_LANGUAGE_STANDARD ${value} PARENT_SCOPE)
         else()
-          message(FATAL_ERROR
-            "Unsupported value for CXX_STANDARD_TO_USE: \"${value}\"\n"
-          )
+          message(FATAL_ERROR "Unsupported value for CXX_STANDARD_TO_USE: \"${value}\"")
         endif()
 
       elseif(tag STREQUAL "PKGCONFIG_LIBRARIES")
@@ -777,9 +773,7 @@ function(jucer_export_target_configuration
         elseif(value STREQUAL "Use Default")
           set(JUCER_OSX_BASE_SDK_VERSION_${config} "default" PARENT_SCOPE)
         else()
-          message(FATAL_ERROR
-            "Unsupported value for OSX_BASE_SDK_VERSION: \"${value}\"\n"
-          )
+          message(FATAL_ERROR "Unsupported value for OSX_BASE_SDK_VERSION: \"${value}\"")
         endif()
 
       elseif(tag STREQUAL "OSX_DEPLOYMENT_TARGET")
@@ -788,9 +782,7 @@ function(jucer_export_target_configuration
         elseif(value STREQUAL "Use Default")
           set(JUCER_OSX_DEPLOYMENT_TARGET_${config} "default" PARENT_SCOPE)
         else()
-          message(FATAL_ERROR
-            "Unsupported value for OSX_DEPLOYMENT_TARGET: \"${value}\"\n"
-          )
+          message(FATAL_ERROR "Unsupported value for OSX_DEPLOYMENT_TARGET: \"${value}\"")
         endif()
 
       elseif(tag STREQUAL "OSX_ARCHITECTURE")
@@ -803,16 +795,14 @@ function(jucer_export_target_configuration
         elseif(value STREQUAL "64-bit Intel")
           set(JUCER_OSX_ARCHITECTURES_${config} "x86_64" PARENT_SCOPE)
         elseif(NOT value STREQUAL "Use Default")
-          message(FATAL_ERROR "Unsupported value for OSX_ARCHITECTURE: \"${value}\"\n")
+          message(FATAL_ERROR "Unsupported value for OSX_ARCHITECTURE: \"${value}\"")
         endif()
 
       elseif(tag STREQUAL "CXX_LANGUAGE_STANDARD")
         if(value MATCHES "^(C|GNU)\\+\\+(98|11|14)$")
           set(JUCER_CXX_LANGUAGE_STANDARD_${config} ${value} PARENT_SCOPE)
         elseif(NOT value STREQUAL "Use Default")
-          message(FATAL_ERROR
-            "Unsupported value for CXX_LANGUAGE_STANDARD: \"${value}\"\n"
-          )
+          message(FATAL_ERROR "Unsupported value for CXX_LANGUAGE_STANDARD: \"${value}\"")
         endif()
 
       elseif(tag STREQUAL "CXX_LIBRARY")
@@ -849,7 +839,7 @@ function(jucer_export_target_configuration
         elseif(value STREQUAL "High")
           set(level 4)
         else()
-          message(FATAL_ERROR "Unsupported value for WARNING_LEVEL: \"${value}\"\n")
+          message(FATAL_ERROR "Unsupported value for WARNING_LEVEL: \"${value}\"")
         endif()
         set(JUCER_WARNING_LEVEL_FLAG_${config} "/W${level}" PARENT_SCOPE)
 
@@ -870,7 +860,7 @@ function(jucer_export_target_configuration
             set(flag "/MT")
           endif()
         elseif(NOT value STREQUAL "(Default)")
-          message(FATAL_ERROR "Unsupported value for RUNTIME_LIBRARY: \"${value}\"\n")
+          message(FATAL_ERROR "Unsupported value for RUNTIME_LIBRARY: \"${value}\"")
         endif()
         set(JUCER_RUNTIME_LIBRARY_FLAG_${config} ${flag} PARENT_SCOPE)
 
@@ -952,7 +942,7 @@ function(jucer_export_target_configuration
         elseif(value STREQUAL "ARM v7")
           set(architecture_flag "-march=armv7")
         elseif(NOT value STREQUAL "<None>")
-          message(FATAL_ERROR "Unsupported value for ARCHITECTURE: \"${value}\"\n")
+          message(FATAL_ERROR "Unsupported value for ARCHITECTURE: \"${value}\"")
         endif()
         set(JUCER_ARCHITECTURE_FLAG_${config} ${architecture_flag} PARENT_SCOPE)
 
