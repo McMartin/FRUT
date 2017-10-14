@@ -660,6 +660,7 @@ function(jucer_export_target_configuration
       "OSX_ARCHITECTURE"
       "CXX_LANGUAGE_STANDARD"
       "CXX_LIBRARY"
+      "CODE_SIGNING_IDENTITY"
       "RELAX_IEEE_COMPLIANCE"
       "LINK_TIME_OPTIMISATION"
       "STRIP_LOCAL_SYMBOLS"
@@ -822,6 +823,14 @@ function(jucer_export_target_configuration
         elseif(NOT value STREQUAL "Use Default")
           message(FATAL_ERROR "Unsupported value for CXX_LIBRARY: \"${value}\"")
         endif()
+
+      elseif(tag STREQUAL "CODE_SIGNING_IDENTITY")
+        if(NOT CMAKE_GENERATOR STREQUAL "Xcode")
+          message(WARNING "CODE_SIGNING_IDENTITY is only supported when using the Xcode "
+            "generator. You should call `cmake -G Xcode`."
+          )
+        endif()
+        set(JUCER_CODE_SIGNING_IDENTITY_${config} ${value} PARENT_SCOPE)
 
       elseif(tag STREQUAL "RELAX_IEEE_COMPLIANCE")
         set(JUCER_RELAX_IEEE_COMPLIANCE_${config} ${value} PARENT_SCOPE)
@@ -2075,6 +2084,13 @@ function(__set_common_target_properties target)
         target_link_libraries(${target} PRIVATE $<$<CONFIG:${config}>:-L${path}>)
       endforeach()
 
+      if(NOT JUCER_CODE_SIGNING_IDENTITY_${config} STREQUAL "Mac Developer")
+        set(code_sign_identity ${JUCER_CODE_SIGNING_IDENTITY_${config}})
+        string(APPEND all_confs_code_sign_identity
+          $<$<CONFIG:${config}>:${code_sign_identity}>
+        )
+      endif()
+
       if(target_type STREQUAL EXECUTABLE OR target_type STREQUAL MODULE_LIBRARY)
         if(${JUCER_STRIP_LOCAL_SYMBOLS_${config}})
           find_program(strip_exe "strip")
@@ -2089,6 +2105,12 @@ function(__set_common_target_properties target)
         endif()
       endif()
     endforeach()
+
+    if(all_confs_code_sign_identity)
+      set_target_properties(${target} PROPERTIES
+        XCODE_ATTRIBUTE_CODE_SIGN_IDENTITY "${all_confs_code_sign_identity}"
+      )
+    endif()
 
     if(all_confs_strip_exe)
       add_custom_command(TARGET ${target} POST_BUILD
