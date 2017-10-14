@@ -19,15 +19,15 @@ cmake_minimum_required(VERSION 3.4)
 
 
 set(Reprojucer_DIR "${CMAKE_CURRENT_LIST_DIR}")
-set(Reprojucer_templates_DIR "${Reprojucer_DIR}/templates")
+set(Reprojucer_TEMPLATES_DIR "${Reprojucer_DIR}/templates")
 
-set(Reprojucer_supported_exporters
+set(Reprojucer_SUPPORTED_EXPORTERS
   "Xcode (MacOSX)"
   "Visual Studio 2015"
   "Visual Studio 2013"
   "Linux Makefile"
 )
-set(Reprojucer_supported_exporters_conditions
+set(Reprojucer_SUPPORTED_EXPORTERS_CONDITIONS
   "APPLE"
   "MSVC_VERSION\;EQUAL\;1900"
   "MSVC_VERSION\;EQUAL\;1800"
@@ -35,17 +35,17 @@ set(Reprojucer_supported_exporters_conditions
 )
 
 
-function(__set_Reprojucer_current_exporter)
+function(__set_Reprojucer_CURRENT_EXPORTER)
 
   unset(current_exporter)
 
   foreach(exporter_index RANGE 3)
-    list(GET Reprojucer_supported_exporters_conditions ${exporter_index} condition)
+    list(GET Reprojucer_SUPPORTED_EXPORTERS_CONDITIONS ${exporter_index} condition)
     if(${condition})
       if(DEFINED current_exporter)
         message(FATAL_ERROR "There is already a current exporter: ${current_exporter}")
       else()
-        list(GET Reprojucer_supported_exporters ${exporter_index} exporter)
+        list(GET Reprojucer_SUPPORTED_EXPORTERS ${exporter_index} exporter)
         set(current_exporter ${exporter})
       endif()
     endif()
@@ -54,17 +54,17 @@ function(__set_Reprojucer_current_exporter)
   if(NOT DEFINED current_exporter)
     message(FATAL_ERROR "Reprojucer.cmake doesn't support any export target for your "
       "current platform. It supports the following export targets: "
-      "${Reprojucer_supported_exporters}. If you think Reprojucer.cmake should support "
+      "${Reprojucer_SUPPORTED_EXPORTERS}. If you think Reprojucer.cmake should support "
       "another export target, please create an issue on GitHub: "
       "https://github.com/McMartin/JUCE.cmake/issues/new"
     )
   endif()
 
-  set(Reprojucer_current_exporter ${current_exporter} PARENT_SCOPE)
+  set(Reprojucer_CURRENT_EXPORTER ${current_exporter} PARENT_SCOPE)
 
 endfunction()
 
-__set_Reprojucer_current_exporter()
+__set_Reprojucer_CURRENT_EXPORTER()
 
 
 function(jucer_project_begin)
@@ -341,7 +341,7 @@ function(jucer_project_module module_name PATH_TAG modules_folder)
 
     if(to_compile)
       get_filename_component(src_file_basename "${src_file}" NAME)
-      configure_file("${Reprojucer_templates_DIR}/JuceLibraryCode-Wrapper.cpp"
+      configure_file("${Reprojucer_TEMPLATES_DIR}/JuceLibraryCode-Wrapper.cpp"
         "JuceLibraryCode/${src_file_basename}"
       )
       list(APPEND JUCER_PROJECT_SOURCES
@@ -410,16 +410,16 @@ endfunction()
 
 function(jucer_export_target exporter)
 
-  if(NOT "${exporter}" IN_LIST Reprojucer_supported_exporters)
+  if(NOT "${exporter}" IN_LIST Reprojucer_SUPPORTED_EXPORTERS)
     message(FATAL_ERROR "Unsupported exporter: ${exporter}\n"
-      "Supported exporters: ${Reprojucer_supported_exporters}"
+      "Supported exporters: ${Reprojucer_SUPPORTED_EXPORTERS}"
     )
   endif()
   list(APPEND JUCER_PROJECT_EXPORT_TARGETS "${exporter}")
   set(JUCER_PROJECT_EXPORT_TARGETS ${JUCER_PROJECT_EXPORT_TARGETS} PARENT_SCOPE)
 
-  list(FIND Reprojucer_supported_exporters "${exporter}" exporter_index)
-  list(GET Reprojucer_supported_exporters_conditions ${exporter_index} condition)
+  list(FIND Reprojucer_SUPPORTED_EXPORTERS "${exporter}" exporter_index)
+  list(GET Reprojucer_SUPPORTED_EXPORTERS_CONDITIONS ${exporter_index} condition)
   if(NOT ${condition})
     return()
   endif()
@@ -545,14 +545,14 @@ function(jucer_export_target exporter)
 
       elseif(tag STREQUAL "PREBUILD_SHELL_SCRIPT")
         set(script_content "${value}")
-        configure_file("${Reprojucer_templates_DIR}/script.in" "prebuild.sh" @ONLY)
+        configure_file("${Reprojucer_TEMPLATES_DIR}/script.in" "prebuild.sh" @ONLY)
         set(JUCER_PREBUILD_SHELL_SCRIPT
           "${CMAKE_CURRENT_BINARY_DIR}/prebuild.sh" PARENT_SCOPE
         )
 
       elseif(tag STREQUAL "POSTBUILD_SHELL_SCRIPT")
         set(script_content "${value}")
-        configure_file("${Reprojucer_templates_DIR}/script.in" "postbuild.sh" @ONLY)
+        configure_file("${Reprojucer_TEMPLATES_DIR}/script.in" "postbuild.sh" @ONLY)
         set(JUCER_POSTBUILD_SHELL_SCRIPT
           "${CMAKE_CURRENT_BINARY_DIR}/postbuild.sh" PARENT_SCOPE
         )
@@ -601,9 +601,9 @@ function(jucer_export_target_configuration
   exporter NAME_TAG config DEBUG_MODE_TAG is_debug
 )
 
-  if(NOT "${exporter}" IN_LIST Reprojucer_supported_exporters)
+  if(NOT "${exporter}" IN_LIST Reprojucer_SUPPORTED_EXPORTERS)
     message(FATAL_ERROR "Unsupported exporter: ${exporter}\n"
-      "Supported exporters: ${Reprojucer_supported_exporters}"
+      "Supported exporters: ${Reprojucer_SUPPORTED_EXPORTERS}"
     )
   endif()
 
@@ -625,8 +625,8 @@ function(jucer_export_target_configuration
     )
   endif()
 
-  list(FIND Reprojucer_supported_exporters "${exporter}" exporter_index)
-  list(GET Reprojucer_supported_exporters_conditions ${exporter_index} condition)
+  list(FIND Reprojucer_SUPPORTED_EXPORTERS "${exporter}" exporter_index)
+  list(GET Reprojucer_SUPPORTED_EXPORTERS_CONDITIONS ${exporter_index} condition)
   if(NOT ${condition})
     return()
   endif()
@@ -890,7 +890,7 @@ function(jucer_export_target_configuration
 
       elseif(tag STREQUAL "PREBUILD_COMMAND")
         set(script_content "${value}")
-        configure_file("${Reprojucer_templates_DIR}/script.in"
+        configure_file("${Reprojucer_TEMPLATES_DIR}/script.in"
           "prebuild_${config}.cmd" @ONLY
         )
         set(JUCER_PREBUILD_COMMAND_${config}
@@ -899,7 +899,7 @@ function(jucer_export_target_configuration
 
       elseif(tag STREQUAL "POSTBUILD_COMMAND")
         set(script_content "${value}")
-        configure_file("${Reprojucer_templates_DIR}/script.in"
+        configure_file("${Reprojucer_TEMPLATES_DIR}/script.in"
           "postbuild_${config}.cmd" @ONLY
         )
         set(JUCER_POSTBUILD_COMMAND_${config}
@@ -969,16 +969,16 @@ endfunction()
 
 function(jucer_project_end)
 
-  if(NOT "${Reprojucer_current_exporter}" IN_LIST JUCER_PROJECT_EXPORT_TARGETS)
+  if(NOT "${Reprojucer_CURRENT_EXPORTER}" IN_LIST JUCER_PROJECT_EXPORT_TARGETS)
     message(FATAL_ERROR
-      "You must call jucer_export_target(\"${Reprojucer_current_exporter}\") before "
+      "You must call jucer_export_target(\"${Reprojucer_CURRENT_EXPORTER}\") before "
       "calling jucer_project_end()."
     )
   endif()
 
   if(NOT JUCER_PROJECT_CONFIGURATIONS)
     message(FATAL_ERROR "You must call "
-      "jucer_export_target_configuration(\"${Reprojucer_current_exporter}\") before "
+      "jucer_export_target_configuration(\"${Reprojucer_CURRENT_EXPORTER}\") before "
       "calling jucer_project_end()."
     )
   endif()
@@ -1100,7 +1100,7 @@ function(jucer_project_end)
     endif()
 
     string(REPLACE "." "," comma_separated_version_number "${JUCER_PROJECT_VERSION}")
-    configure_file("${Reprojucer_templates_DIR}/resources.rc"
+    configure_file("${Reprojucer_TEMPLATES_DIR}/resources.rc"
       "JuceLibraryCode/resources.rc"
     )
     list(APPEND JUCER_PROJECT_SOURCES
@@ -1756,7 +1756,7 @@ function(__generate_AppConfig_header)
   endif()
 
   string(TOUPPER "${JUCER_PROJECT_ID}" upper_project_id)
-  configure_file("${Reprojucer_templates_DIR}/AppConfig.h" "JuceLibraryCode/AppConfig.h")
+  configure_file("${Reprojucer_TEMPLATES_DIR}/AppConfig.h" "JuceLibraryCode/AppConfig.h")
   list(APPEND JUCER_PROJECT_SOURCES
     "${CMAKE_CURRENT_BINARY_DIR}/JuceLibraryCode/AppConfig.h"
   )
@@ -1849,7 +1849,7 @@ function(__generate_JuceHeader_header)
   endforeach()
 
   string(TOUPPER "${JUCER_PROJECT_ID}" upper_project_id)
-  configure_file("${Reprojucer_templates_DIR}/JuceHeader.h"
+  configure_file("${Reprojucer_TEMPLATES_DIR}/JuceHeader.h"
     "JuceLibraryCode/JuceHeader.h"
   )
   list(APPEND JUCER_PROJECT_SOURCES
@@ -2399,7 +2399,7 @@ function(__generate_plist_file
 
   string(CONFIGURE "${main_plist_entries}" main_plist_entries @ONLY)
   string(CONFIGURE "${extra_plist_entries}" extra_plist_entries @ONLY)
-  configure_file("${Reprojucer_templates_DIR}/Info.plist" "${plist_filename}" @ONLY)
+  configure_file("${Reprojucer_TEMPLATES_DIR}/Info.plist" "${plist_filename}" @ONLY)
 
 endfunction()
 
@@ -2415,7 +2415,7 @@ function(__set_bundle_properties target extension)
   add_custom_command(TARGET ${target} PRE_BUILD
     COMMAND
     "${CMAKE_COMMAND}" "-E" "copy_if_different"
-    "${Reprojucer_templates_DIR}/PkgInfo"
+    "${Reprojucer_TEMPLATES_DIR}/PkgInfo"
     "$<TARGET_FILE_DIR:${target}>/.."
   )
 
