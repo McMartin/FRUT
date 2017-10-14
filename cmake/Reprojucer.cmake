@@ -37,6 +37,8 @@ set(Reprojucer_supported_exporters_conditions
 
 function(__set_Reprojucer_current_exporter)
 
+  unset(current_exporter)
+
   foreach(exporter_index RANGE 3)
     list(GET Reprojucer_supported_exporters_conditions ${exporter_index} condition)
     if(${condition})
