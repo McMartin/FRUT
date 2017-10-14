@@ -441,6 +441,7 @@ function(jucer_export_target exporter)
       "CUSTOM_PLIST"
       "PREBUILD_SHELL_SCRIPT"
       "POSTBUILD_SHELL_SCRIPT"
+      "DEVELOPMENT_TEAM_ID"
     )
 
     if(JUCER_PROJECT_TYPE STREQUAL "GUI Application")
@@ -454,6 +455,7 @@ function(jucer_export_target exporter)
     list(APPEND export_target_settings_tags
       "VST3_SDK_FOLDER"
       "PLATFORM_TOOLSET"
+      "USE_IPP_LIBRARY"
     )
   endif()
 
@@ -555,6 +557,14 @@ function(jucer_export_target exporter)
           "${CMAKE_CURRENT_BINARY_DIR}/postbuild.sh" PARENT_SCOPE
         )
 
+      elseif(tag STREQUAL "DEVELOPMENT_TEAM_ID")
+        message(WARNING "Reprojucer.cmake doesn't support the setting "
+          "DEVELOPMENT_TEAM_ID (\"Development Team ID\" in Projucer). If you would like "
+          "Reprojucer.cmake to support this setting, please leave a comment on the issue "
+          "\"Reprojucer.cmake doesn't support the setting DEVELOPMENT_TEAM_ID\" on "
+          "GitHub: https://github.com/McMartin/JUCE.cmake/issues/251"
+        )
+
       elseif(tag STREQUAL "PLATFORM_TOOLSET")
         if((exporter STREQUAL "Visual Studio 2015"
               AND (value STREQUAL "v140" OR value STREQUAL "v140_xp"
@@ -569,6 +579,25 @@ function(jucer_export_target exporter)
           endif()
         elseif(NOT value STREQUAL "(default)")
           message(FATAL_ERROR "Unsupported value for PLATFORM_TOOLSET: \"${value}\"")
+        endif()
+
+      elseif(tag STREQUAL "USE_IPP_LIBRARY")
+        set(ipp_library_values
+          "Yes (Default Mode)"
+          "Multi-Threaded Static Library"
+          "Single-Threaded Static Library"
+          "Multi-Threaded DLL"
+          "Single-Threaded DLL"
+        )
+        if("${value}" IN_LIST ipp_library_values)
+          message(WARNING "Reprojucer.cmake doesn't support the setting USE_IPP_LIBRARY "
+            "(\"Use IPP Library\" in Projucer). If you would like Reprojucer.cmake to "
+            "support this setting, please leave a comment on the issue "
+            "\"Reprojucer.cmake doesn't support the setting USE_IPP_LIBRARY\" on GitHub: "
+            "https://github.com/McMartin/JUCE.cmake/issues/252"
+          )
+        elseif(NOT value STREQUAL "No")
+          message(FATAL_ERROR "Unsupported value for USE_IPP_LIBRARY: \"${value}\"")
         endif()
 
       elseif(tag STREQUAL "CXX_STANDARD_TO_USE")
