@@ -2081,17 +2081,19 @@ function(__set_common_target_properties target)
           if(NOT strip_exe)
             message(FATAL_ERROR "Could not find strip program")
           endif()
-          list(APPEND strip_command
-            "$<$<CONFIG:${config}>:${strip_exe}>"
-            "$<$<CONFIG:${config}>:-x>"
-            "$<$<CONFIG:${config}>:$<TARGET_FILE:${target}>>"
+          string(APPEND all_confs_strip_exe $<$<CONFIG:${config}>:${strip_exe}>)
+          string(APPEND all_confs_strip_opt $<$<CONFIG:${config}>:-x>)
+          string(APPEND all_confs_strip_arg
+            $<$<CONFIG:${config}>:$<TARGET_FILE:${target}>>
           )
         endif()
       endif()
     endforeach()
 
-    if(strip_command)
-      add_custom_command(TARGET ${target} POST_BUILD COMMAND ${strip_command})
+    if(all_confs_strip_exe)
+      add_custom_command(TARGET ${target} POST_BUILD
+        COMMAND ${all_confs_strip_exe} ${all_confs_strip_opt} ${all_confs_strip_arg}
+      )
     endif()
 
     if(DEFINED JUCER_PREBUILD_SHELL_SCRIPT)
@@ -2404,7 +2406,7 @@ function(__install_to_plugin_binary_location target plugin_type default_destinat
     else()
       set(destination ${default_destination})
     endif()
-    string(APPEND all_confs_destination "$<$<CONFIG:${config}>:${destination}>")
+    string(APPEND all_confs_destination $<$<CONFIG:${config}>:${destination}>)
   endforeach()
 
   set(component "_install_${target}_to_${plugin_type}_binary_location")
