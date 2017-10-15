@@ -683,6 +683,7 @@ function(jucer_export_target_configuration
       "OSX_BASE_SDK_VERSION"
       "OSX_DEPLOYMENT_TARGET"
       "OSX_ARCHITECTURE"
+      "CUSTOM_XCODE_FLAGS"
       "CXX_LANGUAGE_STANDARD"
       "CXX_LIBRARY"
       "CODE_SIGNING_IDENTITY"
@@ -826,6 +827,15 @@ function(jucer_export_target_configuration
         elseif(NOT value STREQUAL "Use Default")
           message(FATAL_ERROR "Unsupported value for OSX_ARCHITECTURE: \"${value}\"")
         endif()
+
+      elseif(tag STREQUAL "CUSTOM_XCODE_FLAGS")
+        if(NOT CMAKE_GENERATOR STREQUAL "Xcode")
+          message(WARNING "CUSTOM_XCODE_FLAGS is only supported when using the Xcode "
+            "generator. You should call `cmake -G Xcode`."
+          )
+        endif()
+        string(REGEX REPLACE ", *" ";" value "${value}")
+        set(JUCER_CUSTOM_XCODE_FLAGS_${config} ${value} PARENT_SCOPE)
 
       elseif(tag STREQUAL "CXX_LANGUAGE_STANDARD")
         if(value MATCHES "^(C|GNU)\\+\\+(98|11|14)$")
@@ -1232,6 +1242,7 @@ function(jucer_project_end)
     __link_osx_frameworks(${target}
       ${JUCER_PROJECT_OSX_FRAMEWORKS} ${JUCER_EXTRA_FRAMEWORKS}
     )
+    __set_custom_xcode_flags(${target})
 
   elseif(JUCER_PROJECT_TYPE STREQUAL "GUI Application")
     add_executable(${target} ${all_sources})
@@ -1280,14 +1291,17 @@ function(jucer_project_end)
       ${JUCER_PROJECT_OSX_FRAMEWORKS} ${JUCER_EXTRA_FRAMEWORKS}
     )
     __add_xcode_resources(${target} ${JUCER_CUSTOM_XCODE_RESOURCE_FOLDERS})
+    __set_custom_xcode_flags(${target})
 
   elseif(JUCER_PROJECT_TYPE STREQUAL "Static Library")
     add_library(${target} STATIC ${all_sources})
     __set_common_target_properties(${target})
+    __set_custom_xcode_flags(${target})
 
   elseif(JUCER_PROJECT_TYPE STREQUAL "Dynamic Library")
     add_library(${target} SHARED ${all_sources})
     __set_common_target_properties(${target})
+    __set_custom_xcode_flags(${target})
 
   elseif(JUCER_PROJECT_TYPE STREQUAL "Audio Plug-in")
     if(APPLE)
@@ -1325,6 +1339,7 @@ function(jucer_project_end)
       __set_common_target_properties(${shared_code_target})
       target_compile_definitions(${shared_code_target} PRIVATE "JUCE_SHARED_CODE=1")
       __set_JucePlugin_Build_defines(${shared_code_target} "SharedCodeTarget")
+      __set_custom_xcode_flags(${shared_code_target})
 
       if(JUCER_BUILD_VST)
         set(vst_target ${target}_VST)
@@ -1346,6 +1361,7 @@ function(jucer_project_end)
           ${JUCER_PROJECT_OSX_FRAMEWORKS} ${JUCER_EXTRA_FRAMEWORKS}
         )
         __add_xcode_resources(${vst_target} ${JUCER_CUSTOM_XCODE_RESOURCE_FOLDERS})
+        __set_custom_xcode_flags(${vst_target})
         unset(vst_target)
       endif()
 
@@ -1369,6 +1385,7 @@ function(jucer_project_end)
           ${JUCER_PROJECT_OSX_FRAMEWORKS} ${JUCER_EXTRA_FRAMEWORKS}
         )
         __add_xcode_resources(${vst3_target} ${JUCER_CUSTOM_XCODE_RESOURCE_FOLDERS})
+        __set_custom_xcode_flags(${vst3_target})
         unset(vst3_target)
       endif()
 
@@ -1420,6 +1437,7 @@ function(jucer_project_end)
         )
         __link_osx_frameworks(${au_target} ${au_plugin_osx_frameworks})
         __add_xcode_resources(${au_target} ${JUCER_CUSTOM_XCODE_RESOURCE_FOLDERS})
+        __set_custom_xcode_flags(${au_target})
         unset(au_target)
       endif()
 
@@ -1513,6 +1531,7 @@ function(jucer_project_end)
         )
         __link_osx_frameworks(${auv3_target} ${auv3_plugin_osx_frameworks})
         __add_xcode_resources(${auv3_target} ${JUCER_CUSTOM_XCODE_RESOURCE_FOLDERS})
+        __set_custom_xcode_flags(${auv3_target})
 
         # AUv3 Standalone
         set(standalone_target ${target}_AUv3_Standalone)
@@ -1541,6 +1560,7 @@ function(jucer_project_end)
           "-DCMAKE_INSTALL_COMPONENT=_embed_app_extension_in_standalone_app"
           "-P" "${CMAKE_CURRENT_BINARY_DIR}/cmake_install.cmake"
         )
+        __set_custom_xcode_flags(${standalone_target})
         unset(auv3_target)
         unset(standalone_target)
       endif()
@@ -2528,6 +2548,39 @@ function(__add_xcode_resources target)
         COMMAND rsync -r "${folder}" "$<TARGET_FILE_DIR:${target}>/../Resources"
       )
     endforeach()
+  endif()
+
+endfunction()
+
+
+function(__set_custom_xcode_flags target)
+
+  if(APPLE)
+    set(all_flags)
+
+    foreach(config ${JUCER_PROJECT_CONFIGURATIONS})
+      if(DEFINED JUCER_CUSTOM_XCODE_FLAGS_${config})
+        foreach(xcode_flag ${JUCER_CUSTOM_XCODE_FLAGS_${config}})
+          string(REGEX MATCH "^([^= ]+) *= *(.+)" m "${xcode_flag}")
+          if(NOT CMAKE_MATCH_0)
+            message(FATAL_ERROR "Invalid Xcode flag: \"${xcode_flag}\"")
+          endif()
+          list(APPEND all_flags "${CMAKE_MATCH_1}")
+          set(value "${CMAKE_MATCH_2}")
+          string(APPEND all_confs_${CMAKE_MATCH_1} "$<$<CONFIG:${config}>:${value}>")
+        endforeach()
+      endif()
+    endforeach()
+
+    if(all_flags)
+      list(SORT all_flags)
+      list(REMOVE_DUPLICATES all_flags)
+      foreach(flag ${all_flags})
+        set_target_properties(${target} PROPERTIES
+          XCODE_ATTRIBUTE_${flag} "${all_confs_${flag}}"
+        )
+      endforeach()
+    endif()
   endif()
 
 endfunction()

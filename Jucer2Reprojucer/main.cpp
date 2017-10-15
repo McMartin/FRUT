@@ -989,6 +989,10 @@ int main(int argc, char* argv[])
               out << "  OSX_ARCHITECTURE \"" << osxArchitecture << "\"\n";
             }
 
+            out << "  "
+                << getSetting(configuration, "CUSTOM_XCODE_FLAGS", "customXcodeFlags")
+                << "\n";
+
             const auto cppLanguageStandard = [&configuration]() -> std::string
             {
               const auto value =
