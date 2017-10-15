@@ -1346,6 +1346,7 @@ function(jucer_project_end)
           ${JUCER_PROJECT_OSX_FRAMEWORKS} ${JUCER_EXTRA_FRAMEWORKS}
         )
         __add_xcode_resources(${vst_target} ${JUCER_CUSTOM_XCODE_RESOURCE_FOLDERS})
+        unset(vst_target)
       endif()
 
       if(JUCER_BUILD_VST3)
@@ -1368,6 +1369,7 @@ function(jucer_project_end)
           ${JUCER_PROJECT_OSX_FRAMEWORKS} ${JUCER_EXTRA_FRAMEWORKS}
         )
         __add_xcode_resources(${vst3_target} ${JUCER_CUSTOM_XCODE_RESOURCE_FOLDERS})
+        unset(vst3_target)
       endif()
 
       if(JUCER_BUILD_AUDIOUNIT)
@@ -1418,6 +1420,7 @@ function(jucer_project_end)
         )
         __link_osx_frameworks(${au_target} ${au_plugin_osx_frameworks})
         __add_xcode_resources(${au_target} ${JUCER_CUSTOM_XCODE_RESOURCE_FOLDERS})
+        unset(au_target)
       endif()
 
       if(JUCER_BUILD_AUDIOUNIT_V3)
@@ -1538,6 +1541,8 @@ function(jucer_project_end)
           "-DCMAKE_INSTALL_COMPONENT=_embed_app_extension_in_standalone_app"
           "-P" "${CMAKE_CURRENT_BINARY_DIR}/cmake_install.cmake"
         )
+        unset(auv3_target)
+        unset(standalone_target)
       endif()
     else()
       add_library(${target} MODULE ${all_sources})
