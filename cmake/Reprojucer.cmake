@@ -1360,7 +1360,7 @@ function(jucer_project_end)
         )
         __set_bundle_properties(${vst3_target} "vst3")
         __set_common_target_properties(${vst3_target})
-        __install_to_plugin_binary_location(${vst_target} "VST3"
+        __install_to_plugin_binary_location(${vst3_target} "VST3"
           "$ENV{HOME}/Library/Audio/Plug-Ins/VST3"
         )
         __set_JucePlugin_Build_defines(${vst3_target} "VST3PlugIn")
