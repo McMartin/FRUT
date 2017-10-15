@@ -678,6 +678,13 @@ int main(int argc, char* argv[])
               << "  "
               << getSetting(exporter, "POSTBUILD_SHELL_SCRIPT", "postbuildCommand")
               << "\n";
+
+          if (exporter.hasProperty("iosDevelopmentTeamID"))
+          {
+            out << "  "
+                << getSetting(exporter, "DEVELOPMENT_TEAM_ID", "iosDevelopmentTeamID")
+                << "\n";
+          }
         }
 
         if (exporterType == "VS2015" || exporterType == "VS2013")
@@ -690,6 +697,43 @@ int main(int argc, char* argv[])
           else
           {
             out << "  PLATFORM_TOOLSET \"" << toolset << "\"\n";
+          }
+
+          if (exporter.hasProperty("IPPLibrary"))
+          {
+            const auto useIppLibrary = [&exporter]() -> std::string
+            {
+              const auto value = exporter.getProperty("IPPLibrary").toString();
+
+              if (value == "")
+                return "No";
+
+              if (value == "true")
+                return "Yes (Default Mode)";
+
+              if (value == "Parallel_Static")
+                return "Multi-Threaded Static Library";
+
+              if (value == "Sequential")
+                return "Single-Threaded Static Library";
+
+              if (value == "Parallel_Dynamic")
+                return "Multi-Threaded DLL";
+
+              if (value == "Sequential_Dynamic")
+                return "Single-Threaded DLL";
+
+              return {};
+            }();
+
+            if (useIppLibrary.empty())
+            {
+              out << "  # USE_IPP_LIBRARY\n";
+            }
+            else
+            {
+              out << "  USE_IPP_LIBRARY \"" << useIppLibrary << "\"\n";
+            }
           }
         }
 
