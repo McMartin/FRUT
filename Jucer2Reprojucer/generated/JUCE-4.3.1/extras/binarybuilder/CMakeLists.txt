@@ -82,6 +82,7 @@ jucer_export_target_configuration(
   # OSX_BASE_SDK_VERSION
   # OSX_DEPLOYMENT_TARGET
   OSX_ARCHITECTURE "Use Default"
+  # CUSTOM_XCODE_FLAGS
   CXX_LANGUAGE_STANDARD "Use Default"
   CXX_LIBRARY "Use Default"
   # CODE_SIGNING_IDENTITY
@@ -103,6 +104,7 @@ jucer_export_target_configuration(
   # OSX_BASE_SDK_VERSION
   # OSX_DEPLOYMENT_TARGET
   OSX_ARCHITECTURE "Use Default"
+  # CUSTOM_XCODE_FLAGS
   CXX_LANGUAGE_STANDARD "Use Default"
   CXX_LIBRARY "Use Default"
   # CODE_SIGNING_IDENTITY
