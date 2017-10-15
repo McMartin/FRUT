@@ -1510,9 +1510,8 @@ function(jucer_project_end)
         )
         __link_osx_frameworks(${auv3_target} ${auv3_plugin_osx_frameworks})
         __add_xcode_resources(${auv3_target} ${JUCER_CUSTOM_XCODE_RESOURCE_FOLDERS})
-      endif()
 
-      if(JUCER_BUILD_AUDIOUNIT_V3)
+        # AUv3 Standalone
         set(standalone_target ${target}_AUv3_Standalone)
         add_executable(${standalone_target} MACOSX_BUNDLE
           ${Standalone_sources}
