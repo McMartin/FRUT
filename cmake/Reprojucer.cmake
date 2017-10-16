@@ -2002,12 +2002,10 @@ function(__set_common_target_properties target)
       message(WARNING
         "JUCER_VST_SDK_FOLDER: no such directory \"${JUCER_VST_SDK_FOLDER}\""
       )
-    else()
-      if(NOT EXISTS "${JUCER_VST_SDK_FOLDER}/public.sdk/source/vst2.x/audioeffectx.h")
-        message(WARNING "JUCER_VST_SDK_FOLDER: \"${JUCER_VST_SDK_FOLDER}\" doesn't "
-          "seem to contain the VST SDK"
-        )
-      endif()
+    elseif(NOT EXISTS "${JUCER_VST_SDK_FOLDER}/public.sdk/source/vst2.x/audioeffectx.h")
+      message(WARNING "JUCER_VST_SDK_FOLDER: \"${JUCER_VST_SDK_FOLDER}\" doesn't seem to "
+        "contain the VST SDK"
+      )
     endif()
     target_include_directories(${target} PRIVATE "${JUCER_VST_SDK_FOLDER}")
   endif()
@@ -2018,12 +2016,10 @@ function(__set_common_target_properties target)
       message(WARNING
         "JUCER_VST3_SDK_FOLDER: no such directory \"${JUCER_VST3_SDK_FOLDER}\""
       )
-    else()
-      if(NOT EXISTS "${JUCER_VST3_SDK_FOLDER}/base/source/baseiids.cpp")
-        message(WARNING "JUCER_VST3_SDK_FOLDER: \"${JUCER_VST3_SDK_FOLDER}\" doesn't "
-          "seem to contain the VST3 SDK"
-        )
-      endif()
+    elseif(NOT EXISTS "${JUCER_VST3_SDK_FOLDER}/base/source/baseiids.cpp")
+      message(WARNING "JUCER_VST3_SDK_FOLDER: \"${JUCER_VST3_SDK_FOLDER}\" doesn't seem "
+        "to contain the VST3 SDK"
+      )
     endif()
     target_include_directories(${target} PRIVATE "${JUCER_VST3_SDK_FOLDER}")
   endif()
@@ -2226,12 +2222,10 @@ function(__set_common_target_properties target)
 
       if(DEFINED JUCER_RUNTIME_LIBRARY_FLAG_${config})
         set(runtime_library_flag ${JUCER_RUNTIME_LIBRARY_FLAG_${config}})
+      elseif(JUCER_CONFIGURATION_IS_DEBUG_${config})
+        set(runtime_library_flag "/MTd")
       else()
-        if(JUCER_CONFIGURATION_IS_DEBUG_${config})
-          set(runtime_library_flag "/MTd")
-        else()
-          set(runtime_library_flag "/MT")
-        endif()
+        set(runtime_library_flag "/MT")
       endif()
       target_compile_options(${target} PRIVATE
         $<$<CONFIG:${config}>:${runtime_library_flag}>
