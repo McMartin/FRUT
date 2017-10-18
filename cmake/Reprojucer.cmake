@@ -1,19 +1,19 @@
 # Copyright (c) 2016 Alain Martin
 #
-# This file is part of JUCE.cmake.
+# This file is part of FRUT.
 #
-# JUCE.cmake is free software: you can redistribute it and/or modify
+# FRUT is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
 #
-# JUCE.cmake is distributed in the hope that it will be useful,
+# FRUT is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with JUCE.cmake.  If not, see <http://www.gnu.org/licenses/>.
+# along with FRUT.  If not, see <http://www.gnu.org/licenses/>.
 
 cmake_minimum_required(VERSION 3.4)
 
@@ -54,7 +54,7 @@ function(__set_Reprojucer_current_exporter)
       "current platform. It supports the following export targets: "
       "${Reprojucer_supported_exporters}. If you think Reprojucer.cmake should support "
       "another export target, please create an issue on GitHub: "
-      "https://github.com/McMartin/JUCE.cmake/issues/new"
+      "https://github.com/McMartin/FRUT/issues/new"
     )
   endif()
 
@@ -562,7 +562,7 @@ function(jucer_export_target exporter)
           "DEVELOPMENT_TEAM_ID (\"Development Team ID\" in Projucer). If you would like "
           "Reprojucer.cmake to support this setting, please leave a comment on the issue "
           "\"Reprojucer.cmake doesn't support the setting DEVELOPMENT_TEAM_ID\" on "
-          "GitHub: https://github.com/McMartin/JUCE.cmake/issues/251"
+          "GitHub: https://github.com/McMartin/FRUT/issues/251"
         )
 
       elseif(tag STREQUAL "PLATFORM_TOOLSET")
@@ -594,7 +594,7 @@ function(jucer_export_target exporter)
             "(\"Use IPP Library\" in Projucer). If you would like Reprojucer.cmake to "
             "support this setting, please leave a comment on the issue "
             "\"Reprojucer.cmake doesn't support the setting USE_IPP_LIBRARY\" on GitHub: "
-            "https://github.com/McMartin/JUCE.cmake/issues/252"
+            "https://github.com/McMartin/FRUT/issues/252"
           )
         elseif(NOT value STREQUAL "No")
           message(FATAL_ERROR "Unsupported value for USE_IPP_LIBRARY: \"${value}\"")
@@ -1842,7 +1842,7 @@ function(__generate_JuceHeader_header)
     endif()
 
     if(NOT JUCER_PROJECT_ID)
-      set(project_uid "JUCE.cmake")
+      set(project_uid "FRUT")
     else()
       set(project_uid "${JUCER_PROJECT_ID}")
     endif()

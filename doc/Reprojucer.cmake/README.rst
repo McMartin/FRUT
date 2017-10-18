@@ -13,7 +13,7 @@ Add the following lines at the top of your CMakeLists.txt file to use
 
 .. code:: cmake
 
-  list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/<relative_path_to_JUCE.cmake>/cmake")
+  list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/<relative_path_to_FRUT>/cmake")
   include(Reprojucer)
 
 
