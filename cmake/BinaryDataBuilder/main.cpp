@@ -79,3 +79,15 @@ int main(int argc, char* argv[])
 
   return 0;
 }
+
+
+#if JUCE_LINUX && !JUCE_WEB_BROWSER
+// Work-around a linker error in JUCE 5.0.0
+namespace juce
+{
+int juce_gtkWebkitMain(int, const char**)
+{
+  return 0;
+}
+}
+#endif
