@@ -508,7 +508,7 @@ jucer_export_target(
   # EXTERNAL_LIBRARIES_TO_LINK
   ICON_SMALL "<None>"
   ICON_LARGE "Source/BinaryData/juce_icon.png"
-  PLATFORM_TOOLSET "v140"
+  # PLATFORM_TOOLSET "v140"
 )
 
 jucer_export_target_configuration(
@@ -565,7 +565,7 @@ jucer_export_target(
   # EXTERNAL_LIBRARIES_TO_LINK
   ICON_SMALL "<None>"
   ICON_LARGE "Source/BinaryData/juce_icon.png"
-  PLATFORM_TOOLSET "v120"
+  # PLATFORM_TOOLSET "v120"
 )
 
 jucer_export_target_configuration(
