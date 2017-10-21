@@ -24,15 +24,15 @@ script-anchors:
     - set -e
 
     # Configure and build BinaryDataBuilder, IconBuilder and Jucer2Reprojucer
-    - mkdir ${TRAVIS_BUILD_DIR}/ci/ReprojucerHelpers/Debug_build
-    - cd ${TRAVIS_BUILD_DIR}/ci/ReprojucerHelpers/Debug_build
+    - mkdir ${TRAVIS_BUILD_DIR}/ci/ReprojucerHelpers/Debug_${JUCE_VERSION}_build
+    - cd ${TRAVIS_BUILD_DIR}/ci/ReprojucerHelpers/Debug_${JUCE_VERSION}_build
     - >
       cmake .. -DCMAKE_BUILD_TYPE=Debug
       -DJUCE_ROOT="${TRAVIS_BUILD_DIR}/ci/tmp/JUCE-${JUCE_VERSION}"
       -DJUCE_modules_DIRS="${TRAVIS_BUILD_DIR}/ci/tmp/JUCE-${JUCE_VERSION}/modules"
     - cmake --build .
-    - mkdir ${TRAVIS_BUILD_DIR}/ci/ReprojucerHelpers/Release_build
-    - cd ${TRAVIS_BUILD_DIR}/ci/ReprojucerHelpers/Release_build
+    - mkdir ${TRAVIS_BUILD_DIR}/ci/ReprojucerHelpers/Release_${JUCE_VERSION}_build
+    - cd ${TRAVIS_BUILD_DIR}/ci/ReprojucerHelpers/Release_${JUCE_VERSION}_build
     - >
       cmake .. -DCMAKE_BUILD_TYPE=Release
       -DJUCE_ROOT="${TRAVIS_BUILD_DIR}/ci/tmp/JUCE-${JUCE_VERSION}"
@@ -43,17 +43,17 @@ script-anchors:
     - >
       cmake
       -DJUCE_ROOT="${TRAVIS_BUILD_DIR}/ci/tmp/JUCE-${JUCE_VERSION}"
-      -DJucer2Reprojucer_EXE="ci/ReprojucerHelpers/Debug_build/Jucer2Reprojucer/Jucer2Reprojucer"
+      -DJucer2Reprojucer_EXE="ci/ReprojucerHelpers/Debug_${JUCE_VERSION}_build/Jucer2Reprojucer/Jucer2Reprojucer"
       -Dgenerated_JUCE_ROOT="Jucer2Reprojucer/generated/JUCE-${JUCE_VERSION}"
       -P ci/apply-Jucer2Reprojucer-to-JUCE-jucers.cmake
     - git diff --quiet
 
     # Configure all JUCE projects
-    - mkdir ${TRAVIS_BUILD_DIR}/ci/AllJuceProjects/Debug_build
-    - cd ${TRAVIS_BUILD_DIR}/ci/AllJuceProjects/Debug_build
+    - mkdir ${TRAVIS_BUILD_DIR}/ci/AllJuceProjects/Debug_${JUCE_VERSION}_build
+    - cd ${TRAVIS_BUILD_DIR}/ci/AllJuceProjects/Debug_${JUCE_VERSION}_build
     - cmake .. -DCMAKE_BUILD_TYPE=Debug -DJUCE_VERSION="${JUCE_VERSION}"
-    - mkdir ${TRAVIS_BUILD_DIR}/ci/AllJuceProjects/Release_build
-    - cd ${TRAVIS_BUILD_DIR}/ci/AllJuceProjects/Release_build
+    - mkdir ${TRAVIS_BUILD_DIR}/ci/AllJuceProjects/Release_${JUCE_VERSION}_build
+    - cd ${TRAVIS_BUILD_DIR}/ci/AllJuceProjects/Release_${JUCE_VERSION}_build
     - cmake .. -DCMAKE_BUILD_TYPE=Release -DJUCE_VERSION="${JUCE_VERSION}"
 
     - set +e
@@ -62,8 +62,8 @@ script-anchors:
     - set -e
 
     # Configure and build BinaryDataBuilder, IconBuilder and Jucer2Reprojucer
-    - mkdir ${TRAVIS_BUILD_DIR}/ci/ReprojucerHelpers/build
-    - cd ${TRAVIS_BUILD_DIR}/ci/ReprojucerHelpers/build
+    - mkdir ${TRAVIS_BUILD_DIR}/ci/ReprojucerHelpers/${JUCE_VERSION}_build
+    - cd ${TRAVIS_BUILD_DIR}/ci/ReprojucerHelpers/${JUCE_VERSION}_build
     - >
       cmake .. -G Xcode
       -DJUCE_ROOT="${TRAVIS_BUILD_DIR}/ci/tmp/JUCE-${JUCE_VERSION}"
@@ -75,14 +75,14 @@ script-anchors:
     - >
       cmake
       -DJUCE_ROOT="${TRAVIS_BUILD_DIR}/ci/tmp/JUCE-${JUCE_VERSION}"
-      -DJucer2Reprojucer_EXE="ci/ReprojucerHelpers/build/Jucer2Reprojucer/Debug/Jucer2Reprojucer"
+      -DJucer2Reprojucer_EXE="ci/ReprojucerHelpers/${JUCE_VERSION}_build/Jucer2Reprojucer/Debug/Jucer2Reprojucer"
       -Dgenerated_JUCE_ROOT="Jucer2Reprojucer/generated/JUCE-${JUCE_VERSION}"
       -P ci/apply-Jucer2Reprojucer-to-JUCE-jucers.cmake
     - git diff --quiet
 
     # Configure all JUCE projects
-    - mkdir ${TRAVIS_BUILD_DIR}/ci/AllJuceProjects/build
-    - cd ${TRAVIS_BUILD_DIR}/ci/AllJuceProjects/build
+    - mkdir ${TRAVIS_BUILD_DIR}/ci/AllJuceProjects/${JUCE_VERSION}_build
+    - cd ${TRAVIS_BUILD_DIR}/ci/AllJuceProjects/${JUCE_VERSION}_build
     - cmake .. -G Xcode -DJUCE_VERSION="${JUCE_VERSION}"
 
     - set +e
