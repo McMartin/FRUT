@@ -25,7 +25,7 @@ script-anchors:
   - &script-Makefiles
     - set -e
 
-    # Configure and build BinaryDataBuilder, IconBuilder and Jucer2Reprojucer with JUCE 4.2.0
+    # Configure and build Reprojucer.cmake helpers and Jucer2Reprojucer with JUCE 4.2.0
     - mkdir ${TRAVIS_BUILD_DIR}/ci/ReprojucerHelpers/Debug_4.2.0_build
     - cd ${TRAVIS_BUILD_DIR}/ci/ReprojucerHelpers/Debug_4.2.0_build
     - >
@@ -40,7 +40,7 @@ script-anchors:
       -DJUCE_ROOT="${TRAVIS_BUILD_DIR}/ci/tmp/JUCE-4.2.0"
       -DJUCE_modules_DIRS="${TRAVIS_BUILD_DIR}/ci/tmp/JUCE-4.2.0/modules"
 
-    # Configure and build BinaryDataBuilder, IconBuilder and Jucer2Reprojucer with JUCE 4.3.1
+    # Configure and build Reprojucer.cmake helpers and Jucer2Reprojucer with JUCE 4.3.1
     - mkdir ${TRAVIS_BUILD_DIR}/ci/ReprojucerHelpers/Debug_4.3.1_build
     - cd ${TRAVIS_BUILD_DIR}/ci/ReprojucerHelpers/Debug_4.3.1_build
     - >
@@ -92,7 +92,7 @@ script-anchors:
   - &script-Xcode
     - set -e
 
-    # Configure and build BinaryDataBuilder, IconBuilder and Jucer2Reprojucer with JUCE 4.2.0
+    # Configure and build Reprojucer.cmake helpers and Jucer2Reprojucer with JUCE 4.2.0
     - mkdir ${TRAVIS_BUILD_DIR}/ci/ReprojucerHelpers/4.2.0_build
     - cd ${TRAVIS_BUILD_DIR}/ci/ReprojucerHelpers/4.2.0_build
     - >
@@ -101,7 +101,7 @@ script-anchors:
       -DJUCE_modules_DIRS="${TRAVIS_BUILD_DIR}/ci/tmp/JUCE-4.2.0/modules"
     - cmake --build . --config Debug
 
-    # Configure and build BinaryDataBuilder, IconBuilder and Jucer2Reprojucer with JUCE 4.3.1
+    # Configure and build Reprojucer.cmake helpers and Jucer2Reprojucer with JUCE 4.3.1
     - mkdir ${TRAVIS_BUILD_DIR}/ci/ReprojucerHelpers/4.3.1_build
     - cd ${TRAVIS_BUILD_DIR}/ci/ReprojucerHelpers/4.3.1_build
     - >

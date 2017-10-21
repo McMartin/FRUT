@@ -19,7 +19,7 @@ install:
     -- https://github.com/WeAreROLI/JUCE.git "%APPVEYOR_BUILD_FOLDER%/ci/tmp/JUCE-4.3.1"
 
 build_script:
-  # Configure and build BinaryDataBuilder, IconBuilder and Jucer2Reprojucer with JUCE 4.2.0
+  # Configure and build Reprojucer.cmake helpers and Jucer2Reprojucer with JUCE 4.2.0
   - mkdir %APPVEYOR_BUILD_FOLDER%\ci\ReprojucerHelpers\4.2.0_build
   - cd %APPVEYOR_BUILD_FOLDER%\ci\ReprojucerHelpers\4.2.0_build
   - >
@@ -28,7 +28,7 @@ build_script:
     -DJUCE_modules_DIRS="%APPVEYOR_BUILD_FOLDER%/ci/tmp/JUCE-4.2.0/modules"
   - cmake --build . --config Debug
 
-  # Configure and build BinaryDataBuilder, IconBuilder and Jucer2Reprojucer with JUCE 4.3.1
+  # Configure and build Reprojucer.cmake helpers and Jucer2Reprojucer with JUCE 4.3.1
   - mkdir %APPVEYOR_BUILD_FOLDER%\ci\ReprojucerHelpers\4.3.1_build
   - cd %APPVEYOR_BUILD_FOLDER%\ci\ReprojucerHelpers\4.3.1_build
   - >
