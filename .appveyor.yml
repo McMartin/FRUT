@@ -48,9 +48,3 @@ build_script:
   - mkdir %APPVEYOR_BUILD_FOLDER%\ci\AllJuceProjects\build
   - cd %APPVEYOR_BUILD_FOLDER%\ci\AllJuceProjects\build
   - cmake .. -G "%GENERATOR%" -DJUCE_VERSION="%JUCE_VERSION%"
-
-  # Configure and build JUCE's Plugin Host, JuceDemoPlugin and Projucer
-  - mkdir %APPVEYOR_BUILD_FOLDER%\ci\JuceProjects\build
-  - cd %APPVEYOR_BUILD_FOLDER%\ci\JuceProjects\build
-  - cmake .. -G "%GENERATOR%" -DJUCE_VERSION=%JUCE_VERSION%
-  - cmake --build . --config Debug

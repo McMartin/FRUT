@@ -54,14 +54,6 @@ script-anchors:
     - cd ${TRAVIS_BUILD_DIR}/ci/AllJuceProjects/Release_build
     - cmake .. -DCMAKE_BUILD_TYPE=Release -DJUCE_VERSION="${JUCE_VERSION}"
 
-    # Configure and build JUCE's Plugin Host, JuceDemoPlugin and Projucer
-    - mkdir ${TRAVIS_BUILD_DIR}/ci/JuceProjects/{Debug_build,Release_build}
-    - cd ${TRAVIS_BUILD_DIR}/ci/JuceProjects/Debug_build
-    - cmake .. -DCMAKE_BUILD_TYPE=Debug -DJUCE_VERSION=${JUCE_VERSION}
-    - cmake --build .
-    - cd ${TRAVIS_BUILD_DIR}/ci/JuceProjects/Release_build
-    - cmake .. -DCMAKE_BUILD_TYPE=Release -DJUCE_VERSION=${JUCE_VERSION}
-
     - set +e
 
   - &script-Xcode
@@ -90,12 +82,6 @@ script-anchors:
     - mkdir ${TRAVIS_BUILD_DIR}/ci/AllJuceProjects/build
     - cd ${TRAVIS_BUILD_DIR}/ci/AllJuceProjects/build
     - cmake .. -G Xcode -DJUCE_VERSION="${JUCE_VERSION}"
-
-    # Configure and build JUCE's Plugin Host, JuceDemoPlugin and Projucer
-    - mkdir ${TRAVIS_BUILD_DIR}/ci/JuceProjects/build
-    - cd ${TRAVIS_BUILD_DIR}/ci/JuceProjects/build
-    - cmake .. -G Xcode -DJUCE_VERSION=${JUCE_VERSION}
-    - cmake --build . --config Debug
 
     - set +e
 
