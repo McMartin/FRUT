@@ -63,6 +63,12 @@ add_subdirectory("${generated_JUCE_ROOT}/examples/audio plugin host"
   "Plugin Host"
 )
 
+set(Projucer_jucer_FILE "${JUCE_ROOT}/extras/Projucer/Projucer.jucer")
+add_subdirectory("${generated_JUCE_ROOT}/extras/Projucer"
+  "Projucer"
+)
+
+
 if(JUCE_VERSION STREQUAL "4.3.1")
   set(BlocksDrawing_jucer_FILE
     "${JUCE_ROOT}/examples/BLOCKS/BlocksDrawing/BlocksDrawing.jucer"
@@ -81,11 +87,6 @@ if(JUCE_VERSION STREQUAL "4.3.1")
   set(BlocksSynth_jucer_FILE "${JUCE_ROOT}/examples/BLOCKS/BlocksSynth/BlocksSynth.jucer")
   add_subdirectory("${generated_JUCE_ROOT}/examples/BLOCKS/BlocksSynth"
     "BlocksSynth"
-  )
-
-  set(Projucer_jucer_FILE "${JUCE_ROOT}/extras/Projucer/Projucer.jucer")
-  add_subdirectory("${generated_JUCE_ROOT}/extras/Projucer"
-    "Projucer"
   )
 endif()
 
@@ -227,13 +228,6 @@ if(APPLE OR CMAKE_HOST_SYSTEM_NAME STREQUAL Linux)
   add_subdirectory("${generated_JUCE_ROOT}/extras/binarybuilder"
     "BinaryBuilder"
   )
-
-  if(JUCE_VERSION STREQUAL "4.2.0")
-    set(Projucer_jucer_FILE "${JUCE_ROOT}/extras/Projucer/Projucer.jucer")
-    add_subdirectory("${generated_JUCE_ROOT}/extras/Projucer"
-      "Projucer"
-    )
-  endif()
 endif()
 
 

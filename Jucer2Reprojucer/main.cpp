@@ -692,11 +692,11 @@ int main(int argc, char* argv[])
           const auto toolset = exporter.getProperty("toolset").toString().toStdString();
           if (toolset.empty())
           {
-            out << "  PLATFORM_TOOLSET \"(default)\"\n";
+            out << "  # PLATFORM_TOOLSET \"(default)\"\n";
           }
           else
           {
-            out << "  PLATFORM_TOOLSET \"" << toolset << "\"\n";
+            out << "  # PLATFORM_TOOLSET \"" << toolset << "\"\n";
           }
 
           if (exporter.hasProperty("IPPLibrary"))
