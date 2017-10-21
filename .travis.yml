@@ -24,13 +24,14 @@ script-anchors:
     - set -e
 
     # Configure and build BinaryDataBuilder, IconBuilder and Jucer2Reprojucer
-    - mkdir ${TRAVIS_BUILD_DIR}/ci/ReprojucerHelpers/{Debug_build,Release_build}
+    - mkdir ${TRAVIS_BUILD_DIR}/ci/ReprojucerHelpers/Debug_build
     - cd ${TRAVIS_BUILD_DIR}/ci/ReprojucerHelpers/Debug_build
     - >
       cmake .. -DCMAKE_BUILD_TYPE=Debug
       -DJUCE_ROOT="${JUCE_ROOT}"
       -DJUCE_modules_DIRS="${JUCE_ROOT}/modules"
     - cmake --build .
+    - mkdir ${TRAVIS_BUILD_DIR}/ci/ReprojucerHelpers/Release_build
     - cd ${TRAVIS_BUILD_DIR}/ci/ReprojucerHelpers/Release_build
     - >
       cmake .. -DCMAKE_BUILD_TYPE=Release
@@ -48,9 +49,10 @@ script-anchors:
     - git diff --quiet
 
     # Configure all JUCE projects
-    - mkdir ${TRAVIS_BUILD_DIR}/ci/AllJuceProjects/{Debug_build,Release_build}
+    - mkdir ${TRAVIS_BUILD_DIR}/ci/AllJuceProjects/Debug_build
     - cd ${TRAVIS_BUILD_DIR}/ci/AllJuceProjects/Debug_build
     - cmake .. -DCMAKE_BUILD_TYPE=Debug -DJUCE_VERSION="${JUCE_VERSION}"
+    - mkdir ${TRAVIS_BUILD_DIR}/ci/AllJuceProjects/Release_build
     - cd ${TRAVIS_BUILD_DIR}/ci/AllJuceProjects/Release_build
     - cmake .. -DCMAKE_BUILD_TYPE=Release -DJUCE_VERSION="${JUCE_VERSION}"
 
