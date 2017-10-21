@@ -5,8 +5,10 @@ branches:
 language: cpp
 
 before_install:
-  - git clone --branch=${JUCE_VERSION} --depth=1 --single-branch
-    -- https://github.com/WeAreROLI/JUCE.git "${TRAVIS_BUILD_DIR}/ci/tmp/JUCE-${JUCE_VERSION}"
+  - git clone --branch=4.2.0 --depth=1 --single-branch
+    -- https://github.com/WeAreROLI/JUCE.git "${TRAVIS_BUILD_DIR}/ci/tmp/JUCE-4.2.0"
+  - git clone --branch=4.3.1 --depth=1 --single-branch
+    -- https://github.com/WeAreROLI/JUCE.git "${TRAVIS_BUILD_DIR}/ci/tmp/JUCE-4.3.1"
 
 install-anchors:
   - &install-linux
@@ -23,67 +25,116 @@ script-anchors:
   - &script-Makefiles
     - set -e
 
-    # Configure and build BinaryDataBuilder, IconBuilder and Jucer2Reprojucer
-    - mkdir ${TRAVIS_BUILD_DIR}/ci/ReprojucerHelpers/Debug_${JUCE_VERSION}_build
-    - cd ${TRAVIS_BUILD_DIR}/ci/ReprojucerHelpers/Debug_${JUCE_VERSION}_build
+    # Configure and build BinaryDataBuilder, IconBuilder and Jucer2Reprojucer with JUCE 4.2.0
+    - mkdir ${TRAVIS_BUILD_DIR}/ci/ReprojucerHelpers/Debug_4.2.0_build
+    - cd ${TRAVIS_BUILD_DIR}/ci/ReprojucerHelpers/Debug_4.2.0_build
     - >
       cmake .. -DCMAKE_BUILD_TYPE=Debug
-      -DJUCE_ROOT="${TRAVIS_BUILD_DIR}/ci/tmp/JUCE-${JUCE_VERSION}"
-      -DJUCE_modules_DIRS="${TRAVIS_BUILD_DIR}/ci/tmp/JUCE-${JUCE_VERSION}/modules"
+      -DJUCE_ROOT="${TRAVIS_BUILD_DIR}/ci/tmp/JUCE-4.2.0"
+      -DJUCE_modules_DIRS="${TRAVIS_BUILD_DIR}/ci/tmp/JUCE-4.2.0/modules"
     - cmake --build .
-    - mkdir ${TRAVIS_BUILD_DIR}/ci/ReprojucerHelpers/Release_${JUCE_VERSION}_build
-    - cd ${TRAVIS_BUILD_DIR}/ci/ReprojucerHelpers/Release_${JUCE_VERSION}_build
+    - mkdir ${TRAVIS_BUILD_DIR}/ci/ReprojucerHelpers/Release_4.2.0_build
+    - cd ${TRAVIS_BUILD_DIR}/ci/ReprojucerHelpers/Release_4.2.0_build
     - >
       cmake .. -DCMAKE_BUILD_TYPE=Release
-      -DJUCE_ROOT="${TRAVIS_BUILD_DIR}/ci/tmp/JUCE-${JUCE_VERSION}"
-      -DJUCE_modules_DIRS="${TRAVIS_BUILD_DIR}/ci/tmp/JUCE-${JUCE_VERSION}/modules"
+      -DJUCE_ROOT="${TRAVIS_BUILD_DIR}/ci/tmp/JUCE-4.2.0"
+      -DJUCE_modules_DIRS="${TRAVIS_BUILD_DIR}/ci/tmp/JUCE-4.2.0/modules"
+
+    # Configure and build BinaryDataBuilder, IconBuilder and Jucer2Reprojucer with JUCE 4.3.1
+    - mkdir ${TRAVIS_BUILD_DIR}/ci/ReprojucerHelpers/Debug_4.3.1_build
+    - cd ${TRAVIS_BUILD_DIR}/ci/ReprojucerHelpers/Debug_4.3.1_build
+    - >
+      cmake .. -DCMAKE_BUILD_TYPE=Debug
+      -DJUCE_ROOT="${TRAVIS_BUILD_DIR}/ci/tmp/JUCE-4.3.1"
+      -DJUCE_modules_DIRS="${TRAVIS_BUILD_DIR}/ci/tmp/JUCE-4.3.1/modules"
+    - cmake --build .
+    - mkdir ${TRAVIS_BUILD_DIR}/ci/ReprojucerHelpers/Release_4.3.1_build
+    - cd ${TRAVIS_BUILD_DIR}/ci/ReprojucerHelpers/Release_4.3.1_build
+    - >
+      cmake .. -DCMAKE_BUILD_TYPE=Release
+      -DJUCE_ROOT="${TRAVIS_BUILD_DIR}/ci/tmp/JUCE-4.3.1"
+      -DJUCE_modules_DIRS="${TRAVIS_BUILD_DIR}/ci/tmp/JUCE-4.3.1/modules"
 
     # Check that generated CMakeLists.txt files are up-to-date
     - cd ${TRAVIS_BUILD_DIR}
     - >
       cmake
-      -DJUCE_ROOT="${TRAVIS_BUILD_DIR}/ci/tmp/JUCE-${JUCE_VERSION}"
-      -DJucer2Reprojucer_EXE="ci/ReprojucerHelpers/Debug_${JUCE_VERSION}_build/Jucer2Reprojucer/Jucer2Reprojucer"
-      -Dgenerated_JUCE_ROOT="Jucer2Reprojucer/generated/JUCE-${JUCE_VERSION}"
+      -DJUCE_ROOT="${TRAVIS_BUILD_DIR}/ci/tmp/JUCE-4.2.0"
+      -DJucer2Reprojucer_EXE="ci/ReprojucerHelpers/Debug_4.2.0_build/Jucer2Reprojucer/Jucer2Reprojucer"
+      -Dgenerated_JUCE_ROOT="Jucer2Reprojucer/generated/JUCE-4.2.0"
+      -P ci/apply-Jucer2Reprojucer-to-JUCE-jucers.cmake
+    - >
+      cmake
+      -DJUCE_ROOT="${TRAVIS_BUILD_DIR}/ci/tmp/JUCE-4.3.1"
+      -DJucer2Reprojucer_EXE="ci/ReprojucerHelpers/Debug_4.3.1_build/Jucer2Reprojucer/Jucer2Reprojucer"
+      -Dgenerated_JUCE_ROOT="Jucer2Reprojucer/generated/JUCE-4.3.1"
       -P ci/apply-Jucer2Reprojucer-to-JUCE-jucers.cmake
     - git diff --quiet
 
-    # Configure all JUCE projects
-    - mkdir ${TRAVIS_BUILD_DIR}/ci/AllJuceProjects/Debug_${JUCE_VERSION}_build
-    - cd ${TRAVIS_BUILD_DIR}/ci/AllJuceProjects/Debug_${JUCE_VERSION}_build
-    - cmake .. -DCMAKE_BUILD_TYPE=Debug -DJUCE_VERSION="${JUCE_VERSION}"
-    - mkdir ${TRAVIS_BUILD_DIR}/ci/AllJuceProjects/Release_${JUCE_VERSION}_build
-    - cd ${TRAVIS_BUILD_DIR}/ci/AllJuceProjects/Release_${JUCE_VERSION}_build
-    - cmake .. -DCMAKE_BUILD_TYPE=Release -DJUCE_VERSION="${JUCE_VERSION}"
+    # Configure all JUCE 4.2.0 projects
+    - mkdir ${TRAVIS_BUILD_DIR}/ci/AllJuceProjects/Debug_4.2.0_build
+    - cd ${TRAVIS_BUILD_DIR}/ci/AllJuceProjects/Debug_4.2.0_build
+    - cmake .. -DCMAKE_BUILD_TYPE=Debug -DJUCE_VERSION="4.2.0"
+    - mkdir ${TRAVIS_BUILD_DIR}/ci/AllJuceProjects/Release_4.2.0_build
+    - cd ${TRAVIS_BUILD_DIR}/ci/AllJuceProjects/Release_4.2.0_build
+    - cmake .. -DCMAKE_BUILD_TYPE=Release -DJUCE_VERSION="4.2.0"
+
+    # Configure all JUCE 4.3.1 projects
+    - mkdir ${TRAVIS_BUILD_DIR}/ci/AllJuceProjects/Debug_4.3.1_build
+    - cd ${TRAVIS_BUILD_DIR}/ci/AllJuceProjects/Debug_4.3.1_build
+    - cmake .. -DCMAKE_BUILD_TYPE=Debug -DJUCE_VERSION="4.3.1"
+    - mkdir ${TRAVIS_BUILD_DIR}/ci/AllJuceProjects/Release_4.3.1_build
+    - cd ${TRAVIS_BUILD_DIR}/ci/AllJuceProjects/Release_4.3.1_build
+    - cmake .. -DCMAKE_BUILD_TYPE=Release -DJUCE_VERSION="4.3.1"
 
     - set +e
 
   - &script-Xcode
     - set -e
 
-    # Configure and build BinaryDataBuilder, IconBuilder and Jucer2Reprojucer
-    - mkdir ${TRAVIS_BUILD_DIR}/ci/ReprojucerHelpers/${JUCE_VERSION}_build
-    - cd ${TRAVIS_BUILD_DIR}/ci/ReprojucerHelpers/${JUCE_VERSION}_build
+    # Configure and build BinaryDataBuilder, IconBuilder and Jucer2Reprojucer with JUCE 4.2.0
+    - mkdir ${TRAVIS_BUILD_DIR}/ci/ReprojucerHelpers/4.2.0_build
+    - cd ${TRAVIS_BUILD_DIR}/ci/ReprojucerHelpers/4.2.0_build
     - >
       cmake .. -G Xcode
-      -DJUCE_ROOT="${TRAVIS_BUILD_DIR}/ci/tmp/JUCE-${JUCE_VERSION}"
-      -DJUCE_modules_DIRS="${TRAVIS_BUILD_DIR}/ci/tmp/JUCE-${JUCE_VERSION}/modules"
+      -DJUCE_ROOT="${TRAVIS_BUILD_DIR}/ci/tmp/JUCE-4.2.0"
+      -DJUCE_modules_DIRS="${TRAVIS_BUILD_DIR}/ci/tmp/JUCE-4.2.0/modules"
+    - cmake --build . --config Debug
+
+    # Configure and build BinaryDataBuilder, IconBuilder and Jucer2Reprojucer with JUCE 4.3.1
+    - mkdir ${TRAVIS_BUILD_DIR}/ci/ReprojucerHelpers/4.3.1_build
+    - cd ${TRAVIS_BUILD_DIR}/ci/ReprojucerHelpers/4.3.1_build
+    - >
+      cmake .. -G Xcode
+      -DJUCE_ROOT="${TRAVIS_BUILD_DIR}/ci/tmp/JUCE-4.3.1"
+      -DJUCE_modules_DIRS="${TRAVIS_BUILD_DIR}/ci/tmp/JUCE-4.3.1/modules"
     - cmake --build . --config Debug
 
     # Check that generated CMakeLists.txt files are up-to-date
     - cd ${TRAVIS_BUILD_DIR}
     - >
       cmake
-      -DJUCE_ROOT="${TRAVIS_BUILD_DIR}/ci/tmp/JUCE-${JUCE_VERSION}"
-      -DJucer2Reprojucer_EXE="ci/ReprojucerHelpers/${JUCE_VERSION}_build/Jucer2Reprojucer/Debug/Jucer2Reprojucer"
-      -Dgenerated_JUCE_ROOT="Jucer2Reprojucer/generated/JUCE-${JUCE_VERSION}"
+      -DJUCE_ROOT="${TRAVIS_BUILD_DIR}/ci/tmp/JUCE-4.2.0"
+      -DJucer2Reprojucer_EXE="ci/ReprojucerHelpers/4.2.0_build/Jucer2Reprojucer/Debug/Jucer2Reprojucer"
+      -Dgenerated_JUCE_ROOT="Jucer2Reprojucer/generated/JUCE-4.2.0"
+      -P ci/apply-Jucer2Reprojucer-to-JUCE-jucers.cmake
+    - >
+      cmake
+      -DJUCE_ROOT="${TRAVIS_BUILD_DIR}/ci/tmp/JUCE-4.3.1"
+      -DJucer2Reprojucer_EXE="ci/ReprojucerHelpers/4.3.1_build/Jucer2Reprojucer/Debug/Jucer2Reprojucer"
+      -Dgenerated_JUCE_ROOT="Jucer2Reprojucer/generated/JUCE-4.3.1"
       -P ci/apply-Jucer2Reprojucer-to-JUCE-jucers.cmake
     - git diff --quiet
 
-    # Configure all JUCE projects
-    - mkdir ${TRAVIS_BUILD_DIR}/ci/AllJuceProjects/${JUCE_VERSION}_build
-    - cd ${TRAVIS_BUILD_DIR}/ci/AllJuceProjects/${JUCE_VERSION}_build
-    - cmake .. -G Xcode -DJUCE_VERSION="${JUCE_VERSION}"
+    # Configure all JUCE 4.2.0 projects
+    - mkdir ${TRAVIS_BUILD_DIR}/ci/AllJuceProjects/4.2.0_build
+    - cd ${TRAVIS_BUILD_DIR}/ci/AllJuceProjects/4.2.0_build
+    - cmake .. -G Xcode -DJUCE_VERSION="4.2.0"
+
+    # Configure all JUCE 4.3.1 projects
+    - mkdir ${TRAVIS_BUILD_DIR}/ci/AllJuceProjects/4.3.1_build
+    - cd ${TRAVIS_BUILD_DIR}/ci/AllJuceProjects/4.3.1_build
+    - cmake .. -G Xcode -DJUCE_VERSION="4.3.1"
 
     - set +e
 
@@ -92,7 +143,6 @@ matrix:
     - os: linux
       dist: trusty
       sudo: false
-      env: JUCE_VERSION=4.2.0
       addons: &addons-linux
         apt:
           packages:
@@ -104,30 +154,12 @@ matrix:
       install: *install-linux
       script: *script-Makefiles
 
-    - os: linux
-      dist: trusty
-      sudo: false
-      env: JUCE_VERSION=4.3.1
-      addons: *addons-linux
-      install: *install-linux
-      script: *script-Makefiles
-
     - os: osx
-      env: JUCE_VERSION=4.2.0 GENERATOR=Makefiles
+      env: GENERATOR=Makefiles
       install: *install-osx
       script: *script-Makefiles
 
     - os: osx
-      env: JUCE_VERSION=4.3.1 GENERATOR=Makefiles
-      install: *install-osx
-      script: *script-Makefiles
-
-    - os: osx
-      env: JUCE_VERSION=4.2.0 GENERATOR=Xcode
-      install: *install-osx
-      script: *script-Xcode
-
-    - os: osx
-      env: JUCE_VERSION=4.3.1 GENERATOR=Xcode
+      env: GENERATOR=Xcode
       install: *install-osx
       script: *script-Xcode
