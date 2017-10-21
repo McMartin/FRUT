@@ -105,6 +105,7 @@ target_compile_definitions(BinaryDataBuilder PRIVATE
   JUCE_MODULE_AVAILABLE_juce_gui_basics=1
   JUCE_MODULE_AVAILABLE_juce_gui_extra=1
   JUCE_STANDALONE_APPLICATION=1
+  JUCE_WEB_BROWSER=0
 )
 
 set_target_properties(BinaryDataBuilder PROPERTIES
