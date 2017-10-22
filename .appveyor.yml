@@ -17,9 +17,11 @@ install:
     -- https://github.com/WeAreROLI/JUCE.git "%APPVEYOR_BUILD_FOLDER%/ci/tmp/JUCE-4.2.0"
   - git clone --branch=4.3.1 --depth=1 --single-branch
     -- https://github.com/WeAreROLI/JUCE.git "%APPVEYOR_BUILD_FOLDER%/ci/tmp/JUCE-4.3.1"
+  - git clone --branch=5.0.0 --depth=1 --single-branch
+    -- https://github.com/WeAreROLI/JUCE.git "%APPVEYOR_BUILD_FOLDER%/ci/tmp/JUCE-5.0.0"
 
 build_script:
-  # Configure and build BinaryDataBuilder, IconBuilder and Jucer2Reprojucer with JUCE 4.2.0
+  # Configure and build Reprojucer.cmake helpers and Jucer2Reprojucer with JUCE 4.2.0
   - mkdir %APPVEYOR_BUILD_FOLDER%\ci\ReprojucerHelpers\4.2.0_build
   - cd %APPVEYOR_BUILD_FOLDER%\ci\ReprojucerHelpers\4.2.0_build
   - >
@@ -28,13 +30,22 @@ build_script:
     -DJUCE_modules_DIRS="%APPVEYOR_BUILD_FOLDER%/ci/tmp/JUCE-4.2.0/modules"
   - cmake --build . --config Debug
 
-  # Configure and build BinaryDataBuilder, IconBuilder and Jucer2Reprojucer with JUCE 4.3.1
+  # Configure and build Reprojucer.cmake helpers and Jucer2Reprojucer with JUCE 4.3.1
   - mkdir %APPVEYOR_BUILD_FOLDER%\ci\ReprojucerHelpers\4.3.1_build
   - cd %APPVEYOR_BUILD_FOLDER%\ci\ReprojucerHelpers\4.3.1_build
   - >
     cmake .. -G "%GENERATOR%"
     -DJUCE_ROOT="%APPVEYOR_BUILD_FOLDER%/ci/tmp/JUCE-4.3.1"
     -DJUCE_modules_DIRS="%APPVEYOR_BUILD_FOLDER%/ci/tmp/JUCE-4.3.1/modules"
+  - cmake --build . --config Debug
+
+  # Configure and build Reprojucer.cmake helpers and Jucer2Reprojucer with JUCE 5.0.0
+  - mkdir %APPVEYOR_BUILD_FOLDER%\ci\ReprojucerHelpers\5.0.0_build
+  - cd %APPVEYOR_BUILD_FOLDER%\ci\ReprojucerHelpers\5.0.0_build
+  - >
+    cmake .. -G "%GENERATOR%"
+    -DJUCE_ROOT="%APPVEYOR_BUILD_FOLDER%/ci/tmp/JUCE-5.0.0"
+    -DJUCE_modules_DIRS="%APPVEYOR_BUILD_FOLDER%/ci/tmp/JUCE-5.0.0/modules"
   - cmake --build . --config Debug
 
   # Check that generated CMakeLists.txt files are up-to-date
