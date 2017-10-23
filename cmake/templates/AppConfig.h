@@ -7,6 +7,9 @@
 #define __JUCE_APPCONFIG_@upper_project_id@__
 
 //==============================================================================
+// [BEGIN_USER_CODE_SECTION]@user_code_section@// [END_USER_CODE_SECTION]
+
+//==============================================================================
 @module_available_defines@
 //==============================================================================
 #ifndef    JUCE_STANDALONE_APPLICATION

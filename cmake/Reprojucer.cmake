@@ -406,6 +406,19 @@ function(jucer_project_module module_name PATH_TAG modules_folder)
 endfunction()
 
 
+function(jucer_appconfig_header USER_CODE_SECTION_TAG user_code_section)
+
+  if(NOT USER_CODE_SECTION_TAG STREQUAL "USER_CODE_SECTION")
+    message(FATAL_ERROR "Invalid second argument. Expected \"USER_CODE_SECTION\", but "
+      "got \"${USER_CODE_SECTION}\" instead."
+    )
+  endif()
+
+  set(JUCER_APPCONFIG_USER_CODE_SECTION "${user_code_section}" PARENT_SCOPE)
+
+endfunction()
+
+
 function(jucer_export_target exporter)
 
   if(NOT "${exporter}" IN_LIST Reprojucer_supported_exporters)
@@ -1593,6 +1606,17 @@ endfunction()
 
 
 function(__generate_AppConfig_header)
+
+  if(DEFINED JUCER_APPCONFIG_USER_CODE_SECTION)
+    set(user_code_section "\n${JUCER_APPCONFIG_USER_CODE_SECTION}\n")
+    if("${user_code_section}" STREQUAL "\n\n")
+      set(user_code_section "\n")
+    endif()
+  else()
+    string(APPEND user_code_section "\n\n// (You can call jucer_appconfig_header() to "
+      "add your own code to this section)\n\n"
+    )
+  endif()
 
   set(max_right_padding 0)
   foreach(module_name ${JUCER_PROJECT_MODULES})
