@@ -1766,6 +1766,7 @@ function(__generate_AppConfig_header)
     endif()
 
     string(CONCAT audio_plugin_settings_defines
+      "\n"
       "//==============================================================================\n"
       "// Audio plugin settings..\n\n"
     )
