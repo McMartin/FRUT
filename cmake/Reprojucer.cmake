@@ -316,6 +316,8 @@ function(jucer_project_module module_name PATH_TAG modules_folder)
   )
 
   foreach(src_file ${module_src_files})
+    unset(to_compile)
+
     # See LibraryModule::CompileUnit::isNeededForExporter()
     # in JUCE/extras/Projucer/Source/Project/jucer_Module.cpp
     if(  (src_file MATCHES "_AU[._]"         AND NOT (JUCER_BUILD_AUDIOUNIT    AND APPLE))
@@ -354,8 +356,6 @@ function(jucer_project_module module_name PATH_TAG modules_folder)
         "${CMAKE_CURRENT_BINARY_DIR}/JuceLibraryCode/${src_file_basename}"
       )
     endif()
-
-    unset(to_compile)
   endforeach()
 
   set(JUCER_PROJECT_SOURCES ${JUCER_PROJECT_SOURCES} PARENT_SCOPE)
