@@ -1880,7 +1880,7 @@ function(__generate_JuceHeader_header)
         "${JUCER_BINARYDATACPP_SIZE_LIMIT} * 1024"
       )
     endif()
-    if(NOT DEFINED JUCER_BINARYDATA_NAMESPACE)
+    if("${JUCER_BINARYDATA_NAMESPACE}" STREQUAL "")
       set(JUCER_BINARYDATA_NAMESPACE "BinaryData")
     endif()
     set(BinaryDataBuilder_args
