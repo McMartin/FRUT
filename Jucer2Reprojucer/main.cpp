@@ -533,6 +533,46 @@ int main(int argc, char* argv[])
     }
   }
 
+  // jucer_appconfig_header()
+  {
+    const auto appConfigFile =
+      jucerFile.getSiblingFile("JuceLibraryCode").getChildFile("AppConfig.h");
+
+    juce::StringArray appConfigLines;
+    appConfigLines.addLines(appConfigFile.loadFileAsString());
+
+    std::vector<std::string> userCodeSectionLines;
+
+    for (auto i = 0; i < appConfigLines.size(); ++i)
+    {
+      if (appConfigLines[i].contains("[BEGIN_USER_CODE_SECTION]"))
+      {
+        for (auto j = i + 1; j < appConfigLines.size()
+                             && !appConfigLines[j].contains("[END_USER_CODE_SECTION]");
+             ++j)
+        {
+          userCodeSectionLines.push_back(appConfigLines[j].toStdString());
+        }
+
+        break;
+      }
+    }
+
+    const auto kDefaultProjucerUserCodeSectionComment = std::vector<std::string>{"",
+      "// (You can add your own code in this section, and the Projucer will not "
+      "overwrite it)",
+      ""};
+
+    if (userCodeSectionLines != kDefaultProjucerUserCodeSectionComment)
+    {
+      out << "jucer_appconfig_header(\n"
+          << "  USER_CODE_SECTION\n"
+          << "\"" << escape("\\\"", join("\n", userCodeSectionLines)) << "\"\n"
+          << ")\n"
+          << "\n";
+    }
+  }
+
   // jucer_export_target() and jucer_export_target_configuration()
   {
     const auto supportedExporters = {std::make_tuple("XCODE_MAC", "Xcode (MacOSX)", true),

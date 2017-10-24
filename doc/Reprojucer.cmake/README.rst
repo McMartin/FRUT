@@ -33,6 +33,7 @@ Commands
 
 ``Reprojucer.cmake`` defines the following commands:
 
+- `jucer_appconfig_header <command/jucer_appconfig_header.rst>`_
 - `jucer_audio_plugin_settings <command/jucer_audio_plugin_settings.rst>`_
 - `jucer_export_target <command/jucer_export_target.rst>`_
 - `jucer_export_target_configuration <command/jucer_export_target_configuration.rst>`_

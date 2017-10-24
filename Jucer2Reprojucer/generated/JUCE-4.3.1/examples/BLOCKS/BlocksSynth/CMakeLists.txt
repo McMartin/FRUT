@@ -148,6 +148,13 @@ jucer_project_module(
   PATH "../../../modules"
 )
 
+jucer_appconfig_header(
+  USER_CODE_SECTION
+"
+#define DUMP_TOPOLOGY 1
+"
+)
+
 jucer_export_target(
   "Xcode (MacOSX)"
   # EXTRA_PREPROCESSOR_DEFINITIONS
