@@ -18,6 +18,7 @@ get_filename_component(NetworkGraphicsDemo_jucer_FILE
 
 
 jucer_project_begin(
+  JUCER_VERSION "4.2.0"
   PROJECT_FILE "${NetworkGraphicsDemo_jucer_FILE}"
   PROJECT_ID "gWI5Ir"
 )

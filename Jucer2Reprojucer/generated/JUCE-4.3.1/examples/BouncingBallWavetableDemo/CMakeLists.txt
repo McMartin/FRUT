@@ -18,6 +18,7 @@ get_filename_component(BouncingBallWavetableDemo_jucer_FILE
 
 
 jucer_project_begin(
+  JUCER_VERSION "4.3.1"
   PROJECT_FILE "${BouncingBallWavetableDemo_jucer_FILE}"
   PROJECT_ID "fyUrFS"
 )

@@ -18,6 +18,7 @@ get_filename_component(ComponentTutorialExample_jucer_FILE
 
 
 jucer_project_begin(
+  JUCER_VERSION "4.2.0"
   PROJECT_FILE "${ComponentTutorialExample_jucer_FILE}"
   PROJECT_ID "oNvA5C"
 )
