@@ -40,6 +40,8 @@ jucer_audio_plugin_settings(
   BUILD_VST3 ON
   BUILD_AUDIOUNIT ON
   BUILD_AUDIOUNIT_V3 OFF
+  BUILD_RTAS OFF
+  BUILD_AAX OFF
   PLUGIN_NAME "Juce Demo Plugin"
   PLUGIN_DESCRIPTION "Juce Demo Plugin"
   PLUGIN_MANUFACTURER "ROLI Ltd."
@@ -54,6 +56,9 @@ jucer_audio_plugin_settings(
   PLUGIN_AU_EXPORT_PREFIX "JuceDemoProjectAU"
   # PLUGIN_AU_MAIN_TYPE
   # VST_CATEGORY
+  # PLUGIN_RTAS_CATEGORY
+  PLUGIN_AAX_CATEGORY "AAX_ePlugInCategory_Dynamics"
+  PLUGIN_AAX_IDENTIFIER "com.yourcompany.JuceDemoPlugin"
 )
 
 jucer_project_files("JuceDemoPlugin"

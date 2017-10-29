@@ -40,6 +40,8 @@ jucer_audio_plugin_settings(
   BUILD_VST3 ON
   BUILD_AUDIOUNIT ON
   BUILD_AUDIOUNIT_V3 OFF
+  BUILD_RTAS OFF
+  BUILD_AAX ON
   PLUGIN_NAME "Noise Gate"
   PLUGIN_DESCRIPTION "Noise Gate"
   PLUGIN_MANUFACTURER "ROLI Ltd."
@@ -54,6 +56,9 @@ jucer_audio_plugin_settings(
   PLUGIN_AU_EXPORT_PREFIX "NoiseGateAU"
   # PLUGIN_AU_MAIN_TYPE
   # VST_CATEGORY
+  # PLUGIN_RTAS_CATEGORY
+  PLUGIN_AAX_CATEGORY "AAX_ePlugInCategory_Dynamics"
+  PLUGIN_AAX_IDENTIFIER "com.roli.NoiseGate"
 )
 
 jucer_project_files("NoiseGate/Source"

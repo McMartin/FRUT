@@ -40,6 +40,8 @@ jucer_audio_plugin_settings(
   BUILD_VST3 OFF
   BUILD_AUDIOUNIT ON
   BUILD_AUDIOUNIT_V3 OFF
+  BUILD_RTAS OFF
+  BUILD_AAX OFF
   PLUGIN_NAME "Arpeggiator"
   PLUGIN_DESCRIPTION "Arpeggiator"
   PLUGIN_MANUFACTURER "ROLI Ltd."
@@ -54,6 +56,9 @@ jucer_audio_plugin_settings(
   PLUGIN_AU_EXPORT_PREFIX "ArpeggiatorAU"
   # PLUGIN_AU_MAIN_TYPE
   # VST_CATEGORY
+  # PLUGIN_RTAS_CATEGORY
+  PLUGIN_AAX_CATEGORY "AAX_EPlugInCategory_Effect"
+  PLUGIN_AAX_IDENTIFIER "com.ROLI.Arpeggiator"
 )
 
 jucer_project_files("Arpeggiator/Source"

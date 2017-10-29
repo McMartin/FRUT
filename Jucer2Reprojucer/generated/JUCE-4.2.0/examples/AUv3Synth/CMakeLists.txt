@@ -40,6 +40,8 @@ jucer_audio_plugin_settings(
   BUILD_VST3 ON
   BUILD_AUDIOUNIT OFF
   BUILD_AUDIOUNIT_V3 ON
+  BUILD_RTAS OFF
+  BUILD_AAX OFF
   PLUGIN_NAME "AUv3 Synth"
   PLUGIN_DESCRIPTION "AUv3 Synth"
   PLUGIN_MANUFACTURER "ROLI Ltd."
@@ -54,6 +56,9 @@ jucer_audio_plugin_settings(
   PLUGIN_AU_EXPORT_PREFIX "AUv3SynthAU"
   # PLUGIN_AU_MAIN_TYPE
   # VST_CATEGORY
+  # PLUGIN_RTAS_CATEGORY
+  PLUGIN_AAX_CATEGORY "AAX_ePlugInCategory_Dynamics"
+  PLUGIN_AAX_IDENTIFIER "com.roli.development.AUv3Synth"
 )
 
 jucer_project_files("AUv3Synth/Source/BinaryData"
