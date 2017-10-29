@@ -376,6 +376,8 @@ int main(int argc, char* argv[])
           << "  " << onOffProjectSetting("BUILD_VST3", "buildVST3") << "\n"
           << "  " << onOffProjectSetting("BUILD_AUDIOUNIT", "buildAU") << "\n"
           << "  " << onOffProjectSetting("BUILD_AUDIOUNIT_V3", "buildAUv3") << "\n"
+          << "  " << onOffProjectSetting("BUILD_RTAS", "buildRTAS") << "\n"
+          << "  " << onOffProjectSetting("BUILD_AAX", "buildAAX") << "\n"
           << "  " << projectSetting("PLUGIN_NAME", "pluginName") << "\n"
           << "  " << projectSetting("PLUGIN_DESCRIPTION", "pluginDesc") << "\n"
           << "  " << projectSetting("PLUGIN_MANUFACTURER", "pluginManufacturer") << "\n"
@@ -396,6 +398,9 @@ int main(int argc, char* argv[])
           << "\n"
           << "  " << projectSetting("PLUGIN_AU_MAIN_TYPE", "pluginAUMainType") << "\n"
           << "  " << projectSetting("VST_CATEGORY", "pluginVSTCategory") << "\n"
+          << "  " << projectSetting("PLUGIN_RTAS_CATEGORY", "pluginRTASCategory") << "\n"
+          << "  " << projectSetting("PLUGIN_AAX_CATEGORY", "pluginAAXCategory") << "\n"
+          << "  " << projectSetting("PLUGIN_AAX_IDENTIFIER", "aaxIdentifier") << "\n"
           << ")\n"
           << "\n";
     }

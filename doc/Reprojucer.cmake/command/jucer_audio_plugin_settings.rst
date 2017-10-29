@@ -10,6 +10,8 @@ Define the settings specific to an *Audio Plug-in* project.
     [BUILD_VST3 <ON|OFF>]
     [BUILD_AUDIOUNIT <ON|OFF>]
     [BUILD_AUDIOUNIT_V3 <ON|OFF>]
+    [BUILD_RTAS <ON|OFF>]
+    [BUILD_AAX <ON|OFF>]
     [PLUGIN_NAME <plugin_name>]
     [PLUGIN_DESCRIPTION <plugin_description>]
     [PLUGIN_MANUFACTURER <plugin_manufacturer>]
@@ -24,6 +26,9 @@ Define the settings specific to an *Audio Plug-in* project.
     [PLUGIN_AU_EXPORT_PREFIX <plugin_au_export_prefix>]
     [PLUGIN_AU_MAIN_TYPE <plugin_au_main_type>]
     [VST_CATEGORY <vst_category>]
+    [PLUGIN_RTAS_CATEGORY <plugin_rtas_category>]
+    [PLUGIN_AAX_CATEGORY <plugin_aax_category>]
+    [PLUGIN_AAX_IDENTIFIER <plugin_aax_identifier>]
   )
 
 You must call this command when you call `jucer_project_settings()

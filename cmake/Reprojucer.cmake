@@ -199,6 +199,8 @@ function(jucer_audio_plugin_settings)
     "BUILD_VST3"
     "BUILD_AUDIOUNIT"
     "BUILD_AUDIOUNIT_V3"
+    "BUILD_RTAS"
+    "BUILD_AAX"
     "PLUGIN_NAME"
     "PLUGIN_DESCRIPTION"
     "PLUGIN_MANUFACTURER"
@@ -213,6 +215,9 @@ function(jucer_audio_plugin_settings)
     "PLUGIN_AU_EXPORT_PREFIX"
     "PLUGIN_AU_MAIN_TYPE"
     "VST_CATEGORY"
+    "PLUGIN_RTAS_CATEGORY"
+    "PLUGIN_AAX_CATEGORY"
+    "PLUGIN_AAX_IDENTIFIER"
   )
 
   unset(tag)
@@ -225,6 +230,20 @@ function(jucer_audio_plugin_settings)
       if(NOT "${tag}" IN_LIST plugin_setting_tags)
         message(FATAL_ERROR "Unsupported audio plugin setting: ${tag}\n"
           "Supported audio plugin settings: ${plugin_setting_tags}"
+        )
+
+      elseif(tag STREQUAL "BUILD_RTAS" AND value)
+        message(WARNING "Reprojucer.cmake doesn't support building RTAS plugins. If you "
+          "would like Reprojucer.cmake to support building RTAS plugins, please leave a "
+          "comment on the issue \"Reprojucer.cmake doesn't support building RTAS "
+          "plugins\" on GitHub: https://github.com/McMartin/FRUT/issues/266"
+        )
+
+      elseif(tag STREQUAL "BUILD_AAX" AND value)
+        message(WARNING "Reprojucer.cmake doesn't support building AAX plugins. If you "
+          "would like Reprojucer.cmake to support building AAX plugins, please leave a "
+          "comment on the issue \"Reprojucer.cmake doesn't support building AAX "
+          "plugins\" on GitHub: https://github.com/McMartin/FRUT/issues/267"
         )
       endif()
 
