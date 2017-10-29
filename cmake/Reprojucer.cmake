@@ -1699,7 +1699,8 @@ function(__generate_AppConfig_header)
     # in JUCE/extras/Projucer/Source/Project Saving/jucer_ProjectSaver.cpp
 
     set(audio_plugin_setting_names
-      "Build_VST" "Build_VST3" "Build_AU" "Build_AUv3" "Build_STANDALONE"
+      "Build_VST" "Build_VST3" "Build_AU" "Build_AUv3" "Build_RTAS" "Build_AAX"
+      "Build_STANDALONE"
       "Name" "Desc" "Manufacturer" "ManufacturerWebsite" "ManufacturerEmail"
       "ManufacturerCode" "PluginCode"
       "IsSynth" "WantsMidiInput" "ProducesMidiOutput" "IsMidiEffect"
@@ -1709,12 +1710,18 @@ function(__generate_AppConfig_header)
       "AUMainType" "AUSubType" "AUExportPrefix" "AUExportPrefixQuoted"
       "AUManufacturerCode"
       "CFBundleIdentifier"
+      "RTASCategory" "RTASManufacturerCode" "RTASProductId" "RTASDisableBypass"
+      "RTASDisableMultiMono"
+      "AAXIdentifier" "AAXManufacturerCode" "AAXProductId" "AAXCategory"
+      "AAXDisableBypass" "AAXDisableMultiMono"
     )
 
     __bool_to_int("${JUCER_BUILD_VST}" Build_VST_value)
     __bool_to_int("${JUCER_BUILD_VST3}" Build_VST3_value)
     __bool_to_int("${JUCER_BUILD_AUDIOUNIT}" Build_AU_value)
     __bool_to_int("${JUCER_BUILD_AUDIOUNIT_V3}" Build_AUv3_value)
+    __bool_to_int("OFF" Build_RTAS_value) # Not yet supported
+    __bool_to_int("OFF" Build_AAX_value) # Not yet supported
     __bool_to_int("${JUCER_BUILD_AUDIOUNIT_V3}" Build_STANDALONE_value)
 
     set(Name_value "\"${JUCER_PLUGIN_NAME}\"")
@@ -1770,6 +1777,25 @@ function(__generate_AppConfig_header)
     set(AUManufacturerCode_value "JucePlugin_ManufacturerCode")
 
     set(CFBundleIdentifier_value "${JUCER_BUNDLE_IDENTIFIER}")
+
+    if(JUCER_PLUGIN_IS_A_SYNTH)
+      set(RTASCategory_value "ePlugInCategory_SWGenerators")
+    elseif(NOT DEFINED JUCER_PLUGIN_RTAS_CATEGORY)
+      set(RTASCategory_value "ePlugInCategory_None")
+    else()
+      set(RTASCategory_value "${JUCER_PLUGIN_RTAS_CATEGORY}")
+    endif()
+    set(RTASManufacturerCode_value "JucePlugin_ManufacturerCode")
+    set(RTASProductId_value "JucePlugin_PluginCode")
+    __bool_to_int("${JUCER_PLUGIN_RTAS_DISABLE_BYPASS}" RTASDisableBypass_value)
+    __bool_to_int("${JUCER_PLUGIN_RTAS_DISABLE_MULTI_MONO}" RTASDisableMultiMono_value)
+
+    set(AAXIdentifier_value "${JUCER_PLUGIN_AAX_IDENTIFIER}")
+    set(AAXManufacturerCode_value "JucePlugin_ManufacturerCode")
+    set(AAXProductId_value "JucePlugin_PluginCode")
+    set(AAXCategory_value "${JUCER_PLUGIN_AAX_CATEGORY}")
+    __bool_to_int("${JUCER_PLUGIN_AAX_DISABLE_BYPASS}" AAXDisableBypass_value)
+    __bool_to_int("${JUCER_PLUGIN_AAX_DISABLE_MULTI_MONO}" AAXDisableMultiMono_value)
 
     string(LENGTH "${JUCER_PLUGIN_CHANNEL_CONFIGURATIONS}" plugin_channel_config_length)
     if(plugin_channel_config_length GREATER 0)
