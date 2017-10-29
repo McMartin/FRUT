@@ -1814,6 +1814,7 @@ function(__generate_AppConfig_header)
         set(setting_value "${element}")
 
         string(LENGTH "JucePlugin_${setting_name}" right_padding)
+        set(padding_spaces "")
         while(right_padding LESS 32)
           string(APPEND padding_spaces " ")
           math(EXPR right_padding "${right_padding} + 1")
@@ -1824,7 +1825,6 @@ function(__generate_AppConfig_header)
           " #define JucePlugin_${setting_name}${padding_spaces}  ${setting_value}\n"
           "#endif\n"
         )
-        unset(padding_spaces)
 
         unset(setting_name)
       endif()
