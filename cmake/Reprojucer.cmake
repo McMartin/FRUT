@@ -37,6 +37,8 @@ set(Reprojucer_supported_exporters_conditions
 
 function(__set_Reprojucer_current_exporter)
 
+  unset(current_exporter)
+
   foreach(exporter_index RANGE 3)
     list(GET Reprojucer_supported_exporters_conditions ${exporter_index} condition)
     if(${condition})
@@ -72,6 +74,7 @@ function(jucer_project_begin)
     "PROJECT_ID"
   )
 
+  unset(tag)
   foreach(element ${ARGN})
     if(NOT DEFINED tag)
       set(tag ${element})
@@ -134,6 +137,7 @@ function(jucer_project_settings)
   )
   set(size_limits 10240 20480 10240 6144 2048 1024 512 256 128 64)
 
+  unset(tag)
   foreach(element ${ARGN})
     if(NOT DEFINED tag)
       set(tag ${element})
@@ -211,6 +215,7 @@ function(jucer_audio_plugin_settings)
     "VST_CATEGORY"
   )
 
+  unset(tag)
   foreach(element ${ARGN})
     if(NOT DEFINED tag)
       set(tag ${element})
@@ -240,6 +245,9 @@ function(jucer_project_files source_group_name)
     endif()
   endfunction()
 
+  unset(compile)
+  unset(xcode_resource)
+  unset(binary_resource)
   foreach(element ${ARGN})
     if(NOT DEFINED compile)
       set(compile ${element})
@@ -308,6 +316,8 @@ function(jucer_project_module module_name PATH_TAG modules_folder)
   )
 
   foreach(src_file ${module_src_files})
+    unset(to_compile)
+
     # See LibraryModule::CompileUnit::isNeededForExporter()
     # in JUCE/extras/Projucer/Source/Project/jucer_Module.cpp
     if(  (src_file MATCHES "_AU[._]"         AND NOT (JUCER_BUILD_AUDIOUNIT    AND APPLE))
@@ -346,8 +356,6 @@ function(jucer_project_module module_name PATH_TAG modules_folder)
         "${CMAKE_CURRENT_BINARY_DIR}/JuceLibraryCode/${src_file_basename}"
       )
     endif()
-
-    unset(to_compile)
   endforeach()
 
   set(JUCER_PROJECT_SOURCES ${JUCER_PROJECT_SOURCES} PARENT_SCOPE)
@@ -358,6 +366,7 @@ function(jucer_project_module module_name PATH_TAG modules_folder)
   string(REPLACE "/** Config: " "" module_config_flags "${config_flags_lines}")
   set(JUCER_${module_name}_CONFIG_FLAGS ${module_config_flags} PARENT_SCOPE)
 
+  unset(config_flag)
   foreach(element ${ARGN})
     if(NOT DEFINED config_flag)
       set(config_flag ${element})
@@ -479,6 +488,7 @@ function(jucer_export_target exporter)
     )
   endif()
 
+  unset(tag)
   foreach(element ${ARGN})
     if(NOT DEFINED tag)
       set(tag ${element})
@@ -728,6 +738,7 @@ function(jucer_export_target_configuration
     )
   endif()
 
+  unset(tag)
   foreach(element ${ARGN})
     if(NOT DEFINED tag)
       set(tag ${element})
@@ -1024,7 +1035,7 @@ function(jucer_project_end)
   endif()
 
   if(NOT DEFINED CMAKE_CONFIGURATION_TYPES)
-    if(CMAKE_BUILD_TYPE STREQUAL "")
+    if("${CMAKE_BUILD_TYPE}" STREQUAL "")
       list(GET JUCER_PROJECT_CONFIGURATIONS 0 first_configuration)
       message(STATUS
         "Setting CMAKE_BUILD_TYPE to \"${first_configuration}\" as it was not specified."
@@ -1795,6 +1806,7 @@ function(__generate_AppConfig_header)
       "// Audio plugin settings..\n\n"
     )
 
+    unset(setting_name)
     foreach(element ${plugin_settings})
       if(NOT DEFINED setting_name)
         set(setting_name "${element}")
@@ -1880,7 +1892,7 @@ function(__generate_JuceHeader_header)
         "${JUCER_BINARYDATACPP_SIZE_LIMIT} * 1024"
       )
     endif()
-    if(NOT DEFINED JUCER_BINARYDATA_NAMESPACE)
+    if("${JUCER_BINARYDATA_NAMESPACE}" STREQUAL "")
       set(JUCER_BINARYDATA_NAMESPACE "BinaryData")
     endif()
     set(BinaryDataBuilder_args
@@ -1978,7 +1990,7 @@ function(__generate_icon_file icon_format out_icon_filename)
     message(FATAL_ERROR "Error when executing IconBuilder")
   endif()
 
-  if(NOT icon_filename STREQUAL "")
+  if(NOT "${icon_filename}" STREQUAL "")
     set(${out_icon_filename} ${icon_filename} PARENT_SCOPE)
 
     list(APPEND JUCER_PROJECT_SOURCES
