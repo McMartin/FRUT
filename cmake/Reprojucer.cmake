@@ -1679,63 +1679,49 @@ function(__generate_AppConfig_header)
     # See ProjectSaver::writePluginCharacteristicsFile()
     # in JUCE/extras/Projucer/Source/Project Saving/jucer_ProjectSaver.cpp
 
+    set(audio_plugin_setting_names
+      "Build_VST" "Build_VST3" "Build_AU" "Build_AUv3" "Build_STANDALONE"
+      "Name" "Desc" "Manufacturer" "ManufacturerWebsite" "ManufacturerEmail"
+      "ManufacturerCode" "PluginCode"
+      "IsSynth" "WantsMidiInput" "ProducesMidiOutput" "IsMidiEffect"
+      "EditorRequiresKeyboardFocus"
+      "Version" "VersionCode" "VersionString"
+      "VSTUniqueID" "VSTCategory"
+      "AUMainType" "AUSubType" "AUExportPrefix" "AUExportPrefixQuoted"
+      "AUManufacturerCode"
+      "CFBundleIdentifier"
+    )
+
     __bool_to_int("${JUCER_BUILD_VST}" Build_VST_value)
-    list(APPEND plugin_settings "Build_VST" "${Build_VST_value}")
-
     __bool_to_int("${JUCER_BUILD_VST3}" Build_VST3_value)
-    list(APPEND plugin_settings "Build_VST3" "${Build_VST3_value}")
-
     __bool_to_int("${JUCER_BUILD_AUDIOUNIT}" Build_AU_value)
-    list(APPEND plugin_settings "Build_AU" "${Build_AU_value}")
-
     __bool_to_int("${JUCER_BUILD_AUDIOUNIT_V3}" Build_AUv3_value)
-    list(APPEND plugin_settings "Build_AUv3" "${Build_AUv3_value}")
-
     __bool_to_int("${JUCER_BUILD_AUDIOUNIT_V3}" Build_STANDALONE_value)
-    list(APPEND plugin_settings "Build_STANDALONE" "${Build_STANDALONE_value}")
 
-    list(APPEND plugin_settings "Name" "\"${JUCER_PLUGIN_NAME}\"")
-    list(APPEND plugin_settings "Desc" "\"${JUCER_PLUGIN_DESCRIPTION}\"")
-    list(APPEND plugin_settings "Manufacturer" "\"${JUCER_PLUGIN_MANUFACTURER}\"")
-    list(APPEND plugin_settings "ManufacturerWebsite" "\"${JUCER_COMPANY_WEBSITE}\"")
-    list(APPEND plugin_settings "ManufacturerEmail" "\"${JUCER_COMPANY_EMAIL}\"")
+    set(Name_value "\"${JUCER_PLUGIN_NAME}\"")
+    set(Desc_value "\"${JUCER_PLUGIN_DESCRIPTION}\"")
+    set(Manufacturer_value "\"${JUCER_PLUGIN_MANUFACTURER}\"")
+    set(ManufacturerWebsite_value "\"${JUCER_COMPANY_WEBSITE}\"")
+    set(ManufacturerEmail_value "\"${JUCER_COMPANY_EMAIL}\"")
 
-    __four_chars_to_hex("${JUCER_PLUGIN_MANUFACTURER_CODE}" ManufacturerCode_value)
-    list(APPEND plugin_settings "ManufacturerCode"
-      "${ManufacturerCode_value} // '${JUCER_PLUGIN_MANUFACTURER_CODE}'"
+    __four_chars_to_hex("${JUCER_PLUGIN_MANUFACTURER_CODE}" hex_manufacturer_code)
+    set(ManufacturerCode_value
+      "${hex_manufacturer_code} // '${JUCER_PLUGIN_MANUFACTURER_CODE}'"
     )
-
-    __four_chars_to_hex("${JUCER_PLUGIN_CODE}" PluginCode_value)
-    list(APPEND plugin_settings "PluginCode"
-      "${PluginCode_value} // '${JUCER_PLUGIN_CODE}'"
-    )
+    __four_chars_to_hex("${JUCER_PLUGIN_CODE}" hex_plugin_code)
+    set(PluginCode_value "${hex_plugin_code} // '${JUCER_PLUGIN_CODE}'")
 
     __bool_to_int("${JUCER_PLUGIN_IS_A_SYNTH}" IsSynth_value)
-    list(APPEND plugin_settings "IsSynth" "${IsSynth_value}")
-
     __bool_to_int("${JUCER_PLUGIN_MIDI_INPUT}" WantsMidiInput_value)
-    list(APPEND plugin_settings "WantsMidiInput" "${WantsMidiInput_value}")
-
     __bool_to_int("${JUCER_PLUGIN_MIDI_OUTPUT}" ProducesMidiOutput_value)
-    list(APPEND plugin_settings "ProducesMidiOutput" "${ProducesMidiOutput_value}")
-
     __bool_to_int("${JUCER_MIDI_EFFECT_PLUGIN}" IsMidiEffect_value)
-    list(APPEND plugin_settings "IsMidiEffect" "${IsMidiEffect_value}")
-
     __bool_to_int("${JUCER_KEY_FOCUS}" EditorRequiresKeyboardFocus_value)
-    list(APPEND plugin_settings "EditorRequiresKeyboardFocus"
-      "${EditorRequiresKeyboardFocus_value}"
-    )
 
-    list(APPEND plugin_settings "Version" "${JUCER_PROJECT_VERSION}")
-
+    set(Version_value "${JUCER_PROJECT_VERSION}")
     __version_to_hex("${JUCER_PROJECT_VERSION}" VersionCode_value)
-    list(APPEND plugin_settings "VersionCode" "${VersionCode_value}")
+    set(VersionString_value "\"${JUCER_PROJECT_VERSION}\"")
 
-    list(APPEND plugin_settings "VersionString" "\"${JUCER_PROJECT_VERSION}\"")
-
-    list(APPEND plugin_settings "VSTUniqueID" "JucePlugin_PluginCode")
-
+    set(VSTUniqueID_value "JucePlugin_PluginCode")
     if(NOT DEFINED JUCER_VST_CATEGORY)
       if(JUCER_PLUGIN_IS_A_SYNTH)
         set(VSTCategory_value "kPlugCategSynth")
@@ -1745,7 +1731,6 @@ function(__generate_AppConfig_header)
     else()
       set(VSTCategory_value "${JUCER_VST_CATEGORY}")
     endif()
-    list(APPEND plugin_settings "VSTCategory" "${VSTCategory_value}")
 
     if(NOT DEFINED JUCER_PLUGIN_AU_MAIN_TYPE)
       if(JUCER_MIDI_EFFECT_PLUGIN)
@@ -1760,16 +1745,12 @@ function(__generate_AppConfig_header)
     else()
       set(AUMainType_value "${JUCER_PLUGIN_AU_MAIN_TYPE}")
     endif()
-    list(APPEND plugin_settings "AUMainType" "${AUMainType_value}")
+    set(AUSubType_value "JucePlugin_PluginCode")
+    set(AUExportPrefix_value "${JUCER_PLUGIN_AU_EXPORT_PREFIX}")
+    set(AUExportPrefixQuoted_value "\"${JUCER_PLUGIN_AU_EXPORT_PREFIX}\"")
+    set(AUManufacturerCode_value "JucePlugin_ManufacturerCode")
 
-    list(APPEND plugin_settings "AUSubType" "JucePlugin_PluginCode")
-    list(APPEND plugin_settings "AUExportPrefix" "${JUCER_PLUGIN_AU_EXPORT_PREFIX}")
-    list(APPEND plugin_settings "AUExportPrefixQuoted"
-      "\"${JUCER_PLUGIN_AU_EXPORT_PREFIX}\""
-    )
-    list(APPEND plugin_settings "AUManufacturerCode" "JucePlugin_ManufacturerCode")
-
-    list(APPEND plugin_settings "CFBundleIdentifier" "${JUCER_BUNDLE_IDENTIFIER}")
+    set(CFBundleIdentifier_value "${JUCER_BUNDLE_IDENTIFIER}")
 
     string(LENGTH "${JUCER_PLUGIN_CHANNEL_CONFIGURATIONS}" plugin_channel_config_length)
     if(plugin_channel_config_length GREATER 0)
@@ -1793,11 +1774,12 @@ function(__generate_AppConfig_header)
         endif()
       endforeach()
 
-      list(APPEND plugin_settings "MaxNumInputChannels" "${max_num_input}")
-      list(APPEND plugin_settings "MaxNumOutputChannels" "${max_num_output}")
-      list(APPEND plugin_settings "PreferredChannelConfigurations"
-        "${JUCER_PLUGIN_CHANNEL_CONFIGURATIONS}"
+      list(APPEND audio_plugin_setting_names
+        "MaxNumInputChannels" "MaxNumOutputChannels" "PreferredChannelConfigurations"
       )
+      set(MaxNumInputChannels_value "${max_num_input}")
+      set(MaxNumOutputChannels_value "${max_num_output}")
+      set(PreferredChannelConfigurations_value "${JUCER_PLUGIN_CHANNEL_CONFIGURATIONS}")
     endif()
 
     string(CONCAT audio_plugin_settings_defines
@@ -1806,28 +1788,19 @@ function(__generate_AppConfig_header)
       "// Audio plugin settings..\n\n"
     )
 
-    unset(setting_name)
-    foreach(element ${plugin_settings})
-      if(NOT DEFINED setting_name)
-        set(setting_name "${element}")
-      else()
-        set(setting_value "${element}")
+    foreach(setting_name ${audio_plugin_setting_names})
+      string(LENGTH "JucePlugin_${setting_name}" right_padding)
+      set(padding_spaces "")
+      while(right_padding LESS 32)
+        string(APPEND padding_spaces " ")
+        math(EXPR right_padding "${right_padding} + 1")
+      endwhile()
 
-        string(LENGTH "JucePlugin_${setting_name}" right_padding)
-        set(padding_spaces "")
-        while(right_padding LESS 32)
-          string(APPEND padding_spaces " ")
-          math(EXPR right_padding "${right_padding} + 1")
-        endwhile()
-
-        string(APPEND audio_plugin_settings_defines
-          "#ifndef  JucePlugin_${setting_name}\n"
-          " #define JucePlugin_${setting_name}${padding_spaces}  ${setting_value}\n"
-          "#endif\n"
-        )
-
-        unset(setting_name)
-      endif()
+      string(APPEND audio_plugin_settings_defines
+        "#ifndef  JucePlugin_${setting_name}\n"
+        " #define JucePlugin_${setting_name}${padding_spaces}  ${${setting_name}_value}\n"
+        "#endif\n"
+      )
     endforeach()
   endif()
 
