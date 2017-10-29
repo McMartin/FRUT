@@ -26,7 +26,7 @@ endif()
 project(AllJuceProjects-${JUCE_VERSION})
 
 
-if(JUCE_VERSION STREQUAL 4.2.0)
+if(JUCE_VERSION STREQUAL "4.2.0")
   set(JUCER_VST_SDK_FOLDER
     "${CMAKE_CURRENT_LIST_DIR}/../third-party/vstsdk365_12_11_2015_build_67/VST3 SDK"
   )
@@ -218,7 +218,7 @@ endif()
 
 # "Xcode (MacOSX)" and "Linux Makefile" exporters
 
-if(APPLE OR CMAKE_HOST_SYSTEM_NAME STREQUAL Linux)
+if(APPLE OR CMAKE_HOST_SYSTEM_NAME STREQUAL "Linux")
   set(Surround_jucer_FILE "${JUCE_ROOT}/examples/PlugInSamples/Surround/Surround.jucer")
   add_subdirectory("${generated_JUCE_ROOT}/examples/PlugInSamples/Surround"
     "Surround"

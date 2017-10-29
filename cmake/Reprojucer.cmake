@@ -2188,7 +2188,7 @@ function(__set_common_target_properties target)
         )
       endif()
 
-      if(target_type STREQUAL EXECUTABLE OR target_type STREQUAL MODULE_LIBRARY)
+      if(target_type STREQUAL "EXECUTABLE" OR target_type STREQUAL "MODULE_LIBRARY")
         if(${JUCER_STRIP_LOCAL_SYMBOLS_${config}})
           find_program(strip_exe "strip")
           if(NOT strip_exe)
