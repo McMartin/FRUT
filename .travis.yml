@@ -14,11 +14,7 @@ before_install:
 
 install-anchors:
   - &install-linux
-    - mkdir -p ${TRAVIS_BUILD_DIR}/ci/tmp/cmake
-    - >
-      wget --no-check-certificate --output-document=- http://www.cmake.org/files/v3.4/cmake-3.4.3-Linux-x86_64.tar.gz
-      | tar --extract --gzip --directory=${TRAVIS_BUILD_DIR}/ci/tmp/cmake --strip-components=1
-    - export PATH=${TRAVIS_BUILD_DIR}/ci/tmp/cmake/bin:$PATH
+    - cmake --version
 
   - &install-osx
     - cmake --version
@@ -172,6 +168,7 @@ matrix:
       addons: &addons-linux
         apt:
           packages:
+            - cmake3
             - libasound2-dev
             - libgl1-mesa-dev
             - libxcursor-dev
