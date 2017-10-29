@@ -4,20 +4,15 @@ branches:
 
 language: cpp
 
-before_install:
+install:
+  - cmake --version
+
   - git clone --branch=4.2.0 --depth=1 --single-branch
     -- https://github.com/WeAreROLI/JUCE.git "${TRAVIS_BUILD_DIR}/ci/tmp/JUCE-4.2.0"
   - git clone --branch=4.3.1 --depth=1 --single-branch
     -- https://github.com/WeAreROLI/JUCE.git "${TRAVIS_BUILD_DIR}/ci/tmp/JUCE-4.3.1"
   - git clone --branch=5.0.0 --depth=1 --single-branch
     -- https://github.com/WeAreROLI/JUCE.git "${TRAVIS_BUILD_DIR}/ci/tmp/JUCE-5.0.0"
-
-install-anchors:
-  - &install-linux
-    - cmake --version
-
-  - &install-osx
-    - cmake --version
 
 script-anchors:
   - &script-Makefiles
@@ -174,15 +169,12 @@ matrix:
             - libxcursor-dev
             - libxinerama-dev
             - libxrandr-dev
-      install: *install-linux
       script: *script-Makefiles
 
     - os: osx
       env: GENERATOR=Makefiles
-      install: *install-osx
       script: *script-Makefiles
 
     - os: osx
       env: GENERATOR=Xcode
-      install: *install-osx
       script: *script-Xcode
