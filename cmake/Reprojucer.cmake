@@ -1821,11 +1821,9 @@ function(__generate_AppConfig_header)
 
         string(APPEND audio_plugin_settings_defines
           "#ifndef  JucePlugin_${setting_name}\n"
-        )
-        string(APPEND audio_plugin_settings_defines
           " #define JucePlugin_${setting_name}${padding_spaces}  ${setting_value}\n"
+          "#endif\n"
         )
-        string(APPEND audio_plugin_settings_defines "#endif\n")
         unset(padding_spaces)
 
         unset(setting_name)
