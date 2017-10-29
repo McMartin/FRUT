@@ -2044,31 +2044,34 @@ function(__set_common_target_properties target)
     target_include_directories(${target} PRIVATE $<$<CONFIG:${config}>:${search_paths}>)
   endforeach()
 
-  if((JUCER_BUILD_VST OR JUCER_FLAG_JUCE_PLUGINHOST_VST) AND DEFINED JUCER_VST_SDK_FOLDER)
-    if(NOT IS_DIRECTORY "${JUCER_VST_SDK_FOLDER}")
-      message(WARNING
-        "JUCER_VST_SDK_FOLDER: no such directory \"${JUCER_VST_SDK_FOLDER}\""
-      )
-    elseif(NOT EXISTS "${JUCER_VST_SDK_FOLDER}/public.sdk/source/vst2.x/audioeffectx.h")
-      message(WARNING "JUCER_VST_SDK_FOLDER: \"${JUCER_VST_SDK_FOLDER}\" doesn't seem to "
-        "contain the VST SDK"
-      )
+  if(JUCER_BUILD_VST OR JUCER_FLAG_JUCE_PLUGINHOST_VST)
+    if(DEFINED JUCER_VST_SDK_FOLDER)
+      if(NOT IS_DIRECTORY "${JUCER_VST_SDK_FOLDER}")
+        message(WARNING
+          "JUCER_VST_SDK_FOLDER: no such directory \"${JUCER_VST_SDK_FOLDER}\""
+        )
+      elseif(NOT EXISTS "${JUCER_VST_SDK_FOLDER}/public.sdk/source/vst2.x/audioeffectx.h")
+        message(WARNING "JUCER_VST_SDK_FOLDER: \"${JUCER_VST_SDK_FOLDER}\" doesn't seem to "
+          "contain the VST SDK"
+        )
+      endif()
+      target_include_directories(${target} PRIVATE "${JUCER_VST_SDK_FOLDER}")
     endif()
-    target_include_directories(${target} PRIVATE "${JUCER_VST_SDK_FOLDER}")
   endif()
 
-  if((JUCER_BUILD_VST3 OR JUCER_FLAG_JUCE_PLUGINHOST_VST3)
-      AND DEFINED JUCER_VST3_SDK_FOLDER)
-    if(NOT IS_DIRECTORY "${JUCER_VST3_SDK_FOLDER}")
-      message(WARNING
-        "JUCER_VST3_SDK_FOLDER: no such directory \"${JUCER_VST3_SDK_FOLDER}\""
-      )
-    elseif(NOT EXISTS "${JUCER_VST3_SDK_FOLDER}/base/source/baseiids.cpp")
-      message(WARNING "JUCER_VST3_SDK_FOLDER: \"${JUCER_VST3_SDK_FOLDER}\" doesn't seem "
-        "to contain the VST3 SDK"
-      )
+  if(JUCER_BUILD_VST3 OR JUCER_FLAG_JUCE_PLUGINHOST_VST3)
+    if(DEFINED JUCER_VST3_SDK_FOLDER)
+      if(NOT IS_DIRECTORY "${JUCER_VST3_SDK_FOLDER}")
+        message(WARNING
+          "JUCER_VST3_SDK_FOLDER: no such directory \"${JUCER_VST3_SDK_FOLDER}\""
+        )
+      elseif(NOT EXISTS "${JUCER_VST3_SDK_FOLDER}/base/source/baseiids.cpp")
+        message(WARNING "JUCER_VST3_SDK_FOLDER: \"${JUCER_VST3_SDK_FOLDER}\" doesn't seem "
+          "to contain the VST3 SDK"
+        )
+      endif()
+      target_include_directories(${target} PRIVATE "${JUCER_VST3_SDK_FOLDER}")
     endif()
-    target_include_directories(${target} PRIVATE "${JUCER_VST3_SDK_FOLDER}")
   endif()
 
   foreach(config ${JUCER_PROJECT_CONFIGURATIONS})
