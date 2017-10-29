@@ -40,6 +40,8 @@ jucer_audio_plugin_settings(
   BUILD_VST3 ON
   BUILD_AUDIOUNIT ON
   BUILD_AUDIOUNIT_V3 OFF
+  BUILD_RTAS OFF
+  BUILD_AAX ON
   PLUGIN_NAME "MultiOutSynth"
   PLUGIN_DESCRIPTION "MultiOutSynth"
   PLUGIN_MANUFACTURER "ROLI Ltd."
@@ -54,6 +56,9 @@ jucer_audio_plugin_settings(
   PLUGIN_AU_EXPORT_PREFIX "MultiOutSynthAU"
   # PLUGIN_AU_MAIN_TYPE
   # VST_CATEGORY
+  # PLUGIN_RTAS_CATEGORY
+  PLUGIN_AAX_CATEGORY "AAX_ePlugInCategory_SWGenerators"
+  PLUGIN_AAX_IDENTIFIER "com.ROLI.MultiOutSynth"
 )
 
 jucer_project_files("MultiOutSynth/Source/BinaryData"
