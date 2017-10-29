@@ -73,9 +73,13 @@ __set_Reprojucer_current_exporter()
 
 function(jucer_project_begin)
 
-  cmake_parse_arguments(arg "" "PROJECT_FILE;PROJECT_ID" "" ${ARGN})
+  cmake_parse_arguments(arg "" "JUCER_VERSION;PROJECT_FILE;PROJECT_ID" "" ${ARGN})
   if(NOT "${arg_UNPARSED_ARGUMENTS}" STREQUAL "")
     message(FATAL_ERROR "Unknown arguments: ${arg_UNPARSED_ARGUMENTS}")
+  endif()
+
+  if(NOT "${arg_JUCER_VERSION}" STREQUAL "")
+    set(JUCER_VERSION "${arg_JUCER_VERSION}" PARENT_SCOPE)
   endif()
 
   if(NOT "${arg_PROJECT_FILE}" STREQUAL "")
