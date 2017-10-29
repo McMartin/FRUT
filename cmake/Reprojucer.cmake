@@ -17,6 +17,10 @@
 
 cmake_minimum_required(VERSION 3.4)
 
+if(CMAKE_VERSION VERSION_LESS 3.5)
+  include(CMakeParseArguments)
+endif()
+
 
 set(Reprojucer.cmake_DIR "${CMAKE_CURRENT_LIST_DIR}")
 set(Reprojucer_templates_DIR "${Reprojucer.cmake_DIR}/templates")
@@ -69,38 +73,24 @@ __set_Reprojucer_current_exporter()
 
 function(jucer_project_begin)
 
-  set(project_property_tags
-    "PROJECT_FILE"
-    "PROJECT_ID"
-  )
+  cmake_parse_arguments(arg "" "PROJECT_FILE;PROJECT_ID" "" ${ARGN})
+  if(NOT "${arg_UNPARSED_ARGUMENTS}" STREQUAL "")
+    message(FATAL_ERROR "Unknown arguments: ${arg_UNPARSED_ARGUMENTS}")
+  endif()
 
-  unset(tag)
-  foreach(element ${ARGN})
-    if(NOT DEFINED tag)
-      set(tag ${element})
-
-      if(NOT "${tag}" IN_LIST project_property_tags)
-        message(FATAL_ERROR "Unsupported project property: ${tag}\n"
-          "Supported project properties: ${project_property_tags}"
-        )
-      endif()
-    else()
-      set(value ${element})
-
-      if(tag STREQUAL "PROJECT_FILE")
-        if(NOT EXISTS "${value}")
-          message(FATAL_ERROR "No such JUCE project file: ${value}")
-        endif()
-
-        get_filename_component(project_dir "${value}" DIRECTORY)
-        set(JUCER_PROJECT_DIR "${project_dir}" PARENT_SCOPE)
-      endif()
-
-      set(JUCER_${tag} "${value}" PARENT_SCOPE)
-
-      unset(tag)
+  if(NOT "${arg_PROJECT_FILE}" STREQUAL "")
+    if(NOT EXISTS "${arg_PROJECT_FILE}")
+      message(FATAL_ERROR "No such JUCE project file: ${arg_PROJECT_FILE}")
     endif()
-  endforeach()
+    set(JUCER_PROJECT_FILE "${arg_PROJECT_FILE}" PARENT_SCOPE)
+
+    get_filename_component(project_dir "${arg_PROJECT_FILE}" DIRECTORY)
+    set(JUCER_PROJECT_DIR "${project_dir}" PARENT_SCOPE)
+  endif()
+
+  if(NOT "${arg_PROJECT_ID}" STREQUAL "")
+    set(JUCER_PROJECT_ID "${arg_PROJECT_ID}" PARENT_SCOPE)
+  endif()
 
 endfunction()
 
