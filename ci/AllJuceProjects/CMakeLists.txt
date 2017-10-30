@@ -26,7 +26,7 @@ endif()
 project(AllJuceProjects-${JUCE_VERSION})
 
 
-if(JUCE_VERSION STREQUAL 4.2.0)
+if(JUCE_VERSION STREQUAL "4.2.0")
   set(JUCER_VST_SDK_FOLDER
     "${CMAKE_CURRENT_LIST_DIR}/../third-party/vstsdk365_12_11_2015_build_67/VST3 SDK"
   )
@@ -143,6 +143,11 @@ if(NOT MSVC_VERSION EQUAL 1800)
     "OSCSender"
   )
 
+  set(Surround_jucer_FILE "${JUCE_ROOT}/examples/PlugInSamples/Surround/Surround.jucer")
+  add_subdirectory("${generated_JUCE_ROOT}/examples/PlugInSamples/Surround"
+    "Surround"
+  )
+
   set(JuceDemoPlugin_jucer_FILE
     "${JUCE_ROOT}/examples/audio plugin demo/JuceDemoPlugin.jucer"
   )
@@ -218,12 +223,7 @@ endif()
 
 # "Xcode (MacOSX)" and "Linux Makefile" exporters
 
-if(APPLE OR CMAKE_HOST_SYSTEM_NAME STREQUAL Linux)
-  set(Surround_jucer_FILE "${JUCE_ROOT}/examples/PlugInSamples/Surround/Surround.jucer")
-  add_subdirectory("${generated_JUCE_ROOT}/examples/PlugInSamples/Surround"
-    "Surround"
-  )
-
+if(APPLE OR CMAKE_HOST_SYSTEM_NAME STREQUAL "Linux")
   set(BinaryBuilder_jucer_FILE "${JUCE_ROOT}/extras/binarybuilder/BinaryBuilder.jucer")
   add_subdirectory("${generated_JUCE_ROOT}/extras/binarybuilder"
     "BinaryBuilder"

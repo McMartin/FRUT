@@ -48,6 +48,7 @@ build_script:
     -DJUCE_modules_DIRS="%APPVEYOR_BUILD_FOLDER%/ci/tmp/JUCE-5.0.0/modules"
   - cmake --build . --config Debug
 
+test_script:
   # Check that generated CMakeLists.txt files are up-to-date
   - cd %APPVEYOR_BUILD_FOLDER%
   - >
