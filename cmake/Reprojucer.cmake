@@ -226,14 +226,14 @@ function(jucer_audio_plugin_settings)
           "Supported audio plugin settings: ${plugin_setting_tags}"
         )
 
-      elseif(tag STREQUAL "BUILD_RTAS" AND value)
+      elseif(tag STREQUAL "BUILD_RTAS" AND value AND (APPLE OR MSVC))
         message(WARNING "Reprojucer.cmake doesn't support building RTAS plugins. If you "
           "would like Reprojucer.cmake to support building RTAS plugins, please leave a "
           "comment on the issue \"Reprojucer.cmake doesn't support building RTAS "
           "plugins\" on GitHub: https://github.com/McMartin/FRUT/issues/266"
         )
 
-      elseif(tag STREQUAL "BUILD_AAX" AND value)
+      elseif(tag STREQUAL "BUILD_AAX" AND value AND (APPLE OR MSVC))
         message(WARNING "Reprojucer.cmake doesn't support building AAX plugins. If you "
           "would like Reprojucer.cmake to support building AAX plugins, please leave a "
           "comment on the issue \"Reprojucer.cmake doesn't support building AAX "
