@@ -18,6 +18,7 @@ get_filename_component(HelloWorld_jucer_FILE
 
 
 jucer_project_begin(
+  JUCER_VERSION "4.2.0"
   PROJECT_FILE "${HelloWorld_jucer_FILE}"
   PROJECT_ID "tTAKTK1s"
 )

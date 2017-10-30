@@ -221,8 +221,8 @@ int main(int argc, char* argv[])
     return 1;
   }
 
-  const auto jucerVersionTokens =
-    split(".", jucerProject.getProperty("jucerVersion").toString().toStdString());
+  const auto jucerVersion = jucerProject.getProperty("jucerVersion").toString();
+  const auto jucerVersionTokens = split(".", jucerVersion.toStdString());
   if (jucerVersionTokens.size() != 3u)
   {
     printError(jucerFilePath + " is not a valid Jucer project.");
@@ -231,7 +231,7 @@ int main(int argc, char* argv[])
 
   using Version = std::tuple<int, int, int>;
 
-  const auto jucerVersion = [&jucerVersionTokens, &jucerFilePath]()
+  const auto jucerVersionAsTuple = [&jucerVersionTokens, &jucerFilePath]()
   {
     try
     {
@@ -303,6 +303,7 @@ int main(int argc, char* argv[])
   // jucer_project_begin()
   {
     out << "jucer_project_begin(\n"
+        << "  JUCER_VERSION \"" << jucerVersion << "\"\n"
         << "  PROJECT_FILE \"${" << escapedJucerFileName << "_FILE}\"\n"
         << "  " << getSetting(jucerProject, "PROJECT_ID", "id") << "\n"
         << ")\n"
@@ -631,7 +632,7 @@ int main(int argc, char* argv[])
           }
         }
 
-        const auto hasVst2Interface = jucerVersion > Version{4, 2, 3};
+        const auto hasVst2Interface = jucerVersionAsTuple > Version{4, 2, 3};
         const auto isVstAudioPlugin =
           projectType == "audioplug" && bool{jucerProject.getProperty("buildVST")};
         const auto isVstPluginHost =

@@ -17,6 +17,10 @@
 
 cmake_minimum_required(VERSION 3.4)
 
+if(CMAKE_VERSION VERSION_LESS 3.5)
+  include(CMakeParseArguments)
+endif()
+
 
 set(Reprojucer.cmake_DIR "${CMAKE_CURRENT_LIST_DIR}")
 set(Reprojucer_templates_DIR "${Reprojucer.cmake_DIR}/templates")
@@ -69,38 +73,28 @@ __set_Reprojucer_current_exporter()
 
 function(jucer_project_begin)
 
-  set(project_property_tags
-    "PROJECT_FILE"
-    "PROJECT_ID"
-  )
+  cmake_parse_arguments(arg "" "JUCER_VERSION;PROJECT_FILE;PROJECT_ID" "" ${ARGN})
+  if(NOT "${arg_UNPARSED_ARGUMENTS}" STREQUAL "")
+    message(FATAL_ERROR "Unknown arguments: ${arg_UNPARSED_ARGUMENTS}")
+  endif()
 
-  unset(tag)
-  foreach(element ${ARGN})
-    if(NOT DEFINED tag)
-      set(tag ${element})
+  if(NOT "${arg_JUCER_VERSION}" STREQUAL "")
+    set(JUCER_VERSION "${arg_JUCER_VERSION}" PARENT_SCOPE)
+  endif()
 
-      if(NOT "${tag}" IN_LIST project_property_tags)
-        message(FATAL_ERROR "Unsupported project property: ${tag}\n"
-          "Supported project properties: ${project_property_tags}"
-        )
-      endif()
-    else()
-      set(value ${element})
-
-      if(tag STREQUAL "PROJECT_FILE")
-        if(NOT EXISTS "${value}")
-          message(FATAL_ERROR "No such JUCE project file: ${value}")
-        endif()
-
-        get_filename_component(project_dir "${value}" DIRECTORY)
-        set(JUCER_PROJECT_DIR "${project_dir}" PARENT_SCOPE)
-      endif()
-
-      set(JUCER_${tag} "${value}" PARENT_SCOPE)
-
-      unset(tag)
+  if(NOT "${arg_PROJECT_FILE}" STREQUAL "")
+    if(NOT EXISTS "${arg_PROJECT_FILE}")
+      message(FATAL_ERROR "No such JUCE project file: ${arg_PROJECT_FILE}")
     endif()
-  endforeach()
+    set(JUCER_PROJECT_FILE "${arg_PROJECT_FILE}" PARENT_SCOPE)
+
+    get_filename_component(project_dir "${arg_PROJECT_FILE}" DIRECTORY)
+    set(JUCER_PROJECT_DIR "${project_dir}" PARENT_SCOPE)
+  endif()
+
+  if(NOT "${arg_PROJECT_ID}" STREQUAL "")
+    set(JUCER_PROJECT_ID "${arg_PROJECT_ID}" PARENT_SCOPE)
+  endif()
 
 endfunction()
 
@@ -2050,31 +2044,42 @@ function(__set_common_target_properties target)
     target_include_directories(${target} PRIVATE $<$<CONFIG:${config}>:${search_paths}>)
   endforeach()
 
-  if((JUCER_BUILD_VST OR JUCER_FLAG_JUCE_PLUGINHOST_VST) AND DEFINED JUCER_VST_SDK_FOLDER)
-    if(NOT IS_DIRECTORY "${JUCER_VST_SDK_FOLDER}")
-      message(WARNING
-        "JUCER_VST_SDK_FOLDER: no such directory \"${JUCER_VST_SDK_FOLDER}\""
-      )
-    elseif(NOT EXISTS "${JUCER_VST_SDK_FOLDER}/public.sdk/source/vst2.x/audioeffectx.h")
-      message(WARNING "JUCER_VST_SDK_FOLDER: \"${JUCER_VST_SDK_FOLDER}\" doesn't seem to "
-        "contain the VST SDK"
+  if(JUCER_BUILD_VST OR JUCER_FLAG_JUCE_PLUGINHOST_VST)
+    if(DEFINED JUCER_VST_SDK_FOLDER)
+      if(NOT IS_DIRECTORY "${JUCER_VST_SDK_FOLDER}")
+        message(WARNING
+          "JUCER_VST_SDK_FOLDER: no such directory \"${JUCER_VST_SDK_FOLDER}\""
+        )
+      elseif(NOT EXISTS "${JUCER_VST_SDK_FOLDER}/public.sdk/source/vst2.x/audioeffectx.h")
+        message(WARNING "JUCER_VST_SDK_FOLDER: \"${JUCER_VST_SDK_FOLDER}\" doesn't seem to "
+          "contain the VST SDK"
+        )
+      endif()
+      target_include_directories(${target} PRIVATE "${JUCER_VST_SDK_FOLDER}")
+    elseif(DEFINED JUCER_VERSION AND JUCER_VERSION VERSION_LESS "4.2.4")
+      message(WARNING "JUCER_VST_SDK_FOLDER is not defined. You should give "
+        "VST_SDK_FOLDER when calling jucer_export_target()."
       )
     endif()
-    target_include_directories(${target} PRIVATE "${JUCER_VST_SDK_FOLDER}")
   endif()
 
-  if((JUCER_BUILD_VST3 OR JUCER_FLAG_JUCE_PLUGINHOST_VST3)
-      AND DEFINED JUCER_VST3_SDK_FOLDER)
-    if(NOT IS_DIRECTORY "${JUCER_VST3_SDK_FOLDER}")
-      message(WARNING
-        "JUCER_VST3_SDK_FOLDER: no such directory \"${JUCER_VST3_SDK_FOLDER}\""
-      )
-    elseif(NOT EXISTS "${JUCER_VST3_SDK_FOLDER}/base/source/baseiids.cpp")
-      message(WARNING "JUCER_VST3_SDK_FOLDER: \"${JUCER_VST3_SDK_FOLDER}\" doesn't seem "
-        "to contain the VST3 SDK"
+  if(JUCER_BUILD_VST3 OR JUCER_FLAG_JUCE_PLUGINHOST_VST3)
+    if(DEFINED JUCER_VST3_SDK_FOLDER)
+      if(NOT IS_DIRECTORY "${JUCER_VST3_SDK_FOLDER}")
+        message(WARNING
+          "JUCER_VST3_SDK_FOLDER: no such directory \"${JUCER_VST3_SDK_FOLDER}\""
+        )
+      elseif(NOT EXISTS "${JUCER_VST3_SDK_FOLDER}/base/source/baseiids.cpp")
+        message(WARNING "JUCER_VST3_SDK_FOLDER: \"${JUCER_VST3_SDK_FOLDER}\" doesn't seem "
+          "to contain the VST3 SDK"
+        )
+      endif()
+      target_include_directories(${target} PRIVATE "${JUCER_VST3_SDK_FOLDER}")
+    else()
+      message(WARNING "JUCER_VST3_SDK_FOLDER is not defined. You should give "
+        "VST3_SDK_FOLDER when calling jucer_export_target()."
       )
     endif()
-    target_include_directories(${target} PRIVATE "${JUCER_VST3_SDK_FOLDER}")
   endif()
 
   foreach(config ${JUCER_PROJECT_CONFIGURATIONS})

@@ -18,6 +18,7 @@ get_filename_component(AudioPerformanceTest_jucer_FILE
 
 
 jucer_project_begin(
+  JUCER_VERSION "4.3.1"
   PROJECT_FILE "${AudioPerformanceTest_jucer_FILE}"
   PROJECT_ID "AKfc5m"
 )
