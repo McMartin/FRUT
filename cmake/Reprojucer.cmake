@@ -2075,7 +2075,7 @@ function(__set_common_target_properties target)
         )
       endif()
       target_include_directories(${target} PRIVATE "${JUCER_VST3_SDK_FOLDER}")
-    else()
+    elseif(APPLE OR MSVC)
       message(WARNING "JUCER_VST3_SDK_FOLDER is not defined. You should give "
         "VST3_SDK_FOLDER when calling jucer_export_target()."
       )
