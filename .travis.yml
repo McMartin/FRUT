@@ -158,17 +158,14 @@ script-anchors:
 matrix:
   include:
     - os: linux
-      dist: trusty
-      sudo: false
-      addons: &addons-linux
-        apt:
-          packages:
-            - cmake3
-            - libasound2-dev
-            - libgl1-mesa-dev
-            - libxcursor-dev
-            - libxinerama-dev
-            - libxrandr-dev
+      services:
+        - docker
+      before_install:
+        - docker build --tag mcmartin/frut - < ci/ubuntu-xenial.dockerfile
+        - |
+          function cmake {
+            docker run --rm -v "${TRAVIS_BUILD_DIR}":"${TRAVIS_BUILD_DIR}" -w "$PWD" mcmartin/frut /usr/bin/cmake $@
+          }
       script: *script-Makefiles
 
     - os: osx
