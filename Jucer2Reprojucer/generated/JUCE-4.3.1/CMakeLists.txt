@@ -28,6 +28,14 @@ get_filename_component(JUCE_ROOT "${JUCE_ROOT}" ABSOLUTE BASE_DIR "${CMAKE_BINAR
 project(JUCE-4.3.1)
 
 
+if(MSVC_VERSION GREATER 1909)
+  message(WARNING "Skipping JUCE-4.3.1 because none of its sub-projects supports the "
+    "\"Visual Studio 2017\" exporter"
+  )
+  return()
+endif()
+
+
 # All exporters
 
 set(JuceDemo_jucer_FILE "${JUCE_ROOT}/examples/Demo/JuceDemo.jucer")
@@ -180,4 +188,12 @@ if(APPLE)
     "${JUCE_ROOT}/examples/OpenGLAppExample/OpenGLAppExample.jucer"
   )
   add_subdirectory("examples/OpenGLAppExample")
+endif()
+
+
+# No supported exporters
+
+if(FALSE)
+  set(jucedll_jucer_FILE "${JUCE_ROOT}/extras/windows dll/jucedll.jucer")
+  add_subdirectory("extras/windows dll")
 endif()

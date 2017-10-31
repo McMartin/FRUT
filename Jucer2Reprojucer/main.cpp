@@ -581,22 +581,23 @@ int main(int argc, char* argv[])
 
   // jucer_export_target() and jucer_export_target_configuration()
   {
-    const auto supportedExporters = {std::make_tuple("XCODE_MAC", "Xcode (MacOSX)", true),
-      std::make_tuple("VS2015", "Visual Studio 2015", true),
-      std::make_tuple("VS2013", "Visual Studio 2013", true),
-      std::make_tuple("LINUX_MAKE", "Linux Makefile", false)};
+    const auto supportedExporters = {std::make_pair("XCODE_MAC", "Xcode (MacOSX)"),
+      std::make_pair("VS2017", "Visual Studio 2017"),
+      std::make_pair("VS2015", "Visual Studio 2015"),
+      std::make_pair("VS2013", "Visual Studio 2013"),
+      std::make_pair("LINUX_MAKE", "Linux Makefile")};
 
     for (const auto& element : supportedExporters)
     {
-      const auto exporter = jucerProject.getChildWithName("EXPORTFORMATS")
-                              .getChildWithName(std::get<0>(element));
+      const auto exporter =
+        jucerProject.getChildWithName("EXPORTFORMATS").getChildWithName(element.first);
       if (exporter.isValid())
       {
         const auto exporterType = exporter.getType().toString();
         const auto configurations = exporter.getChildWithName("CONFIGURATIONS");
 
         out << "jucer_export_target(\n"
-            << "  \"" << std::get<1>(element) << "\"\n";
+            << "  \"" << element.second << "\"\n";
 
         if (exporterType == "XCODE_MAC"
             && (!exporter.getProperty("prebuildCommand").toString().isEmpty()
@@ -607,7 +608,10 @@ int main(int argc, char* argv[])
               << "\"  # only used by PREBUILD_SHELL_SCRIPT and POSTBUILD_SHELL_SCRIPT\n";
         }
 
-        if (exporterType == "VS2015" || exporterType == "VS2013")
+        const auto isVSExporter = exporterType == "VS2017" || exporterType == "VS2015"
+                                  || exporterType == "VS2013";
+
+        if (isVSExporter)
         {
           const auto needsTargetFolder = [&configurations]()
           {
@@ -648,7 +652,7 @@ int main(int argc, char* argv[])
           out << "  " << getSetting(exporter, "VST_SDK_FOLDER", "vstFolder") << "\n";
         }
 
-        const auto supportsVst3 = std::get<2>(element);
+        const auto supportsVst3 = exporterType == "XCODE_MAC" || isVSExporter;
         const auto isVst3AudioPlugin =
           projectType == "audioplug" && bool{jucerProject.getProperty("buildVST3")};
         const auto isVst3PluginHost =
@@ -733,7 +737,7 @@ int main(int argc, char* argv[])
           }
         }
 
-        if (exporterType == "VS2015" || exporterType == "VS2013")
+        if (isVSExporter)
         {
           const auto toolset = exporter.getProperty("toolset").toString().toStdString();
           if (toolset.empty())
@@ -916,14 +920,14 @@ int main(int argc, char* argv[])
           out << "  " << getSetting(configuration, "PREPROCESSOR_DEFINITIONS", "defines")
               << "\n";
 
-          const auto optimisation = [&configuration, &exporterType]() -> std::string
+          const auto optimisation = [&configuration, &isVSExporter]() -> std::string
           {
             const auto value = configuration.getProperty("optimisation");
 
             if (value.isVoid())
               return {};
 
-            if (exporterType == "VS2015" || exporterType == "VS2013")
+            if (isVSExporter)
               return getMsvcOptimisation(value);
 
             return getGccOptimisation(value);
@@ -1118,7 +1122,7 @@ int main(int argc, char* argv[])
                 << "\n";
           }
 
-          if (exporterType == "VS2015" || exporterType == "VS2013")
+          if (isVSExporter)
           {
             const auto warningLevel = [&configuration]() -> std::string
             {

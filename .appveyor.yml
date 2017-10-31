@@ -6,9 +6,14 @@ clone_depth: 50
 
 environment:
   matrix:
-    - GENERATOR: "Visual Studio 12 2013"
+    - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2013
+      GENERATOR: "Visual Studio 12 2013"
 
-    - GENERATOR: "Visual Studio 14 2015"
+    - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
+      GENERATOR: "Visual Studio 14 2015"
+
+    - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
+      GENERATOR: "Visual Studio 15 2017"
 
 install:
   - cmake --version
@@ -28,7 +33,7 @@ build_script:
     cmake .. -G "%GENERATOR%"
     -DJUCE_ROOT="%APPVEYOR_BUILD_FOLDER%/ci/tmp/JUCE-4.2.0"
     -DJUCE_modules_DIRS="%APPVEYOR_BUILD_FOLDER%/ci/tmp/JUCE-4.2.0/modules"
-  - cmake --build . --config Debug
+  - cmake --build . --config Debug -- -v:m -maxcpucount
 
   # Configure and build Reprojucer.cmake helpers and Jucer2Reprojucer with JUCE 4.3.1
   - mkdir %APPVEYOR_BUILD_FOLDER%\ci\ReprojucerHelpers\4.3.1_build
@@ -37,7 +42,7 @@ build_script:
     cmake .. -G "%GENERATOR%"
     -DJUCE_ROOT="%APPVEYOR_BUILD_FOLDER%/ci/tmp/JUCE-4.3.1"
     -DJUCE_modules_DIRS="%APPVEYOR_BUILD_FOLDER%/ci/tmp/JUCE-4.3.1/modules"
-  - cmake --build . --config Debug
+  - cmake --build . --config Debug -- -v:m -maxcpucount
 
   # Configure and build Reprojucer.cmake helpers and Jucer2Reprojucer with JUCE 5.0.0
   - mkdir %APPVEYOR_BUILD_FOLDER%\ci\ReprojucerHelpers\5.0.0_build
@@ -46,7 +51,7 @@ build_script:
     cmake .. -G "%GENERATOR%"
     -DJUCE_ROOT="%APPVEYOR_BUILD_FOLDER%/ci/tmp/JUCE-5.0.0"
     -DJUCE_modules_DIRS="%APPVEYOR_BUILD_FOLDER%/ci/tmp/JUCE-5.0.0/modules"
-  - cmake --build . --config Debug
+  - cmake --build . --config Debug -- -v:m -maxcpucount
 
 test_script:
   # Check that generated CMakeLists.txt files are up-to-date

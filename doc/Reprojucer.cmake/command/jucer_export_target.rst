@@ -37,8 +37,8 @@ following tags:
 - ``PREBUILD_SHELL_SCRIPT``
 - ``VST3_SDK_FOLDER``
 
-When ``<exporter>`` equals ``"Visual Studio 2015"`` or ``"Visual Studio 2013"``,
-``<setting_tag>`` can also be one of the following tags:
+When ``<exporter>`` equals ``"Visual Studio 2017"``, ``"Visual Studio 2015"`` or
+``"Visual Studio 2013"``, ``<setting_tag>`` can also be one of the following tags:
 
 - ``PLATFORM_TOOLSET``
 - ``USE_IPP_LIBRARY``
