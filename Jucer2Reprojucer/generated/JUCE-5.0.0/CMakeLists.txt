@@ -96,20 +96,12 @@ if(NOT MSVC_VERSION EQUAL 1800)
     "${JUCE_ROOT}/examples/audio plugin demo/JuceDemoPlugin.jucer"
   )
   add_subdirectory("examples/audio plugin demo")
-
-  set(AudioPerformanceTest_jucer_FILE
-    "${JUCE_ROOT}/extras/AudioPerformanceTest/AudioPerformanceTest.jucer"
-  )
-  add_subdirectory("extras/AudioPerformanceTest")
-
-  set(UnitTestRunner_jucer_FILE "${JUCE_ROOT}/extras/UnitTestRunner/UnitTestRunner.jucer")
-  add_subdirectory("extras/UnitTestRunner")
 endif()
 
 
-# "Xcode (MacOSX)" and "Visual Studio 2015" exporters
+# "Xcode (MacOSX)", "Visual Studio 2017" and "Visual Studio 2015" exporters
 
-if(APPLE OR MSVC_VERSION EQUAL 1900)
+if(APPLE OR MSVC_VERSION GREATER 1909 OR MSVC_VERSION EQUAL 1900)
   set(ComponentTutorialExample_jucer_FILE
     "${JUCE_ROOT}/examples/ComponentTutorialExample/ComponentTutorialExample.jucer"
   )
@@ -137,9 +129,9 @@ if(APPLE OR MSVC_VERSION EQUAL 1900)
 endif()
 
 
-# "Xcode (MacOSX)" and "Visual Studio 2013" exporters
+# "Xcode (MacOSX)", "Visual Studio 2017" and "Visual Studio 2013" exporters
 
-if(APPLE OR MSVC_VERSION EQUAL 1800)
+if(APPLE OR MSVC_VERSION GREATER 1909 OR MSVC_VERSION EQUAL 1800)
   set(PluckedStringsDemo_jucer_FILE
     "${JUCE_ROOT}/examples/PluckedStringsDemo/PluckedStringsDemo.jucer"
   )
@@ -152,20 +144,30 @@ if(APPLE OR MSVC_VERSION EQUAL 1800)
 endif()
 
 
-# "Xcode (MacOSX)" and "Linux Makefile" exporters
+# "Xcode (MacOSX)", "Visual Studio 2017" and "Linux Makefile" exporters
 
-if(APPLE OR CMAKE_HOST_SYSTEM_NAME STREQUAL "Linux")
+if(APPLE OR MSVC_VERSION GREATER 1909 OR CMAKE_HOST_SYSTEM_NAME STREQUAL "Linux")
   set(BinaryBuilder_jucer_FILE "${JUCE_ROOT}/extras/binarybuilder/BinaryBuilder.jucer")
   add_subdirectory("extras/binarybuilder")
 endif()
 
 
-# "Xcode (MacOSX)" exporter only
+# "Xcode (MacOSX)", "Visual Studio 2015" and "Linux Makefile" exporters
 
-if(APPLE)
-  set(AUv3Synth_jucer_FILE "${JUCE_ROOT}/examples/AUv3Synth/AUv3Synth.jucer")
-  add_subdirectory("examples/AUv3Synth")
+if(APPLE OR MSVC_VERSION EQUAL 1900 OR CMAKE_HOST_SYSTEM_NAME STREQUAL "Linux")
+  set(AudioPerformanceTest_jucer_FILE
+    "${JUCE_ROOT}/extras/AudioPerformanceTest/AudioPerformanceTest.jucer"
+  )
+  add_subdirectory("extras/AudioPerformanceTest")
 
+  set(UnitTestRunner_jucer_FILE "${JUCE_ROOT}/extras/UnitTestRunner/UnitTestRunner.jucer")
+  add_subdirectory("extras/UnitTestRunner")
+endif()
+
+
+# "Xcode (MacOSX)" and "Visual Studio 2017" exporters
+
+if(APPLE OR MSVC_VERSION GREATER 1909)
   set(AnimationAppExample_jucer_FILE
     "${JUCE_ROOT}/examples/AnimationAppExample/AnimationAppExample.jucer"
   )
@@ -183,6 +185,22 @@ if(APPLE)
 endif()
 
 
+# "Xcode (MacOSX)" exporter only
+
+if(APPLE)
+  set(AUv3Synth_jucer_FILE "${JUCE_ROOT}/examples/AUv3Synth/AUv3Synth.jucer")
+  add_subdirectory("examples/AUv3Synth")
+endif()
+
+
+# "Visual Studio 2017" exporter only
+
+if(MSVC_VERSION GREATER 1909)
+  set(jucedll_jucer_FILE "${JUCE_ROOT}/extras/windows dll/jucedll.jucer")
+  add_subdirectory("extras/windows dll")
+endif()
+
+
 # No supported exporters
 
 if(FALSE)
@@ -190,7 +208,4 @@ if(FALSE)
     "${JUCE_ROOT}/examples/PlugInSamples/InterAppAudioEffect/InterAppAudioEffect.jucer"
   )
   add_subdirectory("examples/PlugInSamples/InterAppAudioEffect")
-
-  set(jucedll_jucer_FILE "${JUCE_ROOT}/extras/windows dll/jucedll.jucer")
-  add_subdirectory("extras/windows dll")
 endif()
