@@ -117,6 +117,9 @@ function(jucer_project_settings)
     "COMPANY_NAME"
     "COMPANY_WEBSITE"
     "COMPANY_EMAIL"
+    "REPORT_JUCE_APP_USAGE"
+    "DISPLAY_THE_JUCE_SPLASH_SCREEN"
+    "SPLASH_SCREEN_COLOUR"
     "PROJECT_TYPE"
     "BUNDLE_IDENTIFIER"
     "BINARYDATACPP_SIZE_LIMIT"
@@ -1646,6 +1649,24 @@ function(__generate_AppConfig_header)
     string(APPEND user_code_section "\n\n// (You can call jucer_appconfig_header() to "
       "add your own code to this section)\n\n"
     )
+  endif()
+
+  if(DEFINED JUCER_DISPLAY_THE_JUCE_SPLASH_SCREEN
+      AND NOT JUCER_DISPLAY_THE_JUCE_SPLASH_SCREEN)
+    set(display_splash_screen 0)
+  else()
+    set(display_splash_screen 1)
+  endif()
+  if(DEFINED JUCER_REPORT_JUCE_APP_USAGE AND NOT JUCER_REPORT_JUCE_APP_USAGE)
+    set(report_app_usage 0)
+  else()
+    set(report_app_usage 1)
+  endif()
+  if(DEFINED JUCER_SPLASH_SCREEN_COLOUR
+      AND NOT JUCER_SPLASH_SCREEN_COLOUR STREQUAL "Dark")
+    set(use_dark_splash_screen 0)
+  else()
+    set(use_dark_splash_screen 1)
   endif()
 
   set(max_right_padding 0)
