@@ -154,7 +154,7 @@ endif()
 
 # "Xcode (MacOSX)" and "Linux Makefile" exporters
 
-if(APPLE OR CMAKE_HOST_SYSTEM_NAME STREQUAL Linux)
+if(APPLE OR CMAKE_HOST_SYSTEM_NAME STREQUAL "Linux")
   set(BinaryBuilder_jucer_FILE "${JUCE_ROOT}/extras/binarybuilder/BinaryBuilder.jucer")
   add_subdirectory("extras/binarybuilder")
 endif()
