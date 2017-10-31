@@ -1,3 +1,12 @@
+/*
+
+    This is the header file that your files should include in order to get all the
+    JUCE library headers. You should avoid including the JUCE headers directly in
+    your own source files, because that wouldn't pick up the correct configuration
+    options for your app.
+
+*/
+
 #ifndef __APPHEADERFILE_@upper_project_id@__
 #define __APPHEADERFILE_@upper_project_id@__
 
