@@ -7,7 +7,8 @@
 
 */
 
-#pragma once
+#ifndef __APPHEADERFILE_@upper_project_id@__
+#define __APPHEADERFILE_@upper_project_id@__
 
 #include "AppConfig.h"
 
@@ -28,3 +29,5 @@ namespace ProjectInfo
     const int          versionNumber  = @JUCER_PROJECT_VERSION_AS_HEX@;
 }
 #endif
+
+#endif   // __APPHEADERFILE_@upper_project_id@__

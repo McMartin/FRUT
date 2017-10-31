@@ -3,7 +3,8 @@
 
 */
 
-#pragma once
+#ifndef __JUCE_APPCONFIG_@upper_project_id@__
+#define __JUCE_APPCONFIG_@upper_project_id@__
 
 //==============================================================================
 // [BEGIN_USER_CODE_SECTION]@user_code_section@// [END_USER_CODE_SECTION]
@@ -22,3 +23,4 @@
 #define JUCE_GLOBAL_MODULE_SETTINGS_INCLUDED 1
 
 @config_flags_defines@@audio_plugin_settings_defines@
+#endif  // __JUCE_APPCONFIG_@upper_project_id@__

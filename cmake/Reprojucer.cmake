@@ -1849,8 +1849,13 @@ function(__generate_AppConfig_header)
     endforeach()
   endif()
 
-  string(TOUPPER "${JUCER_PROJECT_ID}" upper_project_id)
-  configure_file("${Reprojucer_templates_DIR}/AppConfig.h" "JuceLibraryCode/AppConfig.h")
+  if(DEFINED JUCER_VERSION AND JUCER_VERSION LESS 5.0.0)
+    string(TOUPPER "${JUCER_PROJECT_ID}" upper_project_id)
+    set(template_file "${Reprojucer_templates_DIR}/AppConfig-4.h")
+  else()
+    set(template_file "${Reprojucer_templates_DIR}/AppConfig.h")
+  endif()
+  configure_file("${template_file}" "JuceLibraryCode/AppConfig.h")
   list(APPEND JUCER_PROJECT_SOURCES
     "${CMAKE_CURRENT_BINARY_DIR}/JuceLibraryCode/AppConfig.h"
   )
@@ -1942,10 +1947,13 @@ function(__generate_JuceHeader_header)
     string(APPEND modules_includes "#include <${module_name}/${module_name}.h>\n")
   endforeach()
 
-  string(TOUPPER "${JUCER_PROJECT_ID}" upper_project_id)
-  configure_file("${Reprojucer_templates_DIR}/JuceHeader.h"
-    "JuceLibraryCode/JuceHeader.h"
-  )
+  if(DEFINED JUCER_VERSION AND JUCER_VERSION LESS 5.0.0)
+    string(TOUPPER "${JUCER_PROJECT_ID}" upper_project_id)
+    set(template_file "${Reprojucer_templates_DIR}/JuceHeader-4.h")
+  else()
+    set(template_file "${Reprojucer_templates_DIR}/JuceHeader.h")
+  endif()
+  configure_file("${template_file}" "JuceLibraryCode/JuceHeader.h")
   list(APPEND JUCER_PROJECT_SOURCES
     "${CMAKE_CURRENT_BINARY_DIR}/JuceLibraryCode/JuceHeader.h"
   )
