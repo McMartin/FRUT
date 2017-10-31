@@ -85,6 +85,7 @@ Now we can build `MyGreatProject` using CMake:
 
 `Reprojucer.cmake` and `Jucer2Reprojucer` support the following Projucer export targets:
 - Xcode (MacOSX)
+- Visual Studio 2017
 - Visual Studio 2015
 - Visual Studio 2013
 - Linux Makefiles

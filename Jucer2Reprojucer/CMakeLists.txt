@@ -113,6 +113,23 @@ jucer_export_target_configuration(
 )
 
 jucer_export_target(
+  "Visual Studio 2017"
+  EXTRA_COMPILER_FLAGS "/WX /W4"
+)
+
+jucer_export_target_configuration(
+  "Visual Studio 2017"
+  NAME "Debug"
+  DEBUG_MODE ON
+)
+
+jucer_export_target_configuration(
+  "Visual Studio 2017"
+  NAME "Release"
+  DEBUG_MODE OFF
+)
+
+jucer_export_target(
   "Visual Studio 2015"
   EXTRA_COMPILER_FLAGS "/WX /W4 /wd4592"
 )

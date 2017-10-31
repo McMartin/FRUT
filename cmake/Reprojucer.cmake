@@ -27,12 +27,14 @@ set(Reprojucer_templates_DIR "${Reprojucer.cmake_DIR}/templates")
 
 set(Reprojucer_supported_exporters
   "Xcode (MacOSX)"
+  "Visual Studio 2017"
   "Visual Studio 2015"
   "Visual Studio 2013"
   "Linux Makefile"
 )
 set(Reprojucer_supported_exporters_conditions
   "APPLE"
+  "MSVC_VERSION\;GREATER\;1909"
   "MSVC_VERSION\;EQUAL\;1900"
   "MSVC_VERSION\;EQUAL\;1800"
   "CMAKE_HOST_SYSTEM_NAME\;STREQUAL\;Linux"
@@ -43,7 +45,7 @@ function(__set_Reprojucer_current_exporter)
 
   unset(current_exporter)
 
-  foreach(exporter_index RANGE 3)
+  foreach(exporter_index RANGE 4)
     list(GET Reprojucer_supported_exporters_conditions ${exporter_index} condition)
     if(${condition})
       if(DEFINED current_exporter)
@@ -486,7 +488,7 @@ function(jucer_export_target exporter)
     endif()
   endif()
 
-  if(exporter STREQUAL "Visual Studio 2015" OR exporter STREQUAL "Visual Studio 2013")
+  if(exporter MATCHES "^Visual Studio 201(7|5|3)$")
     list(APPEND export_target_settings_tags
       "VST3_SDK_FOLDER"
       "PLATFORM_TOOLSET"
@@ -602,7 +604,10 @@ function(jucer_export_target exporter)
         )
 
       elseif(tag STREQUAL "PLATFORM_TOOLSET")
-        if((exporter STREQUAL "Visual Studio 2015"
+        if((exporter STREQUAL "Visual Studio 2017"
+              AND (value STREQUAL "v140" OR value STREQUAL "v140_xp"
+                OR value STREQUAL "v141" OR value STREQUAL "v141_xp"))
+            OR (exporter STREQUAL "Visual Studio 2015"
               AND (value STREQUAL "v140" OR value STREQUAL "v140_xp"
                 OR value STREQUAL "CTP_Nov2013"))
             OR (exporter STREQUAL "Visual Studio 2013"
@@ -729,7 +734,7 @@ function(jucer_export_target_configuration
     )
   endif()
 
-  if(exporter STREQUAL "Visual Studio 2015" OR exporter STREQUAL "Visual Studio 2013")
+  if(exporter MATCHES "^Visual Studio 201(7|5|3)$")
     list(APPEND configuration_settings_tags
       "WARNING_LEVEL"
       "TREAT_WARNINGS_AS_ERRORS"
@@ -796,7 +801,7 @@ function(jucer_export_target_configuration
         set(JUCER_PREPROCESSOR_DEFINITIONS_${config} ${value} PARENT_SCOPE)
 
       elseif(tag STREQUAL "OPTIMISATION")
-        if(exporter MATCHES "^Visual Studio 201(5|3)$")
+        if(exporter MATCHES "^Visual Studio 201(7|5|3)$")
           if(value STREQUAL "No optimisation")
             set(optimisation_flag "/Od")
           elseif(value STREQUAL "Minimise size")
@@ -981,7 +986,8 @@ function(jucer_export_target_configuration
           message(FATAL_ERROR "Unsupported value for CHARACTER_SET: \"${value}\"")
         endif()
 
-      elseif(tag STREQUAL "ARCHITECTURE" AND exporter MATCHES "^Visual Studio 201(5|3)$")
+      elseif(tag STREQUAL "ARCHITECTURE"
+          AND exporter MATCHES "^Visual Studio 201(7|5|3)$")
         if(value STREQUAL "32-bit")
           set(wants_x64 FALSE)
         elseif(value STREQUAL "x64")

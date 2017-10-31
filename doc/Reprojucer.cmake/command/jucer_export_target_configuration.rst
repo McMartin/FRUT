@@ -40,8 +40,8 @@ following tags:
 - ``VST3_BINARY_LOCATION``
 - ``VST_BINARY_LOCATION``
 
-When ``<exporter>`` equals ``"Visual Studio 2015"`` or ``"Visual Studio 2013"``,
-``<setting_tag>`` can also be one of the following tags:
+When ``<exporter>`` equals ``"Visual Studio 2017"``, ``"Visual Studio 2015"`` or
+``"Visual Studio 2013"``, ``<setting_tag>`` can also be one of the following tags:
 
 - ``ARCHITECTURE``
 - ``CHARACTER_SET``

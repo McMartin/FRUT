@@ -582,6 +582,7 @@ int main(int argc, char* argv[])
   // jucer_export_target() and jucer_export_target_configuration()
   {
     const auto supportedExporters = {std::make_pair("XCODE_MAC", "Xcode (MacOSX)"),
+      std::make_pair("VS2017", "Visual Studio 2017"),
       std::make_pair("VS2015", "Visual Studio 2015"),
       std::make_pair("VS2013", "Visual Studio 2013"),
       std::make_pair("LINUX_MAKE", "Linux Makefile")};
@@ -607,7 +608,8 @@ int main(int argc, char* argv[])
               << "\"  # only used by PREBUILD_SHELL_SCRIPT and POSTBUILD_SHELL_SCRIPT\n";
         }
 
-        const auto isVSExporter = exporterType == "VS2015" || exporterType == "VS2013";
+        const auto isVSExporter = exporterType == "VS2017" || exporterType == "VS2015"
+                                  || exporterType == "VS2013";
 
         if (isVSExporter)
         {
