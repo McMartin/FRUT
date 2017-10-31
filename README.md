@@ -24,11 +24,17 @@ including:
   - `examples` and `extras` projects from [JUCE 4.3.1][github-juce-4.3.1] (in
 [Jucer2Reprojucer/generated/JUCE-4.3.1](Jucer2Reprojucer/generated/JUCE-4.3.1))
 
+  - `examples` and `extras` projects from [JUCE 5.0.0][github-juce-5.0.0] (in
+[Jucer2Reprojucer/generated/JUCE-5.0.0](Jucer2Reprojucer/generated/JUCE-5.0.0))
+
+  - `examples` and `extras` projects from [JUCE 5.2.0][github-juce-5.2.0] (in
+[Jucer2Reprojucer/generated/JUCE-5.2.0](Jucer2Reprojucer/generated/JUCE-5.2.0))
+
 
 ## Requirements
 
 - CMake, version 3.4 minimum
-- JUCE, version 4.2.0 to 4.3.1 (JUCE 5 is not supported yet)
+- JUCE, version 4.2.0 minimum (JUCE 5 support is experimental)
 
 
 ## Getting started
@@ -108,6 +114,8 @@ See the [LICENSE](LICENSE) file for more details.
 [github-frut]: https://github.com/McMartin/FRUT
 [github-juce-4.2.0]: https://github.com/WeAreROLI/JUCE/tree/4.2.0
 [github-juce-4.3.1]: https://github.com/WeAreROLI/JUCE/tree/4.3.1
+[github-juce-5.0.0]: https://github.com/WeAreROLI/JUCE/tree/5.0.0
+[github-juce-5.2.0]: https://github.com/WeAreROLI/JUCE/tree/5.2.0
 [github-juce]: https://github.com/WeAreROLI/JUCE
 [juce]: https://juce.com/
 [projucer]: https://www.juce.com/projucer
