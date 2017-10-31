@@ -607,7 +607,9 @@ int main(int argc, char* argv[])
               << "\"  # only used by PREBUILD_SHELL_SCRIPT and POSTBUILD_SHELL_SCRIPT\n";
         }
 
-        if (exporterType == "VS2015" || exporterType == "VS2013")
+        const auto isVSExporter = exporterType == "VS2015" || exporterType == "VS2013";
+
+        if (isVSExporter)
         {
           const auto needsTargetFolder = [&configurations]()
           {
@@ -733,7 +735,7 @@ int main(int argc, char* argv[])
           }
         }
 
-        if (exporterType == "VS2015" || exporterType == "VS2013")
+        if (isVSExporter)
         {
           const auto toolset = exporter.getProperty("toolset").toString().toStdString();
           if (toolset.empty())
@@ -916,14 +918,14 @@ int main(int argc, char* argv[])
           out << "  " << getSetting(configuration, "PREPROCESSOR_DEFINITIONS", "defines")
               << "\n";
 
-          const auto optimisation = [&configuration, &exporterType]() -> std::string
+          const auto optimisation = [&configuration, &isVSExporter]() -> std::string
           {
             const auto value = configuration.getProperty("optimisation");
 
             if (value.isVoid())
               return {};
 
-            if (exporterType == "VS2015" || exporterType == "VS2013")
+            if (isVSExporter)
               return getMsvcOptimisation(value);
 
             return getGccOptimisation(value);
@@ -1118,7 +1120,7 @@ int main(int argc, char* argv[])
                 << "\n";
           }
 
-          if (exporterType == "VS2015" || exporterType == "VS2013")
+          if (isVSExporter)
           {
             const auto warningLevel = [&configuration]() -> std::string
             {
