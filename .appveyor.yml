@@ -24,6 +24,8 @@ install:
     -- https://github.com/WeAreROLI/JUCE.git "%APPVEYOR_BUILD_FOLDER%/ci/tmp/JUCE-4.3.1"
   - git clone --branch=5.0.0 --depth=1 --single-branch
     -- https://github.com/WeAreROLI/JUCE.git "%APPVEYOR_BUILD_FOLDER%/ci/tmp/JUCE-5.0.0"
+  - git clone --branch=5.2.0 --depth=1 --single-branch
+    -- https://github.com/WeAreROLI/JUCE.git "%APPVEYOR_BUILD_FOLDER%/ci/tmp/JUCE-5.2.0"
 
 build_script:
   # Configure and build Reprojucer.cmake helpers and Jucer2Reprojucer with JUCE 4.2.0
@@ -53,6 +55,15 @@ build_script:
     -DJUCE_modules_DIRS="%APPVEYOR_BUILD_FOLDER%/ci/tmp/JUCE-5.0.0/modules"
   - cmake --build . --config Debug -- -v:m -maxcpucount
 
+  # Configure and build Reprojucer.cmake helpers and Jucer2Reprojucer with JUCE 5.2.0
+  - mkdir %APPVEYOR_BUILD_FOLDER%\ci\ReprojucerHelpers\5.2.0_build
+  - cd %APPVEYOR_BUILD_FOLDER%\ci\ReprojucerHelpers\5.2.0_build
+  - >
+    cmake .. -G "%GENERATOR%"
+    -DJUCE_ROOT="%APPVEYOR_BUILD_FOLDER%/ci/tmp/JUCE-5.2.0"
+    -DJUCE_modules_DIRS="%APPVEYOR_BUILD_FOLDER%/ci/tmp/JUCE-5.2.0/modules"
+  - cmake --build . --config Debug -- -v:m -maxcpucount
+
 test_script:
   # Check that generated CMakeLists.txt files are up-to-date
   - cd %APPVEYOR_BUILD_FOLDER%
@@ -74,6 +85,12 @@ test_script:
     -DJucer2Reprojucer_EXE="ci/ReprojucerHelpers/5.0.0_build/Jucer2Reprojucer/Debug/Jucer2Reprojucer.exe"
     -Dgenerated_JUCE_ROOT="Jucer2Reprojucer/generated/JUCE-5.0.0"
     -P ci/apply-Jucer2Reprojucer-to-JUCE-jucers.cmake
+  - >
+    cmake
+    -DJUCE_ROOT="%APPVEYOR_BUILD_FOLDER%/ci/tmp/JUCE-5.2.0"
+    -DJucer2Reprojucer_EXE="ci/ReprojucerHelpers/5.2.0_build/Jucer2Reprojucer/Debug/Jucer2Reprojucer.exe"
+    -Dgenerated_JUCE_ROOT="Jucer2Reprojucer/generated/JUCE-5.2.0"
+    -P ci/apply-Jucer2Reprojucer-to-JUCE-jucers.cmake
   - git diff --quiet
 
   # Configure all JUCE 4.2.0 projects
@@ -90,3 +107,8 @@ test_script:
   - mkdir %APPVEYOR_BUILD_FOLDER%\ci\AllJuceProjects\5.0.0_build
   - cd %APPVEYOR_BUILD_FOLDER%\ci\AllJuceProjects\5.0.0_build
   - cmake .. -G "%GENERATOR%" -DJUCE_VERSION="5.0.0"
+
+  # Configure all JUCE 5.2.0 projects
+  - mkdir %APPVEYOR_BUILD_FOLDER%\ci\AllJuceProjects\5.2.0_build
+  - cd %APPVEYOR_BUILD_FOLDER%\ci\AllJuceProjects\5.2.0_build
+  - cmake .. -G "%GENERATOR%" -DJUCE_VERSION="5.2.0"
