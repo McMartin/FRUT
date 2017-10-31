@@ -168,3 +168,11 @@ if(APPLE)
   )
   add_subdirectory("examples/OpenGLAppExample")
 endif()
+
+
+# No supported exporters
+
+if(FALSE)
+  set(jucedll_jucer_FILE "${JUCE_ROOT}/extras/windows dll/jucedll.jucer")
+  add_subdirectory("extras/windows dll")
+endif()

@@ -190,4 +190,7 @@ if(FALSE)
     "${JUCE_ROOT}/examples/PlugInSamples/InterAppAudioEffect/InterAppAudioEffect.jucer"
   )
   add_subdirectory("examples/PlugInSamples/InterAppAudioEffect")
+
+  set(jucedll_jucer_FILE "${JUCE_ROOT}/extras/windows dll/jucedll.jucer")
+  add_subdirectory("extras/windows dll")
 endif()
