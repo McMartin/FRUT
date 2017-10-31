@@ -581,22 +581,22 @@ int main(int argc, char* argv[])
 
   // jucer_export_target() and jucer_export_target_configuration()
   {
-    const auto supportedExporters = {std::make_tuple("XCODE_MAC", "Xcode (MacOSX)"),
-      std::make_tuple("VS2015", "Visual Studio 2015"),
-      std::make_tuple("VS2013", "Visual Studio 2013"),
-      std::make_tuple("LINUX_MAKE", "Linux Makefile")};
+    const auto supportedExporters = {std::make_pair("XCODE_MAC", "Xcode (MacOSX)"),
+      std::make_pair("VS2015", "Visual Studio 2015"),
+      std::make_pair("VS2013", "Visual Studio 2013"),
+      std::make_pair("LINUX_MAKE", "Linux Makefile")};
 
     for (const auto& element : supportedExporters)
     {
-      const auto exporter = jucerProject.getChildWithName("EXPORTFORMATS")
-                              .getChildWithName(std::get<0>(element));
+      const auto exporter =
+        jucerProject.getChildWithName("EXPORTFORMATS").getChildWithName(element.first);
       if (exporter.isValid())
       {
         const auto exporterType = exporter.getType().toString();
         const auto configurations = exporter.getChildWithName("CONFIGURATIONS");
 
         out << "jucer_export_target(\n"
-            << "  \"" << std::get<1>(element) << "\"\n";
+            << "  \"" << element.second << "\"\n";
 
         if (exporterType == "XCODE_MAC"
             && (!exporter.getProperty("prebuildCommand").toString().isEmpty()
