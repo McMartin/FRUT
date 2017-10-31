@@ -36,8 +36,14 @@ add_subdirectory("examples/Demo")
 set(Plugin_Host_jucer_FILE "${JUCE_ROOT}/examples/audio plugin host/Plugin Host.jucer")
 add_subdirectory("examples/audio plugin host")
 
+if(NOT CMAKE_HOST_SYSTEM_NAME STREQUAL "Linux")
+# Due to a case mismatch in Projucer.jucer, BinaryDataBuilder fails with the error:
+#   Can't open resource file: /home/travis/build/McMartin/FRUT/ci/tmp/JUCE-5.2.0/
+#                             extras/Projucer/Source/BinaryData/Gradle/gradle-wrapper.jar
+# See https://github.com/WeAreROLI/JUCE/pull/295.
 set(Projucer_jucer_FILE "${JUCE_ROOT}/extras/Projucer/Projucer.jucer")
 add_subdirectory("extras/Projucer")
+endif()
 
 
 # All exporters but "Visual Studio 2015"
