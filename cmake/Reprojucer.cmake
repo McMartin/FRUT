@@ -796,7 +796,7 @@ function(jucer_export_target_configuration
         set(JUCER_PREPROCESSOR_DEFINITIONS_${config} ${value} PARENT_SCOPE)
 
       elseif(tag STREQUAL "OPTIMISATION")
-        if(exporter MATCHES "Visual Studio 201(5|3)")
+        if(exporter MATCHES "^Visual Studio 201(5|3)$")
           if(value STREQUAL "No optimisation")
             set(optimisation_flag "/Od")
           elseif(value STREQUAL "Minimise size")
@@ -835,7 +835,7 @@ function(jucer_export_target_configuration
         set(JUCER_AU_BINARY_LOCATION_${config} ${value} PARENT_SCOPE)
 
       elseif(tag STREQUAL "OSX_BASE_SDK_VERSION")
-        if(value MATCHES "10\\.([5-9]|10|11|12) SDK")
+        if(value MATCHES "^10\\.([5-9]|10|11|12) SDK$")
           set(JUCER_OSX_BASE_SDK_VERSION_${config} "10.${CMAKE_MATCH_1}" PARENT_SCOPE)
         elseif(value STREQUAL "Use Default")
           set(JUCER_OSX_BASE_SDK_VERSION_${config} "default" PARENT_SCOPE)
@@ -844,7 +844,7 @@ function(jucer_export_target_configuration
         endif()
 
       elseif(tag STREQUAL "OSX_DEPLOYMENT_TARGET")
-        if(value MATCHES "10\\.([5-9]|10|11|12)")
+        if(value MATCHES "^10\\.([5-9]|10|11|12)$")
           set(JUCER_OSX_DEPLOYMENT_TARGET_${config} "10.${CMAKE_MATCH_1}" PARENT_SCOPE)
         elseif(value STREQUAL "Use Default")
           set(JUCER_OSX_DEPLOYMENT_TARGET_${config} "default" PARENT_SCOPE)
@@ -981,7 +981,7 @@ function(jucer_export_target_configuration
           message(FATAL_ERROR "Unsupported value for CHARACTER_SET: \"${value}\"")
         endif()
 
-      elseif(tag STREQUAL "ARCHITECTURE" AND exporter MATCHES "Visual Studio 201(5|3)")
+      elseif(tag STREQUAL "ARCHITECTURE" AND exporter MATCHES "^Visual Studio 201(5|3)$")
         if(value STREQUAL "32-bit")
           set(wants_x64 FALSE)
         elseif(value STREQUAL "x64")
