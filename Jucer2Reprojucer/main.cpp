@@ -581,10 +581,10 @@ int main(int argc, char* argv[])
 
   // jucer_export_target() and jucer_export_target_configuration()
   {
-    const auto supportedExporters = {std::make_tuple("XCODE_MAC", "Xcode (MacOSX)", true),
-      std::make_tuple("VS2015", "Visual Studio 2015", true),
-      std::make_tuple("VS2013", "Visual Studio 2013", true),
-      std::make_tuple("LINUX_MAKE", "Linux Makefile", false)};
+    const auto supportedExporters = {std::make_tuple("XCODE_MAC", "Xcode (MacOSX)"),
+      std::make_tuple("VS2015", "Visual Studio 2015"),
+      std::make_tuple("VS2013", "Visual Studio 2013"),
+      std::make_tuple("LINUX_MAKE", "Linux Makefile")};
 
     for (const auto& element : supportedExporters)
     {
@@ -650,7 +650,7 @@ int main(int argc, char* argv[])
           out << "  " << getSetting(exporter, "VST_SDK_FOLDER", "vstFolder") << "\n";
         }
 
-        const auto supportsVst3 = std::get<2>(element);
+        const auto supportsVst3 = exporterType == "XCODE_MAC" || isVSExporter;
         const auto isVst3AudioPlugin =
           projectType == "audioplug" && bool{jucerProject.getProperty("buildVST3")};
         const auto isVst3PluginHost =
