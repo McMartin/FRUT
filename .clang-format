@@ -2,6 +2,7 @@
 
 AlignAfterOpenBracket: Align
 AllowShortFunctionsOnASingleLine: false
+AlwaysBreakTemplateDeclarations: true
 BinPackArguments: true
 BinPackParameters: false
 BreakBeforeBinaryOperators: NonAssignment
