@@ -59,10 +59,7 @@ std::string join(const std::string& sep, const std::vector<std::string>& element
   return std::accumulate(std::next(elements.begin()),
     elements.end(),
     *elements.begin(),
-    [&sep](const std::string& sum, const std::string& elm)
-    {
-      return sum + sep + elm;
-    });
+    [&sep](const std::string& sum, const std::string& elm) { return sum + sep + elm; });
 }
 
 
@@ -231,8 +228,7 @@ int main(int argc, char* argv[])
 
   using Version = std::tuple<int, int, int>;
 
-  const auto jucerVersionAsTuple = [&jucerVersionTokens, &jucerFilePath]()
-  {
+  const auto jucerVersionAsTuple = [&jucerVersionTokens, &jucerFilePath]() {
     try
     {
       return Version{std::stoi(jucerVersionTokens.at(0)),
@@ -279,8 +275,7 @@ int main(int argc, char* argv[])
   std::string escapedJucerFileName = jucerFileName;
   std::replace_if(escapedJucerFileName.begin(),
     escapedJucerFileName.end(),
-    [](const std::string::value_type& c)
-    {
+    [](const std::string::value_type& c) {
       return !(std::isalpha(c, std::locale{"C"}) || std::isdigit(c, std::locale{"C"}));
     },
     '_');
@@ -314,14 +309,12 @@ int main(int argc, char* argv[])
 
   // jucer_project_settings()
   {
-    const auto projectSetting = [&jucerProject](
-      const std::string& cmakeTag, const juce::Identifier& property)
-    {
+    const auto projectSetting = [&jucerProject](const std::string& cmakeTag,
+                                  const juce::Identifier& property) {
       return getSetting(jucerProject, cmakeTag, property);
     };
 
-    const auto projectTypeDescription = [&projectType]() -> std::string
-    {
+    const auto projectTypeDescription = [&projectType]() -> std::string {
       if (projectType == "guiapp")
         return "GUI Application";
 
@@ -337,8 +330,7 @@ int main(int argc, char* argv[])
       return {};
     }();
 
-    const auto maxBinaryFileSize = [&jucerProject]() -> std::string
-    {
+    const auto maxBinaryFileSize = [&jucerProject]() -> std::string {
       if (jucerProject.getProperty("maxBinaryFileSize").toString().isEmpty())
         return "Default";
 
@@ -390,9 +382,8 @@ int main(int argc, char* argv[])
     // jucer_audio_plugin_settings()
     if (projectType == "audioplug")
     {
-      const auto onOffProjectSetting = [&jucerProject](
-        const std::string& cmakeTag, const juce::Identifier& property)
-      {
+      const auto onOffProjectSetting = [&jucerProject](const std::string& cmakeTag,
+                                         const juce::Identifier& property) {
         return getOnOffSetting(jucerProject, cmakeTag, property);
       };
 
@@ -433,71 +424,70 @@ int main(int argc, char* argv[])
 
   // jucer_project_files()
   {
-    const auto writeFiles = [&out](const std::string& fullGroupName,
-      const std::vector<std::tuple<bool, bool, bool, std::string>>& files)
-    {
-      if (!files.empty())
-      {
-        const auto nineSpaces = "         ";
-
-        out << "jucer_project_files(\"" << fullGroupName << "\"\n"
-            << "# Compile   Xcode     Binary\n"
-            << "#           Resource  Resource\n";
-
-        for (const auto& file : files)
+    const auto writeFiles =
+      [&out](const std::string& fullGroupName,
+        const std::vector<std::tuple<bool, bool, bool, std::string>>& files) {
+        if (!files.empty())
         {
-          const auto compile = std::get<0>(file);
-          const auto xcodeResource = std::get<1>(file);
-          const auto binaryResource = std::get<2>(file);
-          const auto path = std::get<3>(file);
+          const auto nineSpaces = "         ";
 
-          out << "  " << (compile ? "x" : ".") << nineSpaces
-              << (xcodeResource ? "x" : ".") << nineSpaces << (binaryResource ? "x" : ".")
-              << nineSpaces << "\"" << path << "\"\n";
+          out << "jucer_project_files(\"" << fullGroupName << "\"\n"
+              << "# Compile   Xcode     Binary\n"
+              << "#           Resource  Resource\n";
+
+          for (const auto& file : files)
+          {
+            const auto compile = std::get<0>(file);
+            const auto xcodeResource = std::get<1>(file);
+            const auto binaryResource = std::get<2>(file);
+            const auto path = std::get<3>(file);
+
+            out << "  " << (compile ? "x" : ".") << nineSpaces
+                << (xcodeResource ? "x" : ".") << nineSpaces
+                << (binaryResource ? "x" : ".") << nineSpaces << "\"" << path << "\"\n";
+          }
+
+          out << ")\n"
+              << "\n";
         }
-
-        out << ")\n"
-            << "\n";
-      }
-    };
+      };
 
     std::vector<std::string> groupNames;
 
     std::function<void(const juce::ValueTree&)> processGroup =
-      [&groupNames, &processGroup, &writeFiles](const juce::ValueTree& group)
-    {
-      groupNames.push_back(group.getProperty("name").toString().toStdString());
+      [&groupNames, &processGroup, &writeFiles](const juce::ValueTree& group) {
+        groupNames.push_back(group.getProperty("name").toString().toStdString());
 
-      const auto fullGroupName = join("/", groupNames);
+        const auto fullGroupName = join("/", groupNames);
 
-      std::vector<std::tuple<bool, bool, bool, std::string>> files;
+        std::vector<std::tuple<bool, bool, bool, std::string>> files;
 
-      for (auto i = 0; i < group.getNumChildren(); ++i)
-      {
-        const auto fileOrGroup = group.getChild(i);
-
-        if (fileOrGroup.hasType("FILE"))
+        for (auto i = 0; i < group.getNumChildren(); ++i)
         {
-          const auto& file = fileOrGroup;
+          const auto fileOrGroup = group.getChild(i);
 
-          files.emplace_back(int{file.getProperty("compile")} == 1,
-            int{file.getProperty("xcodeResource")} == 1,
-            int{file.getProperty("resource")} == 1,
-            file.getProperty("file").toString().toStdString());
+          if (fileOrGroup.hasType("FILE"))
+          {
+            const auto& file = fileOrGroup;
+
+            files.emplace_back(int{file.getProperty("compile")} == 1,
+              int{file.getProperty("xcodeResource")} == 1,
+              int{file.getProperty("resource")} == 1,
+              file.getProperty("file").toString().toStdString());
+          }
+          else
+          {
+            writeFiles(fullGroupName, files);
+            files.clear();
+
+            processGroup(fileOrGroup);
+          }
         }
-        else
-        {
-          writeFiles(fullGroupName, files);
-          files.clear();
 
-          processGroup(fileOrGroup);
-        }
-      }
+        writeFiles(fullGroupName, files);
 
-      writeFiles(fullGroupName, files);
-
-      groupNames.pop_back();
-    };
+        groupNames.pop_back();
+      };
 
     processGroup(jucerProject.getChildWithName("MAINGROUP"));
   }
@@ -637,8 +627,7 @@ int main(int argc, char* argv[])
 
         if (isVSExporter)
         {
-          const auto needsTargetFolder = [&configurations]()
-          {
+          const auto needsTargetFolder = [&configurations]() {
             for (auto i = 0; i < configurations.getNumChildren(); ++i)
             {
               const auto configuration = configurations.getChild(i);
@@ -704,9 +693,8 @@ int main(int argc, char* argv[])
 
         const auto mainGroup = jucerProject.getChildWithName("MAINGROUP");
 
-        const auto getIconFilePath = [&mainGroup, &exporter](
-          const juce::Identifier& propertyName) -> std::string
-        {
+        const auto getIconFilePath =
+          [&mainGroup, &exporter](const juce::Identifier& propertyName) -> std::string {
           const auto fileId = exporter.getProperty(propertyName).toString();
 
           if (!fileId.isEmpty())
@@ -732,9 +720,10 @@ int main(int argc, char* argv[])
 
         if (exporterType == "XCODE_MAC")
         {
-          out << "  " << getSetting(exporter,
-                           "CUSTOM_XCODE_RESOURCE_FOLDERS",
-                           "customXcodeResourceFolders")
+          out << "  "
+              << getSetting(exporter,
+                   "CUSTOM_XCODE_RESOURCE_FOLDERS",
+                   "customXcodeResourceFolders")
               << "\n";
 
           if (projectType == "guiapp")
@@ -775,8 +764,7 @@ int main(int argc, char* argv[])
 
           if (exporter.hasProperty("IPPLibrary"))
           {
-            const auto useIppLibrary = [&exporter]() -> std::string
-            {
+            const auto useIppLibrary = [&exporter]() -> std::string {
               const auto value = exporter.getProperty("IPPLibrary").toString();
 
               if (value == "")
@@ -813,8 +801,7 @@ int main(int argc, char* argv[])
 
         if (exporterType == "LINUX_MAKE")
         {
-          const auto cppLanguageStandard = [&exporter]() -> std::string
-          {
+          const auto cppLanguageStandard = [&exporter]() -> std::string {
             const auto value = exporter.getProperty("cppLanguageStandard").toString();
 
             if (value == "-std=c++03")
@@ -862,8 +849,7 @@ int main(int argc, char* argv[])
               << "  " << getSetting(configuration, "BINARY_LOCATION", "binaryPath")
               << "\n";
 
-          const auto isAbsolutePath = [](const juce::String& path)
-          {
+          const auto isAbsolutePath = [](const juce::String& path) {
             return path.startsWithChar('/') || path.startsWithChar('~')
                    || path.startsWithChar('$')
                    || (juce::CharacterFunctions::isLetter(path[0]) && path[1] == ':');
@@ -944,8 +930,7 @@ int main(int argc, char* argv[])
           out << "  " << getSetting(configuration, "PREPROCESSOR_DEFINITIONS", "defines")
               << "\n";
 
-          const auto optimisation = [&configuration, &isVSExporter]() -> std::string
-          {
+          const auto optimisation = [&configuration, &isVSExporter]() -> std::string {
             const auto value = configuration.getProperty("optimisation");
 
             if (value.isVoid())
@@ -986,9 +971,10 @@ int main(int argc, char* argv[])
 
             if (jucerProject.getProperty("buildAU"))
             {
-              out << "  " << getSetting(configuration,
-                               "AU_BINARY_LOCATION",
-                               "xcodeAudioUnitBinaryLocation")
+              out << "  "
+                  << getSetting(configuration,
+                       "AU_BINARY_LOCATION",
+                       "xcodeAudioUnitBinaryLocation")
                   << "\n";
             }
 
@@ -1032,8 +1018,7 @@ int main(int argc, char* argv[])
               out << "  # OSX_DEPLOYMENT_TARGET\n";
             }
 
-            const auto osxArchitecture = [&configuration]() -> std::string
-            {
+            const auto osxArchitecture = [&configuration]() -> std::string {
               const auto value = configuration.getProperty("osxArchitecture").toString();
 
               if (value == "default")
@@ -1067,8 +1052,7 @@ int main(int argc, char* argv[])
                 << getSetting(configuration, "CUSTOM_XCODE_FLAGS", "customXcodeFlags")
                 << "\n";
 
-            const auto cppLanguageStandard = [&configuration]() -> std::string
-            {
+            const auto cppLanguageStandard = [&configuration]() -> std::string {
               const auto value =
                 configuration.getProperty("cppLanguageStandard").toString();
 
@@ -1105,8 +1089,7 @@ int main(int argc, char* argv[])
               out << "  CXX_LANGUAGE_STANDARD \"" << cppLanguageStandard << "\"\n";
             }
 
-            const auto cppLibType = [&configuration]() -> std::string
-            {
+            const auto cppLibType = [&configuration]() -> std::string {
               const auto value = configuration.getProperty("cppLibType").toString();
 
               if (value == "")
@@ -1141,15 +1124,15 @@ int main(int argc, char* argv[])
                 << getOnOffSetting(
                      configuration, "LINK_TIME_OPTIMISATION", "linkTimeOptimisation")
                 << "\n"
-                << "  " << getOnOffSetting(
-                             configuration, "STRIP_LOCAL_SYMBOLS", "stripLocalSymbols")
+                << "  "
+                << getOnOffSetting(
+                     configuration, "STRIP_LOCAL_SYMBOLS", "stripLocalSymbols")
                 << "\n";
           }
 
           if (isVSExporter)
           {
-            const auto warningLevel = [&configuration]() -> std::string
-            {
+            const auto warningLevel = [&configuration]() -> std::string {
               switch (int{configuration.getProperty("winWarningLevel")})
               {
               case 2:
@@ -1169,8 +1152,7 @@ int main(int argc, char* argv[])
                      configuration, "TREAT_WARNINGS_AS_ERRORS", "warningsAreErrors")
                 << "\n";
 
-            const auto runtimeLibrary = [&configuration]() -> std::string
-            {
+            const auto runtimeLibrary = [&configuration]() -> std::string {
               const auto value = configuration.getProperty("useRuntimeLibDLL").toString();
 
               if (value == "")
@@ -1258,8 +1240,7 @@ int main(int argc, char* argv[])
             }
             else
             {
-              const auto architecture = [&configuration]() -> std::string
-              {
+              const auto architecture = [&configuration]() -> std::string {
                 const auto value =
                   configuration.getProperty("linuxArchitecture").toString();
 
