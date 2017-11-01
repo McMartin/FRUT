@@ -53,8 +53,7 @@ int main(int argc, char* argv[])
   std::vector<std::string> keysInFirstPlist;
 
   for (auto childElement = firstDictElement->getFirstChildElement();
-       childElement != nullptr;
-       childElement = childElement->getNextElement())
+       childElement != nullptr; childElement = childElement->getNextElement())
   {
     if (childElement->getTagName() != "key" || childElement->getNumChildElements() != 1
         || !childElement->getFirstChildElement()->isTextElement())
@@ -102,8 +101,7 @@ int main(int argc, char* argv[])
   }
 
   for (auto childElement = secondDictElement->getFirstChildElement();
-       childElement != nullptr;
-       childElement = childElement->getNextElement())
+       childElement != nullptr; childElement = childElement->getNextElement())
   {
     if (childElement->getTagName() != "key" || childElement->getNumChildElements() != 1
         || !childElement->getFirstChildElement()->isTextElement())

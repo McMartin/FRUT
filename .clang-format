@@ -1,8 +1,9 @@
 # Using clang-format 5.0.0
 
-AlignAfterOpenBracket: false
+AlignAfterOpenBracket: Align
 AllowShortFunctionsOnASingleLine: false
-BinPackArguments: false
+BinPackArguments: true
+BinPackParameters: false
 BreakBeforeBinaryOperators: NonAssignment
 BreakBeforeBraces: Allman
 BreakConstructorInitializersBeforeComma: true

@@ -56,9 +56,8 @@ std::string join(const std::string& sep, const std::vector<std::string>& element
     return {};
   }
 
-  return std::accumulate(std::next(elements.begin()),
-    elements.end(),
-    *elements.begin(),
+  return std::accumulate(
+    std::next(elements.begin()), elements.end(), *elements.begin(),
     [&sep](const std::string& sum, const std::string& elm) { return sum + sep + elm; });
 }
 
@@ -79,8 +78,9 @@ std::vector<std::string> split(const std::string& sep, const std::string& value)
 }
 
 
-std::string getSetting(const juce::ValueTree& valueTree, const std::string& cmakeTag,
-  const juce::Identifier& property)
+std::string getSetting(const juce::ValueTree& valueTree,
+                       const std::string& cmakeTag,
+                       const juce::Identifier& property)
 {
   if (valueTree.hasProperty(property))
   {
@@ -96,8 +96,9 @@ std::string getSetting(const juce::ValueTree& valueTree, const std::string& cmak
 }
 
 
-std::string getOnOffSetting(const juce::ValueTree& valueTree, const std::string& cmakeTag,
-  const juce::Identifier& property)
+std::string getOnOffSetting(const juce::ValueTree& valueTree,
+                            const std::string& cmakeTag,
+                            const juce::Identifier& property)
 {
   if (valueTree.hasProperty(property))
   {
@@ -111,7 +112,8 @@ std::string getOnOffSetting(const juce::ValueTree& valueTree, const std::string&
 
 
 juce::ValueTree getChildWithPropertyRecursively(const juce::ValueTree& valueTree,
-  const juce::Identifier& propertyName, const juce::var& propertyValue)
+                                                const juce::Identifier& propertyName,
+                                                const juce::var& propertyValue)
 {
   const auto child = valueTree.getChildWithProperty(propertyName, propertyValue);
 
@@ -232,8 +234,8 @@ int main(int argc, char* argv[])
     try
     {
       return Version{std::stoi(jucerVersionTokens.at(0)),
-        std::stoi(jucerVersionTokens.at(1)),
-        std::stoi(jucerVersionTokens.at(2))};
+                     std::stoi(jucerVersionTokens.at(1)),
+                     std::stoi(jucerVersionTokens.at(2))};
     }
     catch (const std::invalid_argument&)
     {
@@ -273,12 +275,12 @@ int main(int argc, char* argv[])
   }
 
   std::string escapedJucerFileName = jucerFileName;
-  std::replace_if(escapedJucerFileName.begin(),
-    escapedJucerFileName.end(),
-    [](const std::string::value_type& c) {
-      return !(std::isalpha(c, std::locale{"C"}) || std::isdigit(c, std::locale{"C"}));
-    },
-    '_');
+  std::replace_if(escapedJucerFileName.begin(), escapedJucerFileName.end(),
+                  [](const std::string::value_type& c) {
+                    return !(std::isalpha(c, std::locale{"C"})
+                             || std::isdigit(c, std::locale{"C"}));
+                  },
+                  '_');
 
   // get_filename_component()
   {
@@ -310,7 +312,7 @@ int main(int argc, char* argv[])
   // jucer_project_settings()
   {
     const auto projectSetting = [&jucerProject](const std::string& cmakeTag,
-                                  const juce::Identifier& property) {
+                                                const juce::Identifier& property) {
       return getSetting(jucerProject, cmakeTag, property);
     };
 
@@ -358,8 +360,8 @@ int main(int argc, char* argv[])
     if (jucerProject.hasProperty("displaySplashScreen"))
     {
       out << "  "
-          << getOnOffSetting(
-               jucerProject, "DISPLAY_THE_JUCE_SPLASH_SCREEN", "displaySplashScreen")
+          << getOnOffSetting(jucerProject, "DISPLAY_THE_JUCE_SPLASH_SCREEN",
+                             "displaySplashScreen")
           << " # " << licenseRequiredTagline << "\n";
     }
 
@@ -383,7 +385,7 @@ int main(int argc, char* argv[])
     if (projectType == "audioplug")
     {
       const auto onOffProjectSetting = [&jucerProject](const std::string& cmakeTag,
-                                         const juce::Identifier& property) {
+                                                       const juce::Identifier& property) {
         return getOnOffSetting(jucerProject, cmakeTag, property);
       };
 
@@ -426,7 +428,7 @@ int main(int argc, char* argv[])
   {
     const auto writeFiles =
       [&out](const std::string& fullGroupName,
-        const std::vector<std::tuple<bool, bool, bool, std::string>>& files) {
+             const std::vector<std::tuple<bool, bool, bool, std::string>>& files) {
         if (!files.empty())
         {
           const auto nineSpaces = "         ";
@@ -471,9 +473,9 @@ int main(int argc, char* argv[])
             const auto& file = fileOrGroup;
 
             files.emplace_back(int{file.getProperty("compile")} == 1,
-              int{file.getProperty("xcodeResource")} == 1,
-              int{file.getProperty("resource")} == 1,
-              file.getProperty("file").toString().toStdString());
+                               int{file.getProperty("xcodeResource")} == 1,
+                               int{file.getProperty("resource")} == 1,
+                               file.getProperty("file").toString().toStdString());
           }
           else
           {
@@ -578,7 +580,8 @@ int main(int argc, char* argv[])
       }
     }
 
-    const auto kDefaultProjucerUserCodeSectionComment = std::vector<std::string>{"",
+    const auto kDefaultProjucerUserCodeSectionComment = std::vector<std::string>{
+      "",
       "// (You can add your own code in this section, and the Projucer will not "
       "overwrite it)",
       ""};
@@ -596,10 +599,10 @@ int main(int argc, char* argv[])
   // jucer_export_target() and jucer_export_target_configuration()
   {
     const auto supportedExporters = {std::make_pair("XCODE_MAC", "Xcode (MacOSX)"),
-      std::make_pair("VS2017", "Visual Studio 2017"),
-      std::make_pair("VS2015", "Visual Studio 2015"),
-      std::make_pair("VS2013", "Visual Studio 2013"),
-      std::make_pair("LINUX_MAKE", "Linux Makefile")};
+                                     std::make_pair("VS2017", "Visual Studio 2017"),
+                                     std::make_pair("VS2015", "Visual Studio 2015"),
+                                     std::make_pair("VS2013", "Visual Studio 2013"),
+                                     std::make_pair("LINUX_MAKE", "Linux Makefile")};
 
     for (const auto& element : supportedExporters)
     {
@@ -615,7 +618,7 @@ int main(int argc, char* argv[])
 
         if (exporterType == "XCODE_MAC"
             && (!exporter.getProperty("prebuildCommand").toString().isEmpty()
-                 || !exporter.getProperty("postbuildCommand").toString().isEmpty()))
+                || !exporter.getProperty("postbuildCommand").toString().isEmpty()))
         {
           out << "  TARGET_PROJECT_FOLDER \""
               << exporter.getProperty("targetFolder").toString()
@@ -721,9 +724,8 @@ int main(int argc, char* argv[])
         if (exporterType == "XCODE_MAC")
         {
           out << "  "
-              << getSetting(exporter,
-                   "CUSTOM_XCODE_RESOURCE_FOLDERS",
-                   "customXcodeResourceFolders")
+              << getSetting(exporter, "CUSTOM_XCODE_RESOURCE_FOLDERS",
+                            "customXcodeResourceFolders")
               << "\n";
 
           if (projectType == "guiapp")
@@ -956,36 +958,29 @@ int main(int argc, char* argv[])
             if (isVstAudioPlugin)
             {
               out << "  "
-                  << getSetting(
-                       configuration, "VST_BINARY_LOCATION", "xcodeVstBinaryLocation")
+                  << getSetting(configuration, "VST_BINARY_LOCATION",
+                                "xcodeVstBinaryLocation")
                   << "\n";
             }
 
             if (isVst3AudioPlugin)
             {
               out << "  "
-                  << getSetting(
-                       configuration, "VST3_BINARY_LOCATION", "xcodeVst3BinaryLocation")
+                  << getSetting(configuration, "VST3_BINARY_LOCATION",
+                                "xcodeVst3BinaryLocation")
                   << "\n";
             }
 
             if (jucerProject.getProperty("buildAU"))
             {
               out << "  "
-                  << getSetting(configuration,
-                       "AU_BINARY_LOCATION",
-                       "xcodeAudioUnitBinaryLocation")
+                  << getSetting(configuration, "AU_BINARY_LOCATION",
+                                "xcodeAudioUnitBinaryLocation")
                   << "\n";
             }
 
-            const auto sdks = {"10.5 SDK",
-              "10.6 SDK",
-              "10.7 SDK",
-              "10.8 SDK",
-              "10.9 SDK",
-              "10.10 SDK",
-              "10.11 SDK",
-              "10.12 SDK"};
+            const auto sdks = {"10.5 SDK", "10.6 SDK",  "10.7 SDK",  "10.8 SDK",
+                               "10.9 SDK", "10.10 SDK", "10.11 SDK", "10.12 SDK"};
 
             const auto osxSDK =
               configuration.getProperty("osxSDK").toString().toStdString();
@@ -1114,19 +1109,19 @@ int main(int argc, char* argv[])
             }
 
             out << "  "
-                << getSetting(
-                     configuration, "CODE_SIGNING_IDENTITY", "codeSigningIdentity")
+                << getSetting(configuration, "CODE_SIGNING_IDENTITY",
+                              "codeSigningIdentity")
                 << "\n"
                 << "  "
                 << getOnOffSetting(configuration, "RELAX_IEEE_COMPLIANCE", "fastMath")
                 << "\n"
                 << "  "
-                << getOnOffSetting(
-                     configuration, "LINK_TIME_OPTIMISATION", "linkTimeOptimisation")
+                << getOnOffSetting(configuration, "LINK_TIME_OPTIMISATION",
+                                   "linkTimeOptimisation")
                 << "\n"
                 << "  "
-                << getOnOffSetting(
-                     configuration, "STRIP_LOCAL_SYMBOLS", "stripLocalSymbols")
+                << getOnOffSetting(configuration, "STRIP_LOCAL_SYMBOLS",
+                                   "stripLocalSymbols")
                 << "\n";
           }
 
@@ -1148,8 +1143,8 @@ int main(int argc, char* argv[])
 
             out << "  WARNING_LEVEL \"" << warningLevel << "\"\n"
                 << "  "
-                << getOnOffSetting(
-                     configuration, "TREAT_WARNINGS_AS_ERRORS", "warningsAreErrors")
+                << getOnOffSetting(configuration, "TREAT_WARNINGS_AS_ERRORS",
+                                   "warningsAreErrors")
                 << "\n";
 
             const auto runtimeLibrary = [&configuration]() -> std::string {
@@ -1190,8 +1185,8 @@ int main(int argc, char* argv[])
             }
 
             out << "  "
-                << getOnOffSetting(
-                     configuration, "INCREMENTAL_LINKING", "enableIncrementalLinking")
+                << getOnOffSetting(configuration, "INCREMENTAL_LINKING",
+                                   "enableIncrementalLinking")
                 << "\n"
                 << "  "
                 << getSetting(configuration, "PREBUILD_COMMAND", "prebuildCommand")
