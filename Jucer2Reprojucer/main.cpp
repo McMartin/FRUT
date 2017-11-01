@@ -261,8 +261,7 @@ int main(int argc, char* argv[])
   {
     const auto& reprojucerFilePath = args.at(2);
 
-    out << "list(APPEND CMAKE_MODULE_PATH \""
-        << "${CMAKE_CURRENT_LIST_DIR}/"
+    out << "list(APPEND CMAKE_MODULE_PATH \"${CMAKE_CURRENT_LIST_DIR}/"
         << juce::File{juce::File::getCurrentWorkingDirectory().getChildFile(
                         juce::String{reprojucerFilePath})}
              .getParentDirectory()
