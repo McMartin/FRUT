@@ -36,6 +36,24 @@ if(NOT IS_DIRECTORY "${JUCE_ROOT}")
 endif()
 
 
+if(WIN32)
+  set(crlf_line_endings_default ON)
+else()
+  set(crlf_line_endings_default OFF)
+endif()
+
+option(USE_CRLF_LINE_ENDINGS
+  "Use CR+LF line endings in generated CMakeLists.txt files"
+  ${crlf_line_endings_default}
+)
+
+if(USE_CRLF_LINE_ENDINGS)
+  set(use_crlf_line_endings_define 1)
+else()
+  set(use_crlf_line_endings_define 0)
+endif()
+
+
 jucer_project_begin()
 
 jucer_project_settings(
@@ -44,7 +62,8 @@ jucer_project_settings(
   PROJECT_TYPE "Console Application"
   REPORT_JUCE_APP_USAGE OFF
   DISPLAY_THE_JUCE_SPLASH_SCREEN OFF
-  PREPROCESSOR_DEFINITIONS "DONT_SET_USING_JUCE_NAMESPACE=1"
+  PREPROCESSOR_DEFINITIONS "DONT_SET_USING_JUCE_NAMESPACE=1
+USE_CRLF_LINE_ENDINGS=${use_crlf_line_endings_define}"
 )
 
 jucer_project_files("Jucer2Reprojucer"

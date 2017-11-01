@@ -29,6 +29,16 @@
 #include <vector>
 
 
+#if !defined(USE_CRLF_LINE_ENDINGS)
+#error USE_CRLF_LINE_ENDINGS must be defined
+#endif
+#if USE_CRLF_LINE_ENDINGS
+static const auto kNewLine = "\r\n";
+#else
+static const auto kNewLine = '\n';
+#endif
+
+
 template <class Head>
 void writeToStream(std::ostream& stream, Head&& head)
 {
@@ -55,7 +65,7 @@ struct LineWriter
   template <typename... Args>
   void operator()(Args&&... args)
   {
-    writeToStream(mStream, std::forward<Args>(args)..., '\n');
+    writeToStream(mStream, std::forward<Args>(args)..., kNewLine);
   }
 
 private:
@@ -279,7 +289,7 @@ int main(int argc, char* argv[])
     }
   }();
 
-  std::ofstream out{"CMakeLists.txt"};
+  std::ofstream out{"CMakeLists.txt", std::ios_base::out | std::ios_base::binary};
   LineWriter wLn{out};
 
   const auto jucerFileName = jucerFile.getFileName().toStdString();
@@ -1261,7 +1271,7 @@ int main(int argc, char* argv[])
     }
   }
 
-  out << "jucer_project_end()" << std::endl;
+  out << "jucer_project_end()" << kNewLine << std::flush;
 
   std::cout << juce::File::getCurrentWorkingDirectory()
                  .getChildFile("CMakeLists.txt")
