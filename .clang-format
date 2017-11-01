@@ -3,8 +3,8 @@
 AlignAfterOpenBracket: false
 AllowShortFunctionsOnASingleLine: false
 BinPackArguments: false
-BreakBeforeBraces: Allman
 BreakBeforeBinaryOperators: NonAssignment
+BreakBeforeBraces: Allman
 BreakConstructorInitializersBeforeComma: true
 ColumnLimit: 90
 ConstructorInitializerIndentWidth: 2
