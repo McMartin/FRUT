@@ -29,6 +29,9 @@ jucer_project_settings(
   COMPANY_NAME "ROLI Ltd."
   COMPANY_WEBSITE "www.juce.com"
   COMPANY_EMAIL "info@juce.com"
+  REPORT_JUCE_APP_USAGE OFF # Required for closed source applications without an Indie or Pro JUCE license
+  DISPLAY_THE_JUCE_SPLASH_SCREEN OFF # Required for closed source applications without an Indie or Pro JUCE license
+  SPLASH_SCREEN_COLOUR "Dark"
   PROJECT_TYPE "Audio Plug-in"
   BUNDLE_IDENTIFIER "com.juce.JuceDemoPlugin"
   BINARYDATACPP_SIZE_LIMIT "Default"

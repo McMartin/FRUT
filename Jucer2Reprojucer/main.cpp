@@ -351,8 +351,32 @@ int main(int argc, char* argv[])
         << "  " << projectSetting("PROJECT_VERSION", "version") << "\n"
         << "  " << projectSetting("COMPANY_NAME", "companyName") << "\n"
         << "  " << projectSetting("COMPANY_WEBSITE", "companyWebsite") << "\n"
-        << "  " << projectSetting("COMPANY_EMAIL", "companyEmail") << "\n"
-        << "  PROJECT_TYPE \"" << projectTypeDescription << "\"\n"
+        << "  " << projectSetting("COMPANY_EMAIL", "companyEmail") << "\n";
+
+    const auto licenseRequiredTagline =
+      "Required for closed source applications without an Indie or Pro JUCE license";
+
+    if (jucerProject.hasProperty("reportAppUsage"))
+    {
+      out << "  "
+          << getOnOffSetting(jucerProject, "REPORT_JUCE_APP_USAGE", "reportAppUsage")
+          << " # " << licenseRequiredTagline << "\n";
+    }
+
+    if (jucerProject.hasProperty("displaySplashScreen"))
+    {
+      out << "  "
+          << getOnOffSetting(
+               jucerProject, "DISPLAY_THE_JUCE_SPLASH_SCREEN", "displaySplashScreen")
+          << " # " << licenseRequiredTagline << "\n";
+    }
+
+    if (jucerProject.hasProperty("splashScreenColour"))
+    {
+      out << "  " << projectSetting("SPLASH_SCREEN_COLOUR", "splashScreenColour") << "\n";
+    }
+
+    out << "  PROJECT_TYPE \"" << projectTypeDescription << "\"\n"
         << "  " << projectSetting("BUNDLE_IDENTIFIER", "bundleIdentifier") << "\n"
         << "  BINARYDATACPP_SIZE_LIMIT \"" << maxBinaryFileSize << "\"\n"
         << "  " << projectSetting("BINARYDATA_NAMESPACE", "binaryDataNamespace") << "\n"

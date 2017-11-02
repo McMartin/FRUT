@@ -117,6 +117,9 @@ function(jucer_project_settings)
     "COMPANY_NAME"
     "COMPANY_WEBSITE"
     "COMPANY_EMAIL"
+    "REPORT_JUCE_APP_USAGE"
+    "DISPLAY_THE_JUCE_SPLASH_SCREEN"
+    "SPLASH_SCREEN_COLOUR"
     "PROJECT_TYPE"
     "BUNDLE_IDENTIFIER"
     "BINARYDATACPP_SIZE_LIMIT"
@@ -1648,6 +1651,24 @@ function(__generate_AppConfig_header)
     )
   endif()
 
+  if(DEFINED JUCER_DISPLAY_THE_JUCE_SPLASH_SCREEN
+      AND NOT JUCER_DISPLAY_THE_JUCE_SPLASH_SCREEN)
+    set(display_splash_screen 0)
+  else()
+    set(display_splash_screen 1)
+  endif()
+  if(DEFINED JUCER_REPORT_JUCE_APP_USAGE AND NOT JUCER_REPORT_JUCE_APP_USAGE)
+    set(report_app_usage 0)
+  else()
+    set(report_app_usage 1)
+  endif()
+  if(DEFINED JUCER_SPLASH_SCREEN_COLOUR
+      AND NOT JUCER_SPLASH_SCREEN_COLOUR STREQUAL "Dark")
+    set(use_dark_splash_screen 0)
+  else()
+    set(use_dark_splash_screen 1)
+  endif()
+
   set(max_right_padding 0)
   foreach(module_name ${JUCER_PROJECT_MODULES})
     string(LENGTH "${module_name}" module_name_length)
@@ -1849,8 +1870,13 @@ function(__generate_AppConfig_header)
     endforeach()
   endif()
 
-  string(TOUPPER "${JUCER_PROJECT_ID}" upper_project_id)
-  configure_file("${Reprojucer_templates_DIR}/AppConfig.h" "JuceLibraryCode/AppConfig.h")
+  if(DEFINED JUCER_VERSION AND JUCER_VERSION LESS 5.0.0)
+    string(TOUPPER "${JUCER_PROJECT_ID}" upper_project_id)
+    set(template_file "${Reprojucer_templates_DIR}/AppConfig-4.h")
+  else()
+    set(template_file "${Reprojucer_templates_DIR}/AppConfig.h")
+  endif()
+  configure_file("${template_file}" "JuceLibraryCode/AppConfig.h")
   list(APPEND JUCER_PROJECT_SOURCES
     "${CMAKE_CURRENT_BINARY_DIR}/JuceLibraryCode/AppConfig.h"
   )
@@ -1942,10 +1968,13 @@ function(__generate_JuceHeader_header)
     string(APPEND modules_includes "#include <${module_name}/${module_name}.h>\n")
   endforeach()
 
-  string(TOUPPER "${JUCER_PROJECT_ID}" upper_project_id)
-  configure_file("${Reprojucer_templates_DIR}/JuceHeader.h"
-    "JuceLibraryCode/JuceHeader.h"
-  )
+  if(DEFINED JUCER_VERSION AND JUCER_VERSION LESS 5.0.0)
+    string(TOUPPER "${JUCER_PROJECT_ID}" upper_project_id)
+    set(template_file "${Reprojucer_templates_DIR}/JuceHeader-4.h")
+  else()
+    set(template_file "${Reprojucer_templates_DIR}/JuceHeader.h")
+  endif()
+  configure_file("${template_file}" "JuceLibraryCode/JuceHeader.h")
   list(APPEND JUCER_PROJECT_SOURCES
     "${CMAKE_CURRENT_BINARY_DIR}/JuceLibraryCode/JuceHeader.h"
   )
