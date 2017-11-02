@@ -35,6 +35,7 @@ build_script:
     cmake .. -G "%GENERATOR%"
     -DJUCE_ROOT="%APPVEYOR_BUILD_FOLDER%/ci/tmp/JUCE-4.2.0"
     -DJUCE_modules_DIRS="%APPVEYOR_BUILD_FOLDER%/ci/tmp/JUCE-4.2.0/modules"
+    -DUSE_CRLF_LINE_ENDINGS=OFF
   - cmake --build . --config Debug -- -v:m -maxcpucount
 
   # Configure and build Reprojucer.cmake helpers and Jucer2Reprojucer with JUCE 4.3.1
@@ -44,6 +45,7 @@ build_script:
     cmake .. -G "%GENERATOR%"
     -DJUCE_ROOT="%APPVEYOR_BUILD_FOLDER%/ci/tmp/JUCE-4.3.1"
     -DJUCE_modules_DIRS="%APPVEYOR_BUILD_FOLDER%/ci/tmp/JUCE-4.3.1/modules"
+    -DUSE_CRLF_LINE_ENDINGS=OFF
   - cmake --build . --config Debug -- -v:m -maxcpucount
 
   # Configure and build Reprojucer.cmake helpers and Jucer2Reprojucer with JUCE 5.0.0
@@ -53,6 +55,7 @@ build_script:
     cmake .. -G "%GENERATOR%"
     -DJUCE_ROOT="%APPVEYOR_BUILD_FOLDER%/ci/tmp/JUCE-5.0.0"
     -DJUCE_modules_DIRS="%APPVEYOR_BUILD_FOLDER%/ci/tmp/JUCE-5.0.0/modules"
+    -DUSE_CRLF_LINE_ENDINGS=OFF
   - cmake --build . --config Debug -- -v:m -maxcpucount
 
   # Configure and build Reprojucer.cmake helpers and Jucer2Reprojucer with JUCE 5.2.0
@@ -62,6 +65,7 @@ build_script:
     cmake .. -G "%GENERATOR%"
     -DJUCE_ROOT="%APPVEYOR_BUILD_FOLDER%/ci/tmp/JUCE-5.2.0"
     -DJUCE_modules_DIRS="%APPVEYOR_BUILD_FOLDER%/ci/tmp/JUCE-5.2.0/modules"
+    -DUSE_CRLF_LINE_ENDINGS=OFF
   - cmake --build . --config Debug -- -v:m -maxcpucount
 
 test_script:

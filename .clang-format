@@ -1,10 +1,12 @@
-# Using clang-format 3.7.0
+# Using clang-format 5.0.0
 
-AlignAfterOpenBracket: false
+AlignAfterOpenBracket: Align
 AllowShortFunctionsOnASingleLine: false
-BinPackArguments: false
-BreakBeforeBraces: Allman
+AlwaysBreakTemplateDeclarations: true
+BinPackArguments: true
+BinPackParameters: false
 BreakBeforeBinaryOperators: NonAssignment
+BreakBeforeBraces: Allman
 BreakConstructorInitializersBeforeComma: true
 ColumnLimit: 90
 ConstructorInitializerIndentWidth: 2
