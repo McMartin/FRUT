@@ -38,4 +38,4 @@ Example
   )
 
 Taken from `the Plugin Host example of JUCE 4.3.1
-<../../../Jucer2Reprojucer/generated/JUCE-4.3.1/examples/audio%20plugin%20host/CMakeLists.txt#L81-L94>`_.
+<../../../Jucer2Reprojucer/generated/JUCE-4.3.1/examples/audio%20plugin%20host/CMakeLists.txt#L82-L95>`_.
