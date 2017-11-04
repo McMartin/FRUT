@@ -39,4 +39,4 @@ Example
   )
 
 Taken from `the AUv3Synth example of JUCE 4.3.1
-<../../../Jucer2Reprojucer/generated/JUCE-4.3.1/examples/AUv3Synth/CMakeLists.txt#L59-L73>`_.
+<../../../generated/JUCE-4.3.1/examples/AUv3Synth/CMakeLists.txt#L65-L79>`_.

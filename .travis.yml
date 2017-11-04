@@ -86,25 +86,25 @@ script-anchors:
       cmake
       -DJUCE_ROOT="${TRAVIS_BUILD_DIR}/ci/tmp/JUCE-4.2.0"
       -DJucer2Reprojucer_EXE="ci/ReprojucerHelpers/Debug_4.2.0_build/Jucer2Reprojucer/Jucer2Reprojucer"
-      -Dgenerated_JUCE_ROOT="Jucer2Reprojucer/generated/JUCE-4.2.0"
+      -Dgenerated_JUCE_ROOT="generated/JUCE-4.2.0"
       -P ci/apply-Jucer2Reprojucer-to-JUCE-jucers.cmake
     - >
       cmake
       -DJUCE_ROOT="${TRAVIS_BUILD_DIR}/ci/tmp/JUCE-4.3.1"
       -DJucer2Reprojucer_EXE="ci/ReprojucerHelpers/Debug_4.3.1_build/Jucer2Reprojucer/Jucer2Reprojucer"
-      -Dgenerated_JUCE_ROOT="Jucer2Reprojucer/generated/JUCE-4.3.1"
+      -Dgenerated_JUCE_ROOT="generated/JUCE-4.3.1"
       -P ci/apply-Jucer2Reprojucer-to-JUCE-jucers.cmake
     - >
       cmake
       -DJUCE_ROOT="${TRAVIS_BUILD_DIR}/ci/tmp/JUCE-5.0.0"
       -DJucer2Reprojucer_EXE="ci/ReprojucerHelpers/Debug_5.0.0_build/Jucer2Reprojucer/Jucer2Reprojucer"
-      -Dgenerated_JUCE_ROOT="Jucer2Reprojucer/generated/JUCE-5.0.0"
+      -Dgenerated_JUCE_ROOT="generated/JUCE-5.0.0"
       -P ci/apply-Jucer2Reprojucer-to-JUCE-jucers.cmake
     - >
       cmake
       -DJUCE_ROOT="${TRAVIS_BUILD_DIR}/ci/tmp/JUCE-5.2.0"
       -DJucer2Reprojucer_EXE="ci/ReprojucerHelpers/Debug_5.2.0_build/Jucer2Reprojucer/Jucer2Reprojucer"
-      -Dgenerated_JUCE_ROOT="Jucer2Reprojucer/generated/JUCE-5.2.0"
+      -Dgenerated_JUCE_ROOT="generated/JUCE-5.2.0"
       -P ci/apply-Jucer2Reprojucer-to-JUCE-jucers.cmake
     - git diff --quiet
 
@@ -187,25 +187,25 @@ script-anchors:
       cmake
       -DJUCE_ROOT="${TRAVIS_BUILD_DIR}/ci/tmp/JUCE-4.2.0"
       -DJucer2Reprojucer_EXE="ci/ReprojucerHelpers/4.2.0_build/Jucer2Reprojucer/Debug/Jucer2Reprojucer"
-      -Dgenerated_JUCE_ROOT="Jucer2Reprojucer/generated/JUCE-4.2.0"
+      -Dgenerated_JUCE_ROOT="generated/JUCE-4.2.0"
       -P ci/apply-Jucer2Reprojucer-to-JUCE-jucers.cmake
     - >
       cmake
       -DJUCE_ROOT="${TRAVIS_BUILD_DIR}/ci/tmp/JUCE-4.3.1"
       -DJucer2Reprojucer_EXE="ci/ReprojucerHelpers/4.3.1_build/Jucer2Reprojucer/Debug/Jucer2Reprojucer"
-      -Dgenerated_JUCE_ROOT="Jucer2Reprojucer/generated/JUCE-4.3.1"
+      -Dgenerated_JUCE_ROOT="generated/JUCE-4.3.1"
       -P ci/apply-Jucer2Reprojucer-to-JUCE-jucers.cmake
     - >
       cmake
       -DJUCE_ROOT="${TRAVIS_BUILD_DIR}/ci/tmp/JUCE-5.0.0"
       -DJucer2Reprojucer_EXE="ci/ReprojucerHelpers/5.0.0_build/Jucer2Reprojucer/Debug/Jucer2Reprojucer"
-      -Dgenerated_JUCE_ROOT="Jucer2Reprojucer/generated/JUCE-5.0.0"
+      -Dgenerated_JUCE_ROOT="generated/JUCE-5.0.0"
       -P ci/apply-Jucer2Reprojucer-to-JUCE-jucers.cmake
     - >
       cmake
       -DJUCE_ROOT="${TRAVIS_BUILD_DIR}/ci/tmp/JUCE-5.2.0"
       -DJucer2Reprojucer_EXE="ci/ReprojucerHelpers/5.2.0_build/Jucer2Reprojucer/Debug/Jucer2Reprojucer"
-      -Dgenerated_JUCE_ROOT="Jucer2Reprojucer/generated/JUCE-5.2.0"
+      -Dgenerated_JUCE_ROOT="generated/JUCE-5.2.0"
       -P ci/apply-Jucer2Reprojucer-to-JUCE-jucers.cmake
     - git diff --quiet
 
