@@ -52,6 +52,6 @@ set(JUCE_ROOT "${CMAKE_CURRENT_LIST_DIR}/../tmp/JUCE-${JUCE_VERSION}")
 
 
 add_subdirectory(
-  "${CMAKE_CURRENT_LIST_DIR}/../../Jucer2Reprojucer/generated/JUCE-${JUCE_VERSION}"
+  "${CMAKE_CURRENT_LIST_DIR}/../../generated/JUCE-${JUCE_VERSION}"
   "JUCE-${JUCE_VERSION}"
 )
