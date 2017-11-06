@@ -94,7 +94,7 @@ Now we can build `MyGreatProject` using CMake:
 - Visual Studio 2017
 - Visual Studio 2015
 - Visual Studio 2013
-- Linux Makefiles
+- Linux Makefile
 
 
 ## License

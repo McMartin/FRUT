@@ -26,7 +26,7 @@ Supported export targets
 - Visual Studio 2017
 - Visual Studio 2015
 - Visual Studio 2013
-- Linux Makefiles
+- Linux Makefile
 
 
 Commands
