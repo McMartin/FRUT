@@ -104,6 +104,12 @@ macOS), Visual Studio 2013, 2015 and 2017 (on Windows only), and Xcode (on macOS
 - Linux Makefile
 
 
+## Contributing
+
+Contributions to FRUT are very welcomed and you can contribute even if you don't know
+anything about CMake. See the [CONTRIBUTING](CONTRIBUTING.md) file for more details.
+
+
 ## License
 
 FRUT is free software: you can redistribute it and/or modify it under the terms of
