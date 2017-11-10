@@ -88,6 +88,7 @@ target_compile_definitions(IconBuilder PRIVATE
   $<$<CONFIG:Debug>:DEBUG=1>
   $<$<CONFIG:Debug>:_DEBUG=1>
   $<$<NOT:$<CONFIG:Debug>>:NDEBUG=1>
+  JUCE_DISABLE_JUCE_VERSION_PRINTING=1
   JUCE_GLOBAL_MODULE_SETTINGS_INCLUDED=1
   JUCE_MODULE_AVAILABLE_juce_core=1
   JUCE_MODULE_AVAILABLE_juce_data_structures=1
