@@ -53,38 +53,45 @@ We first build `Jucer2Reprojucer` with CMake. Since `Jucer2Reprojucer` uses the 
 modules `juce_core`, `juce_data_structures` and `juce_events`, we specify where to find
 JUCE by defining `JUCE_ROOT` when calling `cmake`.
 
-    cd <root>/FRUT/Jucer2Reprojucer
+    $ cd <root>/FRUT/Jucer2Reprojucer/
 
-    mkdir build && cd build
+    $ mkdir build && cd build/
 
-    # On macOS
-    cmake .. -G Xcode -DJUCE_ROOT=../../../JUCE
-    # On Linux and on Windows
-    cmake .. -DJUCE_ROOT=../../../JUCE
+    $ cmake .. -DJUCE_ROOT=../../../JUCE
+    ...
+    -- Configuring done
+    -- Generating done
+    -- Build files have been written to: <root>/FRUT/Jucer2Reprojucer/build
 
-    cmake --build .
+    $ cmake --build .
+    ...
 
 Then we convert `MyGreatProject.jucer` to a new `CMakeLists.txt` file:
 
-    cd <root>/MyGreatProject
+    $ cd <root>/MyGreatProject/
 
-    # On macOs and on Windows
-    ../FRUT/Jucer2Reprojucer/build/Debug/Jucer2Reprojucer MyGreatProject.jucer ../FRUT/cmake/Reprojucer.cmake
-    # On Linux
-    ../FRUT/Jucer2Reprojucer/build/Jucer2Reprojucer MyGreatProject.jucer ../FRUT/cmake/Reprojucer.cmake
+    $ ../FRUT/Jucer2Reprojucer/build(/Debug)/Jucer2Reprojucer MyGreatProject.jucer ../FRUT/cmake/Reprojucer.cmake
+
+    <root>/MyGreatProject/CMakeLists.txt has been successfully generated.
 
 Now we can build `MyGreatProject` using CMake:
 
-    cd <root>/MyGreatProject
+    $ cd <root>/MyGreatProject/
 
-    mkdir build && cd build
+    $ mkdir build && cd build/
 
-    # On macOs
-    cmake .. -G Xcode -DMyGreatProject_jucer_FILE=../MyGreatProject.jucer
-    # On Linux and on Windows
-    cmake .. -DMyGreatProject_jucer_FILE=../MyGreatProject.jucer
+    $ cmake .. -G<generator> -DMyGreatProject_jucer_FILE=../MyGreatProject.jucer
+    ...
+    -- Configuring done
+    -- Generating done
+    -- Build files have been written to: <root>/MyGreatProject/build
 
-    cmake --build .
+    $ cmake --build .
+    ...
+
+`<generator>` can be one of many [CMake Generators][cmake-generators] supported by your
+platform, including Ninja, NMake Makefiles (on Windows only), Unix Makefiles (on Linux and
+macOS), Visual Studio 2013, 2015 and 2017 (on Windows only), and Xcode (on macOS only).
 
 
 ## Supported export targets
@@ -95,6 +102,12 @@ Now we can build `MyGreatProject` using CMake:
 - Visual Studio 2015
 - Visual Studio 2013
 - Linux Makefile
+
+
+## Contributing
+
+Contributions to FRUT are very welcomed and you can contribute even if you don't know
+anything about CMake. See the [CONTRIBUTING](CONTRIBUTING.md) file for more details.
 
 
 ## License
@@ -110,6 +123,7 @@ See the [LICENSE](LICENSE) file for more details.
 
 [appveyor-badge]: https://ci.appveyor.com/api/projects/status/github/McMartin/frut?branch=master&svg=true
 [appveyor]: https://ci.appveyor.com/project/McMartin/frut
+[cmake-generators]: https://cmake.org/cmake/help/latest/manual/cmake-generators.7.html
 [cmake]: https://cmake.org/
 [github-frut]: https://github.com/McMartin/FRUT
 [github-juce-4.2.0]: https://github.com/WeAreROLI/JUCE/tree/4.2.0
