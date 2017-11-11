@@ -115,6 +115,7 @@ function(jucer_project_settings)
     "PROJECT_NAME"
     "PROJECT_VERSION"
     "COMPANY_NAME"
+    "COMPANY_COPYRIGHT"
     "COMPANY_WEBSITE"
     "COMPANY_EMAIL"
     "REPORT_JUCE_APP_USAGE"
@@ -1165,6 +1166,11 @@ function(jucer_project_end)
   endif()
 
   if(WIN32 AND NOT JUCER_PROJECT_TYPE STREQUAL "Static Library")
+    if(NOT(DEFINED JUCER_VERSION AND JUCER_VERSION LESS 5.2.0))
+      set(resources_rc_legal_copyright
+        "\n      VALUE \"LegalCopyright\",  \"${JUCER_COMPANY_COPYRIGHT}\\0\""
+      )
+    endif()
     if(DEFINED icon_filename)
       string(APPEND resources_rc_icon_settings
         "\nIDI_ICON1 ICON DISCARDABLE \"${icon_filename}\""
@@ -1191,6 +1197,12 @@ function(jucer_project_end)
     PROPERTIES HEADER_FILE_ONLY TRUE
   )
 
+  if(DEFINED JUCER_VERSION AND JUCER_VERSION LESS 5.2.0)
+    set(ns_human_readable_copyright "${JUCER_COMPANY_NAME}")
+  else()
+    set(ns_human_readable_copyright "${JUCER_COMPANY_COPYRIGHT}")
+  endif()
+
   set(main_plist_entries "
     <key>CFBundleExecutable</key>
     <string>@bundle_executable@</string>
@@ -1211,7 +1223,7 @@ function(jucer_project_end)
     <key>CFBundleVersion</key>
     <string>@JUCER_PROJECT_VERSION@</string>
     <key>NSHumanReadableCopyright</key>
-    <string>@JUCER_COMPANY_NAME@</string>
+    <string>@ns_human_readable_copyright@</string>
     <key>NSHighResolutionCapable</key>
     <true/>"
   )
