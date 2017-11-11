@@ -27,6 +27,7 @@ jucer_project_settings(
   PROJECT_NAME "InAppPurchase"
   PROJECT_VERSION "0.0.2"
   COMPANY_NAME "ROLI Ltd."
+  COMPANY_COPYRIGHT "ROLI Ltd."
   COMPANY_WEBSITE "www.juce.com"
   COMPANY_EMAIL "info@juce.com"
   REPORT_JUCE_APP_USAGE ON # Required for closed source applications without an Indie or Pro JUCE license
