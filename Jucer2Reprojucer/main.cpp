@@ -388,6 +388,12 @@ int main(int argc, char* argv[])
     wLn("  ", projectSetting("PROJECT_NAME", "name"));
     wLn("  ", projectSetting("PROJECT_VERSION", "version"));
     wLn("  ", projectSetting("COMPANY_NAME", "companyName"));
+
+    if (jucerProject.hasProperty("companyCopyright"))
+    {
+      wLn("  ", projectSetting("COMPANY_COPYRIGHT", "companyCopyright"));
+    }
+
     wLn("  ", projectSetting("COMPANY_WEBSITE", "companyWebsite"));
     wLn("  ", projectSetting("COMPANY_EMAIL", "companyEmail"));
 
