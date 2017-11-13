@@ -334,6 +334,12 @@ function(jucer_project_module module_name PATH_TAG modules_folder)
     "${modules_folder}/${module_name}/*.mm"
   )
 
+  if(DEFINED JUCER_VERSION AND JUCER_VERSION LESS 5.0.0)
+    set(proxy_prefix)
+  else()
+    set(proxy_prefix "include_")
+  endif()
+
   foreach(src_file ${module_src_files})
     unset(to_compile)
 
@@ -369,10 +375,10 @@ function(jucer_project_module module_name PATH_TAG modules_folder)
     if(to_compile)
       get_filename_component(src_file_basename "${src_file}" NAME)
       configure_file("${Reprojucer_templates_DIR}/JuceLibraryCode-Wrapper.cpp"
-        "JuceLibraryCode/${src_file_basename}"
+        "JuceLibraryCode/${proxy_prefix}${src_file_basename}"
       )
       list(APPEND JUCER_PROJECT_SOURCES
-        "${CMAKE_CURRENT_BINARY_DIR}/JuceLibraryCode/${src_file_basename}"
+        "${CMAKE_CURRENT_BINARY_DIR}/JuceLibraryCode/${proxy_prefix}${src_file_basename}"
       )
     endif()
   endforeach()
