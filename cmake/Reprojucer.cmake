@@ -498,6 +498,10 @@ function(jucer_export_target exporter)
       "PLATFORM_TOOLSET"
       "USE_IPP_LIBRARY"
     )
+
+    if(exporter STREQUAL "Visual Studio 2017")
+      list(APPEND export_target_settings_tags "CXX_STANDARD_TO_USE")
+    endif()
   endif()
 
   if(exporter STREQUAL "Linux Makefile")
@@ -645,7 +649,17 @@ function(jucer_export_target exporter)
           message(FATAL_ERROR "Unsupported value for USE_IPP_LIBRARY: \"${value}\"")
         endif()
 
-      elseif(tag STREQUAL "CXX_STANDARD_TO_USE")
+      elseif(tag STREQUAL "CXX_STANDARD_TO_USE"
+          AND exporter STREQUAL "Visual Studio 2017")
+        if(value STREQUAL "C++14")
+          set(JUCER_CXX_STANDARD_TO_USE "14" PARENT_SCOPE)
+        elseif(value STREQUAL "Latest C++ Standard")
+          set(JUCER_CXX_STANDARD_TO_USE "latest" PARENT_SCOPE)
+        elseif(NOT value STREQUAL "(default)")
+          message(FATAL_ERROR "Unsupported value for CXX_STANDARD_TO_USE: \"${value}\"")
+        endif()
+
+      elseif(tag STREQUAL "CXX_STANDARD_TO_USE" AND exporter STREQUAL "Linux Makefile")
         if(value MATCHES "^C\\+\\+(03|11|14)$")
           set(JUCER_CXX_LANGUAGE_STANDARD ${value} PARENT_SCOPE)
         else()
@@ -2433,6 +2447,12 @@ function(__set_common_target_properties target)
         COMMAND ${all_confs_postbuild_command}
         WORKING_DIRECTORY "${JUCER_TARGET_PROJECT_FOLDER}"
       )
+    endif()
+
+    if(JUCER_CXX_STANDARD_TO_USE STREQUAL "14")
+      target_compile_options(${target} PRIVATE "-std:c++14")
+    elseif(JUCER_CXX_STANDARD_TO_USE STREQUAL "latest")
+      target_compile_options(${target} PRIVATE "-std:c++latest")
     endif()
 
   elseif(CMAKE_HOST_SYSTEM_NAME STREQUAL "Linux")
