@@ -884,7 +884,10 @@ function(jucer_export_target_configuration
         set(JUCER_CUSTOM_XCODE_FLAGS_${config} ${value} PARENT_SCOPE)
 
       elseif(tag STREQUAL "CXX_LANGUAGE_STANDARD")
-        if(value MATCHES "^(C|GNU)\\+\\+(98|11|14)$")
+        if(value MATCHES "^(C|GNU)\\+\\+98$" AND DEFINED JUCER_VERSION
+            AND JUCER_VERSION LESS 5.0.0)
+          set(JUCER_CXX_LANGUAGE_STANDARD_${config} ${value} PARENT_SCOPE)
+        elseif(value MATCHES "^(C|GNU)\\+\\+(11|14)$")
           set(JUCER_CXX_LANGUAGE_STANDARD_${config} ${value} PARENT_SCOPE)
         elseif(NOT value STREQUAL "Use Default")
           message(FATAL_ERROR "Unsupported value for CXX_LANGUAGE_STANDARD: \"${value}\"")
