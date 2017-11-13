@@ -14,6 +14,7 @@ Define the settings specific to a JUCE project.
                   Audio Plug-in>
     [PROJECT_VERSION <project_version>]
     [COMPANY_NAME <company_name>]
+    [COMPANY_COPYRIGHT <company_copyright>]
     [COMPANY_WEBSITE <company_website>]
     [COMPANY_EMAIL <company_email>]
     [REPORT_JUCE_APP_USAGE <ON|OFF>]
