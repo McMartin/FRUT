@@ -826,6 +826,34 @@ int main(int argc, char* argv[])
             {
               wLn("  USE_IPP_LIBRARY \"", useIppLibrary, "\"");
             }
+
+            if (exporterType == "VS2017")
+            {
+              if (exporter.hasProperty("cppLanguageStandard"))
+              {
+                const auto cppLanguageStandard = [&exporter]() -> std::string {
+                  const auto value =
+                    exporter.getProperty("cppLanguageStandard").toString();
+
+                  if (value == "")
+                    return "(default)";
+                  if (value == "stdcpp14")
+                    return "C++14";
+                  if (value == "stdcpplatest")
+                    return "Latest C++ Standard";
+                  return {};
+                }();
+
+                if (cppLanguageStandard.empty())
+                {
+                  wLn("  # CXX_STANDARD_TO_USE");
+                }
+                else
+                {
+                  wLn("  CXX_STANDARD_TO_USE \"", cppLanguageStandard, "\"");
+                }
+              }
+            }
           }
         }
 

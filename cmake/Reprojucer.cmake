@@ -334,6 +334,12 @@ function(jucer_project_module module_name PATH_TAG modules_folder)
     "${modules_folder}/${module_name}/*.mm"
   )
 
+  if(DEFINED JUCER_VERSION AND JUCER_VERSION LESS 5.0.0)
+    set(proxy_prefix)
+  else()
+    set(proxy_prefix "include_")
+  endif()
+
   foreach(src_file ${module_src_files})
     unset(to_compile)
 
@@ -369,10 +375,10 @@ function(jucer_project_module module_name PATH_TAG modules_folder)
     if(to_compile)
       get_filename_component(src_file_basename "${src_file}" NAME)
       configure_file("${Reprojucer_templates_DIR}/JuceLibraryCode-Wrapper.cpp"
-        "JuceLibraryCode/${src_file_basename}"
+        "JuceLibraryCode/${proxy_prefix}${src_file_basename}"
       )
       list(APPEND JUCER_PROJECT_SOURCES
-        "${CMAKE_CURRENT_BINARY_DIR}/JuceLibraryCode/${src_file_basename}"
+        "${CMAKE_CURRENT_BINARY_DIR}/JuceLibraryCode/${proxy_prefix}${src_file_basename}"
       )
     endif()
   endforeach()
@@ -498,6 +504,10 @@ function(jucer_export_target exporter)
       "PLATFORM_TOOLSET"
       "USE_IPP_LIBRARY"
     )
+
+    if(exporter STREQUAL "Visual Studio 2017")
+      list(APPEND export_target_settings_tags "CXX_STANDARD_TO_USE")
+    endif()
   endif()
 
   if(exporter STREQUAL "Linux Makefile")
@@ -645,7 +655,17 @@ function(jucer_export_target exporter)
           message(FATAL_ERROR "Unsupported value for USE_IPP_LIBRARY: \"${value}\"")
         endif()
 
-      elseif(tag STREQUAL "CXX_STANDARD_TO_USE")
+      elseif(tag STREQUAL "CXX_STANDARD_TO_USE"
+          AND exporter STREQUAL "Visual Studio 2017")
+        if(value STREQUAL "C++14")
+          set(JUCER_CXX_STANDARD_TO_USE "14" PARENT_SCOPE)
+        elseif(value STREQUAL "Latest C++ Standard")
+          set(JUCER_CXX_STANDARD_TO_USE "latest" PARENT_SCOPE)
+        elseif(NOT value STREQUAL "(default)")
+          message(FATAL_ERROR "Unsupported value for CXX_STANDARD_TO_USE: \"${value}\"")
+        endif()
+
+      elseif(tag STREQUAL "CXX_STANDARD_TO_USE" AND exporter STREQUAL "Linux Makefile")
         if(value MATCHES "^C\\+\\+(03|11|14)$")
           set(JUCER_CXX_LANGUAGE_STANDARD ${value} PARENT_SCOPE)
         else()
@@ -884,7 +904,10 @@ function(jucer_export_target_configuration
         set(JUCER_CUSTOM_XCODE_FLAGS_${config} ${value} PARENT_SCOPE)
 
       elseif(tag STREQUAL "CXX_LANGUAGE_STANDARD")
-        if(value MATCHES "^(C|GNU)\\+\\+(98|11|14)$")
+        if(value MATCHES "^(C|GNU)\\+\\+98$" AND DEFINED JUCER_VERSION
+            AND JUCER_VERSION LESS 5.0.0)
+          set(JUCER_CXX_LANGUAGE_STANDARD_${config} ${value} PARENT_SCOPE)
+        elseif(value MATCHES "^(C|GNU)\\+\\+(11|14)$")
           set(JUCER_CXX_LANGUAGE_STANDARD_${config} ${value} PARENT_SCOPE)
         elseif(NOT value STREQUAL "Use Default")
           message(FATAL_ERROR "Unsupported value for CXX_LANGUAGE_STANDARD: \"${value}\"")
@@ -2430,6 +2453,12 @@ function(__set_common_target_properties target)
         COMMAND ${all_confs_postbuild_command}
         WORKING_DIRECTORY "${JUCER_TARGET_PROJECT_FOLDER}"
       )
+    endif()
+
+    if(JUCER_CXX_STANDARD_TO_USE STREQUAL "14")
+      target_compile_options(${target} PRIVATE "-std:c++14")
+    elseif(JUCER_CXX_STANDARD_TO_USE STREQUAL "latest")
+      target_compile_options(${target} PRIVATE "-std:c++latest")
     endif()
 
   elseif(CMAKE_HOST_SYSTEM_NAME STREQUAL "Linux")
