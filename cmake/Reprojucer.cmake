@@ -15,7 +15,9 @@
 # You should have received a copy of the GNU General Public License
 # along with FRUT.  If not, see <http://www.gnu.org/licenses/>.
 
-cmake_minimum_required(VERSION 3.4)
+if(CMAKE_VERSION VERSION_LESS 3.4)
+  message(FATAL_ERROR "Reprojucer requires at least CMake version 3.4")
+endif()
 
 if(CMAKE_VERSION VERSION_LESS 3.5)
   include(CMakeParseArguments)
