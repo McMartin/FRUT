@@ -334,7 +334,7 @@ function(jucer_project_module module_name PATH_TAG modules_folder)
     "${modules_folder}/${module_name}/*.mm"
   )
 
-  if(DEFINED JUCER_VERSION AND JUCER_VERSION LESS 5.0.0)
+  if(DEFINED JUCER_VERSION AND JUCER_VERSION VERSION_LESS 5.0.0)
     set(proxy_prefix)
   else()
     set(proxy_prefix "include_")
@@ -905,7 +905,7 @@ function(jucer_export_target_configuration
 
       elseif(tag STREQUAL "CXX_LANGUAGE_STANDARD")
         if(value MATCHES "^(C|GNU)\\+\\+98$" AND DEFINED JUCER_VERSION
-            AND JUCER_VERSION LESS 5.0.0)
+            AND JUCER_VERSION VERSION_LESS 5.0.0)
           set(JUCER_CXX_LANGUAGE_STANDARD_${config} ${value} PARENT_SCOPE)
         elseif(value MATCHES "^(C|GNU)\\+\\+(11|14)$")
           set(JUCER_CXX_LANGUAGE_STANDARD_${config} ${value} PARENT_SCOPE)
@@ -1189,7 +1189,7 @@ function(jucer_project_end)
   endif()
 
   if(WIN32 AND NOT JUCER_PROJECT_TYPE STREQUAL "Static Library")
-    if(NOT(DEFINED JUCER_VERSION AND JUCER_VERSION LESS 5.2.0))
+    if(NOT(DEFINED JUCER_VERSION AND JUCER_VERSION VERSION_LESS 5.2.0))
       set(resources_rc_legal_copyright
         "\n      VALUE \"LegalCopyright\",  \"${JUCER_COMPANY_COPYRIGHT}\\0\""
       )
@@ -1220,7 +1220,7 @@ function(jucer_project_end)
     PROPERTIES HEADER_FILE_ONLY TRUE
   )
 
-  if(DEFINED JUCER_VERSION AND JUCER_VERSION LESS 5.2.0)
+  if(DEFINED JUCER_VERSION AND JUCER_VERSION VERSION_LESS 5.2.0)
     set(ns_human_readable_copyright "${JUCER_COMPANY_NAME}")
   else()
     set(ns_human_readable_copyright "${JUCER_COMPANY_COPYRIGHT}")
@@ -1905,7 +1905,7 @@ function(__generate_AppConfig_header)
     endforeach()
   endif()
 
-  if(DEFINED JUCER_VERSION AND JUCER_VERSION LESS 5.0.0)
+  if(DEFINED JUCER_VERSION AND JUCER_VERSION VERSION_LESS 5.0.0)
     string(TOUPPER "${JUCER_PROJECT_ID}" upper_project_id)
     set(template_file "${Reprojucer_templates_DIR}/AppConfig-4.h")
   else()
@@ -2003,7 +2003,7 @@ function(__generate_JuceHeader_header)
     string(APPEND modules_includes "#include <${module_name}/${module_name}.h>\n")
   endforeach()
 
-  if(DEFINED JUCER_VERSION AND JUCER_VERSION LESS 5.0.0)
+  if(DEFINED JUCER_VERSION AND JUCER_VERSION VERSION_LESS 5.0.0)
     string(TOUPPER "${JUCER_PROJECT_ID}" upper_project_id)
     set(template_file "${Reprojucer_templates_DIR}/JuceHeader-4.h")
   else()
