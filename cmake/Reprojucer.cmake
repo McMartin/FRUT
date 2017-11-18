@@ -2126,7 +2126,7 @@ function(__set_common_target_properties target)
         )
       endif()
       target_include_directories(${target} PRIVATE "${JUCER_VST_SDK_FOLDER}")
-    elseif(DEFINED JUCER_VERSION AND JUCER_VERSION VERSION_LESS "4.2.4")
+    elseif(DEFINED JUCER_VERSION AND JUCER_VERSION VERSION_LESS 4.2.4)
       message(WARNING "JUCER_VST_SDK_FOLDER is not defined. You should give "
         "VST_SDK_FOLDER when calling jucer_export_target()."
       )
