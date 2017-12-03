@@ -2385,14 +2385,8 @@ function(__set_common_target_properties target)
       if(DEFINED JUCER_INCREMENTAL_LINKING_${config})
         if(JUCER_INCREMENTAL_LINKING_${config})
           string(TOUPPER "${config}" upper_config)
-          get_target_property(link_flags ${target} LINK_FLAGS_${upper_config})
-          if(link_flags)
-            string(APPEND link_flags " /INCREMENTAL")
-          else()
-            set(link_flags "/INCREMENTAL")
-          endif()
-          set_target_properties(${target} PROPERTIES
-            LINK_FLAGS_${upper_config} "${link_flags}"
+          set_property(TARGET ${target}
+            APPEND PROPERTY LINK_FLAGS_${upper_config} "/INCREMENTAL"
           )
         endif()
       endif()
@@ -2400,14 +2394,8 @@ function(__set_common_target_properties target)
       if(DEFINED JUCER_GENERATE_MANIFEST_${config})
         if(NOT JUCER_GENERATE_MANIFEST_${config})
           string(TOUPPER "${config}" upper_config)
-          get_target_property(link_flags ${target} LINK_FLAGS_${upper_config})
-          if(link_flags)
-            string(APPEND link_flags " /MANIFEST:NO")
-          else()
-            set(link_flags "/MANIFEST:NO")
-          endif()
-          set_target_properties(${target} PROPERTIES
-            LINK_FLAGS_${upper_config} "${link_flags}"
+          set_property(TARGET ${target}
+            APPEND PROPERTY LINK_FLAGS_${upper_config} "/MANIFEST:NO"
           )
         endif()
       endif()
