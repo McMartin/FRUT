@@ -1651,6 +1651,15 @@ function(jucer_project_end)
       add_library(${target} MODULE ${all_sources})
       set_target_properties(${target} PROPERTIES PREFIX "")
       __set_common_target_properties(${target})
+
+      if(JUCER_BUILD_VST3 AND MSVC)
+        add_custom_command(TARGET ${target} POST_BUILD
+          COMMAND
+          "${CMAKE_COMMAND}" "-E" "copy_if_different"
+          "$<TARGET_FILE:${target}>"
+          "$<TARGET_FILE_DIR:${target}>/${target}.vst3"
+        )
+      endif()
     endif()
 
   else()
