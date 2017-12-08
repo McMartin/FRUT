@@ -1651,6 +1651,15 @@ function(jucer_project_end)
       add_library(${target} MODULE ${all_sources})
       set_target_properties(${target} PROPERTIES PREFIX "")
       __set_common_target_properties(${target})
+
+      if(JUCER_BUILD_VST3 AND MSVC)
+        add_custom_command(TARGET ${target} POST_BUILD
+          COMMAND
+          "${CMAKE_COMMAND}" "-E" "copy_if_different"
+          "$<TARGET_FILE:${target}>"
+          "$<TARGET_FILE_DIR:${target}>/${target}.vst3"
+        )
+      endif()
     endif()
 
   else()
@@ -2352,10 +2361,18 @@ function(__set_common_target_properties target)
 
       if(DEFINED JUCER_RUNTIME_LIBRARY_FLAG_${config})
         set(runtime_library_flag ${JUCER_RUNTIME_LIBRARY_FLAG_${config}})
-      elseif(JUCER_CONFIGURATION_IS_DEBUG_${config})
-        set(runtime_library_flag "/MTd")
+      elseif(JUCER_BUILD_VST OR JUCER_BUILD_VST3)
+        if(JUCER_CONFIGURATION_IS_DEBUG_${config})
+          set(runtime_library_flag "/MDd")
+        else()
+          set(runtime_library_flag "/MD")
+        endif()
       else()
-        set(runtime_library_flag "/MT")
+        if(JUCER_CONFIGURATION_IS_DEBUG_${config})
+          set(runtime_library_flag "/MTd")
+        else()
+          set(runtime_library_flag "/MT")
+        endif()
       endif()
       target_compile_options(${target} PRIVATE
         $<$<CONFIG:${config}>:${runtime_library_flag}>
