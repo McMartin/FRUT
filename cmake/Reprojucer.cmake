@@ -1510,11 +1510,10 @@ function(jucer_project_end)
           "$ENV{HOME}/Library/Audio/Plug-Ins/Components"
         )
         __set_JucePlugin_Build_defines(${au_target} "AudioUnitPlugIn")
-        set(au_plugin_osx_frameworks
+        __link_osx_frameworks(${au_target}
           ${JUCER_PROJECT_OSX_FRAMEWORKS} ${JUCER_EXTRA_FRAMEWORKS}
           "AudioUnit" "CoreAudioKit"
         )
-        __link_osx_frameworks(${au_target} ${au_plugin_osx_frameworks})
         __add_xcode_resources(${au_target} ${JUCER_CUSTOM_XCODE_RESOURCE_FOLDERS})
         __set_custom_xcode_flags(${au_target})
         unset(au_target)
@@ -1604,11 +1603,10 @@ function(jucer_project_end)
         )
         __set_common_target_properties(${auv3_target})
         __set_JucePlugin_Build_defines(${auv3_target} "AudioUnitv3PlugIn")
-        set(auv3_plugin_osx_frameworks
+        __link_osx_frameworks(${auv3_target}
           ${JUCER_PROJECT_OSX_FRAMEWORKS} ${JUCER_EXTRA_FRAMEWORKS}
           "AudioUnit" "CoreAudioKit" "AVFoundation"
         )
-        __link_osx_frameworks(${auv3_target} ${auv3_plugin_osx_frameworks})
         __add_xcode_resources(${auv3_target} ${JUCER_CUSTOM_XCODE_RESOURCE_FOLDERS})
         __set_custom_xcode_flags(${auv3_target})
 
