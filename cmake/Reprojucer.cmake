@@ -1415,8 +1415,6 @@ function(jucer_project_end)
         ${SharedCode_sources}
         ${JUCER_PROJECT_RESOURCES}
         ${JUCER_PROJECT_XCODE_RESOURCES}
-        "${CMAKE_CURRENT_BINARY_DIR}/JuceLibraryCode/AppConfig.h"
-        "${CMAKE_CURRENT_BINARY_DIR}/JuceLibraryCode/JuceHeader.h"
         ${JUCER_PROJECT_BROWSABLE_FILES}
       )
       __set_common_target_properties(${shared_code_target})
