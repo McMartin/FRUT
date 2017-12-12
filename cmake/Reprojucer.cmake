@@ -1328,8 +1328,7 @@ function(jucer_project_end)
     __set_custom_xcode_flags(${target})
 
   elseif(JUCER_PROJECT_TYPE STREQUAL "GUI Application")
-    add_executable(${target} ${all_sources})
-    set_target_properties(${target} PROPERTIES MACOSX_BUNDLE TRUE)
+    add_executable(${target} WIN32 MACOSX_BUNDLE ${all_sources})
 
     if(JUCER_DOCUMENT_FILE_EXTENSIONS)
       foreach(type_extension ${JUCER_DOCUMENT_FILE_EXTENSIONS})
@@ -1368,7 +1367,6 @@ function(jucer_project_end)
     __generate_plist_file(${target} "App" "APPL" "????"
       "${main_plist_entries}" "${bundle_document_types_entries}"
     )
-    set_target_properties(${target} PROPERTIES WIN32_EXECUTABLE TRUE)
     __set_common_target_properties(${target})
     __link_osx_frameworks(${target}
       ${JUCER_PROJECT_OSX_FRAMEWORKS} ${JUCER_EXTRA_FRAMEWORKS}
