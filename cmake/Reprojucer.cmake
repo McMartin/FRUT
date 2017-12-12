@@ -336,7 +336,7 @@ function(jucer_project_module module_name PATH_TAG modules_folder)
     "${modules_folder}/${module_name}/*.mm"
   )
 
-  if(DEFINED JUCER_VERSION AND JUCER_VERSION VERSION_LESS 5.0.0)
+  if(DEFINED JUCER_VERSION AND JUCER_VERSION VERSION_LESS 5)
     set(proxy_prefix)
   else()
     set(proxy_prefix "include_")
@@ -907,7 +907,7 @@ function(jucer_export_target_configuration
 
       elseif(tag STREQUAL "CXX_LANGUAGE_STANDARD")
         if(value MATCHES "^(C|GNU)\\+\\+98$" AND DEFINED JUCER_VERSION
-            AND JUCER_VERSION VERSION_LESS 5.0.0)
+            AND JUCER_VERSION VERSION_LESS 5)
           set(JUCER_CXX_LANGUAGE_STANDARD_${config} ${value} PARENT_SCOPE)
         elseif(value MATCHES "^(C|GNU)\\+\\+(11|14)$")
           set(JUCER_CXX_LANGUAGE_STANDARD_${config} ${value} PARENT_SCOPE)
@@ -1191,7 +1191,7 @@ function(jucer_project_end)
   endif()
 
   if(WIN32 AND NOT JUCER_PROJECT_TYPE STREQUAL "Static Library")
-    if(NOT(DEFINED JUCER_VERSION AND JUCER_VERSION VERSION_LESS 5.2.0))
+    if(NOT(DEFINED JUCER_VERSION AND JUCER_VERSION VERSION_LESS 5.2))
       set(resources_rc_legal_copyright
         "\n      VALUE \"LegalCopyright\",  \"${JUCER_COMPANY_COPYRIGHT}\\0\""
       )
@@ -1222,7 +1222,7 @@ function(jucer_project_end)
     PROPERTIES HEADER_FILE_ONLY TRUE
   )
 
-  if(DEFINED JUCER_VERSION AND JUCER_VERSION VERSION_LESS 5.2.0)
+  if(DEFINED JUCER_VERSION AND JUCER_VERSION VERSION_LESS 5.2)
     set(ns_human_readable_copyright "${JUCER_COMPANY_NAME}")
   else()
     set(ns_human_readable_copyright "${JUCER_COMPANY_COPYRIGHT}")
@@ -1322,14 +1322,11 @@ function(jucer_project_end)
   if(JUCER_PROJECT_TYPE STREQUAL "Console Application")
     add_executable(${target} ${all_sources})
     __set_common_target_properties(${target})
-    __link_osx_frameworks(${target}
-      ${JUCER_PROJECT_OSX_FRAMEWORKS} ${JUCER_EXTRA_FRAMEWORKS}
-    )
+    __link_osx_frameworks(${target})
     __set_custom_xcode_flags(${target})
 
   elseif(JUCER_PROJECT_TYPE STREQUAL "GUI Application")
-    add_executable(${target} ${all_sources})
-    set_target_properties(${target} PROPERTIES MACOSX_BUNDLE TRUE)
+    add_executable(${target} WIN32 MACOSX_BUNDLE ${all_sources})
 
     if(JUCER_DOCUMENT_FILE_EXTENSIONS)
       foreach(type_extension ${JUCER_DOCUMENT_FILE_EXTENSIONS})
@@ -1368,12 +1365,9 @@ function(jucer_project_end)
     __generate_plist_file(${target} "App" "APPL" "????"
       "${main_plist_entries}" "${bundle_document_types_entries}"
     )
-    set_target_properties(${target} PROPERTIES WIN32_EXECUTABLE TRUE)
     __set_common_target_properties(${target})
-    __link_osx_frameworks(${target}
-      ${JUCER_PROJECT_OSX_FRAMEWORKS} ${JUCER_EXTRA_FRAMEWORKS}
-    )
-    __add_xcode_resources(${target} ${JUCER_CUSTOM_XCODE_RESOURCE_FOLDERS})
+    __link_osx_frameworks(${target})
+    __add_xcode_resources(${target})
     __set_custom_xcode_flags(${target})
 
   elseif(JUCER_PROJECT_TYPE STREQUAL "Static Library")
@@ -1415,8 +1409,6 @@ function(jucer_project_end)
         ${SharedCode_sources}
         ${JUCER_PROJECT_RESOURCES}
         ${JUCER_PROJECT_XCODE_RESOURCES}
-        "${CMAKE_CURRENT_BINARY_DIR}/JuceLibraryCode/AppConfig.h"
-        "${CMAKE_CURRENT_BINARY_DIR}/JuceLibraryCode/JuceHeader.h"
         ${JUCER_PROJECT_BROWSABLE_FILES}
       )
       __set_common_target_properties(${shared_code_target})
@@ -1440,10 +1432,8 @@ function(jucer_project_end)
           "$ENV{HOME}/Library/Audio/Plug-Ins/VST"
         )
         __set_JucePlugin_Build_defines(${vst_target} "VSTPlugIn")
-        __link_osx_frameworks(${vst_target}
-          ${JUCER_PROJECT_OSX_FRAMEWORKS} ${JUCER_EXTRA_FRAMEWORKS}
-        )
-        __add_xcode_resources(${vst_target} ${JUCER_CUSTOM_XCODE_RESOURCE_FOLDERS})
+        __link_osx_frameworks(${vst_target})
+        __add_xcode_resources(${vst_target})
         __set_custom_xcode_flags(${vst_target})
         unset(vst_target)
       endif()
@@ -1464,10 +1454,8 @@ function(jucer_project_end)
           "$ENV{HOME}/Library/Audio/Plug-Ins/VST3"
         )
         __set_JucePlugin_Build_defines(${vst3_target} "VST3PlugIn")
-        __link_osx_frameworks(${vst3_target}
-          ${JUCER_PROJECT_OSX_FRAMEWORKS} ${JUCER_EXTRA_FRAMEWORKS}
-        )
-        __add_xcode_resources(${vst3_target} ${JUCER_CUSTOM_XCODE_RESOURCE_FOLDERS})
+        __link_osx_frameworks(${vst3_target})
+        __add_xcode_resources(${vst3_target})
         __set_custom_xcode_flags(${vst3_target})
         unset(vst3_target)
       endif()
@@ -1514,12 +1502,8 @@ function(jucer_project_end)
           "$ENV{HOME}/Library/Audio/Plug-Ins/Components"
         )
         __set_JucePlugin_Build_defines(${au_target} "AudioUnitPlugIn")
-        set(au_plugin_osx_frameworks
-          ${JUCER_PROJECT_OSX_FRAMEWORKS} ${JUCER_EXTRA_FRAMEWORKS}
-          "AudioUnit" "CoreAudioKit"
-        )
-        __link_osx_frameworks(${au_target} ${au_plugin_osx_frameworks})
-        __add_xcode_resources(${au_target} ${JUCER_CUSTOM_XCODE_RESOURCE_FOLDERS})
+        __link_osx_frameworks(${au_target} "AudioUnit" "CoreAudioKit")
+        __add_xcode_resources(${au_target})
         __set_custom_xcode_flags(${au_target})
         unset(au_target)
       endif()
@@ -1608,12 +1592,8 @@ function(jucer_project_end)
         )
         __set_common_target_properties(${auv3_target})
         __set_JucePlugin_Build_defines(${auv3_target} "AudioUnitv3PlugIn")
-        set(auv3_plugin_osx_frameworks
-          ${JUCER_PROJECT_OSX_FRAMEWORKS} ${JUCER_EXTRA_FRAMEWORKS}
-          "AudioUnit" "CoreAudioKit" "AVFoundation"
-        )
-        __link_osx_frameworks(${auv3_target} ${auv3_plugin_osx_frameworks})
-        __add_xcode_resources(${auv3_target} ${JUCER_CUSTOM_XCODE_RESOURCE_FOLDERS})
+        __link_osx_frameworks(${auv3_target} "AudioUnit" "CoreAudioKit" "AVFoundation")
+        __add_xcode_resources(${auv3_target})
         __set_custom_xcode_flags(${auv3_target})
 
         # AUv3 Standalone
@@ -1629,10 +1609,8 @@ function(jucer_project_end)
         )
         __set_common_target_properties(${standalone_target})
         __set_JucePlugin_Build_defines(${standalone_target} "StandalonePlugIn")
-        __link_osx_frameworks(${standalone_target}
-          ${JUCER_PROJECT_OSX_FRAMEWORKS} ${JUCER_EXTRA_FRAMEWORKS}
-        )
-        __add_xcode_resources(${standalone_target} ${JUCER_CUSTOM_XCODE_RESOURCE_FOLDERS})
+        __link_osx_frameworks(${standalone_target})
+        __add_xcode_resources(${standalone_target})
         install(TARGETS ${auv3_target} COMPONENT _embed_app_extension_in_standalone_app
           DESTINATION "$<TARGET_FILE_DIR:${standalone_target}>/../PlugIns"
         )
@@ -1916,7 +1894,7 @@ function(__generate_AppConfig_header)
     endforeach()
   endif()
 
-  if(DEFINED JUCER_VERSION AND JUCER_VERSION VERSION_LESS 5.0.0)
+  if(DEFINED JUCER_VERSION AND JUCER_VERSION VERSION_LESS 5)
     string(TOUPPER "${JUCER_PROJECT_ID}" upper_project_id)
     set(template_file "${Reprojucer_templates_DIR}/AppConfig-4.h")
   else()
@@ -2014,7 +1992,7 @@ function(__generate_JuceHeader_header)
     string(APPEND modules_includes "#include <${module_name}/${module_name}.h>\n")
   endforeach()
 
-  if(DEFINED JUCER_VERSION AND JUCER_VERSION VERSION_LESS 5.0.0)
+  if(DEFINED JUCER_VERSION AND JUCER_VERSION VERSION_LESS 5)
     string(TOUPPER "${JUCER_PROJECT_ID}" upper_project_id)
     set(template_file "${Reprojucer_templates_DIR}/JuceHeader-4.h")
   else()
@@ -2656,7 +2634,7 @@ endfunction()
 
 function(__link_osx_frameworks target)
 
-  set(osx_frameworks ${ARGN})
+  set(osx_frameworks ${JUCER_PROJECT_OSX_FRAMEWORKS} ${JUCER_EXTRA_FRAMEWORKS} ${ARGN})
 
   if(APPLE)
     if(JUCER_FLAG_JUCE_PLUGINHOST_AU)
@@ -2675,10 +2653,8 @@ endfunction()
 
 function(__add_xcode_resources target)
 
-  set(resource_folders ${ARGN})
-
   if(APPLE)
-    foreach(folder ${resource_folders})
+    foreach(folder ${JUCER_CUSTOM_XCODE_RESOURCE_FOLDERS})
       add_custom_command(TARGET ${target} PRE_BUILD
         COMMAND rsync -r "${folder}" "$<TARGET_FILE_DIR:${target}>/../Resources"
       )
