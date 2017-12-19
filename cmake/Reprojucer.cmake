@@ -128,6 +128,7 @@ function(jucer_project_settings)
     "BINARYDATACPP_SIZE_LIMIT"
     "BINARYDATA_NAMESPACE"
     "PREPROCESSOR_DEFINITIONS"
+    "HEADER_SEARCH_PATHS"
   )
 
   set(project_types "GUI Application" "Console Application" "Static Library"
@@ -182,6 +183,16 @@ function(jucer_project_settings)
 
       elseif(tag STREQUAL "PREPROCESSOR_DEFINITIONS")
         string(REPLACE "\n" ";" value "${value}")
+
+      elseif(tag STREQUAL "HEADER_SEARCH_PATHS")
+        string(REPLACE "\\" "/" value "${value}")
+        string(REPLACE "\n" ";" value "${value}")
+        unset(header_search_paths)
+        foreach(path ${value})
+          __abs_path_based_on_jucer_project_dir("${path}" path)
+          list(APPEND header_search_paths "${path}")
+        endforeach()
+        set(value ${header_search_paths})
 
       endif()
 
@@ -2184,6 +2195,7 @@ function(__set_common_target_properties target)
     set(search_paths ${JUCER_HEADER_SEARCH_PATHS_${config}})
     target_include_directories(${target} PRIVATE $<$<CONFIG:${config}>:${search_paths}>)
   endforeach()
+  target_include_directories(${target} PRIVATE ${JUCER_HEADER_SEARCH_PATHS})
 
   if(JUCER_BUILD_VST OR JUCER_FLAG_JUCE_PLUGINHOST_VST)
     if(DEFINED JUCER_VST_SDK_FOLDER)
