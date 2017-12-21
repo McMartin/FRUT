@@ -203,6 +203,7 @@ function(jucer_audio_plugin_settings)
     "BUILD_AUDIOUNIT_V3"
     "BUILD_RTAS"
     "BUILD_AAX"
+    "BUILD_STANDALONE_PLUGIN"
     "PLUGIN_NAME"
     "PLUGIN_DESCRIPTION"
     "PLUGIN_MANUFACTURER"
@@ -247,6 +248,11 @@ function(jucer_audio_plugin_settings)
           "comment on the issue \"Reprojucer.cmake doesn't support building AAX "
           "plugins\" on GitHub: https://github.com/McMartin/FRUT/issues/267"
         )
+
+      elseif(tag STREQUAL "BUILD_STANDALONE_PLUGIN" AND DEFINED JUCER_VERSION
+          AND JUCER_VERSION VERSION_LESS 5)
+        message(WARNING "BUILD_STANDALONE_PLUGIN is a JUCE 5 feature only")
+
       endif()
 
       set(JUCER_${tag} "${value}" PARENT_SCOPE)
@@ -345,17 +351,24 @@ function(jucer_project_module module_name PATH_TAG modules_folder)
   foreach(src_file ${module_src_files})
     unset(to_compile)
 
-    # See LibraryModule::CompileUnit::isNeededForExporter()
-    # in JUCE/extras/Projucer/Source/Project/jucer_Module.cpp
-    if(  (src_file MATCHES "_AU[._]"         AND NOT (JUCER_BUILD_AUDIOUNIT    AND APPLE))
-      OR (src_file MATCHES "_AUv3[._]"       AND NOT (JUCER_BUILD_AUDIOUNIT_V3 AND APPLE))
-      OR (src_file MATCHES "_AAX[._]"        AND NOT (JUCER_BUILD_AAX          AND (APPLE OR MSVC)))
-      OR (src_file MATCHES "_RTAS[._]"       AND NOT (JUCER_BUILD_RTAS         AND (APPLE OR MSVC)))
-      OR (src_file MATCHES "_VST2[._]"       AND NOT (JUCER_BUILD_VST          AND TRUE))
-      OR (src_file MATCHES "_VST3[._]"       AND NOT (JUCER_BUILD_VST3         AND (APPLE OR MSVC)))
-      OR (src_file MATCHES "_Standalone[._]" AND NOT (JUCER_BUILD_AUDIOUNIT_V3 AND APPLE))
+    if(  (src_file MATCHES "_AU[._]"   AND NOT (JUCER_BUILD_AUDIOUNIT    AND APPLE))
+      OR (src_file MATCHES "_AUv3[._]" AND NOT (JUCER_BUILD_AUDIOUNIT_V3 AND APPLE))
+      OR (src_file MATCHES "_AAX[._]"  AND NOT (JUCER_BUILD_AAX          AND (APPLE OR MSVC)))
+      OR (src_file MATCHES "_RTAS[._]" AND NOT (JUCER_BUILD_RTAS         AND (APPLE OR MSVC)))
+      OR (src_file MATCHES "_VST2[._]" AND NOT (JUCER_BUILD_VST          AND TRUE))
+      OR (src_file MATCHES "_VST3[._]" AND NOT (JUCER_BUILD_VST3         AND (APPLE OR MSVC)))
     )
       set(to_compile FALSE)
+    endif()
+
+    if(DEFINED JUCER_VERSION AND JUCER_VERSION VERSION_LESS 5)
+      if(src_file MATCHES "_Standalone[._]" AND NOT (JUCER_BUILD_AUDIOUNIT_V3 AND APPLE))
+        set(to_compile FALSE)
+      endif()
+    else()
+      if(src_file MATCHES "_Standalone[._]" AND NOT JUCER_BUILD_STANDALONE_PLUGIN)
+        set(to_compile FALSE)
+      endif()
     endif()
 
     if(NOT DEFINED to_compile)
@@ -1382,7 +1395,7 @@ function(jucer_project_end)
     __set_custom_xcode_flags(${target})
 
   elseif(JUCER_PROJECT_TYPE STREQUAL "Audio Plug-in")
-    if(NOT APPLE)
+    if(NOT APPLE AND DEFINED JUCER_VERSION AND JUCER_VERSION VERSION_LESS 5)
       add_library(${target} MODULE ${all_sources})
       set_target_properties(${target} PROPERTIES PREFIX "")
       __set_output_directory_properties(${target} "")
@@ -1622,33 +1635,51 @@ function(jucer_project_end)
         unset(auv3_target)
       endif()
 
-      if(TARGET ${target}_AUv3_AppExtension)
-        set(standalone_target ${target}_AUv3_Standalone)
-        add_executable(${standalone_target} MACOSX_BUNDLE
+      if(JUCER_BUILD_AUDIOUNIT_V3
+          AND DEFINED JUCER_VERSION AND JUCER_VERSION VERSION_LESS 5)
+        set(juce4_standalone ON)
+      endif()
+
+      if(juce4_standalone OR (JUCER_BUILD_STANDALONE_PLUGIN
+          AND NOT (DEFINED JUCER_VERSION AND JUCER_VERSION VERSION_LESS 5)))
+        if(juce4_standalone)
+          set(standalone_target ${target}_AUv3_Standalone)
+        else()
+          set(standalone_target ${target}_StandalonePlugin)
+        endif()
+        add_executable(${standalone_target} WIN32 MACOSX_BUNDLE
           ${Standalone_sources}
           ${JUCER_PROJECT_XCODE_RESOURCES}
         )
         target_link_libraries(${standalone_target} PRIVATE ${shared_code_target})
-        add_dependencies(${standalone_target} ${target}_AUv3_AppExtension)
-        __generate_plist_file(${standalone_target} "AUv3_Standalone" "APPL" "????"
-          "${main_plist_entries}" ""
-        )
+        if(juce4_standalone)
+          __generate_plist_file(${standalone_target} "AUv3_Standalone" "APPL" "????"
+            "${main_plist_entries}" ""
+          )
+        else()
+          __generate_plist_file(${standalone_target} "Standalone_Plugin" "APPL" "????"
+            "${main_plist_entries}" ""
+          )
+        endif()
         __set_output_directory_properties(${standalone_target} "Standalone Plugin")
         __set_common_target_properties(${standalone_target})
         __set_JucePlugin_Build_defines(${standalone_target} "StandalonePlugIn")
         __link_osx_frameworks(${standalone_target})
         __add_xcode_resources(${standalone_target})
-        install(TARGETS ${target}_AUv3_AppExtension
-          COMPONENT _embed_app_extension_in_standalone_app
-          DESTINATION "$<TARGET_FILE_DIR:${standalone_target}>/../PlugIns"
-        )
-        add_custom_command(TARGET ${standalone_target} POST_BUILD
-          COMMAND
-          "${CMAKE_COMMAND}"
-          "-DCMAKE_INSTALL_CONFIG_NAME=$<CONFIG>"
-          "-DCMAKE_INSTALL_COMPONENT=_embed_app_extension_in_standalone_app"
-          "-P" "${CMAKE_CURRENT_BINARY_DIR}/cmake_install.cmake"
-        )
+        if(TARGET ${target}_AUv3_AppExtension)
+          add_dependencies(${standalone_target} ${target}_AUv3_AppExtension)
+          install(TARGETS ${target}_AUv3_AppExtension
+            COMPONENT _embed_app_extension_in_standalone_app
+            DESTINATION "$<TARGET_FILE_DIR:${standalone_target}>/../PlugIns"
+          )
+          add_custom_command(TARGET ${standalone_target} POST_BUILD
+            COMMAND
+            "${CMAKE_COMMAND}"
+            "-DCMAKE_INSTALL_CONFIG_NAME=$<CONFIG>"
+            "-DCMAKE_INSTALL_COMPONENT=_embed_app_extension_in_standalone_app"
+            "-P" "${CMAKE_CURRENT_BINARY_DIR}/cmake_install.cmake"
+          )
+        endif()
         __set_custom_xcode_flags(${standalone_target})
         unset(standalone_target)
       endif()
@@ -1781,7 +1812,11 @@ function(__generate_AppConfig_header)
     __bool_to_int("${JUCER_BUILD_AUDIOUNIT_V3}" Build_AUv3_value)
     __bool_to_int("OFF" Build_RTAS_value) # Not yet supported
     __bool_to_int("OFF" Build_AAX_value) # Not yet supported
-    __bool_to_int("${JUCER_BUILD_AUDIOUNIT_V3}" Build_STANDALONE_value)
+    if(DEFINED JUCER_VERSION AND JUCER_VERSION VERSION_LESS 5)
+      __bool_to_int("${JUCER_BUILD_AUDIOUNIT_V3}" Build_STANDALONE_value)
+    else()
+      __bool_to_int("${JUCER_BUILD_STANDALONE_PLUGIN}" Build_STANDALONE_value)
+    endif()
 
     set(Name_value "\"${JUCER_PLUGIN_NAME}\"")
     set(Desc_value "\"${JUCER_PLUGIN_DESCRIPTION}\"")
@@ -2642,11 +2677,13 @@ endfunction()
 
 function(__set_JucePlugin_Build_defines target target_type)
 
-  # See XCodeProjectExporter::Target::getTargetSettings()
-  # in JUCE/extras/Projucer/Source/Project Saving/jucer_ProjectExport_XCode.h
-  set(plugin_types     VST VST3 AudioUnit AudioUnitv3  RTAS AAX Standalone  )
-  set(setting_suffixes VST VST3 AUDIOUNIT AUDIOUNIT_V3 RTAS AAX AUDIOUNIT_V3)
-  set(define_suffixes  VST VST3 AU        AUv3         RTAS AAX Standalone  )
+  if(JUCER_BUILD_AUDIOUNIT_V3 AND DEFINED JUCER_VERSION AND JUCER_VERSION VERSION_LESS 5)
+    set(JUCER_BUILD_STANDALONE_PLUGIN ON)
+  endif()
+
+  set(plugin_types     VST VST3 AudioUnit AudioUnitv3  RTAS AAX Standalone       )
+  set(setting_suffixes VST VST3 AUDIOUNIT AUDIOUNIT_V3 RTAS AAX STANDALONE_PLUGIN)
+  set(define_suffixes  VST VST3 AU        AUv3         RTAS AAX Standalone       )
 
   foreach(index RANGE 6)
     list(GET setting_suffixes ${index} setting_suffix)
