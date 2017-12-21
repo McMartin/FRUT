@@ -2088,6 +2088,7 @@ function(__set_common_target_properties target)
     if(DEFINED JUCER_BINARY_LOCATION_${config})
       set(output_directory "${JUCER_BINARY_LOCATION_${config}}")
       set_target_properties(${target} PROPERTIES
+        ARCHIVE_OUTPUT_DIRECTORY_${upper_config} "${output_directory}"
         LIBRARY_OUTPUT_DIRECTORY_${upper_config} "${output_directory}"
         RUNTIME_OUTPUT_DIRECTORY_${upper_config} "${output_directory}"
       )
