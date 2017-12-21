@@ -1382,7 +1382,21 @@ function(jucer_project_end)
     __set_custom_xcode_flags(${target})
 
   elseif(JUCER_PROJECT_TYPE STREQUAL "Audio Plug-in")
-    if(APPLE)
+    if(NOT APPLE)
+      add_library(${target} MODULE ${all_sources})
+      set_target_properties(${target} PROPERTIES PREFIX "")
+      __set_output_directory_properties(${target} "")
+      __set_common_target_properties(${target})
+
+      if(JUCER_BUILD_VST3 AND MSVC)
+        add_custom_command(TARGET ${target} POST_BUILD
+          COMMAND
+          "${CMAKE_COMMAND}" "-E" "copy_if_different"
+          "$<TARGET_FILE:${target}>"
+          "$<TARGET_FILE_DIR:${target}>/${target}.vst3"
+        )
+      endif()
+    else()
       foreach(src_file ${JUCER_PROJECT_SOURCES})
         # See XCodeProjectExporter::getTargetTypeFromFilePath()
         # in JUCE/extras/Projucer/Source/Project Saving/jucer_ProjectExport_XCode.h
@@ -1637,20 +1651,6 @@ function(jucer_project_end)
         )
         __set_custom_xcode_flags(${standalone_target})
         unset(standalone_target)
-      endif()
-    else()
-      add_library(${target} MODULE ${all_sources})
-      set_target_properties(${target} PROPERTIES PREFIX "")
-      __set_output_directory_properties(${target} "")
-      __set_common_target_properties(${target})
-
-      if(JUCER_BUILD_VST3 AND MSVC)
-        add_custom_command(TARGET ${target} POST_BUILD
-          COMMAND
-          "${CMAKE_COMMAND}" "-E" "copy_if_different"
-          "$<TARGET_FILE:${target}>"
-          "$<TARGET_FILE_DIR:${target}>/${target}.vst3"
-        )
       endif()
     endif()
 
