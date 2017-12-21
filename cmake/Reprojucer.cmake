@@ -2588,18 +2588,20 @@ endfunction()
 
 function(__set_bundle_properties target extension)
 
-  set_target_properties(${target} PROPERTIES
-    BUNDLE TRUE
-    BUNDLE_EXTENSION "${extension}"
-    XCODE_ATTRIBUTE_WRAPPER_EXTENSION "${extension}"
-  )
+  if(APPLE)
+    set_target_properties(${target} PROPERTIES
+      BUNDLE TRUE
+      BUNDLE_EXTENSION "${extension}"
+      XCODE_ATTRIBUTE_WRAPPER_EXTENSION "${extension}"
+    )
 
-  add_custom_command(TARGET ${target} PRE_BUILD
-    COMMAND
-    "${CMAKE_COMMAND}" "-E" "copy_if_different"
-    "${Reprojucer_templates_DIR}/PkgInfo"
-    "$<TARGET_FILE_DIR:${target}>/.."
-  )
+    add_custom_command(TARGET ${target} PRE_BUILD
+      COMMAND
+      "${CMAKE_COMMAND}" "-E" "copy_if_different"
+      "${Reprojucer_templates_DIR}/PkgInfo"
+      "$<TARGET_FILE_DIR:${target}>/.."
+    )
+  endif()
 
 endfunction()
 
