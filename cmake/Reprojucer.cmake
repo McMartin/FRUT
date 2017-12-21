@@ -2696,32 +2696,30 @@ endfunction()
 
 function(__set_custom_xcode_flags target)
 
-  if(APPLE)
-    set(all_flags)
+  set(all_flags)
 
-    foreach(config ${JUCER_PROJECT_CONFIGURATIONS})
-      if(DEFINED JUCER_CUSTOM_XCODE_FLAGS_${config})
-        foreach(xcode_flag ${JUCER_CUSTOM_XCODE_FLAGS_${config}})
-          string(REGEX MATCH "^([^= ]+) *= *(.+)" m "${xcode_flag}")
-          if(NOT CMAKE_MATCH_0)
-            message(FATAL_ERROR "Invalid Xcode flag: \"${xcode_flag}\"")
-          endif()
-          list(APPEND all_flags "${CMAKE_MATCH_1}")
-          set(value "${CMAKE_MATCH_2}")
-          string(APPEND all_confs_${CMAKE_MATCH_1} "$<$<CONFIG:${config}>:${value}>")
-        endforeach()
-      endif()
-    endforeach()
-
-    if(all_flags)
-      list(SORT all_flags)
-      list(REMOVE_DUPLICATES all_flags)
-      foreach(flag ${all_flags})
-        set_target_properties(${target} PROPERTIES
-          XCODE_ATTRIBUTE_${flag} "${all_confs_${flag}}"
-        )
+  foreach(config ${JUCER_PROJECT_CONFIGURATIONS})
+    if(DEFINED JUCER_CUSTOM_XCODE_FLAGS_${config})
+      foreach(xcode_flag ${JUCER_CUSTOM_XCODE_FLAGS_${config}})
+        string(REGEX MATCH "^([^= ]+) *= *(.+)" m "${xcode_flag}")
+        if(NOT CMAKE_MATCH_0)
+          message(FATAL_ERROR "Invalid Xcode flag: \"${xcode_flag}\"")
+        endif()
+        list(APPEND all_flags "${CMAKE_MATCH_1}")
+        set(value "${CMAKE_MATCH_2}")
+        string(APPEND all_confs_${CMAKE_MATCH_1} "$<$<CONFIG:${config}>:${value}>")
       endforeach()
     endif()
+  endforeach()
+
+  if(all_flags)
+    list(SORT all_flags)
+    list(REMOVE_DUPLICATES all_flags)
+    foreach(flag ${all_flags})
+      set_target_properties(${target} PROPERTIES
+        XCODE_ATTRIBUTE_${flag} "${all_confs_${flag}}"
+      )
+    endforeach()
   endif()
 
 endfunction()
