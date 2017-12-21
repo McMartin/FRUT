@@ -1431,9 +1431,11 @@ function(jucer_project_end)
         __set_bundle_properties(${vst_target} "vst")
         __set_output_directory_properties(${vst_target} "VST")
         __set_common_target_properties(${vst_target})
-        __install_to_plugin_binary_location(${vst_target} "VST"
-          "$ENV{HOME}/Library/Audio/Plug-Ins/VST"
-        )
+        if(APPLE)
+          __install_to_plugin_binary_location(${vst_target} "VST"
+            "$ENV{HOME}/Library/Audio/Plug-Ins/VST"
+          )
+        endif()
         __set_JucePlugin_Build_defines(${vst_target} "VSTPlugIn")
         __link_osx_frameworks(${vst_target})
         __add_xcode_resources(${vst_target})
@@ -1441,7 +1443,7 @@ function(jucer_project_end)
         unset(vst_target)
       endif()
 
-      if(JUCER_BUILD_VST3)
+      if(JUCER_BUILD_VST3 AND (APPLE OR MSVC))
         set(vst3_target ${target}_VST3)
         add_library(${vst3_target} MODULE
           ${VST3_sources}
@@ -1454,9 +1456,11 @@ function(jucer_project_end)
         __set_bundle_properties(${vst3_target} "vst3")
         __set_output_directory_properties(${vst3_target} "VST3")
         __set_common_target_properties(${vst3_target})
-        __install_to_plugin_binary_location(${vst3_target} "VST3"
-          "$ENV{HOME}/Library/Audio/Plug-Ins/VST3"
-        )
+        if(APPLE)
+          __install_to_plugin_binary_location(${vst3_target} "VST3"
+            "$ENV{HOME}/Library/Audio/Plug-Ins/VST3"
+          )
+        endif()
         __set_JucePlugin_Build_defines(${vst3_target} "VST3PlugIn")
         __link_osx_frameworks(${vst3_target})
         __add_xcode_resources(${vst3_target})
@@ -1464,7 +1468,7 @@ function(jucer_project_end)
         unset(vst3_target)
       endif()
 
-      if(JUCER_BUILD_AUDIOUNIT)
+      if(JUCER_BUILD_AUDIOUNIT AND APPLE)
         set(au_target ${target}_AU)
         add_library(${au_target} MODULE
           ${AudioUnit_sources}
@@ -1513,7 +1517,7 @@ function(jucer_project_end)
         unset(au_target)
       endif()
 
-      if(JUCER_BUILD_AUDIOUNIT_V3)
+      if(JUCER_BUILD_AUDIOUNIT_V3 AND APPLE)
         set(auv3_target ${target}_AUv3_AppExtension)
         add_library(${auv3_target} MODULE
           ${AudioUnitv3_sources}
