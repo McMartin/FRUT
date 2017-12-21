@@ -1220,7 +1220,8 @@ function(jucer_project_end)
   endif()
 
   if(WIN32 AND NOT JUCER_PROJECT_TYPE STREQUAL "Static Library")
-    if(NOT(DEFINED JUCER_VERSION AND JUCER_VERSION VERSION_LESS 5.2))
+    if(DEFINED JUCER_COMPANY_COPYRIGHT
+        OR NOT(DEFINED JUCER_VERSION AND JUCER_VERSION VERSION_LESS 5.2))
       set(resources_rc_legal_copyright
         "\n      VALUE \"LegalCopyright\",  \"${JUCER_COMPANY_COPYRIGHT}\\0\""
       )
@@ -1251,10 +1252,11 @@ function(jucer_project_end)
     PROPERTIES HEADER_FILE_ONLY TRUE
   )
 
-  if(DEFINED JUCER_VERSION AND JUCER_VERSION VERSION_LESS 5.2)
-    set(ns_human_readable_copyright "${JUCER_COMPANY_NAME}")
-  else()
+  if(DEFINED JUCER_COMPANY_COPYRIGHT
+      OR NOT(DEFINED JUCER_VERSION AND JUCER_VERSION VERSION_LESS 5.2))
     set(ns_human_readable_copyright "${JUCER_COMPANY_COPYRIGHT}")
+  else()
+    set(ns_human_readable_copyright "${JUCER_COMPANY_NAME}")
   endif()
 
   set(main_plist_entries "
