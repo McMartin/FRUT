@@ -286,7 +286,7 @@ function(jucer_project_files source_group_name)
       list(APPEND files "${path}")
 
       if(xcode_resource STREQUAL "x")
-        list(APPEND JUCER_PROJECT_XCODE_RESOURCES ${path})
+        list(APPEND JUCER_PROJECT_XCODE_RESOURCES $<$<BOOL:APPLE>:${path}>)
       elseif(binary_resource STREQUAL "x")
         list(APPEND JUCER_PROJECT_RESOURCES ${path})
       else()
@@ -1309,11 +1309,8 @@ function(jucer_project_end)
     ${JUCER_PROJECT_SOURCES}
     ${JUCER_PROJECT_RESOURCES}
     ${JUCER_PROJECT_BROWSABLE_FILES}
+    ${JUCER_PROJECT_XCODE_RESOURCES}
   )
-
-  if(APPLE)
-    list(APPEND all_sources ${JUCER_PROJECT_XCODE_RESOURCES})
-  endif()
 
   set_source_files_properties(${JUCER_PROJECT_XCODE_RESOURCES}
     PROPERTIES MACOSX_PACKAGE_LOCATION "Resources"
