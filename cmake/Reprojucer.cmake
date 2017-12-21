@@ -1321,6 +1321,7 @@ function(jucer_project_end)
 
   if(JUCER_PROJECT_TYPE STREQUAL "Console Application")
     add_executable(${target} ${all_sources})
+    __set_output_directory_properties(${target})
     __set_common_target_properties(${target})
     __link_osx_frameworks(${target})
     __set_custom_xcode_flags(${target})
@@ -1365,6 +1366,7 @@ function(jucer_project_end)
     __generate_plist_file(${target} "App" "APPL" "????"
       "${main_plist_entries}" "${bundle_document_types_entries}"
     )
+    __set_output_directory_properties(${target})
     __set_common_target_properties(${target})
     __link_osx_frameworks(${target})
     __add_xcode_resources(${target})
@@ -1372,11 +1374,13 @@ function(jucer_project_end)
 
   elseif(JUCER_PROJECT_TYPE STREQUAL "Static Library")
     add_library(${target} STATIC ${all_sources})
+    __set_output_directory_properties(${target})
     __set_common_target_properties(${target})
     __set_custom_xcode_flags(${target})
 
   elseif(JUCER_PROJECT_TYPE STREQUAL "Dynamic Library")
     add_library(${target} SHARED ${all_sources})
+    __set_output_directory_properties(${target})
     __set_common_target_properties(${target})
     __set_custom_xcode_flags(${target})
 
@@ -1411,6 +1415,7 @@ function(jucer_project_end)
         ${JUCER_PROJECT_XCODE_RESOURCES}
         ${JUCER_PROJECT_BROWSABLE_FILES}
       )
+      __set_output_directory_properties(${shared_code_target})
       __set_common_target_properties(${shared_code_target})
       target_compile_definitions(${shared_code_target} PRIVATE "JUCE_SHARED_CODE=1")
       __set_JucePlugin_Build_defines(${shared_code_target} "SharedCodeTarget")
@@ -1427,6 +1432,7 @@ function(jucer_project_end)
           "${main_plist_entries}" ""
         )
         __set_bundle_properties(${vst_target} "vst")
+        __set_output_directory_properties(${vst_target})
         __set_common_target_properties(${vst_target})
         __install_to_plugin_binary_location(${vst_target} "VST"
           "$ENV{HOME}/Library/Audio/Plug-Ins/VST"
@@ -1449,6 +1455,7 @@ function(jucer_project_end)
           "${main_plist_entries}" ""
         )
         __set_bundle_properties(${vst3_target} "vst3")
+        __set_output_directory_properties(${vst3_target})
         __set_common_target_properties(${vst3_target})
         __install_to_plugin_binary_location(${vst3_target} "VST3"
           "$ENV{HOME}/Library/Audio/Plug-Ins/VST3"
@@ -1497,6 +1504,7 @@ function(jucer_project_end)
           "${main_plist_entries}" "${audio_components_entries}"
         )
         __set_bundle_properties(${au_target} "component")
+        __set_output_directory_properties(${au_target})
         __set_common_target_properties(${au_target})
         __install_to_plugin_binary_location(${au_target} "AU"
           "$ENV{HOME}/Library/Audio/Plug-Ins/Components"
@@ -1590,6 +1598,7 @@ function(jucer_project_end)
           BUNDLE_EXTENSION "appex"
           XCODE_ATTRIBUTE_WRAPPER_EXTENSION "appex"
         )
+        __set_output_directory_properties(${auv3_target})
         __set_common_target_properties(${auv3_target})
         __set_JucePlugin_Build_defines(${auv3_target} "AudioUnitv3PlugIn")
         __link_osx_frameworks(${auv3_target} "AudioUnit" "CoreAudioKit" "AVFoundation")
@@ -1607,6 +1616,7 @@ function(jucer_project_end)
         __generate_plist_file(${standalone_target} "AUv3_Standalone" "APPL" "????"
           "${main_plist_entries}" ""
         )
+        __set_output_directory_properties(${standalone_target})
         __set_common_target_properties(${standalone_target})
         __set_JucePlugin_Build_defines(${standalone_target} "StandalonePlugIn")
         __link_osx_frameworks(${standalone_target})
@@ -1628,6 +1638,7 @@ function(jucer_project_end)
     else()
       add_library(${target} MODULE ${all_sources})
       set_target_properties(${target} PROPERTIES PREFIX "")
+      __set_output_directory_properties(${target})
       __set_common_target_properties(${target})
 
       if(JUCER_BUILD_VST3 AND MSVC)
@@ -2071,6 +2082,24 @@ function(__generate_icon_file icon_format out_icon_filename)
 endfunction()
 
 
+function(__set_output_directory_properties target)
+
+  foreach(config ${JUCER_PROJECT_CONFIGURATIONS})
+    string(TOUPPER "${config}" upper_config)
+
+    if(DEFINED JUCER_BINARY_LOCATION_${config})
+      set(output_directory "${JUCER_BINARY_LOCATION_${config}}")
+      set_target_properties(${target} PROPERTIES
+        ARCHIVE_OUTPUT_DIRECTORY_${upper_config} "${output_directory}"
+        LIBRARY_OUTPUT_DIRECTORY_${upper_config} "${output_directory}"
+        RUNTIME_OUTPUT_DIRECTORY_${upper_config} "${output_directory}"
+      )
+    endif()
+  endforeach()
+
+endfunction()
+
+
 function(__set_common_target_properties target)
 
   foreach(config ${JUCER_PROJECT_CONFIGURATIONS})
@@ -2084,15 +2113,6 @@ function(__set_common_target_properties target)
     set_target_properties(${target} PROPERTIES
       OUTPUT_NAME_${upper_config} "${output_name}"
     )
-
-    if(DEFINED JUCER_BINARY_LOCATION_${config})
-      set(output_directory "${JUCER_BINARY_LOCATION_${config}}")
-      set_target_properties(${target} PROPERTIES
-        ARCHIVE_OUTPUT_DIRECTORY_${upper_config} "${output_directory}"
-        LIBRARY_OUTPUT_DIRECTORY_${upper_config} "${output_directory}"
-        RUNTIME_OUTPUT_DIRECTORY_${upper_config} "${output_directory}"
-      )
-    endif()
   endforeach()
 
   target_include_directories(${target} PRIVATE
