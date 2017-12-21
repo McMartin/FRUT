@@ -1605,15 +1605,17 @@ function(jucer_project_end)
         __link_osx_frameworks(${auv3_target} "AudioUnit" "CoreAudioKit" "AVFoundation")
         __add_xcode_resources(${auv3_target})
         __set_custom_xcode_flags(${auv3_target})
+        unset(auv3_target)
+      endif()
 
-        # AUv3 Standalone
+      if(TARGET ${target}_AUv3_AppExtension)
         set(standalone_target ${target}_AUv3_Standalone)
         add_executable(${standalone_target} MACOSX_BUNDLE
           ${Standalone_sources}
           ${JUCER_PROJECT_XCODE_RESOURCES}
         )
         target_link_libraries(${standalone_target} PRIVATE ${shared_code_target})
-        add_dependencies(${standalone_target} ${auv3_target})
+        add_dependencies(${standalone_target} ${target}_AUv3_AppExtension)
         __generate_plist_file(${standalone_target} "AUv3_Standalone" "APPL" "????"
           "${main_plist_entries}" ""
         )
@@ -1622,7 +1624,8 @@ function(jucer_project_end)
         __set_JucePlugin_Build_defines(${standalone_target} "StandalonePlugIn")
         __link_osx_frameworks(${standalone_target})
         __add_xcode_resources(${standalone_target})
-        install(TARGETS ${auv3_target} COMPONENT _embed_app_extension_in_standalone_app
+        install(TARGETS ${target}_AUv3_AppExtension
+          COMPONENT _embed_app_extension_in_standalone_app
           DESTINATION "$<TARGET_FILE_DIR:${standalone_target}>/../PlugIns"
         )
         add_custom_command(TARGET ${standalone_target} POST_BUILD
@@ -1633,7 +1636,6 @@ function(jucer_project_end)
           "-P" "${CMAKE_CURRENT_BINARY_DIR}/cmake_install.cmake"
         )
         __set_custom_xcode_flags(${standalone_target})
-        unset(auv3_target)
         unset(standalone_target)
       endif()
     else()
