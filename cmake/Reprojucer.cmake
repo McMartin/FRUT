@@ -2716,8 +2716,8 @@ function(__set_JucePlugin_Build_defines target target_type)
     list(GET plugin_types ${index} plugin_type)
     list(GET define_suffixes ${index} define_suffix)
 
-    if(JUCER_BUILD_${setting_suffix} AND (target_type STREQUAL "SharedCodeTarget"
-        OR target_type STREQUAL "${plugin_type}PlugIn"))
+    if((JUCER_BUILD_${setting_suffix} AND target_type STREQUAL "SharedCodeTarget")
+        OR target_type STREQUAL "${plugin_type}PlugIn")
       target_compile_definitions(${target} PRIVATE
         "JucePlugin_Build_${define_suffix}=1"
       )
