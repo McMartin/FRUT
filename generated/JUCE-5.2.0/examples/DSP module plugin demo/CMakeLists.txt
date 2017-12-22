@@ -47,6 +47,7 @@ jucer_audio_plugin_settings(
   BUILD_AUDIOUNIT_V3 OFF
   BUILD_RTAS OFF
   BUILD_AAX OFF
+  BUILD_STANDALONE_PLUGIN ON
   PLUGIN_NAME "DSP module plugin demo"
   PLUGIN_DESCRIPTION "DSP module plugin demo"
   PLUGIN_MANUFACTURER "ROLI Ltd."

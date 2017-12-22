@@ -74,25 +74,25 @@ test_script:
   - >
     cmake
     -DJUCE_ROOT="%APPVEYOR_BUILD_FOLDER%/ci/tmp/JUCE-4.2.0"
-    -DJucer2Reprojucer_EXE="ci/ReprojucerHelpers/4.2.0_build/Jucer2Reprojucer/Debug/Jucer2Reprojucer.exe"
+    -DJucer2Reprojucer_EXE="ci/ReprojucerHelpers/4.2.0_build/Jucer2Reprojucer/Debug/ConsoleApp/Jucer2Reprojucer.exe"
     -Dgenerated_JUCE_ROOT="generated/JUCE-4.2.0"
     -P ci/apply-Jucer2Reprojucer-to-JUCE-jucers.cmake
   - >
     cmake
     -DJUCE_ROOT="%APPVEYOR_BUILD_FOLDER%/ci/tmp/JUCE-4.3.1"
-    -DJucer2Reprojucer_EXE="ci/ReprojucerHelpers/4.3.1_build/Jucer2Reprojucer/Debug/Jucer2Reprojucer.exe"
+    -DJucer2Reprojucer_EXE="ci/ReprojucerHelpers/4.3.1_build/Jucer2Reprojucer/Debug/ConsoleApp/Jucer2Reprojucer.exe"
     -Dgenerated_JUCE_ROOT="generated/JUCE-4.3.1"
     -P ci/apply-Jucer2Reprojucer-to-JUCE-jucers.cmake
   - >
     cmake
     -DJUCE_ROOT="%APPVEYOR_BUILD_FOLDER%/ci/tmp/JUCE-5.0.0"
-    -DJucer2Reprojucer_EXE="ci/ReprojucerHelpers/5.0.0_build/Jucer2Reprojucer/Debug/Jucer2Reprojucer.exe"
+    -DJucer2Reprojucer_EXE="ci/ReprojucerHelpers/5.0.0_build/Jucer2Reprojucer/Debug/ConsoleApp/Jucer2Reprojucer.exe"
     -Dgenerated_JUCE_ROOT="generated/JUCE-5.0.0"
     -P ci/apply-Jucer2Reprojucer-to-JUCE-jucers.cmake
   - >
     cmake
     -DJUCE_ROOT="%APPVEYOR_BUILD_FOLDER%/ci/tmp/JUCE-5.2.0"
-    -DJucer2Reprojucer_EXE="ci/ReprojucerHelpers/5.2.0_build/Jucer2Reprojucer/Debug/Jucer2Reprojucer.exe"
+    -DJucer2Reprojucer_EXE="ci/ReprojucerHelpers/5.2.0_build/Jucer2Reprojucer/Debug/ConsoleApp/Jucer2Reprojucer.exe"
     -Dgenerated_JUCE_ROOT="generated/JUCE-5.2.0"
     -P ci/apply-Jucer2Reprojucer-to-JUCE-jucers.cmake
   - git diff --quiet

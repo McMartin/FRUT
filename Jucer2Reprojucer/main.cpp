@@ -445,6 +445,10 @@ int main(int argc, char* argv[])
       wLn("  ", onOffProjectSetting("BUILD_AUDIOUNIT_V3", "buildAUv3"));
       wLn("  ", onOffProjectSetting("BUILD_RTAS", "buildRTAS"));
       wLn("  ", onOffProjectSetting("BUILD_AAX", "buildAAX"));
+      if (jucerVersionAsTuple >= Version{5, 0, 0})
+      {
+        wLn("  ", onOffProjectSetting("BUILD_STANDALONE_PLUGIN", "buildStandalone"));
+      }
       wLn("  ", projectSetting("PLUGIN_NAME", "pluginName"));
       wLn("  ", projectSetting("PLUGIN_DESCRIPTION", "pluginDesc"));
       wLn("  ", projectSetting("PLUGIN_MANUFACTURER", "pluginManufacturer"));
