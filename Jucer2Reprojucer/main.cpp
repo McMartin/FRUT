@@ -425,6 +425,11 @@ int main(int argc, char* argv[])
     wLn("  ", projectSetting("BINARYDATA_NAMESPACE", "binaryDataNamespace"));
     wLn("  ", projectSetting("PREPROCESSOR_DEFINITIONS", "defines"));
 
+    if (jucerProject.hasProperty("headerPath"))
+    {
+      wLn("  ", projectSetting("HEADER_SEARCH_PATHS", "headerPath"));
+    }
+
     writeUserNotes(out, jucerProject);
 
     wLn(")");
