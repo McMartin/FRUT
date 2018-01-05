@@ -2405,6 +2405,8 @@ function(__set_common_target_properties target)
     endif()
 
   elseif(MSVC)
+    target_compile_definitions(${target} PRIVATE "_CRT_SECURE_NO_WARNINGS")
+
     foreach(config ${JUCER_PROJECT_CONFIGURATIONS})
       if(${JUCER_CONFIGURATION_IS_DEBUG_${config}})
         target_compile_definitions(${target} PRIVATE
