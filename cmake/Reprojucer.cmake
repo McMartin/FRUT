@@ -1727,6 +1727,36 @@ function(jucer_project_end)
 endfunction()
 
 
+function(_FRUT_parse_arguments single_value_keywords arguments)
+
+  foreach(keyword ${single_value_keywords})
+    unset(_${keyword})
+  endforeach()
+
+  unset(keyword)
+
+  foreach(argument ${arguments})
+    if(NOT DEFINED keyword)
+      set(keyword ${argument})
+      if(NOT "${keyword}" IN_LIST single_value_keywords)
+        message(FATAL_ERROR "Unknown keyword: \"${keyword}\"")
+      endif()
+    else()
+      set(_${keyword} ${argument})
+      unset(keyword)
+    endif()
+  endforeach()
+
+  foreach(keyword ${single_value_keywords})
+    unset(_${keyword} PARENT_SCOPE)
+    if(DEFINED _${keyword})
+      set(_${keyword} ${_${keyword}} PARENT_SCOPE)
+    endif()
+  endforeach()
+
+endfunction()
+
+
 function(_FRUT_abs_path_based_on_jucer_project_dir in_path out_path)
 
   if(NOT IS_ABSOLUTE "${in_path}" AND NOT DEFINED JUCER_PROJECT_DIR)
