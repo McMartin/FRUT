@@ -24,5 +24,5 @@ Define the settings specific to a JUCE project.
     [BINARYDATACPP_SIZE_LIMIT <binarydatacpp_size_limit>]
     [BINARYDATA_NAMESPACE <binarydata_namespace>]
     [PREPROCESSOR_DEFINITIONS <preprocessor_definitions>]
-    [HEADER_SEARCH_PATHS <header_search_paths]
+    [HEADER_SEARCH_PATHS <header_search_paths>]
   )
