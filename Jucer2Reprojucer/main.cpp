@@ -1190,8 +1190,8 @@ int main(int argc, char* argv[])
 
               return "High";
             }();
-
             wLn("  WARNING_LEVEL \"", warningLevel, "\"");
+
             wLn("  ", getOnOffSetting(configuration, "TREAT_WARNINGS_AS_ERRORS",
                                       "warningsAreErrors"));
 
