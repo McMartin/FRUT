@@ -908,7 +908,7 @@ int main(int argc, char* argv[])
           const auto configuration = configurations.getChild(i);
 
           wLn("jucer_export_target_configuration(");
-          wLn("  \"", std::get<1>(element), "\"");
+          wLn("  \"", element.second, "\"");
           wLn("  NAME \"", configuration.getProperty("name").toString(), "\"");
           wLn("  DEBUG_MODE ",
               (bool{configuration.getProperty("isDebug")} ? "ON" : "OFF"));
