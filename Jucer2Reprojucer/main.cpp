@@ -370,6 +370,9 @@ int main(int argc, char* argv[])
       if (projectType == "library")
         return "Static Library";
 
+      if (projectType == "dll")
+        return "Dynamic Library";
+
       if (projectType == "audioplug")
         return "Audio Plug-in";
 
