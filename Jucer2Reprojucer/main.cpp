@@ -441,7 +441,7 @@ int main(int argc, char* argv[])
 
     convertSettingAsListIfDefined(jucerProject, "defines", "PREPROCESSOR_DEFINITIONS",
                                   {});
-    convertSettingIfDefined(jucerProject, "headerPath", "HEADER_SEARCH_PATHS", {});
+    convertSettingAsListIfDefined(jucerProject, "headerPath", "HEADER_SEARCH_PATHS", {});
 
     writeUserNotes(wLn, jucerProject);
 
@@ -910,7 +910,7 @@ int main(int argc, char* argv[])
 
         const auto convertSearchPaths =
           [&isAbsolutePath, &jucerFileDir,
-           &targetProjectDir](const juce::var& value) -> juce::String {
+           &targetProjectDir](const juce::var& value) -> juce::StringArray {
           const auto searchPaths = value.toString();
 
           if (searchPaths.isEmpty())
@@ -929,22 +929,23 @@ int main(int argc, char* argv[])
 
             if (isAbsolutePath(path))
             {
-              absOrRelToJucerFileDirPaths.add(path);
+              absOrRelToJucerFileDirPaths.add(escape("\\", path));
             }
             else
             {
-              absOrRelToJucerFileDirPaths.add(
-                targetProjectDir.getChildFile(path).getRelativePathFrom(jucerFileDir));
+              absOrRelToJucerFileDirPaths.add(escape(
+                "\\",
+                targetProjectDir.getChildFile(path).getRelativePathFrom(jucerFileDir)));
             }
           }
 
-          return escape("\\", absOrRelToJucerFileDirPaths.joinIntoString("\n"));
+          return absOrRelToJucerFileDirPaths;
         };
 
-        convertSettingIfDefined(configuration, "headerPath", "HEADER_SEARCH_PATHS",
-                                convertSearchPaths);
-        convertSettingIfDefined(configuration, "libraryPath",
-                                "EXTRA_LIBRARY_SEARCH_PATHS", convertSearchPaths);
+        convertSettingAsListIfDefined(configuration, "headerPath", "HEADER_SEARCH_PATHS",
+                                      convertSearchPaths);
+        convertSettingAsListIfDefined(configuration, "libraryPath",
+                                      "EXTRA_LIBRARY_SEARCH_PATHS", convertSearchPaths);
 
         convertSettingAsListIfDefined(configuration, "defines",
                                       "PREPROCESSOR_DEFINITIONS", {});

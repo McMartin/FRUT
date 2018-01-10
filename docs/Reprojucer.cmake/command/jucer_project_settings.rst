@@ -25,5 +25,5 @@ Define the settings specific to a JUCE project.
     [BINARYDATA_NAMESPACE <binarydata_namespace>]
     [CXX_LANGUAGE_STANDARD <cxx_language_standard>]
     [PREPROCESSOR_DEFINITIONS <preprocessor_definition> [<preprocessor_definition> ...]]
-    [HEADER_SEARCH_PATHS <header_search_paths>]
+    [HEADER_SEARCH_PATHS <header_search_path> [<header_search_path> ...]]
   )

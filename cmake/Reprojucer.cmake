@@ -79,10 +79,10 @@ function(jucer_project_settings)
     "BINARYDATACPP_SIZE_LIMIT"
     "BINARYDATA_NAMESPACE"
     "CXX_LANGUAGE_STANDARD"
-    "HEADER_SEARCH_PATHS"
   )
   set(multi_value_keywords
     "PREPROCESSOR_DEFINITIONS"
+    "HEADER_SEARCH_PATHS"
   )
 
   _FRUT_parse_arguments("${single_value_keywords}" "${multi_value_keywords}" "${ARGN}")
@@ -152,16 +152,13 @@ function(jucer_project_settings)
   endif()
 
   if(DEFINED _HEADER_SEARCH_PATHS)
-    set(value ${_HEADER_SEARCH_PATHS})
-    string(REPLACE "\\" "/" value "${value}")
-    string(REPLACE "\n" ";" value "${value}")
     unset(header_search_paths)
-    foreach(path ${value})
+    foreach(path ${_HEADER_SEARCH_PATHS})
+      string(REPLACE "\\" "/" path "${path}")
       _FRUT_abs_path_based_on_jucer_project_dir("${path}" path)
       list(APPEND header_search_paths "${path}")
     endforeach()
-    set(value ${header_search_paths})
-    set(_HEADER_SEARCH_PATHS ${value})
+    set(_HEADER_SEARCH_PATHS ${header_search_paths})
   endif()
 
   foreach(keyword ${single_value_keywords} ${multi_value_keywords})
@@ -793,11 +790,11 @@ function(jucer_export_target_configuration
   set(single_value_keywords
     "BINARY_NAME"
     "BINARY_LOCATION"
-    "HEADER_SEARCH_PATHS"
-    "EXTRA_LIBRARY_SEARCH_PATHS"
     "OPTIMISATION"
   )
   set(multi_value_keywords
+    "HEADER_SEARCH_PATHS"
+    "EXTRA_LIBRARY_SEARCH_PATHS"
     "PREPROCESSOR_DEFINITIONS"
   )
 
@@ -855,11 +852,9 @@ function(jucer_export_target_configuration
   endif()
 
   if(DEFINED _HEADER_SEARCH_PATHS)
-    set(value ${_HEADER_SEARCH_PATHS})
-    string(REPLACE "\\" "/" value "${value}")
-    string(REPLACE "\n" ";" value "${value}")
     unset(header_search_paths)
-    foreach(path ${value})
+    foreach(path ${_HEADER_SEARCH_PATHS})
+      string(REPLACE "\\" "/" path "${path}")
       _FRUT_abs_path_based_on_jucer_project_dir("${path}" path)
       list(APPEND header_search_paths "${path}")
     endforeach()
@@ -867,11 +862,9 @@ function(jucer_export_target_configuration
   endif()
 
   if(DEFINED _EXTRA_LIBRARY_SEARCH_PATHS)
-    set(value ${_EXTRA_LIBRARY_SEARCH_PATHS})
-    string(REPLACE "\\" "/" value "${value}")
-    string(REPLACE "\n" ";" value "${value}")
     unset(library_search_paths)
-    foreach(path ${value})
+    foreach(path ${_EXTRA_LIBRARY_SEARCH_PATHS})
+      string(REPLACE "\\" "/" path "${path}")
       _FRUT_abs_path_based_on_jucer_project_dir("${path}" path)
       list(APPEND library_search_paths "${path}")
     endforeach()

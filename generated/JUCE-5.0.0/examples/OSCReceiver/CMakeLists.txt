@@ -134,7 +134,8 @@ jucer_export_target_configuration(
   NAME "Debug"
   DEBUG_MODE ON
   BINARY_NAME "OSCReceiver"
-  EXTRA_LIBRARY_SEARCH_PATHS "/usr/X11R6/lib/"
+  EXTRA_LIBRARY_SEARCH_PATHS
+    "/usr/X11R6/lib/"
   OPTIMISATION "-O0 (no optimisation)"
 )
 
@@ -143,7 +144,8 @@ jucer_export_target_configuration(
   NAME "Release"
   DEBUG_MODE OFF
   BINARY_NAME "OSCReceiver"
-  EXTRA_LIBRARY_SEARCH_PATHS "/usr/X11R6/lib/"
+  EXTRA_LIBRARY_SEARCH_PATHS
+    "/usr/X11R6/lib/"
   OPTIMISATION "-O3 (fastest with safe optimisations)"
 )
 

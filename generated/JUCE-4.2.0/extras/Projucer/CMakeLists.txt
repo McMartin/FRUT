@@ -555,7 +555,8 @@ jucer_export_target_configuration(
   DEBUG_MODE ON
   BINARY_NAME "Projucer"
   # HEADER_SEARCH_PATHS
-  EXTRA_LIBRARY_SEARCH_PATHS "/usr/X11R6/lib/"
+  EXTRA_LIBRARY_SEARCH_PATHS
+    "/usr/X11R6/lib/"
   OPTIMISATION "-O0 (no optimisation)"
 )
 
@@ -565,7 +566,8 @@ jucer_export_target_configuration(
   DEBUG_MODE OFF
   BINARY_NAME "Projucer"
   # HEADER_SEARCH_PATHS
-  EXTRA_LIBRARY_SEARCH_PATHS "/usr/X11R6/lib/"
+  EXTRA_LIBRARY_SEARCH_PATHS
+    "/usr/X11R6/lib/"
   OPTIMISATION "-O3 (fastest with safe optimisations)"
 )
 
