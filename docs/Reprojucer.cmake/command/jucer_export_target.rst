@@ -13,7 +13,7 @@ Define the settings specific to an export target.
     [VST_SDK_FOLDER <vst_sdk_folder>]
     [VST3_SDK_FOLDER <vst3_sdk_folder>]
 
-    [EXTRA_PREPROCESSOR_DEFINITIONS <preprocessor_definitions>]
+    [EXTRA_PREPROCESSOR_DEFINITIONS <preprocessor_definition> [<preprocessor_definition> ...]]
     [EXTRA_COMPILER_FLAGS <compiler_flags>]
     [EXTRA_LINKER_FLAGS <linker_flags>]
     [EXTERNAL_LIBRARIES_TO_LINK <libraries>]

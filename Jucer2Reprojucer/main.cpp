@@ -439,7 +439,8 @@ int main(int argc, char* argv[])
                               return {};
                             });
 
-    convertSettingIfDefined(jucerProject, "defines", "PREPROCESSOR_DEFINITIONS", {});
+    convertSettingAsListIfDefined(jucerProject, "defines", "PREPROCESSOR_DEFINITIONS",
+                                  {});
     convertSettingIfDefined(jucerProject, "headerPath", "HEADER_SEARCH_PATHS", {});
 
     writeUserNotes(wLn, jucerProject);
@@ -751,8 +752,8 @@ int main(int argc, char* argv[])
         convertSetting(exporter, "vst3Folder", "VST3_SDK_FOLDER", {});
       }
 
-      convertSettingIfDefined(exporter, "extraDefs", "EXTRA_PREPROCESSOR_DEFINITIONS",
-                              {});
+      convertSettingAsListIfDefined(exporter, "extraDefs",
+                                    "EXTRA_PREPROCESSOR_DEFINITIONS", {});
       convertSettingIfDefined(exporter, "extraCompilerFlags", "EXTRA_COMPILER_FLAGS", {});
       convertSettingIfDefined(exporter, "extraLinkerFlags", "EXTRA_LINKER_FLAGS", {});
       convertSettingIfDefined(exporter, "externalLibraries", "EXTERNAL_LIBRARIES_TO_LINK",
@@ -945,7 +946,8 @@ int main(int argc, char* argv[])
         convertSettingIfDefined(configuration, "libraryPath",
                                 "EXTRA_LIBRARY_SEARCH_PATHS", convertSearchPaths);
 
-        convertSettingIfDefined(configuration, "defines", "PREPROCESSOR_DEFINITIONS", {});
+        convertSettingAsListIfDefined(configuration, "defines",
+                                      "PREPROCESSOR_DEFINITIONS", {});
 
         convertSettingIfDefined(configuration, "optimisation", "OPTIMISATION",
                                 [&isVSExporter](const juce::var& value) -> juce::String {

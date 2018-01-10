@@ -79,10 +79,10 @@ function(jucer_project_settings)
     "BINARYDATACPP_SIZE_LIMIT"
     "BINARYDATA_NAMESPACE"
     "CXX_LANGUAGE_STANDARD"
-    "PREPROCESSOR_DEFINITIONS"
     "HEADER_SEARCH_PATHS"
   )
   set(multi_value_keywords
+    "PREPROCESSOR_DEFINITIONS"
   )
 
   _FRUT_parse_arguments("${single_value_keywords}" "${multi_value_keywords}" "${ARGN}")
@@ -149,12 +149,6 @@ function(jucer_project_settings)
     endif()
     list(GET cxx_language_standards ${cxx_language_standard_index} value)
     set(_CXX_LANGUAGE_STANDARD ${value})
-  endif()
-
-  if(DEFINED _PREPROCESSOR_DEFINITIONS)
-    set(value ${_PREPROCESSOR_DEFINITIONS})
-    string(REPLACE "\n" ";" value "${value}")
-    set(_PREPROCESSOR_DEFINITIONS ${value})
   endif()
 
   if(DEFINED _HEADER_SEARCH_PATHS)
@@ -504,7 +498,6 @@ function(jucer_export_target exporter)
   set(single_value_keywords
     "TARGET_PROJECT_FOLDER"
     "VST_SDK_FOLDER"
-    "EXTRA_PREPROCESSOR_DEFINITIONS"
     "EXTRA_COMPILER_FLAGS"
     "EXTRA_LINKER_FLAGS"
     "EXTERNAL_LIBRARIES_TO_LINK"
@@ -512,6 +505,7 @@ function(jucer_export_target exporter)
     "ICON_LARGE"
   )
   set(multi_value_keywords
+    "EXTRA_PREPROCESSOR_DEFINITIONS"
   )
 
   if(exporter STREQUAL "Xcode (MacOSX)")
@@ -577,9 +571,9 @@ function(jucer_export_target exporter)
   endif()
 
   if(DEFINED _EXTRA_PREPROCESSOR_DEFINITIONS)
-    set(value ${_EXTRA_PREPROCESSOR_DEFINITIONS})
-    string(REPLACE "\n" ";" value "${value}")
-    set(JUCER_EXTRA_PREPROCESSOR_DEFINITIONS ${value} PARENT_SCOPE)
+    set(JUCER_EXTRA_PREPROCESSOR_DEFINITIONS ${_EXTRA_PREPROCESSOR_DEFINITIONS}
+      PARENT_SCOPE
+    )
   endif()
 
   if(DEFINED _EXTRA_COMPILER_FLAGS)
@@ -801,10 +795,10 @@ function(jucer_export_target_configuration
     "BINARY_LOCATION"
     "HEADER_SEARCH_PATHS"
     "EXTRA_LIBRARY_SEARCH_PATHS"
-    "PREPROCESSOR_DEFINITIONS"
     "OPTIMISATION"
   )
   set(multi_value_keywords
+    "PREPROCESSOR_DEFINITIONS"
   )
 
   if(exporter STREQUAL "Xcode (MacOSX)")
@@ -887,9 +881,9 @@ function(jucer_export_target_configuration
   endif()
 
   if(DEFINED _PREPROCESSOR_DEFINITIONS)
-    set(value ${_PREPROCESSOR_DEFINITIONS})
-    string(REPLACE "\n" ";" value "${value}")
-    set(JUCER_PREPROCESSOR_DEFINITIONS_${config} ${value} PARENT_SCOPE)
+    set(JUCER_PREPROCESSOR_DEFINITIONS_${config} ${_PREPROCESSOR_DEFINITIONS}
+      PARENT_SCOPE
+    )
   endif()
 
   if(DEFINED _OPTIMISATION)

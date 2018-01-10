@@ -30,7 +30,8 @@ jucer_project_settings(
   PROJECT_VERSION "1.0.0"
   PROJECT_TYPE "Console Application"
   BUNDLE_IDENTIFIER "com.yourcompany.UnitTestRunner"
-  PREPROCESSOR_DEFINITIONS "JUCE_UNIT_TESTS=1"
+  PREPROCESSOR_DEFINITIONS
+    "JUCE_UNIT_TESTS=1"
 )
 
 jucer_project_files("UnitTestRunner/Source"

@@ -33,7 +33,8 @@ jucer_project_settings(
   SPLASH_SCREEN_COLOUR "Dark"
   PROJECT_TYPE "Console Application"
   BUNDLE_IDENTIFIER "com.yourcompany.UnitTestRunner"
-  PREPROCESSOR_DEFINITIONS "JUCE_UNIT_TESTS=1"
+  PREPROCESSOR_DEFINITIONS
+    "JUCE_UNIT_TESTS=1"
 )
 
 jucer_project_files("UnitTestRunner/Source"

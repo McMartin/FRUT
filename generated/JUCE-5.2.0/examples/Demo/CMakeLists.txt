@@ -36,7 +36,8 @@ jucer_project_settings(
   PROJECT_TYPE "GUI Application"
   BUNDLE_IDENTIFIER "com.roli.JuceDemo"
   CXX_LANGUAGE_STANDARD "C++11"
-  PREPROCESSOR_DEFINITIONS "JUCE_UNIT_TESTS=1"
+  PREPROCESSOR_DEFINITIONS
+    "JUCE_UNIT_TESTS=1"
 )
 
 jucer_project_files("JuceDemo/Source"

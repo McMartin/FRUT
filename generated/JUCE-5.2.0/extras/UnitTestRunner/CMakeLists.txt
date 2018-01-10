@@ -36,7 +36,8 @@ jucer_project_settings(
   PROJECT_TYPE "Console Application"
   BUNDLE_IDENTIFIER "com.roli.UnitTestRunner"
   CXX_LANGUAGE_STANDARD "C++14"
-  PREPROCESSOR_DEFINITIONS "JUCE_UNIT_TESTS=1"
+  PREPROCESSOR_DEFINITIONS
+    "JUCE_UNIT_TESTS=1"
 )
 
 jucer_project_files("UnitTestRunner/Source"

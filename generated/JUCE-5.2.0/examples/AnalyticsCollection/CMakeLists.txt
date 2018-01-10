@@ -138,7 +138,8 @@ jucer_export_target_configuration(
 
 jucer_export_target(
   "Linux Makefile"
-  EXTRA_PREPROCESSOR_DEFINITIONS "JUCE_USE_CURL=1"
+  EXTRA_PREPROCESSOR_DEFINITIONS
+    "JUCE_USE_CURL=1"
 )
 
 jucer_export_target_configuration(

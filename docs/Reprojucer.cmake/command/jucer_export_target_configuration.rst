@@ -15,7 +15,7 @@ Define the settings specific to a configuration associated with an export target
     [BINARY_LOCATION <binary_location>]
     [HEADER_SEARCH_PATHS <search_paths>]
     [EXTRA_LIBRARY_SEARCH_PATHS <search_paths>]
-    [PREPROCESSOR_DEFINITIONS <preprocessor_definitions>]
+    [PREPROCESSOR_DEFINITIONS <preprocessor_definition> [<preprocessor_definition> ...]]
 
     [VST_BINARY_LOCATION <binary_location>]
     [VST3_BINARY_LOCATION <binary_location>]
