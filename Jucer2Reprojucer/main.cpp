@@ -360,33 +360,6 @@ int main(int argc, char* argv[])
       return getSetting(jucerProject, cmakeTag, property);
     };
 
-    const auto projectTypeDescription = [&projectType]() -> std::string {
-      if (projectType == "guiapp")
-        return "GUI Application";
-
-      if (projectType == "consoleapp")
-        return "Console Application";
-
-      if (projectType == "library")
-        return "Static Library";
-
-      if (projectType == "dll")
-        return "Dynamic Library";
-
-      if (projectType == "audioplug")
-        return "Audio Plug-in";
-
-      return {};
-    }();
-
-    const auto maxBinaryFileSize = [&jucerProject]() -> std::string {
-      if (jucerProject.getProperty("maxBinaryFileSize").toString().isEmpty())
-        return "Default";
-
-      const auto value = int{jucerProject.getProperty("maxBinaryFileSize")};
-      return juce::File::descriptionOfSizeInBytes(value).toStdString();
-    }();
-
     wLn("jucer_project_settings(");
     wLn("  ", projectSetting("PROJECT_NAME", "name"));
     wLn("  ", projectSetting("PROJECT_VERSION", "version"));
@@ -422,9 +395,37 @@ int main(int argc, char* argv[])
       wLn("  ", projectSetting("SPLASH_SCREEN_COLOUR", "splashScreenColour"));
     }
 
+    const auto projectTypeDescription = [&projectType]() -> std::string {
+      if (projectType == "guiapp")
+        return "GUI Application";
+
+      if (projectType == "consoleapp")
+        return "Console Application";
+
+      if (projectType == "library")
+        return "Static Library";
+
+      if (projectType == "dll")
+        return "Dynamic Library";
+
+      if (projectType == "audioplug")
+        return "Audio Plug-in";
+
+      return {};
+    }();
     wLn("  PROJECT_TYPE \"", projectTypeDescription, "\"");
+
     wLn("  ", projectSetting("BUNDLE_IDENTIFIER", "bundleIdentifier"));
+
+    const auto maxBinaryFileSize = [&jucerProject]() -> std::string {
+      if (jucerProject.getProperty("maxBinaryFileSize").toString().isEmpty())
+        return "Default";
+
+      const auto value = int{jucerProject.getProperty("maxBinaryFileSize")};
+      return juce::File::descriptionOfSizeInBytes(value).toStdString();
+    }();
     wLn("  BINARYDATACPP_SIZE_LIMIT \"", maxBinaryFileSize, "\"");
+
     wLn("  ", projectSetting("BINARYDATA_NAMESPACE", "binaryDataNamespace"));
     wLn("  ", projectSetting("PREPROCESSOR_DEFINITIONS", "defines"));
 
