@@ -360,30 +360,6 @@ int main(int argc, char* argv[])
       return getSetting(jucerProject, cmakeTag, property);
     };
 
-    const auto projectTypeDescription = [&projectType]() -> std::string {
-      if (projectType == "guiapp")
-        return "GUI Application";
-
-      if (projectType == "consoleapp")
-        return "Console Application";
-
-      if (projectType == "library")
-        return "Static Library";
-
-      if (projectType == "audioplug")
-        return "Audio Plug-in";
-
-      return {};
-    }();
-
-    const auto maxBinaryFileSize = [&jucerProject]() -> std::string {
-      if (jucerProject.getProperty("maxBinaryFileSize").toString().isEmpty())
-        return "Default";
-
-      const auto value = int{jucerProject.getProperty("maxBinaryFileSize")};
-      return juce::File::descriptionOfSizeInBytes(value).toStdString();
-    }();
-
     wLn("jucer_project_settings(");
     wLn("  ", projectSetting("PROJECT_NAME", "name"));
     wLn("  ", projectSetting("PROJECT_VERSION", "version"));
@@ -419,9 +395,37 @@ int main(int argc, char* argv[])
       wLn("  ", projectSetting("SPLASH_SCREEN_COLOUR", "splashScreenColour"));
     }
 
+    const auto projectTypeDescription = [&projectType]() -> std::string {
+      if (projectType == "guiapp")
+        return "GUI Application";
+
+      if (projectType == "consoleapp")
+        return "Console Application";
+
+      if (projectType == "library")
+        return "Static Library";
+
+      if (projectType == "dll")
+        return "Dynamic Library";
+
+      if (projectType == "audioplug")
+        return "Audio Plug-in";
+
+      return {};
+    }();
     wLn("  PROJECT_TYPE \"", projectTypeDescription, "\"");
+
     wLn("  ", projectSetting("BUNDLE_IDENTIFIER", "bundleIdentifier"));
+
+    const auto maxBinaryFileSize = [&jucerProject]() -> std::string {
+      if (jucerProject.getProperty("maxBinaryFileSize").toString().isEmpty())
+        return "Default";
+
+      const auto value = int{jucerProject.getProperty("maxBinaryFileSize")};
+      return juce::File::descriptionOfSizeInBytes(value).toStdString();
+    }();
     wLn("  BINARYDATACPP_SIZE_LIMIT \"", maxBinaryFileSize, "\"");
+
     wLn("  ", projectSetting("BINARYDATA_NAMESPACE", "binaryDataNamespace"));
     wLn("  ", projectSetting("PREPROCESSOR_DEFINITIONS", "defines"));
 
@@ -835,32 +839,31 @@ int main(int argc, char* argv[])
             {
               wLn("  USE_IPP_LIBRARY \"", useIppLibrary, "\"");
             }
+          }
 
-            if (exporterType == "VS2017")
+          if (exporterType == "VS2017")
+          {
+            if (exporter.hasProperty("cppLanguageStandard"))
             {
-              if (exporter.hasProperty("cppLanguageStandard"))
+              const auto cppLanguageStandard = [&exporter]() -> std::string {
+                const auto value = exporter.getProperty("cppLanguageStandard").toString();
+
+                if (value == "")
+                  return "(default)";
+                if (value == "stdcpp14")
+                  return "C++14";
+                if (value == "stdcpplatest")
+                  return "Latest C++ Standard";
+                return {};
+              }();
+
+              if (cppLanguageStandard.empty())
               {
-                const auto cppLanguageStandard = [&exporter]() -> std::string {
-                  const auto value =
-                    exporter.getProperty("cppLanguageStandard").toString();
-
-                  if (value == "")
-                    return "(default)";
-                  if (value == "stdcpp14")
-                    return "C++14";
-                  if (value == "stdcpplatest")
-                    return "Latest C++ Standard";
-                  return {};
-                }();
-
-                if (cppLanguageStandard.empty())
-                {
-                  wLn("  # CXX_STANDARD_TO_USE");
-                }
-                else
-                {
-                  wLn("  CXX_STANDARD_TO_USE \"", cppLanguageStandard, "\"");
-                }
+                wLn("  # CXX_STANDARD_TO_USE");
+              }
+              else
+              {
+                wLn("  CXX_STANDARD_TO_USE \"", cppLanguageStandard, "\"");
               }
             }
           }
@@ -905,7 +908,7 @@ int main(int argc, char* argv[])
           const auto configuration = configurations.getChild(i);
 
           wLn("jucer_export_target_configuration(");
-          wLn("  \"", std::get<1>(element), "\"");
+          wLn("  \"", element.second, "\"");
           wLn("  NAME \"", configuration.getProperty("name").toString(), "\"");
           wLn("  DEBUG_MODE ",
               (bool{configuration.getProperty("isDebug")} ? "ON" : "OFF"));
@@ -1187,8 +1190,8 @@ int main(int argc, char* argv[])
 
               return "High";
             }();
-
             wLn("  WARNING_LEVEL \"", warningLevel, "\"");
+
             wLn("  ", getOnOffSetting(configuration, "TREAT_WARNINGS_AS_ERRORS",
                                       "warningsAreErrors"));
 

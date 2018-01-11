@@ -268,6 +268,7 @@ jucer_export_target(
   ICON_SMALL "<None>"
   ICON_LARGE "<None>"
   # PLATFORM_TOOLSET "(default)"
+  CXX_STANDARD_TO_USE "Latest C++ Standard"
 )
 
 jucer_export_target_configuration(
