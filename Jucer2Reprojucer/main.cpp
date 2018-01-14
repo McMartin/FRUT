@@ -292,7 +292,7 @@ int main(int argc, char* argv[])
   std::ofstream out{"CMakeLists.txt", std::ios_base::out | std::ios_base::binary};
   LineWriter wLn{out};
 
-  const auto jucerFileName = jucerFile.getFileName().toStdString();
+  const auto jucerFileName = jucerFile.getFileName();
 
   // Preamble
   {
@@ -319,7 +319,7 @@ int main(int argc, char* argv[])
     wLn();
   }
 
-  std::string escapedJucerFileName = jucerFileName;
+  std::string escapedJucerFileName = jucerFileName.toStdString();
   std::replace_if(escapedJucerFileName.begin(), escapedJucerFileName.end(),
                   [](const std::string::value_type& c) {
                     return !(std::isalpha(c, std::locale{"C"})
@@ -797,8 +797,8 @@ int main(int argc, char* argv[])
 
         if (isVSExporter)
         {
-          const auto toolset = exporter.getProperty("toolset").toString().toStdString();
-          if (toolset.empty())
+          const auto toolset = exporter.getProperty("toolset").toString();
+          if (toolset.isEmpty())
           {
             wLn("  # PLATFORM_TOOLSET \"(default)\"");
           }
