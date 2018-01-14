@@ -128,11 +128,11 @@ std::string getSetting(const juce::ValueTree& valueTree,
 {
   if (valueTree.hasProperty(property))
   {
-    const auto value = valueTree.getProperty(property).toString().toStdString();
+    const auto value = valueTree.getProperty(property).toString();
 
-    if (!value.empty())
+    if (value.isNotEmpty())
     {
-      return cmakeTag + " \"" + escape("\\\";", value) + "\"";
+      return cmakeTag + " \"" + escape("\\\";", value.toStdString()) + "\"";
     }
   }
 
@@ -183,12 +183,12 @@ juce::ValueTree getChildWithPropertyRecursively(const juce::ValueTree& valueTree
 
 void writeUserNotes(std::ostream& out, const juce::ValueTree& valueTree)
 {
-  const auto userNotes = valueTree.getProperty("userNotes").toString().toStdString();
-  if (!userNotes.empty())
+  const auto userNotes = valueTree.getProperty("userNotes").toString();
+  if (userNotes.isNotEmpty())
   {
     LineWriter wLn{out};
     wLn("  # NOTES");
-    for (const auto& line : split("\n", userNotes))
+    for (const auto& line : split("\n", userNotes.toStdString()))
     {
       wLn("  #   ", line);
     }
