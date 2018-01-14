@@ -122,39 +122,6 @@ std::vector<std::string> split(const std::string& sep, const std::string& value)
 }
 
 
-std::string getSetting(const juce::ValueTree& valueTree,
-                       const std::string& cmakeTag,
-                       const juce::Identifier& property)
-{
-  if (valueTree.hasProperty(property))
-  {
-    const auto value = valueTree.getProperty(property).toString();
-
-    if (value.isNotEmpty())
-    {
-      return cmakeTag + " \"" + escape("\\\";", value.toStdString()) + "\"";
-    }
-  }
-
-  return "# " + cmakeTag;
-}
-
-
-std::string getOnOffSetting(const juce::ValueTree& valueTree,
-                            const std::string& cmakeTag,
-                            const juce::Identifier& property)
-{
-  if (valueTree.hasProperty(property))
-  {
-    const auto value = bool{valueTree.getProperty(property)};
-
-    return cmakeTag + " " + (value ? "ON" : "OFF");
-  }
-
-  return "# " + cmakeTag;
-}
-
-
 juce::ValueTree getChildWithPropertyRecursively(const juce::ValueTree& valueTree,
                                                 const juce::Identifier& propertyName,
                                                 const juce::var& propertyValue)
