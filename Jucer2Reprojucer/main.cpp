@@ -812,7 +812,7 @@ int main(int argc, char* argv[])
             const auto useIppLibrary = [&exporter]() -> std::string {
               const auto value = exporter.getProperty("IPPLibrary").toString();
 
-              if (value == "")
+              if (value.isEmpty())
                 return "No";
 
               if (value == "true")
@@ -848,7 +848,7 @@ int main(int argc, char* argv[])
             const auto cppLanguageStandard = [&exporter]() -> std::string {
               const auto value = exporter.getProperty("cppLanguageStandard").toString();
 
-              if (value == "")
+              if (value.isEmpty())
                 return "(default)";
               if (value == "stdcpp14")
                 return "C++14";
@@ -1107,7 +1107,7 @@ int main(int argc, char* argv[])
               const auto value =
                 configuration.getProperty("cppLanguageStandard").toString();
 
-              if (value == "")
+              if (value.isEmpty())
                 return "Use Default";
 
               if (value == "c++98")
@@ -1143,7 +1143,7 @@ int main(int argc, char* argv[])
             const auto cppLibType = [&configuration]() -> std::string {
               const auto value = configuration.getProperty("cppLibType").toString();
 
-              if (value == "")
+              if (value.isEmpty())
                 return "Use Default";
 
               if (value == "libc++")
@@ -1197,7 +1197,7 @@ int main(int argc, char* argv[])
             const auto runtimeLibrary = [&configuration]() -> std::string {
               const auto value = configuration.getProperty("useRuntimeLibDLL").toString();
 
-              if (value == "")
+              if (value.isEmpty())
                 return "(Default)";
 
               if (value == "0")
@@ -1218,7 +1218,9 @@ int main(int argc, char* argv[])
               wLn("  RUNTIME_LIBRARY \"", runtimeLibrary, "\"");
             }
 
-            if (configuration.getProperty("wholeProgramOptimisation").toString() == "")
+            if (configuration.getProperty("wholeProgramOptimisation")
+                  .toString()
+                  .isEmpty())
             {
               wLn("  WHOLE_PROGRAM_OPTIMISATION \"Enable when possible\"");
             }
@@ -1278,7 +1280,7 @@ int main(int argc, char* argv[])
                 const auto value =
                   configuration.getProperty("linuxArchitecture").toString();
 
-                if (value == "")
+                if (value.isEmpty())
                   return "<None>";
 
                 if (value == "-m32")
