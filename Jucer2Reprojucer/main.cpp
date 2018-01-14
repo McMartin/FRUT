@@ -395,6 +395,25 @@ int main(int argc, char* argv[])
         return juce::File::descriptionOfSizeInBytes(int{value}).toStdString();
       });
 
+    if (jucerProject.hasProperty("cppLanguageStandard"))
+    {
+      convertSetting(jucerProject, "cppLanguageStandard", "CXX_LANGUAGE_STANDARD",
+                     [](const juce::var& v) -> std::string {
+                       const auto value = v.toString();
+
+                       if (value == "11")
+                         return "C++11";
+
+                       if (value == "14")
+                         return "C++14";
+
+                       if (value == "latest")
+                         return "Use Latest";
+
+                       return {};
+                     });
+    }
+
     convertSetting(jucerProject, "binaryDataNamespace", "BINARYDATA_NAMESPACE", {});
     convertSetting(jucerProject, "defines", "PREPROCESSOR_DEFINITIONS", {});
 

@@ -127,6 +127,7 @@ function(jucer_project_settings)
     "BUNDLE_IDENTIFIER"
     "BINARYDATACPP_SIZE_LIMIT"
     "BINARYDATA_NAMESPACE"
+    "CXX_LANGUAGE_STANDARD"
     "PREPROCESSOR_DEFINITIONS"
     "HEADER_SEARCH_PATHS"
   )
@@ -139,6 +140,9 @@ function(jucer_project_settings)
     "256.0 KB" "128.0 KB" "64.0 KB"
   )
   set(size_limits 10240 20480 10240 6144 2048 1024 512 256 128 64)
+
+  set(cxx_language_standard_descs "C++11" "C++14" "Use Latest")
+  set(cxx_language_standards "11" "14" "latest")
 
   unset(tag)
   foreach(element ${ARGN})
@@ -180,6 +184,16 @@ function(jucer_project_settings)
           )
         endif()
         list(GET size_limits ${size_limit_index} value)
+
+      elseif(tag STREQUAL "CXX_LANGUAGE_STANDARD")
+        list(FIND cxx_language_standard_descs "${value}" cxx_language_standard_index)
+        if(cxx_language_standard_index EQUAL -1)
+          message(FATAL_ERROR
+            "Unsupported value for CXX_LANGUAGE_STANDARD: \"${value}\"\n"
+            "Supported values: ${cxx_language_standard_descs}"
+          )
+        endif()
+        list(GET cxx_language_standards ${cxx_language_standard_index} value)
 
       elseif(tag STREQUAL "PREPROCESSOR_DEFINITIONS")
         string(REPLACE "\n" ";" value "${value}")
@@ -2580,6 +2594,25 @@ function(__set_cxx_language_standard_properties target)
   set_target_properties(${target} PROPERTIES CXX_EXTENSIONS OFF)
   set_target_properties(${target} PROPERTIES CXX_STANDARD 11)
 
+  if(DEFINED JUCER_CXX_LANGUAGE_STANDARD)
+    if(JUCER_CXX_LANGUAGE_STANDARD STREQUAL "latest")
+      if(MSVC)
+        if(MSVC_VERSION EQUAL 1900 OR MSVC_VERSION GREATER 1900) # VS2015 and later
+          target_compile_options(${target} PRIVATE "-std:c++latest")
+        endif()
+      else()
+        set_target_properties(${target} PROPERTIES CXX_STANDARD 17)
+      endif()
+    elseif(JUCER_CXX_LANGUAGE_STANDARD STREQUAL "14")
+      if(MSVC)
+        if(MSVC_VERSION EQUAL 1900 OR MSVC_VERSION GREATER 1900) # VS2015 and later
+          target_compile_options(${target} PRIVATE "-std:c++14")
+        endif()
+      else()
+        set_target_properties(${target} PROPERTIES CXX_STANDARD 14)
+      endif()
+    endif()
+  else()
     if(APPLE)
       unset(all_confs_cxx_language_standard)
       unset(config_to_value)
@@ -2628,6 +2661,7 @@ function(__set_cxx_language_standard_properties target)
         endif()
       endif()
     endif()
+  endif()
 
 endfunction()
 
