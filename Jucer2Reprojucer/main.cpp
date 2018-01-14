@@ -753,15 +753,15 @@ int main(int argc, char* argv[])
         convertSetting(exporter, "extraLinkerFlags", "EXTRA_LINKER_FLAGS", {});
         convertSetting(exporter, "externalLibraries", "EXTERNAL_LIBRARIES_TO_LINK", {});
 
-        const auto mainGroup = jucerProject.getChildWithName("MAINGROUP");
-
         const auto getIconFilePath =
-          [&mainGroup, &exporter](const juce::Identifier& propertyName) -> std::string {
+          [&jucerProject,
+           &exporter](const juce::Identifier& propertyName) -> std::string {
           const auto fileId = exporter.getProperty(propertyName).toString();
 
           if (!fileId.isEmpty())
           {
-            const auto file = getChildWithPropertyRecursively(mainGroup, "id", fileId);
+            const auto file = getChildWithPropertyRecursively(
+              jucerProject.getChildWithName("MAINGROUP"), "id", fileId);
 
             if (file.isValid())
             {
