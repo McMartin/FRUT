@@ -354,23 +354,18 @@ int main(int argc, char* argv[])
 
   // jucer_project_settings()
   {
-    const auto projectSetting = [&jucerProject](const std::string& cmakeTag,
-                                                const juce::Identifier& property) {
-      return getSetting(jucerProject, cmakeTag, property);
-    };
-
     wLn("jucer_project_settings(");
-    wLn("  ", projectSetting("PROJECT_NAME", "name"));
-    wLn("  ", projectSetting("PROJECT_VERSION", "version"));
-    wLn("  ", projectSetting("COMPANY_NAME", "companyName"));
+    wLn("  ", getSetting(jucerProject, "PROJECT_NAME", "name"));
+    wLn("  ", getSetting(jucerProject, "PROJECT_VERSION", "version"));
+    wLn("  ", getSetting(jucerProject, "COMPANY_NAME", "companyName"));
 
     if (jucerProject.hasProperty("companyCopyright"))
     {
-      wLn("  ", projectSetting("COMPANY_COPYRIGHT", "companyCopyright"));
+      wLn("  ", getSetting(jucerProject, "COMPANY_COPYRIGHT", "companyCopyright"));
     }
 
-    wLn("  ", projectSetting("COMPANY_WEBSITE", "companyWebsite"));
-    wLn("  ", projectSetting("COMPANY_EMAIL", "companyEmail"));
+    wLn("  ", getSetting(jucerProject, "COMPANY_WEBSITE", "companyWebsite"));
+    wLn("  ", getSetting(jucerProject, "COMPANY_EMAIL", "companyEmail"));
 
     const auto licenseRequiredTagline =
       "Required for closed source applications without an Indie or Pro JUCE license";
@@ -391,7 +386,7 @@ int main(int argc, char* argv[])
 
     if (jucerProject.hasProperty("splashScreenColour"))
     {
-      wLn("  ", projectSetting("SPLASH_SCREEN_COLOUR", "splashScreenColour"));
+      wLn("  ", getSetting(jucerProject, "SPLASH_SCREEN_COLOUR", "splashScreenColour"));
     }
 
     const auto projectTypeDescription = [&projectType]() -> std::string {
@@ -414,7 +409,7 @@ int main(int argc, char* argv[])
     }();
     wLn("  PROJECT_TYPE \"", projectTypeDescription, "\"");
 
-    wLn("  ", projectSetting("BUNDLE_IDENTIFIER", "bundleIdentifier"));
+    wLn("  ", getSetting(jucerProject, "BUNDLE_IDENTIFIER", "bundleIdentifier"));
 
     const auto maxBinaryFileSize = [&jucerProject]() -> std::string {
       if (jucerProject.getProperty("maxBinaryFileSize").toString().isEmpty())
@@ -425,12 +420,12 @@ int main(int argc, char* argv[])
     }();
     wLn("  BINARYDATACPP_SIZE_LIMIT \"", maxBinaryFileSize, "\"");
 
-    wLn("  ", projectSetting("BINARYDATA_NAMESPACE", "binaryDataNamespace"));
-    wLn("  ", projectSetting("PREPROCESSOR_DEFINITIONS", "defines"));
+    wLn("  ", getSetting(jucerProject, "BINARYDATA_NAMESPACE", "binaryDataNamespace"));
+    wLn("  ", getSetting(jucerProject, "PREPROCESSOR_DEFINITIONS", "defines"));
 
     if (jucerProject.hasProperty("headerPath"))
     {
-      wLn("  ", projectSetting("HEADER_SEARCH_PATHS", "headerPath"));
+      wLn("  ", getSetting(jucerProject, "HEADER_SEARCH_PATHS", "headerPath"));
     }
 
     writeUserNotes(wLn, jucerProject);
@@ -441,39 +436,40 @@ int main(int argc, char* argv[])
     // jucer_audio_plugin_settings()
     if (projectType == "audioplug")
     {
-      const auto onOffProjectSetting = [&jucerProject](const std::string& cmakeTag,
-                                                       const juce::Identifier& property) {
-        return getOnOffSetting(jucerProject, cmakeTag, property);
-      };
-
       wLn("jucer_audio_plugin_settings(");
-      wLn("  ", onOffProjectSetting("BUILD_VST", "buildVST"));
-      wLn("  ", onOffProjectSetting("BUILD_VST3", "buildVST3"));
-      wLn("  ", onOffProjectSetting("BUILD_AUDIOUNIT", "buildAU"));
-      wLn("  ", onOffProjectSetting("BUILD_AUDIOUNIT_V3", "buildAUv3"));
-      wLn("  ", onOffProjectSetting("BUILD_RTAS", "buildRTAS"));
-      wLn("  ", onOffProjectSetting("BUILD_AAX", "buildAAX"));
+      wLn("  ", getOnOffSetting(jucerProject, "BUILD_VST", "buildVST"));
+      wLn("  ", getOnOffSetting(jucerProject, "BUILD_VST3", "buildVST3"));
+      wLn("  ", getOnOffSetting(jucerProject, "BUILD_AUDIOUNIT", "buildAU"));
+      wLn("  ", getOnOffSetting(jucerProject, "BUILD_AUDIOUNIT_V3", "buildAUv3"));
+      wLn("  ", getOnOffSetting(jucerProject, "BUILD_RTAS", "buildRTAS"));
+      wLn("  ", getOnOffSetting(jucerProject, "BUILD_AAX", "buildAAX"));
       if (jucerVersionAsTuple >= Version{5, 0, 0})
       {
-        wLn("  ", onOffProjectSetting("BUILD_STANDALONE_PLUGIN", "buildStandalone"));
+        wLn("  ",
+            getOnOffSetting(jucerProject, "BUILD_STANDALONE_PLUGIN", "buildStandalone"));
       }
-      wLn("  ", projectSetting("PLUGIN_NAME", "pluginName"));
-      wLn("  ", projectSetting("PLUGIN_DESCRIPTION", "pluginDesc"));
-      wLn("  ", projectSetting("PLUGIN_MANUFACTURER", "pluginManufacturer"));
-      wLn("  ", projectSetting("PLUGIN_MANUFACTURER_CODE", "pluginManufacturerCode"));
-      wLn("  ", projectSetting("PLUGIN_CODE", "pluginCode"));
-      wLn("  ", projectSetting("PLUGIN_CHANNEL_CONFIGURATIONS", "pluginChannelConfigs"));
-      wLn("  ", onOffProjectSetting("PLUGIN_IS_A_SYNTH", "pluginIsSynth"));
-      wLn("  ", onOffProjectSetting("PLUGIN_MIDI_INPUT", "pluginWantsMidiIn"));
-      wLn("  ", onOffProjectSetting("PLUGIN_MIDI_OUTPUT", "pluginProducesMidiOut"));
-      wLn("  ", onOffProjectSetting("MIDI_EFFECT_PLUGIN", "pluginIsMidiEffectPlugin"));
-      wLn("  ", onOffProjectSetting("KEY_FOCUS", "pluginEditorRequiresKeys"));
-      wLn("  ", projectSetting("PLUGIN_AU_EXPORT_PREFIX", "pluginAUExportPrefix"));
-      wLn("  ", projectSetting("PLUGIN_AU_MAIN_TYPE", "pluginAUMainType"));
-      wLn("  ", projectSetting("VST_CATEGORY", "pluginVSTCategory"));
-      wLn("  ", projectSetting("PLUGIN_RTAS_CATEGORY", "pluginRTASCategory"));
-      wLn("  ", projectSetting("PLUGIN_AAX_CATEGORY", "pluginAAXCategory"));
-      wLn("  ", projectSetting("PLUGIN_AAX_IDENTIFIER", "aaxIdentifier"));
+      wLn("  ", getSetting(jucerProject, "PLUGIN_NAME", "pluginName"));
+      wLn("  ", getSetting(jucerProject, "PLUGIN_DESCRIPTION", "pluginDesc"));
+      wLn("  ", getSetting(jucerProject, "PLUGIN_MANUFACTURER", "pluginManufacturer"));
+      wLn("  ",
+          getSetting(jucerProject, "PLUGIN_MANUFACTURER_CODE", "pluginManufacturerCode"));
+      wLn("  ", getSetting(jucerProject, "PLUGIN_CODE", "pluginCode"));
+      wLn("  ", getSetting(jucerProject, "PLUGIN_CHANNEL_CONFIGURATIONS",
+                           "pluginChannelConfigs"));
+      wLn("  ", getOnOffSetting(jucerProject, "PLUGIN_IS_A_SYNTH", "pluginIsSynth"));
+      wLn("  ", getOnOffSetting(jucerProject, "PLUGIN_MIDI_INPUT", "pluginWantsMidiIn"));
+      wLn("  ",
+          getOnOffSetting(jucerProject, "PLUGIN_MIDI_OUTPUT", "pluginProducesMidiOut"));
+      wLn("  ", getOnOffSetting(jucerProject, "MIDI_EFFECT_PLUGIN",
+                                "pluginIsMidiEffectPlugin"));
+      wLn("  ", getOnOffSetting(jucerProject, "KEY_FOCUS", "pluginEditorRequiresKeys"));
+      wLn("  ",
+          getSetting(jucerProject, "PLUGIN_AU_EXPORT_PREFIX", "pluginAUExportPrefix"));
+      wLn("  ", getSetting(jucerProject, "PLUGIN_AU_MAIN_TYPE", "pluginAUMainType"));
+      wLn("  ", getSetting(jucerProject, "VST_CATEGORY", "pluginVSTCategory"));
+      wLn("  ", getSetting(jucerProject, "PLUGIN_RTAS_CATEGORY", "pluginRTASCategory"));
+      wLn("  ", getSetting(jucerProject, "PLUGIN_AAX_CATEGORY", "pluginAAXCategory"));
+      wLn("  ", getSetting(jucerProject, "PLUGIN_AAX_IDENTIFIER", "aaxIdentifier"));
       wLn(")");
       wLn();
     }
