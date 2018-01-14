@@ -901,75 +901,45 @@ int main(int argc, char* argv[])
           const auto targetProjectDir =
             jucerFileDir.getChildFile(exporter.getProperty("targetFolder").toString());
 
+          const auto convertSearchPaths =
+            [&isAbsolutePath, &jucerFileDir,
+             &targetProjectDir](const juce::var& value) -> std::string {
+            const auto searchPaths = value.toString().toStdString();
+
+            if (searchPaths.empty())
+            {
+              return {};
+            }
+
+            std::vector<std::string> absOrRelToJucerFileDirPaths;
+
+            for (const auto& path : split("\n", searchPaths))
+            {
+              if (path.empty())
+              {
+                continue;
+              }
+
+              if (isAbsolutePath(path))
+              {
+                absOrRelToJucerFileDirPaths.push_back(path);
+              }
+              else
+              {
+                absOrRelToJucerFileDirPaths.push_back(
+                  targetProjectDir.getChildFile(juce::String{path})
+                    .getRelativePathFrom(jucerFileDir)
+                    .toStdString());
+              }
+            }
+
+            return escape("\\", join("\n", absOrRelToJucerFileDirPaths));
+          };
+
           convertSetting(configuration, "headerPath", "HEADER_SEARCH_PATHS",
-                         [&isAbsolutePath, &jucerFileDir,
-                          &targetProjectDir](const juce::var& value) -> std::string {
-                           const auto headerPath = value.toString().toStdString();
-
-                           if (headerPath.empty())
-                           {
-                             return {};
-                           }
-
-                           std::vector<std::string> absOrRelToJucerFileDirPaths;
-
-                           for (const auto& path : split("\n", headerPath))
-                           {
-                             if (path.empty())
-                             {
-                               continue;
-                             }
-
-                             if (isAbsolutePath(path))
-                             {
-                               absOrRelToJucerFileDirPaths.push_back(path);
-                             }
-                             else
-                             {
-                               absOrRelToJucerFileDirPaths.push_back(
-                                 targetProjectDir.getChildFile(juce::String{path})
-                                   .getRelativePathFrom(jucerFileDir)
-                                   .toStdString());
-                             }
-                           }
-
-                           return escape("\\", join("\n", absOrRelToJucerFileDirPaths));
-                         });
-
+                         convertSearchPaths);
           convertSetting(configuration, "libraryPath", "EXTRA_LIBRARY_SEARCH_PATHS",
-                         [&isAbsolutePath, &jucerFileDir,
-                          &targetProjectDir](const juce::var& value) -> std::string {
-                           const auto libraryPath = value.toString().toStdString();
-
-                           if (libraryPath.empty())
-                           {
-                             return {};
-                           }
-
-                           std::vector<std::string> absOrRelToJucerFileDirPaths;
-
-                           for (const auto& path : split("\n", libraryPath))
-                           {
-                             if (path.empty())
-                             {
-                               continue;
-                             }
-
-                             if (isAbsolutePath(path))
-                             {
-                               absOrRelToJucerFileDirPaths.push_back(path);
-                             }
-                             else
-                             {
-                               absOrRelToJucerFileDirPaths.push_back(
-                                 targetProjectDir.getChildFile(juce::String{path})
-                                   .getRelativePathFrom(jucerFileDir)
-                                   .toStdString());
-                             }
-                           }
-
-                           return escape("\\", join("\n", absOrRelToJucerFileDirPaths));
-                         });
+                         convertSearchPaths);
 
           convertSetting(configuration, "defines", "PREPROCESSOR_DEFINITIONS", {});
 
