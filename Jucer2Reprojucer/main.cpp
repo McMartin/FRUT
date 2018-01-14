@@ -291,6 +291,38 @@ int main(int argc, char* argv[])
   std::ofstream out{"CMakeLists.txt", std::ios_base::out | std::ios_base::binary};
   LineWriter wLn{out};
 
+  const auto convertSetting = [&wLn](const juce::ValueTree& valueTree,
+                                     const juce::Identifier& property,
+                                     const std::string& cmakeKeyword) {
+
+    const auto value = valueTree.getProperty(property).toString().toStdString();
+
+    if (value.empty())
+    {
+      wLn("  # ", cmakeKeyword);
+    }
+    else
+    {
+      wLn("  ", cmakeKeyword, " \"", escape("\\\";", value), "\"");
+    }
+  };
+
+  const auto convertOnOffSetting = [&wLn](const juce::ValueTree& valueTree,
+                                          const juce::Identifier& property,
+                                          const std::string& cmakeKeyword) {
+
+    const auto value = valueTree.getProperty(property);
+
+    if (value.isVoid())
+    {
+      wLn("  # ", cmakeKeyword);
+    }
+    else
+    {
+      wLn("  ", cmakeKeyword, " ", (bool{value} ? "ON" : "OFF"));
+    }
+  };
+
   const auto jucerFileName = jucerFile.getFileName();
 
   // Preamble
@@ -345,7 +377,7 @@ int main(int argc, char* argv[])
     wLn("jucer_project_begin(");
     wLn("  JUCER_VERSION \"", jucerVersion, "\"");
     wLn("  PROJECT_FILE \"${", escapedJucerFileName, "_FILE}\"");
-    wLn("  ", getSetting(jucerProject, "PROJECT_ID", "id"));
+    convertSetting(jucerProject, "id", "PROJECT_ID");
     wLn(")");
     wLn();
   }
@@ -355,17 +387,17 @@ int main(int argc, char* argv[])
   // jucer_project_settings()
   {
     wLn("jucer_project_settings(");
-    wLn("  ", getSetting(jucerProject, "PROJECT_NAME", "name"));
-    wLn("  ", getSetting(jucerProject, "PROJECT_VERSION", "version"));
-    wLn("  ", getSetting(jucerProject, "COMPANY_NAME", "companyName"));
+    convertSetting(jucerProject, "name", "PROJECT_NAME");
+    convertSetting(jucerProject, "version", "PROJECT_VERSION");
+    convertSetting(jucerProject, "companyName", "COMPANY_NAME");
 
     if (jucerProject.hasProperty("companyCopyright"))
     {
-      wLn("  ", getSetting(jucerProject, "COMPANY_COPYRIGHT", "companyCopyright"));
+      convertSetting(jucerProject, "companyCopyright", "COMPANY_COPYRIGHT");
     }
 
-    wLn("  ", getSetting(jucerProject, "COMPANY_WEBSITE", "companyWebsite"));
-    wLn("  ", getSetting(jucerProject, "COMPANY_EMAIL", "companyEmail"));
+    convertSetting(jucerProject, "companyWebsite", "COMPANY_WEBSITE");
+    convertSetting(jucerProject, "companyEmail", "COMPANY_EMAIL");
 
     const auto licenseRequiredTagline =
       "Required for closed source applications without an Indie or Pro JUCE license";
@@ -386,7 +418,7 @@ int main(int argc, char* argv[])
 
     if (jucerProject.hasProperty("splashScreenColour"))
     {
-      wLn("  ", getSetting(jucerProject, "SPLASH_SCREEN_COLOUR", "splashScreenColour"));
+      convertSetting(jucerProject, "splashScreenColour", "SPLASH_SCREEN_COLOUR");
     }
 
     const auto projectTypeDescription = [&projectType]() -> std::string {
@@ -409,7 +441,7 @@ int main(int argc, char* argv[])
     }();
     wLn("  PROJECT_TYPE \"", projectTypeDescription, "\"");
 
-    wLn("  ", getSetting(jucerProject, "BUNDLE_IDENTIFIER", "bundleIdentifier"));
+    convertSetting(jucerProject, "bundleIdentifier", "BUNDLE_IDENTIFIER");
 
     const auto maxBinaryFileSize = [&jucerProject]() -> std::string {
       if (jucerProject.getProperty("maxBinaryFileSize").toString().isEmpty())
@@ -420,12 +452,12 @@ int main(int argc, char* argv[])
     }();
     wLn("  BINARYDATACPP_SIZE_LIMIT \"", maxBinaryFileSize, "\"");
 
-    wLn("  ", getSetting(jucerProject, "BINARYDATA_NAMESPACE", "binaryDataNamespace"));
-    wLn("  ", getSetting(jucerProject, "PREPROCESSOR_DEFINITIONS", "defines"));
+    convertSetting(jucerProject, "binaryDataNamespace", "BINARYDATA_NAMESPACE");
+    convertSetting(jucerProject, "defines", "PREPROCESSOR_DEFINITIONS");
 
     if (jucerProject.hasProperty("headerPath"))
     {
-      wLn("  ", getSetting(jucerProject, "HEADER_SEARCH_PATHS", "headerPath"));
+      convertSetting(jucerProject, "headerPath", "HEADER_SEARCH_PATHS");
     }
 
     writeUserNotes(wLn, jucerProject);
@@ -437,39 +469,34 @@ int main(int argc, char* argv[])
     if (projectType == "audioplug")
     {
       wLn("jucer_audio_plugin_settings(");
-      wLn("  ", getOnOffSetting(jucerProject, "BUILD_VST", "buildVST"));
-      wLn("  ", getOnOffSetting(jucerProject, "BUILD_VST3", "buildVST3"));
-      wLn("  ", getOnOffSetting(jucerProject, "BUILD_AUDIOUNIT", "buildAU"));
-      wLn("  ", getOnOffSetting(jucerProject, "BUILD_AUDIOUNIT_V3", "buildAUv3"));
-      wLn("  ", getOnOffSetting(jucerProject, "BUILD_RTAS", "buildRTAS"));
-      wLn("  ", getOnOffSetting(jucerProject, "BUILD_AAX", "buildAAX"));
+      convertOnOffSetting(jucerProject, "buildVST", "BUILD_VST");
+      convertOnOffSetting(jucerProject, "buildVST3", "BUILD_VST3");
+      convertOnOffSetting(jucerProject, "buildAU", "BUILD_AUDIOUNIT");
+      convertOnOffSetting(jucerProject, "buildAUv3", "BUILD_AUDIOUNIT_V3");
+      convertOnOffSetting(jucerProject, "buildRTAS", "BUILD_RTAS");
+      convertOnOffSetting(jucerProject, "buildAAX", "BUILD_AAX");
       if (jucerVersionAsTuple >= Version{5, 0, 0})
       {
-        wLn("  ",
-            getOnOffSetting(jucerProject, "BUILD_STANDALONE_PLUGIN", "buildStandalone"));
+        convertOnOffSetting(jucerProject, "buildStandalone", "BUILD_STANDALONE_PLUGIN");
       }
-      wLn("  ", getSetting(jucerProject, "PLUGIN_NAME", "pluginName"));
-      wLn("  ", getSetting(jucerProject, "PLUGIN_DESCRIPTION", "pluginDesc"));
-      wLn("  ", getSetting(jucerProject, "PLUGIN_MANUFACTURER", "pluginManufacturer"));
-      wLn("  ",
-          getSetting(jucerProject, "PLUGIN_MANUFACTURER_CODE", "pluginManufacturerCode"));
-      wLn("  ", getSetting(jucerProject, "PLUGIN_CODE", "pluginCode"));
-      wLn("  ", getSetting(jucerProject, "PLUGIN_CHANNEL_CONFIGURATIONS",
-                           "pluginChannelConfigs"));
-      wLn("  ", getOnOffSetting(jucerProject, "PLUGIN_IS_A_SYNTH", "pluginIsSynth"));
-      wLn("  ", getOnOffSetting(jucerProject, "PLUGIN_MIDI_INPUT", "pluginWantsMidiIn"));
-      wLn("  ",
-          getOnOffSetting(jucerProject, "PLUGIN_MIDI_OUTPUT", "pluginProducesMidiOut"));
-      wLn("  ", getOnOffSetting(jucerProject, "MIDI_EFFECT_PLUGIN",
-                                "pluginIsMidiEffectPlugin"));
-      wLn("  ", getOnOffSetting(jucerProject, "KEY_FOCUS", "pluginEditorRequiresKeys"));
-      wLn("  ",
-          getSetting(jucerProject, "PLUGIN_AU_EXPORT_PREFIX", "pluginAUExportPrefix"));
-      wLn("  ", getSetting(jucerProject, "PLUGIN_AU_MAIN_TYPE", "pluginAUMainType"));
-      wLn("  ", getSetting(jucerProject, "VST_CATEGORY", "pluginVSTCategory"));
-      wLn("  ", getSetting(jucerProject, "PLUGIN_RTAS_CATEGORY", "pluginRTASCategory"));
-      wLn("  ", getSetting(jucerProject, "PLUGIN_AAX_CATEGORY", "pluginAAXCategory"));
-      wLn("  ", getSetting(jucerProject, "PLUGIN_AAX_IDENTIFIER", "aaxIdentifier"));
+      convertSetting(jucerProject, "pluginName", "PLUGIN_NAME");
+      convertSetting(jucerProject, "pluginDesc", "PLUGIN_DESCRIPTION");
+      convertSetting(jucerProject, "pluginManufacturer", "PLUGIN_MANUFACTURER");
+      convertSetting(jucerProject, "pluginManufacturerCode", "PLUGIN_MANUFACTURER_CODE");
+      convertSetting(jucerProject, "pluginCode", "PLUGIN_CODE");
+      convertSetting(jucerProject, "pluginChannelConfigs",
+                     "PLUGIN_CHANNEL_CONFIGURATIONS");
+      convertOnOffSetting(jucerProject, "pluginIsSynth", "PLUGIN_IS_A_SYNTH");
+      convertOnOffSetting(jucerProject, "pluginWantsMidiIn", "PLUGIN_MIDI_INPUT");
+      convertOnOffSetting(jucerProject, "pluginProducesMidiOut", "PLUGIN_MIDI_OUTPUT");
+      convertOnOffSetting(jucerProject, "pluginIsMidiEffectPlugin", "MIDI_EFFECT_PLUGIN");
+      convertOnOffSetting(jucerProject, "pluginEditorRequiresKeys", "KEY_FOCUS");
+      convertSetting(jucerProject, "pluginAUExportPrefix", "PLUGIN_AU_EXPORT_PREFIX");
+      convertSetting(jucerProject, "pluginAUMainType", "PLUGIN_AU_MAIN_TYPE");
+      convertSetting(jucerProject, "pluginVSTCategory", "VST_CATEGORY");
+      convertSetting(jucerProject, "pluginRTASCategory", "PLUGIN_RTAS_CATEGORY");
+      convertSetting(jucerProject, "pluginAAXCategory", "PLUGIN_AAX_CATEGORY");
+      convertSetting(jucerProject, "aaxIdentifier", "PLUGIN_AAX_IDENTIFIER");
       wLn(")");
       wLn();
     }
@@ -716,7 +743,7 @@ int main(int argc, char* argv[])
 
         if (!hasVst2Interface && (isVstAudioPlugin || isVstPluginHost))
         {
-          wLn("  ", getSetting(exporter, "VST_SDK_FOLDER", "vstFolder"));
+          convertSetting(exporter, "vstFolder", "VST_SDK_FOLDER");
         }
 
         const auto supportsVst3 = exporterType == "XCODE_MAC" || isVSExporter;
@@ -733,14 +760,13 @@ int main(int argc, char* argv[])
 
         if (supportsVst3 && (isVst3AudioPlugin || isVst3PluginHost))
         {
-          wLn("  ", getSetting(exporter, "VST3_SDK_FOLDER", "vst3Folder"));
+          convertSetting(exporter, "vst3Folder", "VST3_SDK_FOLDER");
         }
 
-        wLn("  ", getSetting(exporter, "EXTRA_PREPROCESSOR_DEFINITIONS", "extraDefs"));
-        wLn("  ", getSetting(exporter, "EXTRA_COMPILER_FLAGS", "extraCompilerFlags"));
-        wLn("  ", getSetting(exporter, "EXTRA_LINKER_FLAGS", "extraLinkerFlags"));
-        wLn("  ",
-            getSetting(exporter, "EXTERNAL_LIBRARIES_TO_LINK", "externalLibraries"));
+        convertSetting(exporter, "extraDefs", "EXTRA_PREPROCESSOR_DEFINITIONS");
+        convertSetting(exporter, "extraCompilerFlags", "EXTRA_COMPILER_FLAGS");
+        convertSetting(exporter, "extraLinkerFlags", "EXTRA_LINKER_FLAGS");
+        convertSetting(exporter, "externalLibraries", "EXTERNAL_LIBRARIES_TO_LINK");
 
         const auto mainGroup = jucerProject.getChildWithName("MAINGROUP");
 
@@ -769,24 +795,22 @@ int main(int argc, char* argv[])
 
         if (exporterType == "XCODE_MAC")
         {
-          wLn("  ", getSetting(exporter, "CUSTOM_XCODE_RESOURCE_FOLDERS",
-                               "customXcodeResourceFolders"));
+          convertSetting(exporter, "customXcodeResourceFolders",
+                         "CUSTOM_XCODE_RESOURCE_FOLDERS");
 
           if (projectType == "guiapp")
           {
-            wLn("  ",
-                getSetting(exporter, "DOCUMENT_FILE_EXTENSIONS", "documentExtensions"));
+            convertSetting(exporter, "documentExtensions", "DOCUMENT_FILE_EXTENSIONS");
           }
 
-          wLn("  ", getSetting(exporter, "CUSTOM_PLIST", "customPList"));
-          wLn("  ", getSetting(exporter, "EXTRA_FRAMEWORKS", "extraFrameworks"));
-          wLn("  ", getSetting(exporter, "PREBUILD_SHELL_SCRIPT", "prebuildCommand"));
-          wLn("  ", getSetting(exporter, "POSTBUILD_SHELL_SCRIPT", "postbuildCommand"));
+          convertSetting(exporter, "customPList", "CUSTOM_PLIST");
+          convertSetting(exporter, "extraFrameworks", "EXTRA_FRAMEWORKS");
+          convertSetting(exporter, "prebuildCommand", "PREBUILD_SHELL_SCRIPT");
+          convertSetting(exporter, "postbuildCommand", "POSTBUILD_SHELL_SCRIPT");
 
           if (exporter.hasProperty("iosDevelopmentTeamID"))
           {
-            wLn("  ",
-                getSetting(exporter, "DEVELOPMENT_TEAM_ID", "iosDevelopmentTeamID"));
+            convertSetting(exporter, "iosDevelopmentTeamID", "DEVELOPMENT_TEAM_ID");
           }
         }
 
@@ -889,7 +913,7 @@ int main(int argc, char* argv[])
             wLn("  CXX_STANDARD_TO_USE \"", cppLanguageStandard, "\"");
           }
 
-          wLn("  ", getSetting(exporter, "PKGCONFIG_LIBRARIES", "linuxExtraPkgConfig"));
+          convertSetting(exporter, "linuxExtraPkgConfig", "PKGCONFIG_LIBRARIES");
         }
 
         writeUserNotes(wLn, exporter);
@@ -907,8 +931,8 @@ int main(int argc, char* argv[])
           wLn("  DEBUG_MODE ",
               (bool{configuration.getProperty("isDebug")} ? "ON" : "OFF"));
 
-          wLn("  ", getSetting(configuration, "BINARY_NAME", "targetName"));
-          wLn("  ", getSetting(configuration, "BINARY_LOCATION", "binaryPath"));
+          convertSetting(configuration, "targetName", "BINARY_NAME");
+          convertSetting(configuration, "binaryPath", "BINARY_LOCATION");
 
           const auto isAbsolutePath = [](const juce::String& path) {
             return path.startsWithChar('/') || path.startsWithChar('~')
@@ -988,7 +1012,7 @@ int main(int argc, char* argv[])
                 escape("\\", join("\n", absOrRelToJucerFileDirPaths)), "\"");
           }
 
-          wLn("  ", getSetting(configuration, "PREPROCESSOR_DEFINITIONS", "defines"));
+          convertSetting(configuration, "defines", "PREPROCESSOR_DEFINITIONS");
 
           const auto optimisation = [&configuration, &isVSExporter]() -> std::string {
             const auto value = configuration.getProperty("optimisation");
@@ -1015,20 +1039,20 @@ int main(int argc, char* argv[])
           {
             if (isVstAudioPlugin)
             {
-              wLn("  ", getSetting(configuration, "VST_BINARY_LOCATION",
-                                   "xcodeVstBinaryLocation"));
+              convertSetting(configuration, "xcodeVstBinaryLocation",
+                             "VST_BINARY_LOCATION");
             }
 
             if (isVst3AudioPlugin)
             {
-              wLn("  ", getSetting(configuration, "VST3_BINARY_LOCATION",
-                                   "xcodeVst3BinaryLocation"));
+              convertSetting(configuration, "xcodeVst3BinaryLocation",
+                             "VST3_BINARY_LOCATION");
             }
 
             if (bool{jucerProject.getProperty("buildAU")})
             {
-              wLn("  ", getSetting(configuration, "AU_BINARY_LOCATION",
-                                   "xcodeAudioUnitBinaryLocation"));
+              convertSetting(configuration, "xcodeAudioUnitBinaryLocation",
+                             "AU_BINARY_LOCATION");
             }
 
             const auto sdks = {"10.5 SDK", "10.6 SDK",  "10.7 SDK",  "10.8 SDK",
@@ -1095,8 +1119,7 @@ int main(int argc, char* argv[])
               wLn("  OSX_ARCHITECTURE \"", osxArchitecture, "\"");
             }
 
-            wLn("  ",
-                getSetting(configuration, "CUSTOM_XCODE_FLAGS", "customXcodeFlags"));
+            convertSetting(configuration, "customXcodeFlags", "CUSTOM_XCODE_FLAGS");
 
             const auto cppLanguageStandard = [&configuration]() -> std::string {
               const auto value =
@@ -1159,14 +1182,12 @@ int main(int argc, char* argv[])
               wLn("  CXX_LIBRARY \"", cppLibType, "\"");
             }
 
-            wLn("  ", getSetting(configuration, "CODE_SIGNING_IDENTITY",
-                                 "codeSigningIdentity"));
-            wLn("  ",
-                getOnOffSetting(configuration, "RELAX_IEEE_COMPLIANCE", "fastMath"));
-            wLn("  ", getOnOffSetting(configuration, "LINK_TIME_OPTIMISATION",
-                                      "linkTimeOptimisation"));
-            wLn("  ", getOnOffSetting(configuration, "STRIP_LOCAL_SYMBOLS",
-                                      "stripLocalSymbols"));
+            convertSetting(configuration, "codeSigningIdentity", "CODE_SIGNING_IDENTITY");
+            convertOnOffSetting(configuration, "fastMath", "RELAX_IEEE_COMPLIANCE");
+            convertOnOffSetting(configuration, "linkTimeOptimisation",
+                                "LINK_TIME_OPTIMISATION");
+            convertOnOffSetting(configuration, "stripLocalSymbols",
+                                "STRIP_LOCAL_SYMBOLS");
           }
 
           if (isVSExporter)
@@ -1186,8 +1207,8 @@ int main(int argc, char* argv[])
             }();
             wLn("  WARNING_LEVEL \"", warningLevel, "\"");
 
-            wLn("  ", getOnOffSetting(configuration, "TREAT_WARNINGS_AS_ERRORS",
-                                      "warningsAreErrors"));
+            convertOnOffSetting(configuration, "warningsAreErrors",
+                                "TREAT_WARNINGS_AS_ERRORS");
 
             const auto runtimeLibrary = [&configuration]() -> std::string {
               const auto value = configuration.getProperty("useRuntimeLibDLL").toString();
@@ -1228,12 +1249,11 @@ int main(int argc, char* argv[])
               wLn("  # WHOLE_PROGRAM_OPTIMISATION");
             }
 
-            wLn("  ", getOnOffSetting(configuration, "INCREMENTAL_LINKING",
-                                      "enableIncrementalLinking"));
-            wLn("  ", getSetting(configuration, "PREBUILD_COMMAND", "prebuildCommand"));
-            wLn("  ", getSetting(configuration, "POSTBUILD_COMMAND", "postbuildCommand"));
-            wLn("  ",
-                getOnOffSetting(configuration, "GENERATE_MANIFEST", "generateManifest"));
+            convertOnOffSetting(configuration, "enableIncrementalLinking",
+                                "INCREMENTAL_LINKING");
+            convertSetting(configuration, "prebuildCommand", "PREBUILD_COMMAND");
+            convertSetting(configuration, "postbuildCommand", "POSTBUILD_COMMAND");
+            convertOnOffSetting(configuration, "generateManifest", "GENERATE_MANIFEST");
 
             const auto characterSet =
               configuration.getProperty("characterSet").toString();
@@ -1259,8 +1279,7 @@ int main(int argc, char* argv[])
               wLn("  # ARCHITECTURE \"", winArchitecture, "\"");
             }
 
-            wLn("  ",
-                getOnOffSetting(configuration, "RELAX_IEEE_COMPLIANCE", "fastMath"));
+            convertOnOffSetting(configuration, "fastMath", "RELAX_IEEE_COMPLIANCE");
           }
 
           if (exporterType == "LINUX_MAKE")
