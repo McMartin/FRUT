@@ -162,44 +162,6 @@ void writeUserNotes(LineWriter& wLn, const juce::ValueTree& valueTree)
 }
 
 
-std::string getGccOptimisation(int optimisationLevel)
-{
-  switch (optimisationLevel)
-  {
-  case 1:
-    return "-O0 (no optimisation)";
-  case 2:
-    return "-Os (minimise code size)";
-  case 3:
-    return "-O3 (fastest with safe optimisations)";
-  case 4:
-    return "-O1 (fast)";
-  case 5:
-    return "-O2 (faster)";
-  case 6:
-    return "-Ofast (uses aggressive optimisations)";
-  }
-
-  return {};
-}
-
-
-std::string getMsvcOptimisation(int optimisationLevel)
-{
-  switch (optimisationLevel)
-  {
-  case 1:
-    return "No optimisation";
-  case 2:
-    return "Minimise size";
-  case 3:
-    return "Maximise speed";
-  }
-
-  return {};
-}
-
-
 int main(int argc, char* argv[])
 {
   if (argc != 3)
@@ -949,9 +911,37 @@ int main(int argc, char* argv[])
                              return {};
 
                            if (isVSExporter)
-                             return getMsvcOptimisation(int{value});
+                           {
+                             switch (int{value})
+                             {
+                             case 1:
+                               return "No optimisation";
+                             case 2:
+                               return "Minimise size";
+                             case 3:
+                               return "Maximise speed";
+                             }
 
-                           return getGccOptimisation(int{value});
+                             return {};
+                           }
+
+                           switch (int{value})
+                           {
+                           case 1:
+                             return "-O0 (no optimisation)";
+                           case 2:
+                             return "-Os (minimise code size)";
+                           case 3:
+                             return "-O3 (fastest with safe optimisations)";
+                           case 4:
+                             return "-O1 (fast)";
+                           case 5:
+                             return "-O2 (faster)";
+                           case 6:
+                             return "-Ofast (uses aggressive optimisations)";
+                           }
+
+                           return {};
                          });
 
           if (exporterType == "XCODE_MAC")
