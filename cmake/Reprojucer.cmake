@@ -449,6 +449,7 @@ function(jucer_project_module module_name PATH_TAG modules_folder)
   unset(module_info_OSXFrameworks)
   unset(module_info_linuxLibs)
   unset(module_info_linuxPackages)
+  unset(module_info_minimumCppStandard)
 
   file(STRINGS "${module_header_file}" all_lines)
   set(in_module_declaration FALSE)
@@ -485,6 +486,24 @@ function(jucer_project_module module_name PATH_TAG modules_folder)
   string(REPLACE " " ";" linux_packages "${module_info_linuxPackages}")
   list(APPEND JUCER_PROJECT_LINUX_PACKAGES ${linux_packages})
   set(JUCER_PROJECT_LINUX_PACKAGES ${JUCER_PROJECT_LINUX_PACKAGES} PARENT_SCOPE)
+
+  if(DEFINED module_info_minimumCppStandard)
+    unset(project_cxx_standard)
+    if(DEFINED JUCER_CXX_LANGUAGE_STANDARD)
+      set(project_cxx_standard ${JUCER_CXX_LANGUAGE_STANDARD})
+    elseif(NOT (DEFINED JUCER_VERSION AND JUCER_VERSION VERSION_LESS 5.1))
+      set(project_cxx_standard 11)
+    endif()
+    if(DEFINED project_cxx_standard AND NOT ("${project_cxx_standard}" STREQUAL "latest")
+        AND ("${module_info_minimumCppStandard}" STREQUAL "latest"
+          OR ${module_info_minimumCppStandard} GREATER ${project_cxx_standard}))
+      message(WARNING "${module_name} has a higher C++ language standard requirement"
+        " (${module_info_minimumCppStandard}) than your project"
+        " (${project_cxx_standard}). To use this module you need to increase the C++"
+        " language standard of the project."
+      )
+    endif()
+  endif()
 
   file(GLOB_RECURSE browsable_files "${modules_folder}/${module_name}/*")
   foreach(file_path ${browsable_files})
