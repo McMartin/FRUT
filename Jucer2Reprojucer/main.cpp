@@ -588,7 +588,7 @@ int main(int argc, char* argv[])
         if (line.startsWith("/** Config: "))
         {
           const auto moduleOption = line.substring(12);
-          const auto optionValue = modulesOptions.getProperty(moduleOption);
+          const auto optionValue = modulesOptions.getProperty(moduleOption).toString();
 
           if (optionValue == "enabled")
           {
@@ -716,6 +716,7 @@ int main(int argc, char* argv[])
             .isValid()
           && jucerProject.getChildWithName("JUCEOPTIONS")
                  .getProperty("JUCE_PLUGINHOST_VST")
+                 .toString()
                == "enabled";
 
         if (!hasVst2Interface && (isVstAudioPlugin || isVstPluginHost))
@@ -732,6 +733,7 @@ int main(int argc, char* argv[])
             .isValid()
           && jucerProject.getChildWithName("JUCEOPTIONS")
                  .getProperty("JUCE_PLUGINHOST_VST3")
+                 .toString()
                == "enabled";
 
         if (supportsVst3 && (isVst3AudioPlugin || isVst3PluginHost))
@@ -1028,7 +1030,7 @@ int main(int argc, char* argv[])
                                    "xcodeVst3BinaryLocation"));
             }
 
-            if (jucerProject.getProperty("buildAU"))
+            if (bool{jucerProject.getProperty("buildAU")})
             {
               wLn("  ", getSetting(configuration, "AU_BINARY_LOCATION",
                                    "xcodeAudioUnitBinaryLocation"));
