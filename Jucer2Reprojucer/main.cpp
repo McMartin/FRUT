@@ -968,29 +968,27 @@ int main(int argc, char* argv[])
                                "10.9 SDK", "10.10 SDK", "10.11 SDK", "10.12 SDK"};
 
             convertSetting(configuration, "osxSDK", "OSX_BASE_SDK_VERSION",
-                           [&sdks](const juce::var& value) -> std::string {
-                             const auto stringValue = value.toString().toStdString();
+                           [&sdks](const juce::var& v) -> std::string {
+                             const auto value = v.toString().toStdString();
 
                              if (value == "default")
                                return "Use Default";
 
-                             if (std::find(sdks.begin(), sdks.end(), stringValue)
-                                 != sdks.end())
-                               return stringValue;
+                             if (std::find(sdks.begin(), sdks.end(), value) != sdks.end())
+                               return value;
 
                              return {};
                            });
 
             convertSetting(configuration, "osxCompatibility", "OSX_DEPLOYMENT_TARGET",
-                           [&sdks](const juce::var& value) -> std::string {
-                             const auto stringValue = value.toString().toStdString();
+                           [&sdks](const juce::var& v) -> std::string {
+                             const auto value = v.toString().toStdString();
 
                              if (value == "default")
                                return "Use Default";
 
-                             if (std::find(sdks.begin(), sdks.end(), stringValue)
-                                 != sdks.end())
-                               return stringValue.substr(0, stringValue.length() - 4);
+                             if (std::find(sdks.begin(), sdks.end(), value) != sdks.end())
+                               return value.substr(0, value.length() - 4);
 
                              return {};
                            });
