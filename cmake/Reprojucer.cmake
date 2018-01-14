@@ -2543,10 +2543,12 @@ function(__set_common_target_properties target)
       )
     endif()
 
-    if(JUCER_CXX_STANDARD_TO_USE STREQUAL "14")
-      target_compile_options(${target} PRIVATE "-std:c++14")
-    elseif(JUCER_CXX_STANDARD_TO_USE STREQUAL "latest")
-      target_compile_options(${target} PRIVATE "-std:c++latest")
+    if(MSVC_VERSION EQUAL 1900 OR MSVC_VERSION GREATER 1900) # VS2015 and later
+      if(JUCER_CXX_STANDARD_TO_USE STREQUAL "14")
+        target_compile_options(${target} PRIVATE "-std:c++14")
+      elseif(JUCER_CXX_STANDARD_TO_USE STREQUAL "latest")
+        target_compile_options(${target} PRIVATE "-std:c++latest")
+      endif()
     endif()
 
   elseif(CMAKE_HOST_SYSTEM_NAME STREQUAL "Linux")
