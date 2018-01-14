@@ -2260,45 +2260,9 @@ function(__set_common_target_properties target)
 
   target_link_libraries(${target} PRIVATE ${JUCER_EXTERNAL_LIBRARIES_TO_LINK})
 
+  __set_cxx_language_standard_properties(${target})
+
   if(APPLE)
-    set_target_properties(${target} PROPERTIES CXX_EXTENSIONS OFF)
-    set_target_properties(${target} PROPERTIES CXX_STANDARD 11)
-
-    unset(all_confs_cxx_language_standard)
-    unset(config_to_value)
-    foreach(config ${JUCER_PROJECT_CONFIGURATIONS})
-      if(DEFINED JUCER_CXX_LANGUAGE_STANDARD_${config})
-        list(APPEND all_confs_cxx_language_standard
-          ${JUCER_CXX_LANGUAGE_STANDARD_${config}}
-        )
-        string(APPEND config_to_value "  ${config}: "
-          "\"${JUCER_CXX_LANGUAGE_STANDARD_${config}}\"\n"
-        )
-      endif()
-    endforeach()
-    if(all_confs_cxx_language_standard)
-      list(GET all_confs_cxx_language_standard 0 cxx_language_standard)
-      list(REMOVE_DUPLICATES all_confs_cxx_language_standard)
-      list(LENGTH all_confs_cxx_language_standard all_confs_cxx_language_standard_length)
-      if(NOT all_confs_cxx_language_standard_length EQUAL 1)
-        message(STATUS "Different values for CXX_LANGUAGE_STANDARD:\n${config_to_value}"
-          "Falling back to the first value: \"${cxx_language_standard}\"."
-        )
-      endif()
-      if(cxx_language_standard MATCHES "^GNU\\+\\+")
-        set_target_properties(${target} PROPERTIES CXX_EXTENSIONS ON)
-      elseif(cxx_language_standard MATCHES "^C\\+\\+")
-        set_target_properties(${target} PROPERTIES CXX_EXTENSIONS OFF)
-      endif()
-      if(cxx_language_standard MATCHES "98$")
-        set_target_properties(${target} PROPERTIES CXX_STANDARD 98)
-      elseif(cxx_language_standard MATCHES "11$")
-        set_target_properties(${target} PROPERTIES CXX_STANDARD 11)
-      elseif(cxx_language_standard MATCHES "14$")
-        set_target_properties(${target} PROPERTIES CXX_STANDARD 14)
-      endif()
-    endif()
-
     get_target_property(target_type ${target} TYPE)
 
     foreach(config ${JUCER_PROJECT_CONFIGURATIONS})
@@ -2543,28 +2507,7 @@ function(__set_common_target_properties target)
       )
     endif()
 
-    if(MSVC_VERSION EQUAL 1900 OR MSVC_VERSION GREATER 1900) # VS2015 and later
-      if(JUCER_CXX_STANDARD_TO_USE STREQUAL "14")
-        target_compile_options(${target} PRIVATE "-std:c++14")
-      elseif(JUCER_CXX_STANDARD_TO_USE STREQUAL "latest")
-        target_compile_options(${target} PRIVATE "-std:c++latest")
-      endif()
-    endif()
-
   elseif(CMAKE_HOST_SYSTEM_NAME STREQUAL "Linux")
-    set_target_properties(${target} PROPERTIES CXX_EXTENSIONS OFF)
-    set_target_properties(${target} PROPERTIES CXX_STANDARD 11)
-
-    if(DEFINED JUCER_CXX_LANGUAGE_STANDARD)
-      if(JUCER_CXX_LANGUAGE_STANDARD MATCHES "03$")
-        set_target_properties(${target} PROPERTIES CXX_STANDARD 98)
-      elseif(JUCER_CXX_LANGUAGE_STANDARD MATCHES "11$")
-        set_target_properties(${target} PROPERTIES CXX_STANDARD 11)
-      elseif(JUCER_CXX_LANGUAGE_STANDARD MATCHES "14$")
-        set_target_properties(${target} PROPERTIES CXX_STANDARD 14)
-      endif()
-    endif()
-
     foreach(config ${JUCER_PROJECT_CONFIGURATIONS})
       if(${JUCER_CONFIGURATION_IS_DEBUG_${config}})
         target_compile_definitions(${target} PRIVATE
@@ -2628,6 +2571,72 @@ function(__set_common_target_properties target)
 
   target_compile_options(${target} PRIVATE ${JUCER_EXTRA_COMPILER_FLAGS})
   target_link_libraries(${target} PRIVATE ${JUCER_EXTRA_LINKER_FLAGS})
+
+endfunction()
+
+
+function(__set_cxx_language_standard_properties target)
+
+  if(APPLE)
+    set_target_properties(${target} PROPERTIES CXX_EXTENSIONS OFF)
+    set_target_properties(${target} PROPERTIES CXX_STANDARD 11)
+
+    unset(all_confs_cxx_language_standard)
+    unset(config_to_value)
+    foreach(config ${JUCER_PROJECT_CONFIGURATIONS})
+      if(DEFINED JUCER_CXX_LANGUAGE_STANDARD_${config})
+        list(APPEND all_confs_cxx_language_standard
+          ${JUCER_CXX_LANGUAGE_STANDARD_${config}}
+        )
+        string(APPEND config_to_value "  ${config}: "
+          "\"${JUCER_CXX_LANGUAGE_STANDARD_${config}}\"\n"
+        )
+      endif()
+    endforeach()
+    if(all_confs_cxx_language_standard)
+      list(GET all_confs_cxx_language_standard 0 cxx_language_standard)
+      list(REMOVE_DUPLICATES all_confs_cxx_language_standard)
+      list(LENGTH all_confs_cxx_language_standard all_confs_cxx_language_standard_length)
+      if(NOT all_confs_cxx_language_standard_length EQUAL 1)
+        message(STATUS "Different values for CXX_LANGUAGE_STANDARD:\n${config_to_value}"
+          "Falling back to the first value: \"${cxx_language_standard}\"."
+        )
+      endif()
+      if(cxx_language_standard MATCHES "^GNU\\+\\+")
+        set_target_properties(${target} PROPERTIES CXX_EXTENSIONS ON)
+      elseif(cxx_language_standard MATCHES "^C\\+\\+")
+        set_target_properties(${target} PROPERTIES CXX_EXTENSIONS OFF)
+      endif()
+      if(cxx_language_standard MATCHES "98$")
+        set_target_properties(${target} PROPERTIES CXX_STANDARD 98)
+      elseif(cxx_language_standard MATCHES "11$")
+        set_target_properties(${target} PROPERTIES CXX_STANDARD 11)
+      elseif(cxx_language_standard MATCHES "14$")
+        set_target_properties(${target} PROPERTIES CXX_STANDARD 14)
+      endif()
+    endif()
+  elseif(MSVC)
+    if(MSVC_VERSION EQUAL 1900 OR MSVC_VERSION GREATER 1900) # VS2015 and later
+      if(JUCER_CXX_STANDARD_TO_USE STREQUAL "14")
+        target_compile_options(${target} PRIVATE "-std:c++14")
+      elseif(JUCER_CXX_STANDARD_TO_USE STREQUAL "latest")
+        target_compile_options(${target} PRIVATE "-std:c++latest")
+      endif()
+    endif()
+  elseif(CMAKE_HOST_SYSTEM_NAME STREQUAL "Linux")
+    set_target_properties(${target} PROPERTIES CXX_EXTENSIONS OFF)
+    set_target_properties(${target} PROPERTIES CXX_STANDARD 11)
+
+    if(DEFINED JUCER_CXX_LANGUAGE_STANDARD)
+      if(JUCER_CXX_LANGUAGE_STANDARD MATCHES "03$")
+        set_target_properties(${target} PROPERTIES CXX_STANDARD 98)
+      elseif(JUCER_CXX_LANGUAGE_STANDARD MATCHES "11$")
+        set_target_properties(${target} PROPERTIES CXX_STANDARD 11)
+      elseif(JUCER_CXX_LANGUAGE_STANDARD MATCHES "14$")
+        set_target_properties(${target} PROPERTIES CXX_STANDARD 14)
+      endif()
+    endif()
+  endif()
 
 endfunction()
 
