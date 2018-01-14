@@ -181,12 +181,11 @@ juce::ValueTree getChildWithPropertyRecursively(const juce::ValueTree& valueTree
 }
 
 
-void writeUserNotes(std::ostream& out, const juce::ValueTree& valueTree)
+void writeUserNotes(LineWriter& wLn, const juce::ValueTree& valueTree)
 {
   const auto userNotes = valueTree.getProperty("userNotes").toString();
   if (userNotes.isNotEmpty())
   {
-    LineWriter wLn{out};
     wLn("  # NOTES");
     for (const auto& line : split("\n", userNotes.toStdString()))
     {
@@ -434,7 +433,7 @@ int main(int argc, char* argv[])
       wLn("  ", projectSetting("HEADER_SEARCH_PATHS", "headerPath"));
     }
 
-    writeUserNotes(out, jucerProject);
+    writeUserNotes(wLn, jucerProject);
 
     wLn(")");
     wLn();
@@ -897,7 +896,7 @@ int main(int argc, char* argv[])
           wLn("  ", getSetting(exporter, "PKGCONFIG_LIBRARIES", "linuxExtraPkgConfig"));
         }
 
-        writeUserNotes(out, exporter);
+        writeUserNotes(wLn, exporter);
 
         wLn(")");
         wLn();
@@ -1309,7 +1308,7 @@ int main(int argc, char* argv[])
             }
           }
 
-          writeUserNotes(out, configuration);
+          writeUserNotes(wLn, configuration);
 
           wLn(")");
           wLn();
