@@ -753,10 +753,8 @@ int main(int argc, char* argv[])
         convertSetting(exporter, "extraLinkerFlags", "EXTRA_LINKER_FLAGS", {});
         convertSetting(exporter, "externalLibraries", "EXTERNAL_LIBRARIES_TO_LINK", {});
 
-        const auto getIconFilePath =
-          [&jucerProject,
-           &exporter](const juce::Identifier& propertyName) -> std::string {
-          const auto fileId = exporter.getProperty(propertyName).toString();
+        const auto convertIcon = [&jucerProject](const juce::var& value) -> std::string {
+          const auto fileId = value.toString();
 
           if (!fileId.isEmpty())
           {
@@ -769,14 +767,11 @@ int main(int argc, char* argv[])
             }
           }
 
-          return {};
+          return "<None>";
         };
 
-        const auto smallIconPath = getIconFilePath("smallIcon");
-        const auto bigIconPath = getIconFilePath("bigIcon");
-
-        wLn("  ICON_SMALL \"", (smallIconPath.empty() ? "<None>" : smallIconPath), "\"");
-        wLn("  ICON_LARGE \"", (bigIconPath.empty() ? "<None>" : bigIconPath), "\"");
+        convertSetting(exporter, "smallIcon", "ICON_SMALL", convertIcon);
+        convertSetting(exporter, "bigIcon", "ICON_LARGE", convertIcon);
 
         if (exporterType == "XCODE_MAC")
         {
