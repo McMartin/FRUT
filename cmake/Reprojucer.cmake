@@ -2577,10 +2577,10 @@ endfunction()
 
 function(__set_cxx_language_standard_properties target)
 
-  if(APPLE)
-    set_target_properties(${target} PROPERTIES CXX_EXTENSIONS OFF)
-    set_target_properties(${target} PROPERTIES CXX_STANDARD 11)
+  set_target_properties(${target} PROPERTIES CXX_EXTENSIONS OFF)
+  set_target_properties(${target} PROPERTIES CXX_STANDARD 11)
 
+  if(APPLE)
     unset(all_confs_cxx_language_standard)
     unset(config_to_value)
     foreach(config ${JUCER_PROJECT_CONFIGURATIONS})
@@ -2624,9 +2624,6 @@ function(__set_cxx_language_standard_properties target)
       endif()
     endif()
   elseif(CMAKE_HOST_SYSTEM_NAME STREQUAL "Linux")
-    set_target_properties(${target} PROPERTIES CXX_EXTENSIONS OFF)
-    set_target_properties(${target} PROPERTIES CXX_STANDARD 11)
-
     if(DEFINED JUCER_CXX_LANGUAGE_STANDARD)
       if(JUCER_CXX_LANGUAGE_STANDARD MATCHES "03$")
         set_target_properties(${target} PROPERTIES CXX_STANDARD 98)
