@@ -2686,6 +2686,7 @@ function(__set_cxx_language_standard_properties target)
           set_target_properties(${target} PROPERTIES CXX_STANDARD 14)
         endif()
       endif()
+
     elseif(MSVC)
       if(MSVC_VERSION EQUAL 1900 OR MSVC_VERSION GREATER 1900) # VS2015 and later
         if(JUCER_CXX_STANDARD_TO_USE STREQUAL "14")
@@ -2694,6 +2695,7 @@ function(__set_cxx_language_standard_properties target)
           target_compile_options(${target} PRIVATE "-std:c++latest")
         endif()
       endif()
+
     elseif(CMAKE_HOST_SYSTEM_NAME STREQUAL "Linux")
       if(DEFINED JUCER_CXX_STANDARD_TO_USE)
         if(JUCER_CXX_STANDARD_TO_USE MATCHES "03$")
