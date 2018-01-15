@@ -2213,8 +2213,8 @@ function(__set_common_target_properties target)
           "JUCER_VST_SDK_FOLDER: no such directory \"${JUCER_VST_SDK_FOLDER}\""
         )
       elseif(NOT EXISTS "${JUCER_VST_SDK_FOLDER}/public.sdk/source/vst2.x/audioeffectx.h")
-        message(WARNING "JUCER_VST_SDK_FOLDER: \"${JUCER_VST_SDK_FOLDER}\" doesn't seem to "
-          "contain the VST SDK"
+        message(WARNING "JUCER_VST_SDK_FOLDER: \"${JUCER_VST_SDK_FOLDER}\" doesn't seem "
+          "to contain the VST SDK"
         )
       endif()
       target_include_directories(${target} PRIVATE "${JUCER_VST_SDK_FOLDER}")
@@ -2232,8 +2232,8 @@ function(__set_common_target_properties target)
           "JUCER_VST3_SDK_FOLDER: no such directory \"${JUCER_VST3_SDK_FOLDER}\""
         )
       elseif(NOT EXISTS "${JUCER_VST3_SDK_FOLDER}/base/source/baseiids.cpp")
-        message(WARNING "JUCER_VST3_SDK_FOLDER: \"${JUCER_VST3_SDK_FOLDER}\" doesn't seem "
-          "to contain the VST3 SDK"
+        message(WARNING "JUCER_VST3_SDK_FOLDER: \"${JUCER_VST3_SDK_FOLDER}\" doesn't "
+          "seem to contain the VST3 SDK"
         )
       endif()
       target_include_directories(${target} PRIVATE "${JUCER_VST3_SDK_FOLDER}")
