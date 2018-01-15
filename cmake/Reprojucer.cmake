@@ -2645,6 +2645,7 @@ function(__set_cxx_language_standard_properties target)
       else()
         set_target_properties(${target} PROPERTIES CXX_STANDARD 17)
       endif()
+
     elseif(JUCER_CXX_LANGUAGE_STANDARD STREQUAL "14")
       if(MSVC)
         if(MSVC_VERSION EQUAL 1900 OR MSVC_VERSION GREATER 1900) # VS2015 and later
