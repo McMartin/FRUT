@@ -23,6 +23,7 @@
 #include <iostream>
 #include <iterator>
 #include <locale>
+#include <map>
 #include <numeric>
 #include <string>
 #include <tuple>
@@ -622,23 +623,27 @@ int main(int argc, char* argv[])
 
   // jucer_export_target() and jucer_export_target_configuration()
   {
-    const auto supportedExporters = {std::make_pair("XCODE_MAC", "Xcode (MacOSX)"),
-                                     std::make_pair("VS2017", "Visual Studio 2017"),
-                                     std::make_pair("VS2015", "Visual Studio 2015"),
-                                     std::make_pair("VS2013", "Visual Studio 2013"),
-                                     std::make_pair("LINUX_MAKE", "Linux Makefile")};
+    const auto supportedExporters = {"XCODE_MAC", "VS2017", "VS2015", "VS2013",
+                                     "LINUX_MAKE"};
+    const auto exporterNames = std::map<std::string, const char*>{
+      {"XCODE_MAC", "Xcode (MacOSX)"},  {"VS2017", "Visual Studio 2017"},
+      {"VS2015", "Visual Studio 2015"}, {"VS2013", "Visual Studio 2013"},
+      {"LINUX_MAKE", "Linux Makefile"},
+    };
 
-    for (const auto& supportedExporter : supportedExporters)
+    const auto exportFormats = jucerProject.getChildWithName("EXPORTFORMATS");
+    for (auto iExporter = 0; iExporter < exportFormats.getNumChildren(); ++iExporter)
     {
-      const auto exporter = jucerProject.getChildWithName("EXPORTFORMATS")
-                              .getChildWithName(supportedExporter.first);
-      if (!exporter.isValid())
+      const auto exporter = exportFormats.getChild(iExporter);
+      const auto exporterType = exporter.getType().toString().toStdString();
+
+      if (std::find(supportedExporters.begin(), supportedExporters.end(), exporterType)
+          == supportedExporters.end())
       {
         continue;
       }
 
-      const auto exporterType = exporter.getType().toString();
-      const auto exporterName = supportedExporter.second;
+      const auto exporterName = exporterNames.at(exporterType);
       const auto configurations = exporter.getChildWithName("CONFIGURATIONS");
 
       wLn("jucer_export_target(");
