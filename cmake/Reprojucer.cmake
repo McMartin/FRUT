@@ -127,6 +127,7 @@ function(jucer_project_settings)
     "BUNDLE_IDENTIFIER"
     "BINARYDATACPP_SIZE_LIMIT"
     "BINARYDATA_NAMESPACE"
+    "CXX_LANGUAGE_STANDARD"
     "PREPROCESSOR_DEFINITIONS"
     "HEADER_SEARCH_PATHS"
   )
@@ -139,6 +140,9 @@ function(jucer_project_settings)
     "256.0 KB" "128.0 KB" "64.0 KB"
   )
   set(size_limits 10240 20480 10240 6144 2048 1024 512 256 128 64)
+
+  set(cxx_language_standard_descs "C++11" "C++14" "Use Latest")
+  set(cxx_language_standards "11" "14" "latest")
 
   unset(tag)
   foreach(element ${ARGN})
@@ -180,6 +184,16 @@ function(jucer_project_settings)
           )
         endif()
         list(GET size_limits ${size_limit_index} value)
+
+      elseif(tag STREQUAL "CXX_LANGUAGE_STANDARD")
+        list(FIND cxx_language_standard_descs "${value}" cxx_language_standard_index)
+        if(cxx_language_standard_index EQUAL -1)
+          message(FATAL_ERROR
+            "Unsupported value for CXX_LANGUAGE_STANDARD: \"${value}\"\n"
+            "Supported values: ${cxx_language_standard_descs}"
+          )
+        endif()
+        list(GET cxx_language_standards ${cxx_language_standard_index} value)
 
       elseif(tag STREQUAL "PREPROCESSOR_DEFINITIONS")
         string(REPLACE "\n" ";" value "${value}")
@@ -260,8 +274,8 @@ function(jucer_audio_plugin_settings)
           "plugins\" on GitHub: https://github.com/McMartin/FRUT/issues/267"
         )
 
-      elseif(tag STREQUAL "BUILD_STANDALONE_PLUGIN" AND DEFINED JUCER_VERSION
-          AND JUCER_VERSION VERSION_LESS 5)
+      elseif(tag STREQUAL "BUILD_STANDALONE_PLUGIN"
+          AND DEFINED JUCER_VERSION AND JUCER_VERSION VERSION_LESS 5)
         message(WARNING "BUILD_STANDALONE_PLUGIN is a JUCE 5 feature only")
 
       endif()
@@ -432,26 +446,63 @@ function(jucer_project_module module_name PATH_TAG modules_folder)
     endif()
   endforeach()
 
-  if(APPLE)
-    file(STRINGS "${module_header_file}" osx_frameworks_line REGEX "OSXFrameworks:")
-    string(REPLACE "OSXFrameworks:" "" osx_frameworks_line "${osx_frameworks_line}")
-    string(REPLACE " " ";" osx_frameworks "${osx_frameworks_line}")
-    list(APPEND JUCER_PROJECT_OSX_FRAMEWORKS ${osx_frameworks})
-    set(JUCER_PROJECT_OSX_FRAMEWORKS ${JUCER_PROJECT_OSX_FRAMEWORKS} PARENT_SCOPE)
-  endif()
+  unset(module_info_OSXFrameworks)
+  unset(module_info_linuxLibs)
+  unset(module_info_linuxPackages)
+  unset(module_info_minimumCppStandard)
 
-  if(CMAKE_HOST_SYSTEM_NAME STREQUAL "Linux")
-    file(STRINGS "${module_header_file}" linux_libs_line REGEX "linuxLibs:")
-    string(REPLACE "linuxLibs:" "" linux_libs_line "${linux_libs_line}")
-    string(REPLACE " " ";" linux_libs "${linux_libs_line}")
-    list(APPEND JUCER_PROJECT_LINUX_LIBS ${linux_libs})
-    set(JUCER_PROJECT_LINUX_LIBS ${JUCER_PROJECT_LINUX_LIBS} PARENT_SCOPE)
+  file(STRINGS "${module_header_file}" all_lines)
+  set(in_module_declaration FALSE)
+  foreach(line ${all_lines})
+    string(STRIP "${line}" stripped_line)
+    if(stripped_line MATCHES "^BEGIN_JUCE_MODULE_DECLARATION")
+      set(in_module_declaration TRUE)
+      continue()
+    elseif(stripped_line MATCHES "^END_JUCE_MODULE_DECLARATION")
+      break()
+    endif()
 
-    file(STRINGS "${module_header_file}" linux_packages_line REGEX "linuxPackages:")
-    string(REPLACE "linuxPackages:" "" linux_packages_line "${linux_packages_line}")
-    string(REPLACE " " ";" linux_packages "${linux_packages_line}")
-    list(APPEND JUCER_PROJECT_LINUX_PACKAGES ${linux_packages})
-    set(JUCER_PROJECT_LINUX_PACKAGES ${JUCER_PROJECT_LINUX_PACKAGES} PARENT_SCOPE)
+    if(in_module_declaration)
+      string(FIND "${line}" ":" colon_pos)
+      if(NOT colon_pos EQUAL -1)
+        string(SUBSTRING "${line}" 0 ${colon_pos} key)
+        string(STRIP "${key}" key)
+        math(EXPR colon_pos_plus_one "${colon_pos} + 1")
+        string(SUBSTRING "${line}" ${colon_pos_plus_one} -1 value)
+        string(STRIP "${value}" value)
+        set(module_info_${key} ${value})
+      endif()
+    endif()
+  endforeach()
+
+  string(REPLACE " " ";" osx_frameworks "${module_info_OSXFrameworks}")
+  list(APPEND JUCER_PROJECT_OSX_FRAMEWORKS ${osx_frameworks})
+  set(JUCER_PROJECT_OSX_FRAMEWORKS ${JUCER_PROJECT_OSX_FRAMEWORKS} PARENT_SCOPE)
+
+  string(REPLACE " " ";" linux_libs "${module_info_linuxLibs}")
+  list(APPEND JUCER_PROJECT_LINUX_LIBS ${linux_libs})
+  set(JUCER_PROJECT_LINUX_LIBS ${JUCER_PROJECT_LINUX_LIBS} PARENT_SCOPE)
+
+  string(REPLACE " " ";" linux_packages "${module_info_linuxPackages}")
+  list(APPEND JUCER_PROJECT_LINUX_PACKAGES ${linux_packages})
+  set(JUCER_PROJECT_LINUX_PACKAGES ${JUCER_PROJECT_LINUX_PACKAGES} PARENT_SCOPE)
+
+  if(DEFINED module_info_minimumCppStandard)
+    unset(project_cxx_standard)
+    if(DEFINED JUCER_CXX_LANGUAGE_STANDARD)
+      set(project_cxx_standard ${JUCER_CXX_LANGUAGE_STANDARD})
+    elseif(NOT (DEFINED JUCER_VERSION AND JUCER_VERSION VERSION_LESS 5.1))
+      set(project_cxx_standard 11)
+    endif()
+    if(DEFINED project_cxx_standard AND NOT ("${project_cxx_standard}" STREQUAL "latest")
+        AND ("${module_info_minimumCppStandard}" STREQUAL "latest"
+          OR ${module_info_minimumCppStandard} GREATER ${project_cxx_standard}))
+      message(WARNING "${module_name} has a higher C++ language standard requirement"
+        " (${module_info_minimumCppStandard}) than your project"
+        " (${project_cxx_standard}). To use this module you need to increase the C++"
+        " language standard of the project."
+      )
+    endif()
   endif()
 
   file(GLOB_RECURSE browsable_files "${modules_folder}/${module_name}/*")
@@ -535,6 +586,8 @@ function(jucer_export_target exporter)
     if(exporter STREQUAL "Visual Studio 2017")
       list(APPEND export_target_settings_tags "CXX_STANDARD_TO_USE")
     endif()
+  else()
+    list(APPEND export_target_settings_tags "GNU_COMPILER_EXTENSIONS")
   endif()
 
   if(exporter STREQUAL "Linux Makefile")
@@ -588,6 +641,9 @@ function(jucer_export_target exporter)
       elseif(tag STREQUAL "EXTERNAL_LIBRARIES_TO_LINK")
         string(REPLACE "\n" ";" value "${value}")
         set(JUCER_EXTERNAL_LIBRARIES_TO_LINK ${value} PARENT_SCOPE)
+
+      elseif(tag STREQUAL "GNU_COMPILER_EXTENSIONS")
+        set(JUCER_GNU_COMPILER_EXTENSIONS ${value} PARENT_SCOPE)
 
       elseif(tag STREQUAL "ICON_SMALL")
         if(NOT value STREQUAL "<None>")
@@ -694,7 +750,7 @@ function(jucer_export_target exporter)
 
       elseif(tag STREQUAL "CXX_STANDARD_TO_USE" AND exporter STREQUAL "Linux Makefile")
         if(value MATCHES "^C\\+\\+(03|11|14)$")
-          set(JUCER_CXX_LANGUAGE_STANDARD ${value} PARENT_SCOPE)
+          set(JUCER_CXX_STANDARD_TO_USE ${value} PARENT_SCOPE)
         else()
           message(FATAL_ERROR "Unsupported value for CXX_STANDARD_TO_USE: \"${value}\"")
         endif()
@@ -933,8 +989,8 @@ function(jucer_export_target_configuration
         set(JUCER_CUSTOM_XCODE_FLAGS_${config} ${value} PARENT_SCOPE)
 
       elseif(tag STREQUAL "CXX_LANGUAGE_STANDARD")
-        if(value MATCHES "^(C|GNU)\\+\\+98$" AND DEFINED JUCER_VERSION
-            AND JUCER_VERSION VERSION_LESS 5)
+        if(value MATCHES "^(C|GNU)\\+\\+98$"
+            AND DEFINED JUCER_VERSION AND JUCER_VERSION VERSION_LESS 5)
           set(JUCER_CXX_LANGUAGE_STANDARD_${config} ${value} PARENT_SCOPE)
         elseif(value MATCHES "^(C|GNU)\\+\\+(11|14)$")
           set(JUCER_CXX_LANGUAGE_STANDARD_${config} ${value} PARENT_SCOPE)
@@ -2260,45 +2316,9 @@ function(__set_common_target_properties target)
 
   target_link_libraries(${target} PRIVATE ${JUCER_EXTERNAL_LIBRARIES_TO_LINK})
 
+  __set_cxx_language_standard_properties(${target})
+
   if(APPLE)
-    set_target_properties(${target} PROPERTIES CXX_EXTENSIONS OFF)
-    set_target_properties(${target} PROPERTIES CXX_STANDARD 11)
-
-    unset(all_confs_cxx_language_standard)
-    unset(config_to_value)
-    foreach(config ${JUCER_PROJECT_CONFIGURATIONS})
-      if(DEFINED JUCER_CXX_LANGUAGE_STANDARD_${config})
-        list(APPEND all_confs_cxx_language_standard
-          ${JUCER_CXX_LANGUAGE_STANDARD_${config}}
-        )
-        string(APPEND config_to_value "  ${config}: "
-          "\"${JUCER_CXX_LANGUAGE_STANDARD_${config}}\"\n"
-        )
-      endif()
-    endforeach()
-    if(all_confs_cxx_language_standard)
-      list(GET all_confs_cxx_language_standard 0 cxx_language_standard)
-      list(REMOVE_DUPLICATES all_confs_cxx_language_standard)
-      list(LENGTH all_confs_cxx_language_standard all_confs_cxx_language_standard_length)
-      if(NOT all_confs_cxx_language_standard_length EQUAL 1)
-        message(STATUS "Different values for CXX_LANGUAGE_STANDARD:\n${config_to_value}"
-          "Falling back to the first value: \"${cxx_language_standard}\"."
-        )
-      endif()
-      if(cxx_language_standard MATCHES "^GNU\\+\\+")
-        set_target_properties(${target} PROPERTIES CXX_EXTENSIONS ON)
-      elseif(cxx_language_standard MATCHES "^C\\+\\+")
-        set_target_properties(${target} PROPERTIES CXX_EXTENSIONS OFF)
-      endif()
-      if(cxx_language_standard MATCHES "98$")
-        set_target_properties(${target} PROPERTIES CXX_STANDARD 98)
-      elseif(cxx_language_standard MATCHES "11$")
-        set_target_properties(${target} PROPERTIES CXX_STANDARD 11)
-      elseif(cxx_language_standard MATCHES "14$")
-        set_target_properties(${target} PROPERTIES CXX_STANDARD 14)
-      endif()
-    endif()
-
     get_target_property(target_type ${target} TYPE)
 
     foreach(config ${JUCER_PROJECT_CONFIGURATIONS})
@@ -2543,26 +2563,7 @@ function(__set_common_target_properties target)
       )
     endif()
 
-    if(JUCER_CXX_STANDARD_TO_USE STREQUAL "14")
-      target_compile_options(${target} PRIVATE "-std:c++14")
-    elseif(JUCER_CXX_STANDARD_TO_USE STREQUAL "latest")
-      target_compile_options(${target} PRIVATE "-std:c++latest")
-    endif()
-
   elseif(CMAKE_HOST_SYSTEM_NAME STREQUAL "Linux")
-    set_target_properties(${target} PROPERTIES CXX_EXTENSIONS OFF)
-    set_target_properties(${target} PROPERTIES CXX_STANDARD 11)
-
-    if(DEFINED JUCER_CXX_LANGUAGE_STANDARD)
-      if(JUCER_CXX_LANGUAGE_STANDARD MATCHES "03$")
-        set_target_properties(${target} PROPERTIES CXX_STANDARD 98)
-      elseif(JUCER_CXX_LANGUAGE_STANDARD MATCHES "11$")
-        set_target_properties(${target} PROPERTIES CXX_STANDARD 11)
-      elseif(JUCER_CXX_LANGUAGE_STANDARD MATCHES "14$")
-        set_target_properties(${target} PROPERTIES CXX_STANDARD 14)
-      endif()
-    endif()
-
     foreach(config ${JUCER_PROJECT_CONFIGURATIONS})
       if(${JUCER_CONFIGURATION_IS_DEBUG_${config}})
         target_compile_definitions(${target} PRIVATE
@@ -2626,6 +2627,90 @@ function(__set_common_target_properties target)
 
   target_compile_options(${target} PRIVATE ${JUCER_EXTRA_COMPILER_FLAGS})
   target_link_libraries(${target} PRIVATE ${JUCER_EXTRA_LINKER_FLAGS})
+
+endfunction()
+
+
+function(__set_cxx_language_standard_properties target)
+
+  set_target_properties(${target} PROPERTIES CXX_EXTENSIONS OFF)
+  set_target_properties(${target} PROPERTIES CXX_STANDARD 11)
+
+  if(DEFINED JUCER_CXX_LANGUAGE_STANDARD)
+    if(JUCER_CXX_LANGUAGE_STANDARD STREQUAL "latest")
+      if(MSVC)
+        if(MSVC_VERSION EQUAL 1900 OR MSVC_VERSION GREATER 1900) # VS2015 and later
+          target_compile_options(${target} PRIVATE "-std:c++latest")
+        endif()
+      else()
+        set_target_properties(${target} PROPERTIES CXX_STANDARD 17)
+      endif()
+
+    elseif(JUCER_CXX_LANGUAGE_STANDARD STREQUAL "14")
+      if(MSVC)
+        if(MSVC_VERSION EQUAL 1900 OR MSVC_VERSION GREATER 1900) # VS2015 and later
+          target_compile_options(${target} PRIVATE "-std:c++14")
+        endif()
+      else()
+        set_target_properties(${target} PROPERTIES CXX_STANDARD 14)
+      endif()
+    endif()
+  else()
+    if(APPLE)
+      unset(all_confs_cxx_language_standard)
+      unset(config_to_value)
+      foreach(config ${JUCER_PROJECT_CONFIGURATIONS})
+        if(DEFINED JUCER_CXX_LANGUAGE_STANDARD_${config})
+          list(APPEND all_confs_cxx_language_standard
+            ${JUCER_CXX_LANGUAGE_STANDARD_${config}}
+          )
+          string(APPEND config_to_value "  ${config}: "
+            "\"${JUCER_CXX_LANGUAGE_STANDARD_${config}}\"\n"
+          )
+        endif()
+      endforeach()
+      if(all_confs_cxx_language_standard)
+        list(GET all_confs_cxx_language_standard 0 cxx_language_standard)
+        list(REMOVE_DUPLICATES all_confs_cxx_language_standard)
+        list(LENGTH all_confs_cxx_language_standard all_confs_cxx_language_standard_len)
+        if(NOT all_confs_cxx_language_standard_len EQUAL 1)
+          message(STATUS "Different values for CXX_LANGUAGE_STANDARD:\n${config_to_value}"
+            "Falling back to the first value: \"${cxx_language_standard}\"."
+          )
+        endif()
+        if(cxx_language_standard MATCHES "^GNU\\+\\+")
+          set_target_properties(${target} PROPERTIES CXX_EXTENSIONS ON)
+        endif()
+        if(cxx_language_standard MATCHES "98$")
+          set_target_properties(${target} PROPERTIES CXX_STANDARD 98)
+        elseif(cxx_language_standard MATCHES "14$")
+          set_target_properties(${target} PROPERTIES CXX_STANDARD 14)
+        endif()
+      endif()
+
+    elseif(MSVC)
+      if(MSVC_VERSION EQUAL 1900 OR MSVC_VERSION GREATER 1900) # VS2015 and later
+        if(JUCER_CXX_STANDARD_TO_USE STREQUAL "14")
+          target_compile_options(${target} PRIVATE "-std:c++14")
+        elseif(JUCER_CXX_STANDARD_TO_USE STREQUAL "latest")
+          target_compile_options(${target} PRIVATE "-std:c++latest")
+        endif()
+      endif()
+
+    elseif(CMAKE_HOST_SYSTEM_NAME STREQUAL "Linux")
+      if(DEFINED JUCER_CXX_STANDARD_TO_USE)
+        if(JUCER_CXX_STANDARD_TO_USE MATCHES "03$")
+          set_target_properties(${target} PROPERTIES CXX_STANDARD 98)
+        elseif(JUCER_CXX_STANDARD_TO_USE MATCHES "14$")
+          set_target_properties(${target} PROPERTIES CXX_STANDARD 14)
+        endif()
+      endif()
+    endif()
+  endif()
+
+  if(JUCER_GNU_COMPILER_EXTENSIONS)
+    set_target_properties(${target} PROPERTIES CXX_EXTENSIONS ON)
+  endif()
 
 endfunction()
 

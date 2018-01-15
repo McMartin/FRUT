@@ -33,6 +33,7 @@ following tags:
 - ``DOCUMENT_FILE_EXTENSIONS`` (only if `jucer_project_settings()
   <jucer_project_settings.rst>`_ was called with ``PROJECT_TYPE "GUI Application"``)
 - ``EXTRA_FRAMEWORKS``
+- ``GNU_COMPILER_EXTENSIONS``
 - ``POSTBUILD_SHELL_SCRIPT``
 - ``PREBUILD_SHELL_SCRIPT``
 - ``VST3_SDK_FOLDER``
@@ -48,4 +49,5 @@ When ``<exporter>`` equals ``"Linux Makefile"``, ``<setting_tag>`` can also be o
 following tags:
 
 - ``CXX_STANDARD_TO_USE``
+- ``GNU_COMPILER_EXTENSIONS``
 - ``PKGCONFIG_LIBRARIES``

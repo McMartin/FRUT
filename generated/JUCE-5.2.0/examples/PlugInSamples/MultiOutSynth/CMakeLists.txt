@@ -36,6 +36,7 @@ jucer_project_settings(
   PROJECT_TYPE "Audio Plug-in"
   BUNDLE_IDENTIFIER "com.roli.MultiOutSynth"
   BINARYDATACPP_SIZE_LIMIT "Default"
+  CXX_LANGUAGE_STANDARD "C++11"
   # BINARYDATA_NAMESPACE
   # PREPROCESSOR_DEFINITIONS
 )

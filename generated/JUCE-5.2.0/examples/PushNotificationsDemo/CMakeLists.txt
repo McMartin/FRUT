@@ -36,6 +36,7 @@ jucer_project_settings(
   PROJECT_TYPE "GUI Application"
   BUNDLE_IDENTIFIER "com.juce.pushnotificationsdemo"
   BINARYDATACPP_SIZE_LIMIT "Default"
+  CXX_LANGUAGE_STANDARD "C++11"
   # BINARYDATA_NAMESPACE
   # PREPROCESSOR_DEFINITIONS
 )

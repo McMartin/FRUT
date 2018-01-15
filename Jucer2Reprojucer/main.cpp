@@ -395,6 +395,25 @@ int main(int argc, char* argv[])
         return juce::File::descriptionOfSizeInBytes(int{value}).toStdString();
       });
 
+    if (jucerProject.hasProperty("cppLanguageStandard"))
+    {
+      convertSetting(jucerProject, "cppLanguageStandard", "CXX_LANGUAGE_STANDARD",
+                     [](const juce::var& v) -> std::string {
+                       const auto value = v.toString();
+
+                       if (value == "11")
+                         return "C++11";
+
+                       if (value == "14")
+                         return "C++14";
+
+                       if (value == "latest")
+                         return "Use Latest";
+
+                       return {};
+                     });
+    }
+
     convertSetting(jucerProject, "binaryDataNamespace", "BINARYDATA_NAMESPACE", {});
     convertSetting(jucerProject, "defines", "PREPROCESSOR_DEFINITIONS", {});
 
@@ -714,6 +733,12 @@ int main(int argc, char* argv[])
         convertSetting(exporter, "extraCompilerFlags", "EXTRA_COMPILER_FLAGS", {});
         convertSetting(exporter, "extraLinkerFlags", "EXTRA_LINKER_FLAGS", {});
         convertSetting(exporter, "externalLibraries", "EXTERNAL_LIBRARIES_TO_LINK", {});
+
+        if (exporter.hasProperty("enableGNUExtensions"))
+        {
+          convertOnOffSetting(exporter, "enableGNUExtensions", "GNU_COMPILER_EXTENSIONS",
+                              {});
+        }
 
         const auto convertIcon = [&jucerProject](const juce::var& value) -> std::string {
           const auto fileId = value.toString();
