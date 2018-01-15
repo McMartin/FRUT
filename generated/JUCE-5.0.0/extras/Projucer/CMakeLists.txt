@@ -541,18 +541,18 @@ jucer_export_target_configuration(
 )
 
 jucer_export_target(
-  "Visual Studio 2017"
+  "Visual Studio 2013"
   # EXTRA_PREPROCESSOR_DEFINITIONS
   # EXTRA_COMPILER_FLAGS
   # EXTRA_LINKER_FLAGS
   # EXTERNAL_LIBRARIES_TO_LINK
   ICON_SMALL "<None>"
   ICON_LARGE "Source/BinaryData/juce_icon.png"
-  # PLATFORM_TOOLSET "(default)"
+  # PLATFORM_TOOLSET "v120"
 )
 
 jucer_export_target_configuration(
-  "Visual Studio 2017"
+  "Visual Studio 2013"
   NAME "Debug"
   DEBUG_MODE ON
   BINARY_NAME "Projucer"
@@ -563,8 +563,8 @@ jucer_export_target_configuration(
   OPTIMISATION "No optimisation"
   WARNING_LEVEL "High"
   # TREAT_WARNINGS_AS_ERRORS
-  RUNTIME_LIBRARY "(Default)"
-  WHOLE_PROGRAM_OPTIMISATION "Enable when possible"
+  RUNTIME_LIBRARY "Use DLL runtime"
+  WHOLE_PROGRAM_OPTIMISATION "Always disable"
   # INCREMENTAL_LINKING
   # PREBUILD_COMMAND
   # POSTBUILD_COMMAND
@@ -575,7 +575,7 @@ jucer_export_target_configuration(
 )
 
 jucer_export_target_configuration(
-  "Visual Studio 2017"
+  "Visual Studio 2013"
   NAME "Release"
   DEBUG_MODE OFF
   BINARY_NAME "Projucer"
@@ -586,7 +586,7 @@ jucer_export_target_configuration(
   OPTIMISATION "Maximise speed"
   WARNING_LEVEL "High"
   # TREAT_WARNINGS_AS_ERRORS
-  RUNTIME_LIBRARY "(Default)"
+  RUNTIME_LIBRARY "Use static runtime"
   WHOLE_PROGRAM_OPTIMISATION "Enable when possible"
   # INCREMENTAL_LINKING
   # PREBUILD_COMMAND
@@ -655,18 +655,18 @@ jucer_export_target_configuration(
 )
 
 jucer_export_target(
-  "Visual Studio 2013"
+  "Visual Studio 2017"
   # EXTRA_PREPROCESSOR_DEFINITIONS
   # EXTRA_COMPILER_FLAGS
   # EXTRA_LINKER_FLAGS
   # EXTERNAL_LIBRARIES_TO_LINK
   ICON_SMALL "<None>"
   ICON_LARGE "Source/BinaryData/juce_icon.png"
-  # PLATFORM_TOOLSET "v120"
+  # PLATFORM_TOOLSET "(default)"
 )
 
 jucer_export_target_configuration(
-  "Visual Studio 2013"
+  "Visual Studio 2017"
   NAME "Debug"
   DEBUG_MODE ON
   BINARY_NAME "Projucer"
@@ -677,8 +677,8 @@ jucer_export_target_configuration(
   OPTIMISATION "No optimisation"
   WARNING_LEVEL "High"
   # TREAT_WARNINGS_AS_ERRORS
-  RUNTIME_LIBRARY "Use DLL runtime"
-  WHOLE_PROGRAM_OPTIMISATION "Always disable"
+  RUNTIME_LIBRARY "(Default)"
+  WHOLE_PROGRAM_OPTIMISATION "Enable when possible"
   # INCREMENTAL_LINKING
   # PREBUILD_COMMAND
   # POSTBUILD_COMMAND
@@ -689,7 +689,7 @@ jucer_export_target_configuration(
 )
 
 jucer_export_target_configuration(
-  "Visual Studio 2013"
+  "Visual Studio 2017"
   NAME "Release"
   DEBUG_MODE OFF
   BINARY_NAME "Projucer"
@@ -700,7 +700,7 @@ jucer_export_target_configuration(
   OPTIMISATION "Maximise speed"
   WARNING_LEVEL "High"
   # TREAT_WARNINGS_AS_ERRORS
-  RUNTIME_LIBRARY "Use static runtime"
+  RUNTIME_LIBRARY "(Default)"
   WHOLE_PROGRAM_OPTIMISATION "Enable when possible"
   # INCREMENTAL_LINKING
   # PREBUILD_COMMAND

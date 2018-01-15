@@ -197,7 +197,7 @@ jucer_export_target_configuration(
 )
 
 jucer_export_target(
-  "Visual Studio 2017"
+  "Visual Studio 2013"
   # EXTRA_PREPROCESSOR_DEFINITIONS
   # EXTRA_COMPILER_FLAGS
   # EXTRA_LINKER_FLAGS
@@ -208,7 +208,7 @@ jucer_export_target(
 )
 
 jucer_export_target_configuration(
-  "Visual Studio 2017"
+  "Visual Studio 2013"
   NAME "Debug"
   DEBUG_MODE ON
   BINARY_NAME "SimpleFFTExample"
@@ -226,12 +226,12 @@ jucer_export_target_configuration(
   # POSTBUILD_COMMAND
   GENERATE_MANIFEST ON
   CHARACTER_SET "Default"
-  # ARCHITECTURE "x64"
+  # ARCHITECTURE "32-bit"
   # RELAX_IEEE_COMPLIANCE
 )
 
 jucer_export_target_configuration(
-  "Visual Studio 2017"
+  "Visual Studio 2013"
   NAME "Release"
   DEBUG_MODE OFF
   BINARY_NAME "SimpleFFTExample"
@@ -249,12 +249,12 @@ jucer_export_target_configuration(
   # POSTBUILD_COMMAND
   GENERATE_MANIFEST ON
   CHARACTER_SET "Default"
-  # ARCHITECTURE "x64"
+  # ARCHITECTURE "32-bit"
   # RELAX_IEEE_COMPLIANCE
 )
 
 jucer_export_target(
-  "Visual Studio 2013"
+  "Visual Studio 2017"
   # EXTRA_PREPROCESSOR_DEFINITIONS
   # EXTRA_COMPILER_FLAGS
   # EXTRA_LINKER_FLAGS
@@ -265,7 +265,7 @@ jucer_export_target(
 )
 
 jucer_export_target_configuration(
-  "Visual Studio 2013"
+  "Visual Studio 2017"
   NAME "Debug"
   DEBUG_MODE ON
   BINARY_NAME "SimpleFFTExample"
@@ -283,12 +283,12 @@ jucer_export_target_configuration(
   # POSTBUILD_COMMAND
   GENERATE_MANIFEST ON
   CHARACTER_SET "Default"
-  # ARCHITECTURE "32-bit"
+  # ARCHITECTURE "x64"
   # RELAX_IEEE_COMPLIANCE
 )
 
 jucer_export_target_configuration(
-  "Visual Studio 2013"
+  "Visual Studio 2017"
   NAME "Release"
   DEBUG_MODE OFF
   BINARY_NAME "SimpleFFTExample"
@@ -306,7 +306,7 @@ jucer_export_target_configuration(
   # POSTBUILD_COMMAND
   GENERATE_MANIFEST ON
   CHARACTER_SET "Default"
-  # ARCHITECTURE "32-bit"
+  # ARCHITECTURE "x64"
   # RELAX_IEEE_COMPLIANCE
 )
 

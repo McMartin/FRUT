@@ -133,66 +133,6 @@ jucer_project_module(
 )
 
 jucer_export_target(
-  "Xcode (MacOSX)"
-  # EXTRA_PREPROCESSOR_DEFINITIONS
-  EXTRA_COMPILER_FLAGS "-std=c++14 -Wreorder -Wconstant-conversion -Wint-conversion -Woverloaded-virtual -Wuninitialized -Wunused-parameter -Wshorten-64-to-32 -Wstrict-aliasing -Wshadow -Wconversion -Wsign-compare -Wsign-conversion"
-  # EXTRA_LINKER_FLAGS
-  # EXTERNAL_LIBRARIES_TO_LINK
-  ICON_SMALL "<None>"
-  ICON_LARGE "<None>"
-  # CUSTOM_XCODE_RESOURCE_FOLDERS
-  # DOCUMENT_FILE_EXTENSIONS
-  # CUSTOM_PLIST
-  # EXTRA_FRAMEWORKS
-  # PREBUILD_SHELL_SCRIPT
-  # POSTBUILD_SHELL_SCRIPT
-)
-
-jucer_export_target_configuration(
-  "Xcode (MacOSX)"
-  NAME "Debug"
-  DEBUG_MODE ON
-  BINARY_NAME "MidiTest"
-  # BINARY_LOCATION
-  # HEADER_SEARCH_PATHS
-  # EXTRA_LIBRARY_SEARCH_PATHS
-  # PREPROCESSOR_DEFINITIONS
-  OPTIMISATION "-O0 (no optimisation)"
-  OSX_BASE_SDK_VERSION "Use Default"
-  OSX_DEPLOYMENT_TARGET "10.9"
-  OSX_ARCHITECTURE "Use Default"
-  # CUSTOM_XCODE_FLAGS
-  CXX_LANGUAGE_STANDARD "Use Default"
-  CXX_LIBRARY "Use Default"
-  # CODE_SIGNING_IDENTITY
-  # RELAX_IEEE_COMPLIANCE
-  # LINK_TIME_OPTIMISATION
-  # STRIP_LOCAL_SYMBOLS
-)
-
-jucer_export_target_configuration(
-  "Xcode (MacOSX)"
-  NAME "Release"
-  DEBUG_MODE OFF
-  BINARY_NAME "MidiTest"
-  # BINARY_LOCATION
-  # HEADER_SEARCH_PATHS
-  # EXTRA_LIBRARY_SEARCH_PATHS
-  # PREPROCESSOR_DEFINITIONS
-  OPTIMISATION "-O3 (fastest with safe optimisations)"
-  OSX_BASE_SDK_VERSION "Use Default"
-  OSX_DEPLOYMENT_TARGET "10.9"
-  OSX_ARCHITECTURE "Use Default"
-  # CUSTOM_XCODE_FLAGS
-  CXX_LANGUAGE_STANDARD "Use Default"
-  CXX_LIBRARY "Use Default"
-  # CODE_SIGNING_IDENTITY
-  # RELAX_IEEE_COMPLIANCE
-  # LINK_TIME_OPTIMISATION
-  # STRIP_LOCAL_SYMBOLS
-)
-
-jucer_export_target(
   "Visual Studio 2015"
   # EXTRA_PREPROCESSOR_DEFINITIONS
   # EXTRA_COMPILER_FLAGS
@@ -285,6 +225,66 @@ jucer_export_target_configuration(
   # PREPROCESSOR_DEFINITIONS
   OPTIMISATION "-O3 (fastest with safe optimisations)"
   ARCHITECTURE "(Default)"
+)
+
+jucer_export_target(
+  "Xcode (MacOSX)"
+  # EXTRA_PREPROCESSOR_DEFINITIONS
+  EXTRA_COMPILER_FLAGS "-std=c++14 -Wreorder -Wconstant-conversion -Wint-conversion -Woverloaded-virtual -Wuninitialized -Wunused-parameter -Wshorten-64-to-32 -Wstrict-aliasing -Wshadow -Wconversion -Wsign-compare -Wsign-conversion"
+  # EXTRA_LINKER_FLAGS
+  # EXTERNAL_LIBRARIES_TO_LINK
+  ICON_SMALL "<None>"
+  ICON_LARGE "<None>"
+  # CUSTOM_XCODE_RESOURCE_FOLDERS
+  # DOCUMENT_FILE_EXTENSIONS
+  # CUSTOM_PLIST
+  # EXTRA_FRAMEWORKS
+  # PREBUILD_SHELL_SCRIPT
+  # POSTBUILD_SHELL_SCRIPT
+)
+
+jucer_export_target_configuration(
+  "Xcode (MacOSX)"
+  NAME "Debug"
+  DEBUG_MODE ON
+  BINARY_NAME "MidiTest"
+  # BINARY_LOCATION
+  # HEADER_SEARCH_PATHS
+  # EXTRA_LIBRARY_SEARCH_PATHS
+  # PREPROCESSOR_DEFINITIONS
+  OPTIMISATION "-O0 (no optimisation)"
+  OSX_BASE_SDK_VERSION "Use Default"
+  OSX_DEPLOYMENT_TARGET "10.9"
+  OSX_ARCHITECTURE "Use Default"
+  # CUSTOM_XCODE_FLAGS
+  CXX_LANGUAGE_STANDARD "Use Default"
+  CXX_LIBRARY "Use Default"
+  # CODE_SIGNING_IDENTITY
+  # RELAX_IEEE_COMPLIANCE
+  # LINK_TIME_OPTIMISATION
+  # STRIP_LOCAL_SYMBOLS
+)
+
+jucer_export_target_configuration(
+  "Xcode (MacOSX)"
+  NAME "Release"
+  DEBUG_MODE OFF
+  BINARY_NAME "MidiTest"
+  # BINARY_LOCATION
+  # HEADER_SEARCH_PATHS
+  # EXTRA_LIBRARY_SEARCH_PATHS
+  # PREPROCESSOR_DEFINITIONS
+  OPTIMISATION "-O3 (fastest with safe optimisations)"
+  OSX_BASE_SDK_VERSION "Use Default"
+  OSX_DEPLOYMENT_TARGET "10.9"
+  OSX_ARCHITECTURE "Use Default"
+  # CUSTOM_XCODE_FLAGS
+  CXX_LANGUAGE_STANDARD "Use Default"
+  CXX_LIBRARY "Use Default"
+  # CODE_SIGNING_IDENTITY
+  # RELAX_IEEE_COMPLIANCE
+  # LINK_TIME_OPTIMISATION
+  # STRIP_LOCAL_SYMBOLS
 )
 
 jucer_project_end()

@@ -217,7 +217,7 @@ jucer_export_target_configuration(
 )
 
 jucer_export_target(
-  "Visual Studio 2015"
+  "Visual Studio 2013"
   # EXTRA_PREPROCESSOR_DEFINITIONS
   # EXTRA_COMPILER_FLAGS
   # EXTRA_LINKER_FLAGS
@@ -228,7 +228,7 @@ jucer_export_target(
 )
 
 jucer_export_target_configuration(
-  "Visual Studio 2015"
+  "Visual Studio 2013"
   NAME "Debug"
   DEBUG_MODE ON
   BINARY_NAME "BlocksSynth"
@@ -251,7 +251,7 @@ jucer_export_target_configuration(
 )
 
 jucer_export_target_configuration(
-  "Visual Studio 2015"
+  "Visual Studio 2013"
   NAME "Release"
   DEBUG_MODE OFF
   BINARY_NAME "BlocksSynth"
@@ -274,7 +274,7 @@ jucer_export_target_configuration(
 )
 
 jucer_export_target(
-  "Visual Studio 2013"
+  "Visual Studio 2015"
   # EXTRA_PREPROCESSOR_DEFINITIONS
   # EXTRA_COMPILER_FLAGS
   # EXTRA_LINKER_FLAGS
@@ -285,7 +285,7 @@ jucer_export_target(
 )
 
 jucer_export_target_configuration(
-  "Visual Studio 2013"
+  "Visual Studio 2015"
   NAME "Debug"
   DEBUG_MODE ON
   BINARY_NAME "BlocksSynth"
@@ -308,7 +308,7 @@ jucer_export_target_configuration(
 )
 
 jucer_export_target_configuration(
-  "Visual Studio 2013"
+  "Visual Studio 2015"
   NAME "Release"
   DEBUG_MODE OFF
   BINARY_NAME "BlocksSynth"

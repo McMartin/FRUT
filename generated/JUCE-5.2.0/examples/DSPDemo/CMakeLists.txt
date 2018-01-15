@@ -233,6 +233,44 @@ jucer_export_target_configuration(
 )
 
 jucer_export_target(
+  "Linux Makefile"
+  # EXTRA_PREPROCESSOR_DEFINITIONS
+  # EXTRA_COMPILER_FLAGS
+  # EXTRA_LINKER_FLAGS
+  # EXTERNAL_LIBRARIES_TO_LINK
+  ICON_SMALL "<None>"
+  ICON_LARGE "<None>"
+  # CXX_STANDARD_TO_USE
+  # PKGCONFIG_LIBRARIES
+)
+
+jucer_export_target_configuration(
+  "Linux Makefile"
+  NAME "Debug"
+  DEBUG_MODE ON
+  BINARY_NAME "DSPDemo"
+  # BINARY_LOCATION
+  # HEADER_SEARCH_PATHS
+  # EXTRA_LIBRARY_SEARCH_PATHS
+  # PREPROCESSOR_DEFINITIONS
+  OPTIMISATION "-O0 (no optimisation)"
+  ARCHITECTURE "(Default)"
+)
+
+jucer_export_target_configuration(
+  "Linux Makefile"
+  NAME "Release"
+  DEBUG_MODE OFF
+  BINARY_NAME "DSPDemo"
+  # BINARY_LOCATION
+  # HEADER_SEARCH_PATHS
+  # EXTRA_LIBRARY_SEARCH_PATHS
+  # PREPROCESSOR_DEFINITIONS
+  OPTIMISATION "-O3 (fastest with safe optimisations)"
+  ARCHITECTURE "(Default)"
+)
+
+jucer_export_target(
   "Visual Studio 2017"
   # EXTRA_PREPROCESSOR_DEFINITIONS
   # EXTRA_COMPILER_FLAGS
@@ -287,44 +325,6 @@ jucer_export_target_configuration(
   CHARACTER_SET "Default"
   # ARCHITECTURE "x64"
   # RELAX_IEEE_COMPLIANCE
-)
-
-jucer_export_target(
-  "Linux Makefile"
-  # EXTRA_PREPROCESSOR_DEFINITIONS
-  # EXTRA_COMPILER_FLAGS
-  # EXTRA_LINKER_FLAGS
-  # EXTERNAL_LIBRARIES_TO_LINK
-  ICON_SMALL "<None>"
-  ICON_LARGE "<None>"
-  # CXX_STANDARD_TO_USE
-  # PKGCONFIG_LIBRARIES
-)
-
-jucer_export_target_configuration(
-  "Linux Makefile"
-  NAME "Debug"
-  DEBUG_MODE ON
-  BINARY_NAME "DSPDemo"
-  # BINARY_LOCATION
-  # HEADER_SEARCH_PATHS
-  # EXTRA_LIBRARY_SEARCH_PATHS
-  # PREPROCESSOR_DEFINITIONS
-  OPTIMISATION "-O0 (no optimisation)"
-  ARCHITECTURE "(Default)"
-)
-
-jucer_export_target_configuration(
-  "Linux Makefile"
-  NAME "Release"
-  DEBUG_MODE OFF
-  BINARY_NAME "DSPDemo"
-  # BINARY_LOCATION
-  # HEADER_SEARCH_PATHS
-  # EXTRA_LIBRARY_SEARCH_PATHS
-  # PREPROCESSOR_DEFINITIONS
-  OPTIMISATION "-O3 (fastest with safe optimisations)"
-  ARCHITECTURE "(Default)"
 )
 
 jucer_project_end()
