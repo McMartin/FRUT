@@ -1958,7 +1958,7 @@ function(__generate_AppConfig_header)
 
     foreach(setting_name ${audio_plugin_setting_names})
       string(LENGTH "JucePlugin_${setting_name}" right_padding)
-      set(padding_spaces "")
+      unset(padding_spaces)
       while(right_padding LESS 32)
         string(APPEND padding_spaces " ")
         math(EXPR right_padding "${right_padding} + 1")
