@@ -628,20 +628,21 @@ int main(int argc, char* argv[])
                                      std::make_pair("VS2013", "Visual Studio 2013"),
                                      std::make_pair("LINUX_MAKE", "Linux Makefile")};
 
-    for (const auto& element : supportedExporters)
+    for (const auto& supportedExporter : supportedExporters)
     {
-      const auto exporter =
-        jucerProject.getChildWithName("EXPORTFORMATS").getChildWithName(element.first);
+      const auto exporter = jucerProject.getChildWithName("EXPORTFORMATS")
+                              .getChildWithName(supportedExporter.first);
       if (!exporter.isValid())
       {
         continue;
       }
 
       const auto exporterType = exporter.getType().toString();
+      const auto exporterName = supportedExporter.second;
       const auto configurations = exporter.getChildWithName("CONFIGURATIONS");
 
       wLn("jucer_export_target(");
-      wLn("  \"", element.second, "\"");
+      wLn("  \"", exporterName, "\"");
 
       if (exporterType == "XCODE_MAC"
           && (!exporter.getProperty("prebuildCommand").toString().isEmpty()
@@ -844,7 +845,7 @@ int main(int argc, char* argv[])
         const auto configuration = configurations.getChild(i);
 
         wLn("jucer_export_target_configuration(");
-        wLn("  \"", element.second, "\"");
+        wLn("  \"", exporterName, "\"");
         wLn("  NAME \"", configuration.getProperty("name").toString(), "\"");
         wLn("  DEBUG_MODE ", (bool{configuration.getProperty("isDebug")} ? "ON" : "OFF"));
 
