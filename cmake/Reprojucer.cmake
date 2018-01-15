@@ -1227,7 +1227,7 @@ function(jucer_project_end)
       )
     endif()
     if(DEFINED icon_filename)
-      string(APPEND resources_rc_icon_settings
+      string(CONCAT resources_rc_icon_settings
         "\nIDI_ICON1 ICON DISCARDABLE \"${icon_filename}\""
         "\nIDI_ICON2 ICON DISCARDABLE \"${icon_filename}\""
       )
@@ -1744,7 +1744,7 @@ function(__generate_AppConfig_header)
       set(user_code_section "\n")
     endif()
   else()
-    string(APPEND user_code_section "\n\n// (You can call jucer_appconfig_header() to "
+    string(CONCAT user_code_section "\n\n// (You can call jucer_appconfig_header() to "
       "add your own code to this section)\n\n"
     )
   endif()
