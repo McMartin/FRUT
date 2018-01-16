@@ -1227,7 +1227,7 @@ function(jucer_project_end)
       )
     endif()
     if(DEFINED icon_filename)
-      string(APPEND resources_rc_icon_settings
+      string(CONCAT resources_rc_icon_settings
         "\nIDI_ICON1 ICON DISCARDABLE \"${icon_filename}\""
         "\nIDI_ICON2 ICON DISCARDABLE \"${icon_filename}\""
       )
@@ -1358,6 +1358,7 @@ function(jucer_project_end)
     add_executable(${target} WIN32 MACOSX_BUNDLE ${all_sources})
 
     if(JUCER_DOCUMENT_FILE_EXTENSIONS)
+      unset(bundle_type_extensions)
       foreach(type_extension ${JUCER_DOCUMENT_FILE_EXTENSIONS})
         if(type_extension MATCHES "^\\.")
           string(SUBSTRING "${type_extension}" 1 -1 type_extension)
@@ -1744,7 +1745,7 @@ function(__generate_AppConfig_header)
       set(user_code_section "\n")
     endif()
   else()
-    string(APPEND user_code_section "\n\n// (You can call jucer_appconfig_header() to "
+    string(CONCAT user_code_section "\n\n// (You can call jucer_appconfig_header() to "
       "add your own code to this section)\n\n"
     )
   endif()
@@ -1776,8 +1777,11 @@ function(__generate_AppConfig_header)
   endforeach()
   math(EXPR max_right_padding "${max_right_padding} + 5")
 
+  unset(module_available_defines)
+  unset(config_flags_defines)
   foreach(module_name ${JUCER_PROJECT_MODULES})
     string(LENGTH "${module_name}" right_padding)
+    unset(padding_spaces)
     while(right_padding LESS max_right_padding)
       string(APPEND padding_spaces " ")
       math(EXPR right_padding "${right_padding} + 1")
@@ -1785,7 +1789,6 @@ function(__generate_AppConfig_header)
     string(APPEND module_available_defines
       "#define JUCE_MODULE_AVAILABLE_${module_name}${padding_spaces} 1\n"
     )
-    unset(padding_spaces)
 
     if(DEFINED JUCER_${module_name}_CONFIG_FLAGS)
       string(APPEND config_flags_defines
@@ -1958,7 +1961,7 @@ function(__generate_AppConfig_header)
 
     foreach(setting_name ${audio_plugin_setting_names})
       string(LENGTH "JucePlugin_${setting_name}" right_padding)
-      set(padding_spaces "")
+      unset(padding_spaces)
       while(right_padding LESS 32)
         string(APPEND padding_spaces " ")
         math(EXPR right_padding "${right_padding} + 1")
@@ -2066,6 +2069,7 @@ function(__generate_JuceHeader_header)
     set(binary_data_include "#include \"BinaryData.h\"")
   endif()
 
+  unset(modules_includes)
   foreach(module_name ${JUCER_PROJECT_MODULES})
     string(APPEND modules_includes "#include <${module_name}/${module_name}.h>\n")
   endforeach()
@@ -2301,6 +2305,11 @@ function(__set_common_target_properties target)
 
     get_target_property(target_type ${target} TYPE)
 
+    unset(all_confs_code_sign_identity)
+    unset(all_confs_strip_exe)
+    unset(all_confs_strip_opt)
+    unset(all_confs_strip_arg)
+
     foreach(config ${JUCER_PROJECT_CONFIGURATIONS})
       if(${JUCER_CONFIGURATION_IS_DEBUG_${config}})
         target_compile_definitions(${target} PRIVATE
@@ -2407,6 +2416,9 @@ function(__set_common_target_properties target)
   elseif(MSVC)
     target_compile_definitions(${target} PRIVATE "_CRT_SECURE_NO_WARNINGS")
     target_compile_options(${target} PRIVATE "/MP")
+
+    unset(all_confs_prebuild_command)
+    unset(all_confs_postbuild_command)
 
     foreach(config ${JUCER_PROJECT_CONFIGURATIONS})
       if(${JUCER_CONFIGURATION_IS_DEBUG_${config}})
@@ -2683,6 +2695,7 @@ endfunction()
 
 function(__install_to_plugin_binary_location target plugin_type default_destination)
 
+  unset(all_confs_destination)
   foreach(config ${JUCER_PROJECT_CONFIGURATIONS})
     if(DEFINED JUCER_${plugin_type}_BINARY_LOCATION_${config})
       set(destination ${JUCER_${plugin_type}_BINARY_LOCATION_${config}})
