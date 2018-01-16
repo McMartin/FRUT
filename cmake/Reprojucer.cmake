@@ -43,7 +43,7 @@ set(Reprojucer_supported_exporters_conditions
 )
 
 
-function(__set_Reprojucer_current_exporter)
+function(_FRUT_set_Reprojucer_current_exporter)
 
   unset(current_exporter)
 
@@ -72,7 +72,7 @@ function(__set_Reprojucer_current_exporter)
 
 endfunction()
 
-__set_Reprojucer_current_exporter()
+_FRUT_set_Reprojucer_current_exporter()
 
 
 function(jucer_project_begin)
@@ -161,7 +161,7 @@ function(jucer_project_settings)
             "major.minor.point[.point]"
           )
         endif()
-        __version_to_hex("${value}" hex_value)
+        _FRUT_version_to_hex("${value}" hex_value)
         set(JUCER_PROJECT_VERSION_AS_HEX "${hex_value}" PARENT_SCOPE)
 
       elseif(tag STREQUAL "PROJECT_TYPE")
@@ -189,7 +189,7 @@ function(jucer_project_settings)
         string(REPLACE "\n" ";" value "${value}")
         unset(header_search_paths)
         foreach(path ${value})
-          __abs_path_based_on_jucer_project_dir("${path}" path)
+          _FRUT_abs_path_based_on_jucer_project_dir("${path}" path)
           list(APPEND header_search_paths "${path}")
         endforeach()
         set(value ${header_search_paths})
@@ -300,7 +300,7 @@ function(jucer_project_files source_group_name)
     else()
       set(path ${element})
 
-      __abs_path_based_on_jucer_project_dir("${path}" path)
+      _FRUT_abs_path_based_on_jucer_project_dir("${path}" path)
       list(APPEND files "${path}")
 
       if(xcode_resource STREQUAL "x")
@@ -342,7 +342,7 @@ function(jucer_project_module module_name PATH_TAG modules_folder)
   list(APPEND JUCER_PROJECT_MODULES ${module_name})
   set(JUCER_PROJECT_MODULES ${JUCER_PROJECT_MODULES} PARENT_SCOPE)
 
-  __abs_path_based_on_jucer_project_dir("${modules_folder}" modules_folder)
+  _FRUT_abs_path_based_on_jucer_project_dir("${modules_folder}" modules_folder)
   if(NOT IS_DIRECTORY "${modules_folder}")
     message(FATAL_ERROR "No such directory: \"${modules_folder}\"")
   endif()
@@ -559,17 +559,17 @@ function(jucer_export_target exporter)
 
       if(tag STREQUAL "TARGET_PROJECT_FOLDER")
         string(REPLACE "\\" "/" value "${value}")
-        __abs_path_based_on_jucer_project_dir("${value}" value)
+        _FRUT_abs_path_based_on_jucer_project_dir("${value}" value)
         set(JUCER_TARGET_PROJECT_FOLDER ${value} PARENT_SCOPE)
 
       elseif(tag STREQUAL "VST_SDK_FOLDER")
         string(REPLACE "\\" "/" value "${value}")
-        __abs_path_based_on_jucer_project_dir("${value}" value)
+        _FRUT_abs_path_based_on_jucer_project_dir("${value}" value)
         set(JUCER_VST_SDK_FOLDER ${value} PARENT_SCOPE)
 
       elseif(tag STREQUAL "VST3_SDK_FOLDER")
         string(REPLACE "\\" "/" value "${value}")
-        __abs_path_based_on_jucer_project_dir("${value}" value)
+        _FRUT_abs_path_based_on_jucer_project_dir("${value}" value)
         set(JUCER_VST3_SDK_FOLDER ${value} PARENT_SCOPE)
 
       elseif(tag STREQUAL "EXTRA_PREPROCESSOR_DEFINITIONS")
@@ -591,13 +591,13 @@ function(jucer_export_target exporter)
 
       elseif(tag STREQUAL "ICON_SMALL")
         if(NOT value STREQUAL "<None>")
-          __abs_path_based_on_jucer_project_dir("${value}" value)
+          _FRUT_abs_path_based_on_jucer_project_dir("${value}" value)
           set(JUCER_SMALL_ICON ${value} PARENT_SCOPE)
         endif()
 
       elseif(tag STREQUAL "ICON_LARGE")
         if(NOT value STREQUAL "<None>")
-          __abs_path_based_on_jucer_project_dir("${value}" value)
+          _FRUT_abs_path_based_on_jucer_project_dir("${value}" value)
           set(JUCER_LARGE_ICON ${value} PARENT_SCOPE)
         endif()
 
@@ -605,7 +605,7 @@ function(jucer_export_target exporter)
         string(REPLACE "\n" ";" value "${value}")
         unset(resource_folders)
         foreach(folder ${value})
-          __abs_path_based_on_jucer_project_dir("${folder}" abs_folder)
+          _FRUT_abs_path_based_on_jucer_project_dir("${folder}" abs_folder)
           list(APPEND resource_folders "${abs_folder}")
         endforeach()
         set(JUCER_CUSTOM_XCODE_RESOURCE_FOLDERS ${resource_folders} PARENT_SCOPE)
@@ -832,7 +832,7 @@ function(jucer_export_target_configuration
         string(REPLACE "\n" ";" value "${value}")
         unset(header_search_paths)
         foreach(path ${value})
-          __abs_path_based_on_jucer_project_dir("${path}" path)
+          _FRUT_abs_path_based_on_jucer_project_dir("${path}" path)
           list(APPEND header_search_paths "${path}")
         endforeach()
         set(JUCER_HEADER_SEARCH_PATHS_${config} ${header_search_paths} PARENT_SCOPE)
@@ -842,7 +842,7 @@ function(jucer_export_target_configuration
         string(REPLACE "\n" ";" value "${value}")
         unset(library_search_paths)
         foreach(path ${value})
-          __abs_path_based_on_jucer_project_dir("${path}" path)
+          _FRUT_abs_path_based_on_jucer_project_dir("${path}" path)
           list(APPEND library_search_paths "${path}")
         endforeach()
         set(JUCER_EXTRA_LIBRARY_SEARCH_PATHS_${config}
@@ -1204,14 +1204,14 @@ function(jucer_project_end)
 
   project(${JUCER_PROJECT_NAME})
 
-  __generate_AppConfig_header()
-  __generate_JuceHeader_header()
+  _FRUT_generate_AppConfig_header()
+  _FRUT_generate_JuceHeader_header()
 
   if(DEFINED JUCER_SMALL_ICON OR DEFINED JUCER_LARGE_ICON)
     if(APPLE)
-      __generate_icon_file("icns" icon_filename)
+      _FRUT_generate_icon_file("icns" icon_filename)
     elseif(WIN32)
-      __generate_icon_file("ico" icon_filename)
+      _FRUT_generate_icon_file("ico" icon_filename)
     endif()
 
     if(DEFINED icon_filename)
@@ -1349,10 +1349,10 @@ function(jucer_project_end)
 
   if(JUCER_PROJECT_TYPE STREQUAL "Console Application")
     add_executable(${target} ${all_sources})
-    __set_output_directory_properties(${target} "ConsoleApp")
-    __set_common_target_properties(${target})
-    __link_osx_frameworks(${target})
-    __set_custom_xcode_flags(${target})
+    _FRUT_set_output_directory_properties(${target} "ConsoleApp")
+    _FRUT_set_common_target_properties(${target})
+    _FRUT_link_osx_frameworks(${target})
+    _FRUT_set_custom_xcode_flags(${target})
 
   elseif(JUCER_PROJECT_TYPE STREQUAL "GUI Application")
     add_executable(${target} WIN32 MACOSX_BUNDLE ${all_sources})
@@ -1392,33 +1392,33 @@ function(jucer_project_end)
       )
     endif()
 
-    __generate_plist_file(${target} "App" "APPL" "????"
+    _FRUT_generate_plist_file(${target} "App" "APPL" "????"
       "${main_plist_entries}" "${bundle_document_types_entries}"
     )
-    __set_output_directory_properties(${target} "App")
-    __set_common_target_properties(${target})
-    __link_osx_frameworks(${target})
-    __add_xcode_resources(${target})
-    __set_custom_xcode_flags(${target})
+    _FRUT_set_output_directory_properties(${target} "App")
+    _FRUT_set_common_target_properties(${target})
+    _FRUT_link_osx_frameworks(${target})
+    _FRUT_add_xcode_resources(${target})
+    _FRUT_set_custom_xcode_flags(${target})
 
   elseif(JUCER_PROJECT_TYPE STREQUAL "Static Library")
     add_library(${target} STATIC ${all_sources})
-    __set_output_directory_properties(${target} "Static Library")
-    __set_common_target_properties(${target})
-    __set_custom_xcode_flags(${target})
+    _FRUT_set_output_directory_properties(${target} "Static Library")
+    _FRUT_set_common_target_properties(${target})
+    _FRUT_set_custom_xcode_flags(${target})
 
   elseif(JUCER_PROJECT_TYPE STREQUAL "Dynamic Library")
     add_library(${target} SHARED ${all_sources})
-    __set_output_directory_properties(${target} "Dynamic Library")
-    __set_common_target_properties(${target})
-    __set_custom_xcode_flags(${target})
+    _FRUT_set_output_directory_properties(${target} "Dynamic Library")
+    _FRUT_set_common_target_properties(${target})
+    _FRUT_set_custom_xcode_flags(${target})
 
   elseif(JUCER_PROJECT_TYPE STREQUAL "Audio Plug-in")
     if(NOT APPLE AND DEFINED JUCER_VERSION AND JUCER_VERSION VERSION_LESS 5)
       add_library(${target} MODULE ${all_sources})
       set_target_properties(${target} PROPERTIES PREFIX "")
-      __set_output_directory_properties(${target} "")
-      __set_common_target_properties(${target})
+      _FRUT_set_output_directory_properties(${target} "")
+      _FRUT_set_common_target_properties(${target})
 
       if(JUCER_BUILD_VST3 AND MSVC)
         add_custom_command(TARGET ${target} POST_BUILD
@@ -1466,11 +1466,11 @@ function(jucer_project_end)
         ${JUCER_PROJECT_XCODE_RESOURCES}
         ${JUCER_PROJECT_BROWSABLE_FILES}
       )
-      __set_output_directory_properties(${shared_code_target} "Shared Code")
-      __set_common_target_properties(${shared_code_target})
+      _FRUT_set_output_directory_properties(${shared_code_target} "Shared Code")
+      _FRUT_set_common_target_properties(${shared_code_target})
       target_compile_definitions(${shared_code_target} PRIVATE "JUCE_SHARED_CODE=1")
-      __set_JucePlugin_Build_defines(${shared_code_target} "SharedCodeTarget")
-      __set_custom_xcode_flags(${shared_code_target})
+      _FRUT_set_JucePlugin_Build_defines(${shared_code_target} "SharedCodeTarget")
+      _FRUT_set_custom_xcode_flags(${shared_code_target})
 
       if(JUCER_BUILD_VST)
         set(vst_target ${target}_VST)
@@ -1479,21 +1479,21 @@ function(jucer_project_end)
           ${JUCER_PROJECT_XCODE_RESOURCES}
         )
         target_link_libraries(${vst_target} PRIVATE ${shared_code_target})
-        __generate_plist_file(${vst_target} "VST" "BNDL" "????"
+        _FRUT_generate_plist_file(${vst_target} "VST" "BNDL" "????"
           "${main_plist_entries}" ""
         )
-        __set_bundle_properties(${vst_target} "vst")
-        __set_output_directory_properties(${vst_target} "VST")
-        __set_common_target_properties(${vst_target})
+        _FRUT_set_bundle_properties(${vst_target} "vst")
+        _FRUT_set_output_directory_properties(${vst_target} "VST")
+        _FRUT_set_common_target_properties(${vst_target})
         if(APPLE)
-          __install_to_plugin_binary_location(${vst_target} "VST"
+          _FRUT_install_to_plugin_binary_location(${vst_target} "VST"
             "$ENV{HOME}/Library/Audio/Plug-Ins/VST"
           )
         endif()
-        __set_JucePlugin_Build_defines(${vst_target} "VSTPlugIn")
-        __link_osx_frameworks(${vst_target})
-        __add_xcode_resources(${vst_target})
-        __set_custom_xcode_flags(${vst_target})
+        _FRUT_set_JucePlugin_Build_defines(${vst_target} "VSTPlugIn")
+        _FRUT_link_osx_frameworks(${vst_target})
+        _FRUT_add_xcode_resources(${vst_target})
+        _FRUT_set_custom_xcode_flags(${vst_target})
         unset(vst_target)
       endif()
 
@@ -1504,24 +1504,24 @@ function(jucer_project_end)
           ${JUCER_PROJECT_XCODE_RESOURCES}
         )
         target_link_libraries(${vst3_target} PRIVATE ${shared_code_target})
-        __generate_plist_file(${vst3_target} "VST3" "BNDL" "????"
+        _FRUT_generate_plist_file(${vst3_target} "VST3" "BNDL" "????"
           "${main_plist_entries}" ""
         )
-        __set_bundle_properties(${vst3_target} "vst3")
+        _FRUT_set_bundle_properties(${vst3_target} "vst3")
         if(MSVC)
           set_property(TARGET ${vst3_target} PROPERTY SUFFIX ".vst3")
         endif()
-        __set_output_directory_properties(${vst3_target} "VST3")
-        __set_common_target_properties(${vst3_target})
+        _FRUT_set_output_directory_properties(${vst3_target} "VST3")
+        _FRUT_set_common_target_properties(${vst3_target})
         if(APPLE)
-          __install_to_plugin_binary_location(${vst3_target} "VST3"
+          _FRUT_install_to_plugin_binary_location(${vst3_target} "VST3"
             "$ENV{HOME}/Library/Audio/Plug-Ins/VST3"
           )
         endif()
-        __set_JucePlugin_Build_defines(${vst3_target} "VST3PlugIn")
-        __link_osx_frameworks(${vst3_target})
-        __add_xcode_resources(${vst3_target})
-        __set_custom_xcode_flags(${vst3_target})
+        _FRUT_set_JucePlugin_Build_defines(${vst3_target} "VST3PlugIn")
+        _FRUT_link_osx_frameworks(${vst3_target})
+        _FRUT_add_xcode_resources(${vst3_target})
+        _FRUT_set_custom_xcode_flags(${vst3_target})
         unset(vst3_target)
       endif()
 
@@ -1533,8 +1533,8 @@ function(jucer_project_end)
         )
         target_link_libraries(${au_target} PRIVATE ${shared_code_target})
 
-        __get_au_main_type_code(au_main_type_code)
-        __version_to_dec("${JUCER_PROJECT_VERSION}" dec_version)
+        _FRUT_get_au_main_type_code(au_main_type_code)
+        _FRUT_version_to_dec("${JUCER_PROJECT_VERSION}" dec_version)
 
         set(audio_components_entries "
     <key>AudioComponents</key>
@@ -1558,19 +1558,19 @@ function(jucer_project_end)
     </array>"
         )
 
-        __generate_plist_file(${au_target} "AU" "BNDL" "????"
+        _FRUT_generate_plist_file(${au_target} "AU" "BNDL" "????"
           "${main_plist_entries}" "${audio_components_entries}"
         )
-        __set_bundle_properties(${au_target} "component")
-        __set_output_directory_properties(${au_target} "AU")
-        __set_common_target_properties(${au_target})
-        __install_to_plugin_binary_location(${au_target} "AU"
+        _FRUT_set_bundle_properties(${au_target} "component")
+        _FRUT_set_output_directory_properties(${au_target} "AU")
+        _FRUT_set_common_target_properties(${au_target})
+        _FRUT_install_to_plugin_binary_location(${au_target} "AU"
           "$ENV{HOME}/Library/Audio/Plug-Ins/Components"
         )
-        __set_JucePlugin_Build_defines(${au_target} "AudioUnitPlugIn")
-        __link_osx_frameworks(${au_target} "AudioUnit" "CoreAudioKit")
-        __add_xcode_resources(${au_target})
-        __set_custom_xcode_flags(${au_target})
+        _FRUT_set_JucePlugin_Build_defines(${au_target} "AudioUnitPlugIn")
+        _FRUT_link_osx_frameworks(${au_target} "AudioUnit" "CoreAudioKit")
+        _FRUT_add_xcode_resources(${au_target})
+        _FRUT_set_custom_xcode_flags(${au_target})
         unset(au_target)
       endif()
 
@@ -1582,8 +1582,8 @@ function(jucer_project_end)
         )
         target_link_libraries(${auv3_target} PRIVATE ${shared_code_target})
 
-        __get_au_main_type_code(au_main_type_code)
-        __version_to_dec("${JUCER_PROJECT_VERSION}" dec_version)
+        _FRUT_get_au_main_type_code(au_main_type_code)
+        _FRUT_version_to_dec("${JUCER_PROJECT_VERSION}" dec_version)
         if(JUCER_PLUGIN_IS_A_SYNTH)
           set(tag "Synth")
         else()
@@ -1628,7 +1628,7 @@ function(jucer_project_end)
     </dict>"
         )
 
-        __generate_plist_file(${auv3_target} "AUv3_AppExtension" "XPC!" "????"
+        _FRUT_generate_plist_file(${auv3_target} "AUv3_AppExtension" "XPC!" "????"
           "${main_plist_entries}" "${ns_extension_entries}"
         )
 
@@ -1649,19 +1649,21 @@ function(jucer_project_end)
           )
         endif()
 
-        # Cannot use __set_bundle_properties() since Projucer sets xcodeIsBundle=false
+        # Cannot use _FRUT_set_bundle_properties() since Projucer sets xcodeIsBundle=false
         # for this target, though it is a bundle...
         set_target_properties(${auv3_target} PROPERTIES
           BUNDLE TRUE
           BUNDLE_EXTENSION "appex"
           XCODE_ATTRIBUTE_WRAPPER_EXTENSION "appex"
         )
-        __set_output_directory_properties(${auv3_target} "AUv3 AppExtension")
-        __set_common_target_properties(${auv3_target})
-        __set_JucePlugin_Build_defines(${auv3_target} "AudioUnitv3PlugIn")
-        __link_osx_frameworks(${auv3_target} "AudioUnit" "CoreAudioKit" "AVFoundation")
-        __add_xcode_resources(${auv3_target})
-        __set_custom_xcode_flags(${auv3_target})
+        _FRUT_set_output_directory_properties(${auv3_target} "AUv3 AppExtension")
+        _FRUT_set_common_target_properties(${auv3_target})
+        _FRUT_set_JucePlugin_Build_defines(${auv3_target} "AudioUnitv3PlugIn")
+        _FRUT_link_osx_frameworks(
+          ${auv3_target} "AudioUnit" "CoreAudioKit" "AVFoundation"
+        )
+        _FRUT_add_xcode_resources(${auv3_target})
+        _FRUT_set_custom_xcode_flags(${auv3_target})
         unset(auv3_target)
       endif()
 
@@ -1683,19 +1685,19 @@ function(jucer_project_end)
         )
         target_link_libraries(${standalone_target} PRIVATE ${shared_code_target})
         if(juce4_standalone)
-          __generate_plist_file(${standalone_target} "AUv3_Standalone" "APPL" "????"
+          _FRUT_generate_plist_file(${standalone_target} "AUv3_Standalone" "APPL" "????"
             "${main_plist_entries}" ""
           )
         else()
-          __generate_plist_file(${standalone_target} "Standalone_Plugin" "APPL" "????"
+          _FRUT_generate_plist_file(${standalone_target} "Standalone_Plugin" "APPL" "????"
             "${main_plist_entries}" ""
           )
         endif()
-        __set_output_directory_properties(${standalone_target} "Standalone Plugin")
-        __set_common_target_properties(${standalone_target})
-        __set_JucePlugin_Build_defines(${standalone_target} "StandalonePlugIn")
-        __link_osx_frameworks(${standalone_target})
-        __add_xcode_resources(${standalone_target})
+        _FRUT_set_output_directory_properties(${standalone_target} "Standalone Plugin")
+        _FRUT_set_common_target_properties(${standalone_target})
+        _FRUT_set_JucePlugin_Build_defines(${standalone_target} "StandalonePlugIn")
+        _FRUT_link_osx_frameworks(${standalone_target})
+        _FRUT_add_xcode_resources(${standalone_target})
         if(TARGET ${target}_AUv3_AppExtension)
           add_dependencies(${standalone_target} ${target}_AUv3_AppExtension)
           install(TARGETS ${target}_AUv3_AppExtension
@@ -1710,7 +1712,7 @@ function(jucer_project_end)
             "-P" "${CMAKE_CURRENT_BINARY_DIR}/cmake_install.cmake"
           )
         endif()
-        __set_custom_xcode_flags(${standalone_target})
+        _FRUT_set_custom_xcode_flags(${standalone_target})
         unset(standalone_target)
       endif()
     endif()
@@ -1723,7 +1725,7 @@ function(jucer_project_end)
 endfunction()
 
 
-function(__abs_path_based_on_jucer_project_dir in_path out_path)
+function(_FRUT_abs_path_based_on_jucer_project_dir in_path out_path)
 
   if(NOT IS_ABSOLUTE "${in_path}" AND NOT DEFINED JUCER_PROJECT_DIR)
     message(FATAL_ERROR "The path \"${in_path}\" must be absolute, unless you give "
@@ -1737,7 +1739,7 @@ function(__abs_path_based_on_jucer_project_dir in_path out_path)
 endfunction()
 
 
-function(__generate_AppConfig_header)
+function(_FRUT_generate_AppConfig_header)
 
   if(DEFINED JUCER_APPCONFIG_USER_CODE_SECTION)
     set(user_code_section "\n${JUCER_APPCONFIG_USER_CODE_SECTION}\n")
@@ -1838,16 +1840,16 @@ function(__generate_AppConfig_header)
       "AAXDisableBypass" "AAXDisableMultiMono"
     )
 
-    __bool_to_int("${JUCER_BUILD_VST}" Build_VST_value)
-    __bool_to_int("${JUCER_BUILD_VST3}" Build_VST3_value)
-    __bool_to_int("${JUCER_BUILD_AUDIOUNIT}" Build_AU_value)
-    __bool_to_int("${JUCER_BUILD_AUDIOUNIT_V3}" Build_AUv3_value)
-    __bool_to_int("OFF" Build_RTAS_value) # Not yet supported
-    __bool_to_int("OFF" Build_AAX_value) # Not yet supported
+    _FRUT_bool_to_int("${JUCER_BUILD_VST}" Build_VST_value)
+    _FRUT_bool_to_int("${JUCER_BUILD_VST3}" Build_VST3_value)
+    _FRUT_bool_to_int("${JUCER_BUILD_AUDIOUNIT}" Build_AU_value)
+    _FRUT_bool_to_int("${JUCER_BUILD_AUDIOUNIT_V3}" Build_AUv3_value)
+    _FRUT_bool_to_int("OFF" Build_RTAS_value) # Not yet supported
+    _FRUT_bool_to_int("OFF" Build_AAX_value) # Not yet supported
     if(DEFINED JUCER_VERSION AND JUCER_VERSION VERSION_LESS 5)
-      __bool_to_int("${JUCER_BUILD_AUDIOUNIT_V3}" Build_STANDALONE_value)
+      _FRUT_bool_to_int("${JUCER_BUILD_AUDIOUNIT_V3}" Build_STANDALONE_value)
     else()
-      __bool_to_int("${JUCER_BUILD_STANDALONE_PLUGIN}" Build_STANDALONE_value)
+      _FRUT_bool_to_int("${JUCER_BUILD_STANDALONE_PLUGIN}" Build_STANDALONE_value)
     endif()
 
     set(Name_value "\"${JUCER_PLUGIN_NAME}\"")
@@ -1856,21 +1858,21 @@ function(__generate_AppConfig_header)
     set(ManufacturerWebsite_value "\"${JUCER_COMPANY_WEBSITE}\"")
     set(ManufacturerEmail_value "\"${JUCER_COMPANY_EMAIL}\"")
 
-    __four_chars_to_hex("${JUCER_PLUGIN_MANUFACTURER_CODE}" hex_manufacturer_code)
+    _FRUT_four_chars_to_hex("${JUCER_PLUGIN_MANUFACTURER_CODE}" hex_manufacturer_code)
     set(ManufacturerCode_value
       "${hex_manufacturer_code} // '${JUCER_PLUGIN_MANUFACTURER_CODE}'"
     )
-    __four_chars_to_hex("${JUCER_PLUGIN_CODE}" hex_plugin_code)
+    _FRUT_four_chars_to_hex("${JUCER_PLUGIN_CODE}" hex_plugin_code)
     set(PluginCode_value "${hex_plugin_code} // '${JUCER_PLUGIN_CODE}'")
 
-    __bool_to_int("${JUCER_PLUGIN_IS_A_SYNTH}" IsSynth_value)
-    __bool_to_int("${JUCER_PLUGIN_MIDI_INPUT}" WantsMidiInput_value)
-    __bool_to_int("${JUCER_PLUGIN_MIDI_OUTPUT}" ProducesMidiOutput_value)
-    __bool_to_int("${JUCER_MIDI_EFFECT_PLUGIN}" IsMidiEffect_value)
-    __bool_to_int("${JUCER_KEY_FOCUS}" EditorRequiresKeyboardFocus_value)
+    _FRUT_bool_to_int("${JUCER_PLUGIN_IS_A_SYNTH}" IsSynth_value)
+    _FRUT_bool_to_int("${JUCER_PLUGIN_MIDI_INPUT}" WantsMidiInput_value)
+    _FRUT_bool_to_int("${JUCER_PLUGIN_MIDI_OUTPUT}" ProducesMidiOutput_value)
+    _FRUT_bool_to_int("${JUCER_MIDI_EFFECT_PLUGIN}" IsMidiEffect_value)
+    _FRUT_bool_to_int("${JUCER_KEY_FOCUS}" EditorRequiresKeyboardFocus_value)
 
     set(Version_value "${JUCER_PROJECT_VERSION}")
-    __version_to_hex("${JUCER_PROJECT_VERSION}" VersionCode_value)
+    _FRUT_version_to_hex("${JUCER_PROJECT_VERSION}" VersionCode_value)
     set(VersionString_value "\"${JUCER_PROJECT_VERSION}\"")
 
     set(VSTUniqueID_value "JucePlugin_PluginCode")
@@ -1913,15 +1915,17 @@ function(__generate_AppConfig_header)
     endif()
     set(RTASManufacturerCode_value "JucePlugin_ManufacturerCode")
     set(RTASProductId_value "JucePlugin_PluginCode")
-    __bool_to_int("${JUCER_PLUGIN_RTAS_DISABLE_BYPASS}" RTASDisableBypass_value)
-    __bool_to_int("${JUCER_PLUGIN_RTAS_DISABLE_MULTI_MONO}" RTASDisableMultiMono_value)
+    _FRUT_bool_to_int("${JUCER_PLUGIN_RTAS_DISABLE_BYPASS}" RTASDisableBypass_value)
+    _FRUT_bool_to_int("${JUCER_PLUGIN_RTAS_DISABLE_MULTI_MONO}"
+      RTASDisableMultiMono_value
+    )
 
     set(AAXIdentifier_value "${JUCER_PLUGIN_AAX_IDENTIFIER}")
     set(AAXManufacturerCode_value "JucePlugin_ManufacturerCode")
     set(AAXProductId_value "JucePlugin_PluginCode")
     set(AAXCategory_value "${JUCER_PLUGIN_AAX_CATEGORY}")
-    __bool_to_int("${JUCER_PLUGIN_AAX_DISABLE_BYPASS}" AAXDisableBypass_value)
-    __bool_to_int("${JUCER_PLUGIN_AAX_DISABLE_MULTI_MONO}" AAXDisableMultiMono_value)
+    _FRUT_bool_to_int("${JUCER_PLUGIN_AAX_DISABLE_BYPASS}" AAXDisableBypass_value)
+    _FRUT_bool_to_int("${JUCER_PLUGIN_AAX_DISABLE_MULTI_MONO}" AAXDisableMultiMono_value)
 
     string(LENGTH "${JUCER_PLUGIN_CHANNEL_CONFIGURATIONS}" plugin_channel_config_length)
     if(plugin_channel_config_length GREATER 0)
@@ -1991,7 +1995,7 @@ function(__generate_AppConfig_header)
 endfunction()
 
 
-function(__generate_JuceHeader_header)
+function(_FRUT_generate_JuceHeader_header)
 
   list(LENGTH JUCER_PROJECT_RESOURCES resources_count)
   if(resources_count GREATER 0)
@@ -2090,7 +2094,7 @@ function(__generate_JuceHeader_header)
 endfunction()
 
 
-function(__generate_icon_file icon_format out_icon_filename)
+function(_FRUT_generate_icon_file icon_format out_icon_filename)
 
   set(IconBuilder_version "0.1.0")
   find_program(IconBuilder_exe "IconBuilder-${IconBuilder_version}"
@@ -2153,7 +2157,7 @@ function(__generate_icon_file icon_format out_icon_filename)
 endfunction()
 
 
-function(__set_output_directory_properties target subfolder)
+function(_FRUT_set_output_directory_properties target subfolder)
 
   foreach(config ${JUCER_PROJECT_CONFIGURATIONS})
     string(TOUPPER "${config}" upper_config)
@@ -2181,7 +2185,7 @@ function(__set_output_directory_properties target subfolder)
 endfunction()
 
 
-function(__set_common_target_properties target)
+function(_FRUT_set_common_target_properties target)
 
   foreach(config ${JUCER_PROJECT_CONFIGURATIONS})
     string(TOUPPER "${config}" upper_config)
@@ -2213,8 +2217,8 @@ function(__set_common_target_properties target)
           "JUCER_VST_SDK_FOLDER: no such directory \"${JUCER_VST_SDK_FOLDER}\""
         )
       elseif(NOT EXISTS "${JUCER_VST_SDK_FOLDER}/public.sdk/source/vst2.x/audioeffectx.h")
-        message(WARNING "JUCER_VST_SDK_FOLDER: \"${JUCER_VST_SDK_FOLDER}\" doesn't seem to "
-          "contain the VST SDK"
+        message(WARNING "JUCER_VST_SDK_FOLDER: \"${JUCER_VST_SDK_FOLDER}\" doesn't seem "
+          "to contain the VST SDK"
         )
       endif()
       target_include_directories(${target} PRIVATE "${JUCER_VST_SDK_FOLDER}")
@@ -2232,8 +2236,8 @@ function(__set_common_target_properties target)
           "JUCER_VST3_SDK_FOLDER: no such directory \"${JUCER_VST3_SDK_FOLDER}\""
         )
       elseif(NOT EXISTS "${JUCER_VST3_SDK_FOLDER}/base/source/baseiids.cpp")
-        message(WARNING "JUCER_VST3_SDK_FOLDER: \"${JUCER_VST3_SDK_FOLDER}\" doesn't seem "
-          "to contain the VST3 SDK"
+        message(WARNING "JUCER_VST3_SDK_FOLDER: \"${JUCER_VST3_SDK_FOLDER}\" doesn't "
+          "seem to contain the VST3 SDK"
         )
       endif()
       target_include_directories(${target} PRIVATE "${JUCER_VST3_SDK_FOLDER}")
@@ -2642,7 +2646,7 @@ function(__set_common_target_properties target)
 endfunction()
 
 
-function(__generate_plist_file
+function(_FRUT_generate_plist_file
   target plist_suffix
   bundle_package_type bundle_signature
   main_plist_entries extra_plist_entries
@@ -2673,7 +2677,7 @@ function(__generate_plist_file
 endfunction()
 
 
-function(__set_bundle_properties target extension)
+function(_FRUT_set_bundle_properties target extension)
 
   if(APPLE)
     set_target_properties(${target} PROPERTIES
@@ -2693,7 +2697,7 @@ function(__set_bundle_properties target extension)
 endfunction()
 
 
-function(__install_to_plugin_binary_location target plugin_type default_destination)
+function(_FRUT_install_to_plugin_binary_location target plugin_type default_destination)
 
   unset(all_confs_destination)
   foreach(config ${JUCER_PROJECT_CONFIGURATIONS})
@@ -2722,7 +2726,7 @@ function(__install_to_plugin_binary_location target plugin_type default_destinat
 endfunction()
 
 
-function(__set_JucePlugin_Build_defines target target_type)
+function(_FRUT_set_JucePlugin_Build_defines target target_type)
 
   if(JUCER_BUILD_AUDIOUNIT_V3 AND DEFINED JUCER_VERSION AND JUCER_VERSION VERSION_LESS 5)
     set(JUCER_BUILD_STANDALONE_PLUGIN ON)
@@ -2752,7 +2756,7 @@ function(__set_JucePlugin_Build_defines target target_type)
 endfunction()
 
 
-function(__link_osx_frameworks target)
+function(_FRUT_link_osx_frameworks target)
 
   set(osx_frameworks ${JUCER_PROJECT_OSX_FRAMEWORKS} ${JUCER_EXTRA_FRAMEWORKS} ${ARGN})
 
@@ -2771,7 +2775,7 @@ function(__link_osx_frameworks target)
 endfunction()
 
 
-function(__add_xcode_resources target)
+function(_FRUT_add_xcode_resources target)
 
   if(APPLE)
     foreach(folder ${JUCER_CUSTOM_XCODE_RESOURCE_FOLDERS})
@@ -2784,7 +2788,7 @@ function(__add_xcode_resources target)
 endfunction()
 
 
-function(__set_custom_xcode_flags target)
+function(_FRUT_set_custom_xcode_flags target)
 
   unset(all_flags)
 
@@ -2815,7 +2819,7 @@ function(__set_custom_xcode_flags target)
 endfunction()
 
 
-function(__bool_to_int bool_value out_int_value)
+function(_FRUT_bool_to_int bool_value out_int_value)
 
   if(bool_value)
     set(${out_int_value} 1 PARENT_SCOPE)
@@ -2826,7 +2830,7 @@ function(__bool_to_int bool_value out_int_value)
 endfunction()
 
 
-function(__dec_to_hex dec_value out_hex_value)
+function(_FRUT_dec_to_hex dec_value out_hex_value)
 
   if(dec_value EQUAL 0)
     set(${out_hex_value} "0x0" PARENT_SCOPE)
@@ -2854,7 +2858,7 @@ function(__dec_to_hex dec_value out_hex_value)
 endfunction()
 
 
-function(__version_to_dec version out_dec_value)
+function(_FRUT_version_to_dec version out_dec_value)
 
   string(REPLACE "." ";" segments "${version}")
   list(LENGTH segments segments_size)
@@ -2876,16 +2880,16 @@ function(__version_to_dec version out_dec_value)
 endfunction()
 
 
-function(__version_to_hex version out_hex_value)
+function(_FRUT_version_to_hex version out_hex_value)
 
-  __version_to_dec("${version}" dec_value)
-  __dec_to_hex("${dec_value}" hex_value)
+  _FRUT_version_to_dec("${version}" dec_value)
+  _FRUT_dec_to_hex("${dec_value}" hex_value)
   set(${out_hex_value} "${hex_value}" PARENT_SCOPE)
 
 endfunction()
 
 
-function(__four_chars_to_hex value out_hex_value)
+function(_FRUT_four_chars_to_hex value out_hex_value)
 
   unset(all_ascii_codes)
   foreach(ascii_code RANGE 1 127)
@@ -2905,13 +2909,13 @@ function(__four_chars_to_hex value out_hex_value)
     math(EXPR dec_value "(${dec_value} << 8) | ((${ascii_code} + 1) & 255)")
   endforeach()
 
-  __dec_to_hex("${dec_value}" hex_value)
+  _FRUT_dec_to_hex("${dec_value}" hex_value)
   set(${out_hex_value} "${hex_value}" PARENT_SCOPE)
 
 endfunction()
 
 
-function(__get_au_main_type_code out_value)
+function(_FRUT_get_au_main_type_code out_value)
 
   if(NOT DEFINED JUCER_PLUGIN_AU_MAIN_TYPE)
     if(JUCER_MIDI_EFFECT_PLUGIN)
