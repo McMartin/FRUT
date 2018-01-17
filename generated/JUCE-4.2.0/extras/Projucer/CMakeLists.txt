@@ -494,63 +494,6 @@ jucer_export_target_configuration(
 )
 
 jucer_export_target(
-  "Visual Studio 2015"
-  # EXTRA_PREPROCESSOR_DEFINITIONS
-  # EXTRA_COMPILER_FLAGS
-  # EXTRA_LINKER_FLAGS
-  # EXTERNAL_LIBRARIES_TO_LINK
-  ICON_SMALL "<None>"
-  ICON_LARGE "Source/BinaryData/juce_icon.png"
-  # PLATFORM_TOOLSET "v140_xp"
-)
-
-jucer_export_target_configuration(
-  "Visual Studio 2015"
-  NAME "Debug"
-  DEBUG_MODE ON
-  BINARY_NAME "Projucer"
-  # BINARY_LOCATION
-  # HEADER_SEARCH_PATHS
-  # EXTRA_LIBRARY_SEARCH_PATHS
-  # PREPROCESSOR_DEFINITIONS
-  OPTIMISATION "No optimisation"
-  WARNING_LEVEL "High"
-  # TREAT_WARNINGS_AS_ERRORS
-  RUNTIME_LIBRARY "Use DLL runtime"
-  WHOLE_PROGRAM_OPTIMISATION "Enable when possible"
-  # INCREMENTAL_LINKING
-  # PREBUILD_COMMAND
-  # POSTBUILD_COMMAND
-  GENERATE_MANIFEST ON
-  CHARACTER_SET "Default"
-  # ARCHITECTURE "x64"
-  # RELAX_IEEE_COMPLIANCE
-)
-
-jucer_export_target_configuration(
-  "Visual Studio 2015"
-  NAME "Release"
-  DEBUG_MODE OFF
-  BINARY_NAME "Projucer"
-  # BINARY_LOCATION
-  # HEADER_SEARCH_PATHS
-  # EXTRA_LIBRARY_SEARCH_PATHS
-  # PREPROCESSOR_DEFINITIONS
-  OPTIMISATION "Maximise speed"
-  WARNING_LEVEL "High"
-  # TREAT_WARNINGS_AS_ERRORS
-  RUNTIME_LIBRARY "Use static runtime"
-  WHOLE_PROGRAM_OPTIMISATION "Enable when possible"
-  # INCREMENTAL_LINKING
-  # PREBUILD_COMMAND
-  # POSTBUILD_COMMAND
-  GENERATE_MANIFEST ON
-  CHARACTER_SET "Default"
-  # ARCHITECTURE "x64"
-  # RELAX_IEEE_COMPLIANCE
-)
-
-jucer_export_target(
   "Visual Studio 2013"
   # EXTRA_PREPROCESSOR_DEFINITIONS
   # EXTRA_COMPILER_FLAGS
@@ -586,6 +529,63 @@ jucer_export_target_configuration(
 
 jucer_export_target_configuration(
   "Visual Studio 2013"
+  NAME "Release"
+  DEBUG_MODE OFF
+  BINARY_NAME "Projucer"
+  # BINARY_LOCATION
+  # HEADER_SEARCH_PATHS
+  # EXTRA_LIBRARY_SEARCH_PATHS
+  # PREPROCESSOR_DEFINITIONS
+  OPTIMISATION "Maximise speed"
+  WARNING_LEVEL "High"
+  # TREAT_WARNINGS_AS_ERRORS
+  RUNTIME_LIBRARY "Use static runtime"
+  WHOLE_PROGRAM_OPTIMISATION "Enable when possible"
+  # INCREMENTAL_LINKING
+  # PREBUILD_COMMAND
+  # POSTBUILD_COMMAND
+  GENERATE_MANIFEST ON
+  CHARACTER_SET "Default"
+  # ARCHITECTURE "x64"
+  # RELAX_IEEE_COMPLIANCE
+)
+
+jucer_export_target(
+  "Visual Studio 2015"
+  # EXTRA_PREPROCESSOR_DEFINITIONS
+  # EXTRA_COMPILER_FLAGS
+  # EXTRA_LINKER_FLAGS
+  # EXTERNAL_LIBRARIES_TO_LINK
+  ICON_SMALL "<None>"
+  ICON_LARGE "Source/BinaryData/juce_icon.png"
+  # PLATFORM_TOOLSET "v140_xp"
+)
+
+jucer_export_target_configuration(
+  "Visual Studio 2015"
+  NAME "Debug"
+  DEBUG_MODE ON
+  BINARY_NAME "Projucer"
+  # BINARY_LOCATION
+  # HEADER_SEARCH_PATHS
+  # EXTRA_LIBRARY_SEARCH_PATHS
+  # PREPROCESSOR_DEFINITIONS
+  OPTIMISATION "No optimisation"
+  WARNING_LEVEL "High"
+  # TREAT_WARNINGS_AS_ERRORS
+  RUNTIME_LIBRARY "Use DLL runtime"
+  WHOLE_PROGRAM_OPTIMISATION "Enable when possible"
+  # INCREMENTAL_LINKING
+  # PREBUILD_COMMAND
+  # POSTBUILD_COMMAND
+  GENERATE_MANIFEST ON
+  CHARACTER_SET "Default"
+  # ARCHITECTURE "x64"
+  # RELAX_IEEE_COMPLIANCE
+)
+
+jucer_export_target_configuration(
+  "Visual Studio 2015"
   NAME "Release"
   DEBUG_MODE OFF
   BINARY_NAME "Projucer"
