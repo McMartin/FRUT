@@ -151,10 +151,10 @@ juce::ValueTree getChildWithPropertyRecursively(const juce::ValueTree& valueTree
 
 void writeUserNotes(LineWriter& wLn, const juce::ValueTree& valueTree)
 {
-  const auto userNotes = valueTree.getProperty("userNotes").toString();
-  if (userNotes.isNotEmpty())
+  if (valueTree.hasProperty("userNotes"))
   {
     wLn("  # NOTES");
+    const auto userNotes = valueTree.getProperty("userNotes").toString();
     for (const auto& line : split("\n", userNotes.toStdString()))
     {
       wLn("  #   ", line);
@@ -650,8 +650,8 @@ int main(int argc, char* argv[])
       wLn("  \"", exporterName, "\"");
 
       if (exporterType == "XCODE_MAC"
-          && (!exporter.getProperty("prebuildCommand").toString().isEmpty()
-              || !exporter.getProperty("postbuildCommand").toString().isEmpty()))
+          && (exporter.hasProperty("prebuildCommand")
+              || exporter.hasProperty("postbuildCommand")))
       {
         wLn("  TARGET_PROJECT_FOLDER \"", exporter.getProperty("targetFolder").toString(),
             "\"  # only used by PREBUILD_SHELL_SCRIPT and POSTBUILD_SHELL_SCRIPT");
