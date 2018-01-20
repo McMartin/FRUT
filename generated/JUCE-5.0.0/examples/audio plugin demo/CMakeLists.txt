@@ -181,23 +181,10 @@ jucer_export_target_configuration(
   NAME "Debug"
   DEBUG_MODE ON
   BINARY_NAME "JuceDemoPlugin"
-  # BINARY_LOCATION
-  # HEADER_SEARCH_PATHS
-  # EXTRA_LIBRARY_SEARCH_PATHS
-  # PREPROCESSOR_DEFINITIONS
   OPTIMISATION "-O0 (no optimisation)"
-  # VST_BINARY_LOCATION
-  # AU_BINARY_LOCATION
   OSX_BASE_SDK_VERSION "Use Default"
   OSX_DEPLOYMENT_TARGET "Use Default"
   OSX_ARCHITECTURE "Universal Binary (32/64-bit)"
-  # CUSTOM_XCODE_FLAGS
-  CXX_LANGUAGE_STANDARD "Use Default"
-  CXX_LIBRARY "Use Default"
-  # CODE_SIGNING_IDENTITY
-  # RELAX_IEEE_COMPLIANCE
-  # LINK_TIME_OPTIMISATION
-  # STRIP_LOCAL_SYMBOLS
 )
 
 jucer_export_target_configuration(
@@ -205,23 +192,10 @@ jucer_export_target_configuration(
   NAME "Release"
   DEBUG_MODE OFF
   BINARY_NAME "JuceDemoPlugin"
-  # BINARY_LOCATION
-  # HEADER_SEARCH_PATHS
-  # EXTRA_LIBRARY_SEARCH_PATHS
-  # PREPROCESSOR_DEFINITIONS
   OPTIMISATION "-O3 (fastest with safe optimisations)"
-  # VST_BINARY_LOCATION
-  # AU_BINARY_LOCATION
   OSX_BASE_SDK_VERSION "Use Default"
   OSX_DEPLOYMENT_TARGET "Use Default"
   OSX_ARCHITECTURE "Universal Binary (32/64-bit)"
-  # CUSTOM_XCODE_FLAGS
-  CXX_LANGUAGE_STANDARD "Use Default"
-  CXX_LIBRARY "Use Default"
-  # CODE_SIGNING_IDENTITY
-  # RELAX_IEEE_COMPLIANCE
-  # LINK_TIME_OPTIMISATION
-  # STRIP_LOCAL_SYMBOLS
 )
 
 jucer_export_target(
@@ -233,22 +207,10 @@ jucer_export_target_configuration(
   NAME "Debug"
   DEBUG_MODE ON
   BINARY_NAME "JuceDemoPlugin"
-  # BINARY_LOCATION
-  # HEADER_SEARCH_PATHS
-  # EXTRA_LIBRARY_SEARCH_PATHS
-  # PREPROCESSOR_DEFINITIONS
   OPTIMISATION "No optimisation"
   WARNING_LEVEL "High"
-  # TREAT_WARNINGS_AS_ERRORS
-  RUNTIME_LIBRARY "(Default)"
-  WHOLE_PROGRAM_OPTIMISATION "Enable when possible"
-  # INCREMENTAL_LINKING
-  # PREBUILD_COMMAND
-  # POSTBUILD_COMMAND
   GENERATE_MANIFEST ON
-  CHARACTER_SET "Default"
   # ARCHITECTURE "x64"
-  # RELAX_IEEE_COMPLIANCE
 )
 
 jucer_export_target_configuration(
@@ -256,22 +218,10 @@ jucer_export_target_configuration(
   NAME "Release"
   DEBUG_MODE OFF
   BINARY_NAME "JuceDemoPlugin"
-  # BINARY_LOCATION
-  # HEADER_SEARCH_PATHS
-  # EXTRA_LIBRARY_SEARCH_PATHS
-  # PREPROCESSOR_DEFINITIONS
   OPTIMISATION "Maximise speed"
   WARNING_LEVEL "High"
-  # TREAT_WARNINGS_AS_ERRORS
-  RUNTIME_LIBRARY "(Default)"
-  WHOLE_PROGRAM_OPTIMISATION "Enable when possible"
-  # INCREMENTAL_LINKING
-  # PREBUILD_COMMAND
-  # POSTBUILD_COMMAND
   GENERATE_MANIFEST ON
-  CHARACTER_SET "Default"
   # ARCHITECTURE "x64"
-  # RELAX_IEEE_COMPLIANCE
 )
 
 jucer_export_target(
@@ -283,22 +233,10 @@ jucer_export_target_configuration(
   NAME "Debug"
   DEBUG_MODE ON
   BINARY_NAME "JuceDemoPlugin"
-  # BINARY_LOCATION
-  # HEADER_SEARCH_PATHS
-  # EXTRA_LIBRARY_SEARCH_PATHS
-  # PREPROCESSOR_DEFINITIONS
   OPTIMISATION "No optimisation"
   WARNING_LEVEL "High"
-  # TREAT_WARNINGS_AS_ERRORS
-  RUNTIME_LIBRARY "(Default)"
-  WHOLE_PROGRAM_OPTIMISATION "Enable when possible"
-  # INCREMENTAL_LINKING
-  # PREBUILD_COMMAND
-  # POSTBUILD_COMMAND
   GENERATE_MANIFEST ON
-  CHARACTER_SET "Default"
   # ARCHITECTURE "x64"
-  # RELAX_IEEE_COMPLIANCE
 )
 
 jucer_export_target_configuration(
@@ -306,22 +244,10 @@ jucer_export_target_configuration(
   NAME "Release"
   DEBUG_MODE OFF
   BINARY_NAME "JuceDemoPlugin"
-  # BINARY_LOCATION
-  # HEADER_SEARCH_PATHS
-  # EXTRA_LIBRARY_SEARCH_PATHS
-  # PREPROCESSOR_DEFINITIONS
   OPTIMISATION "Maximise speed"
   WARNING_LEVEL "High"
-  # TREAT_WARNINGS_AS_ERRORS
-  RUNTIME_LIBRARY "(Default)"
-  WHOLE_PROGRAM_OPTIMISATION "Enable when possible"
-  # INCREMENTAL_LINKING
-  # PREBUILD_COMMAND
-  # POSTBUILD_COMMAND
   GENERATE_MANIFEST ON
-  CHARACTER_SET "Default"
   # ARCHITECTURE "x64"
-  # RELAX_IEEE_COMPLIANCE
 )
 
 jucer_export_target(
@@ -333,12 +259,8 @@ jucer_export_target_configuration(
   NAME "Debug"
   DEBUG_MODE ON
   BINARY_NAME "JuceDemoPlugin"
-  # BINARY_LOCATION
-  # HEADER_SEARCH_PATHS
   EXTRA_LIBRARY_SEARCH_PATHS "/usr/X11R6/lib/"
-  # PREPROCESSOR_DEFINITIONS
   OPTIMISATION "-O0 (no optimisation)"
-  ARCHITECTURE "(Default)"
 )
 
 jucer_export_target_configuration(
@@ -346,12 +268,8 @@ jucer_export_target_configuration(
   NAME "Release"
   DEBUG_MODE OFF
   BINARY_NAME "JuceDemoPlugin"
-  # BINARY_LOCATION
-  # HEADER_SEARCH_PATHS
   EXTRA_LIBRARY_SEARCH_PATHS "/usr/X11R6/lib/"
-  # PREPROCESSOR_DEFINITIONS
   OPTIMISATION "-O3 (fastest with safe optimisations)"
-  ARCHITECTURE "(Default)"
 )
 
 jucer_project_end()

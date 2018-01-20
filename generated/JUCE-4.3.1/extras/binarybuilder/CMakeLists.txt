@@ -58,21 +58,10 @@ jucer_export_target_configuration(
   NAME "Debug"
   DEBUG_MODE ON
   BINARY_NAME "BinaryBuilder"
-  # BINARY_LOCATION
-  # HEADER_SEARCH_PATHS
-  # EXTRA_LIBRARY_SEARCH_PATHS
-  # PREPROCESSOR_DEFINITIONS
   OPTIMISATION "-O0 (no optimisation)"
   # OSX_BASE_SDK_VERSION
   # OSX_DEPLOYMENT_TARGET
   OSX_ARCHITECTURE "Use Default"
-  # CUSTOM_XCODE_FLAGS
-  CXX_LANGUAGE_STANDARD "Use Default"
-  CXX_LIBRARY "Use Default"
-  # CODE_SIGNING_IDENTITY
-  # RELAX_IEEE_COMPLIANCE
-  # LINK_TIME_OPTIMISATION
-  # STRIP_LOCAL_SYMBOLS
 )
 
 jucer_export_target_configuration(
@@ -80,21 +69,10 @@ jucer_export_target_configuration(
   NAME "Release"
   DEBUG_MODE OFF
   BINARY_NAME "BinaryBuilder"
-  # BINARY_LOCATION
-  # HEADER_SEARCH_PATHS
-  # EXTRA_LIBRARY_SEARCH_PATHS
-  # PREPROCESSOR_DEFINITIONS
   OPTIMISATION "-Os (minimise code size)"
   # OSX_BASE_SDK_VERSION
   # OSX_DEPLOYMENT_TARGET
   OSX_ARCHITECTURE "Use Default"
-  # CUSTOM_XCODE_FLAGS
-  CXX_LANGUAGE_STANDARD "Use Default"
-  CXX_LIBRARY "Use Default"
-  # CODE_SIGNING_IDENTITY
-  # RELAX_IEEE_COMPLIANCE
-  # LINK_TIME_OPTIMISATION
-  # STRIP_LOCAL_SYMBOLS
 )
 
 jucer_export_target(
@@ -106,12 +84,8 @@ jucer_export_target_configuration(
   NAME "Debug"
   DEBUG_MODE ON
   BINARY_NAME "BinaryBuilder"
-  # BINARY_LOCATION
-  # HEADER_SEARCH_PATHS
   EXTRA_LIBRARY_SEARCH_PATHS "/usr/X11R6/lib/"
-  # PREPROCESSOR_DEFINITIONS
   OPTIMISATION "-O0 (no optimisation)"
-  ARCHITECTURE "(Default)"
 )
 
 jucer_export_target_configuration(
@@ -119,12 +93,8 @@ jucer_export_target_configuration(
   NAME "Release"
   DEBUG_MODE OFF
   BINARY_NAME "BinaryBuilder"
-  # BINARY_LOCATION
-  # HEADER_SEARCH_PATHS
   EXTRA_LIBRARY_SEARCH_PATHS "/usr/X11R6/lib/"
-  # PREPROCESSOR_DEFINITIONS
   OPTIMISATION "-Os (minimise code size)"
-  ARCHITECTURE "(Default)"
 )
 
 jucer_project_end()
