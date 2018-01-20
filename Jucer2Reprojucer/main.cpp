@@ -720,10 +720,12 @@ int main(int argc, char* argv[])
         convertSetting(exporter, "vst3Folder", "VST3_SDK_FOLDER", {});
       }
 
-      convertSetting(exporter, "extraDefs", "EXTRA_PREPROCESSOR_DEFINITIONS", {});
-      convertSetting(exporter, "extraCompilerFlags", "EXTRA_COMPILER_FLAGS", {});
-      convertSetting(exporter, "extraLinkerFlags", "EXTRA_LINKER_FLAGS", {});
-      convertSetting(exporter, "externalLibraries", "EXTERNAL_LIBRARIES_TO_LINK", {});
+      convertSettingIfDefined(exporter, "extraDefs", "EXTRA_PREPROCESSOR_DEFINITIONS",
+                              {});
+      convertSettingIfDefined(exporter, "extraCompilerFlags", "EXTRA_COMPILER_FLAGS", {});
+      convertSettingIfDefined(exporter, "extraLinkerFlags", "EXTRA_LINKER_FLAGS", {});
+      convertSettingIfDefined(exporter, "externalLibraries", "EXTERNAL_LIBRARIES_TO_LINK",
+                              {});
 
       const auto convertIcon = [&jucerProject](const juce::var& value) -> std::string {
         const auto fileId = value.toString();
@@ -742,37 +744,42 @@ int main(int argc, char* argv[])
         return "<None>";
       };
 
-      convertSetting(exporter, "smallIcon", "ICON_SMALL", convertIcon);
-      convertSetting(exporter, "bigIcon", "ICON_LARGE", convertIcon);
+      convertSettingIfDefined(exporter, "smallIcon", "ICON_SMALL", convertIcon);
+      convertSettingIfDefined(exporter, "bigIcon", "ICON_LARGE", convertIcon);
 
       if (exporterType == "XCODE_MAC")
       {
-        convertSetting(exporter, "customXcodeResourceFolders",
-                       "CUSTOM_XCODE_RESOURCE_FOLDERS", {});
+        convertSettingIfDefined(exporter, "customXcodeResourceFolders",
+                                "CUSTOM_XCODE_RESOURCE_FOLDERS", {});
 
         if (projectType == "guiapp")
         {
-          convertSetting(exporter, "documentExtensions", "DOCUMENT_FILE_EXTENSIONS", {});
+          convertSettingIfDefined(exporter, "documentExtensions",
+                                  "DOCUMENT_FILE_EXTENSIONS", {});
         }
 
-        convertSetting(exporter, "customPList", "CUSTOM_PLIST", {});
-        convertSetting(exporter, "extraFrameworks", "EXTRA_FRAMEWORKS", {});
-        convertSetting(exporter, "prebuildCommand", "PREBUILD_SHELL_SCRIPT", {});
-        convertSetting(exporter, "postbuildCommand", "POSTBUILD_SHELL_SCRIPT", {});
+        convertSettingIfDefined(exporter, "customPList", "CUSTOM_PLIST", {});
+        convertSettingIfDefined(exporter, "extraFrameworks", "EXTRA_FRAMEWORKS", {});
+        convertSettingIfDefined(exporter, "prebuildCommand", "PREBUILD_SHELL_SCRIPT", {});
+        convertSettingIfDefined(exporter, "postbuildCommand", "POSTBUILD_SHELL_SCRIPT",
+                                {});
         convertSettingIfDefined(exporter, "iosDevelopmentTeamID", "DEVELOPMENT_TEAM_ID",
                                 {});
       }
 
       if (isVSExporter)
       {
-        const auto toolset = exporter.getProperty("toolset").toString();
-        if (toolset.isEmpty())
+        if (exporter.hasProperty("toolset"))
         {
-          wLn("  # PLATFORM_TOOLSET \"(default)\"");
-        }
-        else
-        {
-          wLn("  # PLATFORM_TOOLSET \"", toolset, "\"");
+          const auto toolset = exporter.getProperty("toolset").toString();
+          if (toolset.isEmpty())
+          {
+            wLn("  # PLATFORM_TOOLSET \"(default)\"");
+          }
+          else
+          {
+            wLn("  # PLATFORM_TOOLSET \"", toolset, "\"");
+          }
         }
 
         convertSettingIfDefined(exporter, "IPPLibrary", "USE_IPP_LIBRARY",
@@ -819,23 +826,24 @@ int main(int argc, char* argv[])
 
       if (exporterType == "LINUX_MAKE")
       {
-        convertSetting(exporter, "cppLanguageStandard", "CXX_STANDARD_TO_USE",
-                       [](const juce::var& v) -> std::string {
-                         const auto value = v.toString();
+        convertSettingIfDefined(exporter, "cppLanguageStandard", "CXX_STANDARD_TO_USE",
+                                [](const juce::var& v) -> std::string {
+                                  const auto value = v.toString();
 
-                         if (value == "-std=c++03")
-                           return "C++03";
+                                  if (value == "-std=c++03")
+                                    return "C++03";
 
-                         if (value == "-std=c++11")
-                           return "C++11";
+                                  if (value == "-std=c++11")
+                                    return "C++11";
 
-                         if (value == "-std=c++14")
-                           return "C++14";
+                                  if (value == "-std=c++14")
+                                    return "C++14";
 
-                         return {};
-                       });
+                                  return {};
+                                });
 
-        convertSetting(exporter, "linuxExtraPkgConfig", "PKGCONFIG_LIBRARIES", {});
+        convertSettingIfDefined(exporter, "linuxExtraPkgConfig", "PKGCONFIG_LIBRARIES",
+                                {});
       }
 
       writeUserNotes(wLn, exporter);
