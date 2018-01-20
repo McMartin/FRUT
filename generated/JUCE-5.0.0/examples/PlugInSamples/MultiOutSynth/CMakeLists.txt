@@ -188,16 +188,7 @@ jucer_export_target(
   "Xcode (MacOSX)"
   TARGET_PROJECT_FOLDER "Builds/MacOSX"  # only used by PREBUILD_SHELL_SCRIPT and POSTBUILD_SHELL_SCRIPT
   # VST3_SDK_FOLDER
-  # EXTRA_PREPROCESSOR_DEFINITIONS
   EXTRA_COMPILER_FLAGS "-Wall -Wshadow -Wno-missing-field-initializers -Wshadow -Wshorten-64-to-32 -Wstrict-aliasing -Wuninitialized -Wunused-parameter -Wconversion -Wsign-compare -Wint-conversion -Woverloaded-virtual -Wreorder -Wconstant-conversion -Wsign-conversion"
-  # EXTRA_LINKER_FLAGS
-  # EXTERNAL_LIBRARIES_TO_LINK
-  ICON_SMALL "<None>"
-  ICON_LARGE "<None>"
-  # CUSTOM_XCODE_RESOURCE_FOLDERS
-  # CUSTOM_PLIST
-  # EXTRA_FRAMEWORKS
-  # PREBUILD_SHELL_SCRIPT
   # POSTBUILD_SHELL_SCRIPT
 )
 
@@ -254,13 +245,6 @@ jucer_export_target_configuration(
 jucer_export_target(
   "Visual Studio 2015"
   # VST3_SDK_FOLDER
-  # EXTRA_PREPROCESSOR_DEFINITIONS
-  # EXTRA_COMPILER_FLAGS
-  # EXTRA_LINKER_FLAGS
-  # EXTERNAL_LIBRARIES_TO_LINK
-  ICON_SMALL "<None>"
-  ICON_LARGE "<None>"
-  # PLATFORM_TOOLSET "(default)"
 )
 
 jucer_export_target_configuration(
@@ -312,13 +296,6 @@ jucer_export_target_configuration(
 jucer_export_target(
   "Visual Studio 2017"
   # VST3_SDK_FOLDER
-  # EXTRA_PREPROCESSOR_DEFINITIONS
-  # EXTRA_COMPILER_FLAGS
-  # EXTRA_LINKER_FLAGS
-  # EXTERNAL_LIBRARIES_TO_LINK
-  ICON_SMALL "<None>"
-  ICON_LARGE "<None>"
-  # PLATFORM_TOOLSET "(default)"
 )
 
 jucer_export_target_configuration(

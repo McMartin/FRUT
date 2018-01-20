@@ -145,13 +145,6 @@ jucer_project_module(
 
 jucer_export_target(
   "Visual Studio 2017"
-  # EXTRA_PREPROCESSOR_DEFINITIONS
-  # EXTRA_COMPILER_FLAGS
-  # EXTRA_LINKER_FLAGS
-  # EXTERNAL_LIBRARIES_TO_LINK
-  ICON_SMALL "<None>"
-  ICON_LARGE "<None>"
-  # PLATFORM_TOOLSET "(default)"
 )
 
 jucer_export_target_configuration(

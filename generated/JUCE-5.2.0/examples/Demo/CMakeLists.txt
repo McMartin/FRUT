@@ -220,14 +220,8 @@ jucer_project_module(
 
 jucer_export_target(
   "Xcode (MacOSX)"
-  # EXTRA_PREPROCESSOR_DEFINITIONS
   EXTRA_COMPILER_FLAGS "-Wall -Wshadow -Wstrict-aliasing -Wconversion -Wsign-compare -Woverloaded-virtual -Wextra-semi"
-  # EXTRA_LINKER_FLAGS
-  # EXTERNAL_LIBRARIES_TO_LINK
-  ICON_SMALL "<None>"
   ICON_LARGE "Resources/juce_icon.png"
-  # CUSTOM_XCODE_RESOURCE_FOLDERS
-  # DOCUMENT_FILE_EXTENSIONS
   CUSTOM_PLIST "<plist>
 <dict>
 	<key>NSAppTransportSecurity</key>
@@ -237,9 +231,6 @@ jucer_export_target(
 	</dict>
 </dict>
 </plist>"
-  # EXTRA_FRAMEWORKS
-  # PREBUILD_SHELL_SCRIPT
-  # POSTBUILD_SHELL_SCRIPT
 )
 
 jucer_export_target_configuration(
@@ -288,13 +279,8 @@ jucer_export_target_configuration(
 
 jucer_export_target(
   "Visual Studio 2013"
-  # EXTRA_PREPROCESSOR_DEFINITIONS
   EXTRA_COMPILER_FLAGS "/FC"
-  # EXTRA_LINKER_FLAGS
-  # EXTERNAL_LIBRARIES_TO_LINK
-  ICON_SMALL "<None>"
   ICON_LARGE "Resources/juce_icon.png"
-  # PLATFORM_TOOLSET "(default)"
 )
 
 jucer_export_target_configuration(
@@ -345,13 +331,8 @@ jucer_export_target_configuration(
 
 jucer_export_target(
   "Visual Studio 2015"
-  # EXTRA_PREPROCESSOR_DEFINITIONS
   EXTRA_COMPILER_FLAGS "/FC"
-  # EXTRA_LINKER_FLAGS
-  # EXTERNAL_LIBRARIES_TO_LINK
-  ICON_SMALL "<None>"
   ICON_LARGE "Resources/juce_icon.png"
-  # PLATFORM_TOOLSET "(default)"
 )
 
 jucer_export_target_configuration(
@@ -402,13 +383,9 @@ jucer_export_target_configuration(
 
 jucer_export_target(
   "Visual Studio 2017"
-  # EXTRA_PREPROCESSOR_DEFINITIONS
   EXTRA_COMPILER_FLAGS "/FC"
-  # EXTRA_LINKER_FLAGS
-  # EXTERNAL_LIBRARIES_TO_LINK
   ICON_SMALL "<None>"
   ICON_LARGE "Resources/juce_icon.png"
-  # PLATFORM_TOOLSET "(default)"
 )
 
 jucer_export_target_configuration(
@@ -459,14 +436,6 @@ jucer_export_target_configuration(
 
 jucer_export_target(
   "Linux Makefile"
-  # EXTRA_PREPROCESSOR_DEFINITIONS
-  # EXTRA_COMPILER_FLAGS
-  # EXTRA_LINKER_FLAGS
-  # EXTERNAL_LIBRARIES_TO_LINK
-  ICON_SMALL "<None>"
-  ICON_LARGE "<None>"
-  # CXX_STANDARD_TO_USE
-  # PKGCONFIG_LIBRARIES
 )
 
 jucer_export_target_configuration(

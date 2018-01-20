@@ -176,14 +176,6 @@ jucer_export_target(
   # VST3_SDK_FOLDER
   # EXTRA_PREPROCESSOR_DEFINITIONS
   EXTRA_COMPILER_FLAGS "-Wall -Wshadow -Wno-missing-field-initializers -Wshadow -Wshorten-64-to-32 -Wstrict-aliasing -Wuninitialized -Wunused-parameter -Wconversion -Wsign-compare -Wint-conversion -Woverloaded-virtual -Wreorder -Wconstant-conversion -Wsign-conversion"
-  # EXTRA_LINKER_FLAGS
-  # EXTERNAL_LIBRARIES_TO_LINK
-  ICON_SMALL "<None>"
-  ICON_LARGE "<None>"
-  # CUSTOM_XCODE_RESOURCE_FOLDERS
-  # CUSTOM_PLIST
-  # EXTRA_FRAMEWORKS
-  # PREBUILD_SHELL_SCRIPT
   # POSTBUILD_SHELL_SCRIPT
 )
 
@@ -240,12 +232,6 @@ jucer_export_target_configuration(
 jucer_export_target(
   "Visual Studio 2015"
   # VST3_SDK_FOLDER
-  # EXTRA_PREPROCESSOR_DEFINITIONS
-  # EXTRA_COMPILER_FLAGS
-  # EXTRA_LINKER_FLAGS
-  # EXTERNAL_LIBRARIES_TO_LINK
-  ICON_SMALL "<None>"
-  ICON_LARGE "<None>"
   # PLATFORM_TOOLSET "v140_xp"
 )
 
@@ -299,12 +285,6 @@ jucer_export_target(
   "Linux Makefile"
   # EXTRA_PREPROCESSOR_DEFINITIONS
   EXTRA_COMPILER_FLAGS "-Wall -Wshadow -Wno-missing-field-initializers -Wshadow -Wshorten-64-to-32 -Wstrict-aliasing -Wuninitialized -Wunused-parameter -Wconversion -Wsign-compare -Wint-conversion -Woverloaded-virtual -Wreorder -Wconstant-conversion -Wsign-conversion"
-  # EXTRA_LINKER_FLAGS
-  # EXTERNAL_LIBRARIES_TO_LINK
-  ICON_SMALL "<None>"
-  ICON_LARGE "<None>"
-  # CXX_STANDARD_TO_USE
-  # PKGCONFIG_LIBRARIES
 )
 
 jucer_export_target_configuration(

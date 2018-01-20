@@ -505,13 +505,10 @@ jucer_appconfig_header(
 
 jucer_export_target(
   "Xcode (MacOSX)"
-  # EXTRA_PREPROCESSOR_DEFINITIONS
   EXTRA_COMPILER_FLAGS "-Wall -Wshadow -Wstrict-aliasing -Wconversion -Wsign-compare -Woverloaded-virtual -Wextra-semi"
   # EXTRA_LINKER_FLAGS
-  # EXTERNAL_LIBRARIES_TO_LINK
   ICON_SMALL "<None>"
   ICON_LARGE "Source/BinaryData/Icons/juce_icon.png"
-  # CUSTOM_XCODE_RESOURCE_FOLDERS
   DOCUMENT_FILE_EXTENSIONS ".jucer"
   CUSTOM_PLIST "<plist>
 <dict>
@@ -533,8 +530,6 @@ jucer_export_target(
 </dict>
 </plist>"
   EXTRA_FRAMEWORKS "AudioUnit\; Accelerate\; AVFoundation\; CoreAudio\; CoreAudioKit\; CoreMIDI\; DiscRecording\; QuartzCore\; AudioToolbox\; OpenGL\; QTKit\; QuickTime"
-  # PREBUILD_SHELL_SCRIPT
-  # POSTBUILD_SHELL_SCRIPT
 )
 
 jucer_export_target_configuration(
@@ -583,11 +578,8 @@ jucer_export_target_configuration(
 
 jucer_export_target(
   "Visual Studio 2013"
-  # EXTRA_PREPROCESSOR_DEFINITIONS
-  # EXTRA_COMPILER_FLAGS
   # EXTRA_LINKER_FLAGS
   # EXTERNAL_LIBRARIES_TO_LINK
-  ICON_SMALL "<None>"
   ICON_LARGE "Source/BinaryData/Icons/juce_icon.png"
   # PLATFORM_TOOLSET "v120"
 )
@@ -640,11 +632,7 @@ jucer_export_target_configuration(
 
 jucer_export_target(
   "Visual Studio 2015"
-  # EXTRA_PREPROCESSOR_DEFINITIONS
-  # EXTRA_COMPILER_FLAGS
-  # EXTRA_LINKER_FLAGS
   # EXTERNAL_LIBRARIES_TO_LINK
-  ICON_SMALL "<None>"
   ICON_LARGE "Source/BinaryData/Icons/juce_icon.png"
   # PLATFORM_TOOLSET "v140"
 )
@@ -697,13 +685,7 @@ jucer_export_target_configuration(
 
 jucer_export_target(
   "Visual Studio 2017"
-  # EXTRA_PREPROCESSOR_DEFINITIONS
-  # EXTRA_COMPILER_FLAGS
-  # EXTRA_LINKER_FLAGS
-  # EXTERNAL_LIBRARIES_TO_LINK
-  ICON_SMALL "<None>"
   ICON_LARGE "Source/BinaryData/Icons/juce_icon.png"
-  # PLATFORM_TOOLSET "(default)"
 )
 
 jucer_export_target_configuration(
@@ -754,14 +736,10 @@ jucer_export_target_configuration(
 
 jucer_export_target(
   "Linux Makefile"
-  # EXTRA_PREPROCESSOR_DEFINITIONS
   # EXTRA_COMPILER_FLAGS
   # EXTRA_LINKER_FLAGS
-  # EXTERNAL_LIBRARIES_TO_LINK
   ICON_SMALL "<None>"
   ICON_LARGE "Source/BinaryData/Icons/juce_icon.png"
-  # CXX_STANDARD_TO_USE
-  # PKGCONFIG_LIBRARIES
 )
 
 jucer_export_target_configuration(
