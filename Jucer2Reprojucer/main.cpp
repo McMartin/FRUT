@@ -355,10 +355,10 @@ int main(int argc, char* argv[])
     convertSetting(jucerProject, "name", "PROJECT_NAME", {});
     convertSetting(jucerProject, "version", "PROJECT_VERSION", {});
 
-    convertSetting(jucerProject, "companyName", "COMPANY_NAME", {});
+    convertSettingIfDefined(jucerProject, "companyName", "COMPANY_NAME", {});
     convertSettingIfDefined(jucerProject, "companyCopyright", "COMPANY_COPYRIGHT", {});
-    convertSetting(jucerProject, "companyWebsite", "COMPANY_WEBSITE", {});
-    convertSetting(jucerProject, "companyEmail", "COMPANY_EMAIL", {});
+    convertSettingIfDefined(jucerProject, "companyWebsite", "COMPANY_WEBSITE", {});
+    convertSettingIfDefined(jucerProject, "companyEmail", "COMPANY_EMAIL", {});
 
     const auto booleanWithLicenseRequiredTagline = [](bool value) {
       return std::string{value ? "ON" : "OFF"}
@@ -393,9 +393,9 @@ int main(int argc, char* argv[])
     }();
     wLn("  PROJECT_TYPE \"", projectTypeDescription, "\"");
 
-    convertSetting(jucerProject, "bundleIdentifier", "BUNDLE_IDENTIFIER", {});
+    convertSettingIfDefined(jucerProject, "bundleIdentifier", "BUNDLE_IDENTIFIER", {});
 
-    convertSetting(
+    convertSettingIfDefined(
       jucerProject, "maxBinaryFileSize", "BINARYDATACPP_SIZE_LIMIT",
       [](const juce::var& value) -> std::string {
         if (value.toString().isEmpty())
@@ -403,8 +403,9 @@ int main(int argc, char* argv[])
         return juce::File::descriptionOfSizeInBytes(int{value}).toStdString();
       });
 
-    convertSetting(jucerProject, "binaryDataNamespace", "BINARYDATA_NAMESPACE", {});
-    convertSetting(jucerProject, "defines", "PREPROCESSOR_DEFINITIONS", {});
+    convertSettingIfDefined(jucerProject, "binaryDataNamespace", "BINARYDATA_NAMESPACE",
+                            {});
+    convertSettingIfDefined(jucerProject, "defines", "PREPROCESSOR_DEFINITIONS", {});
     convertSettingIfDefined(jucerProject, "headerPath", "HEADER_SEARCH_PATHS", {});
 
     writeUserNotes(wLn, jucerProject);
