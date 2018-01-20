@@ -31,9 +31,6 @@ jucer_project_settings(
   COMPANY_EMAIL "info@juce.com"
   PROJECT_TYPE "Audio Plug-in"
   BUNDLE_IDENTIFIER "com.ROLI.Arpeggiator"
-  BINARYDATACPP_SIZE_LIMIT "Default"
-  # BINARYDATA_NAMESPACE
-  # PREPROCESSOR_DEFINITIONS
 )
 
 jucer_audio_plugin_settings(
@@ -177,17 +174,7 @@ jucer_export_target(
   "Xcode (MacOSX)"
   # VST_SDK_FOLDER
   # VST3_SDK_FOLDER
-  # EXTRA_PREPROCESSOR_DEFINITIONS
   EXTRA_COMPILER_FLAGS "-Wall -Wshadow -Wno-missing-field-initializers -Wshadow -Wshorten-64-to-32 -Wstrict-aliasing -Wuninitialized -Wunused-parameter -Wconversion -Wsign-compare -Wint-conversion -Woverloaded-virtual -Wreorder -Wconstant-conversion -Wsign-conversion"
-  # EXTRA_LINKER_FLAGS
-  # EXTERNAL_LIBRARIES_TO_LINK
-  ICON_SMALL "<None>"
-  ICON_LARGE "<None>"
-  # CUSTOM_XCODE_RESOURCE_FOLDERS
-  # CUSTOM_PLIST
-  # EXTRA_FRAMEWORKS
-  # PREBUILD_SHELL_SCRIPT
-  # POSTBUILD_SHELL_SCRIPT
 )
 
 jucer_export_target_configuration(
@@ -195,24 +182,10 @@ jucer_export_target_configuration(
   NAME "Debug"
   DEBUG_MODE ON
   BINARY_NAME "Arpeggiator"
-  # BINARY_LOCATION
-  # HEADER_SEARCH_PATHS
-  # EXTRA_LIBRARY_SEARCH_PATHS
-  # PREPROCESSOR_DEFINITIONS
   OPTIMISATION "-O0 (no optimisation)"
-  # VST_BINARY_LOCATION
-  # VST3_BINARY_LOCATION
-  # AU_BINARY_LOCATION
   OSX_BASE_SDK_VERSION "Use Default"
   OSX_DEPLOYMENT_TARGET "10.10"
   OSX_ARCHITECTURE "Use Default"
-  # CUSTOM_XCODE_FLAGS
-  CXX_LANGUAGE_STANDARD "Use Default"
-  CXX_LIBRARY "Use Default"
-  # CODE_SIGNING_IDENTITY
-  # RELAX_IEEE_COMPLIANCE
-  # LINK_TIME_OPTIMISATION
-  # STRIP_LOCAL_SYMBOLS
 )
 
 jucer_export_target_configuration(
@@ -220,37 +193,16 @@ jucer_export_target_configuration(
   NAME "Release"
   DEBUG_MODE OFF
   BINARY_NAME "Arpeggiator"
-  # BINARY_LOCATION
-  # HEADER_SEARCH_PATHS
-  # EXTRA_LIBRARY_SEARCH_PATHS
-  # PREPROCESSOR_DEFINITIONS
   OPTIMISATION "-O3 (fastest with safe optimisations)"
-  # VST_BINARY_LOCATION
-  # VST3_BINARY_LOCATION
-  # AU_BINARY_LOCATION
   OSX_BASE_SDK_VERSION "Use Default"
   OSX_DEPLOYMENT_TARGET "10.10"
   OSX_ARCHITECTURE "Use Default"
-  # CUSTOM_XCODE_FLAGS
-  CXX_LANGUAGE_STANDARD "Use Default"
-  CXX_LIBRARY "Use Default"
-  # CODE_SIGNING_IDENTITY
-  # RELAX_IEEE_COMPLIANCE
-  # LINK_TIME_OPTIMISATION
-  # STRIP_LOCAL_SYMBOLS
 )
 
 jucer_export_target(
   "Visual Studio 2015"
   # VST_SDK_FOLDER
   # VST3_SDK_FOLDER
-  # EXTRA_PREPROCESSOR_DEFINITIONS
-  # EXTRA_COMPILER_FLAGS
-  # EXTRA_LINKER_FLAGS
-  # EXTERNAL_LIBRARIES_TO_LINK
-  ICON_SMALL "<None>"
-  ICON_LARGE "<None>"
-  # PLATFORM_TOOLSET "(default)"
 )
 
 jucer_export_target_configuration(
@@ -258,22 +210,10 @@ jucer_export_target_configuration(
   NAME "Debug"
   DEBUG_MODE ON
   BINARY_NAME "Arpeggiator"
-  # BINARY_LOCATION
-  # HEADER_SEARCH_PATHS
-  # EXTRA_LIBRARY_SEARCH_PATHS
-  # PREPROCESSOR_DEFINITIONS
   OPTIMISATION "No optimisation"
   WARNING_LEVEL "High"
-  # TREAT_WARNINGS_AS_ERRORS
-  RUNTIME_LIBRARY "(Default)"
-  WHOLE_PROGRAM_OPTIMISATION "Enable when possible"
-  # INCREMENTAL_LINKING
-  # PREBUILD_COMMAND
-  # POSTBUILD_COMMAND
   GENERATE_MANIFEST ON
-  CHARACTER_SET "Default"
   # ARCHITECTURE "32-bit"
-  # RELAX_IEEE_COMPLIANCE
 )
 
 jucer_export_target_configuration(
@@ -281,22 +221,10 @@ jucer_export_target_configuration(
   NAME "Release"
   DEBUG_MODE OFF
   BINARY_NAME "Arpeggiator"
-  # BINARY_LOCATION
-  # HEADER_SEARCH_PATHS
-  # EXTRA_LIBRARY_SEARCH_PATHS
-  # PREPROCESSOR_DEFINITIONS
   OPTIMISATION "Maximise speed"
   WARNING_LEVEL "High"
-  # TREAT_WARNINGS_AS_ERRORS
-  RUNTIME_LIBRARY "(Default)"
-  WHOLE_PROGRAM_OPTIMISATION "Enable when possible"
-  # INCREMENTAL_LINKING
-  # PREBUILD_COMMAND
-  # POSTBUILD_COMMAND
   GENERATE_MANIFEST ON
-  CHARACTER_SET "Default"
   # ARCHITECTURE "32-bit"
-  # RELAX_IEEE_COMPLIANCE
 )
 
 jucer_project_end()

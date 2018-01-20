@@ -28,16 +28,11 @@ jucer_project_settings(
   PROJECT_VERSION "1.0.0"
   COMPANY_NAME "ROLI Ltd."
   COMPANY_COPYRIGHT "ROLI Ltd."
-  # COMPANY_WEBSITE
-  # COMPANY_EMAIL
   REPORT_JUCE_APP_USAGE OFF # Required for closed source applications without an Indie or Pro JUCE license
   DISPLAY_THE_JUCE_SPLASH_SCREEN OFF # Required for closed source applications without an Indie or Pro JUCE license
   SPLASH_SCREEN_COLOUR "Dark"
   PROJECT_TYPE "Audio Plug-in"
   BUNDLE_IDENTIFIER "com.roli.development.AUv3Synth"
-  BINARYDATACPP_SIZE_LIMIT "Default"
-  # BINARYDATA_NAMESPACE
-  # PREPROCESSOR_DEFINITIONS
 )
 
 jucer_audio_plugin_settings(
@@ -184,17 +179,6 @@ jucer_project_module(
 jucer_export_target(
   "Xcode (MacOSX)"
   # VST3_SDK_FOLDER
-  # EXTRA_PREPROCESSOR_DEFINITIONS
-  # EXTRA_COMPILER_FLAGS
-  # EXTRA_LINKER_FLAGS
-  # EXTERNAL_LIBRARIES_TO_LINK
-  ICON_SMALL "<None>"
-  ICON_LARGE "<None>"
-  # CUSTOM_XCODE_RESOURCE_FOLDERS
-  # CUSTOM_PLIST
-  # EXTRA_FRAMEWORKS
-  # PREBUILD_SHELL_SCRIPT
-  # POSTBUILD_SHELL_SCRIPT
   # DEVELOPMENT_TEAM_ID
 )
 
@@ -203,23 +187,10 @@ jucer_export_target_configuration(
   NAME "Debug"
   DEBUG_MODE ON
   BINARY_NAME "AUv3Synth"
-  # BINARY_LOCATION
-  # HEADER_SEARCH_PATHS
-  # EXTRA_LIBRARY_SEARCH_PATHS
-  # PREPROCESSOR_DEFINITIONS
   OPTIMISATION "-O0 (no optimisation)"
-  # VST_BINARY_LOCATION
-  # VST3_BINARY_LOCATION
   OSX_BASE_SDK_VERSION "Use Default"
   OSX_DEPLOYMENT_TARGET "Use Default"
   OSX_ARCHITECTURE "Use Default"
-  # CUSTOM_XCODE_FLAGS
-  CXX_LANGUAGE_STANDARD "Use Default"
-  CXX_LIBRARY "Use Default"
-  # CODE_SIGNING_IDENTITY
-  # RELAX_IEEE_COMPLIANCE
-  # LINK_TIME_OPTIMISATION
-  # STRIP_LOCAL_SYMBOLS
 )
 
 jucer_export_target_configuration(
@@ -227,23 +198,10 @@ jucer_export_target_configuration(
   NAME "Release"
   DEBUG_MODE OFF
   BINARY_NAME "AUv3Synth"
-  # BINARY_LOCATION
-  # HEADER_SEARCH_PATHS
-  # EXTRA_LIBRARY_SEARCH_PATHS
-  # PREPROCESSOR_DEFINITIONS
   OPTIMISATION "-O3 (fastest with safe optimisations)"
-  # VST_BINARY_LOCATION
-  # VST3_BINARY_LOCATION
   OSX_BASE_SDK_VERSION "Use Default"
   OSX_DEPLOYMENT_TARGET "Use Default"
   OSX_ARCHITECTURE "Use Default"
-  # CUSTOM_XCODE_FLAGS
-  CXX_LANGUAGE_STANDARD "Use Default"
-  CXX_LIBRARY "Use Default"
-  # CODE_SIGNING_IDENTITY
-  # RELAX_IEEE_COMPLIANCE
-  # LINK_TIME_OPTIMISATION
-  # STRIP_LOCAL_SYMBOLS
 )
 
 jucer_project_end()

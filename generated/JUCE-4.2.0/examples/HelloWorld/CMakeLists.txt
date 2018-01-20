@@ -27,13 +27,8 @@ jucer_project_settings(
   PROJECT_NAME "HelloWorld"
   PROJECT_VERSION "1.0.0"
   COMPANY_NAME "ROLI Ltd."
-  # COMPANY_WEBSITE
-  # COMPANY_EMAIL
   PROJECT_TYPE "GUI Application"
   BUNDLE_IDENTIFIER "com.roli.jucehelloworld"
-  BINARYDATACPP_SIZE_LIMIT "Default"
-  # BINARYDATA_NAMESPACE
-  # PREPROCESSOR_DEFINITIONS
 )
 
 jucer_project_files("HelloWorld/Source"
@@ -90,18 +85,6 @@ jucer_project_module(
 
 jucer_export_target(
   "Xcode (MacOSX)"
-  # EXTRA_PREPROCESSOR_DEFINITIONS
-  # EXTRA_COMPILER_FLAGS
-  # EXTRA_LINKER_FLAGS
-  # EXTERNAL_LIBRARIES_TO_LINK
-  ICON_SMALL "<None>"
-  ICON_LARGE "<None>"
-  # CUSTOM_XCODE_RESOURCE_FOLDERS
-  # DOCUMENT_FILE_EXTENSIONS
-  # CUSTOM_PLIST
-  # EXTRA_FRAMEWORKS
-  # PREBUILD_SHELL_SCRIPT
-  # POSTBUILD_SHELL_SCRIPT
 )
 
 jucer_export_target_configuration(
@@ -109,21 +92,10 @@ jucer_export_target_configuration(
   NAME "Debug"
   DEBUG_MODE ON
   BINARY_NAME "HelloWorld"
-  # BINARY_LOCATION
-  # HEADER_SEARCH_PATHS
-  # EXTRA_LIBRARY_SEARCH_PATHS
-  # PREPROCESSOR_DEFINITIONS
   OPTIMISATION "-O0 (no optimisation)"
   # OSX_BASE_SDK_VERSION
   # OSX_DEPLOYMENT_TARGET
   OSX_ARCHITECTURE "Use Default"
-  # CUSTOM_XCODE_FLAGS
-  CXX_LANGUAGE_STANDARD "Use Default"
-  CXX_LIBRARY "Use Default"
-  # CODE_SIGNING_IDENTITY
-  # RELAX_IEEE_COMPLIANCE
-  # LINK_TIME_OPTIMISATION
-  # STRIP_LOCAL_SYMBOLS
 )
 
 jucer_export_target_configuration(
@@ -131,32 +103,14 @@ jucer_export_target_configuration(
   NAME "Release"
   DEBUG_MODE OFF
   BINARY_NAME "HelloWorld"
-  # BINARY_LOCATION
-  # HEADER_SEARCH_PATHS
-  # EXTRA_LIBRARY_SEARCH_PATHS
-  # PREPROCESSOR_DEFINITIONS
   OPTIMISATION "-Os (minimise code size)"
   # OSX_BASE_SDK_VERSION
   # OSX_DEPLOYMENT_TARGET
   OSX_ARCHITECTURE "Use Default"
-  # CUSTOM_XCODE_FLAGS
-  CXX_LANGUAGE_STANDARD "Use Default"
-  CXX_LIBRARY "Use Default"
-  # CODE_SIGNING_IDENTITY
-  # RELAX_IEEE_COMPLIANCE
-  # LINK_TIME_OPTIMISATION
-  # STRIP_LOCAL_SYMBOLS
 )
 
 jucer_export_target(
   "Visual Studio 2015"
-  # EXTRA_PREPROCESSOR_DEFINITIONS
-  # EXTRA_COMPILER_FLAGS
-  # EXTRA_LINKER_FLAGS
-  # EXTERNAL_LIBRARIES_TO_LINK
-  ICON_SMALL "<None>"
-  ICON_LARGE "<None>"
-  # PLATFORM_TOOLSET "(default)"
 )
 
 jucer_export_target_configuration(
@@ -164,22 +118,10 @@ jucer_export_target_configuration(
   NAME "Debug"
   DEBUG_MODE ON
   BINARY_NAME "HelloWorld"
-  # BINARY_LOCATION
-  # HEADER_SEARCH_PATHS
-  # EXTRA_LIBRARY_SEARCH_PATHS
-  # PREPROCESSOR_DEFINITIONS
   OPTIMISATION "No optimisation"
   WARNING_LEVEL "High"
-  # TREAT_WARNINGS_AS_ERRORS
-  RUNTIME_LIBRARY "(Default)"
-  WHOLE_PROGRAM_OPTIMISATION "Enable when possible"
-  # INCREMENTAL_LINKING
-  # PREBUILD_COMMAND
-  # POSTBUILD_COMMAND
   GENERATE_MANIFEST ON
-  CHARACTER_SET "Default"
   # ARCHITECTURE "32-bit"
-  # RELAX_IEEE_COMPLIANCE
 )
 
 jucer_export_target_configuration(
@@ -187,34 +129,14 @@ jucer_export_target_configuration(
   NAME "Release"
   DEBUG_MODE OFF
   BINARY_NAME "HelloWorld"
-  # BINARY_LOCATION
-  # HEADER_SEARCH_PATHS
-  # EXTRA_LIBRARY_SEARCH_PATHS
-  # PREPROCESSOR_DEFINITIONS
   OPTIMISATION "Maximise speed"
   WARNING_LEVEL "High"
-  # TREAT_WARNINGS_AS_ERRORS
-  RUNTIME_LIBRARY "(Default)"
-  WHOLE_PROGRAM_OPTIMISATION "Enable when possible"
-  # INCREMENTAL_LINKING
-  # PREBUILD_COMMAND
-  # POSTBUILD_COMMAND
   GENERATE_MANIFEST ON
-  CHARACTER_SET "Default"
   # ARCHITECTURE "32-bit"
-  # RELAX_IEEE_COMPLIANCE
 )
 
 jucer_export_target(
   "Linux Makefile"
-  # EXTRA_PREPROCESSOR_DEFINITIONS
-  # EXTRA_COMPILER_FLAGS
-  # EXTRA_LINKER_FLAGS
-  # EXTERNAL_LIBRARIES_TO_LINK
-  ICON_SMALL "<None>"
-  ICON_LARGE "<None>"
-  # CXX_STANDARD_TO_USE
-  # PKGCONFIG_LIBRARIES
 )
 
 jucer_export_target_configuration(
@@ -222,12 +144,8 @@ jucer_export_target_configuration(
   NAME "Debug"
   DEBUG_MODE ON
   BINARY_NAME "HelloWorld"
-  # BINARY_LOCATION
-  # HEADER_SEARCH_PATHS
   EXTRA_LIBRARY_SEARCH_PATHS "/usr/X11R6/lib/"
-  # PREPROCESSOR_DEFINITIONS
   OPTIMISATION "-O0 (no optimisation)"
-  ARCHITECTURE "(Default)"
 )
 
 jucer_export_target_configuration(
@@ -235,12 +153,8 @@ jucer_export_target_configuration(
   NAME "Release"
   DEBUG_MODE OFF
   BINARY_NAME "HelloWorld"
-  # BINARY_LOCATION
-  # HEADER_SEARCH_PATHS
   EXTRA_LIBRARY_SEARCH_PATHS "/usr/X11R6/lib/"
-  # PREPROCESSOR_DEFINITIONS
   OPTIMISATION "-Os (minimise code size)"
-  ARCHITECTURE "(Default)"
 )
 
 jucer_project_end()
