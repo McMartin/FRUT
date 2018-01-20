@@ -860,8 +860,8 @@ int main(int argc, char* argv[])
         wLn("  NAME \"", configuration.getProperty("name").toString(), "\"");
         wLn("  DEBUG_MODE ", (bool{configuration.getProperty("isDebug")} ? "ON" : "OFF"));
 
-        convertSetting(configuration, "targetName", "BINARY_NAME", {});
-        convertSetting(configuration, "binaryPath", "BINARY_LOCATION", {});
+        convertSettingIfDefined(configuration, "targetName", "BINARY_NAME", {});
+        convertSettingIfDefined(configuration, "binaryPath", "BINARY_LOCATION", {});
 
         const auto isAbsolutePath = [](const juce::String& path) {
           return path.startsWithChar('/') || path.startsWithChar('~')
@@ -908,282 +908,283 @@ int main(int argc, char* argv[])
           return escape("\\", join("\n", absOrRelToJucerFileDirPaths));
         };
 
-        convertSetting(configuration, "headerPath", "HEADER_SEARCH_PATHS",
-                       convertSearchPaths);
-        convertSetting(configuration, "libraryPath", "EXTRA_LIBRARY_SEARCH_PATHS",
-                       convertSearchPaths);
+        convertSettingIfDefined(configuration, "headerPath", "HEADER_SEARCH_PATHS",
+                                convertSearchPaths);
+        convertSettingIfDefined(configuration, "libraryPath",
+                                "EXTRA_LIBRARY_SEARCH_PATHS", convertSearchPaths);
 
-        convertSetting(configuration, "defines", "PREPROCESSOR_DEFINITIONS", {});
+        convertSettingIfDefined(configuration, "defines", "PREPROCESSOR_DEFINITIONS", {});
 
-        convertSetting(configuration, "optimisation", "OPTIMISATION",
-                       [&isVSExporter](const juce::var& value) -> std::string {
-                         if (value.isVoid())
-                           return {};
+        convertSettingIfDefined(configuration, "optimisation", "OPTIMISATION",
+                                [&isVSExporter](const juce::var& value) -> std::string {
+                                  if (value.isVoid())
+                                    return {};
 
-                         if (isVSExporter)
-                         {
-                           switch (int{value})
-                           {
-                           case 1:
-                             return "No optimisation";
-                           case 2:
-                             return "Minimise size";
-                           case 3:
-                             return "Maximise speed";
-                           }
+                                  if (isVSExporter)
+                                  {
+                                    switch (int{value})
+                                    {
+                                    case 1:
+                                      return "No optimisation";
+                                    case 2:
+                                      return "Minimise size";
+                                    case 3:
+                                      return "Maximise speed";
+                                    }
 
-                           return {};
-                         }
+                                    return {};
+                                  }
 
-                         switch (int{value})
-                         {
-                         case 1:
-                           return "-O0 (no optimisation)";
-                         case 2:
-                           return "-Os (minimise code size)";
-                         case 3:
-                           return "-O3 (fastest with safe optimisations)";
-                         case 4:
-                           return "-O1 (fast)";
-                         case 5:
-                           return "-O2 (faster)";
-                         case 6:
-                           return "-Ofast (uses aggressive optimisations)";
-                         }
+                                  switch (int{value})
+                                  {
+                                  case 1:
+                                    return "-O0 (no optimisation)";
+                                  case 2:
+                                    return "-Os (minimise code size)";
+                                  case 3:
+                                    return "-O3 (fastest with safe optimisations)";
+                                  case 4:
+                                    return "-O1 (fast)";
+                                  case 5:
+                                    return "-O2 (faster)";
+                                  case 6:
+                                    return "-Ofast (uses aggressive optimisations)";
+                                  }
 
-                         return {};
-                       });
+                                  return {};
+                                });
 
         if (exporterType == "XCODE_MAC")
         {
-          if (isVstAudioPlugin)
-          {
-            convertSetting(configuration, "xcodeVstBinaryLocation", "VST_BINARY_LOCATION",
-                           {});
-          }
-
-          if (isVst3AudioPlugin)
-          {
-            convertSetting(configuration, "xcodeVst3BinaryLocation",
-                           "VST3_BINARY_LOCATION", {});
-          }
-
-          if (bool{jucerProject.getProperty("buildAU")})
-          {
-            convertSetting(configuration, "xcodeAudioUnitBinaryLocation",
-                           "AU_BINARY_LOCATION", {});
-          }
+          convertSettingIfDefined(configuration, "xcodeVstBinaryLocation",
+                                  "VST_BINARY_LOCATION", {});
+          convertSettingIfDefined(configuration, "xcodeVst3BinaryLocation",
+                                  "VST3_BINARY_LOCATION", {});
+          convertSettingIfDefined(configuration, "xcodeAudioUnitBinaryLocation",
+                                  "AU_BINARY_LOCATION", {});
 
           const auto sdks = {"10.5 SDK", "10.6 SDK",  "10.7 SDK",  "10.8 SDK",
                              "10.9 SDK", "10.10 SDK", "10.11 SDK", "10.12 SDK"};
 
-          convertSetting(configuration, "osxSDK", "OSX_BASE_SDK_VERSION",
-                         [&sdks](const juce::var& v) -> std::string {
-                           const auto value = v.toString().toStdString();
+          convertSettingIfDefined(configuration, "osxSDK", "OSX_BASE_SDK_VERSION",
+                                  [&sdks](const juce::var& v) -> std::string {
+                                    const auto value = v.toString().toStdString();
 
-                           if (value == "default")
-                             return "Use Default";
+                                    if (value == "default")
+                                      return "Use Default";
 
-                           if (std::find(sdks.begin(), sdks.end(), value) != sdks.end())
-                             return value;
+                                    if (std::find(sdks.begin(), sdks.end(), value)
+                                        != sdks.end())
+                                      return value;
 
-                           return {};
-                         });
+                                    return {};
+                                  });
 
-          convertSetting(configuration, "osxCompatibility", "OSX_DEPLOYMENT_TARGET",
-                         [&sdks](const juce::var& v) -> std::string {
-                           const auto value = v.toString().toStdString();
+          convertSettingIfDefined(
+            configuration, "osxCompatibility", "OSX_DEPLOYMENT_TARGET",
+            [&sdks](const juce::var& v) -> std::string {
+              const auto value = v.toString().toStdString();
 
-                           if (value == "default")
-                             return "Use Default";
+              if (value == "default")
+                return "Use Default";
 
-                           if (std::find(sdks.begin(), sdks.end(), value) != sdks.end())
-                             return value.substr(0, value.length() - 4);
+              if (std::find(sdks.begin(), sdks.end(), value) != sdks.end())
+                return value.substr(0, value.length() - 4);
 
-                           return {};
-                         });
+              return {};
+            });
 
-          convertSetting(configuration, "osxArchitecture", "OSX_ARCHITECTURE",
-                         [](const juce::var& v) -> std::string {
-                           const auto value = v.toString();
+          convertSettingIfDefined(configuration, "osxArchitecture", "OSX_ARCHITECTURE",
+                                  [](const juce::var& v) -> std::string {
+                                    const auto value = v.toString();
 
-                           if (value == "default")
-                             return "Use Default";
+                                    if (value == "default")
+                                      return "Use Default";
 
-                           if (value == "Native")
-                             return "Native architecture of build machine";
+                                    if (value == "Native")
+                                      return "Native architecture of build machine";
 
-                           if (value == "32BitUniversal")
-                             return "Universal Binary (32-bit)";
+                                    if (value == "32BitUniversal")
+                                      return "Universal Binary (32-bit)";
 
-                           if (value == "64BitUniversal")
-                             return "Universal Binary (32/64-bit)";
+                                    if (value == "64BitUniversal")
+                                      return "Universal Binary (32/64-bit)";
 
-                           if (value == "64BitIntel")
-                             return "64-bit Intel";
+                                    if (value == "64BitIntel")
+                                      return "64-bit Intel";
 
-                           return {};
-                         });
+                                    return {};
+                                  });
 
-          convertSetting(configuration, "customXcodeFlags", "CUSTOM_XCODE_FLAGS", {});
+          convertSettingIfDefined(configuration, "customXcodeFlags", "CUSTOM_XCODE_FLAGS",
+                                  {});
 
-          convertSetting(configuration, "cppLanguageStandard", "CXX_LANGUAGE_STANDARD",
-                         [](const juce::var& v) -> std::string {
-                           const auto value = v.toString();
+          convertSettingIfDefined(configuration, "cppLanguageStandard",
+                                  "CXX_LANGUAGE_STANDARD",
+                                  [](const juce::var& v) -> std::string {
+                                    const auto value = v.toString();
 
-                           if (value.isEmpty())
-                             return "Use Default";
+                                    if (value.isEmpty())
+                                      return "Use Default";
 
-                           if (value == "c++98")
-                             return "C++98";
+                                    if (value == "c++98")
+                                      return "C++98";
 
-                           if (value == "gnu++98")
-                             return "GNU++98";
+                                    if (value == "gnu++98")
+                                      return "GNU++98";
 
-                           if (value == "c++11")
-                             return "C++11";
+                                    if (value == "c++11")
+                                      return "C++11";
 
-                           if (value == "gnu++11")
-                             return "GNU++11";
+                                    if (value == "gnu++11")
+                                      return "GNU++11";
 
-                           if (value == "c++14")
-                             return "C++14";
+                                    if (value == "c++14")
+                                      return "C++14";
 
-                           if (value == "gnu++14")
-                             return "GNU++14";
+                                    if (value == "gnu++14")
+                                      return "GNU++14";
 
-                           return {};
-                         });
+                                    return {};
+                                  });
 
-          convertSetting(configuration, "cppLibType", "CXX_LIBRARY",
-                         [](const juce::var& v) -> std::string {
-                           const auto value = v.toString();
+          convertSettingIfDefined(configuration, "cppLibType", "CXX_LIBRARY",
+                                  [](const juce::var& v) -> std::string {
+                                    const auto value = v.toString();
 
-                           if (value.isEmpty())
-                             return "Use Default";
+                                    if (value.isEmpty())
+                                      return "Use Default";
 
-                           if (value == "libc++")
-                             return "LLVM libc++";
+                                    if (value == "libc++")
+                                      return "LLVM libc++";
 
-                           if (value == "libstdc++")
-                             return "GNU libstdc++";
+                                    if (value == "libstdc++")
+                                      return "GNU libstdc++";
 
-                           return {};
-                         });
+                                    return {};
+                                  });
 
-          convertSetting(configuration, "codeSigningIdentity", "CODE_SIGNING_IDENTITY",
-                         {});
-          convertOnOffSetting(configuration, "fastMath", "RELAX_IEEE_COMPLIANCE", {});
-          convertOnOffSetting(configuration, "linkTimeOptimisation",
-                              "LINK_TIME_OPTIMISATION", {});
-          convertOnOffSetting(configuration, "stripLocalSymbols", "STRIP_LOCAL_SYMBOLS",
-                              {});
+          convertSettingIfDefined(configuration, "codeSigningIdentity",
+                                  "CODE_SIGNING_IDENTITY", {});
+          convertOnOffSettingIfDefined(configuration, "fastMath", "RELAX_IEEE_COMPLIANCE",
+                                       {});
+          convertOnOffSettingIfDefined(configuration, "linkTimeOptimisation",
+                                       "LINK_TIME_OPTIMISATION", {});
+          convertOnOffSettingIfDefined(configuration, "stripLocalSymbols",
+                                       "STRIP_LOCAL_SYMBOLS", {});
         }
 
         if (isVSExporter)
         {
-          convertSetting(configuration, "winWarningLevel", "WARNING_LEVEL",
-                         [](const juce::var& value) -> std::string {
-                           switch (int{value})
-                           {
-                           case 2:
-                             return "Low";
-                           case 3:
-                             return "Medium";
-                           case 4:
-                             return "High";
-                           }
+          convertSettingIfDefined(configuration, "winWarningLevel", "WARNING_LEVEL",
+                                  [](const juce::var& value) -> std::string {
+                                    switch (int{value})
+                                    {
+                                    case 2:
+                                      return "Low";
+                                    case 3:
+                                      return "Medium";
+                                    case 4:
+                                      return "High";
+                                    }
 
-                           return "High";
-                         });
+                                    return "High";
+                                  });
 
-          convertOnOffSetting(configuration, "warningsAreErrors",
-                              "TREAT_WARNINGS_AS_ERRORS", {});
+          convertOnOffSettingIfDefined(configuration, "warningsAreErrors",
+                                       "TREAT_WARNINGS_AS_ERRORS", {});
 
-          convertSetting(configuration, "useRuntimeLibDLL", "RUNTIME_LIBRARY",
-                         [](const juce::var& v) -> std::string {
-                           const auto value = v.toString();
+          convertSettingIfDefined(configuration, "useRuntimeLibDLL", "RUNTIME_LIBRARY",
+                                  [](const juce::var& v) -> std::string {
+                                    const auto value = v.toString();
 
-                           if (value.isEmpty())
-                             return "(Default)";
+                                    if (value.isEmpty())
+                                      return "(Default)";
 
-                           if (value == "0")
-                             return "Use static runtime";
+                                    if (value == "0")
+                                      return "Use static runtime";
 
-                           if (value == "1")
-                             return "Use DLL runtime";
+                                    if (value == "1")
+                                      return "Use DLL runtime";
 
-                           return {};
-                         });
+                                    return {};
+                                  });
 
-          convertSetting(configuration, "wholeProgramOptimisation",
-                         "WHOLE_PROGRAM_OPTIMISATION",
-                         [](const juce::var& value) -> std::string {
-                           if (value.toString().isEmpty())
-                             return "Enable when possible";
+          convertSettingIfDefined(configuration, "wholeProgramOptimisation",
+                                  "WHOLE_PROGRAM_OPTIMISATION",
+                                  [](const juce::var& value) -> std::string {
+                                    if (value.toString().isEmpty())
+                                      return "Enable when possible";
 
-                           if (int{value} > 0)
-                             return "Always disable";
+                                    if (int{value} > 0)
+                                      return "Always disable";
 
-                           return {};
-                         });
+                                    return {};
+                                  });
 
-          convertOnOffSetting(configuration, "enableIncrementalLinking",
-                              "INCREMENTAL_LINKING", {});
-          convertSetting(configuration, "prebuildCommand", "PREBUILD_COMMAND", {});
-          convertSetting(configuration, "postbuildCommand", "POSTBUILD_COMMAND", {});
-          convertOnOffSetting(configuration, "generateManifest", "GENERATE_MANIFEST", {});
+          convertOnOffSettingIfDefined(configuration, "enableIncrementalLinking",
+                                       "INCREMENTAL_LINKING", {});
+          convertSettingIfDefined(configuration, "prebuildCommand", "PREBUILD_COMMAND",
+                                  {});
+          convertSettingIfDefined(configuration, "postbuildCommand", "POSTBUILD_COMMAND",
+                                  {});
+          convertOnOffSettingIfDefined(configuration, "generateManifest",
+                                       "GENERATE_MANIFEST", {});
 
-          convertSetting(configuration, "characterSet", "CHARACTER_SET",
-                         [](const juce::var& v) -> std::string {
-                           const auto value = v.toString();
+          convertSettingIfDefined(configuration, "characterSet", "CHARACTER_SET",
+                                  [](const juce::var& v) -> std::string {
+                                    const auto value = v.toString();
 
-                           if (value.isEmpty())
-                             return "Default";
+                                    if (value.isEmpty())
+                                      return "Default";
 
-                           return value.toStdString();
-                         });
+                                    return value.toStdString();
+                                  });
 
-          const auto winArchitecture =
-            configuration.getProperty("winArchitecture").toString();
-          if (winArchitecture.isEmpty())
+          if (configuration.hasProperty("winArchitecture"))
           {
-            wLn("  # ARCHITECTURE");
-          }
-          else
-          {
-            wLn("  # ARCHITECTURE \"", winArchitecture, "\"");
+            const auto winArchitecture =
+              configuration.getProperty("winArchitecture").toString();
+            if (winArchitecture.isEmpty())
+            {
+              wLn("  # ARCHITECTURE");
+            }
+            else
+            {
+              wLn("  # ARCHITECTURE \"", winArchitecture, "\"");
+            }
           }
 
-          convertOnOffSetting(configuration, "fastMath", "RELAX_IEEE_COMPLIANCE", {});
+          convertOnOffSettingIfDefined(configuration, "fastMath", "RELAX_IEEE_COMPLIANCE",
+                                       {});
         }
 
         if (exporterType == "LINUX_MAKE")
         {
-          convertSetting(configuration, "linuxArchitecture", "ARCHITECTURE",
-                         [](const juce::var& v) -> std::string {
-                           if (v.isVoid())
-                             return "(Default)";
+          convertSettingIfDefined(configuration, "linuxArchitecture", "ARCHITECTURE",
+                                  [](const juce::var& v) -> std::string {
+                                    if (v.isVoid())
+                                      return "(Default)";
 
-                           const auto value = v.toString();
+                                    const auto value = v.toString();
 
-                           if (value.isEmpty())
-                             return "<None>";
+                                    if (value.isEmpty())
+                                      return "<None>";
 
-                           if (value == "-m32")
-                             return "32-bit (-m32)";
+                                    if (value == "-m32")
+                                      return "32-bit (-m32)";
 
-                           if (value == "-m64")
-                             return "64-bit (-m64)";
+                                    if (value == "-m64")
+                                      return "64-bit (-m64)";
 
-                           if (value == "-march=armv6")
-                             return "ARM v6";
+                                    if (value == "-march=armv6")
+                                      return "ARM v6";
 
-                           if (value == "-march=armv7")
-                             return "ARM v7";
+                                    if (value == "-march=armv7")
+                                      return "ARM v7";
 
-                           return {};
-                         });
+                                    return {};
+                                  });
         }
 
         writeUserNotes(wLn, configuration);
