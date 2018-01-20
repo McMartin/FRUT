@@ -28,15 +28,11 @@ jucer_project_settings(
   PROJECT_VERSION "1.0.0"
   COMPANY_NAME "ROLI Ltd."
   COMPANY_COPYRIGHT "ROLI Ltd."
-  # COMPANY_WEBSITE
-  # COMPANY_EMAIL
   REPORT_JUCE_APP_USAGE OFF # Required for closed source applications without an Indie or Pro JUCE license
   DISPLAY_THE_JUCE_SPLASH_SCREEN OFF # Required for closed source applications without an Indie or Pro JUCE license
   SPLASH_SCREEN_COLOUR "Dark"
   PROJECT_TYPE "Static Library"
   BUNDLE_IDENTIFIER "com.roli.jucedll"
-  BINARYDATACPP_SIZE_LIMIT "Default"
-  # BINARYDATA_NAMESPACE
   PREPROCESSOR_DEFINITIONS "JUCE_DLL_BUILD=1"
 )
 

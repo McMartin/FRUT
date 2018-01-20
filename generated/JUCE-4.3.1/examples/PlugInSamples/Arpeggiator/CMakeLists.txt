@@ -31,9 +31,6 @@ jucer_project_settings(
   COMPANY_EMAIL "info@juce.com"
   PROJECT_TYPE "Audio Plug-in"
   BUNDLE_IDENTIFIER "com.ROLI.Arpeggiator"
-  BINARYDATACPP_SIZE_LIMIT "Default"
-  # BINARYDATA_NAMESPACE
-  # PREPROCESSOR_DEFINITIONS
 )
 
 jucer_audio_plugin_settings(

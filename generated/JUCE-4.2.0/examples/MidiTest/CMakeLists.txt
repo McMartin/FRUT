@@ -26,14 +26,8 @@ jucer_project_begin(
 jucer_project_settings(
   PROJECT_NAME "MidiTest"
   PROJECT_VERSION "1.0.0"
-  # COMPANY_NAME
-  # COMPANY_WEBSITE
-  # COMPANY_EMAIL
   PROJECT_TYPE "GUI Application"
   BUNDLE_IDENTIFIER "com.yourcompany.MidiTest"
-  BINARYDATACPP_SIZE_LIMIT "Default"
-  # BINARYDATA_NAMESPACE
-  # PREPROCESSOR_DEFINITIONS
 )
 
 jucer_project_files("MidiTest/Source"

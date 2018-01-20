@@ -35,9 +35,6 @@ jucer_project_settings(
   SPLASH_SCREEN_COLOUR "Dark"
   PROJECT_TYPE "Audio Plug-in"
   BUNDLE_IDENTIFIER "com.roli.MultiOutSynth"
-  BINARYDATACPP_SIZE_LIMIT "Default"
-  # BINARYDATA_NAMESPACE
-  # PREPROCESSOR_DEFINITIONS
 )
 
 jucer_audio_plugin_settings(

@@ -26,14 +26,8 @@ jucer_project_begin(
 jucer_project_settings(
   PROJECT_NAME "BinaryBuilder"
   PROJECT_VERSION "1.0.0"
-  # COMPANY_NAME
-  # COMPANY_WEBSITE
-  # COMPANY_EMAIL
   PROJECT_TYPE "Console Application"
   BUNDLE_IDENTIFIER "com.rawmaterialsoftware.binarybuilder"
-  BINARYDATACPP_SIZE_LIMIT "Default"
-  # BINARYDATA_NAMESPACE
-  # PREPROCESSOR_DEFINITIONS
 )
 
 jucer_project_files("BinaryBuilder/Source"

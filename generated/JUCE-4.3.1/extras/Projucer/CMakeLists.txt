@@ -26,13 +26,8 @@ jucer_project_begin(
 jucer_project_settings(
   PROJECT_NAME "Projucer"
   PROJECT_VERSION "4.3.1"
-  # COMPANY_NAME
-  # COMPANY_WEBSITE
-  # COMPANY_EMAIL
   PROJECT_TYPE "GUI Application"
   BUNDLE_IDENTIFIER "com.juce.theprojucer"
-  BINARYDATACPP_SIZE_LIMIT "Default"
-  # BINARYDATA_NAMESPACE
   # PREPROCESSOR_DEFINITIONS
 )
 

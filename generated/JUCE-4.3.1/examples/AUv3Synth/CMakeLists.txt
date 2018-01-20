@@ -26,14 +26,8 @@ jucer_project_begin(
 jucer_project_settings(
   PROJECT_NAME "AUv3Synth"
   PROJECT_VERSION "1.0.0"
-  # COMPANY_NAME
-  # COMPANY_WEBSITE
-  # COMPANY_EMAIL
   PROJECT_TYPE "Audio Plug-in"
   BUNDLE_IDENTIFIER "com.roli.development.AUv3Synth"
-  BINARYDATACPP_SIZE_LIMIT "Default"
-  # BINARYDATA_NAMESPACE
-  # PREPROCESSOR_DEFINITIONS
 )
 
 jucer_audio_plugin_settings(

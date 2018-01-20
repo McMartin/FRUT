@@ -26,14 +26,8 @@ jucer_project_begin(
 jucer_project_settings(
   PROJECT_NAME "OSCSender"
   PROJECT_VERSION "1.0.0"
-  # COMPANY_NAME
-  # COMPANY_WEBSITE
-  # COMPANY_EMAIL
   PROJECT_TYPE "GUI Application"
   BUNDLE_IDENTIFIER "com.yourcompany.OSCSender"
-  BINARYDATACPP_SIZE_LIMIT "Default"
-  # BINARYDATA_NAMESPACE
-  # PREPROCESSOR_DEFINITIONS
 )
 
 jucer_project_files("OSCSender/Source"

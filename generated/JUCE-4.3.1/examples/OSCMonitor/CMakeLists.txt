@@ -26,14 +26,8 @@ jucer_project_begin(
 jucer_project_settings(
   PROJECT_NAME "OSCMonitor"
   PROJECT_VERSION "1.0.0"
-  # COMPANY_NAME
-  # COMPANY_WEBSITE
-  # COMPANY_EMAIL
   PROJECT_TYPE "GUI Application"
   BUNDLE_IDENTIFIER "com.rawmaterialsoftware.OSCMonitor"
-  BINARYDATACPP_SIZE_LIMIT "Default"
-  # BINARYDATA_NAMESPACE
-  # PREPROCESSOR_DEFINITIONS
 )
 
 jucer_project_files("OSCMonitor/Source"
