@@ -177,6 +177,7 @@ jucer_project_module(
 
 jucer_export_target(
   "Xcode (MacOSX)"
+  TARGET_PROJECT_FOLDER "Builds/MacOSX"  # only used by PREBUILD_SHELL_SCRIPT and POSTBUILD_SHELL_SCRIPT
   # EXTRA_PREPROCESSOR_DEFINITIONS
   # EXTRA_COMPILER_FLAGS
   # EXTRA_LINKER_FLAGS

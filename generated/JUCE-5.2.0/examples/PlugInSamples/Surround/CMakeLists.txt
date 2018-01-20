@@ -183,6 +183,7 @@ jucer_project_module(
 
 jucer_export_target(
   "Xcode (MacOSX)"
+  TARGET_PROJECT_FOLDER "Builds/MacOSX"  # only used by PREBUILD_SHELL_SCRIPT and POSTBUILD_SHELL_SCRIPT
   # VST3_SDK_FOLDER
   # EXTRA_PREPROCESSOR_DEFINITIONS
   EXTRA_COMPILER_FLAGS "-Wall -Wshadow -Wstrict-aliasing -Wconversion -Wsign-compare -Woverloaded-virtual -Wextra-semi"
