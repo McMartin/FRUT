@@ -245,6 +245,17 @@ int main(int argc, char* argv[])
       }
     };
 
+  const auto convertSettingIfDefined =
+    [&convertSetting](const juce::ValueTree& valueTree, const juce::Identifier& property,
+                      const std::string& cmakeKeyword,
+                      std::function<std::string(const juce::var&)> converterFn) {
+
+      if (valueTree.hasProperty(property))
+      {
+        convertSetting(valueTree, property, cmakeKeyword, std::move(converterFn));
+      }
+    };
+
   const auto convertOnOffSetting = [&wLn](const juce::ValueTree& valueTree,
                                           const juce::Identifier& property,
                                           const std::string& cmakeKeyword,
@@ -265,6 +276,17 @@ int main(int argc, char* argv[])
       wLn("  ", cmakeKeyword, " ", converterFn(bool{value}));
     }
   };
+
+  const auto convertOnOffSettingIfDefined =
+    [&convertOnOffSetting](
+      const juce::ValueTree& valueTree, const juce::Identifier& property,
+      const std::string& cmakeKeyword, std::function<std::string(bool)> converterFn) {
+
+      if (valueTree.hasProperty(property))
+      {
+        convertOnOffSetting(valueTree, property, cmakeKeyword, std::move(converterFn));
+      }
+    };
 
   const auto jucerFileName = jucerFile.getFileName();
 
@@ -332,13 +354,9 @@ int main(int argc, char* argv[])
     wLn("jucer_project_settings(");
     convertSetting(jucerProject, "name", "PROJECT_NAME", {});
     convertSetting(jucerProject, "version", "PROJECT_VERSION", {});
+
     convertSetting(jucerProject, "companyName", "COMPANY_NAME", {});
-
-    if (jucerProject.hasProperty("companyCopyright"))
-    {
-      convertSetting(jucerProject, "companyCopyright", "COMPANY_COPYRIGHT", {});
-    }
-
+    convertSettingIfDefined(jucerProject, "companyCopyright", "COMPANY_COPYRIGHT", {});
     convertSetting(jucerProject, "companyWebsite", "COMPANY_WEBSITE", {});
     convertSetting(jucerProject, "companyEmail", "COMPANY_EMAIL", {});
 
@@ -347,24 +365,13 @@ int main(int argc, char* argv[])
              + " # Required for closed source applications without an Indie or Pro JUCE "
                "license";
     };
-
-    if (jucerProject.hasProperty("reportAppUsage"))
-    {
-      convertOnOffSetting(jucerProject, "reportAppUsage", "REPORT_JUCE_APP_USAGE",
-                          booleanWithLicenseRequiredTagline);
-    }
-
-    if (jucerProject.hasProperty("displaySplashScreen"))
-    {
-      convertOnOffSetting(jucerProject, "displaySplashScreen",
-                          "DISPLAY_THE_JUCE_SPLASH_SCREEN",
-                          booleanWithLicenseRequiredTagline);
-    }
-
-    if (jucerProject.hasProperty("splashScreenColour"))
-    {
-      convertSetting(jucerProject, "splashScreenColour", "SPLASH_SCREEN_COLOUR", {});
-    }
+    convertOnOffSettingIfDefined(jucerProject, "reportAppUsage", "REPORT_JUCE_APP_USAGE",
+                                 booleanWithLicenseRequiredTagline);
+    convertOnOffSettingIfDefined(jucerProject, "displaySplashScreen",
+                                 "DISPLAY_THE_JUCE_SPLASH_SCREEN",
+                                 booleanWithLicenseRequiredTagline);
+    convertSettingIfDefined(jucerProject, "splashScreenColour", "SPLASH_SCREEN_COLOUR",
+                            {});
 
     const auto projectTypeDescription = [&projectType]() -> std::string {
       if (projectType == "guiapp")
@@ -398,11 +405,7 @@ int main(int argc, char* argv[])
 
     convertSetting(jucerProject, "binaryDataNamespace", "BINARYDATA_NAMESPACE", {});
     convertSetting(jucerProject, "defines", "PREPROCESSOR_DEFINITIONS", {});
-
-    if (jucerProject.hasProperty("headerPath"))
-    {
-      convertSetting(jucerProject, "headerPath", "HEADER_SEARCH_PATHS", {});
-    }
+    convertSettingIfDefined(jucerProject, "headerPath", "HEADER_SEARCH_PATHS", {});
 
     writeUserNotes(wLn, jucerProject);
 
@@ -755,11 +758,8 @@ int main(int argc, char* argv[])
         convertSetting(exporter, "extraFrameworks", "EXTRA_FRAMEWORKS", {});
         convertSetting(exporter, "prebuildCommand", "PREBUILD_SHELL_SCRIPT", {});
         convertSetting(exporter, "postbuildCommand", "POSTBUILD_SHELL_SCRIPT", {});
-
-        if (exporter.hasProperty("iosDevelopmentTeamID"))
-        {
-          convertSetting(exporter, "iosDevelopmentTeamID", "DEVELOPMENT_TEAM_ID", {});
-        }
+        convertSettingIfDefined(exporter, "iosDevelopmentTeamID", "DEVELOPMENT_TEAM_ID",
+                                {});
       }
 
       if (isVSExporter)
@@ -774,48 +774,45 @@ int main(int argc, char* argv[])
           wLn("  # PLATFORM_TOOLSET \"", toolset, "\"");
         }
 
-        if (exporter.hasProperty("IPPLibrary"))
+        convertSettingIfDefined(exporter, "IPPLibrary", "USE_IPP_LIBRARY",
+                                [](const juce::var& v) -> std::string {
+                                  const auto value = v.toString();
+
+                                  if (value.isEmpty())
+                                    return "No";
+
+                                  if (value == "true")
+                                    return "Yes (Default Mode)";
+
+                                  if (value == "Parallel_Static")
+                                    return "Multi-Threaded Static Library";
+
+                                  if (value == "Sequential")
+                                    return "Single-Threaded Static Library";
+
+                                  if (value == "Parallel_Dynamic")
+                                    return "Multi-Threaded DLL";
+
+                                  if (value == "Sequential_Dynamic")
+                                    return "Single-Threaded DLL";
+
+                                  return {};
+                                });
+
+        if (exporterType == "VS2017")
         {
-          convertSetting(exporter, "IPPLibrary", "USE_IPP_LIBRARY",
-                         [](const juce::var& v) -> std::string {
-                           const auto value = v.toString();
+          convertSettingIfDefined(exporter, "cppLanguageStandard", "CXX_STANDARD_TO_USE",
+                                  [](const juce::var& v) -> std::string {
+                                    const auto value = v.toString();
 
-                           if (value.isEmpty())
-                             return "No";
-
-                           if (value == "true")
-                             return "Yes (Default Mode)";
-
-                           if (value == "Parallel_Static")
-                             return "Multi-Threaded Static Library";
-
-                           if (value == "Sequential")
-                             return "Single-Threaded Static Library";
-
-                           if (value == "Parallel_Dynamic")
-                             return "Multi-Threaded DLL";
-
-                           if (value == "Sequential_Dynamic")
-                             return "Single-Threaded DLL";
-
-                           return {};
-                         });
-        }
-
-        if (exporterType == "VS2017" && exporter.hasProperty("cppLanguageStandard"))
-        {
-          convertSetting(exporter, "cppLanguageStandard", "CXX_STANDARD_TO_USE",
-                         [](const juce::var& v) -> std::string {
-                           const auto value = v.toString();
-
-                           if (value.isEmpty())
-                             return "(default)";
-                           if (value == "stdcpp14")
-                             return "C++14";
-                           if (value == "stdcpplatest")
-                             return "Latest C++ Standard";
-                           return {};
-                         });
+                                    if (value.isEmpty())
+                                      return "(default)";
+                                    if (value == "stdcpp14")
+                                      return "C++14";
+                                    if (value == "stdcpplatest")
+                                      return "Latest C++ Standard";
+                                    return {};
+                                  });
         }
       }
 
