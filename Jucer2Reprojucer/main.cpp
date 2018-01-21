@@ -256,6 +256,48 @@ int main(int argc, char* argv[])
       }
     };
 
+  const auto convertSettingAsList =
+    [&wLn](const juce::ValueTree& valueTree, const juce::Identifier& property,
+           const std::string& cmakeKeyword,
+           std::function<juce::StringArray(const juce::var&)> converterFn) {
+
+      if (!converterFn)
+      {
+        converterFn = [](const juce::var& value) {
+          return juce::StringArray::fromLines(value.toString());
+        };
+      }
+
+      auto value = converterFn(valueTree.getProperty(property));
+      value.removeEmptyStrings();
+
+      if (value.isEmpty())
+      {
+        wLn("  # ", cmakeKeyword);
+      }
+      else
+      {
+        wLn("  ", cmakeKeyword);
+
+        for (const auto& item : value)
+        {
+          wLn("    \"", escape("\\\";", item), "\"");
+        }
+      }
+    };
+
+  const auto convertSettingAsListIfDefined =
+    [&convertSettingAsList](
+      const juce::ValueTree& valueTree, const juce::Identifier& property,
+      const std::string& cmakeKeyword,
+      std::function<juce::StringArray(const juce::var&)> converterFn) {
+
+      if (valueTree.hasProperty(property))
+      {
+        convertSettingAsList(valueTree, property, cmakeKeyword, std::move(converterFn));
+      }
+    };
+
   const auto jucerFileName = jucerFile.getFileName();
 
   // Preamble
