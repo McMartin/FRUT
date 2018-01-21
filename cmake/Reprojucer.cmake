@@ -1339,15 +1339,15 @@ function(jucer_project_end)
 
   string(REGEX REPLACE "[^A-Za-z0-9_.+-]" "_" target "${JUCER_PROJECT_NAME}")
 
+  set_source_files_properties(${JUCER_PROJECT_XCODE_RESOURCES}
+    PROPERTIES MACOSX_PACKAGE_LOCATION "Resources"
+  )
+
   set(all_sources
     ${JUCER_PROJECT_SOURCES}
     ${JUCER_PROJECT_RESOURCES}
     ${JUCER_PROJECT_BROWSABLE_FILES}
     ${JUCER_PROJECT_XCODE_RESOURCES}
-  )
-
-  set_source_files_properties(${JUCER_PROJECT_XCODE_RESOURCES}
-    PROPERTIES MACOSX_PACKAGE_LOCATION "Resources"
   )
 
   if(JUCER_PROJECT_TYPE STREQUAL "Console Application")
