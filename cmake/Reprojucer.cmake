@@ -58,8 +58,6 @@ function(jucer_project_begin)
     if(NOT EXISTS "${arg_PROJECT_FILE}")
       message(FATAL_ERROR "No such JUCE project file: ${arg_PROJECT_FILE}")
     endif()
-    set(JUCER_PROJECT_FILE "${arg_PROJECT_FILE}" PARENT_SCOPE)
-
     get_filename_component(project_dir "${arg_PROJECT_FILE}" DIRECTORY)
     set(JUCER_PROJECT_DIR "${project_dir}" PARENT_SCOPE)
   endif()
