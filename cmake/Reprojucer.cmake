@@ -304,7 +304,7 @@ function(jucer_project_files source_group_name)
       list(APPEND files "${path}")
 
       if(xcode_resource STREQUAL "x")
-        list(APPEND JUCER_PROJECT_XCODE_RESOURCES "$<$<BOOL:APPLE>:${path}>")
+        list(APPEND JUCER_PROJECT_XCODE_RESOURCES "${path}")
       elseif(binary_resource STREQUAL "x")
         list(APPEND JUCER_PROJECT_RESOURCES "${path}")
       else()
@@ -1339,6 +1339,9 @@ function(jucer_project_end)
 
   string(REGEX REPLACE "[^A-Za-z0-9_.+-]" "_" target "${JUCER_PROJECT_NAME}")
 
+  if(NOT APPLE)
+    unset(JUCER_PROJECT_XCODE_RESOURCES)
+  endif()
   set_source_files_properties(${JUCER_PROJECT_XCODE_RESOURCES}
     PROPERTIES MACOSX_PACKAGE_LOCATION "Resources"
   )
