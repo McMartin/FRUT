@@ -46,7 +46,6 @@ set(Reprojucer_supported_exporters_conditions
 function(_FRUT_set_Reprojucer_current_exporter)
 
   unset(current_exporter)
-
   foreach(exporter_index RANGE 4)
     list(GET Reprojucer_supported_exporters_conditions ${exporter_index} condition)
     if(${condition})
@@ -2166,8 +2165,8 @@ endfunction()
 function(_FRUT_set_output_directory_properties target subfolder)
 
   foreach(config ${JUCER_PROJECT_CONFIGURATIONS})
-    string(TOUPPER "${config}" upper_config)
     unset(output_directory)
+    string(TOUPPER "${config}" upper_config)
 
     if(MSVC AND NOT "${subfolder}" STREQUAL ""
         AND NOT (DEFINED JUCER_VERSION AND JUCER_VERSION VERSION_LESS 5))
@@ -2798,7 +2797,6 @@ endfunction()
 function(_FRUT_set_custom_xcode_flags target)
 
   unset(all_flags)
-
   foreach(config ${JUCER_PROJECT_CONFIGURATIONS})
     if(DEFINED JUCER_CUSTOM_XCODE_FLAGS_${config})
       foreach(xcode_flag ${JUCER_CUSTOM_XCODE_FLAGS_${config}})
