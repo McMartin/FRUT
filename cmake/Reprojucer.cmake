@@ -1128,9 +1128,7 @@ function(jucer_project_end)
 
   set(CMAKE_CONFIGURATION_TYPES ${JUCER_PROJECT_CONFIGURATIONS} PARENT_SCOPE)
 
-  if(DEFINED JUCER_OSX_BASE_SDK_VERSION_${CMAKE_BUILD_TYPE})
-    set(osx_base_sdk_version ${JUCER_OSX_BASE_SDK_VERSION_${CMAKE_BUILD_TYPE}})
-  else()
+  if(CMAKE_GENERATOR STREQUAL "Xcode")
     unset(all_confs_osx_base_sdk_version)
     unset(config_to_value)
     foreach(config ${JUCER_PROJECT_CONFIGURATIONS})
@@ -1153,30 +1151,29 @@ function(jucer_project_end)
         )
       endif()
     endif()
-  endif()
-  if(osx_base_sdk_version AND NOT osx_base_sdk_version STREQUAL "default")
-    if(CMAKE_GENERATOR STREQUAL "Xcode")
+    if(osx_base_sdk_version AND NOT osx_base_sdk_version STREQUAL "default")
       set(CMAKE_OSX_SYSROOT "macosx${osx_base_sdk_version}")
-    else()
+    endif()
+  else()
+    set(osx_base_sdk_version ${JUCER_OSX_BASE_SDK_VERSION_${CMAKE_BUILD_TYPE}})
+    if(osx_base_sdk_version AND NOT osx_base_sdk_version STREQUAL "default")
       execute_process(
         COMMAND "xcrun" "--sdk" "macosx${osx_base_sdk_version}" "--show-sdk-path"
         OUTPUT_VARIABLE sysroot
         OUTPUT_STRIP_TRAILING_WHITESPACE
       )
-      if(NOT IS_DIRECTORY "${sysroot}")
+      if(IS_DIRECTORY "${sysroot}")
+        set(CMAKE_OSX_SYSROOT ${sysroot} PARENT_SCOPE)
+      else()
         message(WARNING
           "Running `xcrun --sdk macosx${osx_base_sdk_version} --show-sdk-path` "
           "didn't output a valid directory."
         )
-      else()
-        set(CMAKE_OSX_SYSROOT ${sysroot} PARENT_SCOPE)
       endif()
     endif()
   endif()
 
-  if(DEFINED JUCER_OSX_DEPLOYMENT_TARGET_${CMAKE_BUILD_TYPE})
-    set(osx_deployment_target ${JUCER_OSX_DEPLOYMENT_TARGET_${CMAKE_BUILD_TYPE}})
-  else()
+  if(CMAKE_GENERATOR STREQUAL "Xcode")
     unset(all_confs_osx_deployment_target)
     unset(config_to_value)
     foreach(config ${JUCER_PROJECT_CONFIGURATIONS})
@@ -1199,6 +1196,8 @@ function(jucer_project_end)
         )
       endif()
     endif()
+  else()
+    set(osx_deployment_target ${JUCER_OSX_DEPLOYMENT_TARGET_${CMAKE_BUILD_TYPE}})
   endif()
   if(osx_deployment_target AND NOT osx_deployment_target STREQUAL "default")
     set(CMAKE_OSX_DEPLOYMENT_TARGET "${osx_deployment_target}" PARENT_SCOPE)
@@ -2277,27 +2276,33 @@ function(_FRUT_set_common_target_properties target)
     set_target_properties(${target} PROPERTIES CXX_EXTENSIONS OFF)
     set_target_properties(${target} PROPERTIES CXX_STANDARD 11)
 
-    unset(all_confs_cxx_language_standard)
-    unset(config_to_value)
-    foreach(config ${JUCER_PROJECT_CONFIGURATIONS})
-      if(DEFINED JUCER_CXX_LANGUAGE_STANDARD_${config})
-        list(APPEND all_confs_cxx_language_standard
-          ${JUCER_CXX_LANGUAGE_STANDARD_${config}}
-        )
-        string(APPEND config_to_value "  ${config}: "
-          "\"${JUCER_CXX_LANGUAGE_STANDARD_${config}}\"\n"
-        )
+    if(CMAKE_GENERATOR STREQUAL "Xcode")
+      unset(all_confs_cxx_language_standard)
+      unset(config_to_value)
+      foreach(config ${JUCER_PROJECT_CONFIGURATIONS})
+        if(DEFINED JUCER_CXX_LANGUAGE_STANDARD_${config})
+          list(APPEND all_confs_cxx_language_standard
+            ${JUCER_CXX_LANGUAGE_STANDARD_${config}}
+          )
+          string(APPEND config_to_value "  ${config}: "
+            "\"${JUCER_CXX_LANGUAGE_STANDARD_${config}}\"\n"
+          )
+        endif()
+      endforeach()
+      if(all_confs_cxx_language_standard)
+        list(GET all_confs_cxx_language_standard 0 cxx_language_standard)
+        list(REMOVE_DUPLICATES all_confs_cxx_language_standard)
+        list(LENGTH all_confs_cxx_language_standard all_confs_cxx_language_standard_len)
+        if(NOT all_confs_cxx_language_standard_len EQUAL 1)
+          message(STATUS "Different values for CXX_LANGUAGE_STANDARD:\n${config_to_value}"
+            "Falling back to the first value: \"${cxx_language_standard}\"."
+          )
+        endif()
       endif()
-    endforeach()
-    if(all_confs_cxx_language_standard)
-      list(GET all_confs_cxx_language_standard 0 cxx_language_standard)
-      list(REMOVE_DUPLICATES all_confs_cxx_language_standard)
-      list(LENGTH all_confs_cxx_language_standard all_confs_cxx_language_standard_length)
-      if(NOT all_confs_cxx_language_standard_length EQUAL 1)
-        message(STATUS "Different values for CXX_LANGUAGE_STANDARD:\n${config_to_value}"
-          "Falling back to the first value: \"${cxx_language_standard}\"."
-        )
-      endif()
+    else()
+      set(cxx_language_standard "${JUCER_CXX_LANGUAGE_STANDARD_${CMAKE_BUILD_TYPE}}")
+    endif()
+    if(cxx_language_standard)
       if(cxx_language_standard MATCHES "^GNU\\+\\+")
         set_target_properties(${target} PROPERTIES CXX_EXTENSIONS ON)
       elseif(cxx_language_standard MATCHES "^C\\+\\+")
