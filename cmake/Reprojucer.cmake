@@ -2427,8 +2427,6 @@ function(_FRUT_set_common_target_properties target)
     target_compile_definitions(${target} PRIVATE "_CRT_SECURE_NO_WARNINGS")
     target_compile_options(${target} PRIVATE "/MP")
 
-    unset(all_confs_prebuild_command)
-
     foreach(config ${JUCER_PROJECT_CONFIGURATIONS})
       if(${JUCER_CONFIGURATION_IS_DEBUG_${config}})
         target_compile_definitions(${target} PRIVATE
@@ -2518,7 +2516,10 @@ function(_FRUT_set_common_target_properties target)
           )
         endif()
       endif()
+    endforeach()
 
+    unset(all_confs_prebuild_command)
+    foreach(config ${JUCER_PROJECT_CONFIGURATIONS})
       if(DEFINED JUCER_PREBUILD_COMMAND_${config})
         set(prebuild_command ${JUCER_PREBUILD_COMMAND_${config}})
         string(APPEND all_confs_prebuild_command
@@ -2526,7 +2527,6 @@ function(_FRUT_set_common_target_properties target)
         )
       endif()
     endforeach()
-
     if(all_confs_prebuild_command)
       if(NOT DEFINED JUCER_TARGET_PROJECT_FOLDER)
         message(FATAL_ERROR "JUCER_TARGET_PROJECT_FOLDER must be defined. Give "
