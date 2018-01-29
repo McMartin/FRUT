@@ -2428,7 +2428,6 @@ function(_FRUT_set_common_target_properties target)
     target_compile_options(${target} PRIVATE "/MP")
 
     unset(all_confs_prebuild_command)
-    unset(all_confs_postbuild_command)
 
     foreach(config ${JUCER_PROJECT_CONFIGURATIONS})
       if(${JUCER_CONFIGURATION_IS_DEBUG_${config}})
@@ -2526,13 +2525,6 @@ function(_FRUT_set_common_target_properties target)
           $<$<CONFIG:${config}>:${prebuild_command}>
         )
       endif()
-
-      if(DEFINED JUCER_POSTBUILD_COMMAND_${config})
-        set(postbuild_command ${JUCER_POSTBUILD_COMMAND_${config}})
-        string(APPEND all_confs_postbuild_command
-          $<$<CONFIG:${config}>:${postbuild_command}>
-        )
-      endif()
     endforeach()
 
     if(all_confs_prebuild_command)
@@ -2550,6 +2542,15 @@ function(_FRUT_set_common_target_properties target)
       )
     endif()
 
+    unset(all_confs_postbuild_command)
+    foreach(config ${JUCER_PROJECT_CONFIGURATIONS})
+      if(DEFINED JUCER_POSTBUILD_COMMAND_${config})
+        set(postbuild_command ${JUCER_POSTBUILD_COMMAND_${config}})
+        string(APPEND all_confs_postbuild_command
+          $<$<CONFIG:${config}>:${postbuild_command}>
+        )
+      endif()
+    endforeach()
     if(all_confs_postbuild_command)
       if(NOT DEFINED JUCER_TARGET_PROJECT_FOLDER)
         message(FATAL_ERROR "JUCER_TARGET_PROJECT_FOLDER must be defined. Give "
