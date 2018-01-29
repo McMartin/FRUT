@@ -2297,6 +2297,8 @@ function(_FRUT_set_common_target_properties target)
           "Falling back to the first value: \"${cxx_language_standard}\"."
         )
       endif()
+    endif()
+    if(cxx_language_standard)
       if(cxx_language_standard MATCHES "^GNU\\+\\+")
         set_target_properties(${target} PROPERTIES CXX_EXTENSIONS ON)
       elseif(cxx_language_standard MATCHES "^C\\+\\+")
