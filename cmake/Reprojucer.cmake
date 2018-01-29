@@ -46,7 +46,6 @@ set(Reprojucer_supported_exporters_conditions
 function(_FRUT_set_Reprojucer_current_exporter)
 
   unset(current_exporter)
-
   foreach(exporter_index RANGE 4)
     list(GET Reprojucer_supported_exporters_conditions ${exporter_index} condition)
     if(${condition})
@@ -2166,8 +2165,8 @@ endfunction()
 function(_FRUT_set_output_directory_properties target subfolder)
 
   foreach(config ${JUCER_PROJECT_CONFIGURATIONS})
-    string(TOUPPER "${config}" upper_config)
     unset(output_directory)
+    string(TOUPPER "${config}" upper_config)
 
     if(MSVC AND NOT "${subfolder}" STREQUAL ""
         AND NOT (DEFINED JUCER_VERSION AND JUCER_VERSION VERSION_LESS 5))
@@ -2313,13 +2312,6 @@ function(_FRUT_set_common_target_properties target)
       endif()
     endif()
 
-    get_target_property(target_type ${target} TYPE)
-
-    unset(all_confs_code_sign_identity)
-    unset(all_confs_strip_exe)
-    unset(all_confs_strip_opt)
-    unset(all_confs_strip_arg)
-
     foreach(config ${JUCER_PROJECT_CONFIGURATIONS})
       if(${JUCER_CONFIGURATION_IS_DEBUG_${config}})
         target_compile_definitions(${target} PRIVATE
@@ -2358,14 +2350,28 @@ function(_FRUT_set_common_target_properties target)
       foreach(path ${JUCER_EXTRA_LIBRARY_SEARCH_PATHS_${config}})
         target_link_libraries(${target} PRIVATE $<$<CONFIG:${config}>:-L${path}>)
       endforeach()
+    endforeach()
 
+    unset(all_confs_code_sign_identity)
+    foreach(config ${JUCER_PROJECT_CONFIGURATIONS})
       if(NOT JUCER_CODE_SIGNING_IDENTITY_${config} STREQUAL "Mac Developer")
         set(code_sign_identity ${JUCER_CODE_SIGNING_IDENTITY_${config}})
         string(APPEND all_confs_code_sign_identity
           $<$<CONFIG:${config}>:${code_sign_identity}>
         )
       endif()
+    endforeach()
+    if(all_confs_code_sign_identity)
+      set_target_properties(${target} PROPERTIES
+        XCODE_ATTRIBUTE_CODE_SIGN_IDENTITY "${all_confs_code_sign_identity}"
+      )
+    endif()
 
+    get_target_property(target_type ${target} TYPE)
+    unset(all_confs_strip_exe)
+    unset(all_confs_strip_opt)
+    unset(all_confs_strip_arg)
+    foreach(config ${JUCER_PROJECT_CONFIGURATIONS})
       if(target_type STREQUAL "EXECUTABLE" OR target_type STREQUAL "MODULE_LIBRARY")
         if(${JUCER_STRIP_LOCAL_SYMBOLS_${config}})
           find_program(strip_exe "strip")
@@ -2380,13 +2386,6 @@ function(_FRUT_set_common_target_properties target)
         endif()
       endif()
     endforeach()
-
-    if(all_confs_code_sign_identity)
-      set_target_properties(${target} PROPERTIES
-        XCODE_ATTRIBUTE_CODE_SIGN_IDENTITY "${all_confs_code_sign_identity}"
-      )
-    endif()
-
     if(all_confs_strip_exe)
       add_custom_command(TARGET ${target} POST_BUILD
         COMMAND ${all_confs_strip_exe} ${all_confs_strip_opt} ${all_confs_strip_arg}
@@ -2426,9 +2425,6 @@ function(_FRUT_set_common_target_properties target)
   elseif(MSVC)
     target_compile_definitions(${target} PRIVATE "_CRT_SECURE_NO_WARNINGS")
     target_compile_options(${target} PRIVATE "/MP")
-
-    unset(all_confs_prebuild_command)
-    unset(all_confs_postbuild_command)
 
     foreach(config ${JUCER_PROJECT_CONFIGURATIONS})
       if(${JUCER_CONFIGURATION_IS_DEBUG_${config}})
@@ -2519,22 +2515,17 @@ function(_FRUT_set_common_target_properties target)
           )
         endif()
       endif()
+    endforeach()
 
+    unset(all_confs_prebuild_command)
+    foreach(config ${JUCER_PROJECT_CONFIGURATIONS})
       if(DEFINED JUCER_PREBUILD_COMMAND_${config})
         set(prebuild_command ${JUCER_PREBUILD_COMMAND_${config}})
         string(APPEND all_confs_prebuild_command
           $<$<CONFIG:${config}>:${prebuild_command}>
         )
       endif()
-
-      if(DEFINED JUCER_POSTBUILD_COMMAND_${config})
-        set(postbuild_command ${JUCER_POSTBUILD_COMMAND_${config}})
-        string(APPEND all_confs_postbuild_command
-          $<$<CONFIG:${config}>:${postbuild_command}>
-        )
-      endif()
     endforeach()
-
     if(all_confs_prebuild_command)
       if(NOT DEFINED JUCER_TARGET_PROJECT_FOLDER)
         message(FATAL_ERROR "JUCER_TARGET_PROJECT_FOLDER must be defined. Give "
@@ -2550,6 +2541,15 @@ function(_FRUT_set_common_target_properties target)
       )
     endif()
 
+    unset(all_confs_postbuild_command)
+    foreach(config ${JUCER_PROJECT_CONFIGURATIONS})
+      if(DEFINED JUCER_POSTBUILD_COMMAND_${config})
+        set(postbuild_command ${JUCER_POSTBUILD_COMMAND_${config}})
+        string(APPEND all_confs_postbuild_command
+          $<$<CONFIG:${config}>:${postbuild_command}>
+        )
+      endif()
+    endforeach()
     if(all_confs_postbuild_command)
       if(NOT DEFINED JUCER_TARGET_PROJECT_FOLDER)
         message(FATAL_ERROR "JUCER_TARGET_PROJECT_FOLDER must be defined. Give "
@@ -2797,7 +2797,6 @@ endfunction()
 function(_FRUT_set_custom_xcode_flags target)
 
   unset(all_flags)
-
   foreach(config ${JUCER_PROJECT_CONFIGURATIONS})
     if(DEFINED JUCER_CUSTOM_XCODE_FLAGS_${config})
       foreach(xcode_flag ${JUCER_CUSTOM_XCODE_FLAGS_${config}})
