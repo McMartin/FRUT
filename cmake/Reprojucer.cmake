@@ -2313,12 +2313,7 @@ function(_FRUT_set_common_target_properties target)
       endif()
     endif()
 
-    get_target_property(target_type ${target} TYPE)
-
     unset(all_confs_code_sign_identity)
-    unset(all_confs_strip_exe)
-    unset(all_confs_strip_opt)
-    unset(all_confs_strip_arg)
 
     foreach(config ${JUCER_PROJECT_CONFIGURATIONS})
       if(${JUCER_CONFIGURATION_IS_DEBUG_${config}})
@@ -2365,7 +2360,19 @@ function(_FRUT_set_common_target_properties target)
           $<$<CONFIG:${config}>:${code_sign_identity}>
         )
       endif()
+    endforeach()
 
+    if(all_confs_code_sign_identity)
+      set_target_properties(${target} PROPERTIES
+        XCODE_ATTRIBUTE_CODE_SIGN_IDENTITY "${all_confs_code_sign_identity}"
+      )
+    endif()
+
+    get_target_property(target_type ${target} TYPE)
+    unset(all_confs_strip_exe)
+    unset(all_confs_strip_opt)
+    unset(all_confs_strip_arg)
+    foreach(config ${JUCER_PROJECT_CONFIGURATIONS})
       if(target_type STREQUAL "EXECUTABLE" OR target_type STREQUAL "MODULE_LIBRARY")
         if(${JUCER_STRIP_LOCAL_SYMBOLS_${config}})
           find_program(strip_exe "strip")
@@ -2380,13 +2387,6 @@ function(_FRUT_set_common_target_properties target)
         endif()
       endif()
     endforeach()
-
-    if(all_confs_code_sign_identity)
-      set_target_properties(${target} PROPERTIES
-        XCODE_ATTRIBUTE_CODE_SIGN_IDENTITY "${all_confs_code_sign_identity}"
-      )
-    endif()
-
     if(all_confs_strip_exe)
       add_custom_command(TARGET ${target} POST_BUILD
         COMMAND ${all_confs_strip_exe} ${all_confs_strip_opt} ${all_confs_strip_arg}
