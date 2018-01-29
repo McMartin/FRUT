@@ -2291,8 +2291,8 @@ function(_FRUT_set_common_target_properties target)
     if(all_confs_cxx_language_standard)
       list(GET all_confs_cxx_language_standard 0 cxx_language_standard)
       list(REMOVE_DUPLICATES all_confs_cxx_language_standard)
-      list(LENGTH all_confs_cxx_language_standard all_confs_cxx_language_standard_length)
-      if(NOT all_confs_cxx_language_standard_length EQUAL 1)
+      list(LENGTH all_confs_cxx_language_standard all_confs_cxx_language_standard_len)
+      if(NOT all_confs_cxx_language_standard_len EQUAL 1)
         message(STATUS "Different values for CXX_LANGUAGE_STANDARD:\n${config_to_value}"
           "Falling back to the first value: \"${cxx_language_standard}\"."
         )
