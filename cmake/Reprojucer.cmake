@@ -2313,8 +2313,6 @@ function(_FRUT_set_common_target_properties target)
       endif()
     endif()
 
-    unset(all_confs_code_sign_identity)
-
     foreach(config ${JUCER_PROJECT_CONFIGURATIONS})
       if(${JUCER_CONFIGURATION_IS_DEBUG_${config}})
         target_compile_definitions(${target} PRIVATE
@@ -2353,7 +2351,10 @@ function(_FRUT_set_common_target_properties target)
       foreach(path ${JUCER_EXTRA_LIBRARY_SEARCH_PATHS_${config}})
         target_link_libraries(${target} PRIVATE $<$<CONFIG:${config}>:-L${path}>)
       endforeach()
+    endforeach()
 
+    unset(all_confs_code_sign_identity)
+    foreach(config ${JUCER_PROJECT_CONFIGURATIONS})
       if(NOT JUCER_CODE_SIGNING_IDENTITY_${config} STREQUAL "Mac Developer")
         set(code_sign_identity ${JUCER_CODE_SIGNING_IDENTITY_${config}})
         string(APPEND all_confs_code_sign_identity
@@ -2361,7 +2362,6 @@ function(_FRUT_set_common_target_properties target)
         )
       endif()
     endforeach()
-
     if(all_confs_code_sign_identity)
       set_target_properties(${target} PROPERTIES
         XCODE_ATTRIBUTE_CODE_SIGN_IDENTITY "${all_confs_code_sign_identity}"
