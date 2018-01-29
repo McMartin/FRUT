@@ -1163,13 +1163,13 @@ function(jucer_project_end)
         OUTPUT_VARIABLE sysroot
         OUTPUT_STRIP_TRAILING_WHITESPACE
       )
-      if(NOT IS_DIRECTORY "${sysroot}")
+      if(IS_DIRECTORY "${sysroot}")
+        set(CMAKE_OSX_SYSROOT ${sysroot} PARENT_SCOPE)
+      else()
         message(WARNING
           "Running `xcrun --sdk macosx${osx_base_sdk_version} --show-sdk-path` "
           "didn't output a valid directory."
         )
-      else()
-        set(CMAKE_OSX_SYSROOT ${sysroot} PARENT_SCOPE)
       endif()
     endif()
   endif()
