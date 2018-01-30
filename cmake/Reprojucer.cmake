@@ -2286,6 +2286,11 @@ function(_FRUT_set_common_target_properties target)
         if(DEFINED JUCER_OSX_DEPLOYMENT_TARGET_${config})
           set(osx_deployment_target "${JUCER_OSX_DEPLOYMENT_TARGET_${config}}")
         endif()
+        if(target MATCHES "_AUv3_AppExtension$"
+            AND osx_deployment_target VERSION_LESS "10.11")
+          set(osx_deployment_target "10.11")
+          message(STATUS "Set OSX Deployment Target to 10.11 for ${target} in ${config}")
+        endif()
         string(APPEND all_confs_osx_deployment_target
           "$<$<CONFIG:${config}>:${osx_deployment_target}>"
         )
@@ -2304,6 +2309,11 @@ function(_FRUT_set_common_target_properties target)
       set(osx_deployment_target "10.11")
       if(DEFINED ${JUCER_OSX_DEPLOYMENT_TARGET_${CMAKE_BUILD_TYPE}})
         set(osx_deployment_target "${JUCER_OSX_DEPLOYMENT_TARGET_${CMAKE_BUILD_TYPE}}")
+      endif()
+      if(target MATCHES "_AUv3_AppExtension$"
+          AND osx_deployment_target VERSION_LESS "10.11")
+        set(osx_deployment_target "10.11")
+        message(STATUS "Set OSX Deployment Target to 10.11 for ${target}")
       endif()
       target_compile_options(${target} PRIVATE
         "-mmacosx-version-min=${osx_deployment_target}"
