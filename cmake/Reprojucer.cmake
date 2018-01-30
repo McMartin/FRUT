@@ -2279,8 +2279,17 @@ function(_FRUT_set_common_target_properties target)
     endforeach()
 
     if(CMAKE_GENERATOR STREQUAL "Xcode")
+      unset(all_confs_osx_deployment_target)
       unset(all_confs_sdkroot)
       foreach(config ${JUCER_PROJECT_CONFIGURATIONS})
+        set(osx_deployment_target "10.11")
+        if(DEFINED JUCER_OSX_DEPLOYMENT_TARGET_${config})
+          set(osx_deployment_target "${JUCER_OSX_DEPLOYMENT_TARGET_${config}}")
+        endif()
+        string(APPEND all_confs_osx_deployment_target
+          "$<$<CONFIG:${config}>:${osx_deployment_target}>"
+        )
+
         if(DEFINED JUCER_OSX_BASE_SDK_VERSION_${config})
           string(APPEND all_confs_sdkroot
             "$<$<CONFIG:${config}>:macosx${JUCER_OSX_BASE_SDK_VERSION_${config}}>"
@@ -2288,9 +2297,18 @@ function(_FRUT_set_common_target_properties target)
         endif()
       endforeach()
       set_target_properties(${target} PROPERTIES
+        XCODE_ATTRIBUTE_MACOSX_DEPLOYMENT_TARGET "${all_confs_osx_deployment_target}"
         XCODE_ATTRIBUTE_SDKROOT "${all_confs_sdkroot}"
       )
     else()
+      set(osx_deployment_target "10.11")
+      if(DEFINED ${JUCER_OSX_DEPLOYMENT_TARGET_${CMAKE_BUILD_TYPE}})
+        set(osx_deployment_target "${JUCER_OSX_DEPLOYMENT_TARGET_${CMAKE_BUILD_TYPE}}")
+      endif()
+      target_compile_options(${target} PRIVATE
+        "-mmacosx-version-min=${osx_deployment_target}"
+      )
+
       set(sdkroot "${JUCER_OSX_BASE_SDK_VERSION_${CMAKE_BUILD_TYPE}}")
       if(sdkroot)
         execute_process(
@@ -2306,30 +2324,6 @@ function(_FRUT_set_common_target_properties target)
           )
         endif()
       endif()
-    endif()
-
-    if(CMAKE_GENERATOR STREQUAL "Xcode")
-      unset(all_confs_osx_deployment_target)
-      foreach(config ${JUCER_PROJECT_CONFIGURATIONS})
-        set(osx_deployment_target "10.11")
-        if(DEFINED JUCER_OSX_DEPLOYMENT_TARGET_${config})
-          set(osx_deployment_target "${JUCER_OSX_DEPLOYMENT_TARGET_${config}}")
-        endif()
-        string(APPEND all_confs_osx_deployment_target
-          "$<$<CONFIG:${config}>:${osx_deployment_target}>"
-        )
-      endforeach()
-      set_target_properties(${target} PROPERTIES
-        XCODE_ATTRIBUTE_MACOSX_DEPLOYMENT_TARGET "${all_confs_osx_deployment_target}"
-      )
-    else()
-      set(osx_deployment_target "10.11")
-      if(DEFINED ${JUCER_OSX_DEPLOYMENT_TARGET_${CMAKE_BUILD_TYPE}})
-        set(osx_deployment_target "${JUCER_OSX_DEPLOYMENT_TARGET_${CMAKE_BUILD_TYPE}}")
-      endif()
-      target_compile_options(${target} PRIVATE
-        "-mmacosx-version-min=${osx_deployment_target}"
-      )
     endif()
 
     unset(all_confs_code_sign_identity)
