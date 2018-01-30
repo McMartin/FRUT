@@ -1124,8 +1124,6 @@ function(jucer_project_end)
 
   set(CMAKE_CONFIGURATION_TYPES ${JUCER_PROJECT_CONFIGURATIONS} PARENT_SCOPE)
 
-  project(${JUCER_PROJECT_NAME})
-
   _FRUT_generate_AppConfig_header()
   _FRUT_generate_JuceHeader_header()
 
