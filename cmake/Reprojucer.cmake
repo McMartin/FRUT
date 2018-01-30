@@ -1125,51 +1125,6 @@ function(jucer_project_end)
   set(CMAKE_CONFIGURATION_TYPES ${JUCER_PROJECT_CONFIGURATIONS} PARENT_SCOPE)
 
   if(CMAKE_GENERATOR STREQUAL "Xcode")
-    unset(all_confs_osx_base_sdk_version)
-    unset(config_to_value)
-    foreach(config ${JUCER_PROJECT_CONFIGURATIONS})
-      if(DEFINED JUCER_OSX_BASE_SDK_VERSION_${config})
-        list(APPEND all_confs_osx_base_sdk_version
-          ${JUCER_OSX_BASE_SDK_VERSION_${config}}
-        )
-        string(APPEND config_to_value "  ${config}: "
-          "\"${JUCER_OSX_BASE_SDK_VERSION_${config}}\"\n"
-        )
-      endif()
-    endforeach()
-    if(all_confs_osx_base_sdk_version)
-      list(GET all_confs_osx_base_sdk_version 0 osx_base_sdk_version)
-      list(REMOVE_DUPLICATES all_confs_osx_base_sdk_version)
-      list(LENGTH all_confs_osx_base_sdk_version all_confs_osx_base_sdk_version_length)
-      if(NOT all_confs_osx_base_sdk_version_length EQUAL 1)
-        message(STATUS "Different values for OSX_BASE_SDK_VERSION:\n${config_to_value}"
-          "Falling back to the first value: \"${osx_base_sdk_version}\"."
-        )
-      endif()
-    endif()
-    if(osx_base_sdk_version)
-      set(CMAKE_OSX_SYSROOT "macosx${osx_base_sdk_version}")
-    endif()
-  else()
-    set(osx_base_sdk_version ${JUCER_OSX_BASE_SDK_VERSION_${CMAKE_BUILD_TYPE}})
-    if(osx_base_sdk_version)
-      execute_process(
-        COMMAND "xcrun" "--sdk" "macosx${osx_base_sdk_version}" "--show-sdk-path"
-        OUTPUT_VARIABLE sysroot
-        OUTPUT_STRIP_TRAILING_WHITESPACE
-      )
-      if(IS_DIRECTORY "${sysroot}")
-        set(CMAKE_OSX_SYSROOT ${sysroot} PARENT_SCOPE)
-      else()
-        message(WARNING
-          "Running `xcrun --sdk macosx${osx_base_sdk_version} --show-sdk-path` "
-          "didn't output a valid directory."
-        )
-      endif()
-    endif()
-  endif()
-
-  if(CMAKE_GENERATOR STREQUAL "Xcode")
     unset(all_confs_osx_deployment_target)
     unset(config_to_value)
     foreach(config ${JUCER_PROJECT_CONFIGURATIONS})
@@ -2352,6 +2307,37 @@ function(_FRUT_set_common_target_properties target)
         target_link_libraries(${target} PRIVATE $<$<CONFIG:${config}>:-L${path}>)
       endforeach()
     endforeach()
+
+    if(CMAKE_GENERATOR STREQUAL "Xcode")
+      unset(all_confs_osx_base_sdk_version)
+      foreach(config ${JUCER_PROJECT_CONFIGURATIONS})
+        if(DEFINED JUCER_OSX_BASE_SDK_VERSION_${config})
+          string(APPEND all_confs_osx_base_sdk_version
+            "$<$<CONFIG:${config}>:macosx${JUCER_OSX_BASE_SDK_VERSION_${config}}>"
+          )
+        endif()
+      endforeach()
+      set_target_properties(${target} PROPERTIES
+        XCODE_ATTRIBUTE_SDKROOT "${all_confs_osx_base_sdk_version}"
+      )
+    else()
+      set(osx_base_sdk_version ${JUCER_OSX_BASE_SDK_VERSION_${CMAKE_BUILD_TYPE}})
+      if(osx_base_sdk_version)
+        execute_process(
+          COMMAND "xcrun" "--sdk" "macosx${osx_base_sdk_version}" "--show-sdk-path"
+          OUTPUT_VARIABLE sysroot
+          OUTPUT_STRIP_TRAILING_WHITESPACE
+        )
+        if(IS_DIRECTORY "${sysroot}")
+          target_compile_options(${target} PRIVATE "-isysroot ${sysroot}")
+        else()
+          message(WARNING
+            "Running `xcrun --sdk macosx${osx_base_sdk_version} --show-sdk-path` "
+            "didn't output a valid directory."
+          )
+        endif()
+      endif()
+    endif()
 
     unset(all_confs_code_sign_identity)
     foreach(config ${JUCER_PROJECT_CONFIGURATIONS})
