@@ -296,6 +296,8 @@ int main(int argc, char* argv[])
     wLn();
     wLn("cmake_minimum_required(VERSION 3.4)");
     wLn();
+    wLn("project(\"", jucerProject.getProperty("name").toString(), "\")");
+    wLn();
     wLn();
   }
 
