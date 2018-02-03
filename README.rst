@@ -3,7 +3,7 @@ FRUT
 
 .. compound::
 
-  |AppVeyor| |Travis_CI|
+  |AppVeyor| |Travis_CI| |Read_the_Docs|
 
 
 ``FRUT`` is a collection of tools dedicated to building `JUCE <https://juce.com/>`__
@@ -109,6 +109,12 @@ targets:
 - Linux Makefile
 
 
+Documentation
+-------------
+
+You can read the documentation of FRUT on Read the Docs: http://frut.readthedocs.io/
+
+
 Contributing
 ------------
 
@@ -135,6 +141,10 @@ See the `LICENSE`_ file for more details.
 .. |Travis_CI| image:: https://travis-ci.org/McMartin/FRUT.svg?branch=master
   :target: https://travis-ci.org/McMartin/FRUT
   :alt: Travis CI build status
+
+.. |Read_the_Docs| image:: https://readthedocs.org/projects/frut/badge/?version=latest
+  :target: https://frut.readthedocs.io/en/latest/
+  :alt: Documentation status
 
 .. _CONTRIBUTING: CONTRIBUTING.md
 .. _LICENSE: LICENSE
