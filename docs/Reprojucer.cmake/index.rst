@@ -17,6 +17,8 @@ Add the following lines at the top of your CMakeLists.txt file to use
   include(Reprojucer)
 
 
+.. _supported-export-targets:
+
 Supported export targets
 ------------------------
 
@@ -28,18 +30,22 @@ Supported export targets
 - Visual Studio 2013
 - Linux Makefile
 
+.. _Reprojucer-commands:
 
 Commands
 ---------
 
 ``Reprojucer.cmake`` defines the following commands:
 
-- `jucer_appconfig_header <command/jucer_appconfig_header.rst>`_
-- `jucer_audio_plugin_settings <command/jucer_audio_plugin_settings.rst>`_
-- `jucer_export_target <command/jucer_export_target.rst>`_
-- `jucer_export_target_configuration <command/jucer_export_target_configuration.rst>`_
-- `jucer_project_begin <command/jucer_project_begin.rst>`_
-- `jucer_project_end <command/jucer_project_end.rst>`_
-- `jucer_project_files <command/jucer_project_files.rst>`_
-- `jucer_project_module <command/jucer_project_module.rst>`_
-- `jucer_project_settings <command/jucer_project_settings.rst>`_
+.. toctree::
+  :maxdepth: 1
+
+  command/jucer_appconfig_header
+  command/jucer_audio_plugin_settings
+  command/jucer_export_target
+  command/jucer_export_target_configuration
+  command/jucer_project_begin
+  command/jucer_project_end
+  command/jucer_project_files
+  command/jucer_project_module
+  command/jucer_project_settings

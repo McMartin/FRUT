@@ -32,5 +32,5 @@ Define the settings specific to an *Audio Plug-in* project.
     [PLUGIN_AAX_IDENTIFIER <plugin_aax_identifier>]
   )
 
-You must call this command when you call `jucer_project_settings()
-<jucer_project_settings.rst>`_ with ``PROJECT_TYPE "Audio Plug-in"``.
+You must call this command when you call :doc:`jucer_project_settings()
+<jucer_project_settings>` with ``PROJECT_TYPE "Audio Plug-in"``.

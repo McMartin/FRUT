@@ -37,5 +37,5 @@ Example
     JUCE_USE_CDBURNER OFF
   )
 
-Taken from `the Plugin Host example of JUCE 4.3.1
-<../../../generated/JUCE-4.3.1/examples/audio%20plugin%20host/CMakeLists.txt#L79-L92>`_.
+Taken from `the Plugin Host example of JUCE 4.3.1 <https://github.com/McMartin/FRUT/tree/
+master/generated/JUCE-4.3.1/examples/audio%20plugin%20host/CMakeLists.txt#L79-L92>`_.

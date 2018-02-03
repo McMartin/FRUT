@@ -38,5 +38,5 @@ Example
     x         .         .         "Source/AUv3SynthProcessor.cpp"
   )
 
-Taken from `the AUv3Synth example of JUCE 4.3.1
-<../../../generated/JUCE-4.3.1/examples/AUv3Synth/CMakeLists.txt#L61-L75>`_.
+Taken from `the AUv3Synth example of JUCE 4.3.1 <https://github.com/McMartin/FRUT/tree/
+master/generated/JUCE-4.3.1/examples/AUv3Synth/CMakeLists.txt#L61-L75>`_.

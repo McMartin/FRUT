@@ -12,8 +12,7 @@ Define the settings specific to a configuration associated with an export target
     [<setting_tag> <setting_value>]...
   )
 
-``<exporter>`` must be one of the `supported exporters
-<../README.rst#supported-export-targets>`_.
+``<exporter>`` must be one of the :ref:`supported exporters <supported-export-targets>`.
 
 ``<setting_tag>`` can be one of the following tags:
 
