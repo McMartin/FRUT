@@ -2185,43 +2185,34 @@ function(_FRUT_set_common_target_properties target)
   target_link_libraries(${target} PRIVATE ${JUCER_EXTERNAL_LIBRARIES_TO_LINK})
 
   if(APPLE)
-    set_target_properties(${target} PROPERTIES CXX_EXTENSIONS OFF)
-    set_target_properties(${target} PROPERTIES CXX_STANDARD 11)
-
     if(CMAKE_GENERATOR STREQUAL "Xcode")
       unset(all_confs_cxx_language_standard)
-      unset(config_to_value)
       foreach(config ${JUCER_PROJECT_CONFIGURATIONS})
+        set(cxx_language_standard "c++0x")
         if(DEFINED JUCER_CXX_LANGUAGE_STANDARD_${config})
-          list(APPEND all_confs_cxx_language_standard
-            ${JUCER_CXX_LANGUAGE_STANDARD_${config}}
-          )
-          string(APPEND config_to_value "  ${config}: "
-            "\"${JUCER_CXX_LANGUAGE_STANDARD_${config}}\"\n"
-          )
+          string(TOLOWER cxx_language_standard "${JUCER_CXX_LANGUAGE_STANDARD_${config}}")
         endif()
+        string(APPEND all_confs_cxx_language_standard
+          "$<$<CONFIG:${config}>:${cxx_language_standard}>"
+        )
       endforeach()
-      if(all_confs_cxx_language_standard)
-        list(GET all_confs_cxx_language_standard 0 cxx_language_standard)
-        list(REMOVE_DUPLICATES all_confs_cxx_language_standard)
-        list(LENGTH all_confs_cxx_language_standard all_confs_cxx_language_standard_len)
-        if(NOT all_confs_cxx_language_standard_len EQUAL 1)
-          message(STATUS "Different values for CXX_LANGUAGE_STANDARD:\n${config_to_value}"
-            "Falling back to the first value: \"${cxx_language_standard}\"."
-          )
-        endif()
-      endif()
+      set_target_properties(${target} PROPERTIES
+        XCODE_ATTRIBUTE_CLANG_CXX_LANGUAGE_STANDARD "${all_confs_cxx_language_standard}"
+      )
     else()
+      set_target_properties(${target} PROPERTIES CXX_EXTENSIONS OFF)
+      set_target_properties(${target} PROPERTIES CXX_STANDARD 11)
+
       set(cxx_language_standard "${JUCER_CXX_LANGUAGE_STANDARD_${CMAKE_BUILD_TYPE}}")
-    endif()
-    if(cxx_language_standard)
-      if(cxx_language_standard MATCHES "^GNU\\+\\+")
-        set_target_properties(${target} PROPERTIES CXX_EXTENSIONS ON)
-      endif()
-      if(cxx_language_standard MATCHES "98$")
-        set_target_properties(${target} PROPERTIES CXX_STANDARD 98)
-      elseif(cxx_language_standard MATCHES "14$")
-        set_target_properties(${target} PROPERTIES CXX_STANDARD 14)
+      if(cxx_language_standard)
+        if(cxx_language_standard MATCHES "^GNU\\+\\+")
+          set_target_properties(${target} PROPERTIES CXX_EXTENSIONS ON)
+        endif()
+        if(cxx_language_standard MATCHES "98$")
+          set_target_properties(${target} PROPERTIES CXX_STANDARD 98)
+        elseif(cxx_language_standard MATCHES "14$")
+          set_target_properties(${target} PROPERTIES CXX_STANDARD 14)
+        endif()
       endif()
     endif()
 
