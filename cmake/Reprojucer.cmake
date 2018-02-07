@@ -1076,11 +1076,14 @@ function(jucer_project_end)
   endforeach()
 
   if(NOT DEFINED current_exporter)
+    unset(exporters_list)
+    foreach(exporter ${Reprojucer_supported_exporters})
+      string(APPEND exporters_list "\n  - ${exporter}")
+    endforeach()
     message(FATAL_ERROR "Reprojucer.cmake doesn't support any export target for your "
-      "current platform. It supports the following export targets: "
-      "${Reprojucer_supported_exporters}. If you think Reprojucer.cmake should support "
-      "another export target, please create an issue on GitHub: "
-      "https://github.com/McMartin/FRUT/issues/new"
+      "current platform. It supports the following export targets:${exporters_list}\n"
+      "If you think Reprojucer.cmake should support another export target, please create "
+      "an issue on GitHub: https://github.com/McMartin/FRUT/issues/new\n"
     )
   endif()
 
