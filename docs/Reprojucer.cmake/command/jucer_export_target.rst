@@ -10,8 +10,7 @@ Define the settings specific to an export target.
     [<setting_tag> <setting_value>]...
   )
 
-``<exporter>`` must be one of the `supported exporters
-<../README.rst#supported-export-targets>`_.
+``<exporter>`` must be one of the :ref:`supported exporters <supported-export-targets>`.
 
 ``<setting_tag>`` can be one of the following tags:
 
@@ -30,8 +29,8 @@ following tags:
 - ``CUSTOM_PLIST``
 - ``CUSTOM_XCODE_RESOURCE_FOLDERS``
 - ``DEVELOPMENT_TEAM_ID``
-- ``DOCUMENT_FILE_EXTENSIONS`` (only if `jucer_project_settings()
-  <jucer_project_settings.rst>`_ was called with ``PROJECT_TYPE "GUI Application"``)
+- ``DOCUMENT_FILE_EXTENSIONS`` (only if :doc:`jucer_project_settings()
+  <jucer_project_settings>` was called with ``PROJECT_TYPE "GUI Application"``)
 - ``EXTRA_FRAMEWORKS``
 - ``POSTBUILD_SHELL_SCRIPT``
 - ``PREBUILD_SHELL_SCRIPT``
