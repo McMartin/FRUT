@@ -2184,38 +2184,9 @@ function(_FRUT_set_common_target_properties target)
 
   target_link_libraries(${target} PRIVATE ${JUCER_EXTERNAL_LIBRARIES_TO_LINK})
 
+  _FRUT_set_cxx_language_standard_properties(${target})
+
   if(APPLE)
-    if(CMAKE_GENERATOR STREQUAL "Xcode")
-      unset(all_confs_cxx_language_standard)
-      foreach(config ${JUCER_PROJECT_CONFIGURATIONS})
-        set(cxx_language_standard "c++0x")
-        if(DEFINED JUCER_CXX_LANGUAGE_STANDARD_${config})
-          string(TOLOWER cxx_language_standard "${JUCER_CXX_LANGUAGE_STANDARD_${config}}")
-        endif()
-        string(APPEND all_confs_cxx_language_standard
-          "$<$<CONFIG:${config}>:${cxx_language_standard}>"
-        )
-      endforeach()
-      set_target_properties(${target} PROPERTIES
-        XCODE_ATTRIBUTE_CLANG_CXX_LANGUAGE_STANDARD "${all_confs_cxx_language_standard}"
-      )
-    else()
-      set_target_properties(${target} PROPERTIES CXX_EXTENSIONS OFF)
-      set_target_properties(${target} PROPERTIES CXX_STANDARD 11)
-
-      set(cxx_language_standard "${JUCER_CXX_LANGUAGE_STANDARD_${CMAKE_BUILD_TYPE}}")
-      if(cxx_language_standard)
-        if(cxx_language_standard MATCHES "^GNU\\+\\+")
-          set_target_properties(${target} PROPERTIES CXX_EXTENSIONS ON)
-        endif()
-        if(cxx_language_standard MATCHES "98$")
-          set_target_properties(${target} PROPERTIES CXX_STANDARD 98)
-        elseif(cxx_language_standard MATCHES "14$")
-          set_target_properties(${target} PROPERTIES CXX_STANDARD 14)
-        endif()
-      endif()
-    endif()
-
     foreach(config ${JUCER_PROJECT_CONFIGURATIONS})
       if(${JUCER_CONFIGURATION_IS_DEBUG_${config}})
         target_compile_definitions(${target} PRIVATE
@@ -2527,26 +2498,7 @@ function(_FRUT_set_common_target_properties target)
       )
     endif()
 
-    if(MSVC_VERSION EQUAL 1900 OR MSVC_VERSION GREATER 1900) # VS2015 and later
-      if(JUCER_CXX_STANDARD_TO_USE STREQUAL "14")
-        target_compile_options(${target} PRIVATE "-std:c++14")
-      elseif(JUCER_CXX_STANDARD_TO_USE STREQUAL "latest")
-        target_compile_options(${target} PRIVATE "-std:c++latest")
-      endif()
-    endif()
-
   elseif(CMAKE_HOST_SYSTEM_NAME STREQUAL "Linux")
-    set_target_properties(${target} PROPERTIES CXX_EXTENSIONS OFF)
-    set_target_properties(${target} PROPERTIES CXX_STANDARD 11)
-
-    if(DEFINED JUCER_CXX_LANGUAGE_STANDARD)
-      if(JUCER_CXX_LANGUAGE_STANDARD MATCHES "03$")
-        set_target_properties(${target} PROPERTIES CXX_STANDARD 98)
-      elseif(JUCER_CXX_LANGUAGE_STANDARD MATCHES "14$")
-        set_target_properties(${target} PROPERTIES CXX_STANDARD 14)
-      endif()
-    endif()
-
     foreach(config ${JUCER_PROJECT_CONFIGURATIONS})
       if(${JUCER_CONFIGURATION_IS_DEBUG_${config}})
         target_compile_definitions(${target} PRIVATE
@@ -2610,6 +2562,66 @@ function(_FRUT_set_common_target_properties target)
 
   target_compile_options(${target} PRIVATE ${JUCER_EXTRA_COMPILER_FLAGS})
   target_link_libraries(${target} PRIVATE ${JUCER_EXTRA_LINKER_FLAGS})
+
+endfunction()
+
+
+function(_FRUT_set_cxx_language_standard_properties target)
+
+  if(APPLE)
+    if(CMAKE_GENERATOR STREQUAL "Xcode")
+      unset(all_confs_cxx_language_standard)
+      foreach(config ${JUCER_PROJECT_CONFIGURATIONS})
+        set(cxx_language_standard "c++0x")
+        if(DEFINED JUCER_CXX_LANGUAGE_STANDARD_${config})
+          string(TOLOWER cxx_language_standard "${JUCER_CXX_LANGUAGE_STANDARD_${config}}")
+        endif()
+        string(APPEND all_confs_cxx_language_standard
+          "$<$<CONFIG:${config}>:${cxx_language_standard}>"
+        )
+      endforeach()
+      set_target_properties(${target} PROPERTIES
+        XCODE_ATTRIBUTE_CLANG_CXX_LANGUAGE_STANDARD "${all_confs_cxx_language_standard}"
+      )
+    else()
+      set_target_properties(${target} PROPERTIES CXX_EXTENSIONS OFF)
+      set_target_properties(${target} PROPERTIES CXX_STANDARD 11)
+
+      set(cxx_language_standard "${JUCER_CXX_LANGUAGE_STANDARD_${CMAKE_BUILD_TYPE}}")
+      if(cxx_language_standard)
+        if(cxx_language_standard MATCHES "^GNU\\+\\+")
+          set_target_properties(${target} PROPERTIES CXX_EXTENSIONS ON)
+        endif()
+        if(cxx_language_standard MATCHES "98$")
+          set_target_properties(${target} PROPERTIES CXX_STANDARD 98)
+        elseif(cxx_language_standard MATCHES "14$")
+          set_target_properties(${target} PROPERTIES CXX_STANDARD 14)
+        endif()
+      endif()
+    endif()
+
+  elseif(MSVC)
+    if(MSVC_VERSION EQUAL 1900 OR MSVC_VERSION GREATER 1900) # VS2015 and later
+      if(JUCER_CXX_STANDARD_TO_USE STREQUAL "14")
+        target_compile_options(${target} PRIVATE "-std:c++14")
+      elseif(JUCER_CXX_STANDARD_TO_USE STREQUAL "latest")
+        target_compile_options(${target} PRIVATE "-std:c++latest")
+      endif()
+    endif()
+
+  elseif(CMAKE_HOST_SYSTEM_NAME STREQUAL "Linux")
+    set_target_properties(${target} PROPERTIES CXX_EXTENSIONS OFF)
+    set_target_properties(${target} PROPERTIES CXX_STANDARD 11)
+
+    if(DEFINED JUCER_CXX_LANGUAGE_STANDARD)
+      if(JUCER_CXX_LANGUAGE_STANDARD MATCHES "03$")
+        set_target_properties(${target} PROPERTIES CXX_STANDARD 98)
+      elseif(JUCER_CXX_LANGUAGE_STANDARD MATCHES "14$")
+        set_target_properties(${target} PROPERTIES CXX_STANDARD 14)
+      endif()
+    endif()
+
+  endif()
 
 endfunction()
 
