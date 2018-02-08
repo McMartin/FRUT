@@ -43,37 +43,6 @@ set(Reprojucer_supported_exporters_conditions
 )
 
 
-function(_FRUT_set_Reprojucer_current_exporter)
-
-  unset(current_exporter)
-  foreach(exporter_index RANGE 4)
-    list(GET Reprojucer_supported_exporters_conditions ${exporter_index} condition)
-    if(${condition})
-      if(DEFINED current_exporter)
-        message(FATAL_ERROR "There is already a current exporter: ${current_exporter}")
-      else()
-        list(GET Reprojucer_supported_exporters ${exporter_index} exporter)
-        set(current_exporter ${exporter})
-      endif()
-    endif()
-  endforeach()
-
-  if(NOT DEFINED current_exporter)
-    message(FATAL_ERROR "Reprojucer.cmake doesn't support any export target for your "
-      "current platform. It supports the following export targets: "
-      "${Reprojucer_supported_exporters}. If you think Reprojucer.cmake should support "
-      "another export target, please create an issue on GitHub: "
-      "https://github.com/McMartin/FRUT/issues/new"
-    )
-  endif()
-
-  set(Reprojucer_current_exporter ${current_exporter} PARENT_SCOPE)
-
-endfunction()
-
-_FRUT_set_Reprojucer_current_exporter()
-
-
 function(jucer_project_begin)
 
   cmake_parse_arguments(arg "" "JUCER_VERSION;PROJECT_FILE;PROJECT_ID" "" ${ARGN})
@@ -1093,16 +1062,40 @@ endfunction()
 
 function(jucer_project_end)
 
-  if(NOT "${Reprojucer_current_exporter}" IN_LIST JUCER_PROJECT_EXPORT_TARGETS)
-    message(FATAL_ERROR
-      "You must call jucer_export_target(\"${Reprojucer_current_exporter}\") before "
-      "calling jucer_project_end()."
+  unset(current_exporter)
+  foreach(exporter_index RANGE 4)
+    list(GET Reprojucer_supported_exporters_conditions ${exporter_index} condition)
+    if(${condition})
+      if(DEFINED current_exporter)
+        message(FATAL_ERROR "There is already a current exporter: ${current_exporter}")
+      else()
+        list(GET Reprojucer_supported_exporters ${exporter_index} exporter)
+        set(current_exporter ${exporter})
+      endif()
+    endif()
+  endforeach()
+
+  if(NOT DEFINED current_exporter)
+    unset(exporters_list)
+    foreach(exporter ${Reprojucer_supported_exporters})
+      string(APPEND exporters_list "\n  - ${exporter}")
+    endforeach()
+    message(FATAL_ERROR "Reprojucer.cmake doesn't support any export target for your "
+      "current platform. It supports the following export targets:${exporters_list}\n"
+      "If you think Reprojucer.cmake should support another export target, please create "
+      "an issue on GitHub: https://github.com/McMartin/FRUT/issues/new\n"
+    )
+  endif()
+
+  if(NOT "${current_exporter}" IN_LIST JUCER_PROJECT_EXPORT_TARGETS)
+    message(FATAL_ERROR "You must call jucer_export_target(\"${current_exporter}\") "
+      "before calling jucer_project_end()."
     )
   endif()
 
   if(NOT JUCER_PROJECT_CONFIGURATIONS)
     message(FATAL_ERROR "You must call "
-      "jucer_export_target_configuration(\"${Reprojucer_current_exporter}\") before "
+      "jucer_export_target_configuration(\"${current_exporter}\") before "
       "calling jucer_project_end()."
     )
   endif()
