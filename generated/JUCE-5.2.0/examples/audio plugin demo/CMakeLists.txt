@@ -37,6 +37,7 @@ jucer_project_settings(
   SPLASH_SCREEN_COLOUR "Dark"
   PROJECT_TYPE "Audio Plug-in"
   BUNDLE_IDENTIFIER "com.juce.JuceDemoPlugin"
+  CXX_LANGUAGE_STANDARD "C++11"
 )
 
 jucer_audio_plugin_settings(

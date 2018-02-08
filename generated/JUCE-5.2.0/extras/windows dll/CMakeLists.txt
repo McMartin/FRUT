@@ -35,6 +35,7 @@ jucer_project_settings(
   SPLASH_SCREEN_COLOUR "Dark"
   PROJECT_TYPE "Static Library"
   BUNDLE_IDENTIFIER "com.roli.jucedll"
+  CXX_LANGUAGE_STANDARD "C++11"
   PREPROCESSOR_DEFINITIONS "JUCE_DLL_BUILD=1"
 )
 

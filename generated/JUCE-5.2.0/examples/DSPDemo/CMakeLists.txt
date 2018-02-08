@@ -37,6 +37,7 @@ jucer_project_settings(
   SPLASH_SCREEN_COLOUR "Dark"
   PROJECT_TYPE "GUI Application"
   BUNDLE_IDENTIFIER "com.roli.DSPDemo"
+  CXX_LANGUAGE_STANDARD "C++14"
 )
 
 jucer_project_files("DSPDemo/Source/Resources"
