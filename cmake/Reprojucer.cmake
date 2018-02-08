@@ -228,8 +228,8 @@ function(jucer_audio_plugin_settings)
           "plugins\" on GitHub: https://github.com/McMartin/FRUT/issues/267"
         )
 
-      elseif(tag STREQUAL "BUILD_STANDALONE_PLUGIN" AND DEFINED JUCER_VERSION
-          AND JUCER_VERSION VERSION_LESS 5)
+      elseif(tag STREQUAL "BUILD_STANDALONE_PLUGIN"
+          AND DEFINED JUCER_VERSION AND JUCER_VERSION VERSION_LESS 5)
         message(WARNING "BUILD_STANDALONE_PLUGIN is a JUCE 5 feature only")
 
       endif()
@@ -900,8 +900,8 @@ function(jucer_export_target_configuration
         set(JUCER_CUSTOM_XCODE_FLAGS_${config} ${value} PARENT_SCOPE)
 
       elseif(tag STREQUAL "CXX_LANGUAGE_STANDARD")
-        if(value MATCHES "^(C|GNU)\\+\\+98$" AND DEFINED JUCER_VERSION
-            AND JUCER_VERSION VERSION_LESS 5)
+        if(value MATCHES "^(C|GNU)\\+\\+98$"
+            AND DEFINED JUCER_VERSION AND JUCER_VERSION VERSION_LESS 5)
           set(JUCER_CXX_LANGUAGE_STANDARD_${config} ${value} PARENT_SCOPE)
         elseif(value MATCHES "^(C|GNU)\\+\\+(11|14)$")
           set(JUCER_CXX_LANGUAGE_STANDARD_${config} ${value} PARENT_SCOPE)
