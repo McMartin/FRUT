@@ -95,6 +95,7 @@ function(jucer_project_settings)
     "BUNDLE_IDENTIFIER"
     "BINARYDATACPP_SIZE_LIMIT"
     "BINARYDATA_NAMESPACE"
+    "CXX_LANGUAGE_STANDARD"
     "PREPROCESSOR_DEFINITIONS"
     "HEADER_SEARCH_PATHS"
   )
@@ -107,6 +108,9 @@ function(jucer_project_settings)
     "256.0 KB" "128.0 KB" "64.0 KB"
   )
   set(size_limits 10240 20480 10240 6144 2048 1024 512 256 128 64)
+
+  set(cxx_language_standard_descs "C++11" "C++14" "Use Latest")
+  set(cxx_language_standards "11" "14" "latest")
 
   unset(tag)
   foreach(element ${ARGN})
@@ -148,6 +152,16 @@ function(jucer_project_settings)
           )
         endif()
         list(GET size_limits ${size_limit_index} value)
+
+      elseif(tag STREQUAL "CXX_LANGUAGE_STANDARD")
+        list(FIND cxx_language_standard_descs "${value}" cxx_language_standard_index)
+        if(cxx_language_standard_index EQUAL -1)
+          message(FATAL_ERROR
+            "Unsupported value for CXX_LANGUAGE_STANDARD: \"${value}\"\n"
+            "Supported values: ${cxx_language_standard_descs}"
+          )
+        endif()
+        list(GET cxx_language_standards ${cxx_language_standard_index} value)
 
       elseif(tag STREQUAL "PREPROCESSOR_DEFINITIONS")
         string(REPLACE "\n" ";" value "${value}")
@@ -2568,6 +2582,31 @@ endfunction()
 
 function(_FRUT_set_cxx_language_standard_properties target)
 
+  if(DEFINED JUCER_CXX_LANGUAGE_STANDARD)
+    set(cxx_language_standard "${JUCER_CXX_LANGUAGE_STANDARD}")
+
+    if(CMAKE_GENERATOR STREQUAL "Xcode")
+      if(cxx_language_standard STREQUAL "latest")
+        set(cxx_language_standard "1z")
+      endif()
+      set_target_properties(${target} PROPERTIES
+        XCODE_ATTRIBUTE_CLANG_CXX_LANGUAGE_STANDARD "c++${cxx_language_standard}"
+      )
+
+    elseif(MSVC)
+      if(MSVC_VERSION EQUAL 1900 OR MSVC_VERSION GREATER 1900) # VS2015 and later
+        target_compile_options(${target} PRIVATE "-std:c++${cxx_language_standard}")
+      endif()
+
+    else()
+      set_target_properties(${target} PROPERTIES CXX_EXTENSIONS OFF)
+      if(cxx_language_standard STREQUAL "latest")
+        set(cxx_language_standard "17")
+      endif()
+      set_target_properties(${target} PROPERTIES CXX_STANDARD ${cxx_language_standard})
+
+    endif()
+  else()
     if(APPLE)
       if(CMAKE_GENERATOR STREQUAL "Xcode")
         unset(all_confs_cxx_language_standard)
@@ -2624,6 +2663,7 @@ function(_FRUT_set_cxx_language_standard_properties target)
       endif()
 
     endif()
+  endif()
 
 endfunction()
 
