@@ -745,6 +745,9 @@ int main(int argc, char* argv[])
       convertSettingIfDefined(exporter, "externalLibraries", "EXTERNAL_LIBRARIES_TO_LINK",
                               {});
 
+      convertOnOffSettingIfDefined(exporter, "enableGNUExtensions",
+                                   "GNU_COMPILER_EXTENSIONS", {});
+
       const auto convertIcon = [&jucerProject](const juce::var& value) -> std::string {
         const auto fileId = value.toString();
 
