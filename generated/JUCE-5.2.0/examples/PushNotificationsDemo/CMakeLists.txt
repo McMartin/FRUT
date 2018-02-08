@@ -34,6 +34,7 @@ jucer_project_settings(
   SPLASH_SCREEN_COLOUR "Dark"
   PROJECT_TYPE "GUI Application"
   BUNDLE_IDENTIFIER "com.juce.pushnotificationsdemo"
+  CXX_LANGUAGE_STANDARD "C++11"
 )
 
 jucer_project_files("PushNotificationsDemo/BinaryResources/images"
