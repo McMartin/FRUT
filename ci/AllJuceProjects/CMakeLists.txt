@@ -23,23 +23,7 @@ if(NOT DEFINED JUCE_VERSION)
 endif()
 
 
-if(JUCE_VERSION STREQUAL "4.2.0")
-  set(JUCER_VST_SDK_FOLDER
-    "${CMAKE_CURRENT_LIST_DIR}/../third-party/vstsdk365_12_11_2015_build_67/VST3 SDK"
-  )
-
-  if(APPLE OR WIN32)
-    set(JUCER_VST3_SDK_FOLDER
-      "${CMAKE_CURRENT_LIST_DIR}/../third-party/vstsdk365_12_11_2015_build_67/VST3 SDK"
-    )
-  endif()
-elseif(JUCE_VERSION STREQUAL "4.3.1")
-  if(APPLE OR WIN32)
-    set(JUCER_VST3_SDK_FOLDER
-      "${CMAKE_CURRENT_LIST_DIR}/../third-party/vstsdk366_27_06_2016_build_61/VST3 SDK"
-    )
-  endif()
-else()
+if(JUCE_VERSION VERSION_GREATER "4.3.1")
   if(APPLE OR WIN32)
     set(JUCER_VST3_SDK_FOLDER
       "${CMAKE_CURRENT_LIST_DIR}/../third-party/vstsdk367_03_03_2017_build_352/VST_SDK/VST3_SDK"
