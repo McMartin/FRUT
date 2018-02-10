@@ -28,3 +28,12 @@ set(JUCE_modules_DIRS "${JUCE_ROOT}/modules")
 add_subdirectory(cmake/BinaryDataBuilder)
 add_subdirectory(cmake/IconBuilder)
 add_subdirectory(cmake/PListMerger)
+
+
+install(FILES "${CMAKE_CURRENT_LIST_DIR}/cmake/Reprojucer.cmake"
+  DESTINATION "FRUT/cmake"
+)
+
+install(DIRECTORY "${CMAKE_CURRENT_LIST_DIR}/cmake/templates"
+  DESTINATION "FRUT/cmake"
+)
