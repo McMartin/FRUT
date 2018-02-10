@@ -68,28 +68,20 @@ test_script:
   # Check that generated CMakeLists.txt files are up-to-date
   - cd %APPVEYOR_BUILD_FOLDER%
   - >
-    cmake
-    -DJUCE_ROOT="%APPVEYOR_BUILD_FOLDER%/ci/tmp/JUCE-4.2.0"
+    cmake -DJUCE_VERSION="4.2.0"
     -DJucer2Reprojucer_EXE="4.2.0_build/Jucer2Reprojucer/Debug/ConsoleApp/Jucer2Reprojucer.exe"
-    -Dgenerated_JUCE_ROOT="generated/JUCE-4.2.0"
     -P ci/apply-Jucer2Reprojucer-to-JUCE-jucers.cmake
   - >
-    cmake
-    -DJUCE_ROOT="%APPVEYOR_BUILD_FOLDER%/ci/tmp/JUCE-4.3.1"
+    cmake -DJUCE_VERSION="4.3.1"
     -DJucer2Reprojucer_EXE="4.3.1_build/Jucer2Reprojucer/Debug/ConsoleApp/Jucer2Reprojucer.exe"
-    -Dgenerated_JUCE_ROOT="generated/JUCE-4.3.1"
     -P ci/apply-Jucer2Reprojucer-to-JUCE-jucers.cmake
   - >
-    cmake
-    -DJUCE_ROOT="%APPVEYOR_BUILD_FOLDER%/ci/tmp/JUCE-5.0.0"
+    cmake -DJUCE_VERSION="5.0.0"
     -DJucer2Reprojucer_EXE="5.0.0_build/Jucer2Reprojucer/Debug/ConsoleApp/Jucer2Reprojucer.exe"
-    -Dgenerated_JUCE_ROOT="generated/JUCE-5.0.0"
     -P ci/apply-Jucer2Reprojucer-to-JUCE-jucers.cmake
   - >
-    cmake
-    -DJUCE_ROOT="%APPVEYOR_BUILD_FOLDER%/ci/tmp/JUCE-5.2.0"
+    cmake -DJUCE_VERSION="5.2.0"
     -DJucer2Reprojucer_EXE="5.2.0_build/Jucer2Reprojucer/Debug/ConsoleApp/Jucer2Reprojucer.exe"
-    -Dgenerated_JUCE_ROOT="generated/JUCE-5.2.0"
     -P ci/apply-Jucer2Reprojucer-to-JUCE-jucers.cmake
   - git diff --quiet
 
