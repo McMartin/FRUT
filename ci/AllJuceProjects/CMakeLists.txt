@@ -33,6 +33,9 @@ endif()
 
 
 set(JUCE_ROOT "${CMAKE_CURRENT_LIST_DIR}/../tmp/JUCE-${JUCE_VERSION}")
+if(NOT IS_DIRECTORY "${JUCE_ROOT}")
+  message(FATAL_ERROR "No such directory: ${JUCE_ROOT}")
+endif()
 
 
 add_subdirectory(
