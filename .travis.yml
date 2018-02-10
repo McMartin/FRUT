@@ -21,54 +21,38 @@ script-anchors:
     # Configure and build FRUT with JUCE 4.2.0
     - mkdir ${TRAVIS_BUILD_DIR}/Debug_4.2.0_build
     - cd ${TRAVIS_BUILD_DIR}/Debug_4.2.0_build
-    - >
-      cmake .. -DCMAKE_BUILD_TYPE=Debug
-      -DJUCE_ROOT="${TRAVIS_BUILD_DIR}/ci/tmp/JUCE-4.2.0"
+    - cmake .. -DJUCE_ROOT="${TRAVIS_BUILD_DIR}/ci/tmp/JUCE-4.2.0" -DCMAKE_BUILD_TYPE=Debug
     - cmake --build .
     - mkdir ${TRAVIS_BUILD_DIR}/Release_4.2.0_build
     - cd ${TRAVIS_BUILD_DIR}/Release_4.2.0_build
-    - >
-      cmake .. -DCMAKE_BUILD_TYPE=Release
-      -DJUCE_ROOT="${TRAVIS_BUILD_DIR}/ci/tmp/JUCE-4.2.0"
+    - cmake .. -DJUCE_ROOT="${TRAVIS_BUILD_DIR}/ci/tmp/JUCE-4.2.0" -DCMAKE_BUILD_TYPE=Release
 
     # Configure and build FRUT with JUCE 4.3.1
     - mkdir ${TRAVIS_BUILD_DIR}/Debug_4.3.1_build
     - cd ${TRAVIS_BUILD_DIR}/Debug_4.3.1_build
-    - >
-      cmake .. -DCMAKE_BUILD_TYPE=Debug
-      -DJUCE_ROOT="${TRAVIS_BUILD_DIR}/ci/tmp/JUCE-4.3.1"
+    - cmake .. -DJUCE_ROOT="${TRAVIS_BUILD_DIR}/ci/tmp/JUCE-4.3.1" -DCMAKE_BUILD_TYPE=Debug
     - cmake --build .
     - mkdir ${TRAVIS_BUILD_DIR}/Release_4.3.1_build
     - cd ${TRAVIS_BUILD_DIR}/Release_4.3.1_build
-    - >
-      cmake .. -DCMAKE_BUILD_TYPE=Release
-      -DJUCE_ROOT="${TRAVIS_BUILD_DIR}/ci/tmp/JUCE-4.3.1"
+    - cmake .. -DJUCE_ROOT="${TRAVIS_BUILD_DIR}/ci/tmp/JUCE-4.3.1" -DCMAKE_BUILD_TYPE=Release
 
     # Configure and build FRUT with JUCE 5.0.0
     - mkdir ${TRAVIS_BUILD_DIR}/Debug_5.0.0_build
     - cd ${TRAVIS_BUILD_DIR}/Debug_5.0.0_build
-    - >
-      cmake .. -DCMAKE_BUILD_TYPE=Debug
-      -DJUCE_ROOT="${TRAVIS_BUILD_DIR}/ci/tmp/JUCE-5.0.0"
+    - cmake .. -DJUCE_ROOT="${TRAVIS_BUILD_DIR}/ci/tmp/JUCE-5.0.0" -DCMAKE_BUILD_TYPE=Debug
     - cmake --build .
     - mkdir ${TRAVIS_BUILD_DIR}/Release_5.0.0_build
     - cd ${TRAVIS_BUILD_DIR}/Release_5.0.0_build
-    - >
-      cmake .. -DCMAKE_BUILD_TYPE=Release
-      -DJUCE_ROOT="${TRAVIS_BUILD_DIR}/ci/tmp/JUCE-5.0.0"
+    - cmake .. -DJUCE_ROOT="${TRAVIS_BUILD_DIR}/ci/tmp/JUCE-5.0.0" -DCMAKE_BUILD_TYPE=Release
 
     # Configure and build FRUT with JUCE 5.2.0
     - mkdir ${TRAVIS_BUILD_DIR}/Debug_5.2.0_build
     - cd ${TRAVIS_BUILD_DIR}/Debug_5.2.0_build
-    - >
-      cmake .. -DCMAKE_BUILD_TYPE=Debug
-      -DJUCE_ROOT="${TRAVIS_BUILD_DIR}/ci/tmp/JUCE-5.2.0"
+    - cmake .. -DJUCE_ROOT="${TRAVIS_BUILD_DIR}/ci/tmp/JUCE-5.2.0" -DCMAKE_BUILD_TYPE=Debug
     - cmake --build .
     - mkdir ${TRAVIS_BUILD_DIR}/Release_5.2.0_build
     - cd ${TRAVIS_BUILD_DIR}/Release_5.2.0_build
-    - >
-      cmake .. -DCMAKE_BUILD_TYPE=Release
-      -DJUCE_ROOT="${TRAVIS_BUILD_DIR}/ci/tmp/JUCE-5.2.0"
+    - cmake .. -DJUCE_ROOT="${TRAVIS_BUILD_DIR}/ci/tmp/JUCE-5.2.0" -DCMAKE_BUILD_TYPE=Release
 
     # Build and install FRUT in ./prefix
     - cmake .. -DCMAKE_INSTALL_PREFIX="${TRAVIS_BUILD_DIR}/prefix"
@@ -130,33 +114,25 @@ script-anchors:
     # Configure and build FRUT with JUCE 4.2.0
     - mkdir ${TRAVIS_BUILD_DIR}/4.2.0_build
     - cd ${TRAVIS_BUILD_DIR}/4.2.0_build
-    - >
-      cmake .. -G Xcode
-      -DJUCE_ROOT="${TRAVIS_BUILD_DIR}/ci/tmp/JUCE-4.2.0"
+    - cmake .. -G Xcode -DJUCE_ROOT="${TRAVIS_BUILD_DIR}/ci/tmp/JUCE-4.2.0"
     - cmake --build . --config Debug
 
     # Configure and build FRUT with JUCE 4.3.1
     - mkdir ${TRAVIS_BUILD_DIR}/4.3.1_build
     - cd ${TRAVIS_BUILD_DIR}/4.3.1_build
-    - >
-      cmake .. -G Xcode
-      -DJUCE_ROOT="${TRAVIS_BUILD_DIR}/ci/tmp/JUCE-4.3.1"
+    - cmake .. -G Xcode -DJUCE_ROOT="${TRAVIS_BUILD_DIR}/ci/tmp/JUCE-4.3.1"
     - cmake --build . --config Debug
 
     # Configure and build FRUT with JUCE 5.0.0
     - mkdir ${TRAVIS_BUILD_DIR}/5.0.0_build
     - cd ${TRAVIS_BUILD_DIR}/5.0.0_build
-    - >
-      cmake .. -G Xcode
-      -DJUCE_ROOT="${TRAVIS_BUILD_DIR}/ci/tmp/JUCE-5.0.0"
+    - cmake .. -G Xcode -DJUCE_ROOT="${TRAVIS_BUILD_DIR}/ci/tmp/JUCE-5.0.0"
     - cmake --build . --config Debug
 
     # Configure and build FRUT with JUCE 5.2.0
     - mkdir ${TRAVIS_BUILD_DIR}/5.2.0_build
     - cd ${TRAVIS_BUILD_DIR}/5.2.0_build
-    - >
-      cmake .. -G Xcode
-      -DJUCE_ROOT="${TRAVIS_BUILD_DIR}/ci/tmp/JUCE-5.2.0"
+    - cmake .. -G Xcode -DJUCE_ROOT="${TRAVIS_BUILD_DIR}/ci/tmp/JUCE-5.2.0"
     - cmake --build . --config Debug
 
     # Build and install FRUT in ./prefix

@@ -32,36 +32,32 @@ build_script:
   - mkdir %APPVEYOR_BUILD_FOLDER%\4.2.0_build
   - cd %APPVEYOR_BUILD_FOLDER%\4.2.0_build
   - >
-    cmake .. -G "%GENERATOR%"
+    cmake .. -G "%GENERATOR%" -DUSE_CRLF_LINE_ENDINGS=OFF
     -DJUCE_ROOT="%APPVEYOR_BUILD_FOLDER%/ci/tmp/JUCE-4.2.0"
-    -DUSE_CRLF_LINE_ENDINGS=OFF
   - cmake --build . --config Debug -- -v:m -maxcpucount
 
   # Configure and build FRUT with JUCE 4.3.1
   - mkdir %APPVEYOR_BUILD_FOLDER%\4.3.1_build
   - cd %APPVEYOR_BUILD_FOLDER%\4.3.1_build
   - >
-    cmake .. -G "%GENERATOR%"
+    cmake .. -G "%GENERATOR%" -DUSE_CRLF_LINE_ENDINGS=OFF
     -DJUCE_ROOT="%APPVEYOR_BUILD_FOLDER%/ci/tmp/JUCE-4.3.1"
-    -DUSE_CRLF_LINE_ENDINGS=OFF
   - cmake --build . --config Debug -- -v:m -maxcpucount
 
   # Configure and build FRUT with JUCE 5.0.0
   - mkdir %APPVEYOR_BUILD_FOLDER%\5.0.0_build
   - cd %APPVEYOR_BUILD_FOLDER%\5.0.0_build
   - >
-    cmake .. -G "%GENERATOR%"
+    cmake .. -G "%GENERATOR%" -DUSE_CRLF_LINE_ENDINGS=OFF
     -DJUCE_ROOT="%APPVEYOR_BUILD_FOLDER%/ci/tmp/JUCE-5.0.0"
-    -DUSE_CRLF_LINE_ENDINGS=OFF
   - cmake --build . --config Debug -- -v:m -maxcpucount
 
   # Configure and build FRUT with JUCE 5.2.0
   - mkdir %APPVEYOR_BUILD_FOLDER%\5.2.0_build
   - cd %APPVEYOR_BUILD_FOLDER%\5.2.0_build
   - >
-    cmake .. -G "%GENERATOR%"
+    cmake .. -G "%GENERATOR%" -DUSE_CRLF_LINE_ENDINGS=OFF
     -DJUCE_ROOT="%APPVEYOR_BUILD_FOLDER%/ci/tmp/JUCE-5.2.0"
-    -DUSE_CRLF_LINE_ENDINGS=OFF
   - cmake --build . --config Debug -- -v:m -maxcpucount
 
   # Build and install FRUT in ./prefix
