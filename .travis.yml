@@ -70,23 +70,27 @@ script-anchors:
       cmake .. -DCMAKE_BUILD_TYPE=Release
       -DJUCE_ROOT="${TRAVIS_BUILD_DIR}/ci/tmp/JUCE-5.2.0"
 
+    # Build and install FRUT in ./prefix
+    - cmake .. -DCMAKE_INSTALL_PREFIX="${TRAVIS_BUILD_DIR}/prefix"
+    - cmake --build . --target install
+
     # Check that generated CMakeLists.txt files are up-to-date
     - cd ${TRAVIS_BUILD_DIR}
     - >
       cmake -DJUCE_VERSION="4.2.0"
-      -DJucer2Reprojucer_EXE="Debug_4.2.0_build/Jucer2Reprojucer/Jucer2Reprojucer"
+      -DJucer2Reprojucer_EXE="prefix/FRUT/bin/Jucer2Reprojucer"
       -P ci/apply-Jucer2Reprojucer-to-JUCE-jucers.cmake
     - >
       cmake -DJUCE_VERSION="4.3.1"
-      -DJucer2Reprojucer_EXE="Debug_4.3.1_build/Jucer2Reprojucer/Jucer2Reprojucer"
+      -DJucer2Reprojucer_EXE="prefix/FRUT/bin/Jucer2Reprojucer"
       -P ci/apply-Jucer2Reprojucer-to-JUCE-jucers.cmake
     - >
       cmake -DJUCE_VERSION="5.0.0"
-      -DJucer2Reprojucer_EXE="Debug_5.0.0_build/Jucer2Reprojucer/Jucer2Reprojucer"
+      -DJucer2Reprojucer_EXE="prefix/FRUT/bin/Jucer2Reprojucer"
       -P ci/apply-Jucer2Reprojucer-to-JUCE-jucers.cmake
     - >
       cmake -DJUCE_VERSION="5.2.0"
-      -DJucer2Reprojucer_EXE="Debug_5.2.0_build/Jucer2Reprojucer/Jucer2Reprojucer"
+      -DJucer2Reprojucer_EXE="prefix/FRUT/bin/Jucer2Reprojucer"
       -P ci/apply-Jucer2Reprojucer-to-JUCE-jucers.cmake
     - git diff --quiet
 
@@ -155,23 +159,27 @@ script-anchors:
       -DJUCE_ROOT="${TRAVIS_BUILD_DIR}/ci/tmp/JUCE-5.2.0"
     - cmake --build . --config Debug
 
+    # Build and install FRUT in ./prefix
+    - cmake .. -DCMAKE_INSTALL_PREFIX="${TRAVIS_BUILD_DIR}/prefix"
+    - cmake --build . --config Release --target install
+
     # Check that generated CMakeLists.txt files are up-to-date
     - cd ${TRAVIS_BUILD_DIR}
     - >
       cmake -DJUCE_VERSION="4.2.0"
-      -DJucer2Reprojucer_EXE="4.2.0_build/Jucer2Reprojucer/Debug/Jucer2Reprojucer"
+      -DJucer2Reprojucer_EXE="prefix/FRUT/bin/Jucer2Reprojucer"
       -P ci/apply-Jucer2Reprojucer-to-JUCE-jucers.cmake
     - >
       cmake -DJUCE_VERSION="4.3.1"
-      -DJucer2Reprojucer_EXE="4.3.1_build/Jucer2Reprojucer/Debug/Jucer2Reprojucer"
+      -DJucer2Reprojucer_EXE="prefix/FRUT/bin/Jucer2Reprojucer"
       -P ci/apply-Jucer2Reprojucer-to-JUCE-jucers.cmake
     - >
       cmake -DJUCE_VERSION="5.0.0"
-      -DJucer2Reprojucer_EXE="5.0.0_build/Jucer2Reprojucer/Debug/Jucer2Reprojucer"
+      -DJucer2Reprojucer_EXE="prefix/FRUT/bin/Jucer2Reprojucer"
       -P ci/apply-Jucer2Reprojucer-to-JUCE-jucers.cmake
     - >
       cmake -DJUCE_VERSION="5.2.0"
-      -DJucer2Reprojucer_EXE="5.2.0_build/Jucer2Reprojucer/Debug/Jucer2Reprojucer"
+      -DJucer2Reprojucer_EXE="prefix/FRUT/bin/Jucer2Reprojucer"
       -P ci/apply-Jucer2Reprojucer-to-JUCE-jucers.cmake
     - git diff --quiet
 
