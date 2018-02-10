@@ -33,6 +33,25 @@ Requirements
 - JUCE, version 4.2.0 minimum (JUCE 5 support is experimental)
 
 
+Supported export targets
+------------------------
+
+``Reprojucer.cmake`` and ``Jucer2Reprojucer`` support the following Projucer export
+targets:
+
+- Xcode (MacOSX)
+- Visual Studio 2017
+- Visual Studio 2015
+- Visual Studio 2013
+- Linux Makefile
+
+
+Documentation
+-------------
+
+You can read the documentation of FRUT on Read the Docs: http://frut.readthedocs.io/
+
+
 Getting started
 ---------------
 
@@ -88,25 +107,6 @@ Now we can build ``MyGreatProject`` using CMake: ::
 ``<generator>`` can be one of many `CMake Generators`_ supported by your platform,
 including Ninja, NMake Makefiles (on Windows), Unix Makefiles (on Linux and macOS),
 Visual Studio 2013, 2015 and 2017 (on Windows), and Xcode (on macOS).
-
-
-Supported export targets
-------------------------
-
-``Reprojucer.cmake`` and ``Jucer2Reprojucer`` support the following Projucer export
-targets:
-
-- Xcode (MacOSX)
-- Visual Studio 2017
-- Visual Studio 2015
-- Visual Studio 2013
-- Linux Makefile
-
-
-Documentation
--------------
-
-You can read the documentation of FRUT on Read the Docs: http://frut.readthedocs.io/
 
 
 Contributing
