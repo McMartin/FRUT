@@ -38,8 +38,7 @@ Getting started
 
 Let's consider that you have a copy of `JUCE <https://github.com/WeAreROLI/JUCE>`__, a
 copy of `FRUT`_ and a JUCE project called ``MyGreatProject`` following this folder
-structure:
-::
+structure: ::
 
   <root>
   ├── FRUT/
@@ -50,8 +49,7 @@ structure:
 
 We first build ``Jucer2Reprojucer`` with CMake. Since ``Jucer2Reprojucer`` uses the JUCE
 modules ``juce_core``, ``juce_data_structures`` and ``juce_events``, we specify where to
-find JUCE by defining ``JUCE_ROOT`` when calling ``cmake``.
-::
+find JUCE by defining ``JUCE_ROOT`` when calling ``cmake``. ::
 
   $ cd <root>/FRUT/Jucer2Reprojucer/
 
@@ -66,8 +64,7 @@ find JUCE by defining ``JUCE_ROOT`` when calling ``cmake``.
   $ cmake --build .
   ...
 
-Then we convert ``MyGreatProject.jucer`` to a new ``CMakeLists.txt`` file:
-::
+Then we convert ``MyGreatProject.jucer`` to a new ``CMakeLists.txt`` file: ::
 
   $ cd <root>/MyGreatProject/
 
@@ -75,8 +72,7 @@ Then we convert ``MyGreatProject.jucer`` to a new ``CMakeLists.txt`` file:
 
   <root>/MyGreatProject/CMakeLists.txt has been successfully generated.
 
-Now we can build ``MyGreatProject`` using CMake:
-::
+Now we can build ``MyGreatProject`` using CMake: ::
 
   $ cd <root>/MyGreatProject/
 
