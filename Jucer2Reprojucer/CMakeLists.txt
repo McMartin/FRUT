@@ -17,6 +17,8 @@
 
 cmake_minimum_required(VERSION 3.4)
 
+project(Jucer2Reprojucer)
+
 
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/../cmake")
 include(Reprojucer)
@@ -203,3 +205,6 @@ jucer_export_target_configuration(
 )
 
 jucer_project_end()
+
+
+install(TARGETS Jucer2Reprojucer DESTINATION "FRUT/bin")

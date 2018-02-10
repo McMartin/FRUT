@@ -18,91 +18,63 @@ install:
 
 script-anchors:
   - &script-Makefiles
-    # Configure and build Reprojucer.cmake helpers and Jucer2Reprojucer with JUCE 4.2.0
-    - mkdir ${TRAVIS_BUILD_DIR}/ci/ReprojucerHelpers/Debug_4.2.0_build
-    - cd ${TRAVIS_BUILD_DIR}/ci/ReprojucerHelpers/Debug_4.2.0_build
-    - >
-      cmake .. -DCMAKE_BUILD_TYPE=Debug
-      -DJUCE_ROOT="${TRAVIS_BUILD_DIR}/ci/tmp/JUCE-4.2.0"
-      -DJUCE_modules_DIRS="${TRAVIS_BUILD_DIR}/ci/tmp/JUCE-4.2.0/modules"
+    # Configure and build FRUT with JUCE 4.2.0
+    - mkdir ${TRAVIS_BUILD_DIR}/Debug_4.2.0_build
+    - cd ${TRAVIS_BUILD_DIR}/Debug_4.2.0_build
+    - cmake .. -DJUCE_ROOT="${TRAVIS_BUILD_DIR}/ci/tmp/JUCE-4.2.0" -DCMAKE_BUILD_TYPE=Debug
     - cmake --build .
-    - mkdir ${TRAVIS_BUILD_DIR}/ci/ReprojucerHelpers/Release_4.2.0_build
-    - cd ${TRAVIS_BUILD_DIR}/ci/ReprojucerHelpers/Release_4.2.0_build
-    - >
-      cmake .. -DCMAKE_BUILD_TYPE=Release
-      -DJUCE_ROOT="${TRAVIS_BUILD_DIR}/ci/tmp/JUCE-4.2.0"
-      -DJUCE_modules_DIRS="${TRAVIS_BUILD_DIR}/ci/tmp/JUCE-4.2.0/modules"
+    - mkdir ${TRAVIS_BUILD_DIR}/Release_4.2.0_build
+    - cd ${TRAVIS_BUILD_DIR}/Release_4.2.0_build
+    - cmake .. -DJUCE_ROOT="${TRAVIS_BUILD_DIR}/ci/tmp/JUCE-4.2.0" -DCMAKE_BUILD_TYPE=Release
 
-    # Configure and build Reprojucer.cmake helpers and Jucer2Reprojucer with JUCE 4.3.1
-    - mkdir ${TRAVIS_BUILD_DIR}/ci/ReprojucerHelpers/Debug_4.3.1_build
-    - cd ${TRAVIS_BUILD_DIR}/ci/ReprojucerHelpers/Debug_4.3.1_build
-    - >
-      cmake .. -DCMAKE_BUILD_TYPE=Debug
-      -DJUCE_ROOT="${TRAVIS_BUILD_DIR}/ci/tmp/JUCE-4.3.1"
-      -DJUCE_modules_DIRS="${TRAVIS_BUILD_DIR}/ci/tmp/JUCE-4.3.1/modules"
+    # Configure and build FRUT with JUCE 4.3.1
+    - mkdir ${TRAVIS_BUILD_DIR}/Debug_4.3.1_build
+    - cd ${TRAVIS_BUILD_DIR}/Debug_4.3.1_build
+    - cmake .. -DJUCE_ROOT="${TRAVIS_BUILD_DIR}/ci/tmp/JUCE-4.3.1" -DCMAKE_BUILD_TYPE=Debug
     - cmake --build .
-    - mkdir ${TRAVIS_BUILD_DIR}/ci/ReprojucerHelpers/Release_4.3.1_build
-    - cd ${TRAVIS_BUILD_DIR}/ci/ReprojucerHelpers/Release_4.3.1_build
-    - >
-      cmake .. -DCMAKE_BUILD_TYPE=Release
-      -DJUCE_ROOT="${TRAVIS_BUILD_DIR}/ci/tmp/JUCE-4.3.1"
-      -DJUCE_modules_DIRS="${TRAVIS_BUILD_DIR}/ci/tmp/JUCE-4.3.1/modules"
+    - mkdir ${TRAVIS_BUILD_DIR}/Release_4.3.1_build
+    - cd ${TRAVIS_BUILD_DIR}/Release_4.3.1_build
+    - cmake .. -DJUCE_ROOT="${TRAVIS_BUILD_DIR}/ci/tmp/JUCE-4.3.1" -DCMAKE_BUILD_TYPE=Release
 
-    # Configure and build Reprojucer.cmake helpers and Jucer2Reprojucer with JUCE 5.0.0
-    - mkdir ${TRAVIS_BUILD_DIR}/ci/ReprojucerHelpers/Debug_5.0.0_build
-    - cd ${TRAVIS_BUILD_DIR}/ci/ReprojucerHelpers/Debug_5.0.0_build
-    - >
-      cmake .. -DCMAKE_BUILD_TYPE=Debug
-      -DJUCE_ROOT="${TRAVIS_BUILD_DIR}/ci/tmp/JUCE-5.0.0"
-      -DJUCE_modules_DIRS="${TRAVIS_BUILD_DIR}/ci/tmp/JUCE-5.0.0/modules"
+    # Configure and build FRUT with JUCE 5.0.0
+    - mkdir ${TRAVIS_BUILD_DIR}/Debug_5.0.0_build
+    - cd ${TRAVIS_BUILD_DIR}/Debug_5.0.0_build
+    - cmake .. -DJUCE_ROOT="${TRAVIS_BUILD_DIR}/ci/tmp/JUCE-5.0.0" -DCMAKE_BUILD_TYPE=Debug
     - cmake --build .
-    - mkdir ${TRAVIS_BUILD_DIR}/ci/ReprojucerHelpers/Release_5.0.0_build
-    - cd ${TRAVIS_BUILD_DIR}/ci/ReprojucerHelpers/Release_5.0.0_build
-    - >
-      cmake .. -DCMAKE_BUILD_TYPE=Release
-      -DJUCE_ROOT="${TRAVIS_BUILD_DIR}/ci/tmp/JUCE-5.0.0"
-      -DJUCE_modules_DIRS="${TRAVIS_BUILD_DIR}/ci/tmp/JUCE-5.0.0/modules"
+    - mkdir ${TRAVIS_BUILD_DIR}/Release_5.0.0_build
+    - cd ${TRAVIS_BUILD_DIR}/Release_5.0.0_build
+    - cmake .. -DJUCE_ROOT="${TRAVIS_BUILD_DIR}/ci/tmp/JUCE-5.0.0" -DCMAKE_BUILD_TYPE=Release
 
-    # Configure and build Reprojucer.cmake helpers and Jucer2Reprojucer with JUCE 5.2.0
-    - mkdir ${TRAVIS_BUILD_DIR}/ci/ReprojucerHelpers/Debug_5.2.0_build
-    - cd ${TRAVIS_BUILD_DIR}/ci/ReprojucerHelpers/Debug_5.2.0_build
-    - >
-      cmake .. -DCMAKE_BUILD_TYPE=Debug
-      -DJUCE_ROOT="${TRAVIS_BUILD_DIR}/ci/tmp/JUCE-5.2.0"
-      -DJUCE_modules_DIRS="${TRAVIS_BUILD_DIR}/ci/tmp/JUCE-5.2.0/modules"
+    # Configure and build FRUT with JUCE 5.2.0
+    - mkdir ${TRAVIS_BUILD_DIR}/Debug_5.2.0_build
+    - cd ${TRAVIS_BUILD_DIR}/Debug_5.2.0_build
+    - cmake .. -DJUCE_ROOT="${TRAVIS_BUILD_DIR}/ci/tmp/JUCE-5.2.0" -DCMAKE_BUILD_TYPE=Debug
     - cmake --build .
-    - mkdir ${TRAVIS_BUILD_DIR}/ci/ReprojucerHelpers/Release_5.2.0_build
-    - cd ${TRAVIS_BUILD_DIR}/ci/ReprojucerHelpers/Release_5.2.0_build
-    - >
-      cmake .. -DCMAKE_BUILD_TYPE=Release
-      -DJUCE_ROOT="${TRAVIS_BUILD_DIR}/ci/tmp/JUCE-5.2.0"
-      -DJUCE_modules_DIRS="${TRAVIS_BUILD_DIR}/ci/tmp/JUCE-5.2.0/modules"
+    - mkdir ${TRAVIS_BUILD_DIR}/Release_5.2.0_build
+    - cd ${TRAVIS_BUILD_DIR}/Release_5.2.0_build
+    - cmake .. -DJUCE_ROOT="${TRAVIS_BUILD_DIR}/ci/tmp/JUCE-5.2.0" -DCMAKE_BUILD_TYPE=Release
+
+    # Build and install FRUT in ./prefix
+    - cmake .. -DCMAKE_INSTALL_PREFIX="${TRAVIS_BUILD_DIR}/prefix"
+    - cmake --build . --target install
 
     # Check that generated CMakeLists.txt files are up-to-date
     - cd ${TRAVIS_BUILD_DIR}
     - >
-      cmake
-      -DJUCE_ROOT="${TRAVIS_BUILD_DIR}/ci/tmp/JUCE-4.2.0"
-      -DJucer2Reprojucer_EXE="ci/ReprojucerHelpers/Debug_4.2.0_build/Jucer2Reprojucer/Jucer2Reprojucer"
-      -Dgenerated_JUCE_ROOT="generated/JUCE-4.2.0"
+      cmake -DJUCE_VERSION="4.2.0"
+      -DJucer2Reprojucer_EXE="prefix/FRUT/bin/Jucer2Reprojucer"
       -P ci/apply-Jucer2Reprojucer-to-JUCE-jucers.cmake
     - >
-      cmake
-      -DJUCE_ROOT="${TRAVIS_BUILD_DIR}/ci/tmp/JUCE-4.3.1"
-      -DJucer2Reprojucer_EXE="ci/ReprojucerHelpers/Debug_4.3.1_build/Jucer2Reprojucer/Jucer2Reprojucer"
-      -Dgenerated_JUCE_ROOT="generated/JUCE-4.3.1"
+      cmake -DJUCE_VERSION="4.3.1"
+      -DJucer2Reprojucer_EXE="prefix/FRUT/bin/Jucer2Reprojucer"
       -P ci/apply-Jucer2Reprojucer-to-JUCE-jucers.cmake
     - >
-      cmake
-      -DJUCE_ROOT="${TRAVIS_BUILD_DIR}/ci/tmp/JUCE-5.0.0"
-      -DJucer2Reprojucer_EXE="ci/ReprojucerHelpers/Debug_5.0.0_build/Jucer2Reprojucer/Jucer2Reprojucer"
-      -Dgenerated_JUCE_ROOT="generated/JUCE-5.0.0"
+      cmake -DJUCE_VERSION="5.0.0"
+      -DJucer2Reprojucer_EXE="prefix/FRUT/bin/Jucer2Reprojucer"
       -P ci/apply-Jucer2Reprojucer-to-JUCE-jucers.cmake
     - >
-      cmake
-      -DJUCE_ROOT="${TRAVIS_BUILD_DIR}/ci/tmp/JUCE-5.2.0"
-      -DJucer2Reprojucer_EXE="ci/ReprojucerHelpers/Debug_5.2.0_build/Jucer2Reprojucer/Jucer2Reprojucer"
-      -Dgenerated_JUCE_ROOT="generated/JUCE-5.2.0"
+      cmake -DJUCE_VERSION="5.2.0"
+      -DJucer2Reprojucer_EXE="prefix/FRUT/bin/Jucer2Reprojucer"
       -P ci/apply-Jucer2Reprojucer-to-JUCE-jucers.cmake
     - git diff --quiet
 
@@ -139,67 +111,51 @@ script-anchors:
     - cmake .. -DCMAKE_BUILD_TYPE=Release -DJUCE_VERSION="5.2.0"
 
   - &script-Xcode
-    # Configure and build Reprojucer.cmake helpers and Jucer2Reprojucer with JUCE 4.2.0
-    - mkdir ${TRAVIS_BUILD_DIR}/ci/ReprojucerHelpers/4.2.0_build
-    - cd ${TRAVIS_BUILD_DIR}/ci/ReprojucerHelpers/4.2.0_build
-    - >
-      cmake .. -G Xcode
-      -DJUCE_ROOT="${TRAVIS_BUILD_DIR}/ci/tmp/JUCE-4.2.0"
-      -DJUCE_modules_DIRS="${TRAVIS_BUILD_DIR}/ci/tmp/JUCE-4.2.0/modules"
+    # Configure and build FRUT with JUCE 4.2.0
+    - mkdir ${TRAVIS_BUILD_DIR}/4.2.0_build
+    - cd ${TRAVIS_BUILD_DIR}/4.2.0_build
+    - cmake .. -G Xcode -DJUCE_ROOT="${TRAVIS_BUILD_DIR}/ci/tmp/JUCE-4.2.0"
     - cmake --build . --config Debug
 
-    # Configure and build Reprojucer.cmake helpers and Jucer2Reprojucer with JUCE 4.3.1
-    - mkdir ${TRAVIS_BUILD_DIR}/ci/ReprojucerHelpers/4.3.1_build
-    - cd ${TRAVIS_BUILD_DIR}/ci/ReprojucerHelpers/4.3.1_build
-    - >
-      cmake .. -G Xcode
-      -DJUCE_ROOT="${TRAVIS_BUILD_DIR}/ci/tmp/JUCE-4.3.1"
-      -DJUCE_modules_DIRS="${TRAVIS_BUILD_DIR}/ci/tmp/JUCE-4.3.1/modules"
+    # Configure and build FRUT with JUCE 4.3.1
+    - mkdir ${TRAVIS_BUILD_DIR}/4.3.1_build
+    - cd ${TRAVIS_BUILD_DIR}/4.3.1_build
+    - cmake .. -G Xcode -DJUCE_ROOT="${TRAVIS_BUILD_DIR}/ci/tmp/JUCE-4.3.1"
     - cmake --build . --config Debug
 
-    # Configure and build Reprojucer.cmake helpers and Jucer2Reprojucer with JUCE 5.0.0
-    - mkdir ${TRAVIS_BUILD_DIR}/ci/ReprojucerHelpers/5.0.0_build
-    - cd ${TRAVIS_BUILD_DIR}/ci/ReprojucerHelpers/5.0.0_build
-    - >
-      cmake .. -G Xcode
-      -DJUCE_ROOT="${TRAVIS_BUILD_DIR}/ci/tmp/JUCE-5.0.0"
-      -DJUCE_modules_DIRS="${TRAVIS_BUILD_DIR}/ci/tmp/JUCE-5.0.0/modules"
+    # Configure and build FRUT with JUCE 5.0.0
+    - mkdir ${TRAVIS_BUILD_DIR}/5.0.0_build
+    - cd ${TRAVIS_BUILD_DIR}/5.0.0_build
+    - cmake .. -G Xcode -DJUCE_ROOT="${TRAVIS_BUILD_DIR}/ci/tmp/JUCE-5.0.0"
     - cmake --build . --config Debug
 
-    # Configure and build Reprojucer.cmake helpers and Jucer2Reprojucer with JUCE 5.2.0
-    - mkdir ${TRAVIS_BUILD_DIR}/ci/ReprojucerHelpers/5.2.0_build
-    - cd ${TRAVIS_BUILD_DIR}/ci/ReprojucerHelpers/5.2.0_build
-    - >
-      cmake .. -G Xcode
-      -DJUCE_ROOT="${TRAVIS_BUILD_DIR}/ci/tmp/JUCE-5.2.0"
-      -DJUCE_modules_DIRS="${TRAVIS_BUILD_DIR}/ci/tmp/JUCE-5.2.0/modules"
+    # Configure and build FRUT with JUCE 5.2.0
+    - mkdir ${TRAVIS_BUILD_DIR}/5.2.0_build
+    - cd ${TRAVIS_BUILD_DIR}/5.2.0_build
+    - cmake .. -G Xcode -DJUCE_ROOT="${TRAVIS_BUILD_DIR}/ci/tmp/JUCE-5.2.0"
     - cmake --build . --config Debug
+
+    # Build and install FRUT in ./prefix
+    - cmake .. -DCMAKE_INSTALL_PREFIX="${TRAVIS_BUILD_DIR}/prefix"
+    - cmake --build . --config Release --target install
 
     # Check that generated CMakeLists.txt files are up-to-date
     - cd ${TRAVIS_BUILD_DIR}
     - >
-      cmake
-      -DJUCE_ROOT="${TRAVIS_BUILD_DIR}/ci/tmp/JUCE-4.2.0"
-      -DJucer2Reprojucer_EXE="ci/ReprojucerHelpers/4.2.0_build/Jucer2Reprojucer/Debug/Jucer2Reprojucer"
-      -Dgenerated_JUCE_ROOT="generated/JUCE-4.2.0"
+      cmake -DJUCE_VERSION="4.2.0"
+      -DJucer2Reprojucer_EXE="prefix/FRUT/bin/Jucer2Reprojucer"
       -P ci/apply-Jucer2Reprojucer-to-JUCE-jucers.cmake
     - >
-      cmake
-      -DJUCE_ROOT="${TRAVIS_BUILD_DIR}/ci/tmp/JUCE-4.3.1"
-      -DJucer2Reprojucer_EXE="ci/ReprojucerHelpers/4.3.1_build/Jucer2Reprojucer/Debug/Jucer2Reprojucer"
-      -Dgenerated_JUCE_ROOT="generated/JUCE-4.3.1"
+      cmake -DJUCE_VERSION="4.3.1"
+      -DJucer2Reprojucer_EXE="prefix/FRUT/bin/Jucer2Reprojucer"
       -P ci/apply-Jucer2Reprojucer-to-JUCE-jucers.cmake
     - >
-      cmake
-      -DJUCE_ROOT="${TRAVIS_BUILD_DIR}/ci/tmp/JUCE-5.0.0"
-      -DJucer2Reprojucer_EXE="ci/ReprojucerHelpers/5.0.0_build/Jucer2Reprojucer/Debug/Jucer2Reprojucer"
-      -Dgenerated_JUCE_ROOT="generated/JUCE-5.0.0"
+      cmake -DJUCE_VERSION="5.0.0"
+      -DJucer2Reprojucer_EXE="prefix/FRUT/bin/Jucer2Reprojucer"
       -P ci/apply-Jucer2Reprojucer-to-JUCE-jucers.cmake
     - >
-      cmake
-      -DJUCE_ROOT="${TRAVIS_BUILD_DIR}/ci/tmp/JUCE-5.2.0"
-      -DJucer2Reprojucer_EXE="ci/ReprojucerHelpers/5.2.0_build/Jucer2Reprojucer/Debug/Jucer2Reprojucer"
-      -Dgenerated_JUCE_ROOT="generated/JUCE-5.2.0"
+      cmake -DJUCE_VERSION="5.2.0"
+      -DJucer2Reprojucer_EXE="prefix/FRUT/bin/Jucer2Reprojucer"
       -P ci/apply-Jucer2Reprojucer-to-JUCE-jucers.cmake
     - git diff --quiet
 

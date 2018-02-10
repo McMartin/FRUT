@@ -1,4 +1,4 @@
-# Copyright (c) 2017 Alain Martin
+# Copyright (c) 2018 Alain Martin
 #
 # This file is part of FRUT.
 #
@@ -17,22 +17,23 @@
 
 cmake_minimum_required(VERSION 3.4)
 
+project(FRUT)
 
-project(ReprojucerHelpers)
+
+add_subdirectory(Jucer2Reprojucer)
 
 
-add_subdirectory("../../cmake/BinaryDataBuilder"
-  "BinaryDataBuilder"
+set(JUCE_modules_DIRS "${JUCE_ROOT}/modules")
+
+add_subdirectory(cmake/BinaryDataBuilder)
+add_subdirectory(cmake/IconBuilder)
+add_subdirectory(cmake/PListMerger)
+
+
+install(FILES "${CMAKE_CURRENT_LIST_DIR}/cmake/Reprojucer.cmake"
+  DESTINATION "FRUT/cmake"
 )
 
-add_subdirectory("../../cmake/IconBuilder"
-  "IconBuilder"
-)
-
-add_subdirectory("../../cmake/PListMerger"
-  "PListMerger"
-)
-
-add_subdirectory("../../Jucer2Reprojucer"
-  "Jucer2Reprojucer"
+install(DIRECTORY "${CMAKE_CURRENT_LIST_DIR}/cmake/templates"
+  DESTINATION "FRUT/cmake"
 )

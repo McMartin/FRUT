@@ -134,4 +134,9 @@ if(CMAKE_HOST_SYSTEM_NAME STREQUAL "Linux")
 endif()
 
 
-install(TARGETS IconBuilder DESTINATION ".")
+get_cmake_property(is_in_try_compile IN_TRY_COMPILE)
+if(is_in_try_compile)
+  install(TARGETS IconBuilder DESTINATION ".")
+else()
+  install(TARGETS IconBuilder DESTINATION "FRUT/cmake/bin")
+endif()

@@ -148,4 +148,9 @@ if(CMAKE_HOST_SYSTEM_NAME STREQUAL "Linux")
 endif()
 
 
-install(TARGETS BinaryDataBuilder DESTINATION ".")
+get_cmake_property(is_in_try_compile IN_TRY_COMPILE)
+if(is_in_try_compile)
+  install(TARGETS BinaryDataBuilder DESTINATION ".")
+else()
+  install(TARGETS BinaryDataBuilder DESTINATION "FRUT/cmake/bin")
+endif()

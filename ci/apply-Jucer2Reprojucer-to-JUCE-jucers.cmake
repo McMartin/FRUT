@@ -15,26 +15,19 @@
 # You should have received a copy of the GNU General Public License
 # along with FRUT.  If not, see <http://www.gnu.org/licenses/>.
 
-if(NOT DEFINED JUCE_ROOT)
-  message(FATAL_ERROR "JUCE_ROOT must be defined")
+if(NOT DEFINED JUCE_VERSION)
+  message(FATAL_ERROR "JUCE_VERSION must be defined")
 endif()
 
-if(NOT IS_DIRECTORY ${JUCE_ROOT})
+set(JUCE_ROOT "${CMAKE_CURRENT_LIST_DIR}/tmp/JUCE-${JUCE_VERSION}")
+if(NOT IS_DIRECTORY "${JUCE_ROOT}")
   message(FATAL_ERROR "No such directory: ${JUCE_ROOT}")
 endif()
 
-get_filename_component(JUCE_ROOT "${JUCE_ROOT}" ABSOLUTE)
-
-
-if(NOT DEFINED generated_JUCE_ROOT)
-  message(FATAL_ERROR "generated_JUCE_ROOT must be defined")
-endif()
-
-if(NOT IS_DIRECTORY ${generated_JUCE_ROOT})
+set(generated_JUCE_ROOT "${CMAKE_CURRENT_LIST_DIR}/../generated/JUCE-${JUCE_VERSION}")
+if(NOT IS_DIRECTORY "${generated_JUCE_ROOT}")
   message(FATAL_ERROR "No such directory: ${generated_JUCE_ROOT}")
 endif()
-
-get_filename_component(generated_JUCE_ROOT "${generated_JUCE_ROOT}" ABSOLUTE)
 
 
 if(NOT DEFINED Jucer2Reprojucer_EXE)
