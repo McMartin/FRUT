@@ -47,28 +47,26 @@ structure: ::
       ├── Source/
       └── MyGreatProject.jucer
 
-We first build ``Jucer2Reprojucer`` with CMake. Since ``Jucer2Reprojucer`` uses the JUCE
-modules ``juce_core``, ``juce_data_structures`` and ``juce_events``, we specify where to
-find JUCE by defining ``JUCE_ROOT`` when calling ``cmake``. ::
+We first build and install ``FRUT`` with CMake: ::
 
-  $ cd <root>/FRUT/Jucer2Reprojucer/
+  $ cd <root>/FRUT/
 
   $ mkdir build && cd build/
 
-  $ cmake .. -DJUCE_ROOT=../../../JUCE
+  $ cmake .. -DCMAKE_INSTALL_PREFIX=../prefix -DJUCE_ROOT=../../JUCE
   ...
   -- Configuring done
   -- Generating done
-  -- Build files have been written to: <root>/FRUT/Jucer2Reprojucer/build
+  -- Build files have been written to: <root>/FRUT/build
 
-  $ cmake --build .
+  $ cmake --build . --target install
   ...
 
 Then we convert ``MyGreatProject.jucer`` to a new ``CMakeLists.txt`` file: ::
 
   $ cd <root>/MyGreatProject/
 
-  $ ../FRUT/Jucer2Reprojucer/build(/Debug)/Jucer2Reprojucer MyGreatProject.jucer ../FRUT/cmake/Reprojucer.cmake
+  $ ../FRUT/prefix/FRUT/bin/Jucer2Reprojucer MyGreatProject.jucer ../FRUT/prefix/FRUT/cmake/Reprojucer.cmake
 
   <root>/MyGreatProject/CMakeLists.txt has been successfully generated.
 
