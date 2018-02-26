@@ -1226,9 +1226,7 @@ function(jucer_project_end)
     configure_file("${Reprojucer_templates_DIR}/resources.rc"
       "JuceLibraryCode/resources.rc"
     )
-    list(APPEND JUCER_PROJECT_SOURCES
-      "${CMAKE_CURRENT_BINARY_DIR}/JuceLibraryCode/resources.rc"
-    )
+    set(resources_rc_file "${CMAKE_CURRENT_BINARY_DIR}/JuceLibraryCode/resources.rc")
   endif()
 
   source_group("Juce Library Code"
@@ -1337,6 +1335,7 @@ function(jucer_project_end)
     ${JUCER_PROJECT_RESOURCES}
     ${JUCER_PROJECT_BROWSABLE_FILES}
     ${JUCER_PROJECT_XCODE_RESOURCES}
+    ${resources_rc_file}
   )
 
   if(JUCER_PROJECT_TYPE STREQUAL "Console Application")
@@ -1457,6 +1456,7 @@ function(jucer_project_end)
         ${JUCER_PROJECT_RESOURCES}
         ${JUCER_PROJECT_XCODE_RESOURCES}
         ${JUCER_PROJECT_BROWSABLE_FILES}
+        ${resources_rc_file}
       )
       _FRUT_set_output_directory_properties(${shared_code_target} "Shared Code")
       _FRUT_set_common_target_properties(${shared_code_target})
@@ -1469,6 +1469,7 @@ function(jucer_project_end)
         add_library(${vst_target} MODULE
           ${VST_sources}
           ${JUCER_PROJECT_XCODE_RESOURCES}
+          ${resources_rc_file}
         )
         target_link_libraries(${vst_target} PRIVATE ${shared_code_target})
         _FRUT_generate_plist_file(${vst_target} "VST" "BNDL" "????"
@@ -1494,6 +1495,7 @@ function(jucer_project_end)
         add_library(${vst3_target} MODULE
           ${VST3_sources}
           ${JUCER_PROJECT_XCODE_RESOURCES}
+          ${resources_rc_file}
         )
         target_link_libraries(${vst3_target} PRIVATE ${shared_code_target})
         _FRUT_generate_plist_file(${vst3_target} "VST3" "BNDL" "????"
@@ -1674,6 +1676,7 @@ function(jucer_project_end)
         add_executable(${standalone_target} WIN32 MACOSX_BUNDLE
           ${Standalone_sources}
           ${JUCER_PROJECT_XCODE_RESOURCES}
+          ${resources_rc_file}
         )
         target_link_libraries(${standalone_target} PRIVATE ${shared_code_target})
         if(juce4_standalone)
