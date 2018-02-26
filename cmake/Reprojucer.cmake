@@ -1205,7 +1205,6 @@ function(jucer_project_end)
 
     if(DEFINED icon_filename)
       set(icon_file "${CMAKE_CURRENT_BINARY_DIR}/${icon_filename}")
-      list(APPEND JUCER_PROJECT_SOURCES "${icon_file}")
       source_group("Juce Library Code" FILES "${icon_file}")
       set(JUCER_BUNDLE_ICON_FILE ${icon_filename})
     endif()
@@ -1337,6 +1336,7 @@ function(jucer_project_end)
     ${JUCER_PROJECT_RESOURCES}
     ${JUCER_PROJECT_BROWSABLE_FILES}
     ${JUCER_PROJECT_XCODE_RESOURCES}
+    ${icon_file}
     ${resources_rc_file}
   )
 
@@ -1458,6 +1458,7 @@ function(jucer_project_end)
         ${JUCER_PROJECT_RESOURCES}
         ${JUCER_PROJECT_XCODE_RESOURCES}
         ${JUCER_PROJECT_BROWSABLE_FILES}
+        ${icon_file}
         ${resources_rc_file}
       )
       _FRUT_set_output_directory_properties(${shared_code_target} "Shared Code")
@@ -1471,6 +1472,7 @@ function(jucer_project_end)
         add_library(${vst_target} MODULE
           ${VST_sources}
           ${JUCER_PROJECT_XCODE_RESOURCES}
+          ${icon_file}
           ${resources_rc_file}
         )
         target_link_libraries(${vst_target} PRIVATE ${shared_code_target})
@@ -1497,6 +1499,7 @@ function(jucer_project_end)
         add_library(${vst3_target} MODULE
           ${VST3_sources}
           ${JUCER_PROJECT_XCODE_RESOURCES}
+          ${icon_file}
           ${resources_rc_file}
         )
         target_link_libraries(${vst3_target} PRIVATE ${shared_code_target})
@@ -1526,6 +1529,7 @@ function(jucer_project_end)
         add_library(${au_target} MODULE
           ${AudioUnit_sources}
           ${JUCER_PROJECT_XCODE_RESOURCES}
+          ${icon_file}
         )
         target_link_libraries(${au_target} PRIVATE ${shared_code_target})
 
@@ -1575,6 +1579,7 @@ function(jucer_project_end)
         add_library(${auv3_target} MODULE
           ${AudioUnitv3_sources}
           ${JUCER_PROJECT_XCODE_RESOURCES}
+          ${icon_file}
         )
         target_link_libraries(${auv3_target} PRIVATE ${shared_code_target})
 
@@ -1678,6 +1683,7 @@ function(jucer_project_end)
         add_executable(${standalone_target} WIN32 MACOSX_BUNDLE
           ${Standalone_sources}
           ${JUCER_PROJECT_XCODE_RESOURCES}
+          ${icon_file}
           ${resources_rc_file}
         )
         target_link_libraries(${standalone_target} PRIVATE ${shared_code_target})
