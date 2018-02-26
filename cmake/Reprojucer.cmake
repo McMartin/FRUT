@@ -1198,12 +1198,15 @@ function(jucer_project_end)
 
   if(DEFINED JUCER_SMALL_ICON OR DEFINED JUCER_LARGE_ICON)
     if(APPLE)
-      _FRUT_generate_icon_file("icns" icon_filename)
+      _FRUT_generate_icon_file("icns" "${CMAKE_CURRENT_BINARY_DIR}" icon_filename)
     elseif(WIN32)
-      _FRUT_generate_icon_file("ico" icon_filename)
+      _FRUT_generate_icon_file("ico" "${CMAKE_CURRENT_BINARY_DIR}" icon_filename)
     endif()
 
     if(DEFINED icon_filename)
+      set(icon_file "${CMAKE_CURRENT_BINARY_DIR}/${icon_filename}")
+      list(APPEND JUCER_PROJECT_SOURCES "${icon_file}")
+      source_group("Juce Library Code" FILES "${icon_file}")
       set(JUCER_BUNDLE_ICON_FILE ${icon_filename})
     endif()
   endif()
@@ -2088,7 +2091,7 @@ function(_FRUT_generate_JuceHeader_header)
 endfunction()
 
 
-function(_FRUT_generate_icon_file icon_format out_icon_filename)
+function(_FRUT_generate_icon_file icon_format icon_file_output_dir out_icon_filename)
 
   set(IconBuilder_version "0.1.0")
   find_program(IconBuilder_exe "IconBuilder-${IconBuilder_version}"
@@ -2118,7 +2121,7 @@ function(_FRUT_generate_icon_file icon_format out_icon_filename)
     endif()
   endif()
 
-  set(IconBuilder_args "${icon_format}" "${CMAKE_CURRENT_BINARY_DIR}/")
+  set(IconBuilder_args "${icon_format}" "${icon_file_output_dir}")
   if(DEFINED JUCER_SMALL_ICON)
     list(APPEND IconBuilder_args "${JUCER_SMALL_ICON}")
   else()
@@ -2141,10 +2144,6 @@ function(_FRUT_generate_icon_file icon_format out_icon_filename)
 
   if(NOT "${icon_filename}" STREQUAL "")
     set(${out_icon_filename} ${icon_filename} PARENT_SCOPE)
-
-    list(APPEND JUCER_PROJECT_SOURCES "${CMAKE_CURRENT_BINARY_DIR}/${icon_filename}")
-    set(JUCER_PROJECT_SOURCES ${JUCER_PROJECT_SOURCES} PARENT_SCOPE)
-    source_group("Juce Library Code" FILES "${CMAKE_CURRENT_BINARY_DIR}/${icon_filename}")
   endif()
 
 endfunction()
