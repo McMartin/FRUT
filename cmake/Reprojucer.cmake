@@ -2687,7 +2687,9 @@ function(_FRUT_set_cxx_language_standard_properties target)
 
     elseif(MSVC)
       if(MSVC_VERSION EQUAL 1900 OR MSVC_VERSION GREATER 1900) # VS2015 and later
-        target_compile_options(${target} PRIVATE "-std:c++${cxx_language_standard}")
+        if(NOT cxx_language_standard STREQUAL "11")
+          target_compile_options(${target} PRIVATE "-std:c++${cxx_language_standard}")
+        endif()
       endif()
 
     else()
