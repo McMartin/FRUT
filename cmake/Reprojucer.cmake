@@ -1223,10 +1223,9 @@ function(jucer_project_end)
     endif()
 
     string(REPLACE "." "," comma_separated_version_number "${JUCER_PROJECT_VERSION}")
-    configure_file("${Reprojucer_templates_DIR}/resources.rc"
-      "JuceLibraryCode/resources.rc"
-    )
-    set(resources_rc_file "${CMAKE_CURRENT_BINARY_DIR}/JuceLibraryCode/resources.rc")
+    configure_file("${Reprojucer_templates_DIR}/resources.rc" "resources.rc")
+    set(resources_rc_file "${CMAKE_CURRENT_BINARY_DIR}/resources.rc")
+    source_group("Juce Library Code" FILES "${CMAKE_CURRENT_BINARY_DIR}/resources.rc")
   endif()
 
   source_group("Juce Library Code"
@@ -2119,7 +2118,7 @@ function(_FRUT_generate_icon_file icon_format out_icon_filename)
     endif()
   endif()
 
-  set(IconBuilder_args "${icon_format}" "${CMAKE_CURRENT_BINARY_DIR}/JuceLibraryCode/")
+  set(IconBuilder_args "${icon_format}" "${CMAKE_CURRENT_BINARY_DIR}/")
   if(DEFINED JUCER_SMALL_ICON)
     list(APPEND IconBuilder_args "${JUCER_SMALL_ICON}")
   else()
@@ -2143,10 +2142,9 @@ function(_FRUT_generate_icon_file icon_format out_icon_filename)
   if(NOT "${icon_filename}" STREQUAL "")
     set(${out_icon_filename} ${icon_filename} PARENT_SCOPE)
 
-    list(APPEND JUCER_PROJECT_SOURCES
-      "${CMAKE_CURRENT_BINARY_DIR}/JuceLibraryCode/${icon_filename}"
-    )
+    list(APPEND JUCER_PROJECT_SOURCES "${CMAKE_CURRENT_BINARY_DIR}/${icon_filename}")
     set(JUCER_PROJECT_SOURCES ${JUCER_PROJECT_SOURCES} PARENT_SCOPE)
+    source_group("Juce Library Code" FILES "${CMAKE_CURRENT_BINARY_DIR}/${icon_filename}")
   endif()
 
 endfunction()
