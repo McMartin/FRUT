@@ -2296,6 +2296,15 @@ function(_FRUT_set_common_target_properties target)
       endforeach()
     endforeach()
 
+    if(target MATCHES "_AUv3_AppExtension$")
+      if(CMAKE_GENERATOR STREQUAL "Xcode")
+        set_target_properties(${target} PROPERTIES
+          XCODE_ATTRIBUTE_ARCHS "$(ARCHS_STANDARD_64_BIT)"
+        )
+      else()
+        set_target_properties(${target} PROPERTIES OSX_ARCHITECTURES "x86_64")
+      endif()
+    else()
       if(CMAKE_GENERATOR STREQUAL "Xcode")
         unset(all_confs_archs)
         foreach(config ${JUCER_PROJECT_CONFIGURATIONS})
@@ -2317,6 +2326,7 @@ function(_FRUT_set_common_target_properties target)
           endif()
         endforeach()
       endif()
+    endif()
 
     if(CMAKE_GENERATOR STREQUAL "Xcode")
       unset(all_confs_osx_deployment_target)
