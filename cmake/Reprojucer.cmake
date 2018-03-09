@@ -488,7 +488,7 @@ function(jucer_export_target exporter)
     return()
   endif()
 
-  set(export_target_settings_tags
+  set(single_value_keywords
     "TARGET_PROJECT_FOLDER"
     "VST_SDK_FOLDER"
     "EXTRA_PREPROCESSOR_DEFINITIONS"
@@ -500,7 +500,7 @@ function(jucer_export_target exporter)
   )
 
   if(exporter STREQUAL "Xcode (MacOSX)")
-    list(APPEND export_target_settings_tags
+    list(APPEND single_value_keywords
       "VST3_SDK_FOLDER"
       "CUSTOM_XCODE_RESOURCE_FOLDERS"
       "EXTRA_FRAMEWORKS"
@@ -511,200 +511,225 @@ function(jucer_export_target exporter)
     )
 
     if(JUCER_PROJECT_TYPE STREQUAL "GUI Application")
-      list(APPEND export_target_settings_tags
+      list(APPEND single_value_keywords
         "DOCUMENT_FILE_EXTENSIONS"
       )
     endif()
   endif()
 
   if(exporter MATCHES "^Visual Studio 201(7|5|3)$")
-    list(APPEND export_target_settings_tags
+    list(APPEND single_value_keywords
       "VST3_SDK_FOLDER"
       "PLATFORM_TOOLSET"
       "USE_IPP_LIBRARY"
     )
 
     if(exporter STREQUAL "Visual Studio 2017")
-      list(APPEND export_target_settings_tags "CXX_STANDARD_TO_USE")
+      list(APPEND single_value_keywords "CXX_STANDARD_TO_USE")
     endif()
   else()
-    list(APPEND export_target_settings_tags "GNU_COMPILER_EXTENSIONS")
+    list(APPEND single_value_keywords "GNU_COMPILER_EXTENSIONS")
   endif()
 
   if(exporter STREQUAL "Linux Makefile")
-    list(APPEND export_target_settings_tags
+    list(APPEND single_value_keywords
       "CXX_STANDARD_TO_USE"
       "PKGCONFIG_LIBRARIES"
     )
   endif()
 
-  unset(tag)
-  foreach(element ${ARGN})
-    if(NOT DEFINED tag)
-      set(tag ${element})
+  _FRUT_parse_arguments("${single_value_keywords}" "${ARGN}")
 
-      if(NOT "${tag}" IN_LIST export_target_settings_tags)
-        message(FATAL_ERROR "Unsupported export target setting: ${tag}\n"
-          "Supported export target settings: ${export_target_settings_tags}"
-        )
-      endif()
-    else()
-      set(value ${element})
+  if(DEFINED _TARGET_PROJECT_FOLDER)
+    set(value ${_TARGET_PROJECT_FOLDER})
+    string(REPLACE "\\" "/" value "${value}")
+    _FRUT_abs_path_based_on_jucer_project_dir("${value}" value)
+    set(JUCER_TARGET_PROJECT_FOLDER ${value} PARENT_SCOPE)
+  endif()
 
-      if(tag STREQUAL "TARGET_PROJECT_FOLDER")
-        string(REPLACE "\\" "/" value "${value}")
-        _FRUT_abs_path_based_on_jucer_project_dir("${value}" value)
-        set(JUCER_TARGET_PROJECT_FOLDER ${value} PARENT_SCOPE)
+  if(DEFINED _VST_SDK_FOLDER)
+    set(value ${_VST_SDK_FOLDER})
+    string(REPLACE "\\" "/" value "${value}")
+    _FRUT_abs_path_based_on_jucer_project_dir("${value}" value)
+    set(JUCER_VST_SDK_FOLDER ${value} PARENT_SCOPE)
+  endif()
 
-      elseif(tag STREQUAL "VST_SDK_FOLDER")
-        string(REPLACE "\\" "/" value "${value}")
-        _FRUT_abs_path_based_on_jucer_project_dir("${value}" value)
-        set(JUCER_VST_SDK_FOLDER ${value} PARENT_SCOPE)
+  if(DEFINED _VST3_SDK_FOLDER)
+    set(value ${_VST3_SDK_FOLDER})
+    string(REPLACE "\\" "/" value "${value}")
+    _FRUT_abs_path_based_on_jucer_project_dir("${value}" value)
+    set(JUCER_VST3_SDK_FOLDER ${value} PARENT_SCOPE)
+  endif()
 
-      elseif(tag STREQUAL "VST3_SDK_FOLDER")
-        string(REPLACE "\\" "/" value "${value}")
-        _FRUT_abs_path_based_on_jucer_project_dir("${value}" value)
-        set(JUCER_VST3_SDK_FOLDER ${value} PARENT_SCOPE)
+  if(DEFINED _EXTRA_PREPROCESSOR_DEFINITIONS)
+    set(value ${_EXTRA_PREPROCESSOR_DEFINITIONS})
+    string(REPLACE "\n" ";" value "${value}")
+    set(JUCER_EXTRA_PREPROCESSOR_DEFINITIONS ${value} PARENT_SCOPE)
+  endif()
 
-      elseif(tag STREQUAL "EXTRA_PREPROCESSOR_DEFINITIONS")
-        string(REPLACE "\n" ";" value "${value}")
-        set(JUCER_EXTRA_PREPROCESSOR_DEFINITIONS ${value} PARENT_SCOPE)
+  if(DEFINED _EXTRA_COMPILER_FLAGS)
+    set(value ${_EXTRA_COMPILER_FLAGS})
+    string(REPLACE "\n" " " value "${value}")
+    string(REPLACE " " ";" value "${value}")
+    set(JUCER_EXTRA_COMPILER_FLAGS ${value} PARENT_SCOPE)
+  endif()
 
-      elseif(tag STREQUAL "EXTRA_COMPILER_FLAGS")
-        string(REPLACE "\n" " " value "${value}")
-        string(REPLACE " " ";" value "${value}")
-        set(JUCER_EXTRA_COMPILER_FLAGS ${value} PARENT_SCOPE)
+  if(DEFINED _EXTRA_LINKER_FLAGS)
+    set(value ${_EXTRA_LINKER_FLAGS})
+    string(REPLACE "\n" " " value "${value}")
+    set(JUCER_EXTRA_LINKER_FLAGS ${value} PARENT_SCOPE)
+  endif()
 
-      elseif(tag STREQUAL "EXTRA_LINKER_FLAGS")
-        string(REPLACE "\n" " " value "${value}")
-        set(JUCER_EXTRA_LINKER_FLAGS ${value} PARENT_SCOPE)
+  if(DEFINED _EXTERNAL_LIBRARIES_TO_LINK)
+    set(value ${_EXTERNAL_LIBRARIES_TO_LINK})
+    string(REPLACE "\n" ";" value "${value}")
+    set(JUCER_EXTERNAL_LIBRARIES_TO_LINK ${value} PARENT_SCOPE)
+  endif()
 
-      elseif(tag STREQUAL "EXTERNAL_LIBRARIES_TO_LINK")
-        string(REPLACE "\n" ";" value "${value}")
-        set(JUCER_EXTERNAL_LIBRARIES_TO_LINK ${value} PARENT_SCOPE)
+  if(DEFINED _GNU_COMPILER_EXTENSIONS)
+    set(value ${_GNU_COMPILER_EXTENSIONS})
+    set(JUCER_GNU_COMPILER_EXTENSIONS ${value} PARENT_SCOPE)
+  endif()
 
-      elseif(tag STREQUAL "GNU_COMPILER_EXTENSIONS")
-        set(JUCER_GNU_COMPILER_EXTENSIONS ${value} PARENT_SCOPE)
-
-      elseif(tag STREQUAL "ICON_SMALL")
-        if(NOT value STREQUAL "<None>")
-          _FRUT_abs_path_based_on_jucer_project_dir("${value}" value)
-          set(JUCER_SMALL_ICON ${value} PARENT_SCOPE)
-        endif()
-
-      elseif(tag STREQUAL "ICON_LARGE")
-        if(NOT value STREQUAL "<None>")
-          _FRUT_abs_path_based_on_jucer_project_dir("${value}" value)
-          set(JUCER_LARGE_ICON ${value} PARENT_SCOPE)
-        endif()
-
-      elseif(tag STREQUAL "CUSTOM_XCODE_RESOURCE_FOLDERS")
-        string(REPLACE "\n" ";" value "${value}")
-        unset(resource_folders)
-        foreach(folder ${value})
-          _FRUT_abs_path_based_on_jucer_project_dir("${folder}" abs_folder)
-          list(APPEND resource_folders "${abs_folder}")
-        endforeach()
-        set(JUCER_CUSTOM_XCODE_RESOURCE_FOLDERS ${resource_folders} PARENT_SCOPE)
-
-      elseif(tag STREQUAL "DOCUMENT_FILE_EXTENSIONS")
-        string(REPLACE "," ";" value "${value}")
-        set(JUCER_DOCUMENT_FILE_EXTENSIONS ${value} PARENT_SCOPE)
-
-      elseif(tag STREQUAL "EXTRA_FRAMEWORKS")
-        string(REPLACE "," ";" value "${value}")
-        string(REPLACE " " "" value "${value}")
-        set(JUCER_EXTRA_FRAMEWORKS ${value} PARENT_SCOPE)
-
-      elseif(tag STREQUAL "CUSTOM_PLIST")
-        set(JUCER_CUSTOM_PLIST "${value}" PARENT_SCOPE)
-
-      elseif(tag STREQUAL "PREBUILD_SHELL_SCRIPT")
-        set(script_content "${value}")
-        configure_file("${Reprojucer_templates_DIR}/script.in" "prebuild.sh" @ONLY)
-        set(JUCER_PREBUILD_SHELL_SCRIPT
-          "${CMAKE_CURRENT_BINARY_DIR}/prebuild.sh" PARENT_SCOPE
-        )
-
-      elseif(tag STREQUAL "POSTBUILD_SHELL_SCRIPT")
-        set(script_content "${value}")
-        configure_file("${Reprojucer_templates_DIR}/script.in" "postbuild.sh" @ONLY)
-        set(JUCER_POSTBUILD_SHELL_SCRIPT
-          "${CMAKE_CURRENT_BINARY_DIR}/postbuild.sh" PARENT_SCOPE
-        )
-
-      elseif(tag STREQUAL "DEVELOPMENT_TEAM_ID")
-        message(WARNING "Reprojucer.cmake doesn't support the setting "
-          "DEVELOPMENT_TEAM_ID (\"Development Team ID\" in Projucer). If you would like "
-          "Reprojucer.cmake to support this setting, please leave a comment on the issue "
-          "\"Reprojucer.cmake doesn't support the setting DEVELOPMENT_TEAM_ID\" on "
-          "GitHub: https://github.com/McMartin/FRUT/issues/251"
-        )
-
-      elseif(tag STREQUAL "PLATFORM_TOOLSET")
-        if((exporter STREQUAL "Visual Studio 2017"
-              AND (value STREQUAL "v140" OR value STREQUAL "v140_xp"
-                OR value STREQUAL "v141" OR value STREQUAL "v141_xp"))
-            OR (exporter STREQUAL "Visual Studio 2015"
-              AND (value STREQUAL "v140" OR value STREQUAL "v140_xp"
-                OR value STREQUAL "CTP_Nov2013"))
-            OR (exporter STREQUAL "Visual Studio 2013"
-              AND (value STREQUAL "v120" OR value STREQUAL "v120_xp"
-                OR value STREQUAL "Windows7" OR value STREQUAL "CTP_Nov2013")))
-          if(NOT value STREQUAL "${CMAKE_VS_PLATFORM_TOOLSET}")
-            message(FATAL_ERROR "You must call `cmake -T ${value}` in order to build with"
-              " the toolset \"${value}\"."
-            )
-          endif()
-        elseif(NOT value STREQUAL "(default)")
-          message(FATAL_ERROR "Unsupported value for PLATFORM_TOOLSET: \"${value}\"")
-        endif()
-
-      elseif(tag STREQUAL "USE_IPP_LIBRARY")
-        set(ipp_library_values
-          "Yes (Default Mode)"
-          "Multi-Threaded Static Library"
-          "Single-Threaded Static Library"
-          "Multi-Threaded DLL"
-          "Single-Threaded DLL"
-        )
-        if("${value}" IN_LIST ipp_library_values)
-          message(WARNING "Reprojucer.cmake doesn't support the setting USE_IPP_LIBRARY "
-            "(\"Use IPP Library\" in Projucer). If you would like Reprojucer.cmake to "
-            "support this setting, please leave a comment on the issue "
-            "\"Reprojucer.cmake doesn't support the setting USE_IPP_LIBRARY\" on GitHub: "
-            "https://github.com/McMartin/FRUT/issues/252"
-          )
-        elseif(NOT value STREQUAL "No")
-          message(FATAL_ERROR "Unsupported value for USE_IPP_LIBRARY: \"${value}\"")
-        endif()
-
-      elseif(tag STREQUAL "CXX_STANDARD_TO_USE"
-          AND exporter STREQUAL "Visual Studio 2017")
-        if(value STREQUAL "C++14")
-          set(JUCER_CXX_STANDARD_TO_USE "14" PARENT_SCOPE)
-        elseif(value STREQUAL "Latest C++ Standard")
-          set(JUCER_CXX_STANDARD_TO_USE "latest" PARENT_SCOPE)
-        elseif(NOT value STREQUAL "(default)")
-          message(FATAL_ERROR "Unsupported value for CXX_STANDARD_TO_USE: \"${value}\"")
-        endif()
-
-      elseif(tag STREQUAL "CXX_STANDARD_TO_USE" AND exporter STREQUAL "Linux Makefile")
-        if(value MATCHES "^C\\+\\+(03|11|14)$")
-          set(JUCER_CXX_STANDARD_TO_USE ${value} PARENT_SCOPE)
-        else()
-          message(FATAL_ERROR "Unsupported value for CXX_STANDARD_TO_USE: \"${value}\"")
-        endif()
-
-      elseif(tag STREQUAL "PKGCONFIG_LIBRARIES")
-        string(REPLACE " " ";" value "${value}")
-        set(JUCER_PKGCONFIG_LIBRARIES ${value} PARENT_SCOPE)
-
-      endif()
-
-      unset(tag)
+  if(DEFINED _ICON_SMALL)
+    set(value ${_ICON_SMALL})
+    if(NOT value STREQUAL "<None>")
+      _FRUT_abs_path_based_on_jucer_project_dir("${value}" value)
+      set(JUCER_SMALL_ICON ${value} PARENT_SCOPE)
     endif()
-  endforeach()
+  endif()
+
+  if(DEFINED _ICON_LARGE)
+    set(value ${_ICON_LARGE})
+    if(NOT value STREQUAL "<None>")
+      _FRUT_abs_path_based_on_jucer_project_dir("${value}" value)
+      set(JUCER_LARGE_ICON ${value} PARENT_SCOPE)
+    endif()
+  endif()
+
+  if(DEFINED _CUSTOM_XCODE_RESOURCE_FOLDERS)
+    set(value ${_CUSTOM_XCODE_RESOURCE_FOLDERS})
+    string(REPLACE "\n" ";" value "${value}")
+    unset(resource_folders)
+    foreach(folder ${value})
+      _FRUT_abs_path_based_on_jucer_project_dir("${folder}" abs_folder)
+      list(APPEND resource_folders "${abs_folder}")
+    endforeach()
+    set(JUCER_CUSTOM_XCODE_RESOURCE_FOLDERS ${resource_folders} PARENT_SCOPE)
+  endif()
+
+  if(DEFINED _DOCUMENT_FILE_EXTENSIONS)
+    set(value ${_DOCUMENT_FILE_EXTENSIONS})
+    string(REPLACE "," ";" value "${value}")
+    set(JUCER_DOCUMENT_FILE_EXTENSIONS ${value} PARENT_SCOPE)
+  endif()
+
+  if(DEFINED _EXTRA_FRAMEWORKS)
+    set(value ${_EXTRA_FRAMEWORKS})
+    string(REPLACE "," ";" value "${value}")
+    string(REPLACE " " "" value "${value}")
+    set(JUCER_EXTRA_FRAMEWORKS ${value} PARENT_SCOPE)
+  endif()
+
+  if(DEFINED _CUSTOM_PLIST)
+    set(value ${_CUSTOM_PLIST})
+    set(JUCER_CUSTOM_PLIST "${value}" PARENT_SCOPE)
+  endif()
+
+  if(DEFINED _PREBUILD_SHELL_SCRIPT)
+    set(value ${_PREBUILD_SHELL_SCRIPT})
+    set(script_content "${value}")
+    configure_file("${Reprojucer_templates_DIR}/script.in" "prebuild.sh" @ONLY)
+    set(JUCER_PREBUILD_SHELL_SCRIPT
+      "${CMAKE_CURRENT_BINARY_DIR}/prebuild.sh" PARENT_SCOPE
+    )
+  endif()
+
+  if(DEFINED _POSTBUILD_SHELL_SCRIPT)
+    set(value ${_POSTBUILD_SHELL_SCRIPT})
+    set(script_content "${value}")
+    configure_file("${Reprojucer_templates_DIR}/script.in" "postbuild.sh" @ONLY)
+    set(JUCER_POSTBUILD_SHELL_SCRIPT
+      "${CMAKE_CURRENT_BINARY_DIR}/postbuild.sh" PARENT_SCOPE
+    )
+  endif()
+
+  if(DEFINED _DEVELOPMENT_TEAM_ID)
+    message(WARNING "Reprojucer.cmake doesn't support the setting "
+      "DEVELOPMENT_TEAM_ID (\"Development Team ID\" in Projucer). If you would like "
+      "Reprojucer.cmake to support this setting, please leave a comment on the issue "
+      "\"Reprojucer.cmake doesn't support the setting DEVELOPMENT_TEAM_ID\" on "
+      "GitHub: https://github.com/McMartin/FRUT/issues/251"
+    )
+  endif()
+
+  if(DEFINED _PLATFORM_TOOLSET)
+    set(value ${_PLATFORM_TOOLSET})
+    if((exporter STREQUAL "Visual Studio 2017"
+          AND (value STREQUAL "v140" OR value STREQUAL "v140_xp"
+            OR value STREQUAL "v141" OR value STREQUAL "v141_xp"))
+        OR (exporter STREQUAL "Visual Studio 2015"
+          AND (value STREQUAL "v140" OR value STREQUAL "v140_xp"
+            OR value STREQUAL "CTP_Nov2013"))
+        OR (exporter STREQUAL "Visual Studio 2013"
+          AND (value STREQUAL "v120" OR value STREQUAL "v120_xp"
+            OR value STREQUAL "Windows7" OR value STREQUAL "CTP_Nov2013")))
+      if(NOT value STREQUAL "${CMAKE_VS_PLATFORM_TOOLSET}")
+        message(FATAL_ERROR "You must call `cmake -T ${value}` in order to build with"
+          " the toolset \"${value}\"."
+        )
+      endif()
+    elseif(NOT value STREQUAL "(default)")
+      message(FATAL_ERROR "Unsupported value for PLATFORM_TOOLSET: \"${value}\"")
+    endif()
+  endif()
+
+  if(DEFINED _USE_IPP_LIBRARY)
+    set(value ${_USE_IPP_LIBRARY})
+    set(ipp_library_values
+      "Yes (Default Mode)"
+      "Multi-Threaded Static Library"
+      "Single-Threaded Static Library"
+      "Multi-Threaded DLL"
+      "Single-Threaded DLL"
+    )
+    if("${value}" IN_LIST ipp_library_values)
+      message(WARNING "Reprojucer.cmake doesn't support the setting USE_IPP_LIBRARY "
+        "(\"Use IPP Library\" in Projucer). If you would like Reprojucer.cmake to "
+        "support this setting, please leave a comment on the issue "
+        "\"Reprojucer.cmake doesn't support the setting USE_IPP_LIBRARY\" on GitHub: "
+        "https://github.com/McMartin/FRUT/issues/252"
+      )
+    elseif(NOT value STREQUAL "No")
+      message(FATAL_ERROR "Unsupported value for USE_IPP_LIBRARY: \"${value}\"")
+    endif()
+  endif()
+
+  if(DEFINED _CXX_STANDARD_TO_USE AND exporter STREQUAL "Visual Studio 2017")
+    set(value ${_CXX_STANDARD_TO_USE})
+    if(value STREQUAL "C++14")
+      set(JUCER_CXX_STANDARD_TO_USE "14" PARENT_SCOPE)
+    elseif(value STREQUAL "Latest C++ Standard")
+      set(JUCER_CXX_STANDARD_TO_USE "latest" PARENT_SCOPE)
+    elseif(NOT value STREQUAL "(default)")
+      message(FATAL_ERROR "Unsupported value for CXX_STANDARD_TO_USE: \"${value}\"")
+    endif()
+  endif()
+
+  if(DEFINED _CXX_STANDARD_TO_USE AND exporter STREQUAL "Linux Makefile")
+    set(value ${_CXX_STANDARD_TO_USE})
+    if(value MATCHES "^C\\+\\+(03|11|14)$")
+      set(JUCER_CXX_STANDARD_TO_USE ${value} PARENT_SCOPE)
+    else()
+      message(FATAL_ERROR "Unsupported value for CXX_STANDARD_TO_USE: \"${value}\"")
+    endif()
+  endif()
+
+  if(DEFINED _PKGCONFIG_LIBRARIES)
+    set(value ${_PKGCONFIG_LIBRARIES})
+    string(REPLACE " " ";" value "${value}")
+    set(JUCER_PKGCONFIG_LIBRARIES ${value} PARENT_SCOPE)
+  endif()
 
 endfunction()
 
