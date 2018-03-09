@@ -508,12 +508,14 @@ function(jucer_export_target exporter)
   if(exporter STREQUAL "Xcode (MacOSX)")
     list(APPEND single_value_keywords
       "VST3_SDK_FOLDER"
-      "CUSTOM_XCODE_RESOURCE_FOLDERS"
       "EXTRA_FRAMEWORKS"
       "CUSTOM_PLIST"
       "PREBUILD_SHELL_SCRIPT"
       "POSTBUILD_SHELL_SCRIPT"
       "DEVELOPMENT_TEAM_ID"
+    )
+    list(APPEND multi_value_keywords
+      "CUSTOM_XCODE_RESOURCE_FOLDERS"
     )
 
     if(JUCER_PROJECT_TYPE STREQUAL "GUI Application")
@@ -607,10 +609,8 @@ function(jucer_export_target exporter)
   endif()
 
   if(DEFINED _CUSTOM_XCODE_RESOURCE_FOLDERS)
-    set(value ${_CUSTOM_XCODE_RESOURCE_FOLDERS})
-    string(REPLACE "\n" ";" value "${value}")
     unset(resource_folders)
-    foreach(folder ${value})
+    foreach(folder ${_CUSTOM_XCODE_RESOURCE_FOLDERS})
       _FRUT_abs_path_based_on_jucer_project_dir("${folder}" abs_folder)
       list(APPEND resource_folders "${abs_folder}")
     endforeach()

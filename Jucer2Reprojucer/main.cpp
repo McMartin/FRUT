@@ -793,8 +793,8 @@ int main(int argc, char* argv[])
 
       if (exporterType == "XCODE_MAC")
       {
-        convertSettingIfDefined(exporter, "customXcodeResourceFolders",
-                                "CUSTOM_XCODE_RESOURCE_FOLDERS", {});
+        convertSettingAsListIfDefined(exporter, "customXcodeResourceFolders",
+                                      "CUSTOM_XCODE_RESOURCE_FOLDERS", {});
 
         if (projectType == "guiapp")
         {
