@@ -519,7 +519,7 @@ function(jucer_export_target exporter)
     )
 
     if(JUCER_PROJECT_TYPE STREQUAL "GUI Application")
-      list(APPEND single_value_keywords
+      list(APPEND multi_value_keywords
         "DOCUMENT_FILE_EXTENSIONS"
       )
     endif()
@@ -618,9 +618,7 @@ function(jucer_export_target exporter)
   endif()
 
   if(DEFINED _DOCUMENT_FILE_EXTENSIONS)
-    set(value ${_DOCUMENT_FILE_EXTENSIONS})
-    string(REPLACE "," ";" value "${value}")
-    set(JUCER_DOCUMENT_FILE_EXTENSIONS ${value} PARENT_SCOPE)
+    set(JUCER_DOCUMENT_FILE_EXTENSIONS ${_DOCUMENT_FILE_EXTENSIONS} PARENT_SCOPE)
   endif()
 
   if(DEFINED _EXTRA_FRAMEWORKS)

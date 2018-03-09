@@ -798,8 +798,11 @@ int main(int argc, char* argv[])
 
         if (projectType == "guiapp")
         {
-          convertSettingIfDefined(exporter, "documentExtensions",
-                                  "DOCUMENT_FILE_EXTENSIONS", {});
+          convertSettingAsListIfDefined(
+            exporter, "documentExtensions", "DOCUMENT_FILE_EXTENSIONS",
+            [](const juce::var& v) {
+              return juce::StringArray::fromTokens(v.toString(), ",", {});
+            });
         }
 
         convertSettingIfDefined(exporter, "customPList", "CUSTOM_PLIST", {});

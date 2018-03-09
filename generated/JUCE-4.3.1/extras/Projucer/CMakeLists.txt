@@ -441,7 +441,8 @@ jucer_export_target(
   # EXTRA_LINKER_FLAGS
   ICON_SMALL "<None>"
   ICON_LARGE "Source/BinaryData/juce_icon.png"
-  DOCUMENT_FILE_EXTENSIONS ".jucer"
+  DOCUMENT_FILE_EXTENSIONS
+    ".jucer"
   CUSTOM_PLIST "<plist>
 <dict>
 	<key>NSAppTransportSecurity</key>

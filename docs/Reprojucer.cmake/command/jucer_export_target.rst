@@ -24,7 +24,7 @@ Define the settings specific to an export target.
     [ICON_LARGE <icon_file>]
 
     [CUSTOM_XCODE_RESOURCE_FOLDERS <xcode_resource_folder> [<xcode_resource_folders> ...]]
-    [DOCUMENT_FILE_EXTENSIONS <file_extensions>]
+    [DOCUMENT_FILE_EXTENSIONS <file_extension> [<file_extension> ...]]
     [CUSTOM_PLIST <plist_content>]
     [EXTRA_FRAMEWORKS <osx_frameworks>]
     [PREBUILD_SHELL_SCRIPT <shell_script_content>]
