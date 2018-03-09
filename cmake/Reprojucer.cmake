@@ -763,7 +763,7 @@ function(jucer_export_target_configuration
 
   set(JUCER_CONFIGURATION_IS_DEBUG_${config} ${is_debug} PARENT_SCOPE)
 
-  set(configuration_settings_tags
+  set(single_value_keywords
     "BINARY_NAME"
     "BINARY_LOCATION"
     "HEADER_SEARCH_PATHS"
@@ -773,7 +773,7 @@ function(jucer_export_target_configuration
   )
 
   if(exporter STREQUAL "Xcode (MacOSX)")
-    list(APPEND configuration_settings_tags
+    list(APPEND single_value_keywords
       "VST_BINARY_LOCATION"
       "VST3_BINARY_LOCATION"
       "AU_BINARY_LOCATION"
@@ -791,7 +791,7 @@ function(jucer_export_target_configuration
   endif()
 
   if(exporter MATCHES "^Visual Studio 201(7|5|3)$")
-    list(APPEND configuration_settings_tags
+    list(APPEND single_value_keywords
       "WARNING_LEVEL"
       "TREAT_WARNINGS_AS_ERRORS"
       "RUNTIME_LIBRARY"
@@ -807,309 +807,351 @@ function(jucer_export_target_configuration
   endif()
 
   if(exporter STREQUAL "Linux Makefile")
-    list(APPEND configuration_settings_tags
+    list(APPEND single_value_keywords
       "ARCHITECTURE"
     )
   endif()
 
-  unset(tag)
-  foreach(element ${ARGN})
-    if(NOT DEFINED tag)
-      set(tag ${element})
+  _FRUT_parse_arguments("${single_value_keywords}" "${ARGN}")
 
-      if(NOT "${tag}" IN_LIST configuration_settings_tags)
-        message(FATAL_ERROR "Unsupported configuration setting: ${tag}\n"
-          "Supported configuration settings: ${configuration_settings_tags}"
-        )
+  if(DEFINED _BINARY_NAME)
+    set(value ${_BINARY_NAME})
+    set(JUCER_BINARY_NAME_${config} ${value} PARENT_SCOPE)
+  endif()
+
+  if(DEFINED _BINARY_LOCATION)
+    set(value ${_BINARY_LOCATION})
+    get_filename_component(abs_path "${value}" ABSOLUTE)
+    set(JUCER_BINARY_LOCATION_${config} ${abs_path} PARENT_SCOPE)
+  endif()
+
+  if(DEFINED _HEADER_SEARCH_PATHS)
+    set(value ${_HEADER_SEARCH_PATHS})
+    string(REPLACE "\\" "/" value "${value}")
+    string(REPLACE "\n" ";" value "${value}")
+    unset(header_search_paths)
+    foreach(path ${value})
+      _FRUT_abs_path_based_on_jucer_project_dir("${path}" path)
+      list(APPEND header_search_paths "${path}")
+    endforeach()
+    set(JUCER_HEADER_SEARCH_PATHS_${config} ${header_search_paths} PARENT_SCOPE)
+  endif()
+
+  if(DEFINED _EXTRA_LIBRARY_SEARCH_PATHS)
+    set(value ${_EXTRA_LIBRARY_SEARCH_PATHS})
+    string(REPLACE "\\" "/" value "${value}")
+    string(REPLACE "\n" ";" value "${value}")
+    unset(library_search_paths)
+    foreach(path ${value})
+      _FRUT_abs_path_based_on_jucer_project_dir("${path}" path)
+      list(APPEND library_search_paths "${path}")
+    endforeach()
+    set(JUCER_EXTRA_LIBRARY_SEARCH_PATHS_${config}
+      ${library_search_paths} PARENT_SCOPE
+    )
+  endif()
+
+  if(DEFINED _PREPROCESSOR_DEFINITIONS)
+    set(value ${_PREPROCESSOR_DEFINITIONS})
+    string(REPLACE "\n" ";" value "${value}")
+    set(JUCER_PREPROCESSOR_DEFINITIONS_${config} ${value} PARENT_SCOPE)
+  endif()
+
+  if(DEFINED _OPTIMISATION)
+    set(value ${_OPTIMISATION})
+    if(exporter MATCHES "^Visual Studio 201(7|5|3)$")
+      if(value STREQUAL "No optimisation")
+        set(optimisation_flag "/Od")
+      elseif(value STREQUAL "Minimise size")
+        set(optimisation_flag "/O1")
+      elseif(value STREQUAL "Maximise speed")
+        set(optimisation_flag "/Ox")
+      else()
+        message(FATAL_ERROR "Unsupported value for OPTIMISATION: \"${value}\"")
       endif()
     else()
-      set(value ${element})
-
-      if(tag STREQUAL "BINARY_NAME")
-        set(JUCER_BINARY_NAME_${config} ${value} PARENT_SCOPE)
-
-      elseif(tag STREQUAL "BINARY_LOCATION")
-        get_filename_component(abs_path "${value}" ABSOLUTE)
-        set(JUCER_BINARY_LOCATION_${config} ${abs_path} PARENT_SCOPE)
-
-      elseif(tag STREQUAL "HEADER_SEARCH_PATHS")
-        string(REPLACE "\\" "/" value "${value}")
-        string(REPLACE "\n" ";" value "${value}")
-        unset(header_search_paths)
-        foreach(path ${value})
-          _FRUT_abs_path_based_on_jucer_project_dir("${path}" path)
-          list(APPEND header_search_paths "${path}")
-        endforeach()
-        set(JUCER_HEADER_SEARCH_PATHS_${config} ${header_search_paths} PARENT_SCOPE)
-
-      elseif(tag STREQUAL "EXTRA_LIBRARY_SEARCH_PATHS")
-        string(REPLACE "\\" "/" value "${value}")
-        string(REPLACE "\n" ";" value "${value}")
-        unset(library_search_paths)
-        foreach(path ${value})
-          _FRUT_abs_path_based_on_jucer_project_dir("${path}" path)
-          list(APPEND library_search_paths "${path}")
-        endforeach()
-        set(JUCER_EXTRA_LIBRARY_SEARCH_PATHS_${config}
-          ${library_search_paths} PARENT_SCOPE
-        )
-
-      elseif(tag STREQUAL "PREPROCESSOR_DEFINITIONS")
-        string(REPLACE "\n" ";" value "${value}")
-        set(JUCER_PREPROCESSOR_DEFINITIONS_${config} ${value} PARENT_SCOPE)
-
-      elseif(tag STREQUAL "OPTIMISATION")
-        if(exporter MATCHES "^Visual Studio 201(7|5|3)$")
-          if(value STREQUAL "No optimisation")
-            set(optimisation_flag "/Od")
-          elseif(value STREQUAL "Minimise size")
-            set(optimisation_flag "/O1")
-          elseif(value STREQUAL "Maximise speed")
-            set(optimisation_flag "/Ox")
-          else()
-            message(FATAL_ERROR "Unsupported value for OPTIMISATION: \"${value}\"")
-          endif()
-        else()
-          if(value STREQUAL "-O0 (no optimisation)")
-            set(optimisation_flag "-O0")
-          elseif(value STREQUAL "-Os (minimise code size)")
-            set(optimisation_flag "-Os")
-          elseif(value STREQUAL "-O3 (fastest with safe optimisations)")
-            set(optimisation_flag "-O3")
-          elseif(value STREQUAL "-O1 (fast)")
-            set(optimisation_flag "-O1")
-          elseif(value STREQUAL "-O2 (faster)")
-            set(optimisation_flag "-O2")
-          elseif(value STREQUAL "-Ofast (uses aggressive optimisations)")
-            set(optimisation_flag "-Ofast")
-          else()
-            message(FATAL_ERROR "Unsupported value for OPTIMISATION: \"${value}\"")
-          endif()
-        endif()
-        set(JUCER_OPTIMISATION_FLAG_${config} ${optimisation_flag} PARENT_SCOPE)
-
-      elseif(tag STREQUAL "VST_BINARY_LOCATION")
-        set(JUCER_VST_BINARY_LOCATION_${config} ${value} PARENT_SCOPE)
-
-      elseif(tag STREQUAL "VST3_BINARY_LOCATION")
-        set(JUCER_VST3_BINARY_LOCATION_${config} ${value} PARENT_SCOPE)
-
-      elseif(tag STREQUAL "AU_BINARY_LOCATION")
-        set(JUCER_AU_BINARY_LOCATION_${config} ${value} PARENT_SCOPE)
-
-      elseif(tag STREQUAL "OSX_BASE_SDK_VERSION")
-        if(value MATCHES "^10\\.([5-9]|10|11|12) SDK$")
-          set(JUCER_OSX_BASE_SDK_VERSION_${config} "10.${CMAKE_MATCH_1}" PARENT_SCOPE)
-        elseif(NOT value STREQUAL "Use Default")
-          message(FATAL_ERROR "Unsupported value for OSX_BASE_SDK_VERSION: \"${value}\"")
-        endif()
-
-      elseif(tag STREQUAL "OSX_DEPLOYMENT_TARGET")
-        if(value MATCHES "^10\\.([5-9]|10|11|12)$")
-          set(JUCER_OSX_DEPLOYMENT_TARGET_${config} "10.${CMAKE_MATCH_1}" PARENT_SCOPE)
-        elseif(NOT value STREQUAL "Use Default")
-          message(FATAL_ERROR "Unsupported value for OSX_DEPLOYMENT_TARGET: \"${value}\"")
-        endif()
-
-      elseif(tag STREQUAL "OSX_ARCHITECTURE")
-        if(value STREQUAL "Native architecture of build machine")
-          if(CMAKE_GENERATOR STREQUAL "Xcode")
-            set(osx_architectures "$(NATIVE_ARCH_ACTUAL)")
-          else()
-            # Consider as default
-            set(osx_architectures)
-          endif()
-        elseif(value STREQUAL "Universal Binary (32-bit)")
-          if(CMAKE_GENERATOR STREQUAL "Xcode")
-            set(osx_architectures "$(ARCHS_STANDARD_32_BIT)")
-          else()
-            set(osx_architectures "i386")
-          endif()
-        elseif(value STREQUAL "Universal Binary (32/64-bit)")
-          if(CMAKE_GENERATOR STREQUAL "Xcode")
-            set(osx_architectures "$(ARCHS_STANDARD_32_64_BIT)")
-          else()
-            set(osx_architectures "x86_64" "i386")
-          endif()
-        elseif(value STREQUAL "64-bit Intel")
-          if(CMAKE_GENERATOR STREQUAL "Xcode")
-            set(osx_architectures "$(ARCHS_STANDARD_64_BIT)")
-          else()
-            set(osx_architectures "x86_64")
-          endif()
-        elseif(NOT value STREQUAL "Use Default")
-          message(FATAL_ERROR "Unsupported value for OSX_ARCHITECTURE: \"${value}\"")
-        endif()
-        if(DEFINED osx_architectures)
-          set(JUCER_OSX_ARCHITECTURES_${config} "${osx_architectures}" PARENT_SCOPE)
-        endif()
-
-      elseif(tag STREQUAL "CUSTOM_XCODE_FLAGS")
-        if(NOT CMAKE_GENERATOR STREQUAL "Xcode")
-          message(WARNING "CUSTOM_XCODE_FLAGS is only supported when using the Xcode "
-            "generator. You should call `cmake -G Xcode`."
-          )
-        endif()
-        string(REGEX REPLACE ", *" ";" value "${value}")
-        set(JUCER_CUSTOM_XCODE_FLAGS_${config} ${value} PARENT_SCOPE)
-
-      elseif(tag STREQUAL "CXX_LANGUAGE_STANDARD")
-        if(value MATCHES "^(C|GNU)\\+\\+98$"
-            AND DEFINED JUCER_VERSION AND JUCER_VERSION VERSION_LESS 5)
-          set(JUCER_CXX_LANGUAGE_STANDARD_${config} ${value} PARENT_SCOPE)
-        elseif(value MATCHES "^(C|GNU)\\+\\+(11|14)$")
-          set(JUCER_CXX_LANGUAGE_STANDARD_${config} ${value} PARENT_SCOPE)
-        elseif(NOT value STREQUAL "Use Default")
-          message(FATAL_ERROR "Unsupported value for CXX_LANGUAGE_STANDARD: \"${value}\"")
-        endif()
-
-      elseif(tag STREQUAL "CXX_LIBRARY")
-        if(value STREQUAL "LLVM libc++")
-          set(JUCER_CXX_LIBRARY_${config} "libc++" PARENT_SCOPE)
-        elseif(value STREQUAL "GNU libstdc++")
-          set(JUCER_CXX_LIBRARY_${config} "libstdc++" PARENT_SCOPE)
-        elseif(NOT value STREQUAL "Use Default")
-          message(FATAL_ERROR "Unsupported value for CXX_LIBRARY: \"${value}\"")
-        endif()
-
-      elseif(tag STREQUAL "CODE_SIGNING_IDENTITY")
-        if(NOT CMAKE_GENERATOR STREQUAL "Xcode")
-          message(WARNING "CODE_SIGNING_IDENTITY is only supported when using the Xcode "
-            "generator. You should call `cmake -G Xcode`."
-          )
-        endif()
-        set(JUCER_CODE_SIGNING_IDENTITY_${config} ${value} PARENT_SCOPE)
-
-      elseif(tag STREQUAL "RELAX_IEEE_COMPLIANCE")
-        set(JUCER_RELAX_IEEE_COMPLIANCE_${config} ${value} PARENT_SCOPE)
-
-      elseif(tag STREQUAL "LINK_TIME_OPTIMISATION")
-        set(JUCER_LINK_TIME_OPTIMISATION_${config} ${value} PARENT_SCOPE)
-
-      elseif(tag STREQUAL "STRIP_LOCAL_SYMBOLS")
-        set(JUCER_STRIP_LOCAL_SYMBOLS_${config} ${value} PARENT_SCOPE)
-
-      elseif(tag STREQUAL "WARNING_LEVEL")
-        if(value STREQUAL "Low")
-          set(level 2)
-        elseif(value STREQUAL "Medium")
-          set(level 3)
-        elseif(value STREQUAL "High")
-          set(level 4)
-        else()
-          message(FATAL_ERROR "Unsupported value for WARNING_LEVEL: \"${value}\"")
-        endif()
-        set(JUCER_WARNING_LEVEL_FLAG_${config} "/W${level}" PARENT_SCOPE)
-
-      elseif(tag STREQUAL "TREAT_WARNINGS_AS_ERRORS")
-        set(JUCER_TREAT_WARNINGS_AS_ERRORS_${config} ${value} PARENT_SCOPE)
-
-      elseif(tag STREQUAL "RUNTIME_LIBRARY")
-        if(value STREQUAL "Use DLL runtime")
-          if(is_debug)
-            set(flag "/MDd")
-          else()
-            set(flag "/MD")
-          endif()
-        elseif(value STREQUAL "Use static runtime")
-          if(is_debug)
-            set(flag "/MTd")
-          else()
-            set(flag "/MT")
-          endif()
-        elseif(NOT value STREQUAL "(Default)")
-          message(FATAL_ERROR "Unsupported value for RUNTIME_LIBRARY: \"${value}\"")
-        endif()
-        set(JUCER_RUNTIME_LIBRARY_FLAG_${config} ${flag} PARENT_SCOPE)
-
-      elseif(tag STREQUAL "WHOLE_PROGRAM_OPTIMISATION")
-        if(value STREQUAL "Always disable")
-          set(JUCER_ALWAYS_DISABLE_WPO_${config} TRUE PARENT_SCOPE)
-        elseif(NOT value STREQUAL "Enable when possible")
-          message(FATAL_ERROR
-            "Unsupported value for WHOLE_PROGRAM_OPTIMISATION: \"${value}\""
-          )
-        endif()
-
-      elseif(tag STREQUAL "INCREMENTAL_LINKING")
-        set(JUCER_INCREMENTAL_LINKING_${config} ${value} PARENT_SCOPE)
-
-      elseif(tag STREQUAL "PREBUILD_COMMAND")
-        set(script_content "${value}")
-        configure_file("${Reprojucer_templates_DIR}/script.in"
-          "prebuild_${config}.cmd" @ONLY
-        )
-        set(JUCER_PREBUILD_COMMAND_${config}
-          "${CMAKE_CURRENT_BINARY_DIR}/prebuild_${config}.cmd" PARENT_SCOPE
-        )
-
-      elseif(tag STREQUAL "POSTBUILD_COMMAND")
-        set(script_content "${value}")
-        configure_file("${Reprojucer_templates_DIR}/script.in"
-          "postbuild_${config}.cmd" @ONLY
-        )
-        set(JUCER_POSTBUILD_COMMAND_${config}
-          "${CMAKE_CURRENT_BINARY_DIR}/postbuild_${config}.cmd" PARENT_SCOPE
-        )
-
-      elseif(tag STREQUAL "GENERATE_MANIFEST")
-        set(JUCER_GENERATE_MANIFEST_${config} ${value} PARENT_SCOPE)
-
-      elseif(tag STREQUAL "CHARACTER_SET")
-        set(character_sets "Default" "MultiByte" "Unicode")
-        if("${value}" IN_LIST character_sets)
-          set(JUCER_CHARACTER_SET_${config} ${value} PARENT_SCOPE)
-        else()
-          message(FATAL_ERROR "Unsupported value for CHARACTER_SET: \"${value}\"")
-        endif()
-
-      elseif(tag STREQUAL "ARCHITECTURE"
-          AND exporter MATCHES "^Visual Studio 201(7|5|3)$")
-        if(value STREQUAL "32-bit")
-          set(wants_x64 FALSE)
-        elseif(value STREQUAL "x64")
-          set(wants_x64 TRUE)
-        else()
-          message(FATAL_ERROR "Unsupported value for ARCHITECTURE: \"${value}\"")
-        endif()
-        if(CMAKE_GENERATOR_PLATFORM STREQUAL "x64" OR CMAKE_GENERATOR MATCHES "Win64")
-          set(is_x64 TRUE)
-        else()
-          set(is_x64 FALSE)
-        endif()
-        if(wants_x64 AND NOT is_x64)
-          message(FATAL_ERROR "You must call `cmake -G\"${CMAKE_GENERATOR} Win64\"` or "
-            "`cmake -G\"${CMAKE_GENERATOR}\" -A x64` in order to build for 64-bit."
-          )
-        elseif(NOT wants_x64 AND is_x64)
-          string(FIND "${CMAKE_GENERATOR}" " Win64" length REVERSE)
-          string(SUBSTRING "${CMAKE_GENERATOR}" 0 ${length} 32_bit_generator)
-          message(FATAL_ERROR "You must call `cmake -G\"${32_bit_generator}\"` or "
-            "`cmake -G\"${32_bit_generator}\" -A Win32` in order to build for 32-bit."
-          )
-        endif()
-
-      elseif(tag STREQUAL "ARCHITECTURE" AND exporter STREQUAL "Linux Makefile")
-        if(value STREQUAL "(Default)")
-          set(architecture_flag "-march=native")
-        elseif(value STREQUAL "32-bit (-m32)")
-          set(architecture_flag "-m32")
-        elseif(value STREQUAL "64-bit (-m64)")
-          set(architecture_flag "-m64")
-        elseif(value STREQUAL "ARM v6")
-          set(architecture_flag "-march=armv6")
-        elseif(value STREQUAL "ARM v7")
-          set(architecture_flag "-march=armv7")
-        elseif(NOT value STREQUAL "<None>")
-          message(FATAL_ERROR "Unsupported value for ARCHITECTURE: \"${value}\"")
-        endif()
-        set(JUCER_ARCHITECTURE_FLAG_${config} ${architecture_flag} PARENT_SCOPE)
-
+      if(value STREQUAL "-O0 (no optimisation)")
+        set(optimisation_flag "-O0")
+      elseif(value STREQUAL "-Os (minimise code size)")
+        set(optimisation_flag "-Os")
+      elseif(value STREQUAL "-O3 (fastest with safe optimisations)")
+        set(optimisation_flag "-O3")
+      elseif(value STREQUAL "-O1 (fast)")
+        set(optimisation_flag "-O1")
+      elseif(value STREQUAL "-O2 (faster)")
+        set(optimisation_flag "-O2")
+      elseif(value STREQUAL "-Ofast (uses aggressive optimisations)")
+        set(optimisation_flag "-Ofast")
+      else()
+        message(FATAL_ERROR "Unsupported value for OPTIMISATION: \"${value}\"")
       endif()
-
-      unset(tag)
     endif()
-  endforeach()
+    set(JUCER_OPTIMISATION_FLAG_${config} ${optimisation_flag} PARENT_SCOPE)
+  endif()
+
+  if(DEFINED _VST_BINARY_LOCATION)
+    set(value ${_VST_BINARY_LOCATION})
+    set(JUCER_VST_BINARY_LOCATION_${config} ${value} PARENT_SCOPE)
+  endif()
+
+  if(DEFINED _VST3_BINARY_LOCATION)
+    set(value ${_VST3_BINARY_LOCATION})
+    set(JUCER_VST3_BINARY_LOCATION_${config} ${value} PARENT_SCOPE)
+  endif()
+
+  if(DEFINED _AU_BINARY_LOCATION)
+    set(value ${_AU_BINARY_LOCATION})
+    set(JUCER_AU_BINARY_LOCATION_${config} ${value} PARENT_SCOPE)
+  endif()
+
+  if(DEFINED _OSX_BASE_SDK_VERSION)
+    set(value ${_OSX_BASE_SDK_VERSION})
+    if(value MATCHES "^10\\.([5-9]|10|11|12) SDK$")
+      set(JUCER_OSX_BASE_SDK_VERSION_${config} "10.${CMAKE_MATCH_1}" PARENT_SCOPE)
+    elseif(NOT value STREQUAL "Use Default")
+      message(FATAL_ERROR "Unsupported value for OSX_BASE_SDK_VERSION: \"${value}\"")
+    endif()
+  endif()
+
+  if(DEFINED _OSX_DEPLOYMENT_TARGET)
+    set(value ${_OSX_DEPLOYMENT_TARGET})
+    if(value MATCHES "^10\\.([5-9]|10|11|12)$")
+      set(JUCER_OSX_DEPLOYMENT_TARGET_${config} "10.${CMAKE_MATCH_1}" PARENT_SCOPE)
+    elseif(NOT value STREQUAL "Use Default")
+      message(FATAL_ERROR "Unsupported value for OSX_DEPLOYMENT_TARGET: \"${value}\"")
+    endif()
+  endif()
+
+  if(DEFINED _OSX_ARCHITECTURE)
+    set(value ${_OSX_ARCHITECTURE})
+    if(value STREQUAL "Native architecture of build machine")
+      if(CMAKE_GENERATOR STREQUAL "Xcode")
+        set(osx_architectures "$(NATIVE_ARCH_ACTUAL)")
+      else()
+        # Consider as default
+        set(osx_architectures)
+      endif()
+    elseif(value STREQUAL "Universal Binary (32-bit)")
+      if(CMAKE_GENERATOR STREQUAL "Xcode")
+        set(osx_architectures "$(ARCHS_STANDARD_32_BIT)")
+      else()
+        set(osx_architectures "i386")
+      endif()
+    elseif(value STREQUAL "Universal Binary (32/64-bit)")
+      if(CMAKE_GENERATOR STREQUAL "Xcode")
+        set(osx_architectures "$(ARCHS_STANDARD_32_64_BIT)")
+      else()
+        set(osx_architectures "x86_64" "i386")
+      endif()
+    elseif(value STREQUAL "64-bit Intel")
+      if(CMAKE_GENERATOR STREQUAL "Xcode")
+        set(osx_architectures "$(ARCHS_STANDARD_64_BIT)")
+      else()
+        set(osx_architectures "x86_64")
+      endif()
+    elseif(NOT value STREQUAL "Use Default")
+      message(FATAL_ERROR "Unsupported value for OSX_ARCHITECTURE: \"${value}\"")
+    endif()
+    if(DEFINED osx_architectures)
+      set(JUCER_OSX_ARCHITECTURES_${config} "${osx_architectures}" PARENT_SCOPE)
+    endif()
+  endif()
+
+  if(DEFINED _CUSTOM_XCODE_FLAGS)
+    set(value ${_CUSTOM_XCODE_FLAGS})
+    if(NOT CMAKE_GENERATOR STREQUAL "Xcode")
+      message(WARNING "CUSTOM_XCODE_FLAGS is only supported when using the Xcode "
+        "generator. You should call `cmake -G Xcode`."
+      )
+    endif()
+    string(REGEX REPLACE ", *" ";" value "${value}")
+    set(JUCER_CUSTOM_XCODE_FLAGS_${config} ${value} PARENT_SCOPE)
+  endif()
+
+  if(DEFINED _CXX_LANGUAGE_STANDARD)
+    set(value ${_CXX_LANGUAGE_STANDARD})
+    if(value MATCHES "^(C|GNU)\\+\\+98$"
+        AND DEFINED JUCER_VERSION AND JUCER_VERSION VERSION_LESS 5)
+      set(JUCER_CXX_LANGUAGE_STANDARD_${config} ${value} PARENT_SCOPE)
+    elseif(value MATCHES "^(C|GNU)\\+\\+(11|14)$")
+      set(JUCER_CXX_LANGUAGE_STANDARD_${config} ${value} PARENT_SCOPE)
+    elseif(NOT value STREQUAL "Use Default")
+      message(FATAL_ERROR "Unsupported value for CXX_LANGUAGE_STANDARD: \"${value}\"")
+    endif()
+  endif()
+
+  if(DEFINED _CXX_LIBRARY)
+    set(value ${_CXX_LIBRARY})
+    if(value STREQUAL "LLVM libc++")
+      set(JUCER_CXX_LIBRARY_${config} "libc++" PARENT_SCOPE)
+    elseif(value STREQUAL "GNU libstdc++")
+      set(JUCER_CXX_LIBRARY_${config} "libstdc++" PARENT_SCOPE)
+    elseif(NOT value STREQUAL "Use Default")
+      message(FATAL_ERROR "Unsupported value for CXX_LIBRARY: \"${value}\"")
+    endif()
+  endif()
+
+  if(DEFINED _CODE_SIGNING_IDENTITY)
+    set(value ${_CODE_SIGNING_IDENTITY})
+    if(NOT CMAKE_GENERATOR STREQUAL "Xcode")
+      message(WARNING "CODE_SIGNING_IDENTITY is only supported when using the Xcode "
+        "generator. You should call `cmake -G Xcode`."
+      )
+    endif()
+    set(JUCER_CODE_SIGNING_IDENTITY_${config} ${value} PARENT_SCOPE)
+  endif()
+
+  if(DEFINED _RELAX_IEEE_COMPLIANCE)
+    set(value ${_RELAX_IEEE_COMPLIANCE})
+    set(JUCER_RELAX_IEEE_COMPLIANCE_${config} ${value} PARENT_SCOPE)
+  endif()
+
+  if(DEFINED _LINK_TIME_OPTIMISATION)
+    set(value ${_LINK_TIME_OPTIMISATION})
+    set(JUCER_LINK_TIME_OPTIMISATION_${config} ${value} PARENT_SCOPE)
+  endif()
+
+  if(DEFINED _STRIP_LOCAL_SYMBOLS)
+    set(value ${_STRIP_LOCAL_SYMBOLS})
+    set(JUCER_STRIP_LOCAL_SYMBOLS_${config} ${value} PARENT_SCOPE)
+  endif()
+
+  if(DEFINED _WARNING_LEVEL)
+    set(value ${_WARNING_LEVEL})
+    if(value STREQUAL "Low")
+      set(level 2)
+    elseif(value STREQUAL "Medium")
+      set(level 3)
+    elseif(value STREQUAL "High")
+      set(level 4)
+    else()
+      message(FATAL_ERROR "Unsupported value for WARNING_LEVEL: \"${value}\"")
+    endif()
+    set(JUCER_WARNING_LEVEL_FLAG_${config} "/W${level}" PARENT_SCOPE)
+  endif()
+
+  if(DEFINED _TREAT_WARNINGS_AS_ERRORS)
+    set(value ${_TREAT_WARNINGS_AS_ERRORS})
+    set(JUCER_TREAT_WARNINGS_AS_ERRORS_${config} ${value} PARENT_SCOPE)
+  endif()
+
+  if(DEFINED _RUNTIME_LIBRARY)
+    set(value ${_RUNTIME_LIBRARY})
+    if(value STREQUAL "Use DLL runtime")
+      if(is_debug)
+        set(flag "/MDd")
+      else()
+        set(flag "/MD")
+      endif()
+    elseif(value STREQUAL "Use static runtime")
+      if(is_debug)
+        set(flag "/MTd")
+      else()
+        set(flag "/MT")
+      endif()
+    elseif(NOT value STREQUAL "(Default)")
+      message(FATAL_ERROR "Unsupported value for RUNTIME_LIBRARY: \"${value}\"")
+    endif()
+    set(JUCER_RUNTIME_LIBRARY_FLAG_${config} ${flag} PARENT_SCOPE)
+  endif()
+
+  if(DEFINED _WHOLE_PROGRAM_OPTIMISATION)
+    set(value ${_WHOLE_PROGRAM_OPTIMISATION})
+    if(value STREQUAL "Always disable")
+      set(JUCER_ALWAYS_DISABLE_WPO_${config} TRUE PARENT_SCOPE)
+    elseif(NOT value STREQUAL "Enable when possible")
+      message(FATAL_ERROR
+        "Unsupported value for WHOLE_PROGRAM_OPTIMISATION: \"${value}\""
+      )
+    endif()
+  endif()
+
+  if(DEFINED _INCREMENTAL_LINKING)
+    set(value ${_INCREMENTAL_LINKING})
+    set(JUCER_INCREMENTAL_LINKING_${config} ${value} PARENT_SCOPE)
+  endif()
+
+  if(DEFINED _PREBUILD_COMMAND)
+    set(value ${_PREBUILD_COMMAND})
+    set(script_content "${value}")
+    configure_file("${Reprojucer_templates_DIR}/script.in"
+      "prebuild_${config}.cmd" @ONLY
+    )
+    set(JUCER_PREBUILD_COMMAND_${config}
+      "${CMAKE_CURRENT_BINARY_DIR}/prebuild_${config}.cmd" PARENT_SCOPE
+    )
+  endif()
+
+  if(DEFINED _POSTBUILD_COMMAND)
+    set(value ${_POSTBUILD_COMMAND})
+    set(script_content "${value}")
+    configure_file("${Reprojucer_templates_DIR}/script.in"
+      "postbuild_${config}.cmd" @ONLY
+    )
+    set(JUCER_POSTBUILD_COMMAND_${config}
+      "${CMAKE_CURRENT_BINARY_DIR}/postbuild_${config}.cmd" PARENT_SCOPE
+    )
+  endif()
+
+  if(DEFINED _GENERATE_MANIFEST)
+    set(value ${_GENERATE_MANIFEST})
+    set(JUCER_GENERATE_MANIFEST_${config} ${value} PARENT_SCOPE)
+  endif()
+
+  if(DEFINED _CHARACTER_SET)
+    set(value ${_CHARACTER_SET})
+    set(character_sets "Default" "MultiByte" "Unicode")
+    if("${value}" IN_LIST character_sets)
+      set(JUCER_CHARACTER_SET_${config} ${value} PARENT_SCOPE)
+    else()
+      message(FATAL_ERROR "Unsupported value for CHARACTER_SET: \"${value}\"")
+    endif()
+  endif()
+
+  if(DEFINED _ARCHITECTURE AND exporter MATCHES "^Visual Studio 201(7|5|3)$")
+    set(value ${_ARCHITECTURE})
+    if(value STREQUAL "32-bit")
+      set(wants_x64 FALSE)
+    elseif(value STREQUAL "x64")
+      set(wants_x64 TRUE)
+    else()
+      message(FATAL_ERROR "Unsupported value for ARCHITECTURE: \"${value}\"")
+    endif()
+    if(CMAKE_GENERATOR_PLATFORM STREQUAL "x64" OR CMAKE_GENERATOR MATCHES "Win64")
+      set(is_x64 TRUE)
+    else()
+      set(is_x64 FALSE)
+    endif()
+    if(wants_x64 AND NOT is_x64)
+      message(FATAL_ERROR "You must call `cmake -G\"${CMAKE_GENERATOR} Win64\"` or "
+        "`cmake -G\"${CMAKE_GENERATOR}\" -A x64` in order to build for 64-bit."
+      )
+    elseif(NOT wants_x64 AND is_x64)
+      string(FIND "${CMAKE_GENERATOR}" " Win64" length REVERSE)
+      string(SUBSTRING "${CMAKE_GENERATOR}" 0 ${length} 32_bit_generator)
+      message(FATAL_ERROR "You must call `cmake -G\"${32_bit_generator}\"` or "
+        "`cmake -G\"${32_bit_generator}\" -A Win32` in order to build for 32-bit."
+      )
+    endif()
+  endif()
+
+  if(DEFINED _ARCHITECTURE AND exporter STREQUAL "Linux Makefile")
+    set(value ${_ARCHITECTURE})
+    if(value STREQUAL "(Default)")
+      set(architecture_flag "-march=native")
+    elseif(value STREQUAL "32-bit (-m32)")
+      set(architecture_flag "-m32")
+    elseif(value STREQUAL "64-bit (-m64)")
+      set(architecture_flag "-m64")
+    elseif(value STREQUAL "ARM v6")
+      set(architecture_flag "-march=armv6")
+    elseif(value STREQUAL "ARM v7")
+      set(architecture_flag "-march=armv7")
+    elseif(NOT value STREQUAL "<None>")
+      message(FATAL_ERROR "Unsupported value for ARCHITECTURE: \"${value}\"")
+    endif()
+    set(JUCER_ARCHITECTURE_FLAG_${config} ${architecture_flag} PARENT_SCOPE)
+  endif()
 
 endfunction()
 
