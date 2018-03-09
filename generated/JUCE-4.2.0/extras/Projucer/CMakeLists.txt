@@ -414,7 +414,22 @@ jucer_project_module(
 
 jucer_export_target(
   "Xcode (MacOSX)"
-  EXTRA_COMPILER_FLAGS "-Wall -Wshadow -Wno-missing-field-initializers -Wshadow -Wshorten-64-to-32 -Wstrict-aliasing -Wuninitialized -Wunused-parameter -Wconversion -Wsign-compare -Wint-conversion -Woverloaded-virtual -Wreorder -Wconstant-conversion -Wsign-conversion"
+  EXTRA_COMPILER_FLAGS
+    "-Wall"
+    "-Wshadow"
+    "-Wno-missing-field-initializers"
+    "-Wshadow"
+    "-Wshorten-64-to-32"
+    "-Wstrict-aliasing"
+    "-Wuninitialized"
+    "-Wunused-parameter"
+    "-Wconversion"
+    "-Wsign-compare"
+    "-Wint-conversion"
+    "-Woverloaded-virtual"
+    "-Wreorder"
+    "-Wconstant-conversion"
+    "-Wsign-conversion"
   # EXTRA_LINKER_FLAGS
   ICON_SMALL "<None>"
   ICON_LARGE "Source/BinaryData/juce_icon.png"
@@ -543,7 +558,8 @@ jucer_export_target_configuration(
 
 jucer_export_target(
   "Linux Makefile"
-  EXTRA_COMPILER_FLAGS "-std=c++11"
+  EXTRA_COMPILER_FLAGS
+    "-std=c++11"
   # EXTRA_LINKER_FLAGS
   ICON_SMALL "<None>"
   ICON_LARGE "Source/BinaryData/juce_icon.png"

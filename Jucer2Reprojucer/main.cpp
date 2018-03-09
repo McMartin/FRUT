@@ -757,8 +757,14 @@ int main(int argc, char* argv[])
 
       convertSettingAsListIfDefined(exporter, "extraDefs",
                                     "EXTRA_PREPROCESSOR_DEFINITIONS", {});
-      convertSettingIfDefined(exporter, "extraCompilerFlags", "EXTRA_COMPILER_FLAGS", {});
-      convertSettingIfDefined(exporter, "extraLinkerFlags", "EXTRA_LINKER_FLAGS", {});
+      convertSettingAsListIfDefined(
+        exporter, "extraCompilerFlags", "EXTRA_COMPILER_FLAGS", [](const juce::var& v) {
+          return juce::StringArray::fromTokens(v.toString(), false);
+        });
+      convertSettingAsListIfDefined(
+        exporter, "extraLinkerFlags", "EXTRA_LINKER_FLAGS", [](const juce::var& v) {
+          return juce::StringArray::fromTokens(v.toString(), false);
+        });
       convertSettingIfDefined(exporter, "externalLibraries", "EXTERNAL_LIBRARIES_TO_LINK",
                               {});
 

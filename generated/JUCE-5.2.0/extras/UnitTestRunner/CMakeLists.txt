@@ -185,7 +185,14 @@ jucer_project_module(
 jucer_export_target(
   "Xcode (MacOSX)"
   # EXTRA_PREPROCESSOR_DEFINITIONS
-  EXTRA_COMPILER_FLAGS "-Wall -Wshadow -Wstrict-aliasing -Wconversion -Wsign-compare -Woverloaded-virtual -Wextra-semi"
+  EXTRA_COMPILER_FLAGS
+    "-Wall"
+    "-Wshadow"
+    "-Wstrict-aliasing"
+    "-Wconversion"
+    "-Wsign-compare"
+    "-Woverloaded-virtual"
+    "-Wextra-semi"
 )
 
 jucer_export_target_configuration(

@@ -215,7 +215,15 @@ jucer_export_target_configuration(
 
 jucer_export_target(
   "Xcode (MacOSX)"
-  EXTRA_COMPILER_FLAGS "-std=c++14 -Wall -Wshadow -Wstrict-aliasing -Wconversion -Wsign-compare -Woverloaded-virtual -Wextra-semi"
+  EXTRA_COMPILER_FLAGS
+    "-std=c++14"
+    "-Wall"
+    "-Wshadow"
+    "-Wstrict-aliasing"
+    "-Wconversion"
+    "-Wsign-compare"
+    "-Woverloaded-virtual"
+    "-Wextra-semi"
 )
 
 jucer_export_target_configuration(

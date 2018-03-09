@@ -163,7 +163,14 @@ jucer_project_module(
 jucer_export_target(
   "Xcode (MacOSX)"
   # VST3_SDK_FOLDER
-  EXTRA_COMPILER_FLAGS "-Wall -Wshadow -Wstrict-aliasing -Wconversion -Wsign-compare -Woverloaded-virtual -Wextra-semi"
+  EXTRA_COMPILER_FLAGS
+    "-Wall"
+    "-Wshadow"
+    "-Wstrict-aliasing"
+    "-Wconversion"
+    "-Wsign-compare"
+    "-Woverloaded-virtual"
+    "-Wextra-semi"
 )
 
 jucer_export_target_configuration(

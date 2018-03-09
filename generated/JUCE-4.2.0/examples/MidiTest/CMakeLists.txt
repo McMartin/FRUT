@@ -179,7 +179,20 @@ jucer_export_target_configuration(
 
 jucer_export_target(
   "Xcode (MacOSX)"
-  EXTRA_COMPILER_FLAGS "-std=c++14 -Wreorder -Wconstant-conversion -Wint-conversion -Woverloaded-virtual -Wuninitialized -Wunused-parameter -Wshorten-64-to-32 -Wstrict-aliasing -Wshadow -Wconversion -Wsign-compare -Wsign-conversion"
+  EXTRA_COMPILER_FLAGS
+    "-std=c++14"
+    "-Wreorder"
+    "-Wconstant-conversion"
+    "-Wint-conversion"
+    "-Woverloaded-virtual"
+    "-Wuninitialized"
+    "-Wunused-parameter"
+    "-Wshorten-64-to-32"
+    "-Wstrict-aliasing"
+    "-Wshadow"
+    "-Wconversion"
+    "-Wsign-compare"
+    "-Wsign-conversion"
 )
 
 jucer_export_target_configuration(

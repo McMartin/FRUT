@@ -224,7 +224,14 @@ jucer_project_module(
 
 jucer_export_target(
   "Xcode (MacOSX)"
-  EXTRA_COMPILER_FLAGS "-Wall -Wshadow -Wstrict-aliasing -Wconversion -Wsign-compare -Woverloaded-virtual -Wextra-semi"
+  EXTRA_COMPILER_FLAGS
+    "-Wall"
+    "-Wshadow"
+    "-Wstrict-aliasing"
+    "-Wconversion"
+    "-Wsign-compare"
+    "-Woverloaded-virtual"
+    "-Wextra-semi"
   ICON_LARGE "Resources/juce_icon.png"
   CUSTOM_PLIST "<plist>
 <dict>
@@ -263,7 +270,8 @@ jucer_export_target_configuration(
 
 jucer_export_target(
   "Visual Studio 2013"
-  EXTRA_COMPILER_FLAGS "/FC"
+  EXTRA_COMPILER_FLAGS
+    "/FC"
   ICON_LARGE "Resources/juce_icon.png"
 )
 
@@ -291,7 +299,8 @@ jucer_export_target_configuration(
 
 jucer_export_target(
   "Visual Studio 2015"
-  EXTRA_COMPILER_FLAGS "/FC"
+  EXTRA_COMPILER_FLAGS
+    "/FC"
   ICON_LARGE "Resources/juce_icon.png"
 )
 
@@ -319,7 +328,8 @@ jucer_export_target_configuration(
 
 jucer_export_target(
   "Visual Studio 2017"
-  EXTRA_COMPILER_FLAGS "/FC"
+  EXTRA_COMPILER_FLAGS
+    "/FC"
   ICON_SMALL "<None>"
   ICON_LARGE "Resources/juce_icon.png"
 )

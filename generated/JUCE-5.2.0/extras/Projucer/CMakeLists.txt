@@ -508,7 +508,14 @@ jucer_appconfig_header(
 
 jucer_export_target(
   "Xcode (MacOSX)"
-  EXTRA_COMPILER_FLAGS "-Wall -Wshadow -Wstrict-aliasing -Wconversion -Wsign-compare -Woverloaded-virtual -Wextra-semi"
+  EXTRA_COMPILER_FLAGS
+    "-Wall"
+    "-Wshadow"
+    "-Wstrict-aliasing"
+    "-Wconversion"
+    "-Wsign-compare"
+    "-Woverloaded-virtual"
+    "-Wextra-semi"
   # EXTRA_LINKER_FLAGS
   ICON_SMALL "<None>"
   ICON_LARGE "Source/BinaryData/Icons/juce_icon.png"

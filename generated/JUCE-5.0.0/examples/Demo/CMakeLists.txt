@@ -223,7 +223,15 @@ jucer_project_module(
 
 jucer_export_target(
   "Xcode (MacOSX)"
-  EXTRA_COMPILER_FLAGS "-Wall -Wshadow -Wno-missing-field-initializers -Wshadow -Wshorten-64-to-32 -Wstrict-aliasing -Wuninitialized -Wunused-parameter"
+  EXTRA_COMPILER_FLAGS
+    "-Wall"
+    "-Wshadow"
+    "-Wno-missing-field-initializers"
+    "-Wshadow"
+    "-Wshorten-64-to-32"
+    "-Wstrict-aliasing"
+    "-Wuninitialized"
+    "-Wunused-parameter"
   ICON_LARGE "Resources/juce_icon.png"
   CUSTOM_PLIST "<plist>
 <dict>

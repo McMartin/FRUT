@@ -14,8 +14,8 @@ Define the settings specific to an export target.
     [VST3_SDK_FOLDER <vst3_sdk_folder>]
 
     [EXTRA_PREPROCESSOR_DEFINITIONS <preprocessor_definition> [<preprocessor_definition> ...]]
-    [EXTRA_COMPILER_FLAGS <compiler_flags>]
-    [EXTRA_LINKER_FLAGS <linker_flags>]
+    [EXTRA_COMPILER_FLAGS <compiler_flag> [<compiler_flag> ...]]
+    [EXTRA_LINKER_FLAGS <linker_flag> [<linker_flag> ...]]
     [EXTERNAL_LIBRARIES_TO_LINK <libraries>]
 
     [GNU_COMPILER_EXTENSIONS <ON|OFF>]
