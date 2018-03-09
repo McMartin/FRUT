@@ -765,8 +765,8 @@ int main(int argc, char* argv[])
         exporter, "extraLinkerFlags", "EXTRA_LINKER_FLAGS", [](const juce::var& v) {
           return juce::StringArray::fromTokens(v.toString(), false);
         });
-      convertSettingIfDefined(exporter, "externalLibraries", "EXTERNAL_LIBRARIES_TO_LINK",
-                              {});
+      convertSettingAsListIfDefined(exporter, "externalLibraries",
+                                    "EXTERNAL_LIBRARIES_TO_LINK", {});
 
       convertOnOffSettingIfDefined(exporter, "enableGNUExtensions",
                                    "GNU_COMPILER_EXTENSIONS", {});

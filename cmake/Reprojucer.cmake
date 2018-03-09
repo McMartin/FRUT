@@ -495,7 +495,6 @@ function(jucer_export_target exporter)
   set(single_value_keywords
     "TARGET_PROJECT_FOLDER"
     "VST_SDK_FOLDER"
-    "EXTERNAL_LIBRARIES_TO_LINK"
     "ICON_SMALL"
     "ICON_LARGE"
   )
@@ -503,6 +502,7 @@ function(jucer_export_target exporter)
     "EXTRA_PREPROCESSOR_DEFINITIONS"
     "EXTRA_COMPILER_FLAGS"
     "EXTRA_LINKER_FLAGS"
+    "EXTERNAL_LIBRARIES_TO_LINK"
   )
 
   if(exporter STREQUAL "Xcode (MacOSX)")
@@ -582,9 +582,7 @@ function(jucer_export_target exporter)
   endif()
 
   if(DEFINED _EXTERNAL_LIBRARIES_TO_LINK)
-    set(value ${_EXTERNAL_LIBRARIES_TO_LINK})
-    string(REPLACE "\n" ";" value "${value}")
-    set(JUCER_EXTERNAL_LIBRARIES_TO_LINK ${value} PARENT_SCOPE)
+    set(JUCER_EXTERNAL_LIBRARIES_TO_LINK ${_EXTERNAL_LIBRARIES_TO_LINK} PARENT_SCOPE)
   endif()
 
   if(DEFINED _GNU_COMPILER_EXTENSIONS)

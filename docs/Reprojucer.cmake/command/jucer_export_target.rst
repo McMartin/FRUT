@@ -16,7 +16,7 @@ Define the settings specific to an export target.
     [EXTRA_PREPROCESSOR_DEFINITIONS <preprocessor_definition> [<preprocessor_definition> ...]]
     [EXTRA_COMPILER_FLAGS <compiler_flag> [<compiler_flag> ...]]
     [EXTRA_LINKER_FLAGS <linker_flag> [<linker_flag> ...]]
-    [EXTERNAL_LIBRARIES_TO_LINK <libraries>]
+    [EXTERNAL_LIBRARIES_TO_LINK <library> [<library> ...]]
 
     [GNU_COMPILER_EXTENSIONS <ON|OFF>]
 
