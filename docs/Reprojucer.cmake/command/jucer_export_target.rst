@@ -26,7 +26,7 @@ Define the settings specific to an export target.
     [CUSTOM_XCODE_RESOURCE_FOLDERS <xcode_resource_folder> [<xcode_resource_folders> ...]]
     [DOCUMENT_FILE_EXTENSIONS <file_extension> [<file_extension> ...]]
     [CUSTOM_PLIST <plist_content>]
-    [EXTRA_FRAMEWORKS <osx_frameworks>]
+    [EXTRA_FRAMEWORKS <osx_framework> [<osx_framework> ...]]
     [PREBUILD_SHELL_SCRIPT <shell_script_content>]
     [POSTBUILD_SHELL_SCRIPT <shell_script_content>]
     [DEVELOPMENT_TEAM_ID <development_team_id>]

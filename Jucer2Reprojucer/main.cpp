@@ -806,7 +806,12 @@ int main(int argc, char* argv[])
         }
 
         convertSettingIfDefined(exporter, "customPList", "CUSTOM_PLIST", {});
-        convertSettingIfDefined(exporter, "extraFrameworks", "EXTRA_FRAMEWORKS", {});
+        convertSettingAsListIfDefined(
+          exporter, "extraFrameworks", "EXTRA_FRAMEWORKS", [](const juce::var& v) {
+            auto frameworks = juce::StringArray::fromTokens(v.toString(), ",;", "\"'");
+            frameworks.trim();
+            return frameworks;
+          });
         convertSettingIfDefined(exporter, "prebuildCommand", "PREBUILD_SHELL_SCRIPT", {});
         convertSettingIfDefined(exporter, "postbuildCommand", "POSTBUILD_SHELL_SCRIPT",
                                 {});

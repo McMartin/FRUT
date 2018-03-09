@@ -540,7 +540,19 @@ jucer_export_target(
 	</dict>
 </dict>
 </plist>"
-  EXTRA_FRAMEWORKS "AudioUnit\; Accelerate\; AVFoundation\; CoreAudio\; CoreAudioKit\; CoreMIDI\; DiscRecording\; QuartzCore\; AudioToolbox\; OpenGL\; QTKit\; QuickTime"
+  EXTRA_FRAMEWORKS
+    "AudioUnit"
+    "Accelerate"
+    "AVFoundation"
+    "CoreAudio"
+    "CoreAudioKit"
+    "CoreMIDI"
+    "DiscRecording"
+    "QuartzCore"
+    "AudioToolbox"
+    "OpenGL"
+    "QTKit"
+    "QuickTime"
 )
 
 jucer_export_target_configuration(

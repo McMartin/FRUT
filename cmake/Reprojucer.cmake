@@ -508,7 +508,6 @@ function(jucer_export_target exporter)
   if(exporter STREQUAL "Xcode (MacOSX)")
     list(APPEND single_value_keywords
       "VST3_SDK_FOLDER"
-      "EXTRA_FRAMEWORKS"
       "CUSTOM_PLIST"
       "PREBUILD_SHELL_SCRIPT"
       "POSTBUILD_SHELL_SCRIPT"
@@ -516,6 +515,7 @@ function(jucer_export_target exporter)
     )
     list(APPEND multi_value_keywords
       "CUSTOM_XCODE_RESOURCE_FOLDERS"
+      "EXTRA_FRAMEWORKS"
     )
 
     if(JUCER_PROJECT_TYPE STREQUAL "GUI Application")
@@ -622,10 +622,7 @@ function(jucer_export_target exporter)
   endif()
 
   if(DEFINED _EXTRA_FRAMEWORKS)
-    set(value ${_EXTRA_FRAMEWORKS})
-    string(REPLACE "," ";" value "${value}")
-    string(REPLACE " " "" value "${value}")
-    set(JUCER_EXTRA_FRAMEWORKS ${value} PARENT_SCOPE)
+    set(JUCER_EXTRA_FRAMEWORKS ${_EXTRA_FRAMEWORKS} PARENT_SCOPE)
   endif()
 
   if(DEFINED _CUSTOM_PLIST)
