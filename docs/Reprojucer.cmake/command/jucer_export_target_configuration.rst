@@ -26,7 +26,7 @@ Define the settings specific to a configuration associated with an export target
     [OSX_BASE_SDK_VERSION <osx_sdk>]
     [OSX_DEPLOYMENT_TARGET <osx_deployment_target>]
     [OSX_ARCHITECTURE <osx_architecture>]
-    [CUSTOM_XCODE_FLAGS <xcode_flags>]
+    [CUSTOM_XCODE_FLAGS <xcode_flag> [<xcode_flag> ...]]
     [CXX_LANGUAGE_STANDARD <cxx_standard>]
     [CXX_LIBRARY <cxx_library>]
     [CODE_SIGNING_IDENTITY <code_signing_identity>]

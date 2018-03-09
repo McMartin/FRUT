@@ -793,13 +793,15 @@ function(jucer_export_target_configuration
       "OSX_BASE_SDK_VERSION"
       "OSX_DEPLOYMENT_TARGET"
       "OSX_ARCHITECTURE"
-      "CUSTOM_XCODE_FLAGS"
       "CXX_LANGUAGE_STANDARD"
       "CXX_LIBRARY"
       "CODE_SIGNING_IDENTITY"
       "RELAX_IEEE_COMPLIANCE"
       "LINK_TIME_OPTIMISATION"
       "STRIP_LOCAL_SYMBOLS"
+    )
+    list(APPEND multi_value_keywords
+      "CUSTOM_XCODE_FLAGS"
     )
   endif()
 
@@ -967,14 +969,12 @@ function(jucer_export_target_configuration
   endif()
 
   if(DEFINED _CUSTOM_XCODE_FLAGS)
-    set(value ${_CUSTOM_XCODE_FLAGS})
     if(NOT CMAKE_GENERATOR STREQUAL "Xcode")
       message(WARNING "CUSTOM_XCODE_FLAGS is only supported when using the Xcode "
         "generator. You should call `cmake -G Xcode`."
       )
     endif()
-    string(REGEX REPLACE ", *" ";" value "${value}")
-    set(JUCER_CUSTOM_XCODE_FLAGS_${config} ${value} PARENT_SCOPE)
+    set(JUCER_CUSTOM_XCODE_FLAGS_${config} ${_CUSTOM_XCODE_FLAGS} PARENT_SCOPE)
   endif()
 
   if(DEFINED _CXX_LANGUAGE_STANDARD)

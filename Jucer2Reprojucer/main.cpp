@@ -1070,8 +1070,11 @@ int main(int argc, char* argv[])
                                     return {};
                                   });
 
-          convertSettingIfDefined(configuration, "customXcodeFlags", "CUSTOM_XCODE_FLAGS",
-                                  {});
+          convertSettingAsListIfDefined(configuration, "customXcodeFlags",
+                                        "CUSTOM_XCODE_FLAGS", [](const juce::var& v) {
+                                          return juce::StringArray::fromTokens(
+                                            v.toString(), ",", "\"'");
+                                        });
 
           convertSettingIfDefined(configuration, "cppLanguageStandard",
                                   "CXX_LANGUAGE_STANDARD",
