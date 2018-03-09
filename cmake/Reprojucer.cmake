@@ -542,6 +542,8 @@ function(jucer_export_target exporter)
   if(exporter STREQUAL "Linux Makefile")
     list(APPEND single_value_keywords
       "CXX_STANDARD_TO_USE"
+    )
+    list(APPEND multi_value_keywords
       "PKGCONFIG_LIBRARIES"
     )
   endif()
@@ -720,9 +722,7 @@ function(jucer_export_target exporter)
   endif()
 
   if(DEFINED _PKGCONFIG_LIBRARIES)
-    set(value ${_PKGCONFIG_LIBRARIES})
-    string(REPLACE " " ";" value "${value}")
-    set(JUCER_PKGCONFIG_LIBRARIES ${value} PARENT_SCOPE)
+    set(JUCER_PKGCONFIG_LIBRARIES ${_PKGCONFIG_LIBRARIES} PARENT_SCOPE)
   endif()
 
 endfunction()

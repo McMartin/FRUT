@@ -894,8 +894,10 @@ int main(int argc, char* argv[])
                                   return {};
                                 });
 
-        convertSettingIfDefined(exporter, "linuxExtraPkgConfig", "PKGCONFIG_LIBRARIES",
-                                {});
+        convertSettingAsListIfDefined(
+          exporter, "linuxExtraPkgConfig", "PKGCONFIG_LIBRARIES", [](const juce::var& v) {
+            return juce::StringArray::fromTokens(v.toString(), " ", "\"'");
+          });
       }
 
       writeUserNotes(wLn, exporter);

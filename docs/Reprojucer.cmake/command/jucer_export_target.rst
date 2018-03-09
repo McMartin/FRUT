@@ -35,7 +35,7 @@ Define the settings specific to an export target.
     [USE_IPP_LIBRARY <use_ipp_library>]
 
     [CXX_STANDARD_TO_USE <cxx_standard>]
-    [PKGCONFIG_LIBRARIES <libraries>]
+    [PKGCONFIG_LIBRARIES <library> [<library> ...]]
   )
 
 ``<exporter>`` must be one of the :ref:`supported exporters <supported-export-targets>`.
