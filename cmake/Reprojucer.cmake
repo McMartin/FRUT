@@ -168,7 +168,7 @@ endfunction()
 
 function(jucer_audio_plugin_settings)
 
-  set(plugin_setting_tags
+  set(single_value_keywords
     "BUILD_VST"
     "BUILD_VST3"
     "BUILD_AUDIOUNIT"
@@ -195,42 +195,32 @@ function(jucer_audio_plugin_settings)
     "PLUGIN_AAX_IDENTIFIER"
   )
 
-  unset(tag)
-  foreach(element ${ARGN})
-    if(NOT DEFINED tag)
-      set(tag ${element})
+  _FRUT_parse_arguments("${single_value_keywords}" "${ARGN}")
 
-      if(NOT "${tag}" IN_LIST plugin_setting_tags)
-        message(FATAL_ERROR "Unsupported audio plugin setting: ${tag}\n"
-          "Supported audio plugin settings: ${plugin_setting_tags}"
-        )
-      endif()
-    else()
-      set(value ${element})
+  if(_BUILD_RTAS AND (APPLE OR MSVC))
+    message(WARNING "Reprojucer.cmake doesn't support building RTAS plugins. If you "
+      "would like Reprojucer.cmake to support building RTAS plugins, please leave a "
+      "comment on the issue \"Reprojucer.cmake doesn't support building RTAS "
+      "plugins\" on GitHub: https://github.com/McMartin/FRUT/issues/266"
+    )
+  endif()
 
-      if(tag STREQUAL "BUILD_RTAS" AND value AND (APPLE OR MSVC))
-        message(WARNING "Reprojucer.cmake doesn't support building RTAS plugins. If you "
-          "would like Reprojucer.cmake to support building RTAS plugins, please leave a "
-          "comment on the issue \"Reprojucer.cmake doesn't support building RTAS "
-          "plugins\" on GitHub: https://github.com/McMartin/FRUT/issues/266"
-        )
+  if(_BUILD_AAX AND (APPLE OR MSVC))
+    message(WARNING "Reprojucer.cmake doesn't support building AAX plugins. If you "
+      "would like Reprojucer.cmake to support building AAX plugins, please leave a "
+      "comment on the issue \"Reprojucer.cmake doesn't support building AAX "
+      "plugins\" on GitHub: https://github.com/McMartin/FRUT/issues/267"
+    )
+  endif()
 
-      elseif(tag STREQUAL "BUILD_AAX" AND value AND (APPLE OR MSVC))
-        message(WARNING "Reprojucer.cmake doesn't support building AAX plugins. If you "
-          "would like Reprojucer.cmake to support building AAX plugins, please leave a "
-          "comment on the issue \"Reprojucer.cmake doesn't support building AAX "
-          "plugins\" on GitHub: https://github.com/McMartin/FRUT/issues/267"
-        )
+  if(DEFINED BUILD_STANDALONE_PLUGIN
+      AND DEFINED JUCER_VERSION AND JUCER_VERSION VERSION_LESS 5)
+    message(WARNING "BUILD_STANDALONE_PLUGIN is a JUCE 5 feature only")
+  endif()
 
-      elseif(tag STREQUAL "BUILD_STANDALONE_PLUGIN"
-          AND DEFINED JUCER_VERSION AND JUCER_VERSION VERSION_LESS 5)
-        message(WARNING "BUILD_STANDALONE_PLUGIN is a JUCE 5 feature only")
-
-      endif()
-
-      set(JUCER_${tag} "${value}" PARENT_SCOPE)
-
-      unset(tag)
+  foreach(keyword ${single_value_keywords})
+    if(DEFINED _${keyword})
+      set(JUCER_${keyword} ${_${keyword}} PARENT_SCOPE)
     endif()
   endforeach()
 
