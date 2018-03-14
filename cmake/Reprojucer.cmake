@@ -218,15 +218,16 @@ function(jucer_audio_plugin_settings)
   foreach(element ${ARGN})
     if(NOT DEFINED tag)
       set(tag ${element})
-    else()
-      set(value ${element})
 
       if(NOT "${tag}" IN_LIST plugin_setting_tags)
         message(FATAL_ERROR "Unsupported audio plugin setting: ${tag}\n"
           "Supported audio plugin settings: ${plugin_setting_tags}"
         )
+      endif()
+    else()
+      set(value ${element})
 
-      elseif(tag STREQUAL "BUILD_RTAS" AND value AND (APPLE OR MSVC))
+      if(tag STREQUAL "BUILD_RTAS" AND value AND (APPLE OR MSVC))
         message(WARNING "Reprojucer.cmake doesn't support building RTAS plugins. If you "
           "would like Reprojucer.cmake to support building RTAS plugins, please leave a "
           "comment on the issue \"Reprojucer.cmake doesn't support building RTAS "
