@@ -206,42 +206,32 @@ function(jucer_audio_plugin_settings)
     "PLUGIN_AAX_IDENTIFIER"
   )
 
-  unset(keyword)
-  foreach(element ${ARGN})
-    if(NOT DEFINED keyword)
-      set(keyword ${element})
+  _FRUT_parse_arguments("${plugin_setting_keywords}" "${ARGN}")
 
-      if(NOT "${keyword}" IN_LIST plugin_setting_keywords)
-        message(FATAL_ERROR "Unsupported audio plugin setting: ${keyword}\n"
-          "Supported audio plugin settings: ${plugin_setting_keywords}"
-        )
-      endif()
-    else()
-      set(value ${element})
+  if(_BUILD_RTAS AND (APPLE OR MSVC))
+    message(WARNING "Reprojucer.cmake doesn't support building RTAS plugins. If you "
+      "would like Reprojucer.cmake to support building RTAS plugins, please leave a "
+      "comment on the issue \"Reprojucer.cmake doesn't support building RTAS "
+      "plugins\" on GitHub: https://github.com/McMartin/FRUT/issues/266"
+    )
+  endif()
 
-      if(keyword STREQUAL "BUILD_RTAS" AND value AND (APPLE OR MSVC))
-        message(WARNING "Reprojucer.cmake doesn't support building RTAS plugins. If you "
-          "would like Reprojucer.cmake to support building RTAS plugins, please leave a "
-          "comment on the issue \"Reprojucer.cmake doesn't support building RTAS "
-          "plugins\" on GitHub: https://github.com/McMartin/FRUT/issues/266"
-        )
+  if(_BUILD_AAX AND (APPLE OR MSVC))
+    message(WARNING "Reprojucer.cmake doesn't support building AAX plugins. If you "
+      "would like Reprojucer.cmake to support building AAX plugins, please leave a "
+      "comment on the issue \"Reprojucer.cmake doesn't support building AAX "
+      "plugins\" on GitHub: https://github.com/McMartin/FRUT/issues/267"
+    )
+  endif()
 
-      elseif(keyword STREQUAL "BUILD_AAX" AND value AND (APPLE OR MSVC))
-        message(WARNING "Reprojucer.cmake doesn't support building AAX plugins. If you "
-          "would like Reprojucer.cmake to support building AAX plugins, please leave a "
-          "comment on the issue \"Reprojucer.cmake doesn't support building AAX "
-          "plugins\" on GitHub: https://github.com/McMartin/FRUT/issues/267"
-        )
+  if(DEFINED BUILD_STANDALONE_PLUGIN
+      AND DEFINED JUCER_VERSION AND JUCER_VERSION VERSION_LESS 5)
+    message(WARNING "BUILD_STANDALONE_PLUGIN is a JUCE 5 feature only")
+  endif()
 
-      elseif(keyword STREQUAL "BUILD_STANDALONE_PLUGIN"
-          AND DEFINED JUCER_VERSION AND JUCER_VERSION VERSION_LESS 5)
-        message(WARNING "BUILD_STANDALONE_PLUGIN is a JUCE 5 feature only")
-
-      endif()
-
-      set(JUCER_${keyword} "${value}" PARENT_SCOPE)
-
-      unset(keyword)
+  foreach(keyword ${plugin_setting_keywords})
+    if(DEFINED _${keyword})
+      set(JUCER_${keyword} ${_${keyword}} PARENT_SCOPE)
     endif()
   endforeach()
 
