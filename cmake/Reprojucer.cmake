@@ -88,18 +88,6 @@ function(jucer_project_settings)
     message(FATAL_ERROR "Missing PROJECT_NAME argument")
   endif()
 
-  set(project_types "GUI Application" "Console Application" "Static Library"
-    "Dynamic Library" "Audio Plug-in"
-  )
-
-  set(size_limit_descs "Default" "20.0 MB" "10.0 MB" "6.0 MB" "2.0 MB" "1.0 MB" "512.0 KB"
-    "256.0 KB" "128.0 KB" "64.0 KB"
-  )
-  set(size_limits 10240 20480 10240 6144 2048 1024 512 256 128 64)
-
-  set(cxx_language_standard_descs "C++11" "C++14" "Use Latest")
-  set(cxx_language_standards "11" "14" "latest")
-
   if(DEFINED _PROJECT_VERSION)
     set(value ${_PROJECT_VERSION})
     string(REGEX MATCH ".+\\..+\\..+(\\..+)?" version_match "${value}")
@@ -117,6 +105,9 @@ function(jucer_project_settings)
     message(FATAL_ERROR "Missing PROJECT_TYPE argument")
   endif()
   set(value ${_PROJECT_TYPE})
+  set(project_types "GUI Application" "Console Application" "Static Library"
+    "Dynamic Library" "Audio Plug-in"
+  )
   if(NOT "${value}" IN_LIST project_types)
     message(FATAL_ERROR "Unsupported project type: \"${value}\"\n"
       "Supported project types: ${project_types}"
@@ -125,6 +116,11 @@ function(jucer_project_settings)
 
   if(DEFINED _BINARYDATACPP_SIZE_LIMIT)
     set(value ${_BINARYDATACPP_SIZE_LIMIT})
+    set(size_limit_descs "Default" "20.0 MB" "10.0 MB" "6.0 MB" "2.0 MB" "1.0 MB"
+      "512.0 KB" "256.0 KB" "128.0 KB" "64.0 KB"
+    )
+    set(size_limits 10240 20480 10240 6144 2048 1024 512 256 128 64)
+
     list(FIND size_limit_descs "${value}" size_limit_index)
     if(size_limit_index EQUAL -1)
       message(FATAL_ERROR
@@ -138,6 +134,9 @@ function(jucer_project_settings)
 
   if(DEFINED _CXX_LANGUAGE_STANDARD)
     set(value ${_CXX_LANGUAGE_STANDARD})
+    set(cxx_language_standard_descs "C++11" "C++14" "Use Latest")
+    set(cxx_language_standards "11" "14" "latest")
+
     list(FIND cxx_language_standard_descs "${value}" cxx_language_standard_index)
     if(cxx_language_standard_index EQUAL -1)
       message(FATAL_ERROR
