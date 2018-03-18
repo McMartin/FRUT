@@ -92,63 +92,57 @@ function(jucer_project_settings)
   endif()
 
   if(DEFINED _PROJECT_VERSION)
-    set(value ${_PROJECT_VERSION})
-    string(REGEX MATCH ".+\\..+\\..+(\\..+)?" version_match "${value}")
-    if(NOT value STREQUAL version_match)
+    string(REGEX MATCH ".+\\..+\\..+(\\..+)?" version_match "${_PROJECT_VERSION}")
+    if(NOT _PROJECT_VERSION STREQUAL version_match)
       message(WARNING
         "The PROJECT_VERSION doesn't seem to be in the format "
         "major.minor.point[.point]"
       )
     endif()
-    _FRUT_version_to_hex("${value}" hex_value)
+    _FRUT_version_to_hex("${_PROJECT_VERSION}" hex_value)
     set(JUCER_PROJECT_VERSION_AS_HEX "${hex_value}" PARENT_SCOPE)
   endif()
 
   if(NOT DEFINED _PROJECT_TYPE)
     message(FATAL_ERROR "Missing PROJECT_TYPE argument")
   endif()
-  set(value ${_PROJECT_TYPE})
   set(project_types "GUI Application" "Console Application" "Static Library"
     "Dynamic Library" "Audio Plug-in"
   )
-  if(NOT "${value}" IN_LIST project_types)
-    message(FATAL_ERROR "Unsupported project type: \"${value}\"\n"
+  if(NOT "${_PROJECT_TYPE}" IN_LIST project_types)
+    message(FATAL_ERROR "Unsupported project type: \"${_PROJECT_TYPE}\"\n"
       "Supported project types: ${project_types}"
     )
   endif()
 
   if(DEFINED _BINARYDATACPP_SIZE_LIMIT)
-    set(value ${_BINARYDATACPP_SIZE_LIMIT})
     set(size_limit_descs "Default" "20.0 MB" "10.0 MB" "6.0 MB" "2.0 MB" "1.0 MB"
       "512.0 KB" "256.0 KB" "128.0 KB" "64.0 KB"
     )
     set(size_limits 10240 20480 10240 6144 2048 1024 512 256 128 64)
 
-    list(FIND size_limit_descs "${value}" size_limit_index)
+    list(FIND size_limit_descs "${_BINARYDATACPP_SIZE_LIMIT}" size_limit_index)
     if(size_limit_index EQUAL -1)
       message(FATAL_ERROR
         "Unsupported value for BINARYDATACPP_SIZE_LIMIT: "
-        "\"${value}\"\nSupported values: ${size_limit_descs}"
+        "\"${_BINARYDATACPP_SIZE_LIMIT}\"\nSupported values: ${size_limit_descs}"
       )
     endif()
-    list(GET size_limits ${size_limit_index} value)
-    set(_BINARYDATACPP_SIZE_LIMIT ${value})
+    list(GET size_limits ${size_limit_index} _BINARYDATACPP_SIZE_LIMIT)
   endif()
 
   if(DEFINED _CXX_LANGUAGE_STANDARD)
-    set(value ${_CXX_LANGUAGE_STANDARD})
     set(cxx_lang_standard_descs "C++11" "C++14" "Use Latest")
     set(cxx_lang_standards "11" "14" "latest")
 
-    list(FIND cxx_lang_standard_descs "${value}" cxx_lang_standard_index)
+    list(FIND cxx_lang_standard_descs "${_CXX_LANGUAGE_STANDARD}" cxx_lang_standard_index)
     if(cxx_lang_standard_index EQUAL -1)
       message(FATAL_ERROR
         "Unsupported value for CXX_LANGUAGE_STANDARD: "
-        "\"${value}\"\nSupported values: ${cxx_lang_standard_descs}"
+        "\"${_CXX_LANGUAGE_STANDARD}\"\nSupported values: ${cxx_lang_standard_descs}"
       )
     endif()
-    list(GET cxx_lang_standards ${cxx_lang_standard_index} value)
-    set(_CXX_LANGUAGE_STANDARD ${value})
+    list(GET cxx_lang_standards ${cxx_lang_standard_index} _CXX_LANGUAGE_STANDARD)
   endif()
 
   if(DEFINED _HEADER_SEARCH_PATHS)
@@ -551,22 +545,19 @@ function(jucer_export_target exporter)
   _FRUT_parse_arguments("${single_value_keywords}" "${multi_value_keywords}" "${ARGN}")
 
   if(DEFINED _TARGET_PROJECT_FOLDER)
-    set(value ${_TARGET_PROJECT_FOLDER})
-    string(REPLACE "\\" "/" value "${value}")
+    string(REPLACE "\\" "/" value "${_TARGET_PROJECT_FOLDER}")
     _FRUT_abs_path_based_on_jucer_project_dir("${value}" value)
     set(JUCER_TARGET_PROJECT_FOLDER ${value} PARENT_SCOPE)
   endif()
 
   if(DEFINED _VST_SDK_FOLDER)
-    set(value ${_VST_SDK_FOLDER})
-    string(REPLACE "\\" "/" value "${value}")
+    string(REPLACE "\\" "/" value "${_VST_SDK_FOLDER}")
     _FRUT_abs_path_based_on_jucer_project_dir("${value}" value)
     set(JUCER_VST_SDK_FOLDER ${value} PARENT_SCOPE)
   endif()
 
   if(DEFINED _VST3_SDK_FOLDER)
-    set(value ${_VST3_SDK_FOLDER})
-    string(REPLACE "\\" "/" value "${value}")
+    string(REPLACE "\\" "/" value "${_VST3_SDK_FOLDER}")
     _FRUT_abs_path_based_on_jucer_project_dir("${value}" value)
     set(JUCER_VST3_SDK_FOLDER ${value} PARENT_SCOPE)
   endif()
@@ -590,22 +581,19 @@ function(jucer_export_target exporter)
   endif()
 
   if(DEFINED _GNU_COMPILER_EXTENSIONS)
-    set(value ${_GNU_COMPILER_EXTENSIONS})
-    set(JUCER_GNU_COMPILER_EXTENSIONS ${value} PARENT_SCOPE)
+    set(JUCER_GNU_COMPILER_EXTENSIONS ${_GNU_COMPILER_EXTENSIONS} PARENT_SCOPE)
   endif()
 
   if(DEFINED _ICON_SMALL)
-    set(value ${_ICON_SMALL})
-    if(NOT value STREQUAL "<None>")
-      _FRUT_abs_path_based_on_jucer_project_dir("${value}" value)
+    if(NOT _ICON_SMALL STREQUAL "<None>")
+      _FRUT_abs_path_based_on_jucer_project_dir("${_ICON_SMALL}" value)
       set(JUCER_SMALL_ICON ${value} PARENT_SCOPE)
     endif()
   endif()
 
   if(DEFINED _ICON_LARGE)
-    set(value ${_ICON_LARGE})
-    if(NOT value STREQUAL "<None>")
-      _FRUT_abs_path_based_on_jucer_project_dir("${value}" value)
+    if(NOT _ICON_LARGE STREQUAL "<None>")
+      _FRUT_abs_path_based_on_jucer_project_dir("${_ICON_LARGE}" value)
       set(JUCER_LARGE_ICON ${value} PARENT_SCOPE)
     endif()
   endif()
@@ -628,13 +616,11 @@ function(jucer_export_target exporter)
   endif()
 
   if(DEFINED _CUSTOM_PLIST)
-    set(value ${_CUSTOM_PLIST})
-    set(JUCER_CUSTOM_PLIST "${value}" PARENT_SCOPE)
+    set(JUCER_CUSTOM_PLIST "${_CUSTOM_PLIST}" PARENT_SCOPE)
   endif()
 
   if(DEFINED _PREBUILD_SHELL_SCRIPT)
-    set(value ${_PREBUILD_SHELL_SCRIPT})
-    set(script_content "${value}")
+    set(script_content "${_PREBUILD_SHELL_SCRIPT}")
     configure_file("${Reprojucer_templates_DIR}/script.in" "prebuild.sh" @ONLY)
     set(JUCER_PREBUILD_SHELL_SCRIPT
       "${CMAKE_CURRENT_BINARY_DIR}/prebuild.sh" PARENT_SCOPE
@@ -642,8 +628,7 @@ function(jucer_export_target exporter)
   endif()
 
   if(DEFINED _POSTBUILD_SHELL_SCRIPT)
-    set(value ${_POSTBUILD_SHELL_SCRIPT})
-    set(script_content "${value}")
+    set(script_content "${_POSTBUILD_SHELL_SCRIPT}")
     configure_file("${Reprojucer_templates_DIR}/script.in" "postbuild.sh" @ONLY)
     set(JUCER_POSTBUILD_SHELL_SCRIPT
       "${CMAKE_CURRENT_BINARY_DIR}/postbuild.sh" PARENT_SCOPE
@@ -830,13 +815,11 @@ function(jucer_export_target_configuration
   _FRUT_parse_arguments("${single_value_keywords}" "${multi_value_keywords}" "${ARGN}")
 
   if(DEFINED _BINARY_NAME)
-    set(value ${_BINARY_NAME})
-    set(JUCER_BINARY_NAME_${config} ${value} PARENT_SCOPE)
+    set(JUCER_BINARY_NAME_${config} ${_BINARY_NAME} PARENT_SCOPE)
   endif()
 
   if(DEFINED _BINARY_LOCATION)
-    set(value ${_BINARY_LOCATION})
-    get_filename_component(abs_path "${value}" ABSOLUTE)
+    get_filename_component(abs_path "${_BINARY_LOCATION}" ABSOLUTE)
     set(JUCER_BINARY_LOCATION_${config} ${abs_path} PARENT_SCOPE)
   endif()
 
@@ -901,18 +884,15 @@ function(jucer_export_target_configuration
   endif()
 
   if(DEFINED _VST_BINARY_LOCATION)
-    set(value ${_VST_BINARY_LOCATION})
-    set(JUCER_VST_BINARY_LOCATION_${config} ${value} PARENT_SCOPE)
+    set(JUCER_VST_BINARY_LOCATION_${config} ${_VST_BINARY_LOCATION} PARENT_SCOPE)
   endif()
 
   if(DEFINED _VST3_BINARY_LOCATION)
-    set(value ${_VST3_BINARY_LOCATION})
-    set(JUCER_VST3_BINARY_LOCATION_${config} ${value} PARENT_SCOPE)
+    set(JUCER_VST3_BINARY_LOCATION_${config} ${_VST3_BINARY_LOCATION} PARENT_SCOPE)
   endif()
 
   if(DEFINED _AU_BINARY_LOCATION)
-    set(value ${_AU_BINARY_LOCATION})
-    set(JUCER_AU_BINARY_LOCATION_${config} ${value} PARENT_SCOPE)
+    set(JUCER_AU_BINARY_LOCATION_${config} ${_AU_BINARY_LOCATION} PARENT_SCOPE)
   endif()
 
   if(DEFINED _OSX_BASE_SDK_VERSION)
@@ -1001,28 +981,24 @@ function(jucer_export_target_configuration
   endif()
 
   if(DEFINED _CODE_SIGNING_IDENTITY)
-    set(value ${_CODE_SIGNING_IDENTITY})
     if(NOT CMAKE_GENERATOR STREQUAL "Xcode")
       message(WARNING "CODE_SIGNING_IDENTITY is only supported when using the Xcode "
         "generator. You should call `cmake -G Xcode`."
       )
     endif()
-    set(JUCER_CODE_SIGNING_IDENTITY_${config} ${value} PARENT_SCOPE)
+    set(JUCER_CODE_SIGNING_IDENTITY_${config} ${_CODE_SIGNING_IDENTITY} PARENT_SCOPE)
   endif()
 
   if(DEFINED _RELAX_IEEE_COMPLIANCE)
-    set(value ${_RELAX_IEEE_COMPLIANCE})
-    set(JUCER_RELAX_IEEE_COMPLIANCE_${config} ${value} PARENT_SCOPE)
+    set(JUCER_RELAX_IEEE_COMPLIANCE_${config} ${_RELAX_IEEE_COMPLIANCE} PARENT_SCOPE)
   endif()
 
   if(DEFINED _LINK_TIME_OPTIMISATION)
-    set(value ${_LINK_TIME_OPTIMISATION})
-    set(JUCER_LINK_TIME_OPTIMISATION_${config} ${value} PARENT_SCOPE)
+    set(JUCER_LINK_TIME_OPTIMISATION_${config} ${_LINK_TIME_OPTIMISATION} PARENT_SCOPE)
   endif()
 
   if(DEFINED _STRIP_LOCAL_SYMBOLS)
-    set(value ${_STRIP_LOCAL_SYMBOLS})
-    set(JUCER_STRIP_LOCAL_SYMBOLS_${config} ${value} PARENT_SCOPE)
+    set(JUCER_STRIP_LOCAL_SYMBOLS_${config} ${_STRIP_LOCAL_SYMBOLS} PARENT_SCOPE)
   endif()
 
   if(DEFINED _WARNING_LEVEL)
@@ -1040,8 +1016,9 @@ function(jucer_export_target_configuration
   endif()
 
   if(DEFINED _TREAT_WARNINGS_AS_ERRORS)
-    set(value ${_TREAT_WARNINGS_AS_ERRORS})
-    set(JUCER_TREAT_WARNINGS_AS_ERRORS_${config} ${value} PARENT_SCOPE)
+    set(JUCER_TREAT_WARNINGS_AS_ERRORS_${config} ${_TREAT_WARNINGS_AS_ERRORS}
+      PARENT_SCOPE
+    )
   endif()
 
   if(DEFINED _RUNTIME_LIBRARY)
@@ -1076,13 +1053,11 @@ function(jucer_export_target_configuration
   endif()
 
   if(DEFINED _INCREMENTAL_LINKING)
-    set(value ${_INCREMENTAL_LINKING})
-    set(JUCER_INCREMENTAL_LINKING_${config} ${value} PARENT_SCOPE)
+    set(JUCER_INCREMENTAL_LINKING_${config} ${_INCREMENTAL_LINKING} PARENT_SCOPE)
   endif()
 
   if(DEFINED _PREBUILD_COMMAND)
-    set(value ${_PREBUILD_COMMAND})
-    set(script_content "${value}")
+    set(script_content "${_PREBUILD_COMMAND}")
     configure_file("${Reprojucer_templates_DIR}/script.in"
       "prebuild_${config}.cmd" @ONLY
     )
@@ -1092,8 +1067,7 @@ function(jucer_export_target_configuration
   endif()
 
   if(DEFINED _POSTBUILD_COMMAND)
-    set(value ${_POSTBUILD_COMMAND})
-    set(script_content "${value}")
+    set(script_content "${_POSTBUILD_COMMAND}")
     configure_file("${Reprojucer_templates_DIR}/script.in"
       "postbuild_${config}.cmd" @ONLY
     )
@@ -1103,28 +1077,25 @@ function(jucer_export_target_configuration
   endif()
 
   if(DEFINED _GENERATE_MANIFEST)
-    set(value ${_GENERATE_MANIFEST})
-    set(JUCER_GENERATE_MANIFEST_${config} ${value} PARENT_SCOPE)
+    set(JUCER_GENERATE_MANIFEST_${config} ${_GENERATE_MANIFEST} PARENT_SCOPE)
   endif()
 
   if(DEFINED _CHARACTER_SET)
-    set(value ${_CHARACTER_SET})
     set(character_sets "Default" "MultiByte" "Unicode")
-    if("${value}" IN_LIST character_sets)
-      set(JUCER_CHARACTER_SET_${config} ${value} PARENT_SCOPE)
+    if("${_CHARACTER_SET}" IN_LIST character_sets)
+      set(JUCER_CHARACTER_SET_${config} ${_CHARACTER_SET} PARENT_SCOPE)
     else()
-      message(FATAL_ERROR "Unsupported value for CHARACTER_SET: \"${value}\"")
+      message(FATAL_ERROR "Unsupported value for CHARACTER_SET: \"${_CHARACTER_SET}\"")
     endif()
   endif()
 
   if(DEFINED _ARCHITECTURE AND exporter MATCHES "^Visual Studio 201(7|5|3)$")
-    set(value ${_ARCHITECTURE})
-    if(value STREQUAL "32-bit")
+    if(_ARCHITECTURE STREQUAL "32-bit")
       set(wants_x64 FALSE)
-    elseif(value STREQUAL "x64")
+    elseif(_ARCHITECTURE STREQUAL "x64")
       set(wants_x64 TRUE)
     else()
-      message(FATAL_ERROR "Unsupported value for ARCHITECTURE: \"${value}\"")
+      message(FATAL_ERROR "Unsupported value for ARCHITECTURE: \"${_ARCHITECTURE}\"")
     endif()
     if(CMAKE_GENERATOR_PLATFORM STREQUAL "x64" OR CMAKE_GENERATOR MATCHES "Win64")
       set(is_x64 TRUE)
