@@ -94,8 +94,7 @@ function(jucer_project_settings)
   if(DEFINED _PROJECT_VERSION)
     string(REGEX MATCH ".+\\..+\\..+(\\..+)?" version_match "${_PROJECT_VERSION}")
     if(NOT _PROJECT_VERSION STREQUAL version_match)
-      message(WARNING
-        "The PROJECT_VERSION doesn't seem to be in the format "
+      message(WARNING "The PROJECT_VERSION doesn't seem to be in the format "
         "major.minor.point[.point]"
       )
     endif()
@@ -123,8 +122,7 @@ function(jucer_project_settings)
 
     list(FIND size_limit_descs "${_BINARYDATACPP_SIZE_LIMIT}" size_limit_index)
     if(size_limit_index EQUAL -1)
-      message(FATAL_ERROR
-        "Unsupported value for BINARYDATACPP_SIZE_LIMIT: "
+      message(FATAL_ERROR "Unsupported value for BINARYDATACPP_SIZE_LIMIT: "
         "\"${_BINARYDATACPP_SIZE_LIMIT}\"\nSupported values: ${size_limit_descs}"
       )
     endif()
@@ -137,8 +135,7 @@ function(jucer_project_settings)
 
     list(FIND cxx_lang_standard_descs "${_CXX_LANGUAGE_STANDARD}" cxx_lang_standard_index)
     if(cxx_lang_standard_index EQUAL -1)
-      message(FATAL_ERROR
-        "Unsupported value for CXX_LANGUAGE_STANDARD: "
+      message(FATAL_ERROR "Unsupported value for CXX_LANGUAGE_STANDARD: "
         "\"${_CXX_LANGUAGE_STANDARD}\"\nSupported values: ${cxx_lang_standard_descs}"
       )
     endif()
@@ -198,16 +195,16 @@ function(jucer_audio_plugin_settings)
   if(_BUILD_RTAS AND (APPLE OR MSVC))
     message(WARNING "Reprojucer.cmake doesn't support building RTAS plugins. If you "
       "would like Reprojucer.cmake to support building RTAS plugins, please leave a "
-      "comment on the issue \"Reprojucer.cmake doesn't support building RTAS "
-      "plugins\" on GitHub: https://github.com/McMartin/FRUT/issues/266"
+      "comment on the issue \"Reprojucer.cmake doesn't support building RTAS plugins\" "
+      "on GitHub: https://github.com/McMartin/FRUT/issues/266"
     )
   endif()
 
   if(_BUILD_AAX AND (APPLE OR MSVC))
     message(WARNING "Reprojucer.cmake doesn't support building AAX plugins. If you "
       "would like Reprojucer.cmake to support building AAX plugins, please leave a "
-      "comment on the issue \"Reprojucer.cmake doesn't support building AAX "
-      "plugins\" on GitHub: https://github.com/McMartin/FRUT/issues/267"
+      "comment on the issue \"Reprojucer.cmake doesn't support building AAX plugins\" "
+      "on GitHub: https://github.com/McMartin/FRUT/issues/267"
     )
   endif()
 
@@ -748,8 +745,7 @@ function(jucer_export_target_configuration
   endif()
 
   if("${config}" IN_LIST JUCER_PROJECT_CONFIGURATIONS)
-    message(FATAL_ERROR
-      "You cannot call jucer_export_target_configuration("
+    message(FATAL_ERROR "You cannot call jucer_export_target_configuration("
       "\"${exporter}\" NAME \"${config}\") twice."
     )
   endif()
