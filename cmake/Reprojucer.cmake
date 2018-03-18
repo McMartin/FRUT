@@ -815,19 +815,16 @@ function(jucer_export_target_configuration
   _FRUT_parse_arguments("${single_value_keywords}" "${ARGN}")
 
   if(DEFINED _BINARY_NAME)
-    set(value ${_BINARY_NAME})
-    set(JUCER_BINARY_NAME_${config} ${value} PARENT_SCOPE)
+    set(JUCER_BINARY_NAME_${config} ${_BINARY_NAME} PARENT_SCOPE)
   endif()
 
   if(DEFINED _BINARY_LOCATION)
-    set(value ${_BINARY_LOCATION})
-    get_filename_component(abs_path "${value}" ABSOLUTE)
+    get_filename_component(abs_path "${_BINARY_LOCATION}" ABSOLUTE)
     set(JUCER_BINARY_LOCATION_${config} ${abs_path} PARENT_SCOPE)
   endif()
 
   if(DEFINED _HEADER_SEARCH_PATHS)
-    set(value ${_HEADER_SEARCH_PATHS})
-    string(REPLACE "\\" "/" value "${value}")
+    string(REPLACE "\\" "/" value "${_HEADER_SEARCH_PATHS}")
     string(REPLACE "\n" ";" value "${value}")
     unset(header_search_paths)
     foreach(path ${value})
@@ -838,8 +835,7 @@ function(jucer_export_target_configuration
   endif()
 
   if(DEFINED _EXTRA_LIBRARY_SEARCH_PATHS)
-    set(value ${_EXTRA_LIBRARY_SEARCH_PATHS})
-    string(REPLACE "\\" "/" value "${value}")
+    string(REPLACE "\\" "/" value "${_EXTRA_LIBRARY_SEARCH_PATHS}")
     string(REPLACE "\n" ";" value "${value}")
     unset(library_search_paths)
     foreach(path ${value})
@@ -852,8 +848,7 @@ function(jucer_export_target_configuration
   endif()
 
   if(DEFINED _PREPROCESSOR_DEFINITIONS)
-    set(value ${_PREPROCESSOR_DEFINITIONS})
-    string(REPLACE "\n" ";" value "${value}")
+    string(REPLACE "\n" ";" value "${_PREPROCESSOR_DEFINITIONS}")
     set(JUCER_PREPROCESSOR_DEFINITIONS_${config} ${value} PARENT_SCOPE)
   endif()
 
@@ -890,18 +885,15 @@ function(jucer_export_target_configuration
   endif()
 
   if(DEFINED _VST_BINARY_LOCATION)
-    set(value ${_VST_BINARY_LOCATION})
-    set(JUCER_VST_BINARY_LOCATION_${config} ${value} PARENT_SCOPE)
+    set(JUCER_VST_BINARY_LOCATION_${config} ${_VST_BINARY_LOCATION} PARENT_SCOPE)
   endif()
 
   if(DEFINED _VST3_BINARY_LOCATION)
-    set(value ${_VST3_BINARY_LOCATION})
-    set(JUCER_VST3_BINARY_LOCATION_${config} ${value} PARENT_SCOPE)
+    set(JUCER_VST3_BINARY_LOCATION_${config} ${_VST3_BINARY_LOCATION} PARENT_SCOPE)
   endif()
 
   if(DEFINED _AU_BINARY_LOCATION)
-    set(value ${_AU_BINARY_LOCATION})
-    set(JUCER_AU_BINARY_LOCATION_${config} ${value} PARENT_SCOPE)
+    set(JUCER_AU_BINARY_LOCATION_${config} ${_AU_BINARY_LOCATION} PARENT_SCOPE)
   endif()
 
   if(DEFINED _OSX_BASE_SDK_VERSION)
@@ -958,13 +950,12 @@ function(jucer_export_target_configuration
   endif()
 
   if(DEFINED _CUSTOM_XCODE_FLAGS)
-    set(value ${_CUSTOM_XCODE_FLAGS})
     if(NOT CMAKE_GENERATOR STREQUAL "Xcode")
       message(WARNING "CUSTOM_XCODE_FLAGS is only supported when using the Xcode "
         "generator. You should call `cmake -G Xcode`."
       )
     endif()
-    string(REGEX REPLACE ", *" ";" value "${value}")
+    string(REGEX REPLACE ", *" ";" value "${_CUSTOM_XCODE_FLAGS}")
     set(JUCER_CUSTOM_XCODE_FLAGS_${config} ${value} PARENT_SCOPE)
   endif()
 
@@ -992,28 +983,24 @@ function(jucer_export_target_configuration
   endif()
 
   if(DEFINED _CODE_SIGNING_IDENTITY)
-    set(value ${_CODE_SIGNING_IDENTITY})
     if(NOT CMAKE_GENERATOR STREQUAL "Xcode")
       message(WARNING "CODE_SIGNING_IDENTITY is only supported when using the Xcode "
         "generator. You should call `cmake -G Xcode`."
       )
     endif()
-    set(JUCER_CODE_SIGNING_IDENTITY_${config} ${value} PARENT_SCOPE)
+    set(JUCER_CODE_SIGNING_IDENTITY_${config} ${_CODE_SIGNING_IDENTITY} PARENT_SCOPE)
   endif()
 
   if(DEFINED _RELAX_IEEE_COMPLIANCE)
-    set(value ${_RELAX_IEEE_COMPLIANCE})
-    set(JUCER_RELAX_IEEE_COMPLIANCE_${config} ${value} PARENT_SCOPE)
+    set(JUCER_RELAX_IEEE_COMPLIANCE_${config} ${_RELAX_IEEE_COMPLIANCE} PARENT_SCOPE)
   endif()
 
   if(DEFINED _LINK_TIME_OPTIMISATION)
-    set(value ${_LINK_TIME_OPTIMISATION})
-    set(JUCER_LINK_TIME_OPTIMISATION_${config} ${value} PARENT_SCOPE)
+    set(JUCER_LINK_TIME_OPTIMISATION_${config} ${_LINK_TIME_OPTIMISATION} PARENT_SCOPE)
   endif()
 
   if(DEFINED _STRIP_LOCAL_SYMBOLS)
-    set(value ${_STRIP_LOCAL_SYMBOLS})
-    set(JUCER_STRIP_LOCAL_SYMBOLS_${config} ${value} PARENT_SCOPE)
+    set(JUCER_STRIP_LOCAL_SYMBOLS_${config} ${_STRIP_LOCAL_SYMBOLS} PARENT_SCOPE)
   endif()
 
   if(DEFINED _WARNING_LEVEL)
@@ -1031,8 +1018,9 @@ function(jucer_export_target_configuration
   endif()
 
   if(DEFINED _TREAT_WARNINGS_AS_ERRORS)
-    set(value ${_TREAT_WARNINGS_AS_ERRORS})
-    set(JUCER_TREAT_WARNINGS_AS_ERRORS_${config} ${value} PARENT_SCOPE)
+    set(JUCER_TREAT_WARNINGS_AS_ERRORS_${config} ${_TREAT_WARNINGS_AS_ERRORS}
+      PARENT_SCOPE
+    )
   endif()
 
   if(DEFINED _RUNTIME_LIBRARY)
@@ -1067,13 +1055,11 @@ function(jucer_export_target_configuration
   endif()
 
   if(DEFINED _INCREMENTAL_LINKING)
-    set(value ${_INCREMENTAL_LINKING})
-    set(JUCER_INCREMENTAL_LINKING_${config} ${value} PARENT_SCOPE)
+    set(JUCER_INCREMENTAL_LINKING_${config} ${_INCREMENTAL_LINKING} PARENT_SCOPE)
   endif()
 
   if(DEFINED _PREBUILD_COMMAND)
-    set(value ${_PREBUILD_COMMAND})
-    set(script_content "${value}")
+    set(script_content "${_PREBUILD_COMMAND}")
     configure_file("${Reprojucer_templates_DIR}/script.in"
       "prebuild_${config}.cmd" @ONLY
     )
@@ -1083,8 +1069,7 @@ function(jucer_export_target_configuration
   endif()
 
   if(DEFINED _POSTBUILD_COMMAND)
-    set(value ${_POSTBUILD_COMMAND})
-    set(script_content "${value}")
+    set(script_content "${_POSTBUILD_COMMAND}")
     configure_file("${Reprojucer_templates_DIR}/script.in"
       "postbuild_${config}.cmd" @ONLY
     )
@@ -1094,28 +1079,25 @@ function(jucer_export_target_configuration
   endif()
 
   if(DEFINED _GENERATE_MANIFEST)
-    set(value ${_GENERATE_MANIFEST})
-    set(JUCER_GENERATE_MANIFEST_${config} ${value} PARENT_SCOPE)
+    set(JUCER_GENERATE_MANIFEST_${config} ${_GENERATE_MANIFEST} PARENT_SCOPE)
   endif()
 
   if(DEFINED _CHARACTER_SET)
-    set(value ${_CHARACTER_SET})
     set(character_sets "Default" "MultiByte" "Unicode")
-    if("${value}" IN_LIST character_sets)
-      set(JUCER_CHARACTER_SET_${config} ${value} PARENT_SCOPE)
+    if("${_CHARACTER_SET}" IN_LIST character_sets)
+      set(JUCER_CHARACTER_SET_${config} ${_CHARACTER_SET} PARENT_SCOPE)
     else()
-      message(FATAL_ERROR "Unsupported value for CHARACTER_SET: \"${value}\"")
+      message(FATAL_ERROR "Unsupported value for CHARACTER_SET: \"${_CHARACTER_SET}\"")
     endif()
   endif()
 
   if(DEFINED _ARCHITECTURE AND exporter MATCHES "^Visual Studio 201(7|5|3)$")
-    set(value ${_ARCHITECTURE})
-    if(value STREQUAL "32-bit")
+    if(_ARCHITECTURE STREQUAL "32-bit")
       set(wants_x64 FALSE)
-    elseif(value STREQUAL "x64")
+    elseif(_ARCHITECTURE STREQUAL "x64")
       set(wants_x64 TRUE)
     else()
-      message(FATAL_ERROR "Unsupported value for ARCHITECTURE: \"${value}\"")
+      message(FATAL_ERROR "Unsupported value for ARCHITECTURE: \"${_ARCHITECTURE}\"")
     endif()
     if(CMAKE_GENERATOR_PLATFORM STREQUAL "x64" OR CMAKE_GENERATOR MATCHES "Win64")
       set(is_x64 TRUE)
