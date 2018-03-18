@@ -134,17 +134,17 @@ function(jucer_project_settings)
 
   if(DEFINED _CXX_LANGUAGE_STANDARD)
     set(value ${_CXX_LANGUAGE_STANDARD})
-    set(cxx_language_standard_descs "C++11" "C++14" "Use Latest")
-    set(cxx_language_standards "11" "14" "latest")
+    set(cxx_lang_standard_descs "C++11" "C++14" "Use Latest")
+    set(cxx_lang_standards "11" "14" "latest")
 
-    list(FIND cxx_language_standard_descs "${value}" cxx_language_standard_index)
-    if(cxx_language_standard_index EQUAL -1)
+    list(FIND cxx_lang_standard_descs "${value}" cxx_lang_standard_index)
+    if(cxx_lang_standard_index EQUAL -1)
       message(FATAL_ERROR
         "Unsupported value for CXX_LANGUAGE_STANDARD: "
-        "\"${value}\"\nSupported values: ${cxx_language_standard_descs}"
+        "\"${value}\"\nSupported values: ${cxx_lang_standard_descs}"
       )
     endif()
-    list(GET cxx_language_standards ${cxx_language_standard_index} value)
+    list(GET cxx_lang_standards ${cxx_lang_standard_index} value)
     set(_CXX_LANGUAGE_STANDARD ${value})
   endif()
 
