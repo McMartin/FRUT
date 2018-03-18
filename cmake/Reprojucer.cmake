@@ -89,82 +89,72 @@ function(jucer_project_settings)
   endif()
 
   if(DEFINED _PROJECT_VERSION)
-    set(value ${_PROJECT_VERSION})
-    string(REGEX MATCH ".+\\..+\\..+(\\..+)?" version_match "${value}")
-    if(NOT value STREQUAL version_match)
+    string(REGEX MATCH ".+\\..+\\..+(\\..+)?" version_match "${_PROJECT_VERSION}")
+    if(NOT _PROJECT_VERSION STREQUAL version_match)
       message(WARNING
         "The PROJECT_VERSION doesn't seem to be in the format "
         "major.minor.point[.point]"
       )
     endif()
-    _FRUT_version_to_hex("${value}" hex_value)
+    _FRUT_version_to_hex("${_PROJECT_VERSION}" hex_value)
     set(JUCER_PROJECT_VERSION_AS_HEX "${hex_value}" PARENT_SCOPE)
   endif()
 
   if(NOT DEFINED _PROJECT_TYPE)
     message(FATAL_ERROR "Missing PROJECT_TYPE argument")
   endif()
-  set(value ${_PROJECT_TYPE})
   set(project_types "GUI Application" "Console Application" "Static Library"
     "Dynamic Library" "Audio Plug-in"
   )
-  if(NOT "${value}" IN_LIST project_types)
-    message(FATAL_ERROR "Unsupported project type: \"${value}\"\n"
+  if(NOT "${_PROJECT_TYPE}" IN_LIST project_types)
+    message(FATAL_ERROR "Unsupported project type: \"${_PROJECT_TYPE}\"\n"
       "Supported project types: ${project_types}"
     )
   endif()
 
   if(DEFINED _BINARYDATACPP_SIZE_LIMIT)
-    set(value ${_BINARYDATACPP_SIZE_LIMIT})
     set(size_limit_descs "Default" "20.0 MB" "10.0 MB" "6.0 MB" "2.0 MB" "1.0 MB"
       "512.0 KB" "256.0 KB" "128.0 KB" "64.0 KB"
     )
     set(size_limits 10240 20480 10240 6144 2048 1024 512 256 128 64)
 
-    list(FIND size_limit_descs "${value}" size_limit_index)
+    list(FIND size_limit_descs "${_BINARYDATACPP_SIZE_LIMIT}" size_limit_index)
     if(size_limit_index EQUAL -1)
       message(FATAL_ERROR
         "Unsupported value for BINARYDATACPP_SIZE_LIMIT: "
-        "\"${value}\"\nSupported values: ${size_limit_descs}"
+        "\"${_BINARYDATACPP_SIZE_LIMIT}\"\nSupported values: ${size_limit_descs}"
       )
     endif()
-    list(GET size_limits ${size_limit_index} value)
-    set(_BINARYDATACPP_SIZE_LIMIT ${value})
+    list(GET size_limits ${size_limit_index} _BINARYDATACPP_SIZE_LIMIT)
   endif()
 
   if(DEFINED _CXX_LANGUAGE_STANDARD)
-    set(value ${_CXX_LANGUAGE_STANDARD})
     set(cxx_lang_standard_descs "C++11" "C++14" "Use Latest")
     set(cxx_lang_standards "11" "14" "latest")
 
-    list(FIND cxx_lang_standard_descs "${value}" cxx_lang_standard_index)
+    list(FIND cxx_lang_standard_descs "${_CXX_LANGUAGE_STANDARD}" cxx_lang_standard_index)
     if(cxx_lang_standard_index EQUAL -1)
       message(FATAL_ERROR
         "Unsupported value for CXX_LANGUAGE_STANDARD: "
-        "\"${value}\"\nSupported values: ${cxx_lang_standard_descs}"
+        "\"${_CXX_LANGUAGE_STANDARD}\"\nSupported values: ${cxx_lang_standard_descs}"
       )
     endif()
-    list(GET cxx_lang_standards ${cxx_lang_standard_index} value)
-    set(_CXX_LANGUAGE_STANDARD ${value})
+    list(GET cxx_lang_standards ${cxx_lang_standard_index} _CXX_LANGUAGE_STANDARD)
   endif()
 
   if(DEFINED _PREPROCESSOR_DEFINITIONS)
-    set(value ${_PREPROCESSOR_DEFINITIONS})
-    string(REPLACE "\n" ";" value "${value}")
-    set(_PREPROCESSOR_DEFINITIONS ${value})
+    string(REPLACE "\n" ";" _PREPROCESSOR_DEFINITIONS "${_PREPROCESSOR_DEFINITIONS}")
   endif()
 
   if(DEFINED _HEADER_SEARCH_PATHS)
-    set(value ${_HEADER_SEARCH_PATHS})
-    string(REPLACE "\\" "/" value "${value}")
+    string(REPLACE "\\" "/" value "${_HEADER_SEARCH_PATHS}")
     string(REPLACE "\n" ";" value "${value}")
     unset(header_search_paths)
     foreach(path ${value})
       _FRUT_abs_path_based_on_jucer_project_dir("${path}" path)
       list(APPEND header_search_paths "${path}")
     endforeach()
-    set(value ${header_search_paths})
-    set(_HEADER_SEARCH_PATHS ${value})
+    set(_HEADER_SEARCH_PATHS ${header_search_paths})
   endif()
 
   foreach(keyword ${single_value_keywords})
