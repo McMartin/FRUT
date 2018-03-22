@@ -304,11 +304,12 @@ int main(int argc, char* argv[])
   // include(Reprojucer)
   {
     const auto& reprojucerFilePath = args.at(2);
+    const auto reprojucerFile =
+      juce::File{juce::File::getCurrentWorkingDirectory().getChildFile(
+        juce::String{reprojucerFilePath})};
 
     wLn("list(APPEND CMAKE_MODULE_PATH \"${CMAKE_CURRENT_LIST_DIR}/",
-        juce::File{juce::File::getCurrentWorkingDirectory().getChildFile(
-                     juce::String{reprojucerFilePath})}
-          .getParentDirectory()
+        reprojucerFile.getParentDirectory()
           .getRelativePathFrom(juce::File::getCurrentWorkingDirectory())
           .replace("\\", "/"),
         "\")");
