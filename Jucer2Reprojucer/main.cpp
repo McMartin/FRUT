@@ -308,6 +308,12 @@ int main(int argc, char* argv[])
       juce::File{juce::File::getCurrentWorkingDirectory().getChildFile(
         juce::String{reprojucerFilePath})};
 
+    if (!reprojucerFile.existsAsFile())
+    {
+      printError(reprojucerFilePath + " is not a valid file.");
+      return 1;
+    }
+
     wLn("list(APPEND CMAKE_MODULE_PATH \"${CMAKE_CURRENT_LIST_DIR}/",
         reprojucerFile.getParentDirectory()
           .getRelativePathFrom(juce::File::getCurrentWorkingDirectory())
