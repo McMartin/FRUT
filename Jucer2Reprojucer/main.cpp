@@ -308,9 +308,10 @@ int main(int argc, char* argv[])
       juce::File{juce::File::getCurrentWorkingDirectory().getChildFile(
         juce::String{reprojucerFilePath})};
 
-    if (!reprojucerFile.existsAsFile())
+    if (!reprojucerFile.existsAsFile()
+        || !reprojucerFile.getFileName().endsWith("Reprojucer.cmake"))
     {
-      printError(reprojucerFilePath + " is not a valid file.");
+      printError(reprojucerFilePath + " is not a valid Reprojucer.cmake file.");
       return 1;
     }
 
