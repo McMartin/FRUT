@@ -41,7 +41,7 @@ set(Reprojucer_supported_exporters_conditions
 
 function(jucer_project_begin)
 
-  _FRUT_parse_arguments("JUCER_VERSION;PROJECT_FILE;PROJECT_ID" "${ARGN}")
+  _FRUT_parse_arguments("JUCER_VERSION;PROJECT_FILE;PROJECT_ID" "" "${ARGN}")
 
   if(DEFINED _JUCER_VERSION)
     set(JUCER_VERSION "${_JUCER_VERSION}" PARENT_SCOPE)
@@ -64,7 +64,7 @@ endfunction()
 
 function(jucer_project_settings)
 
-  set(project_setting_keywords
+  set(single_value_keywords
     "PROJECT_NAME"
     "PROJECT_VERSION"
     "COMPANY_NAME"
@@ -82,8 +82,10 @@ function(jucer_project_settings)
     "PREPROCESSOR_DEFINITIONS"
     "HEADER_SEARCH_PATHS"
   )
+  set(multi_value_keywords
+  )
 
-  _FRUT_parse_arguments("${project_setting_keywords}" "${ARGN}")
+  _FRUT_parse_arguments("${single_value_keywords}" "${multi_value_keywords}" "${ARGN}")
 
   if(NOT DEFINED _PROJECT_NAME)
     message(FATAL_ERROR "Missing PROJECT_NAME argument")
@@ -168,7 +170,7 @@ function(jucer_project_settings)
     set(_HEADER_SEARCH_PATHS ${value})
   endif()
 
-  foreach(keyword ${project_setting_keywords})
+  foreach(keyword ${single_value_keywords} ${multi_value_keywords})
     if(DEFINED _${keyword})
       set(JUCER_${keyword} ${_${keyword}} PARENT_SCOPE)
     endif()
@@ -179,7 +181,7 @@ endfunction()
 
 function(jucer_audio_plugin_settings)
 
-  set(plugin_setting_keywords
+  set(single_value_keywords
     "BUILD_VST"
     "BUILD_VST3"
     "BUILD_AUDIOUNIT"
@@ -206,7 +208,7 @@ function(jucer_audio_plugin_settings)
     "PLUGIN_AAX_IDENTIFIER"
   )
 
-  _FRUT_parse_arguments("${plugin_setting_keywords}" "${ARGN}")
+  _FRUT_parse_arguments("${single_value_keywords}" "" "${ARGN}")
 
   if(_BUILD_RTAS AND (APPLE OR MSVC))
     message(WARNING "Reprojucer.cmake doesn't support building RTAS plugins. If you "
@@ -229,7 +231,7 @@ function(jucer_audio_plugin_settings)
     message(WARNING "BUILD_STANDALONE_PLUGIN is a JUCE 5 feature only")
   endif()
 
-  foreach(keyword ${plugin_setting_keywords})
+  foreach(keyword ${single_value_keywords})
     if(DEFINED _${keyword})
       set(JUCER_${keyword} ${_${keyword}} PARENT_SCOPE)
     endif()
@@ -499,7 +501,7 @@ function(jucer_export_target exporter)
     return()
   endif()
 
-  set(export_target_settings_keywords
+  set(single_value_keywords
     "TARGET_PROJECT_FOLDER"
     "VST_SDK_FOLDER"
     "EXTRA_PREPROCESSOR_DEFINITIONS"
@@ -509,9 +511,11 @@ function(jucer_export_target exporter)
     "ICON_SMALL"
     "ICON_LARGE"
   )
+  set(multi_value_keywords
+  )
 
   if(exporter STREQUAL "Xcode (MacOSX)")
-    list(APPEND export_target_settings_keywords
+    list(APPEND single_value_keywords
       "VST3_SDK_FOLDER"
       "CUSTOM_XCODE_RESOURCE_FOLDERS"
       "EXTRA_FRAMEWORKS"
@@ -522,34 +526,34 @@ function(jucer_export_target exporter)
     )
 
     if(JUCER_PROJECT_TYPE STREQUAL "GUI Application")
-      list(APPEND export_target_settings_keywords
+      list(APPEND single_value_keywords
         "DOCUMENT_FILE_EXTENSIONS"
       )
     endif()
   endif()
 
   if(exporter MATCHES "^Visual Studio 201(7|5|3)$")
-    list(APPEND export_target_settings_keywords
+    list(APPEND single_value_keywords
       "VST3_SDK_FOLDER"
       "PLATFORM_TOOLSET"
       "USE_IPP_LIBRARY"
     )
 
     if(exporter STREQUAL "Visual Studio 2017")
-      list(APPEND export_target_settings_keywords "CXX_STANDARD_TO_USE")
+      list(APPEND single_value_keywords "CXX_STANDARD_TO_USE")
     endif()
   else()
-    list(APPEND export_target_settings_keywords "GNU_COMPILER_EXTENSIONS")
+    list(APPEND single_value_keywords "GNU_COMPILER_EXTENSIONS")
   endif()
 
   if(exporter STREQUAL "Linux Makefile")
-    list(APPEND export_target_settings_keywords
+    list(APPEND single_value_keywords
       "CXX_STANDARD_TO_USE"
       "PKGCONFIG_LIBRARIES"
     )
   endif()
 
-  _FRUT_parse_arguments("${export_target_settings_keywords}" "${ARGN}")
+  _FRUT_parse_arguments("${single_value_keywords}" "${multi_value_keywords}" "${ARGN}")
 
   if(DEFINED _TARGET_PROJECT_FOLDER)
     set(value ${_TARGET_PROJECT_FOLDER})
@@ -792,7 +796,7 @@ function(jucer_export_target_configuration
 
   set(JUCER_CONFIGURATION_IS_DEBUG_${config} ${is_debug} PARENT_SCOPE)
 
-  set(configuration_settings_keywords
+  set(single_value_keywords
     "BINARY_NAME"
     "BINARY_LOCATION"
     "HEADER_SEARCH_PATHS"
@@ -800,9 +804,11 @@ function(jucer_export_target_configuration
     "PREPROCESSOR_DEFINITIONS"
     "OPTIMISATION"
   )
+  set(multi_value_keywords
+  )
 
   if(exporter STREQUAL "Xcode (MacOSX)")
-    list(APPEND configuration_settings_keywords
+    list(APPEND single_value_keywords
       "VST_BINARY_LOCATION"
       "VST3_BINARY_LOCATION"
       "AU_BINARY_LOCATION"
@@ -820,7 +826,7 @@ function(jucer_export_target_configuration
   endif()
 
   if(exporter MATCHES "^Visual Studio 201(7|5|3)$")
-    list(APPEND configuration_settings_keywords
+    list(APPEND single_value_keywords
       "WARNING_LEVEL"
       "TREAT_WARNINGS_AS_ERRORS"
       "RUNTIME_LIBRARY"
@@ -836,12 +842,12 @@ function(jucer_export_target_configuration
   endif()
 
   if(exporter STREQUAL "Linux Makefile")
-    list(APPEND configuration_settings_keywords
+    list(APPEND single_value_keywords
       "ARCHITECTURE"
     )
   endif()
 
-  _FRUT_parse_arguments("${configuration_settings_keywords}" "${ARGN}")
+  _FRUT_parse_arguments("${single_value_keywords}" "${multi_value_keywords}" "${ARGN}")
 
   if(DEFINED _BINARY_NAME)
     set(value ${_BINARY_NAME})
@@ -1777,27 +1783,51 @@ function(jucer_project_end)
 endfunction()
 
 
-function(_FRUT_parse_arguments single_value_keywords arguments)
+function(_FRUT_parse_arguments single_value_keywords multi_value_keywords arguments)
 
-  foreach(keyword ${single_value_keywords})
+  foreach(keyword ${single_value_keywords} ${multi_value_keywords})
     unset(_${keyword})
   endforeach()
 
   unset(keyword)
 
   foreach(argument ${arguments})
+    list(FIND single_value_keywords "${argument}" single_value_index)
+    list(FIND multi_value_keywords "${argument}" multi_value_index)
+
     if(NOT DEFINED keyword)
-      set(keyword ${argument})
-      if(NOT "${keyword}" IN_LIST single_value_keywords)
+      if(NOT single_value_index EQUAL -1)
+        set(keyword ${argument})
+        set(keyword_type "single")
+      elseif(NOT multi_value_index EQUAL -1)
+        set(keyword ${argument})
+        set(keyword_type "multi")
+      else()
         message(FATAL_ERROR "Unknown keyword: \"${keyword}\"")
       endif()
-    else()
+    elseif(keyword_type STREQUAL "single")
       set(_${keyword} ${argument})
       unset(keyword)
+    elseif(keyword_type STREQUAL "multi")
+      if(DEFINED _${keyword})
+        if(NOT single_value_index EQUAL -1)
+          set(keyword "${argument}")
+          set(keyword_type "single")
+        elseif(NOT multi_value_index EQUAL -1)
+          set(keyword "${argument}")
+          set(keyword_type "multi")
+        else()
+          list(APPEND _${keyword} ${argument})
+        endif()
+      else()
+        list(APPEND _${keyword} ${argument})
+      endif()
+    else()
+      message(FATAL_ERROR "There is a bug!")
     endif()
   endforeach()
 
-  foreach(keyword ${single_value_keywords})
+  foreach(keyword ${single_value_keywords} ${multi_value_keywords})
     unset(_${keyword} PARENT_SCOPE)
     if(DEFINED _${keyword})
       set(_${keyword} ${_${keyword}} PARENT_SCOPE)
