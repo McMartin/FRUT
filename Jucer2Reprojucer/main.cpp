@@ -181,8 +181,8 @@ int main(int argc, char* argv[])
   }
 
   const auto jucerVersion = jucerProject.getProperty("jucerVersion").toString();
-  const auto jucerVersionTokens = split(".", jucerVersion.toStdString());
-  if (jucerVersionTokens.size() != 3u)
+  const auto jucerVersionTokens = juce::StringArray::fromTokens(jucerVersion, ".", {});
+  if (jucerVersionTokens.size() != 3)
   {
     printError(jucerFilePath + " is not a valid Jucer project.");
     return 1;
@@ -193,9 +193,9 @@ int main(int argc, char* argv[])
   const auto jucerVersionAsTuple = [&jucerVersionTokens, &jucerFilePath]() {
     try
     {
-      return Version{std::stoi(jucerVersionTokens.at(0)),
-                     std::stoi(jucerVersionTokens.at(1)),
-                     std::stoi(jucerVersionTokens.at(2))};
+      return Version{std::stoi(jucerVersionTokens[0].toStdString()),
+                     std::stoi(jucerVersionTokens[1].toStdString()),
+                     std::stoi(jucerVersionTokens[2].toStdString())};
     }
     catch (const std::invalid_argument&)
     {
