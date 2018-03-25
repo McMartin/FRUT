@@ -17,6 +17,7 @@
 
 #include "JuceHeader.h"
 
+#include <algorithm>
 #include <cstdlib>
 #include <fstream>
 #include <functional>
