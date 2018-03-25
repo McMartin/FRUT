@@ -617,9 +617,9 @@ int main(int argc, char* argv[])
 
   // jucer_export_target() and jucer_export_target_configuration()
   {
-    const auto supportedExporters = {"XCODE_MAC", "VS2017", "VS2015", "VS2013",
-                                     "LINUX_MAKE"};
-    const auto exporterNames = std::map<std::string, const char*>{
+    const auto supportedExporters =
+      juce::StringArray{"XCODE_MAC", "VS2017", "VS2015", "VS2013", "LINUX_MAKE"};
+    const auto exporterNames = std::map<juce::String, const char*>{
       {"XCODE_MAC", "Xcode (MacOSX)"},  {"VS2017", "Visual Studio 2017"},
       {"VS2015", "Visual Studio 2015"}, {"VS2013", "Visual Studio 2013"},
       {"LINUX_MAKE", "Linux Makefile"},
@@ -629,10 +629,9 @@ int main(int argc, char* argv[])
     for (auto iExporter = 0; iExporter < exportFormats.getNumChildren(); ++iExporter)
     {
       const auto exporter = exportFormats.getChild(iExporter);
-      const auto exporterType = exporter.getType().toString().toStdString();
+      const auto exporterType = exporter.getType().toString();
 
-      if (std::find(supportedExporters.begin(), supportedExporters.end(), exporterType)
-          == supportedExporters.end())
+      if (!supportedExporters.contains(exporterType))
       {
         continue;
       }
@@ -954,36 +953,36 @@ int main(int argc, char* argv[])
           convertSettingIfDefined(configuration, "xcodeAudioUnitBinaryLocation",
                                   "AU_BINARY_LOCATION", {});
 
-          const auto sdks = {"10.5 SDK", "10.6 SDK",  "10.7 SDK",  "10.8 SDK",
-                             "10.9 SDK", "10.10 SDK", "10.11 SDK", "10.12 SDK"};
+          const auto sdks =
+            juce::StringArray{"10.5 SDK", "10.6 SDK",  "10.7 SDK",  "10.8 SDK",
+                              "10.9 SDK", "10.10 SDK", "10.11 SDK", "10.12 SDK"};
 
-          convertSettingIfDefined(
-            configuration, "osxSDK", "OSX_BASE_SDK_VERSION",
-            [&sdks](const juce::var& v) -> juce::String {
-              const auto value = v.toString();
+          convertSettingIfDefined(configuration, "osxSDK", "OSX_BASE_SDK_VERSION",
+                                  [&sdks](const juce::var& v) -> juce::String {
+                                    const auto value = v.toString();
 
-              if (value == "default")
-                return "Use Default";
+                                    if (value == "default")
+                                      return "Use Default";
 
-              if (std::find(sdks.begin(), sdks.end(), value.toStdString()) != sdks.end())
-                return value;
+                                    if (sdks.contains(value))
+                                      return value;
 
-              return {};
-            });
+                                    return {};
+                                  });
 
-          convertSettingIfDefined(
-            configuration, "osxCompatibility", "OSX_DEPLOYMENT_TARGET",
-            [&sdks](const juce::var& v) -> juce::String {
-              const auto value = v.toString();
+          convertSettingIfDefined(configuration, "osxCompatibility",
+                                  "OSX_DEPLOYMENT_TARGET",
+                                  [&sdks](const juce::var& v) -> juce::String {
+                                    const auto value = v.toString();
 
-              if (value == "default")
-                return "Use Default";
+                                    if (value == "default")
+                                      return "Use Default";
 
-              if (std::find(sdks.begin(), sdks.end(), value.toStdString()) != sdks.end())
-                return value.substring(0, value.length() - 4);
+                                    if (sdks.contains(value))
+                                      return value.substring(0, value.length() - 4);
 
-              return {};
-            });
+                                    return {};
+                                  });
 
           convertSettingIfDefined(configuration, "osxArchitecture", "OSX_ARCHITECTURE",
                                   [](const juce::var& v) -> juce::String {
