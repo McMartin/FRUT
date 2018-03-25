@@ -194,18 +194,16 @@ int main(int argc, char* argv[])
   const auto convertSetting =
     [&wLn](const juce::ValueTree& valueTree, const juce::Identifier& property,
            const std::string& cmakeKeyword,
-           std::function<std::string(const juce::var&)> converterFn) {
+           std::function<juce::String(const juce::var&)> converterFn) {
 
       if (!converterFn)
       {
-        converterFn = [](const juce::var& value) {
-          return value.toString().toStdString();
-        };
+        converterFn = [](const juce::var& value) { return value.toString(); };
       }
 
       const auto value = converterFn(valueTree.getProperty(property));
 
-      if (value.empty())
+      if (value.isEmpty())
       {
         wLn("  # ", cmakeKeyword);
       }
@@ -218,7 +216,7 @@ int main(int argc, char* argv[])
   const auto convertSettingIfDefined =
     [&convertSetting](const juce::ValueTree& valueTree, const juce::Identifier& property,
                       const std::string& cmakeKeyword,
-                      std::function<std::string(const juce::var&)> converterFn) {
+                      std::function<juce::String(const juce::var&)> converterFn) {
 
       if (valueTree.hasProperty(property))
       {
@@ -229,10 +227,10 @@ int main(int argc, char* argv[])
   const auto convertOnOffSetting = [&wLn](const juce::ValueTree& valueTree,
                                           const juce::Identifier& property,
                                           const std::string& cmakeKeyword,
-                                          std::function<std::string(bool)> converterFn) {
+                                          std::function<juce::String(bool)> converterFn) {
     if (!converterFn)
     {
-      converterFn = [](bool value) -> std::string { return value ? "ON" : "OFF"; };
+      converterFn = [](bool value) -> juce::String { return value ? "ON" : "OFF"; };
     }
 
     const auto value = valueTree.getProperty(property);
@@ -250,7 +248,7 @@ int main(int argc, char* argv[])
   const auto convertOnOffSettingIfDefined =
     [&convertOnOffSetting](
       const juce::ValueTree& valueTree, const juce::Identifier& property,
-      const std::string& cmakeKeyword, std::function<std::string(bool)> converterFn) {
+      const std::string& cmakeKeyword, std::function<juce::String(bool)> converterFn) {
 
       if (valueTree.hasProperty(property))
       {
@@ -340,7 +338,7 @@ int main(int argc, char* argv[])
     convertSettingIfDefined(jucerProject, "companyEmail", "COMPANY_EMAIL", {});
 
     const auto booleanWithLicenseRequiredTagline = [](bool value) {
-      return std::string{value ? "ON" : "OFF"}
+      return juce::String{value ? "ON" : "OFF"}
              + " # Required for closed source applications without an Indie or Pro JUCE "
                "license";
     };
@@ -352,7 +350,7 @@ int main(int argc, char* argv[])
     convertSettingIfDefined(jucerProject, "splashScreenColour", "SPLASH_SCREEN_COLOUR",
                             {});
 
-    const auto projectTypeDescription = [&projectType]() -> std::string {
+    const auto projectTypeDescription = [&projectType]() -> juce::String {
       if (projectType == "guiapp")
         return "GUI Application";
 
@@ -374,16 +372,15 @@ int main(int argc, char* argv[])
 
     convertSettingIfDefined(jucerProject, "bundleIdentifier", "BUNDLE_IDENTIFIER", {});
 
-    convertSettingIfDefined(
-      jucerProject, "maxBinaryFileSize", "BINARYDATACPP_SIZE_LIMIT",
-      [](const juce::var& value) -> std::string {
-        if (value.toString().isEmpty())
-          return "Default";
-        return juce::File::descriptionOfSizeInBytes(int{value}).toStdString();
-      });
+    convertSettingIfDefined(jucerProject, "maxBinaryFileSize", "BINARYDATACPP_SIZE_LIMIT",
+                            [](const juce::var& value) -> juce::String {
+                              if (value.toString().isEmpty())
+                                return "Default";
+                              return juce::File::descriptionOfSizeInBytes(int{value});
+                            });
 
     convertSettingIfDefined(jucerProject, "cppLanguageStandard", "CXX_LANGUAGE_STANDARD",
-                            [](const juce::var& v) -> std::string {
+                            [](const juce::var& v) -> juce::String {
                               const auto value = v.toString();
 
                               if (value == "11")
@@ -725,7 +722,7 @@ int main(int argc, char* argv[])
       convertOnOffSettingIfDefined(exporter, "enableGNUExtensions",
                                    "GNU_COMPILER_EXTENSIONS", {});
 
-      const auto convertIcon = [&jucerProject](const juce::var& value) -> std::string {
+      const auto convertIcon = [&jucerProject](const juce::var& value) -> juce::String {
         const auto fileId = value.toString();
 
         if (!fileId.isEmpty())
@@ -735,7 +732,7 @@ int main(int argc, char* argv[])
 
           if (file.isValid())
           {
-            return file.getProperty("file").toString().toStdString();
+            return file.getProperty("file").toString();
           }
         }
 
@@ -781,7 +778,7 @@ int main(int argc, char* argv[])
         }
 
         convertSettingIfDefined(exporter, "IPPLibrary", "USE_IPP_LIBRARY",
-                                [](const juce::var& v) -> std::string {
+                                [](const juce::var& v) -> juce::String {
                                   const auto value = v.toString();
 
                                   if (value.isEmpty())
@@ -808,7 +805,7 @@ int main(int argc, char* argv[])
         if (exporterType == "VS2017")
         {
           convertSettingIfDefined(exporter, "cppLanguageStandard", "CXX_STANDARD_TO_USE",
-                                  [](const juce::var& v) -> std::string {
+                                  [](const juce::var& v) -> juce::String {
                                     const auto value = v.toString();
 
                                     if (value.isEmpty())
@@ -825,7 +822,7 @@ int main(int argc, char* argv[])
       if (exporterType == "LINUX_MAKE")
       {
         convertSettingIfDefined(exporter, "cppLanguageStandard", "CXX_STANDARD_TO_USE",
-                                [](const juce::var& v) -> std::string {
+                                [](const juce::var& v) -> juce::String {
                                   const auto value = v.toString();
 
                                   if (value == "-std=c++03")
@@ -873,7 +870,7 @@ int main(int argc, char* argv[])
 
         const auto convertSearchPaths =
           [&isAbsolutePath, &jucerFileDir,
-           &targetProjectDir](const juce::var& value) -> std::string {
+           &targetProjectDir](const juce::var& value) -> juce::String {
           const auto searchPaths = value.toString();
 
           if (searchPaths.isEmpty())
@@ -901,8 +898,7 @@ int main(int argc, char* argv[])
             }
           }
 
-          return escape("\\", absOrRelToJucerFileDirPaths.joinIntoString("\n"))
-            .toStdString();
+          return escape("\\", absOrRelToJucerFileDirPaths.joinIntoString("\n"));
         };
 
         convertSettingIfDefined(configuration, "headerPath", "HEADER_SEARCH_PATHS",
@@ -913,7 +909,7 @@ int main(int argc, char* argv[])
         convertSettingIfDefined(configuration, "defines", "PREPROCESSOR_DEFINITIONS", {});
 
         convertSettingIfDefined(configuration, "optimisation", "OPTIMISATION",
-                                [&isVSExporter](const juce::var& value) -> std::string {
+                                [&isVSExporter](const juce::var& value) -> juce::String {
                                   if (value.isVoid())
                                     return {};
 
@@ -963,36 +959,36 @@ int main(int argc, char* argv[])
           const auto sdks = {"10.5 SDK", "10.6 SDK",  "10.7 SDK",  "10.8 SDK",
                              "10.9 SDK", "10.10 SDK", "10.11 SDK", "10.12 SDK"};
 
-          convertSettingIfDefined(configuration, "osxSDK", "OSX_BASE_SDK_VERSION",
-                                  [&sdks](const juce::var& v) -> std::string {
-                                    const auto value = v.toString().toStdString();
-
-                                    if (value == "default")
-                                      return "Use Default";
-
-                                    if (std::find(sdks.begin(), sdks.end(), value)
-                                        != sdks.end())
-                                      return value;
-
-                                    return {};
-                                  });
-
           convertSettingIfDefined(
-            configuration, "osxCompatibility", "OSX_DEPLOYMENT_TARGET",
-            [&sdks](const juce::var& v) -> std::string {
-              const auto value = v.toString().toStdString();
+            configuration, "osxSDK", "OSX_BASE_SDK_VERSION",
+            [&sdks](const juce::var& v) -> juce::String {
+              const auto value = v.toString();
 
               if (value == "default")
                 return "Use Default";
 
-              if (std::find(sdks.begin(), sdks.end(), value) != sdks.end())
-                return value.substr(0, value.length() - 4);
+              if (std::find(sdks.begin(), sdks.end(), value.toStdString()) != sdks.end())
+                return value;
+
+              return {};
+            });
+
+          convertSettingIfDefined(
+            configuration, "osxCompatibility", "OSX_DEPLOYMENT_TARGET",
+            [&sdks](const juce::var& v) -> juce::String {
+              const auto value = v.toString();
+
+              if (value == "default")
+                return "Use Default";
+
+              if (std::find(sdks.begin(), sdks.end(), value.toStdString()) != sdks.end())
+                return value.substring(0, value.length() - 4);
 
               return {};
             });
 
           convertSettingIfDefined(configuration, "osxArchitecture", "OSX_ARCHITECTURE",
-                                  [](const juce::var& v) -> std::string {
+                                  [](const juce::var& v) -> juce::String {
                                     const auto value = v.toString();
 
                                     if (value == "default")
@@ -1018,7 +1014,7 @@ int main(int argc, char* argv[])
 
           convertSettingIfDefined(configuration, "cppLanguageStandard",
                                   "CXX_LANGUAGE_STANDARD",
-                                  [](const juce::var& v) -> std::string {
+                                  [](const juce::var& v) -> juce::String {
                                     const auto value = v.toString();
 
                                     if (value.isEmpty())
@@ -1046,7 +1042,7 @@ int main(int argc, char* argv[])
                                   });
 
           convertSettingIfDefined(configuration, "cppLibType", "CXX_LIBRARY",
-                                  [](const juce::var& v) -> std::string {
+                                  [](const juce::var& v) -> juce::String {
                                     const auto value = v.toString();
 
                                     if (value.isEmpty())
@@ -1074,7 +1070,7 @@ int main(int argc, char* argv[])
         if (isVSExporter)
         {
           convertSettingIfDefined(configuration, "winWarningLevel", "WARNING_LEVEL",
-                                  [](const juce::var& value) -> std::string {
+                                  [](const juce::var& value) -> juce::String {
                                     switch (int{value})
                                     {
                                     case 2:
@@ -1092,7 +1088,7 @@ int main(int argc, char* argv[])
                                        "TREAT_WARNINGS_AS_ERRORS", {});
 
           convertSettingIfDefined(configuration, "useRuntimeLibDLL", "RUNTIME_LIBRARY",
-                                  [](const juce::var& v) -> std::string {
+                                  [](const juce::var& v) -> juce::String {
                                     const auto value = v.toString();
 
                                     if (value.isEmpty())
@@ -1109,7 +1105,7 @@ int main(int argc, char* argv[])
 
           convertSettingIfDefined(configuration, "wholeProgramOptimisation",
                                   "WHOLE_PROGRAM_OPTIMISATION",
-                                  [](const juce::var& value) -> std::string {
+                                  [](const juce::var& value) -> juce::String {
                                     if (value.toString().isEmpty())
                                       return "Enable when possible";
 
@@ -1129,13 +1125,13 @@ int main(int argc, char* argv[])
                                        "GENERATE_MANIFEST", {});
 
           convertSettingIfDefined(configuration, "characterSet", "CHARACTER_SET",
-                                  [](const juce::var& v) -> std::string {
+                                  [](const juce::var& v) -> juce::String {
                                     const auto value = v.toString();
 
                                     if (value.isEmpty())
                                       return "Default";
 
-                                    return value.toStdString();
+                                    return value;
                                   });
 
           if (configuration.hasProperty("winArchitecture"))
@@ -1159,7 +1155,7 @@ int main(int argc, char* argv[])
         if (exporterType == "LINUX_MAKE")
         {
           convertSettingIfDefined(configuration, "linuxArchitecture", "ARCHITECTURE",
-                                  [](const juce::var& v) -> std::string {
+                                  [](const juce::var& v) -> juce::String {
                                     if (v.isVoid())
                                       return "(Default)";
 
