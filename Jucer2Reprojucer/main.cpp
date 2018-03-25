@@ -326,7 +326,7 @@ int main(int argc, char* argv[])
     wLn();
   }
 
-  std::string escapedJucerFileName = jucerFileName.toStdString();
+  auto escapedJucerFileName = jucerFileName.toStdString();
   std::replace_if(escapedJucerFileName.begin(), escapedJucerFileName.end(),
                   [](const std::string::value_type& c) {
                     return !(std::isalpha(c, std::locale{"C"})
