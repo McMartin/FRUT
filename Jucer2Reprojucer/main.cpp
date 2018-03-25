@@ -79,13 +79,13 @@ void printError(const std::string& error)
 }
 
 
-std::string escape(const std::string& charsToEscape, std::string value)
+juce::String escape(const juce::String& charsToEscape, juce::String value)
 {
-  auto pos = std::string::size_type{0};
+  auto pos = 0;
 
-  while ((pos = value.find_first_of(charsToEscape, pos)) != std::string::npos)
+  while ((pos = value.indexOfAnyOf(charsToEscape, pos)) != -1)
   {
-    value.insert(pos, "\\");
+    value = value.replaceSection(pos, 0, "\\");
     pos += 2;
   }
 
@@ -614,8 +614,7 @@ int main(int argc, char* argv[])
     {
       wLn("jucer_appconfig_header(");
       wLn("  USER_CODE_SECTION");
-      wLn("\"", escape("\\\"", userCodeSectionLines.joinIntoString("\n").toStdString()),
-          "\"");
+      wLn("\"", escape("\\\"", userCodeSectionLines.joinIntoString("\n")), "\"");
       wLn(")");
       wLn();
     }
@@ -902,8 +901,8 @@ int main(int argc, char* argv[])
             }
           }
 
-          return escape("\\",
-                        absOrRelToJucerFileDirPaths.joinIntoString("\n").toStdString());
+          return escape("\\", absOrRelToJucerFileDirPaths.joinIntoString("\n"))
+            .toStdString();
         };
 
         convertSettingIfDefined(configuration, "headerPath", "HEADER_SEARCH_PATHS",
