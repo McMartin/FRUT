@@ -93,22 +93,6 @@ std::string escape(const std::string& charsToEscape, std::string value)
 }
 
 
-std::vector<std::string> split(const std::string& sep, const std::string& value)
-{
-  std::vector<std::string> tokens;
-  std::string::size_type start = 0u, end = 0u;
-
-  while ((end = value.find(sep, start)) != std::string::npos)
-  {
-    tokens.push_back(value.substr(start, end - start));
-    start = end + sep.length();
-  }
-  tokens.push_back(value.substr(start));
-
-  return tokens;
-}
-
-
 juce::ValueTree getChildWithPropertyRecursively(const juce::ValueTree& valueTree,
                                                 const juce::Identifier& propertyName,
                                                 const juce::var& propertyValue)
