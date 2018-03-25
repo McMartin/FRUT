@@ -450,7 +450,7 @@ int main(int argc, char* argv[])
   {
     const auto writeFiles =
       [&wLn](const juce::String& fullGroupName,
-             const std::vector<std::tuple<bool, bool, bool, std::string>>& files) {
+             const std::vector<std::tuple<bool, bool, bool, juce::String>>& files) {
         if (!files.empty())
         {
           const auto nineSpaces = "         ";
@@ -483,7 +483,7 @@ int main(int argc, char* argv[])
 
         const auto fullGroupName = groupNames.joinIntoString("/");
 
-        std::vector<std::tuple<bool, bool, bool, std::string>> files;
+        std::vector<std::tuple<bool, bool, bool, juce::String>> files;
 
         for (auto i = 0; i < group.getNumChildren(); ++i)
         {
@@ -496,7 +496,7 @@ int main(int argc, char* argv[])
             files.emplace_back(int{file.getProperty("compile")} == 1,
                                int{file.getProperty("xcodeResource")} == 1,
                                int{file.getProperty("resource")} == 1,
-                               file.getProperty("file").toString().toStdString());
+                               file.getProperty("file").toString());
           }
           else
           {
@@ -517,12 +517,12 @@ int main(int argc, char* argv[])
 
   // jucer_project_module()
   {
-    std::vector<std::string> moduleNames;
+    juce::StringArray moduleNames;
     const auto modules = jucerProject.getChildWithName("MODULES");
     for (auto i = 0; i < modules.getNumChildren(); ++i)
     {
       const auto module = modules.getChild(i);
-      moduleNames.push_back(module.getProperty("id").toString().toStdString());
+      moduleNames.add(module.getProperty("id").toString());
     }
 
     const auto modulePaths = jucerProject.getChildWithName("EXPORTFORMATS")
@@ -532,9 +532,7 @@ int main(int argc, char* argv[])
     for (const auto& moduleName : moduleNames)
     {
       const auto relativeModulePath =
-        modulePaths.getChildWithProperty("id", juce::String{moduleName})
-          .getProperty("path")
-          .toString();
+        modulePaths.getChildWithProperty("id", moduleName).getProperty("path").toString();
 
       wLn("jucer_project_module(");
       wLn("  ", moduleName);
@@ -542,8 +540,8 @@ int main(int argc, char* argv[])
 
       const auto moduleHeader = jucerFile.getParentDirectory()
                                   .getChildFile(relativeModulePath)
-                                  .getChildFile(juce::String{moduleName})
-                                  .getChildFile(juce::String{moduleName + ".h"});
+                                  .getChildFile(moduleName)
+                                  .getChildFile(moduleName + ".h");
       juce::StringArray moduleHeaderLines;
       moduleHeader.readLines(moduleHeaderLines);
 
