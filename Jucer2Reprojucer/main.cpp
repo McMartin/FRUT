@@ -141,7 +141,7 @@ void writeUserNotes(LineWriter& wLn, const juce::ValueTree& valueTree)
   {
     wLn("  # NOTES");
     const auto userNotes = valueTree.getProperty("userNotes").toString();
-    for (const auto& line : split("\n", userNotes.toStdString()))
+    for (const auto& line : juce::StringArray::fromLines(userNotes))
     {
       wLn("  #   ", line);
     }
@@ -891,18 +891,18 @@ int main(int argc, char* argv[])
         const auto convertSearchPaths =
           [&isAbsolutePath, &jucerFileDir,
            &targetProjectDir](const juce::var& value) -> std::string {
-          const auto searchPaths = value.toString().toStdString();
+          const auto searchPaths = value.toString();
 
-          if (searchPaths.empty())
+          if (searchPaths.isEmpty())
           {
             return {};
           }
 
           juce::StringArray absOrRelToJucerFileDirPaths;
 
-          for (const auto& path : split("\n", searchPaths))
+          for (const auto& path : juce::StringArray::fromLines(searchPaths))
           {
-            if (path.empty())
+            if (path.isEmpty())
             {
               continue;
             }
@@ -914,8 +914,7 @@ int main(int argc, char* argv[])
             else
             {
               absOrRelToJucerFileDirPaths.add(
-                targetProjectDir.getChildFile(juce::String{path})
-                  .getRelativePathFrom(jucerFileDir));
+                targetProjectDir.getChildFile(path).getRelativePathFrom(jucerFileDir));
             }
           }
 
