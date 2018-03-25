@@ -193,7 +193,7 @@ int main(int argc, char* argv[])
 
   const auto convertSetting =
     [&wLn](const juce::ValueTree& valueTree, const juce::Identifier& property,
-           const std::string& cmakeKeyword,
+           const juce::String& cmakeKeyword,
            std::function<juce::String(const juce::var&)> converterFn) {
 
       if (!converterFn)
@@ -215,7 +215,7 @@ int main(int argc, char* argv[])
 
   const auto convertSettingIfDefined =
     [&convertSetting](const juce::ValueTree& valueTree, const juce::Identifier& property,
-                      const std::string& cmakeKeyword,
+                      const juce::String& cmakeKeyword,
                       std::function<juce::String(const juce::var&)> converterFn) {
 
       if (valueTree.hasProperty(property))
@@ -226,7 +226,7 @@ int main(int argc, char* argv[])
 
   const auto convertOnOffSetting = [&wLn](const juce::ValueTree& valueTree,
                                           const juce::Identifier& property,
-                                          const std::string& cmakeKeyword,
+                                          const juce::String& cmakeKeyword,
                                           std::function<juce::String(bool)> converterFn) {
     if (!converterFn)
     {
@@ -248,7 +248,7 @@ int main(int argc, char* argv[])
   const auto convertOnOffSettingIfDefined =
     [&convertOnOffSetting](
       const juce::ValueTree& valueTree, const juce::Identifier& property,
-      const std::string& cmakeKeyword, std::function<juce::String(bool)> converterFn) {
+      const juce::String& cmakeKeyword, std::function<juce::String(bool)> converterFn) {
 
       if (valueTree.hasProperty(property))
       {
