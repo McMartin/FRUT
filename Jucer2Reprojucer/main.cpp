@@ -73,7 +73,7 @@ private:
 };
 
 
-void printError(const std::string& error)
+void printError(const juce::String& error)
 {
   std::cerr << "error: " << error << std::endl;
 }
@@ -144,11 +144,11 @@ int main(int argc, char* argv[])
     return 1;
   }
 
-  const auto args = std::vector<std::string>{argv, argv + argc};
+  const auto args = std::vector<juce::String>{argv, argv + argc};
 
   const auto& jucerFilePath = args.at(1);
   const auto jucerFile =
-    juce::File::getCurrentWorkingDirectory().getChildFile(juce::String{jucerFilePath});
+    juce::File::getCurrentWorkingDirectory().getChildFile(jucerFilePath);
 
   const auto xml = std::unique_ptr<juce::XmlElement>{juce::XmlDocument::parse(jucerFile)};
   if (xml == nullptr || !xml->hasTagName("JUCERPROJECT"))
@@ -272,8 +272,8 @@ int main(int argc, char* argv[])
   // include(Reprojucer)
   {
     const auto& reprojucerFilePath = args.at(2);
-    const auto reprojucerFile = juce::File::getCurrentWorkingDirectory().getChildFile(
-      juce::String{reprojucerFilePath});
+    const auto reprojucerFile =
+      juce::File::getCurrentWorkingDirectory().getChildFile(reprojucerFilePath);
 
     if (!reprojucerFile.existsAsFile()
         || !reprojucerFile.getFileName().endsWith("Reprojucer.cmake"))
