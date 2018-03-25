@@ -22,10 +22,8 @@
 #include <fstream>
 #include <functional>
 #include <iostream>
-#include <iterator>
 #include <locale>
 #include <map>
-#include <numeric>
 #include <string>
 #include <tuple>
 #include <vector>
@@ -92,19 +90,6 @@ std::string escape(const std::string& charsToEscape, std::string value)
   }
 
   return value;
-}
-
-
-std::string join(const std::string& sep, const std::vector<std::string>& elements)
-{
-  if (elements.empty())
-  {
-    return {};
-  }
-
-  return std::accumulate(
-    std::next(elements.begin()), elements.end(), *elements.begin(),
-    [&sep](const std::string& sum, const std::string& elm) { return sum + sep + elm; });
 }
 
 
@@ -483,7 +468,7 @@ int main(int argc, char* argv[])
   // jucer_project_files()
   {
     const auto writeFiles =
-      [&wLn](const std::string& fullGroupName,
+      [&wLn](const juce::String& fullGroupName,
              const std::vector<std::tuple<bool, bool, bool, std::string>>& files) {
         if (!files.empty())
         {
@@ -509,13 +494,13 @@ int main(int argc, char* argv[])
         }
       };
 
-    std::vector<std::string> groupNames;
+    juce::StringArray groupNames;
 
     std::function<void(const juce::ValueTree&)> processGroup =
       [&groupNames, &processGroup, &writeFiles](const juce::ValueTree& group) {
-        groupNames.push_back(group.getProperty("name").toString().toStdString());
+        groupNames.add(group.getProperty("name").toString());
 
-        const auto fullGroupName = join("/", groupNames);
+        const auto fullGroupName = groupNames.joinIntoString("/");
 
         std::vector<std::tuple<bool, bool, bool, std::string>> files;
 
@@ -543,7 +528,7 @@ int main(int argc, char* argv[])
 
         writeFiles(fullGroupName, files);
 
-        groupNames.pop_back();
+        groupNames.strings.removeLast();
       };
 
     processGroup(jucerProject.getChildWithName("MAINGROUP"));
@@ -618,7 +603,7 @@ int main(int argc, char* argv[])
     juce::StringArray appConfigLines;
     appConfigLines.addLines(appConfigFile.loadFileAsString());
 
-    std::vector<std::string> userCodeSectionLines;
+    juce::StringArray userCodeSectionLines;
 
     for (auto i = 0; i < appConfigLines.size(); ++i)
     {
@@ -628,14 +613,14 @@ int main(int argc, char* argv[])
                              && !appConfigLines[j].contains("[END_USER_CODE_SECTION]");
              ++j)
         {
-          userCodeSectionLines.push_back(appConfigLines[j].toStdString());
+          userCodeSectionLines.add(appConfigLines[j]);
         }
 
         break;
       }
     }
 
-    const auto kDefaultProjucerUserCodeSectionComment = std::vector<std::string>{
+    const auto kDefaultProjucerUserCodeSectionComment = juce::StringArray{
       "",
       "// (You can add your own code in this section, and the Projucer will not "
       "overwrite it)",
@@ -645,7 +630,8 @@ int main(int argc, char* argv[])
     {
       wLn("jucer_appconfig_header(");
       wLn("  USER_CODE_SECTION");
-      wLn("\"", escape("\\\"", join("\n", userCodeSectionLines)), "\"");
+      wLn("\"", escape("\\\"", userCodeSectionLines.joinIntoString("\n").toStdString()),
+          "\"");
       wLn(")");
       wLn();
     }
@@ -912,7 +898,7 @@ int main(int argc, char* argv[])
             return {};
           }
 
-          std::vector<std::string> absOrRelToJucerFileDirPaths;
+          juce::StringArray absOrRelToJucerFileDirPaths;
 
           for (const auto& path : split("\n", searchPaths))
           {
@@ -923,18 +909,18 @@ int main(int argc, char* argv[])
 
             if (isAbsolutePath(path))
             {
-              absOrRelToJucerFileDirPaths.push_back(path);
+              absOrRelToJucerFileDirPaths.add(path);
             }
             else
             {
-              absOrRelToJucerFileDirPaths.push_back(
+              absOrRelToJucerFileDirPaths.add(
                 targetProjectDir.getChildFile(juce::String{path})
-                  .getRelativePathFrom(jucerFileDir)
-                  .toStdString());
+                  .getRelativePathFrom(jucerFileDir));
             }
           }
 
-          return escape("\\", join("\n", absOrRelToJucerFileDirPaths));
+          return escape("\\",
+                        absOrRelToJucerFileDirPaths.joinIntoString("\n").toStdString());
         };
 
         convertSettingIfDefined(configuration, "headerPath", "HEADER_SEARCH_PATHS",
