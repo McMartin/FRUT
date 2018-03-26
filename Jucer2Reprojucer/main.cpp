@@ -441,7 +441,10 @@ int main(int argc, char* argv[])
 
     convertSettingAsListIfDefined(jucerProject, "defines", "PREPROCESSOR_DEFINITIONS",
                                   {});
-    convertSettingAsListIfDefined(jucerProject, "headerPath", "HEADER_SEARCH_PATHS", {});
+    convertSettingAsListIfDefined(
+      jucerProject, "headerPath", "HEADER_SEARCH_PATHS", [](const juce::var& v) {
+        return juce::StringArray::fromTokens(v.toString(), ";\r\n", {});
+      });
 
     writeUserNotes(wLn, jucerProject);
 
@@ -920,7 +923,7 @@ int main(int argc, char* argv[])
 
           juce::StringArray absOrRelToJucerFileDirPaths;
 
-          for (const auto& path : juce::StringArray::fromLines(searchPaths))
+          for (const auto& path : juce::StringArray::fromTokens(searchPaths, ";\r\n", {}))
           {
             if (path.isEmpty())
             {
