@@ -605,6 +605,7 @@ function(jucer_export_target exporter)
 
       elseif(tag STREQUAL "EXTRA_LINKER_FLAGS")
         string(REPLACE "\n" " " value "${value}")
+        string(REPLACE " " ";" value "${value}")
         set(JUCER_EXTRA_LINKER_FLAGS ${value} PARENT_SCOPE)
 
       elseif(tag STREQUAL "EXTERNAL_LIBRARIES_TO_LINK")
