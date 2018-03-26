@@ -492,7 +492,7 @@ function(jucer_appconfig_header USER_CODE_SECTION_TAG user_code_section)
 
   if(NOT USER_CODE_SECTION_TAG STREQUAL "USER_CODE_SECTION")
     message(FATAL_ERROR "Invalid second argument. Expected \"USER_CODE_SECTION\", but "
-      "got \"${USER_CODE_SECTION}\" instead."
+      "got \"${USER_CODE_SECTION_TAG}\" instead."
     )
   endif()
 
