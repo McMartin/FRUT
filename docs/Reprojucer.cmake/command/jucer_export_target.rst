@@ -7,12 +7,12 @@ Define the settings specific to an export target.
 
   jucer_export_target(
     <exporter>
-    [<setting_tag> <setting_value>]...
+    [<keyword> <value>]...
   )
 
 ``<exporter>`` must be one of the :ref:`supported exporters <supported-export-targets>`.
 
-``<setting_tag>`` can be one of the following tags:
+``<keyword>`` can be one of the following keywords:
 
 - ``EXTERNAL_LIBRARIES_TO_LINK``
 - ``EXTRA_COMPILER_FLAGS``
@@ -23,8 +23,8 @@ Define the settings specific to an export target.
 - ``TARGET_PROJECT_FOLDER``
 - ``VST_SDK_FOLDER``
 
-When ``<exporter>`` equals ``"Xcode (MacOSX)"``, ``<setting_tag>`` can also be one of the
-following tags:
+When ``<exporter>`` equals ``"Xcode (MacOSX)"``, ``<keyword>`` can also be one of the
+following keywords:
 
 - ``CUSTOM_PLIST``
 - ``CUSTOM_XCODE_RESOURCE_FOLDERS``
@@ -38,14 +38,14 @@ following tags:
 - ``VST3_SDK_FOLDER``
 
 When ``<exporter>`` equals ``"Visual Studio 2017"``, ``"Visual Studio 2015"`` or
-``"Visual Studio 2013"``, ``<setting_tag>`` can also be one of the following tags:
+``"Visual Studio 2013"``, ``<keyword>`` can also be one of the following keywords:
 
 - ``PLATFORM_TOOLSET``
 - ``USE_IPP_LIBRARY``
 - ``VST3_SDK_FOLDER``
 
-When ``<exporter>`` equals ``"Linux Makefile"``, ``<setting_tag>`` can also be one of the
-following tags:
+When ``<exporter>`` equals ``"Linux Makefile"``, ``<keyword>`` can also be one of the
+following keywords:
 
 - ``CXX_STANDARD_TO_USE``
 - ``GNU_COMPILER_EXTENSIONS``
