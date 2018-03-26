@@ -19,10 +19,6 @@ if(CMAKE_VERSION VERSION_LESS 3.4)
   message(FATAL_ERROR "Reprojucer requires at least CMake version 3.4")
 endif()
 
-if(CMAKE_VERSION VERSION_LESS 3.5)
-  include(CMakeParseArguments)
-endif()
-
 
 set(Reprojucer.cmake_DIR "${CMAKE_CURRENT_LIST_DIR}")
 set(Reprojucer_templates_DIR "${Reprojucer.cmake_DIR}/templates")
@@ -45,27 +41,22 @@ set(Reprojucer_supported_exporters_conditions
 
 function(jucer_project_begin)
 
-  cmake_parse_arguments(arg "" "JUCER_VERSION;PROJECT_FILE;PROJECT_ID" "" ${ARGN})
-  if(NOT "${arg_UNPARSED_ARGUMENTS}" STREQUAL "")
-    message(FATAL_ERROR "Unknown arguments: ${arg_UNPARSED_ARGUMENTS}")
+  _FRUT_parse_arguments("JUCER_VERSION;PROJECT_FILE;PROJECT_ID" "${ARGN}")
+
+  if(DEFINED _JUCER_VERSION)
+    set(JUCER_VERSION "${_JUCER_VERSION}" PARENT_SCOPE)
   endif()
 
-  if(NOT "${arg_JUCER_VERSION}" STREQUAL "")
-    set(JUCER_VERSION "${arg_JUCER_VERSION}" PARENT_SCOPE)
-  endif()
-
-  if(NOT "${arg_PROJECT_FILE}" STREQUAL "")
-    if(NOT EXISTS "${arg_PROJECT_FILE}")
-      message(FATAL_ERROR "No such JUCE project file: ${arg_PROJECT_FILE}")
+  if(DEFINED _PROJECT_FILE)
+    if(NOT EXISTS "${_PROJECT_FILE}")
+      message(FATAL_ERROR "No such JUCE project file: ${_PROJECT_FILE}")
     endif()
-    set(JUCER_PROJECT_FILE "${arg_PROJECT_FILE}" PARENT_SCOPE)
-
-    get_filename_component(project_dir "${arg_PROJECT_FILE}" DIRECTORY)
+    get_filename_component(project_dir "${_PROJECT_FILE}" DIRECTORY)
     set(JUCER_PROJECT_DIR "${project_dir}" PARENT_SCOPE)
   endif()
 
-  if(NOT "${arg_PROJECT_ID}" STREQUAL "")
-    set(JUCER_PROJECT_ID "${arg_PROJECT_ID}" PARENT_SCOPE)
+  if(DEFINED _PROJECT_ID)
+    set(JUCER_PROJECT_ID "${_PROJECT_ID}" PARENT_SCOPE)
   endif()
 
 endfunction()
@@ -73,15 +64,7 @@ endfunction()
 
 function(jucer_project_settings)
 
-  if(NOT "PROJECT_NAME" IN_LIST ARGN)
-    message(FATAL_ERROR "Missing PROJECT_NAME argument")
-  endif()
-
-  if(NOT "PROJECT_TYPE" IN_LIST ARGN)
-    message(FATAL_ERROR "Missing PROJECT_TYPE argument")
-  endif()
-
-  set(project_setting_tags
+  set(single_value_keywords
     "PROJECT_NAME"
     "PROJECT_VERSION"
     "COMPANY_NAME"
@@ -99,88 +82,81 @@ function(jucer_project_settings)
     "PREPROCESSOR_DEFINITIONS"
     "HEADER_SEARCH_PATHS"
   )
+  _FRUT_parse_arguments("${single_value_keywords}" "${ARGN}")
 
+  if(NOT DEFINED _PROJECT_NAME)
+    message(FATAL_ERROR "Missing PROJECT_NAME argument")
+  endif()
+
+  if(DEFINED _PROJECT_VERSION)
+    string(REGEX MATCH ".+\\..+\\..+(\\..+)?" version_match "${_PROJECT_VERSION}")
+    if(NOT _PROJECT_VERSION STREQUAL version_match)
+      message(WARNING "The PROJECT_VERSION doesn't seem to be in the format "
+        "major.minor.point[.point]"
+      )
+    endif()
+    _FRUT_version_to_hex("${_PROJECT_VERSION}" hex_value)
+    set(JUCER_PROJECT_VERSION_AS_HEX "${hex_value}" PARENT_SCOPE)
+  endif()
+
+  if(NOT DEFINED _PROJECT_TYPE)
+    message(FATAL_ERROR "Missing PROJECT_TYPE argument")
+  endif()
   set(project_types "GUI Application" "Console Application" "Static Library"
     "Dynamic Library" "Audio Plug-in"
   )
+  if(NOT "${_PROJECT_TYPE}" IN_LIST project_types)
+    message(FATAL_ERROR "Unsupported project type: \"${_PROJECT_TYPE}\"\n"
+      "Supported project types: ${project_types}"
+    )
+  endif()
 
-  set(size_limit_descs "Default" "20.0 MB" "10.0 MB" "6.0 MB" "2.0 MB" "1.0 MB" "512.0 KB"
-    "256.0 KB" "128.0 KB" "64.0 KB"
-  )
-  set(size_limits 10240 20480 10240 6144 2048 1024 512 256 128 64)
+  if(DEFINED _BINARYDATACPP_SIZE_LIMIT)
+    set(size_limit_descs "Default" "20.0 MB" "10.0 MB" "6.0 MB" "2.0 MB" "1.0 MB"
+      "512.0 KB" "256.0 KB" "128.0 KB" "64.0 KB"
+    )
+    set(size_limits 10240 20480 10240 6144 2048 1024 512 256 128 64)
 
-  set(cxx_language_standard_descs "C++11" "C++14" "Use Latest")
-  set(cxx_language_standards "11" "14" "latest")
+    list(FIND size_limit_descs "${_BINARYDATACPP_SIZE_LIMIT}" size_limit_index)
+    if(size_limit_index EQUAL -1)
+      message(FATAL_ERROR "Unsupported value for BINARYDATACPP_SIZE_LIMIT: "
+        "\"${_BINARYDATACPP_SIZE_LIMIT}\"\nSupported values: ${size_limit_descs}"
+      )
+    endif()
+    list(GET size_limits ${size_limit_index} _BINARYDATACPP_SIZE_LIMIT)
+  endif()
 
-  unset(tag)
-  foreach(element ${ARGN})
-    if(NOT DEFINED tag)
-      set(tag ${element})
+  if(DEFINED _CXX_LANGUAGE_STANDARD)
+    set(cxx_lang_standard_descs "C++11" "C++14" "Use Latest")
+    set(cxx_lang_standards "11" "14" "latest")
 
-      if(NOT "${tag}" IN_LIST project_setting_tags)
-        message(FATAL_ERROR "Unsupported project setting: ${tag}\n"
-          "Supported project settings: ${project_setting_tags}"
-        )
-      endif()
-    else()
-      set(value ${element})
+    list(FIND cxx_lang_standard_descs "${_CXX_LANGUAGE_STANDARD}" cxx_lang_standard_index)
+    if(cxx_lang_standard_index EQUAL -1)
+      message(FATAL_ERROR "Unsupported value for CXX_LANGUAGE_STANDARD: "
+        "\"${_CXX_LANGUAGE_STANDARD}\"\nSupported values: ${cxx_lang_standard_descs}"
+      )
+    endif()
+    list(GET cxx_lang_standards ${cxx_lang_standard_index} _CXX_LANGUAGE_STANDARD)
+  endif()
 
-      if(tag STREQUAL "PROJECT_VERSION")
-        string(REGEX MATCH ".+\\..+\\..+(\\..+)?" version_match "${value}")
-        if(NOT value STREQUAL version_match)
-          message(WARNING
-            "The PROJECT_VERSION doesn't seem to be in the format "
-            "major.minor.point[.point]"
-          )
-        endif()
-        _FRUT_version_to_hex("${value}" hex_value)
-        set(JUCER_PROJECT_VERSION_AS_HEX "${hex_value}" PARENT_SCOPE)
+  if(DEFINED _PREPROCESSOR_DEFINITIONS)
+    string(REPLACE "\n" ";" _PREPROCESSOR_DEFINITIONS "${_PREPROCESSOR_DEFINITIONS}")
+  endif()
 
-      elseif(tag STREQUAL "PROJECT_TYPE")
-        if(NOT "${value}" IN_LIST project_types)
-          message(FATAL_ERROR "Unsupported project type: \"${value}\"\n"
-            "Supported project types: ${project_types}"
-          )
-        endif()
+  if(DEFINED _HEADER_SEARCH_PATHS)
+    string(REPLACE "\\" "/" search_paths "${_HEADER_SEARCH_PATHS}")
+    string(REPLACE "\n" ";" search_paths "${search_paths}")
+    unset(header_search_paths)
+    foreach(path ${search_paths})
+      _FRUT_abs_path_based_on_jucer_project_dir("${path}" path)
+      list(APPEND header_search_paths "${path}")
+    endforeach()
+    set(_HEADER_SEARCH_PATHS ${header_search_paths})
+  endif()
 
-      elseif(tag STREQUAL "BINARYDATACPP_SIZE_LIMIT")
-        list(FIND size_limit_descs "${value}" size_limit_index)
-        if(size_limit_index EQUAL -1)
-          message(FATAL_ERROR
-            "Unsupported value for BINARYDATACPP_SIZE_LIMIT: \"${value}\"\n"
-            "Supported values: ${size_limit_descs}"
-          )
-        endif()
-        list(GET size_limits ${size_limit_index} value)
-
-      elseif(tag STREQUAL "CXX_LANGUAGE_STANDARD")
-        list(FIND cxx_language_standard_descs "${value}" cxx_language_standard_index)
-        if(cxx_language_standard_index EQUAL -1)
-          message(FATAL_ERROR
-            "Unsupported value for CXX_LANGUAGE_STANDARD: \"${value}\"\n"
-            "Supported values: ${cxx_language_standard_descs}"
-          )
-        endif()
-        list(GET cxx_language_standards ${cxx_language_standard_index} value)
-
-      elseif(tag STREQUAL "PREPROCESSOR_DEFINITIONS")
-        string(REPLACE "\n" ";" value "${value}")
-
-      elseif(tag STREQUAL "HEADER_SEARCH_PATHS")
-        string(REPLACE "\\" "/" value "${value}")
-        string(REPLACE "\n" ";" value "${value}")
-        unset(header_search_paths)
-        foreach(path ${value})
-          _FRUT_abs_path_based_on_jucer_project_dir("${path}" path)
-          list(APPEND header_search_paths "${path}")
-        endforeach()
-        set(value ${header_search_paths})
-
-      endif()
-
-      set(JUCER_${tag} "${value}" PARENT_SCOPE)
-
-      unset(tag)
+  foreach(keyword ${single_value_keywords})
+    if(DEFINED _${keyword})
+      set(JUCER_${keyword} ${_${keyword}} PARENT_SCOPE)
     endif()
   endforeach()
 
@@ -189,7 +165,7 @@ endfunction()
 
 function(jucer_audio_plugin_settings)
 
-  set(plugin_setting_tags
+  set(single_value_keywords
     "BUILD_VST"
     "BUILD_VST3"
     "BUILD_AUDIOUNIT"
@@ -216,41 +192,32 @@ function(jucer_audio_plugin_settings)
     "PLUGIN_AAX_IDENTIFIER"
   )
 
-  unset(tag)
-  foreach(element ${ARGN})
-    if(NOT DEFINED tag)
-      set(tag ${element})
-    else()
-      set(value ${element})
+  _FRUT_parse_arguments("${single_value_keywords}" "${ARGN}")
 
-      if(NOT "${tag}" IN_LIST plugin_setting_tags)
-        message(FATAL_ERROR "Unsupported audio plugin setting: ${tag}\n"
-          "Supported audio plugin settings: ${plugin_setting_tags}"
-        )
+  if(_BUILD_RTAS AND (APPLE OR MSVC))
+    message(WARNING "Reprojucer.cmake doesn't support building RTAS plugins. If you "
+      "would like Reprojucer.cmake to support building RTAS plugins, please leave a "
+      "comment on the issue \"Reprojucer.cmake doesn't support building RTAS plugins\" "
+      "on GitHub: https://github.com/McMartin/FRUT/issues/266"
+    )
+  endif()
 
-      elseif(tag STREQUAL "BUILD_RTAS" AND value AND (APPLE OR MSVC))
-        message(WARNING "Reprojucer.cmake doesn't support building RTAS plugins. If you "
-          "would like Reprojucer.cmake to support building RTAS plugins, please leave a "
-          "comment on the issue \"Reprojucer.cmake doesn't support building RTAS "
-          "plugins\" on GitHub: https://github.com/McMartin/FRUT/issues/266"
-        )
+  if(_BUILD_AAX AND (APPLE OR MSVC))
+    message(WARNING "Reprojucer.cmake doesn't support building AAX plugins. If you "
+      "would like Reprojucer.cmake to support building AAX plugins, please leave a "
+      "comment on the issue \"Reprojucer.cmake doesn't support building AAX plugins\" "
+      "on GitHub: https://github.com/McMartin/FRUT/issues/267"
+    )
+  endif()
 
-      elseif(tag STREQUAL "BUILD_AAX" AND value AND (APPLE OR MSVC))
-        message(WARNING "Reprojucer.cmake doesn't support building AAX plugins. If you "
-          "would like Reprojucer.cmake to support building AAX plugins, please leave a "
-          "comment on the issue \"Reprojucer.cmake doesn't support building AAX "
-          "plugins\" on GitHub: https://github.com/McMartin/FRUT/issues/267"
-        )
+  if(DEFINED BUILD_STANDALONE_PLUGIN
+      AND DEFINED JUCER_VERSION AND JUCER_VERSION VERSION_LESS 5)
+    message(WARNING "BUILD_STANDALONE_PLUGIN is a JUCE 5 feature only")
+  endif()
 
-      elseif(tag STREQUAL "BUILD_STANDALONE_PLUGIN"
-          AND DEFINED JUCER_VERSION AND JUCER_VERSION VERSION_LESS 5)
-        message(WARNING "BUILD_STANDALONE_PLUGIN is a JUCE 5 feature only")
-
-      endif()
-
-      set(JUCER_${tag} "${value}" PARENT_SCOPE)
-
-      unset(tag)
+  foreach(keyword ${single_value_keywords})
+    if(DEFINED _${keyword})
+      set(JUCER_${keyword} ${_${keyword}} PARENT_SCOPE)
     endif()
   endforeach()
 
@@ -518,7 +485,7 @@ function(jucer_export_target exporter)
     return()
   endif()
 
-  set(export_target_settings_tags
+  set(single_value_keywords
     "TARGET_PROJECT_FOLDER"
     "VST_SDK_FOLDER"
     "EXTRA_PREPROCESSOR_DEFINITIONS"
@@ -530,7 +497,7 @@ function(jucer_export_target exporter)
   )
 
   if(exporter STREQUAL "Xcode (MacOSX)")
-    list(APPEND export_target_settings_tags
+    list(APPEND single_value_keywords
       "VST3_SDK_FOLDER"
       "CUSTOM_XCODE_RESOURCE_FOLDERS"
       "EXTRA_FRAMEWORKS"
@@ -541,200 +508,208 @@ function(jucer_export_target exporter)
     )
 
     if(JUCER_PROJECT_TYPE STREQUAL "GUI Application")
-      list(APPEND export_target_settings_tags
+      list(APPEND single_value_keywords
         "DOCUMENT_FILE_EXTENSIONS"
       )
     endif()
   endif()
 
   if(exporter MATCHES "^Visual Studio 201(7|5|3)$")
-    list(APPEND export_target_settings_tags
+    list(APPEND single_value_keywords
       "VST3_SDK_FOLDER"
       "PLATFORM_TOOLSET"
       "USE_IPP_LIBRARY"
     )
 
     if(exporter STREQUAL "Visual Studio 2017")
-      list(APPEND export_target_settings_tags "CXX_STANDARD_TO_USE")
+      list(APPEND single_value_keywords "CXX_STANDARD_TO_USE")
     endif()
   else()
-    list(APPEND export_target_settings_tags "GNU_COMPILER_EXTENSIONS")
+    list(APPEND single_value_keywords "GNU_COMPILER_EXTENSIONS")
   endif()
 
   if(exporter STREQUAL "Linux Makefile")
-    list(APPEND export_target_settings_tags
+    list(APPEND single_value_keywords
       "CXX_STANDARD_TO_USE"
       "PKGCONFIG_LIBRARIES"
     )
   endif()
 
-  unset(tag)
-  foreach(element ${ARGN})
-    if(NOT DEFINED tag)
-      set(tag ${element})
+  _FRUT_parse_arguments("${single_value_keywords}" "${ARGN}")
 
-      if(NOT "${tag}" IN_LIST export_target_settings_tags)
-        message(FATAL_ERROR "Unsupported export target setting: ${tag}\n"
-          "Supported export target settings: ${export_target_settings_tags}"
-        )
-      endif()
-    else()
-      set(value ${element})
+  if(DEFINED _TARGET_PROJECT_FOLDER)
+    string(REPLACE "\\" "/" project_folder "${_TARGET_PROJECT_FOLDER}")
+    _FRUT_abs_path_based_on_jucer_project_dir("${project_folder}" project_folder)
+    set(JUCER_TARGET_PROJECT_FOLDER ${project_folder} PARENT_SCOPE)
+  endif()
 
-      if(tag STREQUAL "TARGET_PROJECT_FOLDER")
-        string(REPLACE "\\" "/" value "${value}")
-        _FRUT_abs_path_based_on_jucer_project_dir("${value}" value)
-        set(JUCER_TARGET_PROJECT_FOLDER ${value} PARENT_SCOPE)
+  if(DEFINED _VST_SDK_FOLDER)
+    string(REPLACE "\\" "/" sdk_folder "${_VST_SDK_FOLDER}")
+    _FRUT_abs_path_based_on_jucer_project_dir("${sdk_folder}" sdk_folder)
+    set(JUCER_VST_SDK_FOLDER ${sdk_folder} PARENT_SCOPE)
+  endif()
 
-      elseif(tag STREQUAL "VST_SDK_FOLDER")
-        string(REPLACE "\\" "/" value "${value}")
-        _FRUT_abs_path_based_on_jucer_project_dir("${value}" value)
-        set(JUCER_VST_SDK_FOLDER ${value} PARENT_SCOPE)
+  if(DEFINED _VST3_SDK_FOLDER)
+    string(REPLACE "\\" "/" sdk_folder "${_VST3_SDK_FOLDER}")
+    _FRUT_abs_path_based_on_jucer_project_dir("${sdk_folder}" sdk_folder)
+    set(JUCER_VST3_SDK_FOLDER ${sdk_folder} PARENT_SCOPE)
+  endif()
 
-      elseif(tag STREQUAL "VST3_SDK_FOLDER")
-        string(REPLACE "\\" "/" value "${value}")
-        _FRUT_abs_path_based_on_jucer_project_dir("${value}" value)
-        set(JUCER_VST3_SDK_FOLDER ${value} PARENT_SCOPE)
+  if(DEFINED _EXTRA_PREPROCESSOR_DEFINITIONS)
+    string(REPLACE "\n" ";" defitions "${_EXTRA_PREPROCESSOR_DEFINITIONS}")
+    set(JUCER_EXTRA_PREPROCESSOR_DEFINITIONS ${defitions} PARENT_SCOPE)
+  endif()
 
-      elseif(tag STREQUAL "EXTRA_PREPROCESSOR_DEFINITIONS")
-        string(REPLACE "\n" ";" value "${value}")
-        set(JUCER_EXTRA_PREPROCESSOR_DEFINITIONS ${value} PARENT_SCOPE)
+  if(DEFINED _EXTRA_COMPILER_FLAGS)
+    string(REPLACE "\n" " " compiler_flags "${_EXTRA_COMPILER_FLAGS}")
+    string(REPLACE " " ";" compiler_flags "${compiler_flags}")
+    set(JUCER_EXTRA_COMPILER_FLAGS ${compiler_flags} PARENT_SCOPE)
+  endif()
 
-      elseif(tag STREQUAL "EXTRA_COMPILER_FLAGS")
-        string(REPLACE "\n" " " value "${value}")
-        string(REPLACE " " ";" value "${value}")
-        set(JUCER_EXTRA_COMPILER_FLAGS ${value} PARENT_SCOPE)
+  if(DEFINED _EXTRA_LINKER_FLAGS)
+    string(REPLACE "\n" " " linker_flags "${_EXTRA_LINKER_FLAGS}")
+    set(JUCER_EXTRA_LINKER_FLAGS ${linker_flags} PARENT_SCOPE)
+  endif()
 
-      elseif(tag STREQUAL "EXTRA_LINKER_FLAGS")
-        string(REPLACE "\n" " " value "${value}")
-        set(JUCER_EXTRA_LINKER_FLAGS ${value} PARENT_SCOPE)
+  if(DEFINED _EXTERNAL_LIBRARIES_TO_LINK)
+    string(REPLACE "\n" ";" libraries "${_EXTERNAL_LIBRARIES_TO_LINK}")
+    set(JUCER_EXTERNAL_LIBRARIES_TO_LINK ${libraries} PARENT_SCOPE)
+  endif()
 
-      elseif(tag STREQUAL "EXTERNAL_LIBRARIES_TO_LINK")
-        string(REPLACE "\n" ";" value "${value}")
-        set(JUCER_EXTERNAL_LIBRARIES_TO_LINK ${value} PARENT_SCOPE)
+  if(DEFINED _GNU_COMPILER_EXTENSIONS)
+    set(JUCER_GNU_COMPILER_EXTENSIONS ${_GNU_COMPILER_EXTENSIONS} PARENT_SCOPE)
+  endif()
 
-      elseif(tag STREQUAL "GNU_COMPILER_EXTENSIONS")
-        set(JUCER_GNU_COMPILER_EXTENSIONS ${value} PARENT_SCOPE)
-
-      elseif(tag STREQUAL "ICON_SMALL")
-        if(NOT value STREQUAL "<None>")
-          _FRUT_abs_path_based_on_jucer_project_dir("${value}" value)
-          set(JUCER_SMALL_ICON ${value} PARENT_SCOPE)
-        endif()
-
-      elseif(tag STREQUAL "ICON_LARGE")
-        if(NOT value STREQUAL "<None>")
-          _FRUT_abs_path_based_on_jucer_project_dir("${value}" value)
-          set(JUCER_LARGE_ICON ${value} PARENT_SCOPE)
-        endif()
-
-      elseif(tag STREQUAL "CUSTOM_XCODE_RESOURCE_FOLDERS")
-        string(REPLACE "\n" ";" value "${value}")
-        unset(resource_folders)
-        foreach(folder ${value})
-          _FRUT_abs_path_based_on_jucer_project_dir("${folder}" abs_folder)
-          list(APPEND resource_folders "${abs_folder}")
-        endforeach()
-        set(JUCER_CUSTOM_XCODE_RESOURCE_FOLDERS ${resource_folders} PARENT_SCOPE)
-
-      elseif(tag STREQUAL "DOCUMENT_FILE_EXTENSIONS")
-        string(REPLACE "," ";" value "${value}")
-        set(JUCER_DOCUMENT_FILE_EXTENSIONS ${value} PARENT_SCOPE)
-
-      elseif(tag STREQUAL "EXTRA_FRAMEWORKS")
-        string(REPLACE "," ";" value "${value}")
-        string(REPLACE " " "" value "${value}")
-        set(JUCER_EXTRA_FRAMEWORKS ${value} PARENT_SCOPE)
-
-      elseif(tag STREQUAL "CUSTOM_PLIST")
-        set(JUCER_CUSTOM_PLIST "${value}" PARENT_SCOPE)
-
-      elseif(tag STREQUAL "PREBUILD_SHELL_SCRIPT")
-        set(script_content "${value}")
-        configure_file("${Reprojucer_templates_DIR}/script.in" "prebuild.sh" @ONLY)
-        set(JUCER_PREBUILD_SHELL_SCRIPT
-          "${CMAKE_CURRENT_BINARY_DIR}/prebuild.sh" PARENT_SCOPE
-        )
-
-      elseif(tag STREQUAL "POSTBUILD_SHELL_SCRIPT")
-        set(script_content "${value}")
-        configure_file("${Reprojucer_templates_DIR}/script.in" "postbuild.sh" @ONLY)
-        set(JUCER_POSTBUILD_SHELL_SCRIPT
-          "${CMAKE_CURRENT_BINARY_DIR}/postbuild.sh" PARENT_SCOPE
-        )
-
-      elseif(tag STREQUAL "DEVELOPMENT_TEAM_ID")
-        message(WARNING "Reprojucer.cmake doesn't support the setting "
-          "DEVELOPMENT_TEAM_ID (\"Development Team ID\" in Projucer). If you would like "
-          "Reprojucer.cmake to support this setting, please leave a comment on the issue "
-          "\"Reprojucer.cmake doesn't support the setting DEVELOPMENT_TEAM_ID\" on "
-          "GitHub: https://github.com/McMartin/FRUT/issues/251"
-        )
-
-      elseif(tag STREQUAL "PLATFORM_TOOLSET")
-        if((exporter STREQUAL "Visual Studio 2017"
-              AND (value STREQUAL "v140" OR value STREQUAL "v140_xp"
-                OR value STREQUAL "v141" OR value STREQUAL "v141_xp"))
-            OR (exporter STREQUAL "Visual Studio 2015"
-              AND (value STREQUAL "v140" OR value STREQUAL "v140_xp"
-                OR value STREQUAL "CTP_Nov2013"))
-            OR (exporter STREQUAL "Visual Studio 2013"
-              AND (value STREQUAL "v120" OR value STREQUAL "v120_xp"
-                OR value STREQUAL "Windows7" OR value STREQUAL "CTP_Nov2013")))
-          if(NOT value STREQUAL "${CMAKE_VS_PLATFORM_TOOLSET}")
-            message(FATAL_ERROR "You must call `cmake -T ${value}` in order to build with"
-              " the toolset \"${value}\"."
-            )
-          endif()
-        elseif(NOT value STREQUAL "(default)")
-          message(FATAL_ERROR "Unsupported value for PLATFORM_TOOLSET: \"${value}\"")
-        endif()
-
-      elseif(tag STREQUAL "USE_IPP_LIBRARY")
-        set(ipp_library_values
-          "Yes (Default Mode)"
-          "Multi-Threaded Static Library"
-          "Single-Threaded Static Library"
-          "Multi-Threaded DLL"
-          "Single-Threaded DLL"
-        )
-        if("${value}" IN_LIST ipp_library_values)
-          message(WARNING "Reprojucer.cmake doesn't support the setting USE_IPP_LIBRARY "
-            "(\"Use IPP Library\" in Projucer). If you would like Reprojucer.cmake to "
-            "support this setting, please leave a comment on the issue "
-            "\"Reprojucer.cmake doesn't support the setting USE_IPP_LIBRARY\" on GitHub: "
-            "https://github.com/McMartin/FRUT/issues/252"
-          )
-        elseif(NOT value STREQUAL "No")
-          message(FATAL_ERROR "Unsupported value for USE_IPP_LIBRARY: \"${value}\"")
-        endif()
-
-      elseif(tag STREQUAL "CXX_STANDARD_TO_USE"
-          AND exporter STREQUAL "Visual Studio 2017")
-        if(value STREQUAL "C++14")
-          set(JUCER_CXX_STANDARD_TO_USE "14" PARENT_SCOPE)
-        elseif(value STREQUAL "Latest C++ Standard")
-          set(JUCER_CXX_STANDARD_TO_USE "latest" PARENT_SCOPE)
-        elseif(NOT value STREQUAL "(default)")
-          message(FATAL_ERROR "Unsupported value for CXX_STANDARD_TO_USE: \"${value}\"")
-        endif()
-
-      elseif(tag STREQUAL "CXX_STANDARD_TO_USE" AND exporter STREQUAL "Linux Makefile")
-        if(value MATCHES "^C\\+\\+(03|11|14)$")
-          set(JUCER_CXX_STANDARD_TO_USE ${value} PARENT_SCOPE)
-        else()
-          message(FATAL_ERROR "Unsupported value for CXX_STANDARD_TO_USE: \"${value}\"")
-        endif()
-
-      elseif(tag STREQUAL "PKGCONFIG_LIBRARIES")
-        string(REPLACE " " ";" value "${value}")
-        set(JUCER_PKGCONFIG_LIBRARIES ${value} PARENT_SCOPE)
-
-      endif()
-
-      unset(tag)
+  if(DEFINED _ICON_SMALL)
+    if(NOT _ICON_SMALL STREQUAL "<None>")
+      _FRUT_abs_path_based_on_jucer_project_dir("${_ICON_SMALL}" small_icon)
+      set(JUCER_SMALL_ICON ${small_icon} PARENT_SCOPE)
     endif()
-  endforeach()
+  endif()
+
+  if(DEFINED _ICON_LARGE)
+    if(NOT _ICON_LARGE STREQUAL "<None>")
+      _FRUT_abs_path_based_on_jucer_project_dir("${_ICON_LARGE}" large_icon)
+      set(JUCER_LARGE_ICON ${large_icon} PARENT_SCOPE)
+    endif()
+  endif()
+
+  if(DEFINED _CUSTOM_XCODE_RESOURCE_FOLDERS)
+    string(REPLACE "\n" ";" xcode_resource_folders "${_CUSTOM_XCODE_RESOURCE_FOLDERS}")
+    unset(resource_folders)
+    foreach(folder ${xcode_resource_folders})
+      _FRUT_abs_path_based_on_jucer_project_dir("${folder}" abs_folder)
+      list(APPEND resource_folders "${abs_folder}")
+    endforeach()
+    set(JUCER_CUSTOM_XCODE_RESOURCE_FOLDERS ${resource_folders} PARENT_SCOPE)
+  endif()
+
+  if(DEFINED _DOCUMENT_FILE_EXTENSIONS)
+    string(REPLACE "," ";" file_extensions "${_DOCUMENT_FILE_EXTENSIONS}")
+    set(JUCER_DOCUMENT_FILE_EXTENSIONS ${file_extensions} PARENT_SCOPE)
+  endif()
+
+  if(DEFINED _EXTRA_FRAMEWORKS)
+    string(REPLACE "," ";" frameworks "${_EXTRA_FRAMEWORKS}")
+    string(REPLACE " " "" frameworks "${frameworks}")
+    set(JUCER_EXTRA_FRAMEWORKS ${frameworks} PARENT_SCOPE)
+  endif()
+
+  if(DEFINED _CUSTOM_PLIST)
+    set(JUCER_CUSTOM_PLIST "${_CUSTOM_PLIST}" PARENT_SCOPE)
+  endif()
+
+  if(DEFINED _PREBUILD_SHELL_SCRIPT)
+    set(script_content "${_PREBUILD_SHELL_SCRIPT}")
+    configure_file("${Reprojucer_templates_DIR}/script.in" "prebuild.sh" @ONLY)
+    set(JUCER_PREBUILD_SHELL_SCRIPT
+      "${CMAKE_CURRENT_BINARY_DIR}/prebuild.sh" PARENT_SCOPE
+    )
+  endif()
+
+  if(DEFINED _POSTBUILD_SHELL_SCRIPT)
+    set(script_content "${_POSTBUILD_SHELL_SCRIPT}")
+    configure_file("${Reprojucer_templates_DIR}/script.in" "postbuild.sh" @ONLY)
+    set(JUCER_POSTBUILD_SHELL_SCRIPT
+      "${CMAKE_CURRENT_BINARY_DIR}/postbuild.sh" PARENT_SCOPE
+    )
+  endif()
+
+  if(DEFINED _DEVELOPMENT_TEAM_ID)
+    message(WARNING "Reprojucer.cmake doesn't support the setting "
+      "DEVELOPMENT_TEAM_ID (\"Development Team ID\" in Projucer). If you would like "
+      "Reprojucer.cmake to support this setting, please leave a comment on the issue "
+      "\"Reprojucer.cmake doesn't support the setting DEVELOPMENT_TEAM_ID\" on "
+      "GitHub: https://github.com/McMartin/FRUT/issues/251"
+    )
+  endif()
+
+  if(DEFINED _PLATFORM_TOOLSET)
+    set(toolset ${_PLATFORM_TOOLSET})
+    if((exporter STREQUAL "Visual Studio 2017"
+          AND (toolset STREQUAL "v140" OR toolset STREQUAL "v140_xp"
+            OR toolset STREQUAL "v141" OR toolset STREQUAL "v141_xp"))
+        OR (exporter STREQUAL "Visual Studio 2015"
+          AND (toolset STREQUAL "v140" OR toolset STREQUAL "v140_xp"
+            OR toolset STREQUAL "CTP_Nov2013"))
+        OR (exporter STREQUAL "Visual Studio 2013"
+          AND (toolset STREQUAL "v120" OR toolset STREQUAL "v120_xp"
+            OR toolset STREQUAL "Windows7" OR toolset STREQUAL "CTP_Nov2013")))
+      if(NOT toolset STREQUAL "${CMAKE_VS_PLATFORM_TOOLSET}")
+        message(FATAL_ERROR "You must call `cmake -T ${toolset}` in order to build with"
+          " the toolset \"${toolset}\"."
+        )
+      endif()
+    elseif(NOT toolset STREQUAL "(default)")
+      message(FATAL_ERROR "Unsupported value for PLATFORM_TOOLSET: \"${toolset}\"")
+    endif()
+  endif()
+
+  if(DEFINED _USE_IPP_LIBRARY)
+    set(ipp_library ${_USE_IPP_LIBRARY})
+    set(ipp_library_values
+      "Yes (Default Mode)"
+      "Multi-Threaded Static Library"
+      "Single-Threaded Static Library"
+      "Multi-Threaded DLL"
+      "Single-Threaded DLL"
+    )
+    if("${ipp_library}" IN_LIST ipp_library_values)
+      message(WARNING "Reprojucer.cmake doesn't support the setting USE_IPP_LIBRARY "
+        "(\"Use IPP Library\" in Projucer). If you would like Reprojucer.cmake to "
+        "support this setting, please leave a comment on the issue "
+        "\"Reprojucer.cmake doesn't support the setting USE_IPP_LIBRARY\" on GitHub: "
+        "https://github.com/McMartin/FRUT/issues/252"
+      )
+    elseif(NOT ipp_library STREQUAL "No")
+      message(FATAL_ERROR "Unsupported value for USE_IPP_LIBRARY: \"${ipp_library}\"")
+    endif()
+  endif()
+
+  if(DEFINED _CXX_STANDARD_TO_USE AND exporter STREQUAL "Visual Studio 2017")
+    set(standard ${_CXX_STANDARD_TO_USE})
+    if(standard STREQUAL "C++14")
+      set(JUCER_CXX_STANDARD_TO_USE "14" PARENT_SCOPE)
+    elseif(standard STREQUAL "Latest C++ Standard")
+      set(JUCER_CXX_STANDARD_TO_USE "latest" PARENT_SCOPE)
+    elseif(NOT standard STREQUAL "(default)")
+      message(FATAL_ERROR "Unsupported value for CXX_STANDARD_TO_USE: \"${standard}\"")
+    endif()
+  endif()
+
+  if(DEFINED _CXX_STANDARD_TO_USE AND exporter STREQUAL "Linux Makefile")
+    set(standard ${_CXX_STANDARD_TO_USE})
+    if(standard MATCHES "^C\\+\\+(03|11|14)$")
+      set(JUCER_CXX_STANDARD_TO_USE ${standard} PARENT_SCOPE)
+    else()
+      message(FATAL_ERROR "Unsupported value for CXX_STANDARD_TO_USE: \"${standard}\"")
+    endif()
+  endif()
+
+  if(DEFINED _PKGCONFIG_LIBRARIES)
+    string(REPLACE " " ";" libraries "${_PKGCONFIG_LIBRARIES}")
+    set(JUCER_PKGCONFIG_LIBRARIES ${libraries} PARENT_SCOPE)
+  endif()
 
 endfunction()
 
@@ -774,8 +749,7 @@ function(jucer_export_target_configuration
   endif()
 
   if("${config}" IN_LIST JUCER_PROJECT_CONFIGURATIONS)
-    message(FATAL_ERROR
-      "You cannot call jucer_export_target_configuration("
+    message(FATAL_ERROR "You cannot call jucer_export_target_configuration("
       "\"${exporter}\" NAME \"${config}\") twice."
     )
   endif()
@@ -785,7 +759,7 @@ function(jucer_export_target_configuration
 
   set(JUCER_CONFIGURATION_IS_DEBUG_${config} ${is_debug} PARENT_SCOPE)
 
-  set(configuration_settings_tags
+  set(single_value_keywords
     "BINARY_NAME"
     "BINARY_LOCATION"
     "HEADER_SEARCH_PATHS"
@@ -795,7 +769,7 @@ function(jucer_export_target_configuration
   )
 
   if(exporter STREQUAL "Xcode (MacOSX)")
-    list(APPEND configuration_settings_tags
+    list(APPEND single_value_keywords
       "VST_BINARY_LOCATION"
       "VST3_BINARY_LOCATION"
       "AU_BINARY_LOCATION"
@@ -813,7 +787,7 @@ function(jucer_export_target_configuration
   endif()
 
   if(exporter MATCHES "^Visual Studio 201(7|5|3)$")
-    list(APPEND configuration_settings_tags
+    list(APPEND single_value_keywords
       "WARNING_LEVEL"
       "TREAT_WARNINGS_AS_ERRORS"
       "RUNTIME_LIBRARY"
@@ -829,309 +803,333 @@ function(jucer_export_target_configuration
   endif()
 
   if(exporter STREQUAL "Linux Makefile")
-    list(APPEND configuration_settings_tags
+    list(APPEND single_value_keywords
       "ARCHITECTURE"
     )
   endif()
 
-  unset(tag)
-  foreach(element ${ARGN})
-    if(NOT DEFINED tag)
-      set(tag ${element})
+  _FRUT_parse_arguments("${single_value_keywords}" "${ARGN}")
 
-      if(NOT "${tag}" IN_LIST configuration_settings_tags)
-        message(FATAL_ERROR "Unsupported configuration setting: ${tag}\n"
-          "Supported configuration settings: ${configuration_settings_tags}"
-        )
+  if(DEFINED _BINARY_NAME)
+    set(JUCER_BINARY_NAME_${config} ${_BINARY_NAME} PARENT_SCOPE)
+  endif()
+
+  if(DEFINED _BINARY_LOCATION)
+    get_filename_component(abs_path "${_BINARY_LOCATION}" ABSOLUTE)
+    set(JUCER_BINARY_LOCATION_${config} ${abs_path} PARENT_SCOPE)
+  endif()
+
+  if(DEFINED _HEADER_SEARCH_PATHS)
+    string(REPLACE "\\" "/" search_paths "${_HEADER_SEARCH_PATHS}")
+    string(REPLACE "\n" ";" search_paths "${search_paths}")
+    unset(header_search_paths)
+    foreach(path ${search_paths})
+      _FRUT_abs_path_based_on_jucer_project_dir("${path}" path)
+      list(APPEND header_search_paths "${path}")
+    endforeach()
+    set(JUCER_HEADER_SEARCH_PATHS_${config} ${header_search_paths} PARENT_SCOPE)
+  endif()
+
+  if(DEFINED _EXTRA_LIBRARY_SEARCH_PATHS)
+    string(REPLACE "\\" "/" search_paths "${_EXTRA_LIBRARY_SEARCH_PATHS}")
+    string(REPLACE "\n" ";" search_paths "${search_paths}")
+    unset(library_search_paths)
+    foreach(path ${search_paths})
+      _FRUT_abs_path_based_on_jucer_project_dir("${path}" path)
+      list(APPEND library_search_paths "${path}")
+    endforeach()
+    set(JUCER_EXTRA_LIBRARY_SEARCH_PATHS_${config}
+      ${library_search_paths} PARENT_SCOPE
+    )
+  endif()
+
+  if(DEFINED _PREPROCESSOR_DEFINITIONS)
+    string(REPLACE "\n" ";" defitions "${_PREPROCESSOR_DEFINITIONS}")
+    set(JUCER_PREPROCESSOR_DEFINITIONS_${config} ${defitions} PARENT_SCOPE)
+  endif()
+
+  if(DEFINED _OPTIMISATION)
+    set(optimisation ${_OPTIMISATION})
+    if(exporter MATCHES "^Visual Studio 201(7|5|3)$")
+      if(optimisation STREQUAL "No optimisation")
+        set(optimisation_flag "/Od")
+      elseif(optimisation STREQUAL "Minimise size")
+        set(optimisation_flag "/O1")
+      elseif(optimisation STREQUAL "Maximise speed")
+        set(optimisation_flag "/Ox")
+      else()
+        message(FATAL_ERROR "Unsupported value for OPTIMISATION: \"${optimisation}\"")
       endif()
     else()
-      set(value ${element})
-
-      if(tag STREQUAL "BINARY_NAME")
-        set(JUCER_BINARY_NAME_${config} ${value} PARENT_SCOPE)
-
-      elseif(tag STREQUAL "BINARY_LOCATION")
-        get_filename_component(abs_path "${value}" ABSOLUTE)
-        set(JUCER_BINARY_LOCATION_${config} ${abs_path} PARENT_SCOPE)
-
-      elseif(tag STREQUAL "HEADER_SEARCH_PATHS")
-        string(REPLACE "\\" "/" value "${value}")
-        string(REPLACE "\n" ";" value "${value}")
-        unset(header_search_paths)
-        foreach(path ${value})
-          _FRUT_abs_path_based_on_jucer_project_dir("${path}" path)
-          list(APPEND header_search_paths "${path}")
-        endforeach()
-        set(JUCER_HEADER_SEARCH_PATHS_${config} ${header_search_paths} PARENT_SCOPE)
-
-      elseif(tag STREQUAL "EXTRA_LIBRARY_SEARCH_PATHS")
-        string(REPLACE "\\" "/" value "${value}")
-        string(REPLACE "\n" ";" value "${value}")
-        unset(library_search_paths)
-        foreach(path ${value})
-          _FRUT_abs_path_based_on_jucer_project_dir("${path}" path)
-          list(APPEND library_search_paths "${path}")
-        endforeach()
-        set(JUCER_EXTRA_LIBRARY_SEARCH_PATHS_${config}
-          ${library_search_paths} PARENT_SCOPE
-        )
-
-      elseif(tag STREQUAL "PREPROCESSOR_DEFINITIONS")
-        string(REPLACE "\n" ";" value "${value}")
-        set(JUCER_PREPROCESSOR_DEFINITIONS_${config} ${value} PARENT_SCOPE)
-
-      elseif(tag STREQUAL "OPTIMISATION")
-        if(exporter MATCHES "^Visual Studio 201(7|5|3)$")
-          if(value STREQUAL "No optimisation")
-            set(optimisation_flag "/Od")
-          elseif(value STREQUAL "Minimise size")
-            set(optimisation_flag "/O1")
-          elseif(value STREQUAL "Maximise speed")
-            set(optimisation_flag "/Ox")
-          else()
-            message(FATAL_ERROR "Unsupported value for OPTIMISATION: \"${value}\"")
-          endif()
-        else()
-          if(value STREQUAL "-O0 (no optimisation)")
-            set(optimisation_flag "-O0")
-          elseif(value STREQUAL "-Os (minimise code size)")
-            set(optimisation_flag "-Os")
-          elseif(value STREQUAL "-O3 (fastest with safe optimisations)")
-            set(optimisation_flag "-O3")
-          elseif(value STREQUAL "-O1 (fast)")
-            set(optimisation_flag "-O1")
-          elseif(value STREQUAL "-O2 (faster)")
-            set(optimisation_flag "-O2")
-          elseif(value STREQUAL "-Ofast (uses aggressive optimisations)")
-            set(optimisation_flag "-Ofast")
-          else()
-            message(FATAL_ERROR "Unsupported value for OPTIMISATION: \"${value}\"")
-          endif()
-        endif()
-        set(JUCER_OPTIMISATION_FLAG_${config} ${optimisation_flag} PARENT_SCOPE)
-
-      elseif(tag STREQUAL "VST_BINARY_LOCATION")
-        set(JUCER_VST_BINARY_LOCATION_${config} ${value} PARENT_SCOPE)
-
-      elseif(tag STREQUAL "VST3_BINARY_LOCATION")
-        set(JUCER_VST3_BINARY_LOCATION_${config} ${value} PARENT_SCOPE)
-
-      elseif(tag STREQUAL "AU_BINARY_LOCATION")
-        set(JUCER_AU_BINARY_LOCATION_${config} ${value} PARENT_SCOPE)
-
-      elseif(tag STREQUAL "OSX_BASE_SDK_VERSION")
-        if(value MATCHES "^10\\.([5-9]|10|11|12) SDK$")
-          set(JUCER_OSX_BASE_SDK_VERSION_${config} "10.${CMAKE_MATCH_1}" PARENT_SCOPE)
-        elseif(NOT value STREQUAL "Use Default")
-          message(FATAL_ERROR "Unsupported value for OSX_BASE_SDK_VERSION: \"${value}\"")
-        endif()
-
-      elseif(tag STREQUAL "OSX_DEPLOYMENT_TARGET")
-        if(value MATCHES "^10\\.([5-9]|10|11|12)$")
-          set(JUCER_OSX_DEPLOYMENT_TARGET_${config} "10.${CMAKE_MATCH_1}" PARENT_SCOPE)
-        elseif(NOT value STREQUAL "Use Default")
-          message(FATAL_ERROR "Unsupported value for OSX_DEPLOYMENT_TARGET: \"${value}\"")
-        endif()
-
-      elseif(tag STREQUAL "OSX_ARCHITECTURE")
-        if(value STREQUAL "Native architecture of build machine")
-          if(CMAKE_GENERATOR STREQUAL "Xcode")
-            set(osx_architectures "$(NATIVE_ARCH_ACTUAL)")
-          else()
-            # Consider as default
-            set(osx_architectures)
-          endif()
-        elseif(value STREQUAL "Universal Binary (32-bit)")
-          if(CMAKE_GENERATOR STREQUAL "Xcode")
-            set(osx_architectures "$(ARCHS_STANDARD_32_BIT)")
-          else()
-            set(osx_architectures "i386")
-          endif()
-        elseif(value STREQUAL "Universal Binary (32/64-bit)")
-          if(CMAKE_GENERATOR STREQUAL "Xcode")
-            set(osx_architectures "$(ARCHS_STANDARD_32_64_BIT)")
-          else()
-            set(osx_architectures "x86_64" "i386")
-          endif()
-        elseif(value STREQUAL "64-bit Intel")
-          if(CMAKE_GENERATOR STREQUAL "Xcode")
-            set(osx_architectures "$(ARCHS_STANDARD_64_BIT)")
-          else()
-            set(osx_architectures "x86_64")
-          endif()
-        elseif(NOT value STREQUAL "Use Default")
-          message(FATAL_ERROR "Unsupported value for OSX_ARCHITECTURE: \"${value}\"")
-        endif()
-        if(DEFINED osx_architectures)
-          set(JUCER_OSX_ARCHITECTURES_${config} "${osx_architectures}" PARENT_SCOPE)
-        endif()
-
-      elseif(tag STREQUAL "CUSTOM_XCODE_FLAGS")
-        if(NOT CMAKE_GENERATOR STREQUAL "Xcode")
-          message(WARNING "CUSTOM_XCODE_FLAGS is only supported when using the Xcode "
-            "generator. You should call `cmake -G Xcode`."
-          )
-        endif()
-        string(REGEX REPLACE ", *" ";" value "${value}")
-        set(JUCER_CUSTOM_XCODE_FLAGS_${config} ${value} PARENT_SCOPE)
-
-      elseif(tag STREQUAL "CXX_LANGUAGE_STANDARD")
-        if(value MATCHES "^(C|GNU)\\+\\+98$"
-            AND DEFINED JUCER_VERSION AND JUCER_VERSION VERSION_LESS 5)
-          set(JUCER_CXX_LANGUAGE_STANDARD_${config} ${value} PARENT_SCOPE)
-        elseif(value MATCHES "^(C|GNU)\\+\\+(11|14)$")
-          set(JUCER_CXX_LANGUAGE_STANDARD_${config} ${value} PARENT_SCOPE)
-        elseif(NOT value STREQUAL "Use Default")
-          message(FATAL_ERROR "Unsupported value for CXX_LANGUAGE_STANDARD: \"${value}\"")
-        endif()
-
-      elseif(tag STREQUAL "CXX_LIBRARY")
-        if(value STREQUAL "LLVM libc++")
-          set(JUCER_CXX_LIBRARY_${config} "libc++" PARENT_SCOPE)
-        elseif(value STREQUAL "GNU libstdc++")
-          set(JUCER_CXX_LIBRARY_${config} "libstdc++" PARENT_SCOPE)
-        elseif(NOT value STREQUAL "Use Default")
-          message(FATAL_ERROR "Unsupported value for CXX_LIBRARY: \"${value}\"")
-        endif()
-
-      elseif(tag STREQUAL "CODE_SIGNING_IDENTITY")
-        if(NOT CMAKE_GENERATOR STREQUAL "Xcode")
-          message(WARNING "CODE_SIGNING_IDENTITY is only supported when using the Xcode "
-            "generator. You should call `cmake -G Xcode`."
-          )
-        endif()
-        set(JUCER_CODE_SIGNING_IDENTITY_${config} ${value} PARENT_SCOPE)
-
-      elseif(tag STREQUAL "RELAX_IEEE_COMPLIANCE")
-        set(JUCER_RELAX_IEEE_COMPLIANCE_${config} ${value} PARENT_SCOPE)
-
-      elseif(tag STREQUAL "LINK_TIME_OPTIMISATION")
-        set(JUCER_LINK_TIME_OPTIMISATION_${config} ${value} PARENT_SCOPE)
-
-      elseif(tag STREQUAL "STRIP_LOCAL_SYMBOLS")
-        set(JUCER_STRIP_LOCAL_SYMBOLS_${config} ${value} PARENT_SCOPE)
-
-      elseif(tag STREQUAL "WARNING_LEVEL")
-        if(value STREQUAL "Low")
-          set(level 2)
-        elseif(value STREQUAL "Medium")
-          set(level 3)
-        elseif(value STREQUAL "High")
-          set(level 4)
-        else()
-          message(FATAL_ERROR "Unsupported value for WARNING_LEVEL: \"${value}\"")
-        endif()
-        set(JUCER_WARNING_LEVEL_FLAG_${config} "/W${level}" PARENT_SCOPE)
-
-      elseif(tag STREQUAL "TREAT_WARNINGS_AS_ERRORS")
-        set(JUCER_TREAT_WARNINGS_AS_ERRORS_${config} ${value} PARENT_SCOPE)
-
-      elseif(tag STREQUAL "RUNTIME_LIBRARY")
-        if(value STREQUAL "Use DLL runtime")
-          if(is_debug)
-            set(flag "/MDd")
-          else()
-            set(flag "/MD")
-          endif()
-        elseif(value STREQUAL "Use static runtime")
-          if(is_debug)
-            set(flag "/MTd")
-          else()
-            set(flag "/MT")
-          endif()
-        elseif(NOT value STREQUAL "(Default)")
-          message(FATAL_ERROR "Unsupported value for RUNTIME_LIBRARY: \"${value}\"")
-        endif()
-        set(JUCER_RUNTIME_LIBRARY_FLAG_${config} ${flag} PARENT_SCOPE)
-
-      elseif(tag STREQUAL "WHOLE_PROGRAM_OPTIMISATION")
-        if(value STREQUAL "Always disable")
-          set(JUCER_ALWAYS_DISABLE_WPO_${config} TRUE PARENT_SCOPE)
-        elseif(NOT value STREQUAL "Enable when possible")
-          message(FATAL_ERROR
-            "Unsupported value for WHOLE_PROGRAM_OPTIMISATION: \"${value}\""
-          )
-        endif()
-
-      elseif(tag STREQUAL "INCREMENTAL_LINKING")
-        set(JUCER_INCREMENTAL_LINKING_${config} ${value} PARENT_SCOPE)
-
-      elseif(tag STREQUAL "PREBUILD_COMMAND")
-        set(script_content "${value}")
-        configure_file("${Reprojucer_templates_DIR}/script.in"
-          "prebuild_${config}.cmd" @ONLY
-        )
-        set(JUCER_PREBUILD_COMMAND_${config}
-          "${CMAKE_CURRENT_BINARY_DIR}/prebuild_${config}.cmd" PARENT_SCOPE
-        )
-
-      elseif(tag STREQUAL "POSTBUILD_COMMAND")
-        set(script_content "${value}")
-        configure_file("${Reprojucer_templates_DIR}/script.in"
-          "postbuild_${config}.cmd" @ONLY
-        )
-        set(JUCER_POSTBUILD_COMMAND_${config}
-          "${CMAKE_CURRENT_BINARY_DIR}/postbuild_${config}.cmd" PARENT_SCOPE
-        )
-
-      elseif(tag STREQUAL "GENERATE_MANIFEST")
-        set(JUCER_GENERATE_MANIFEST_${config} ${value} PARENT_SCOPE)
-
-      elseif(tag STREQUAL "CHARACTER_SET")
-        set(character_sets "Default" "MultiByte" "Unicode")
-        if("${value}" IN_LIST character_sets)
-          set(JUCER_CHARACTER_SET_${config} ${value} PARENT_SCOPE)
-        else()
-          message(FATAL_ERROR "Unsupported value for CHARACTER_SET: \"${value}\"")
-        endif()
-
-      elseif(tag STREQUAL "ARCHITECTURE"
-          AND exporter MATCHES "^Visual Studio 201(7|5|3)$")
-        if(value STREQUAL "32-bit")
-          set(wants_x64 FALSE)
-        elseif(value STREQUAL "x64")
-          set(wants_x64 TRUE)
-        else()
-          message(FATAL_ERROR "Unsupported value for ARCHITECTURE: \"${value}\"")
-        endif()
-        if(CMAKE_GENERATOR_PLATFORM STREQUAL "x64" OR CMAKE_GENERATOR MATCHES "Win64")
-          set(is_x64 TRUE)
-        else()
-          set(is_x64 FALSE)
-        endif()
-        if(wants_x64 AND NOT is_x64)
-          message(FATAL_ERROR "You must call `cmake -G\"${CMAKE_GENERATOR} Win64\"` or "
-            "`cmake -G\"${CMAKE_GENERATOR}\" -A x64` in order to build for 64-bit."
-          )
-        elseif(NOT wants_x64 AND is_x64)
-          string(FIND "${CMAKE_GENERATOR}" " Win64" length REVERSE)
-          string(SUBSTRING "${CMAKE_GENERATOR}" 0 ${length} 32_bit_generator)
-          message(FATAL_ERROR "You must call `cmake -G\"${32_bit_generator}\"` or "
-            "`cmake -G\"${32_bit_generator}\" -A Win32` in order to build for 32-bit."
-          )
-        endif()
-
-      elseif(tag STREQUAL "ARCHITECTURE" AND exporter STREQUAL "Linux Makefile")
-        if(value STREQUAL "(Default)")
-          set(architecture_flag "-march=native")
-        elseif(value STREQUAL "32-bit (-m32)")
-          set(architecture_flag "-m32")
-        elseif(value STREQUAL "64-bit (-m64)")
-          set(architecture_flag "-m64")
-        elseif(value STREQUAL "ARM v6")
-          set(architecture_flag "-march=armv6")
-        elseif(value STREQUAL "ARM v7")
-          set(architecture_flag "-march=armv7")
-        elseif(NOT value STREQUAL "<None>")
-          message(FATAL_ERROR "Unsupported value for ARCHITECTURE: \"${value}\"")
-        endif()
-        set(JUCER_ARCHITECTURE_FLAG_${config} ${architecture_flag} PARENT_SCOPE)
-
+      if(optimisation STREQUAL "-O0 (no optimisation)")
+        set(optimisation_flag "-O0")
+      elseif(optimisation STREQUAL "-Os (minimise code size)")
+        set(optimisation_flag "-Os")
+      elseif(optimisation STREQUAL "-O3 (fastest with safe optimisations)")
+        set(optimisation_flag "-O3")
+      elseif(optimisation STREQUAL "-O1 (fast)")
+        set(optimisation_flag "-O1")
+      elseif(optimisation STREQUAL "-O2 (faster)")
+        set(optimisation_flag "-O2")
+      elseif(optimisation STREQUAL "-Ofast (uses aggressive optimisations)")
+        set(optimisation_flag "-Ofast")
+      else()
+        message(FATAL_ERROR "Unsupported value for OPTIMISATION: \"${optimisation}\"")
       endif()
-
-      unset(tag)
     endif()
-  endforeach()
+    set(JUCER_OPTIMISATION_FLAG_${config} ${optimisation_flag} PARENT_SCOPE)
+  endif()
+
+  if(DEFINED _VST_BINARY_LOCATION)
+    set(JUCER_VST_BINARY_LOCATION_${config} ${_VST_BINARY_LOCATION} PARENT_SCOPE)
+  endif()
+
+  if(DEFINED _VST3_BINARY_LOCATION)
+    set(JUCER_VST3_BINARY_LOCATION_${config} ${_VST3_BINARY_LOCATION} PARENT_SCOPE)
+  endif()
+
+  if(DEFINED _AU_BINARY_LOCATION)
+    set(JUCER_AU_BINARY_LOCATION_${config} ${_AU_BINARY_LOCATION} PARENT_SCOPE)
+  endif()
+
+  if(DEFINED _OSX_BASE_SDK_VERSION)
+    set(version ${_OSX_BASE_SDK_VERSION})
+    if(version MATCHES "^10\\.([5-9]|10|11|12) SDK$")
+      set(JUCER_OSX_BASE_SDK_VERSION_${config} "10.${CMAKE_MATCH_1}" PARENT_SCOPE)
+    elseif(NOT version STREQUAL "Use Default")
+      message(FATAL_ERROR "Unsupported value for OSX_BASE_SDK_VERSION: \"${version}\"")
+    endif()
+  endif()
+
+  if(DEFINED _OSX_DEPLOYMENT_TARGET)
+    set(target ${_OSX_DEPLOYMENT_TARGET})
+    if(target MATCHES "^10\\.([5-9]|10|11|12)$")
+      set(JUCER_OSX_DEPLOYMENT_TARGET_${config} "10.${CMAKE_MATCH_1}" PARENT_SCOPE)
+    elseif(NOT target STREQUAL "Use Default")
+      message(FATAL_ERROR "Unsupported value for OSX_DEPLOYMENT_TARGET: \"${target}\"")
+    endif()
+  endif()
+
+  if(DEFINED _OSX_ARCHITECTURE)
+    set(architecture ${_OSX_ARCHITECTURE})
+    if(architecture STREQUAL "Native architecture of build machine")
+      if(CMAKE_GENERATOR STREQUAL "Xcode")
+        set(osx_architectures "$(NATIVE_ARCH_ACTUAL)")
+      else()
+        # Consider as default
+        set(osx_architectures)
+      endif()
+    elseif(architecture STREQUAL "Universal Binary (32-bit)")
+      if(CMAKE_GENERATOR STREQUAL "Xcode")
+        set(osx_architectures "$(ARCHS_STANDARD_32_BIT)")
+      else()
+        set(osx_architectures "i386")
+      endif()
+    elseif(architecture STREQUAL "Universal Binary (32/64-bit)")
+      if(CMAKE_GENERATOR STREQUAL "Xcode")
+        set(osx_architectures "$(ARCHS_STANDARD_32_64_BIT)")
+      else()
+        set(osx_architectures "x86_64" "i386")
+      endif()
+    elseif(architecture STREQUAL "64-bit Intel")
+      if(CMAKE_GENERATOR STREQUAL "Xcode")
+        set(osx_architectures "$(ARCHS_STANDARD_64_BIT)")
+      else()
+        set(osx_architectures "x86_64")
+      endif()
+    elseif(NOT architecture STREQUAL "Use Default")
+      message(FATAL_ERROR "Unsupported value for OSX_ARCHITECTURE: \"${architecture}\"")
+    endif()
+    if(DEFINED osx_architectures)
+      set(JUCER_OSX_ARCHITECTURES_${config} "${osx_architectures}" PARENT_SCOPE)
+    endif()
+  endif()
+
+  if(DEFINED _CUSTOM_XCODE_FLAGS)
+    if(NOT CMAKE_GENERATOR STREQUAL "Xcode")
+      message(WARNING "CUSTOM_XCODE_FLAGS is only supported when using the Xcode "
+        "generator. You should call `cmake -G Xcode`."
+      )
+    endif()
+    string(REGEX REPLACE ", *" ";" xcode_flags "${_CUSTOM_XCODE_FLAGS}")
+    set(JUCER_CUSTOM_XCODE_FLAGS_${config} ${xcode_flags} PARENT_SCOPE)
+  endif()
+
+  if(DEFINED _CXX_LANGUAGE_STANDARD)
+    set(standard ${_CXX_LANGUAGE_STANDARD})
+    if(standard MATCHES "^(C|GNU)\\+\\+98$"
+        AND DEFINED JUCER_VERSION AND JUCER_VERSION VERSION_LESS 5)
+      set(JUCER_CXX_LANGUAGE_STANDARD_${config} ${standard} PARENT_SCOPE)
+    elseif(standard MATCHES "^(C|GNU)\\+\\+(11|14)$")
+      set(JUCER_CXX_LANGUAGE_STANDARD_${config} ${standard} PARENT_SCOPE)
+    elseif(NOT standard STREQUAL "Use Default")
+      message(FATAL_ERROR "Unsupported value for CXX_LANGUAGE_STANDARD: \"${standard}\"")
+    endif()
+  endif()
+
+  if(DEFINED _CXX_LIBRARY)
+    set(cxx_library ${_CXX_LIBRARY})
+    if(cxx_library STREQUAL "LLVM libc++")
+      set(JUCER_CXX_LIBRARY_${config} "libc++" PARENT_SCOPE)
+    elseif(cxx_library STREQUAL "GNU libstdc++")
+      set(JUCER_CXX_LIBRARY_${config} "libstdc++" PARENT_SCOPE)
+    elseif(NOT cxx_library STREQUAL "Use Default")
+      message(FATAL_ERROR "Unsupported value for CXX_LIBRARY: \"${cxx_library}\"")
+    endif()
+  endif()
+
+  if(DEFINED _CODE_SIGNING_IDENTITY)
+    if(NOT CMAKE_GENERATOR STREQUAL "Xcode")
+      message(WARNING "CODE_SIGNING_IDENTITY is only supported when using the Xcode "
+        "generator. You should call `cmake -G Xcode`."
+      )
+    endif()
+    set(JUCER_CODE_SIGNING_IDENTITY_${config} ${_CODE_SIGNING_IDENTITY} PARENT_SCOPE)
+  endif()
+
+  if(DEFINED _RELAX_IEEE_COMPLIANCE)
+    set(JUCER_RELAX_IEEE_COMPLIANCE_${config} ${_RELAX_IEEE_COMPLIANCE} PARENT_SCOPE)
+  endif()
+
+  if(DEFINED _LINK_TIME_OPTIMISATION)
+    set(JUCER_LINK_TIME_OPTIMISATION_${config} ${_LINK_TIME_OPTIMISATION} PARENT_SCOPE)
+  endif()
+
+  if(DEFINED _STRIP_LOCAL_SYMBOLS)
+    set(JUCER_STRIP_LOCAL_SYMBOLS_${config} ${_STRIP_LOCAL_SYMBOLS} PARENT_SCOPE)
+  endif()
+
+  if(DEFINED _WARNING_LEVEL)
+    set(warning_level ${_WARNING_LEVEL})
+    if(warning_level STREQUAL "Low")
+      set(level 2)
+    elseif(warning_level STREQUAL "Medium")
+      set(level 3)
+    elseif(warning_level STREQUAL "High")
+      set(level 4)
+    else()
+      message(FATAL_ERROR "Unsupported value for WARNING_LEVEL: \"${warning_level}\"")
+    endif()
+    set(JUCER_WARNING_LEVEL_FLAG_${config} "/W${level}" PARENT_SCOPE)
+  endif()
+
+  if(DEFINED _TREAT_WARNINGS_AS_ERRORS)
+    set(JUCER_TREAT_WARNINGS_AS_ERRORS_${config} ${_TREAT_WARNINGS_AS_ERRORS}
+      PARENT_SCOPE
+    )
+  endif()
+
+  if(DEFINED _RUNTIME_LIBRARY)
+    set(library ${_RUNTIME_LIBRARY})
+    if(library STREQUAL "Use DLL runtime")
+      if(is_debug)
+        set(flag "/MDd")
+      else()
+        set(flag "/MD")
+      endif()
+    elseif(library STREQUAL "Use static runtime")
+      if(is_debug)
+        set(flag "/MTd")
+      else()
+        set(flag "/MT")
+      endif()
+    elseif(NOT library STREQUAL "(Default)")
+      message(FATAL_ERROR "Unsupported value for RUNTIME_LIBRARY: \"${library}\"")
+    endif()
+    set(JUCER_RUNTIME_LIBRARY_FLAG_${config} ${flag} PARENT_SCOPE)
+  endif()
+
+  if(DEFINED _WHOLE_PROGRAM_OPTIMISATION)
+    set(optimisation ${_WHOLE_PROGRAM_OPTIMISATION})
+    if(optimisation STREQUAL "Always disable")
+      set(JUCER_ALWAYS_DISABLE_WPO_${config} TRUE PARENT_SCOPE)
+    elseif(NOT optimisation STREQUAL "Enable when possible")
+      message(FATAL_ERROR
+        "Unsupported value for WHOLE_PROGRAM_OPTIMISATION: \"${optimisation}\""
+      )
+    endif()
+  endif()
+
+  if(DEFINED _INCREMENTAL_LINKING)
+    set(JUCER_INCREMENTAL_LINKING_${config} ${_INCREMENTAL_LINKING} PARENT_SCOPE)
+  endif()
+
+  if(DEFINED _PREBUILD_COMMAND)
+    set(script_content "${_PREBUILD_COMMAND}")
+    configure_file("${Reprojucer_templates_DIR}/script.in"
+      "prebuild_${config}.cmd" @ONLY
+    )
+    set(JUCER_PREBUILD_COMMAND_${config}
+      "${CMAKE_CURRENT_BINARY_DIR}/prebuild_${config}.cmd" PARENT_SCOPE
+    )
+  endif()
+
+  if(DEFINED _POSTBUILD_COMMAND)
+    set(script_content "${_POSTBUILD_COMMAND}")
+    configure_file("${Reprojucer_templates_DIR}/script.in"
+      "postbuild_${config}.cmd" @ONLY
+    )
+    set(JUCER_POSTBUILD_COMMAND_${config}
+      "${CMAKE_CURRENT_BINARY_DIR}/postbuild_${config}.cmd" PARENT_SCOPE
+    )
+  endif()
+
+  if(DEFINED _GENERATE_MANIFEST)
+    set(JUCER_GENERATE_MANIFEST_${config} ${_GENERATE_MANIFEST} PARENT_SCOPE)
+  endif()
+
+  if(DEFINED _CHARACTER_SET)
+    set(character_sets "Default" "MultiByte" "Unicode")
+    if("${_CHARACTER_SET}" IN_LIST character_sets)
+      set(JUCER_CHARACTER_SET_${config} ${_CHARACTER_SET} PARENT_SCOPE)
+    else()
+      message(FATAL_ERROR "Unsupported value for CHARACTER_SET: \"${_CHARACTER_SET}\"")
+    endif()
+  endif()
+
+  if(DEFINED _ARCHITECTURE AND exporter MATCHES "^Visual Studio 201(7|5|3)$")
+    if(_ARCHITECTURE STREQUAL "32-bit")
+      set(wants_x64 FALSE)
+    elseif(_ARCHITECTURE STREQUAL "x64")
+      set(wants_x64 TRUE)
+    else()
+      message(FATAL_ERROR "Unsupported value for ARCHITECTURE: \"${_ARCHITECTURE}\"")
+    endif()
+    if(CMAKE_GENERATOR_PLATFORM STREQUAL "x64" OR CMAKE_GENERATOR MATCHES "Win64")
+      set(is_x64 TRUE)
+    else()
+      set(is_x64 FALSE)
+    endif()
+    if(wants_x64 AND NOT is_x64)
+      message(FATAL_ERROR "You must call `cmake -G\"${CMAKE_GENERATOR} Win64\"` or "
+        "`cmake -G\"${CMAKE_GENERATOR}\" -A x64` in order to build for 64-bit."
+      )
+    elseif(NOT wants_x64 AND is_x64)
+      string(FIND "${CMAKE_GENERATOR}" " Win64" length REVERSE)
+      string(SUBSTRING "${CMAKE_GENERATOR}" 0 ${length} 32_bit_generator)
+      message(FATAL_ERROR "You must call `cmake -G\"${32_bit_generator}\"` or "
+        "`cmake -G\"${32_bit_generator}\" -A Win32` in order to build for 32-bit."
+      )
+    endif()
+  endif()
+
+  if(DEFINED _ARCHITECTURE AND exporter STREQUAL "Linux Makefile")
+    set(architecture ${_ARCHITECTURE})
+    if(architecture STREQUAL "(Default)")
+      set(architecture_flag "-march=native")
+    elseif(architecture STREQUAL "32-bit (-m32)")
+      set(architecture_flag "-m32")
+    elseif(architecture STREQUAL "64-bit (-m64)")
+      set(architecture_flag "-m64")
+    elseif(architecture STREQUAL "ARM v6")
+      set(architecture_flag "-march=armv6")
+    elseif(architecture STREQUAL "ARM v7")
+      set(architecture_flag "-march=armv7")
+    elseif(NOT architecture STREQUAL "<None>")
+      message(FATAL_ERROR "Unsupported value for ARCHITECTURE: \"${architecture}\"")
+    endif()
+    set(JUCER_ARCHITECTURE_FLAG_${config} ${architecture_flag} PARENT_SCOPE)
+  endif()
 
 endfunction()
 
@@ -1724,6 +1722,36 @@ function(jucer_project_end)
     message(FATAL_ERROR "Unknown project type: ${JUCER_PROJECT_TYPE}")
 
   endif()
+
+endfunction()
+
+
+function(_FRUT_parse_arguments single_value_keywords arguments)
+
+  foreach(keyword ${single_value_keywords})
+    unset(_${keyword})
+  endforeach()
+
+  unset(keyword)
+
+  foreach(argument ${arguments})
+    if(NOT DEFINED keyword)
+      set(keyword ${argument})
+      if(NOT "${keyword}" IN_LIST single_value_keywords)
+        message(FATAL_ERROR "Unknown keyword: \"${keyword}\"")
+      endif()
+    else()
+      set(_${keyword} ${argument})
+      unset(keyword)
+    endif()
+  endforeach()
+
+  foreach(keyword ${single_value_keywords})
+    unset(_${keyword} PARENT_SCOPE)
+    if(DEFINED _${keyword})
+      set(_${keyword} ${_${keyword}} PARENT_SCOPE)
+    endif()
+  endforeach()
 
 endfunction()
 
