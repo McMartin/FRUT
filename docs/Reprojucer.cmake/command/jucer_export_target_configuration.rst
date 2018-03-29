@@ -9,12 +9,12 @@ Define the settings specific to a configuration associated with an export target
     <exporter>
     NAME <configuration_name>
     DEBUG_MODE <ON|OFF>
-    [<setting_tag> <setting_value>]...
+    [<keyword> <value>]...
   )
 
 ``<exporter>`` must be one of the :ref:`supported exporters <supported-export-targets>`.
 
-``<setting_tag>`` can be one of the following tags:
+``<keyword>`` can be one of the following keywords:
 
 - ``BINARY_LOCATION``
 - ``BINARY_NAME``
@@ -23,8 +23,8 @@ Define the settings specific to a configuration associated with an export target
 - ``OPTIMISATION``
 - ``PREPROCESSOR_DEFINITIONS``
 
-When ``<exporter>`` equals ``"Xcode (MacOSX)"``, ``<setting_tag>`` can also be one of the
-following tags:
+When ``<exporter>`` equals ``"Xcode (MacOSX)"``, ``<keyword>`` can also be one of the
+following keywords:
 
 - ``AU_BINARY_LOCATION``
 - ``CODE_SIGNING_IDENTITY``
@@ -40,7 +40,7 @@ following tags:
 - ``VST_BINARY_LOCATION``
 
 When ``<exporter>`` equals ``"Visual Studio 2017"``, ``"Visual Studio 2015"`` or
-``"Visual Studio 2013"``, ``<setting_tag>`` can also be one of the following tags:
+``"Visual Studio 2013"``, ``<keyword>`` can also be one of the following keywords:
 
 - ``ARCHITECTURE``
 - ``CHARACTER_SET``
@@ -54,7 +54,7 @@ When ``<exporter>`` equals ``"Visual Studio 2017"``, ``"Visual Studio 2015"`` or
 - ``WARNING_LEVEL``
 - ``WHOLE_PROGRAM_OPTIMISATION``
 
-When ``<exporter>`` equals ``"Linux Makefile"``, ``<setting_tag>`` can also be one of the
-following tags:
+When ``<exporter>`` equals ``"Linux Makefile"``, ``<keyword>`` can also be one of the
+following keywords:
 
 - ``ARCHITECTURE``
