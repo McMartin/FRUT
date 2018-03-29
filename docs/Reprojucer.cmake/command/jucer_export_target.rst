@@ -7,46 +7,55 @@ Define the settings specific to an export target.
 
   jucer_export_target(
     <exporter>
-    [<keyword> <value>]...
+
+    [TARGET_PROJECT_FOLDER <target_project_folder>]
+
+    [VST_SDK_FOLDER <vst_sdk_folder>]
+    [VST3_SDK_FOLDER <vst3_sdk_folder>]
+
+    [EXTRA_PREPROCESSOR_DEFINITIONS <preprocessor_definitions>]
+    [EXTRA_COMPILER_FLAGS <compiler_flags>]
+    [EXTRA_LINKER_FLAGS <linker_flags>]
+    [EXTERNAL_LIBRARIES_TO_LINK <libraries>]
+
+    [GNU_COMPILER_EXTENSIONS <ON|OFF>]
+
+    [ICON_SMALL <icon_file>]
+    [ICON_LARGE <icon_file>]
+
+    [CUSTOM_XCODE_RESOURCE_FOLDERS <xcode_resource_folders>]
+    [DOCUMENT_FILE_EXTENSIONS <file_extensions>]
+    [CUSTOM_PLIST <plist_content>]
+    [EXTRA_FRAMEWORKS <osx_frameworks>]
+    [PREBUILD_SHELL_SCRIPT <shell_script_content>]
+    [POSTBUILD_SHELL_SCRIPT <shell_script_content>]
+    [DEVELOPMENT_TEAM_ID <development_team_id>]
+
+    [PLATFORM_TOOLSET <platform_toolset>]
+    [USE_IPP_LIBRARY <use_ipp_library>]
+
+    [CXX_STANDARD_TO_USE <cxx_standard>]
+    [PKGCONFIG_LIBRARIES <libraries>]
   )
 
 ``<exporter>`` must be one of the :ref:`supported exporters <supported-export-targets>`.
 
-``<keyword>`` can be one of the following keywords:
+``VST3_SDK_FOLDER`` is only supported by the following exporters: ``"Xcode (MacOSX)"``,
+``"Visual Studio 2017"``, ``"Visual Studio 2015"`` and ``"Visual Studio 2013"``.
 
-- ``EXTERNAL_LIBRARIES_TO_LINK``
-- ``EXTRA_COMPILER_FLAGS``
-- ``EXTRA_LINKER_FLAGS``
-- ``EXTRA_PREPROCESSOR_DEFINITIONS``
-- ``ICON_LARGE``
-- ``ICON_SMALL``
-- ``TARGET_PROJECT_FOLDER``
-- ``VST_SDK_FOLDER``
+``GNU_COMPILER_EXTENSIONS`` is only supported by the following exporters:
+``"Xcode (MacOSX)"`` and ``"Linux Makefile"``.
 
-When ``<exporter>`` equals ``"Xcode (MacOSX)"``, ``<keyword>`` can also be one of the
-following keywords:
+``CUSTOM_PLIST``, ``CUSTOM_XCODE_RESOURCE_FOLDERS``, ``DEVELOPMENT_TEAM_ID``,
+``EXTRA_FRAMEWORKS``, ``POSTBUILD_SHELL_SCRIPT`` and ``PREBUILD_SHELL_SCRIPT`` are only
+supported by the ``"Xcode (MacOSX)"`` exporter.
 
-- ``CUSTOM_PLIST``
-- ``CUSTOM_XCODE_RESOURCE_FOLDERS``
-- ``DEVELOPMENT_TEAM_ID``
-- ``DOCUMENT_FILE_EXTENSIONS`` (only if :doc:`jucer_project_settings()
-  <jucer_project_settings>` was called with ``PROJECT_TYPE "GUI Application"``)
-- ``EXTRA_FRAMEWORKS``
-- ``GNU_COMPILER_EXTENSIONS``
-- ``POSTBUILD_SHELL_SCRIPT``
-- ``PREBUILD_SHELL_SCRIPT``
-- ``VST3_SDK_FOLDER``
+``DOCUMENT_FILE_EXTENSIONS`` is only supported by the ``"Xcode (MacOSX)"`` exporter on
+``"GUI Application"`` projects.
 
-When ``<exporter>`` equals ``"Visual Studio 2017"``, ``"Visual Studio 2015"`` or
-``"Visual Studio 2013"``, ``<keyword>`` can also be one of the following keywords:
+``PLATFORM_TOOLSET`` and ``USE_IPP_LIBRARY`` are only supported by the following
+exporters: ``"Visual Studio 2017"``, ``"Visual Studio 2015"`` and
+``"Visual Studio 2013"``.
 
-- ``PLATFORM_TOOLSET``
-- ``USE_IPP_LIBRARY``
-- ``VST3_SDK_FOLDER``
-
-When ``<exporter>`` equals ``"Linux Makefile"``, ``<keyword>`` can also be one of the
-following keywords:
-
-- ``CXX_STANDARD_TO_USE``
-- ``GNU_COMPILER_EXTENSIONS``
-- ``PKGCONFIG_LIBRARIES``
+``CXX_STANDARD_TO_USE`` and ``PKGCONFIG_LIBRARIES`` are only supported by the
+``"Linux Makefile"`` exporter.
