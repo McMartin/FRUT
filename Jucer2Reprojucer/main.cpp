@@ -378,6 +378,8 @@ int main(int argc, char* argv[])
                                 return "Default";
                               return juce::File::descriptionOfSizeInBytes(int{value});
                             });
+    convertSettingIfDefined(jucerProject, "binaryDataNamespace", "BINARYDATA_NAMESPACE",
+                            {});
 
     convertSettingIfDefined(jucerProject, "cppLanguageStandard", "CXX_LANGUAGE_STANDARD",
                             [](const juce::var& v) -> juce::String {
@@ -395,8 +397,6 @@ int main(int argc, char* argv[])
                               return {};
                             });
 
-    convertSettingIfDefined(jucerProject, "binaryDataNamespace", "BINARYDATA_NAMESPACE",
-                            {});
     convertSettingIfDefined(jucerProject, "defines", "PREPROCESSOR_DEFINITIONS", {});
     convertSettingIfDefined(jucerProject, "headerPath", "HEADER_SEARCH_PATHS", {});
 
