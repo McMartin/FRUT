@@ -77,6 +77,7 @@ function(jucer_project_settings)
     "PROJECT_TYPE"
     "BUNDLE_IDENTIFIER"
     "BINARYDATACPP_SIZE_LIMIT"
+    "INCLUDE_BINARYDATA"
     "BINARYDATA_NAMESPACE"
     "CXX_LANGUAGE_STANDARD"
   )
@@ -2123,7 +2124,11 @@ function(_FRUT_generate_JuceHeader_header)
         "${CMAKE_CURRENT_BINARY_DIR}/JuceLibraryCode/${filename}"
       )
     endforeach()
-    set(binary_data_include "#include \"BinaryData.h\"")
+    if(DEFINED JUCER_INCLUDE_BINARYDATA AND NOT JUCER_INCLUDE_BINARYDATA)
+      set(binary_data_include "")
+    else()
+      set(binary_data_include "\n#include \"BinaryData.h\"")
+    endif()
   endif()
 
   unset(modules_includes)

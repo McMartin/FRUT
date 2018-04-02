@@ -22,6 +22,7 @@ Define the settings specific to a JUCE project.
     [SPLASH_SCREEN_COLOUR <splash_screen_colour>]
     [BUNDLE_IDENTIFIER <bundle_identifier>]
     [BINARYDATACPP_SIZE_LIMIT <binarydatacpp_size_limit>]
+    [INCLUDE_BINARYDATA <ON|OFF>]
     [BINARYDATA_NAMESPACE <binarydata_namespace>]
     [CXX_LANGUAGE_STANDARD <cxx_language_standard>]
     [PREPROCESSOR_DEFINITIONS <preprocessor_definition> [<preprocessor_definition> ...]]
