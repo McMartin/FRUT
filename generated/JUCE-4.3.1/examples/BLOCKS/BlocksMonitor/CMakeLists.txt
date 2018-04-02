@@ -30,6 +30,7 @@ jucer_project_settings(
   PROJECT_VERSION "1.0.0"
   PROJECT_TYPE "GUI Application"
   BUNDLE_IDENTIFIER "com.yourcompany.BlocksInfo"
+  INCLUDE_BINARYDATA ON
 )
 
 jucer_project_files("BlocksMonitor/Source"

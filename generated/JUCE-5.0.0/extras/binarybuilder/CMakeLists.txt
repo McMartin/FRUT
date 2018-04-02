@@ -33,6 +33,7 @@ jucer_project_settings(
   SPLASH_SCREEN_COLOUR "Dark"
   PROJECT_TYPE "Console Application"
   BUNDLE_IDENTIFIER "com.rawmaterialsoftware.binarybuilder"
+  INCLUDE_BINARYDATA ON
 )
 
 jucer_project_files("BinaryBuilder/Source"

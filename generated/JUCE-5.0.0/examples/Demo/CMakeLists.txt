@@ -33,6 +33,7 @@ jucer_project_settings(
   SPLASH_SCREEN_COLOUR "Dark"
   PROJECT_TYPE "GUI Application"
   BUNDLE_IDENTIFIER "com.yourcompany.JuceDemo"
+  INCLUDE_BINARYDATA ON
   PREPROCESSOR_DEFINITIONS
     "JUCE_UNIT_TESTS=1"
 )

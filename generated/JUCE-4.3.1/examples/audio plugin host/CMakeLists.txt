@@ -31,6 +31,7 @@ jucer_project_settings(
   COMPANY_NAME "ROLI Ltd."
   PROJECT_TYPE "GUI Application"
   BUNDLE_IDENTIFIER "com.roli.pluginhost"
+  INCLUDE_BINARYDATA ON
 )
 
 jucer_project_files("Plugin Host"
