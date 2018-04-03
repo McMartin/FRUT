@@ -94,6 +94,7 @@ jucer_export_target(
     -Wno-c++98-compat
     -Wno-c++98-compat-pedantic
     -Wno-cast-align
+    -Wno-cast-qual
     -Wno-comma
     -Wno-covered-switch-default
     -Wno-date-time
@@ -106,6 +107,7 @@ jucer_export_target(
     -Wno-float-equal
     -Wno-global-constructors
     -Wno-implicit-fallthrough
+    -Wno-inconsistent-missing-destructor-override
     -Wno-missing-noreturn
     -Wno-missing-prototypes
     -Wno-missing-variable-declarations
@@ -120,7 +122,9 @@ jucer_export_target(
     -Wno-undef
     -Wno-undefined-reinterpret-cast
     -Wno-unknown-warning-option
+    -Wno-unused-template
     -Wno-weak-vtables
+    -Wno-zero-as-null-pointer-constant
   "
 )
 
