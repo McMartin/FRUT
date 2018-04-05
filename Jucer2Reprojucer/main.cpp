@@ -420,8 +420,16 @@ int main(int argc, char* argv[])
                                 return "Default";
                               return juce::File::descriptionOfSizeInBytes(int{value});
                             });
-    convertOnOffSettingIfDefined(jucerProject, "includeBinaryInAppConfig",
-                                 "INCLUDE_BINARYDATA", {});
+    if (jucerProject.hasProperty("includeBinaryInJuceHeader"))
+    {
+      convertOnOffSetting(jucerProject, "includeBinaryInJuceHeader", "INCLUDE_BINARYDATA",
+                          {});
+    }
+    else
+    {
+      convertOnOffSettingIfDefined(jucerProject, "includeBinaryInAppConfig",
+                                   "INCLUDE_BINARYDATA", {});
+    }
     convertSettingIfDefined(jucerProject, "binaryDataNamespace", "BINARYDATA_NAMESPACE",
                             {});
 
