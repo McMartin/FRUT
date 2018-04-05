@@ -29,10 +29,8 @@ Define the settings specific to an export target.
     [EXTRA_FRAMEWORKS <osx_framework> [<osx_framework> ...]]
     [PREBUILD_SHELL_SCRIPT <shell_script_content>]
     [POSTBUILD_SHELL_SCRIPT <shell_script_content>]
-    [DEVELOPMENT_TEAM_ID <development_team_id>]
 
     [PLATFORM_TOOLSET <platform_toolset>]
-    [USE_IPP_LIBRARY <use_ipp_library>]
 
     [CXX_STANDARD_TO_USE <cxx_standard>]
     [PKGCONFIG_LIBRARIES <library> [<library> ...]]
@@ -46,16 +44,15 @@ Define the settings specific to an export target.
 ``GNU_COMPILER_EXTENSIONS`` is only supported by the following exporters:
 ``"Xcode (MacOSX)"`` and ``"Linux Makefile"``.
 
-``CUSTOM_PLIST``, ``CUSTOM_XCODE_RESOURCE_FOLDERS``, ``DEVELOPMENT_TEAM_ID``,
-``EXTRA_FRAMEWORKS``, ``POSTBUILD_SHELL_SCRIPT`` and ``PREBUILD_SHELL_SCRIPT`` are only
-supported by the ``"Xcode (MacOSX)"`` exporter.
+``CUSTOM_PLIST``, ``CUSTOM_XCODE_RESOURCE_FOLDERS``,  ``EXTRA_FRAMEWORKS``,
+``POSTBUILD_SHELL_SCRIPT`` and ``PREBUILD_SHELL_SCRIPT`` are only supported by the
+``"Xcode (MacOSX)"`` exporter.
 
 ``DOCUMENT_FILE_EXTENSIONS`` is only supported by the ``"Xcode (MacOSX)"`` exporter on
 ``"GUI Application"`` projects.
 
-``PLATFORM_TOOLSET`` and ``USE_IPP_LIBRARY`` are only supported by the following
-exporters: ``"Visual Studio 2017"``, ``"Visual Studio 2015"`` and
-``"Visual Studio 2013"``.
+``PLATFORM_TOOLSET`` is only supported by the following exporters:
+``"Visual Studio 2017"``, ``"Visual Studio 2015"`` and ``"Visual Studio 2013"``.
 
 ``CXX_STANDARD_TO_USE`` and ``PKGCONFIG_LIBRARIES`` are only supported by the
 ``"Linux Makefile"`` exporter.
