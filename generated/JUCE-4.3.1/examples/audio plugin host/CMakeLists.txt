@@ -159,7 +159,22 @@ jucer_project_module(
 jucer_export_target(
   "Xcode (MacOSX)"
   # VST3_SDK_FOLDER
-  EXTRA_COMPILER_FLAGS "-Wall -Wshadow -Wno-missing-field-initializers -Wshadow -Wshorten-64-to-32 -Wstrict-aliasing -Wuninitialized -Wunused-parameter -Wconversion -Wsign-compare -Wint-conversion -Woverloaded-virtual -Wreorder -Wconstant-conversion -Wsign-conversion"
+  EXTRA_COMPILER_FLAGS
+    "-Wall"
+    "-Wshadow"
+    "-Wno-missing-field-initializers"
+    "-Wshadow"
+    "-Wshorten-64-to-32"
+    "-Wstrict-aliasing"
+    "-Wuninitialized"
+    "-Wunused-parameter"
+    "-Wconversion"
+    "-Wsign-compare"
+    "-Wint-conversion"
+    "-Woverloaded-virtual"
+    "-Wreorder"
+    "-Wconstant-conversion"
+    "-Wsign-conversion"
 )
 
 jucer_export_target_configuration(
@@ -193,7 +208,8 @@ jucer_export_target_configuration(
   NAME "Debug"
   DEBUG_MODE ON
   BINARY_NAME "Plugin Host"
-  EXTRA_LIBRARY_SEARCH_PATHS "/usr/X11R6/lib/"
+  EXTRA_LIBRARY_SEARCH_PATHS
+    "/usr/X11R6/lib/"
   OPTIMISATION "-O0 (no optimisation)"
 )
 
@@ -202,7 +218,8 @@ jucer_export_target_configuration(
   NAME "Release"
   DEBUG_MODE OFF
   BINARY_NAME "Plugin Host"
-  EXTRA_LIBRARY_SEARCH_PATHS "/usr/X11R6/lib/"
+  EXTRA_LIBRARY_SEARCH_PATHS
+    "/usr/X11R6/lib/"
   OPTIMISATION "-Os (minimise code size)"
 )
 

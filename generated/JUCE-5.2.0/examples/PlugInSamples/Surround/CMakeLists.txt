@@ -184,7 +184,14 @@ jucer_export_target(
   TARGET_PROJECT_FOLDER "Builds/MacOSX"  # only used by PREBUILD_SHELL_SCRIPT and POSTBUILD_SHELL_SCRIPT
   # VST3_SDK_FOLDER
   # EXTRA_PREPROCESSOR_DEFINITIONS
-  EXTRA_COMPILER_FLAGS "-Wall -Wshadow -Wstrict-aliasing -Wconversion -Wsign-compare -Woverloaded-virtual -Wextra-semi"
+  EXTRA_COMPILER_FLAGS
+    "-Wall"
+    "-Wshadow"
+    "-Wstrict-aliasing"
+    "-Wconversion"
+    "-Wsign-compare"
+    "-Woverloaded-virtual"
+    "-Wextra-semi"
   # POSTBUILD_SHELL_SCRIPT
 )
 
@@ -272,7 +279,22 @@ jucer_export_target_configuration(
 jucer_export_target(
   "Linux Makefile"
   # EXTRA_PREPROCESSOR_DEFINITIONS
-  EXTRA_COMPILER_FLAGS "-Wall -Wshadow -Wno-missing-field-initializers -Wshadow -Wshorten-64-to-32 -Wstrict-aliasing -Wuninitialized -Wunused-parameter -Wconversion -Wsign-compare -Wint-conversion -Woverloaded-virtual -Wreorder -Wconstant-conversion -Wsign-conversion"
+  EXTRA_COMPILER_FLAGS
+    "-Wall"
+    "-Wshadow"
+    "-Wno-missing-field-initializers"
+    "-Wshadow"
+    "-Wshorten-64-to-32"
+    "-Wstrict-aliasing"
+    "-Wuninitialized"
+    "-Wunused-parameter"
+    "-Wconversion"
+    "-Wsign-compare"
+    "-Wint-conversion"
+    "-Woverloaded-virtual"
+    "-Wreorder"
+    "-Wconstant-conversion"
+    "-Wsign-conversion"
 )
 
 jucer_export_target_configuration(
@@ -280,7 +302,8 @@ jucer_export_target_configuration(
   NAME "Debug"
   DEBUG_MODE ON
   BINARY_NAME "Surround"
-  EXTRA_LIBRARY_SEARCH_PATHS "/usr/X11R6/lib/"
+  EXTRA_LIBRARY_SEARCH_PATHS
+    "/usr/X11R6/lib/"
   OPTIMISATION "-O0 (no optimisation)"
 )
 
@@ -289,7 +312,8 @@ jucer_export_target_configuration(
   NAME "Release"
   DEBUG_MODE OFF
   BINARY_NAME "Surround"
-  EXTRA_LIBRARY_SEARCH_PATHS "/usr/X11R6/lib/"
+  EXTRA_LIBRARY_SEARCH_PATHS
+    "/usr/X11R6/lib/"
   OPTIMISATION "-O3 (fastest with safe optimisations)"
 )
 

@@ -508,11 +508,19 @@ jucer_appconfig_header(
 
 jucer_export_target(
   "Xcode (MacOSX)"
-  EXTRA_COMPILER_FLAGS "-Wall -Wshadow -Wstrict-aliasing -Wconversion -Wsign-compare -Woverloaded-virtual -Wextra-semi"
+  EXTRA_COMPILER_FLAGS
+    "-Wall"
+    "-Wshadow"
+    "-Wstrict-aliasing"
+    "-Wconversion"
+    "-Wsign-compare"
+    "-Woverloaded-virtual"
+    "-Wextra-semi"
   # EXTRA_LINKER_FLAGS
   ICON_SMALL "<None>"
   ICON_LARGE "Source/BinaryData/Icons/juce_icon.png"
-  DOCUMENT_FILE_EXTENSIONS ".jucer"
+  DOCUMENT_FILE_EXTENSIONS
+    ".jucer"
   CUSTOM_PLIST "<plist>
 <dict>
 	<key>NSAppTransportSecurity</key>
@@ -532,7 +540,19 @@ jucer_export_target(
 	</dict>
 </dict>
 </plist>"
-  EXTRA_FRAMEWORKS "AudioUnit\; Accelerate\; AVFoundation\; CoreAudio\; CoreAudioKit\; CoreMIDI\; DiscRecording\; QuartzCore\; AudioToolbox\; OpenGL\; QTKit\; QuickTime"
+  EXTRA_FRAMEWORKS
+    "AudioUnit"
+    "Accelerate"
+    "AVFoundation"
+    "CoreAudio"
+    "CoreAudioKit"
+    "CoreMIDI"
+    "DiscRecording"
+    "QuartzCore"
+    "AudioToolbox"
+    "OpenGL"
+    "QTKit"
+    "QuickTime"
 )
 
 jucer_export_target_configuration(

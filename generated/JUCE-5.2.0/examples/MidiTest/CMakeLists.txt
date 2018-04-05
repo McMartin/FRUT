@@ -198,7 +198,8 @@ jucer_export_target_configuration(
   NAME "Debug"
   DEBUG_MODE ON
   BINARY_NAME "MidiTest"
-  EXTRA_LIBRARY_SEARCH_PATHS "/usr/X11R6/lib/"
+  EXTRA_LIBRARY_SEARCH_PATHS
+    "/usr/X11R6/lib/"
   OPTIMISATION "-O0 (no optimisation)"
 )
 
@@ -207,13 +208,22 @@ jucer_export_target_configuration(
   NAME "Release"
   DEBUG_MODE OFF
   BINARY_NAME "MidiTest"
-  EXTRA_LIBRARY_SEARCH_PATHS "/usr/X11R6/lib/"
+  EXTRA_LIBRARY_SEARCH_PATHS
+    "/usr/X11R6/lib/"
   OPTIMISATION "-O3 (fastest with safe optimisations)"
 )
 
 jucer_export_target(
   "Xcode (MacOSX)"
-  EXTRA_COMPILER_FLAGS "-std=c++14 -Wall -Wshadow -Wstrict-aliasing -Wconversion -Wsign-compare -Woverloaded-virtual -Wextra-semi"
+  EXTRA_COMPILER_FLAGS
+    "-std=c++14"
+    "-Wall"
+    "-Wshadow"
+    "-Wstrict-aliasing"
+    "-Wconversion"
+    "-Wsign-compare"
+    "-Woverloaded-virtual"
+    "-Wextra-semi"
 )
 
 jucer_export_target_configuration(

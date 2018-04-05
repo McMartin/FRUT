@@ -64,9 +64,10 @@ jucer_project_settings(
   PROJECT_TYPE "Console Application"
   REPORT_JUCE_APP_USAGE OFF
   DISPLAY_THE_JUCE_SPLASH_SCREEN OFF
-  PREPROCESSOR_DEFINITIONS "DONT_SET_USING_JUCE_NAMESPACE=1
-JUCE_DISABLE_JUCE_VERSION_PRINTING=1
-USE_CRLF_LINE_ENDINGS=${use_crlf_line_endings_define}"
+  PREPROCESSOR_DEFINITIONS
+    "DONT_SET_USING_JUCE_NAMESPACE=1"
+    "JUCE_DISABLE_JUCE_VERSION_PRINTING=1"
+    "USE_CRLF_LINE_ENDINGS=${use_crlf_line_endings_define}"
 )
 
 jucer_project_files("Jucer2Reprojucer"
@@ -90,42 +91,43 @@ jucer_project_module(
 
 jucer_export_target(
   "Xcode (MacOSX)"
-  EXTRA_COMPILER_FLAGS "-Werror -Weverything
-    -Wno-c++98-compat
-    -Wno-c++98-compat-pedantic
-    -Wno-cast-align
-    -Wno-cast-qual
-    -Wno-comma
-    -Wno-covered-switch-default
-    -Wno-date-time
-    -Wno-deprecated
-    -Wno-disabled-macro-expansion
-    -Wno-documentation
-    -Wno-documentation-unknown-command
-    -Wno-exit-time-destructors
-    -Wno-extra-semi
-    -Wno-float-equal
-    -Wno-global-constructors
-    -Wno-implicit-fallthrough
-    -Wno-inconsistent-missing-destructor-override
-    -Wno-missing-noreturn
-    -Wno-missing-prototypes
-    -Wno-missing-variable-declarations
-    -Wno-nullable-to-nonnull-conversion
-    -Wno-old-style-cast
-    -Wno-padded
-    -Wno-reorder
-    -Wno-reserved-id-macro
-    -Wno-strict-selector-match
-    -Wno-switch-enum
-    -Wno-undeclared-selector
-    -Wno-undef
-    -Wno-undefined-reinterpret-cast
-    -Wno-unknown-warning-option
-    -Wno-unused-template
-    -Wno-weak-vtables
-    -Wno-zero-as-null-pointer-constant
-  "
+  EXTRA_COMPILER_FLAGS
+    "-Werror"
+    "-Weverything"
+    "-Wno-c++98-compat"
+    "-Wno-c++98-compat-pedantic"
+    "-Wno-cast-align"
+    "-Wno-cast-qual"
+    "-Wno-comma"
+    "-Wno-covered-switch-default"
+    "-Wno-date-time"
+    "-Wno-deprecated"
+    "-Wno-disabled-macro-expansion"
+    "-Wno-documentation"
+    "-Wno-documentation-unknown-command"
+    "-Wno-exit-time-destructors"
+    "-Wno-extra-semi"
+    "-Wno-float-equal"
+    "-Wno-global-constructors"
+    "-Wno-implicit-fallthrough"
+    "-Wno-inconsistent-missing-destructor-override"
+    "-Wno-missing-noreturn"
+    "-Wno-missing-prototypes"
+    "-Wno-missing-variable-declarations"
+    "-Wno-nullable-to-nonnull-conversion"
+    "-Wno-old-style-cast"
+    "-Wno-padded"
+    "-Wno-reorder"
+    "-Wno-reserved-id-macro"
+    "-Wno-strict-selector-match"
+    "-Wno-switch-enum"
+    "-Wno-undeclared-selector"
+    "-Wno-undef"
+    "-Wno-undefined-reinterpret-cast"
+    "-Wno-unknown-warning-option"
+    "-Wno-unused-template"
+    "-Wno-weak-vtables"
+    "-Wno-zero-as-null-pointer-constant"
 )
 
 jucer_export_target_configuration(
@@ -142,7 +144,9 @@ jucer_export_target_configuration(
 
 jucer_export_target(
   "Visual Studio 2017"
-  EXTRA_COMPILER_FLAGS "/WX /W4"
+  EXTRA_COMPILER_FLAGS
+    "/WX"
+    "/W4"
 )
 
 jucer_export_target_configuration(
@@ -159,7 +163,10 @@ jucer_export_target_configuration(
 
 jucer_export_target(
   "Visual Studio 2015"
-  EXTRA_COMPILER_FLAGS "/WX /W4 /wd4592"
+  EXTRA_COMPILER_FLAGS
+    "/WX"
+    "/W4"
+    "/wd4592"
 )
 
 jucer_export_target_configuration(
@@ -176,7 +183,9 @@ jucer_export_target_configuration(
 
 jucer_export_target(
   "Visual Studio 2013"
-  EXTRA_COMPILER_FLAGS "/WX /W4"
+  EXTRA_COMPILER_FLAGS
+    "/WX"
+    "/W4"
 )
 
 jucer_export_target_configuration(
@@ -193,7 +202,10 @@ jucer_export_target_configuration(
 
 jucer_export_target(
   "Linux Makefile"
-  EXTRA_COMPILER_FLAGS "-Werror -Wall -Wextra"
+  EXTRA_COMPILER_FLAGS
+    "-Werror"
+    "-Wall"
+    "-Wextra"
 )
 
 jucer_export_target_configuration(

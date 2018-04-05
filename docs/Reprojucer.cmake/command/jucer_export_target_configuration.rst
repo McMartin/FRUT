@@ -13,9 +13,9 @@ Define the settings specific to a configuration associated with an export target
 
     [BINARY_NAME <binary_name>]
     [BINARY_LOCATION <binary_location>]
-    [HEADER_SEARCH_PATHS <search_paths>]
-    [EXTRA_LIBRARY_SEARCH_PATHS <search_paths>]
-    [PREPROCESSOR_DEFINITIONS <preprocessor_definitions>]
+    [HEADER_SEARCH_PATHS <search_path> [<search_path> ...]]
+    [EXTRA_LIBRARY_SEARCH_PATHS <search_path> [<search_path> ...]]
+    [PREPROCESSOR_DEFINITIONS <preprocessor_definition> [<preprocessor_definition> ...]]
 
     [VST_BINARY_LOCATION <binary_location>]
     [VST3_BINARY_LOCATION <binary_location>]
@@ -26,7 +26,7 @@ Define the settings specific to a configuration associated with an export target
     [OSX_BASE_SDK_VERSION <osx_sdk>]
     [OSX_DEPLOYMENT_TARGET <osx_deployment_target>]
     [OSX_ARCHITECTURE <osx_architecture>]
-    [CUSTOM_XCODE_FLAGS <xcode_flags>]
+    [CUSTOM_XCODE_FLAGS <xcode_flag> [<xcode_flag> ...]]
     [CXX_LANGUAGE_STANDARD <cxx_standard>]
     [CXX_LIBRARY <cxx_library>]
     [CODE_SIGNING_IDENTITY <code_signing_identity>]

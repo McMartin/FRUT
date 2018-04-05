@@ -414,11 +414,27 @@ jucer_project_module(
 
 jucer_export_target(
   "Xcode (MacOSX)"
-  EXTRA_COMPILER_FLAGS "-Wall -Wshadow -Wno-missing-field-initializers -Wshadow -Wshorten-64-to-32 -Wstrict-aliasing -Wuninitialized -Wunused-parameter -Wconversion -Wsign-compare -Wint-conversion -Woverloaded-virtual -Wreorder -Wconstant-conversion -Wsign-conversion"
+  EXTRA_COMPILER_FLAGS
+    "-Wall"
+    "-Wshadow"
+    "-Wno-missing-field-initializers"
+    "-Wshadow"
+    "-Wshorten-64-to-32"
+    "-Wstrict-aliasing"
+    "-Wuninitialized"
+    "-Wunused-parameter"
+    "-Wconversion"
+    "-Wsign-compare"
+    "-Wint-conversion"
+    "-Woverloaded-virtual"
+    "-Wreorder"
+    "-Wconstant-conversion"
+    "-Wsign-conversion"
   # EXTRA_LINKER_FLAGS
   ICON_SMALL "<None>"
   ICON_LARGE "Source/BinaryData/juce_icon.png"
-  DOCUMENT_FILE_EXTENSIONS ".jucer"
+  DOCUMENT_FILE_EXTENSIONS
+    ".jucer"
   CUSTOM_PLIST "<plist>
 <dict>
 	<key>NSAppTransportSecurity</key>
@@ -543,7 +559,8 @@ jucer_export_target_configuration(
 
 jucer_export_target(
   "Linux Makefile"
-  EXTRA_COMPILER_FLAGS "-std=c++11"
+  EXTRA_COMPILER_FLAGS
+    "-std=c++11"
   # EXTRA_LINKER_FLAGS
   ICON_SMALL "<None>"
   ICON_LARGE "Source/BinaryData/juce_icon.png"
@@ -555,7 +572,8 @@ jucer_export_target_configuration(
   DEBUG_MODE ON
   BINARY_NAME "Projucer"
   # HEADER_SEARCH_PATHS
-  EXTRA_LIBRARY_SEARCH_PATHS "/usr/X11R6/lib/"
+  EXTRA_LIBRARY_SEARCH_PATHS
+    "/usr/X11R6/lib/"
   OPTIMISATION "-O0 (no optimisation)"
 )
 
@@ -565,7 +583,8 @@ jucer_export_target_configuration(
   DEBUG_MODE OFF
   BINARY_NAME "Projucer"
   # HEADER_SEARCH_PATHS
-  EXTRA_LIBRARY_SEARCH_PATHS "/usr/X11R6/lib/"
+  EXTRA_LIBRARY_SEARCH_PATHS
+    "/usr/X11R6/lib/"
   OPTIMISATION "-O3 (fastest with safe optimisations)"
 )
 

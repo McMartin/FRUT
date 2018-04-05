@@ -256,6 +256,48 @@ int main(int argc, char* argv[])
       }
     };
 
+  const auto convertSettingAsList =
+    [&wLn](const juce::ValueTree& valueTree, const juce::Identifier& property,
+           const std::string& cmakeKeyword,
+           std::function<juce::StringArray(const juce::var&)> converterFn) {
+
+      if (!converterFn)
+      {
+        converterFn = [](const juce::var& value) {
+          return juce::StringArray::fromLines(value.toString());
+        };
+      }
+
+      auto value = converterFn(valueTree.getProperty(property));
+      value.removeEmptyStrings();
+
+      if (value.isEmpty())
+      {
+        wLn("  # ", cmakeKeyword);
+      }
+      else
+      {
+        wLn("  ", cmakeKeyword);
+
+        for (const auto& item : value)
+        {
+          wLn("    \"", escape("\\\";", item), "\"");
+        }
+      }
+    };
+
+  const auto convertSettingAsListIfDefined =
+    [&convertSettingAsList](
+      const juce::ValueTree& valueTree, const juce::Identifier& property,
+      const std::string& cmakeKeyword,
+      std::function<juce::StringArray(const juce::var&)> converterFn) {
+
+      if (valueTree.hasProperty(property))
+      {
+        convertSettingAsList(valueTree, property, cmakeKeyword, std::move(converterFn));
+      }
+    };
+
   const auto jucerFileName = jucerFile.getFileName();
 
   // Preamble
@@ -397,8 +439,12 @@ int main(int argc, char* argv[])
                               return {};
                             });
 
-    convertSettingIfDefined(jucerProject, "defines", "PREPROCESSOR_DEFINITIONS", {});
-    convertSettingIfDefined(jucerProject, "headerPath", "HEADER_SEARCH_PATHS", {});
+    convertSettingAsListIfDefined(jucerProject, "defines", "PREPROCESSOR_DEFINITIONS",
+                                  {});
+    convertSettingAsListIfDefined(
+      jucerProject, "headerPath", "HEADER_SEARCH_PATHS", [](const juce::var& v) {
+        return juce::StringArray::fromTokens(v.toString(), ";\r\n", {});
+      });
 
     writeUserNotes(wLn, jucerProject);
 
@@ -709,12 +755,18 @@ int main(int argc, char* argv[])
         convertSetting(exporter, "vst3Folder", "VST3_SDK_FOLDER", {});
       }
 
-      convertSettingIfDefined(exporter, "extraDefs", "EXTRA_PREPROCESSOR_DEFINITIONS",
-                              {});
-      convertSettingIfDefined(exporter, "extraCompilerFlags", "EXTRA_COMPILER_FLAGS", {});
-      convertSettingIfDefined(exporter, "extraLinkerFlags", "EXTRA_LINKER_FLAGS", {});
-      convertSettingIfDefined(exporter, "externalLibraries", "EXTERNAL_LIBRARIES_TO_LINK",
-                              {});
+      convertSettingAsListIfDefined(exporter, "extraDefs",
+                                    "EXTRA_PREPROCESSOR_DEFINITIONS", {});
+      convertSettingAsListIfDefined(
+        exporter, "extraCompilerFlags", "EXTRA_COMPILER_FLAGS", [](const juce::var& v) {
+          return juce::StringArray::fromTokens(v.toString(), false);
+        });
+      convertSettingAsListIfDefined(
+        exporter, "extraLinkerFlags", "EXTRA_LINKER_FLAGS", [](const juce::var& v) {
+          return juce::StringArray::fromTokens(v.toString(), false);
+        });
+      convertSettingAsListIfDefined(exporter, "externalLibraries",
+                                    "EXTERNAL_LIBRARIES_TO_LINK", {});
 
       convertOnOffSettingIfDefined(exporter, "enableGNUExtensions",
                                    "GNU_COMPILER_EXTENSIONS", {});
@@ -741,17 +793,25 @@ int main(int argc, char* argv[])
 
       if (exporterType == "XCODE_MAC")
       {
-        convertSettingIfDefined(exporter, "customXcodeResourceFolders",
-                                "CUSTOM_XCODE_RESOURCE_FOLDERS", {});
+        convertSettingAsListIfDefined(exporter, "customXcodeResourceFolders",
+                                      "CUSTOM_XCODE_RESOURCE_FOLDERS", {});
 
         if (projectType == "guiapp")
         {
-          convertSettingIfDefined(exporter, "documentExtensions",
-                                  "DOCUMENT_FILE_EXTENSIONS", {});
+          convertSettingAsListIfDefined(
+            exporter, "documentExtensions", "DOCUMENT_FILE_EXTENSIONS",
+            [](const juce::var& v) {
+              return juce::StringArray::fromTokens(v.toString(), ",", {});
+            });
         }
 
         convertSettingIfDefined(exporter, "customPList", "CUSTOM_PLIST", {});
-        convertSettingIfDefined(exporter, "extraFrameworks", "EXTRA_FRAMEWORKS", {});
+        convertSettingAsListIfDefined(
+          exporter, "extraFrameworks", "EXTRA_FRAMEWORKS", [](const juce::var& v) {
+            auto frameworks = juce::StringArray::fromTokens(v.toString(), ",;", "\"'");
+            frameworks.trim();
+            return frameworks;
+          });
         convertSettingIfDefined(exporter, "prebuildCommand", "PREBUILD_SHELL_SCRIPT", {});
         convertSettingIfDefined(exporter, "postbuildCommand", "POSTBUILD_SHELL_SCRIPT",
                                 {});
@@ -834,8 +894,10 @@ int main(int argc, char* argv[])
                                   return {};
                                 });
 
-        convertSettingIfDefined(exporter, "linuxExtraPkgConfig", "PKGCONFIG_LIBRARIES",
-                                {});
+        convertSettingAsListIfDefined(
+          exporter, "linuxExtraPkgConfig", "PKGCONFIG_LIBRARIES", [](const juce::var& v) {
+            return juce::StringArray::fromTokens(v.toString(), " ", "\"'");
+          });
       }
 
       writeUserNotes(wLn, exporter);
@@ -867,7 +929,7 @@ int main(int argc, char* argv[])
 
         const auto convertSearchPaths =
           [&isAbsolutePath, &jucerFileDir,
-           &targetProjectDir](const juce::var& value) -> juce::String {
+           &targetProjectDir](const juce::var& value) -> juce::StringArray {
           const auto searchPaths = value.toString();
 
           if (searchPaths.isEmpty())
@@ -877,7 +939,7 @@ int main(int argc, char* argv[])
 
           juce::StringArray absOrRelToJucerFileDirPaths;
 
-          for (const auto& path : juce::StringArray::fromLines(searchPaths))
+          for (const auto& path : juce::StringArray::fromTokens(searchPaths, ";\r\n", {}))
           {
             if (path.isEmpty())
             {
@@ -886,24 +948,26 @@ int main(int argc, char* argv[])
 
             if (isAbsolutePath(path))
             {
-              absOrRelToJucerFileDirPaths.add(path);
+              absOrRelToJucerFileDirPaths.add(escape("\\", path));
             }
             else
             {
-              absOrRelToJucerFileDirPaths.add(
-                targetProjectDir.getChildFile(path).getRelativePathFrom(jucerFileDir));
+              absOrRelToJucerFileDirPaths.add(escape(
+                "\\",
+                targetProjectDir.getChildFile(path).getRelativePathFrom(jucerFileDir)));
             }
           }
 
-          return escape("\\", absOrRelToJucerFileDirPaths.joinIntoString("\n"));
+          return absOrRelToJucerFileDirPaths;
         };
 
-        convertSettingIfDefined(configuration, "headerPath", "HEADER_SEARCH_PATHS",
-                                convertSearchPaths);
-        convertSettingIfDefined(configuration, "libraryPath",
-                                "EXTRA_LIBRARY_SEARCH_PATHS", convertSearchPaths);
+        convertSettingAsListIfDefined(configuration, "headerPath", "HEADER_SEARCH_PATHS",
+                                      convertSearchPaths);
+        convertSettingAsListIfDefined(configuration, "libraryPath",
+                                      "EXTRA_LIBRARY_SEARCH_PATHS", convertSearchPaths);
 
-        convertSettingIfDefined(configuration, "defines", "PREPROCESSOR_DEFINITIONS", {});
+        convertSettingAsListIfDefined(configuration, "defines",
+                                      "PREPROCESSOR_DEFINITIONS", {});
 
         convertSettingIfDefined(configuration, "optimisation", "OPTIMISATION",
                                 [&isVSExporter](const juce::var& value) -> juce::String {
@@ -1006,8 +1070,11 @@ int main(int argc, char* argv[])
                                     return {};
                                   });
 
-          convertSettingIfDefined(configuration, "customXcodeFlags", "CUSTOM_XCODE_FLAGS",
-                                  {});
+          convertSettingAsListIfDefined(configuration, "customXcodeFlags",
+                                        "CUSTOM_XCODE_FLAGS", [](const juce::var& v) {
+                                          return juce::StringArray::fromTokens(
+                                            v.toString(), ",", "\"'");
+                                        });
 
           convertSettingIfDefined(configuration, "cppLanguageStandard",
                                   "CXX_LANGUAGE_STANDARD",

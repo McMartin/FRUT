@@ -13,20 +13,20 @@ Define the settings specific to an export target.
     [VST_SDK_FOLDER <vst_sdk_folder>]
     [VST3_SDK_FOLDER <vst3_sdk_folder>]
 
-    [EXTRA_PREPROCESSOR_DEFINITIONS <preprocessor_definitions>]
-    [EXTRA_COMPILER_FLAGS <compiler_flags>]
-    [EXTRA_LINKER_FLAGS <linker_flags>]
-    [EXTERNAL_LIBRARIES_TO_LINK <libraries>]
+    [EXTRA_PREPROCESSOR_DEFINITIONS <preprocessor_definition> [<preprocessor_definition> ...]]
+    [EXTRA_COMPILER_FLAGS <compiler_flag> [<compiler_flag> ...]]
+    [EXTRA_LINKER_FLAGS <linker_flag> [<linker_flag> ...]]
+    [EXTERNAL_LIBRARIES_TO_LINK <library> [<library> ...]]
 
     [GNU_COMPILER_EXTENSIONS <ON|OFF>]
 
     [ICON_SMALL <icon_file>]
     [ICON_LARGE <icon_file>]
 
-    [CUSTOM_XCODE_RESOURCE_FOLDERS <xcode_resource_folders>]
-    [DOCUMENT_FILE_EXTENSIONS <file_extensions>]
+    [CUSTOM_XCODE_RESOURCE_FOLDERS <xcode_resource_folder> [<xcode_resource_folders> ...]]
+    [DOCUMENT_FILE_EXTENSIONS <file_extension> [<file_extension> ...]]
     [CUSTOM_PLIST <plist_content>]
-    [EXTRA_FRAMEWORKS <osx_frameworks>]
+    [EXTRA_FRAMEWORKS <osx_framework> [<osx_framework> ...]]
     [PREBUILD_SHELL_SCRIPT <shell_script_content>]
     [POSTBUILD_SHELL_SCRIPT <shell_script_content>]
     [DEVELOPMENT_TEAM_ID <development_team_id>]
@@ -35,7 +35,7 @@ Define the settings specific to an export target.
     [USE_IPP_LIBRARY <use_ipp_library>]
 
     [CXX_STANDARD_TO_USE <cxx_standard>]
-    [PKGCONFIG_LIBRARIES <libraries>]
+    [PKGCONFIG_LIBRARIES <library> [<library> ...]]
   )
 
 ``<exporter>`` must be one of the :ref:`supported exporters <supported-export-targets>`.

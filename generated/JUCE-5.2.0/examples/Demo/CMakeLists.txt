@@ -36,7 +36,8 @@ jucer_project_settings(
   PROJECT_TYPE "GUI Application"
   BUNDLE_IDENTIFIER "com.roli.JuceDemo"
   CXX_LANGUAGE_STANDARD "C++11"
-  PREPROCESSOR_DEFINITIONS "JUCE_UNIT_TESTS=1"
+  PREPROCESSOR_DEFINITIONS
+    "JUCE_UNIT_TESTS=1"
 )
 
 jucer_project_files("JuceDemo/Source"
@@ -223,7 +224,14 @@ jucer_project_module(
 
 jucer_export_target(
   "Xcode (MacOSX)"
-  EXTRA_COMPILER_FLAGS "-Wall -Wshadow -Wstrict-aliasing -Wconversion -Wsign-compare -Woverloaded-virtual -Wextra-semi"
+  EXTRA_COMPILER_FLAGS
+    "-Wall"
+    "-Wshadow"
+    "-Wstrict-aliasing"
+    "-Wconversion"
+    "-Wsign-compare"
+    "-Woverloaded-virtual"
+    "-Wextra-semi"
   ICON_LARGE "Resources/juce_icon.png"
   CUSTOM_PLIST "<plist>
 <dict>
@@ -262,7 +270,8 @@ jucer_export_target_configuration(
 
 jucer_export_target(
   "Visual Studio 2013"
-  EXTRA_COMPILER_FLAGS "/FC"
+  EXTRA_COMPILER_FLAGS
+    "/FC"
   ICON_LARGE "Resources/juce_icon.png"
 )
 
@@ -290,7 +299,8 @@ jucer_export_target_configuration(
 
 jucer_export_target(
   "Visual Studio 2015"
-  EXTRA_COMPILER_FLAGS "/FC"
+  EXTRA_COMPILER_FLAGS
+    "/FC"
   ICON_LARGE "Resources/juce_icon.png"
 )
 
@@ -318,7 +328,8 @@ jucer_export_target_configuration(
 
 jucer_export_target(
   "Visual Studio 2017"
-  EXTRA_COMPILER_FLAGS "/FC"
+  EXTRA_COMPILER_FLAGS
+    "/FC"
   ICON_SMALL "<None>"
   ICON_LARGE "Resources/juce_icon.png"
 )
@@ -354,7 +365,8 @@ jucer_export_target_configuration(
   NAME "Debug"
   DEBUG_MODE ON
   BINARY_NAME "JuceDemo"
-  EXTRA_LIBRARY_SEARCH_PATHS "/usr/X11R6/lib/"
+  EXTRA_LIBRARY_SEARCH_PATHS
+    "/usr/X11R6/lib/"
   OPTIMISATION "-O0 (no optimisation)"
 )
 
@@ -363,7 +375,8 @@ jucer_export_target_configuration(
   NAME "Release"
   DEBUG_MODE OFF
   BINARY_NAME "JuceDemo"
-  EXTRA_LIBRARY_SEARCH_PATHS "/usr/X11R6/lib/"
+  EXTRA_LIBRARY_SEARCH_PATHS
+    "/usr/X11R6/lib/"
   OPTIMISATION "-O3 (fastest with safe optimisations)"
 )
 

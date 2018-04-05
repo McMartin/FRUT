@@ -33,7 +33,8 @@ jucer_project_settings(
   SPLASH_SCREEN_COLOUR "Dark"
   PROJECT_TYPE "Static Library"
   BUNDLE_IDENTIFIER "com.rawmaterialsoftware.juce"
-  PREPROCESSOR_DEFINITIONS "JUCE_DLL_BUILD=1"
+  PREPROCESSOR_DEFINITIONS
+    "JUCE_DLL_BUILD=1"
 )
 
 jucer_project_module(
