@@ -500,6 +500,8 @@ function(jucer_export_target exporter)
   if(exporter STREQUAL "Xcode (MacOSX)")
     list(APPEND single_value_keywords
       "VST3_SDK_FOLDER"
+      "AAX_SDK_FOLDER"
+      "RTAS_SDK_FOLDER"
       "CUSTOM_PLIST"
       "PREBUILD_SHELL_SCRIPT"
       "POSTBUILD_SHELL_SCRIPT"
@@ -522,6 +524,8 @@ function(jucer_export_target exporter)
   if(exporter MATCHES "^Visual Studio 201(7|5|3)$")
     list(APPEND single_value_keywords
       "VST3_SDK_FOLDER"
+      "AAX_SDK_FOLDER"
+      "RTAS_SDK_FOLDER"
       "PLATFORM_TOOLSET"
       "USE_IPP_LIBRARY"
     )
@@ -560,6 +564,18 @@ function(jucer_export_target exporter)
     string(REPLACE "\\" "/" sdk_folder "${_VST3_SDK_FOLDER}")
     _FRUT_abs_path_based_on_jucer_project_dir("${sdk_folder}" sdk_folder)
     set(JUCER_VST3_SDK_FOLDER ${sdk_folder} PARENT_SCOPE)
+  endif()
+
+  if(DEFINED _AAX_SDK_FOLDER)
+    string(REPLACE "\\" "/" sdk_folder "${_AAX_SDK_FOLDER}")
+    _FRUT_abs_path_based_on_jucer_project_dir("${sdk_folder}" sdk_folder)
+    set(JUCER_AAX_SDK_FOLDER ${sdk_folder} PARENT_SCOPE)
+  endif()
+
+  if(DEFINED _RTAS_SDK_FOLDER)
+    string(REPLACE "\\" "/" sdk_folder "${_RTAS_SDK_FOLDER}")
+    _FRUT_abs_path_based_on_jucer_project_dir("${sdk_folder}" sdk_folder)
+    set(JUCER_RTAS_SDK_FOLDER ${sdk_folder} PARENT_SCOPE)
   endif()
 
   if(DEFINED _EXTRA_PREPROCESSOR_DEFINITIONS)

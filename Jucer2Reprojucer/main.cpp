@@ -767,6 +767,21 @@ int main(int argc, char* argv[])
         convertSetting(exporter, "vst3Folder", "VST3_SDK_FOLDER", {});
       }
 
+      const auto supportsAaxRtas = exporterType == "XCODE_MAC" || isVSExporter;
+
+      if (supportsAaxRtas && isAudioPlugin)
+      {
+        if (bool{jucerProject.getProperty("buildAAX")})
+        {
+          convertSetting(exporter, "aaxFolder", "AAX_SDK_FOLDER", {});
+        }
+
+        if (bool{jucerProject.getProperty("buildRTAS")})
+        {
+          convertSetting(exporter, "rtasFolder", "RTAS_SDK_FOLDER", {});
+        }
+      }
+
       convertSettingAsListIfDefined(exporter, "extraDefs",
                                     "EXTRA_PREPROCESSOR_DEFINITIONS", {});
       convertSettingAsListIfDefined(
