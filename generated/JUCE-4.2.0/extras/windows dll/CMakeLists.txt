@@ -30,6 +30,7 @@ jucer_project_settings(
   PROJECT_VERSION "1.0.0"
   PROJECT_TYPE "Static Library"
   BUNDLE_IDENTIFIER "com.rawmaterialsoftware.juce"
+  INCLUDE_BINARYDATA ON
   PREPROCESSOR_DEFINITIONS
     "JUCE_DLL_BUILD=1"
 )

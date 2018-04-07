@@ -30,6 +30,7 @@ jucer_project_settings(
   PROJECT_VERSION "4.3.1"
   PROJECT_TYPE "GUI Application"
   BUNDLE_IDENTIFIER "com.juce.theprojucer"
+  INCLUDE_BINARYDATA ON
   # PREPROCESSOR_DEFINITIONS
 )
 

@@ -30,6 +30,7 @@ jucer_project_settings(
   PROJECT_VERSION "1.0.0"
   PROJECT_TYPE "Console Application"
   BUNDLE_IDENTIFIER "com.yourcompany.UnitTestRunner"
+  INCLUDE_BINARYDATA ON
   PREPROCESSOR_DEFINITIONS
     "JUCE_UNIT_TESTS=1"
 )

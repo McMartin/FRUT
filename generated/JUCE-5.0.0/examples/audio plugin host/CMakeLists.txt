@@ -34,6 +34,7 @@ jucer_project_settings(
   SPLASH_SCREEN_COLOUR "Dark"
   PROJECT_TYPE "GUI Application"
   BUNDLE_IDENTIFIER "com.roli.pluginhost"
+  INCLUDE_BINARYDATA ON
 )
 
 jucer_project_files("Plugin Host"

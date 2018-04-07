@@ -30,6 +30,7 @@ jucer_project_settings(
   PROJECT_VERSION "1.0.0"
   PROJECT_TYPE "Audio Plug-in"
   BUNDLE_IDENTIFIER "com.ROLI.Surround"
+  INCLUDE_BINARYDATA ON
 )
 
 jucer_audio_plugin_settings(

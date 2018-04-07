@@ -30,6 +30,7 @@ jucer_project_settings(
   PROJECT_VERSION "3.0.0"
   PROJECT_TYPE "GUI Application"
   BUNDLE_IDENTIFIER "com.yourcompany.JuceDemo"
+  INCLUDE_BINARYDATA ON
   PREPROCESSOR_DEFINITIONS
     "JUCE_UNIT_TESTS=1"
 )

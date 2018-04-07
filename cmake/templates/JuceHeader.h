@@ -11,8 +11,7 @@
 
 #include "AppConfig.h"
 
-@modules_includes@
-@binary_data_include@
+@modules_includes@@binary_data_include@
 
 #if ! DONT_SET_USING_JUCE_NAMESPACE
  // If your code uses a lot of JUCE classes, then this will obviously save you

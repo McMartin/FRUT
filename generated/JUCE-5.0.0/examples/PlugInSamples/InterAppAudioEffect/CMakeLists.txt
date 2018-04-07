@@ -34,6 +34,7 @@ jucer_project_settings(
   SPLASH_SCREEN_COLOUR "Dark"
   PROJECT_TYPE "Audio Plug-in"
   BUNDLE_IDENTIFIER "com.yourcompany.InterAppAudioEffect"
+  INCLUDE_BINARYDATA ON
 )
 
 jucer_audio_plugin_settings(

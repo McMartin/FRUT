@@ -33,6 +33,7 @@ jucer_project_settings(
   COMPANY_EMAIL "info@juce.com"
   PROJECT_TYPE "Audio Plug-in"
   BUNDLE_IDENTIFIER "com.ROLI.Arpeggiator"
+  INCLUDE_BINARYDATA ON
 )
 
 jucer_audio_plugin_settings(

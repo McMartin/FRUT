@@ -35,6 +35,7 @@ jucer_project_settings(
   SPLASH_SCREEN_COLOUR "Dark"
   PROJECT_TYPE "Audio Plug-in"
   BUNDLE_IDENTIFIER "com.roli.NoiseGate"
+  INCLUDE_BINARYDATA ON
   CXX_LANGUAGE_STANDARD "C++11"
 )
 
