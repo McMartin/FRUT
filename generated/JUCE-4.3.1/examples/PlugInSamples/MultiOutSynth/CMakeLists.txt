@@ -185,6 +185,7 @@ jucer_export_target(
   "Xcode (MacOSX)"
   TARGET_PROJECT_FOLDER "Builds/MacOSX"  # only used by PREBUILD_SHELL_SCRIPT and POSTBUILD_SHELL_SCRIPT
   # VST3_SDK_FOLDER
+  # AAX_SDK_FOLDER
   EXTRA_COMPILER_FLAGS
     "-Wall"
     "-Wshadow"
@@ -229,6 +230,7 @@ jucer_export_target_configuration(
 jucer_export_target(
   "Visual Studio 2015"
   # VST3_SDK_FOLDER
+  # AAX_SDK_FOLDER
 )
 
 jucer_export_target_configuration(

@@ -177,6 +177,7 @@ jucer_export_target(
   "Xcode (MacOSX)"
   # VST_SDK_FOLDER
   # VST3_SDK_FOLDER
+  # AAX_SDK_FOLDER
   EXTRA_COMPILER_FLAGS
     "-Wall"
     "-Wshadow"
@@ -221,6 +222,7 @@ jucer_export_target(
   "Visual Studio 2015"
   # VST_SDK_FOLDER
   # VST3_SDK_FOLDER
+  # AAX_SDK_FOLDER
 )
 
 jucer_export_target_configuration(
