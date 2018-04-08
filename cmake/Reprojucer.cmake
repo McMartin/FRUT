@@ -504,6 +504,7 @@ function(jucer_export_target exporter)
       "PREBUILD_SHELL_SCRIPT"
       "POSTBUILD_SHELL_SCRIPT"
       "DEVELOPMENT_TEAM_ID"
+      "KEEP_CUSTOM_XCODE_SCHEMES"
       "USE_HEADERMAP"
     )
     list(APPEND multi_value_keywords
@@ -641,6 +642,14 @@ function(jucer_export_target exporter)
       "\"Reprojucer.cmake doesn't support the setting DEVELOPMENT_TEAM_ID\" on "
       "GitHub: https://github.com/McMartin/FRUT/issues/251"
     )
+  endif()
+
+  if(DEFINED _KEEP_CUSTOM_XCODE_SCHEMES)
+    if(_KEEP_CUSTOM_XCODE_SCHEMES AND CMAKE_GENERATOR STREQUAL "Xcode")
+      message(WARNING "Reprojucer.cmake won't create any Xcode schemes, so it won't "
+        "delete any either."
+      )
+    endif()
   endif()
 
   if(DEFINED _USE_HEADERMAP)
