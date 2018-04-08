@@ -807,6 +807,8 @@ function(jucer_export_target_configuration
       "VST_BINARY_LOCATION"
       "VST3_BINARY_LOCATION"
       "AU_BINARY_LOCATION"
+      "RTAS_BINARY_LOCATION"
+      "AAX_BINARY_LOCATION"
       "OSX_BASE_SDK_VERSION"
       "OSX_DEPLOYMENT_TARGET"
       "OSX_ARCHITECTURE"
@@ -826,6 +828,8 @@ function(jucer_export_target_configuration
     list(APPEND single_value_keywords
       "VST_BINARY_LOCATION"
       "VST3_BINARY_LOCATION"
+      "RTAS_BINARY_LOCATION"
+      "AAX_BINARY_LOCATION"
       "WARNING_LEVEL"
       "TREAT_WARNINGS_AS_ERRORS"
       "RUNTIME_LIBRARY"
@@ -927,6 +931,14 @@ function(jucer_export_target_configuration
 
   if(DEFINED _AU_BINARY_LOCATION)
     set(JUCER_AU_BINARY_LOCATION_${config} ${_AU_BINARY_LOCATION} PARENT_SCOPE)
+  endif()
+
+  if(DEFINED _RTAS_BINARY_LOCATION)
+    set(JUCER_RTAS_BINARY_LOCATION_${config} ${_RTAS_BINARY_LOCATION} PARENT_SCOPE)
+  endif()
+
+  if(DEFINED _AAX_BINARY_LOCATION)
+    set(JUCER_AAX_BINARY_LOCATION_${config} ${_AAX_BINARY_LOCATION} PARENT_SCOPE)
   endif()
 
   if(DEFINED _OSX_BASE_SDK_VERSION)

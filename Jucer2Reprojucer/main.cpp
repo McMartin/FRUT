@@ -1046,6 +1046,10 @@ int main(int argc, char* argv[])
                                   "VST3_BINARY_LOCATION", {});
           convertSettingIfDefined(configuration, "xcodeAudioUnitBinaryLocation",
                                   "AU_BINARY_LOCATION", {});
+          convertSettingIfDefined(configuration, "xcodeRtasBinaryLocation",
+                                  "RTAS_BINARY_LOCATION", {});
+          convertSettingIfDefined(configuration, "xcodeAaxBinaryLocation",
+                                  "AAX_BINARY_LOCATION", {});
 
           const auto sdks =
             juce::StringArray{"10.5 SDK", "10.6 SDK",  "10.7 SDK",  "10.8 SDK",
@@ -1167,6 +1171,10 @@ int main(int argc, char* argv[])
                                   "VST_BINARY_LOCATION", {});
           convertSettingIfDefined(configuration, "vst3BinaryLocation",
                                   "VST3_BINARY_LOCATION", {});
+          convertSettingIfDefined(configuration, "rtasBinaryLocation",
+                                  "RTAS_BINARY_LOCATION", {});
+          convertSettingIfDefined(configuration, "aaxBinaryLocation",
+                                  "AAX_BINARY_LOCATION", {});
 
           convertSettingIfDefined(configuration, "winWarningLevel", "WARNING_LEVEL",
                                   [](const juce::var& value) -> juce::String {
