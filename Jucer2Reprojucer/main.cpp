@@ -1040,6 +1040,9 @@ int main(int argc, char* argv[])
 
         if (exporterType == "XCODE_MAC")
         {
+          convertOnOffSettingIfDefined(configuration, "enablePluginBinaryCopyStep",
+                                       "ENABLE_PLUGIN_COPY_STEP", {});
+
           const auto binaryLocationTuples = {
             std::make_tuple("xcodeVstBinaryLocation", "vstBinaryLocation",
                             "VST_BINARY_LOCATION"),
@@ -1185,6 +1188,9 @@ int main(int argc, char* argv[])
 
         if (isVSExporter)
         {
+          convertOnOffSettingIfDefined(configuration, "enablePluginBinaryCopyStep",
+                                       "ENABLE_PLUGIN_COPY_STEP", {});
+
           convertSettingIfDefined(configuration, "vstBinaryLocation",
                                   "VST_BINARY_LOCATION", {});
           convertSettingIfDefined(configuration, "vst3BinaryLocation",

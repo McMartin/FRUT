@@ -804,6 +804,7 @@ function(jucer_export_target_configuration
 
   if(exporter STREQUAL "Xcode (MacOSX)")
     list(APPEND single_value_keywords
+      "ENABLE_PLUGIN_COPY_STEP"
       "VST_BINARY_LOCATION"
       "VST3_BINARY_LOCATION"
       "AU_BINARY_LOCATION"
@@ -826,6 +827,7 @@ function(jucer_export_target_configuration
 
   if(exporter MATCHES "^Visual Studio 201(7|5|3)$")
     list(APPEND single_value_keywords
+      "ENABLE_PLUGIN_COPY_STEP"
       "VST_BINARY_LOCATION"
       "VST3_BINARY_LOCATION"
       "RTAS_BINARY_LOCATION"
@@ -919,6 +921,10 @@ function(jucer_export_target_configuration
       endif()
     endif()
     set(JUCER_OPTIMISATION_FLAG_${config} ${optimisation_flag} PARENT_SCOPE)
+  endif()
+
+  if(DEFINED _ENABLE_PLUGIN_COPY_STEP)
+    set(JUCER_ENABLE_PLUGIN_COPY_STEP_${config} ${_ENABLE_PLUGIN_COPY_STEP} PARENT_SCOPE)
   endif()
 
   if(DEFINED _VST_BINARY_LOCATION)
@@ -2962,8 +2968,18 @@ function(_FRUT_install_to_plugin_binary_location target plugin_type default_dest
     else()
       set(destination ${default_destination})
     endif()
-    string(APPEND all_confs_destination $<$<CONFIG:${config}>:${destination}>)
+    if(DEFINED JUCER_ENABLE_PLUGIN_COPY_STEP_${config})
+      if(JUCER_ENABLE_PLUGIN_COPY_STEP_${config})
+        string(APPEND all_confs_destination $<$<CONFIG:${config}>:${destination}>)
+      endif()
+    elseif(APPLE)
+      string(APPEND all_confs_destination $<$<CONFIG:${config}>:${destination}>)
+    endif()
   endforeach()
+
+  if("${all_confs_destination}" STREQUAL "")
+    return()
+  endif()
 
   set(component "_install_${target}_to_${plugin_type}_binary_location")
 
