@@ -101,6 +101,7 @@ jucer_export_target_configuration(
   DEBUG_MODE ON
   BINARY_NAME "AnalyticsCollection"
   OPTIMISATION "-O0 (no optimisation)"
+  ENABLE_PLUGIN_COPY_STEP ON
 )
 
 jucer_export_target_configuration(
@@ -109,6 +110,7 @@ jucer_export_target_configuration(
   DEBUG_MODE OFF
   BINARY_NAME "AnalyticsCollection"
   OPTIMISATION "-O3 (fastest with safe optimisations)"
+  ENABLE_PLUGIN_COPY_STEP ON
 )
 
 jucer_export_target(
@@ -121,6 +123,7 @@ jucer_export_target_configuration(
   DEBUG_MODE ON
   BINARY_NAME "AnalyticsCollection"
   OPTIMISATION "No optimisation"
+  ENABLE_PLUGIN_COPY_STEP OFF
   WARNING_LEVEL "High"
   GENERATE_MANIFEST ON
   # ARCHITECTURE "x64"
@@ -132,6 +135,7 @@ jucer_export_target_configuration(
   DEBUG_MODE OFF
   BINARY_NAME "AnalyticsCollection"
   OPTIMISATION "Maximise speed"
+  ENABLE_PLUGIN_COPY_STEP OFF
   WARNING_LEVEL "High"
   GENERATE_MANIFEST ON
   # ARCHITECTURE "x64"

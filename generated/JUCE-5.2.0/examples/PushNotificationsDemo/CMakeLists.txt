@@ -179,6 +179,7 @@ jucer_export_target_configuration(
   DEBUG_MODE ON
   BINARY_NAME "PushNotificationsDemo"
   OPTIMISATION "-O0 (no optimisation)"
+  ENABLE_PLUGIN_COPY_STEP ON
 )
 
 jucer_export_target_configuration(
@@ -187,6 +188,7 @@ jucer_export_target_configuration(
   DEBUG_MODE OFF
   BINARY_NAME "PushNotificationsDemo"
   OPTIMISATION "-O3 (fastest with safe optimisations)"
+  ENABLE_PLUGIN_COPY_STEP ON
 )
 
 jucer_export_target(
@@ -199,6 +201,7 @@ jucer_export_target_configuration(
   DEBUG_MODE ON
   BINARY_NAME "PushNotificationsDemo"
   OPTIMISATION "No optimisation"
+  ENABLE_PLUGIN_COPY_STEP OFF
   WARNING_LEVEL "High"
   GENERATE_MANIFEST ON
   # ARCHITECTURE "x64"
@@ -210,6 +213,7 @@ jucer_export_target_configuration(
   DEBUG_MODE OFF
   BINARY_NAME "PushNotificationsDemo"
   OPTIMISATION "Maximise speed"
+  ENABLE_PLUGIN_COPY_STEP OFF
   WARNING_LEVEL "High"
   GENERATE_MANIFEST ON
   # ARCHITECTURE "x64"
