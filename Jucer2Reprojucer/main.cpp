@@ -1163,6 +1163,11 @@ int main(int argc, char* argv[])
 
         if (isVSExporter)
         {
+          convertSettingIfDefined(configuration, "vstBinaryLocation",
+                                  "VST_BINARY_LOCATION", {});
+          convertSettingIfDefined(configuration, "vst3BinaryLocation",
+                                  "VST3_BINARY_LOCATION", {});
+
           convertSettingIfDefined(configuration, "winWarningLevel", "WARNING_LEVEL",
                                   [](const juce::var& value) -> juce::String {
                                     switch (int{value})
