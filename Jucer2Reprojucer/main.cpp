@@ -827,6 +827,8 @@ int main(int argc, char* argv[])
                                 {});
         convertSettingIfDefined(exporter, "iosDevelopmentTeamID", "DEVELOPMENT_TEAM_ID",
                                 {});
+        convertOnOffSettingIfDefined(exporter, "keepCustomXcodeSchemes",
+                                     "KEEP_CUSTOM_XCODE_SCHEMES", {});
         convertOnOffSettingIfDefined(exporter, "useHeaderMap", "USE_HEADERMAP", {});
       }
 
