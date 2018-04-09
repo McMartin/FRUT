@@ -504,6 +504,7 @@ function(jucer_export_target exporter)
       "PREBUILD_SHELL_SCRIPT"
       "POSTBUILD_SHELL_SCRIPT"
       "DEVELOPMENT_TEAM_ID"
+      "USE_HEADERMAP"
     )
     list(APPEND multi_value_keywords
       "CUSTOM_XCODE_RESOURCE_FOLDERS"
@@ -640,6 +641,15 @@ function(jucer_export_target exporter)
       "\"Reprojucer.cmake doesn't support the setting DEVELOPMENT_TEAM_ID\" on "
       "GitHub: https://github.com/McMartin/FRUT/issues/251"
     )
+  endif()
+
+  if(DEFINED _USE_HEADERMAP)
+    if(_USE_HEADERMAP)
+      message(WARNING "USE_HEADERMAP is only supported when using the Xcode "
+        "generator. You should call `cmake -G Xcode`."
+      )
+    endif()
+    set(JUCER_USE_HEADERMAP ${_USE_HEADERMAP} PARENT_SCOPE)
   endif()
 
   if(DEFINED _PLATFORM_TOOLSET)
@@ -2515,6 +2525,14 @@ function(_FRUT_set_common_target_properties target)
         COMMAND "/bin/sh" "${JUCER_POSTBUILD_SHELL_SCRIPT}"
         WORKING_DIRECTORY "${JUCER_TARGET_PROJECT_FOLDER}"
       )
+    endif()
+
+    if(CMAKE_GENERATOR STREQUAL "Xcode" AND DEFINED JUCER_USE_HEADERMAP)
+      if(JUCER_USE_HEADERMAP)
+        set_target_properties(${target} PROPERTIES XCODE_ATTRIBUTE_USE_HEADERMAP "YES")
+      else()
+        set_target_properties(${target} PROPERTIES XCODE_ATTRIBUTE_USE_HEADERMAP "NO")
+      endif()
     endif()
 
   elseif(MSVC)
