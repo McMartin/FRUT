@@ -733,9 +733,11 @@ int main(int argc, char* argv[])
         }
       }
 
+      const auto isAudioPlugin = projectType == "audioplug";
+
       const auto hasVst2Interface = jucerVersionAsTuple > Version{4, 2, 3};
       const auto isVstAudioPlugin =
-        projectType == "audioplug" && bool{jucerProject.getProperty("buildVST")};
+        isAudioPlugin && bool{jucerProject.getProperty("buildVST")};
       const auto isVstPluginHost = jucerProject.getChildWithName("MODULES")
                                      .getChildWithProperty("id", "juce_audio_processors")
                                      .isValid()
@@ -751,7 +753,7 @@ int main(int argc, char* argv[])
 
       const auto supportsVst3 = exporterType == "XCODE_MAC" || isVSExporter;
       const auto isVst3AudioPlugin =
-        projectType == "audioplug" && bool{jucerProject.getProperty("buildVST3")};
+        isAudioPlugin && bool{jucerProject.getProperty("buildVST3")};
       const auto isVst3PluginHost = jucerProject.getChildWithName("MODULES")
                                       .getChildWithProperty("id", "juce_audio_processors")
                                       .isValid()
@@ -763,6 +765,21 @@ int main(int argc, char* argv[])
       if (supportsVst3 && (isVst3AudioPlugin || isVst3PluginHost))
       {
         convertSetting(exporter, "vst3Folder", "VST3_SDK_FOLDER", {});
+      }
+
+      const auto supportsAaxRtas = exporterType == "XCODE_MAC" || isVSExporter;
+
+      if (supportsAaxRtas && isAudioPlugin)
+      {
+        if (bool{jucerProject.getProperty("buildAAX")})
+        {
+          convertSetting(exporter, "aaxFolder", "AAX_SDK_FOLDER", {});
+        }
+
+        if (bool{jucerProject.getProperty("buildRTAS")})
+        {
+          convertSetting(exporter, "rtasFolder", "RTAS_SDK_FOLDER", {});
+        }
       }
 
       convertSettingAsListIfDefined(exporter, "extraDefs",
