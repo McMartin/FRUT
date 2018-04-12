@@ -1040,12 +1040,37 @@ int main(int argc, char* argv[])
 
         if (exporterType == "XCODE_MAC")
         {
-          convertSettingIfDefined(configuration, "xcodeVstBinaryLocation",
-                                  "VST_BINARY_LOCATION", {});
-          convertSettingIfDefined(configuration, "xcodeVst3BinaryLocation",
-                                  "VST3_BINARY_LOCATION", {});
-          convertSettingIfDefined(configuration, "xcodeAudioUnitBinaryLocation",
-                                  "AU_BINARY_LOCATION", {});
+          convertOnOffSettingIfDefined(configuration, "enablePluginBinaryCopyStep",
+                                       "ENABLE_PLUGIN_COPY_STEP", {});
+
+          const auto binaryLocationTuples = {
+            std::make_tuple("xcodeVstBinaryLocation", "vstBinaryLocation",
+                            "VST_BINARY_LOCATION"),
+            std::make_tuple("xcodeVst3BinaryLocation", "vst3BinaryLocation",
+                            "VST3_BINARY_LOCATION"),
+            std::make_tuple("xcodeAudioUnitBinaryLocation", "auBinaryLocation",
+                            "AU_BINARY_LOCATION"),
+            std::make_tuple("xcodeRtasBinaryLocation", "rtasBinaryLocation",
+                            "RTAS_BINARY_LOCATION"),
+            std::make_tuple("xcodeAaxBinaryLocation", "aaxBinaryLocation",
+                            "AAX_BINARY_LOCATION"),
+          };
+
+          for (const auto& binaryLocationTuple : binaryLocationTuples)
+          {
+            const auto& oldProperty = std::get<0>(binaryLocationTuple);
+            const auto& newProperty = std::get<1>(binaryLocationTuple);
+            const auto& cmakeKeyword = std::get<2>(binaryLocationTuple);
+
+            if (configuration.hasProperty(oldProperty))
+            {
+              convertSetting(configuration, oldProperty, cmakeKeyword, {});
+            }
+            else
+            {
+              convertSettingIfDefined(configuration, newProperty, cmakeKeyword, {});
+            }
+          }
 
           const auto sdks =
             juce::StringArray{"10.5 SDK", "10.6 SDK",  "10.7 SDK",  "10.8 SDK",
@@ -1163,6 +1188,18 @@ int main(int argc, char* argv[])
 
         if (isVSExporter)
         {
+          convertOnOffSettingIfDefined(configuration, "enablePluginBinaryCopyStep",
+                                       "ENABLE_PLUGIN_COPY_STEP", {});
+
+          convertSettingIfDefined(configuration, "vstBinaryLocation",
+                                  "VST_BINARY_LOCATION", {});
+          convertSettingIfDefined(configuration, "vst3BinaryLocation",
+                                  "VST3_BINARY_LOCATION", {});
+          convertSettingIfDefined(configuration, "rtasBinaryLocation",
+                                  "RTAS_BINARY_LOCATION", {});
+          convertSettingIfDefined(configuration, "aaxBinaryLocation",
+                                  "AAX_BINARY_LOCATION", {});
+
           convertSettingIfDefined(configuration, "winWarningLevel", "WARNING_LEVEL",
                                   [](const juce::var& value) -> juce::String {
                                     switch (int{value})

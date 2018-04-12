@@ -564,6 +564,7 @@ jucer_export_target_configuration(
   # HEADER_SEARCH_PATHS
   # EXTRA_LIBRARY_SEARCH_PATHS
   OPTIMISATION "-O0 (no optimisation)"
+  ENABLE_PLUGIN_COPY_STEP ON
   OSX_BASE_SDK_VERSION "Use Default"
   OSX_DEPLOYMENT_TARGET "10.9"
   OSX_ARCHITECTURE "Use Default"
@@ -578,6 +579,7 @@ jucer_export_target_configuration(
   # HEADER_SEARCH_PATHS
   # EXTRA_LIBRARY_SEARCH_PATHS
   OPTIMISATION "-O3 (fastest with safe optimisations)"
+  ENABLE_PLUGIN_COPY_STEP ON
   OSX_BASE_SDK_VERSION "Use Default"
   OSX_DEPLOYMENT_TARGET "10.7"
   OSX_ARCHITECTURE "Use Default"
@@ -601,6 +603,7 @@ jucer_export_target_configuration(
   # EXTRA_LIBRARY_SEARCH_PATHS
   # PREPROCESSOR_DEFINITIONS
   OPTIMISATION "No optimisation"
+  ENABLE_PLUGIN_COPY_STEP OFF
   WARNING_LEVEL "High"
   RUNTIME_LIBRARY "Use DLL runtime"
   WHOLE_PROGRAM_OPTIMISATION "Always disable"
@@ -616,6 +619,7 @@ jucer_export_target_configuration(
   # HEADER_SEARCH_PATHS
   # EXTRA_LIBRARY_SEARCH_PATHS
   OPTIMISATION "Maximise speed"
+  ENABLE_PLUGIN_COPY_STEP OFF
   WARNING_LEVEL "High"
   RUNTIME_LIBRARY "Use static runtime"
   GENERATE_MANIFEST ON
@@ -637,6 +641,7 @@ jucer_export_target_configuration(
   # HEADER_SEARCH_PATHS
   # EXTRA_LIBRARY_SEARCH_PATHS
   OPTIMISATION "No optimisation"
+  ENABLE_PLUGIN_COPY_STEP OFF
   WARNING_LEVEL "High"
   RUNTIME_LIBRARY "Use DLL runtime"
   GENERATE_MANIFEST ON
@@ -651,6 +656,7 @@ jucer_export_target_configuration(
   # HEADER_SEARCH_PATHS
   # EXTRA_LIBRARY_SEARCH_PATHS
   OPTIMISATION "Maximise speed"
+  ENABLE_PLUGIN_COPY_STEP OFF
   WARNING_LEVEL "High"
   RUNTIME_LIBRARY "Use static runtime"
   GENERATE_MANIFEST ON
@@ -668,6 +674,7 @@ jucer_export_target_configuration(
   DEBUG_MODE ON
   BINARY_NAME "Projucer"
   OPTIMISATION "No optimisation"
+  ENABLE_PLUGIN_COPY_STEP OFF
   WARNING_LEVEL "High"
   GENERATE_MANIFEST ON
   # ARCHITECTURE "x64"
@@ -679,6 +686,7 @@ jucer_export_target_configuration(
   DEBUG_MODE OFF
   BINARY_NAME "Projucer"
   OPTIMISATION "Maximise speed"
+  ENABLE_PLUGIN_COPY_STEP OFF
   WARNING_LEVEL "High"
   GENERATE_MANIFEST ON
   # ARCHITECTURE "x64"

@@ -804,9 +804,12 @@ function(jucer_export_target_configuration
 
   if(exporter STREQUAL "Xcode (MacOSX)")
     list(APPEND single_value_keywords
+      "ENABLE_PLUGIN_COPY_STEP"
       "VST_BINARY_LOCATION"
       "VST3_BINARY_LOCATION"
       "AU_BINARY_LOCATION"
+      "RTAS_BINARY_LOCATION"
+      "AAX_BINARY_LOCATION"
       "OSX_BASE_SDK_VERSION"
       "OSX_DEPLOYMENT_TARGET"
       "OSX_ARCHITECTURE"
@@ -824,6 +827,11 @@ function(jucer_export_target_configuration
 
   if(exporter MATCHES "^Visual Studio 201(7|5|3)$")
     list(APPEND single_value_keywords
+      "ENABLE_PLUGIN_COPY_STEP"
+      "VST_BINARY_LOCATION"
+      "VST3_BINARY_LOCATION"
+      "RTAS_BINARY_LOCATION"
+      "AAX_BINARY_LOCATION"
       "WARNING_LEVEL"
       "TREAT_WARNINGS_AS_ERRORS"
       "RUNTIME_LIBRARY"
@@ -915,6 +923,10 @@ function(jucer_export_target_configuration
     set(JUCER_OPTIMISATION_FLAG_${config} ${optimisation_flag} PARENT_SCOPE)
   endif()
 
+  if(DEFINED _ENABLE_PLUGIN_COPY_STEP)
+    set(JUCER_ENABLE_PLUGIN_COPY_STEP_${config} ${_ENABLE_PLUGIN_COPY_STEP} PARENT_SCOPE)
+  endif()
+
   if(DEFINED _VST_BINARY_LOCATION)
     set(JUCER_VST_BINARY_LOCATION_${config} ${_VST_BINARY_LOCATION} PARENT_SCOPE)
   endif()
@@ -925,6 +937,14 @@ function(jucer_export_target_configuration
 
   if(DEFINED _AU_BINARY_LOCATION)
     set(JUCER_AU_BINARY_LOCATION_${config} ${_AU_BINARY_LOCATION} PARENT_SCOPE)
+  endif()
+
+  if(DEFINED _RTAS_BINARY_LOCATION)
+    set(JUCER_RTAS_BINARY_LOCATION_${config} ${_RTAS_BINARY_LOCATION} PARENT_SCOPE)
+  endif()
+
+  if(DEFINED _AAX_BINARY_LOCATION)
+    set(JUCER_AAX_BINARY_LOCATION_${config} ${_AAX_BINARY_LOCATION} PARENT_SCOPE)
   endif()
 
   if(DEFINED _OSX_BASE_SDK_VERSION)
@@ -1518,6 +1538,15 @@ function(jucer_project_end)
           _FRUT_install_to_plugin_binary_location(${vst_target} "VST"
             "$ENV{HOME}/Library/Audio/Plug-Ins/VST"
           )
+        elseif(MSVC)
+          if(CMAKE_GENERATOR_PLATFORM STREQUAL "x64" OR CMAKE_GENERATOR MATCHES "Win64")
+            set(env_var "ProgramW6432")
+          else()
+            set(env_var "programfiles(x86)")
+          endif()
+          _FRUT_install_to_plugin_binary_location(${vst_target} "VST"
+            "$ENV{${env_var}}/Steinberg/Vstplugins"
+          )
         endif()
         _FRUT_set_JucePlugin_Build_defines(${vst_target} "VSTPlugIn")
         _FRUT_link_osx_frameworks(${vst_target})
@@ -1547,6 +1576,15 @@ function(jucer_project_end)
         if(APPLE)
           _FRUT_install_to_plugin_binary_location(${vst3_target} "VST3"
             "$ENV{HOME}/Library/Audio/Plug-Ins/VST3"
+          )
+        elseif(MSVC)
+          if(CMAKE_GENERATOR_PLATFORM STREQUAL "x64" OR CMAKE_GENERATOR MATCHES "Win64")
+            set(env_var "CommonProgramW6432")
+          else()
+            set(env_var "CommonProgramFiles(x86)")
+          endif()
+          _FRUT_install_to_plugin_binary_location(${vst3_target} "VST3"
+            "$ENV{${env_var}}/VST3"
           )
         endif()
         _FRUT_set_JucePlugin_Build_defines(${vst3_target} "VST3PlugIn")
@@ -2930,8 +2968,18 @@ function(_FRUT_install_to_plugin_binary_location target plugin_type default_dest
     else()
       set(destination ${default_destination})
     endif()
-    string(APPEND all_confs_destination $<$<CONFIG:${config}>:${destination}>)
+    if(DEFINED JUCER_ENABLE_PLUGIN_COPY_STEP_${config})
+      if(JUCER_ENABLE_PLUGIN_COPY_STEP_${config})
+        string(APPEND all_confs_destination $<$<CONFIG:${config}>:${destination}>)
+      endif()
+    elseif(APPLE)
+      string(APPEND all_confs_destination $<$<CONFIG:${config}>:${destination}>)
+    endif()
   endforeach()
+
+  if("${all_confs_destination}" STREQUAL "")
+    return()
+  endif()
 
   set(component "_install_${target}_to_${plugin_type}_binary_location")
 
