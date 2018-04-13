@@ -17,6 +17,7 @@ Define the settings specific to a configuration associated with an export target
     [EXTRA_LIBRARY_SEARCH_PATHS <search_path> [<search_path> ...]]
     [PREPROCESSOR_DEFINITIONS <preprocessor_definition> [<preprocessor_definition> ...]]
 
+    [ENABLE_PLUGIN_COPY_STEP <ON|OFF>]
     [VST_BINARY_LOCATION <binary_location>]
     [VST3_BINARY_LOCATION <binary_location>]
     [AU_BINARY_LOCATION <binary_location>]
@@ -55,9 +56,9 @@ Define the settings specific to a configuration associated with an export target
 ``OSX_ARCHITECTURE``, ``OSX_BASE_SDK_VERSION``, ``OSX_DEPLOYMENT_TARGET`` and
 ``STRIP_LOCAL_SYMBOLS`` are only supported by the ``"Xcode (MacOSX)"`` exporter.
 
-``VST3_BINARY_LOCATION`` and ``VST_BINARY_LOCATION`` are only supported by the following
-exporters: ``"Xcode (MacOSX)"``, ``"Visual Studio 2017"``, ``"Visual Studio 2015"`` and
-``"Visual Studio 2013"``.
+``ENABLE_PLUGIN_COPY_STEP``, ``VST3_BINARY_LOCATION`` and ``VST_BINARY_LOCATION`` are only
+supported by the following exporters: ``"Xcode (MacOSX)"``, ``"Visual Studio 2017"``,
+``"Visual Studio 2015"`` and ``"Visual Studio 2013"``.
 
 ``CHARACTER_SET``, ``GENERATE_MANIFEST``, ``INCREMENTAL_LINKING``, ``POSTBUILD_COMMAND``,
 ``PREBUILD_COMMAND``, ``RUNTIME_LIBRARY``, ``TREAT_WARNINGS_AS_ERRORS``, ``WARNING_LEVEL``
