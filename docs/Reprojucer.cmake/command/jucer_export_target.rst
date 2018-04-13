@@ -29,6 +29,7 @@ Define the settings specific to an export target.
     [EXTRA_FRAMEWORKS <osx_framework> [<osx_framework> ...]]
     [PREBUILD_SHELL_SCRIPT <shell_script_content>]
     [POSTBUILD_SHELL_SCRIPT <shell_script_content>]
+    [USE_HEADERMAP <ON|OFF>]
 
     [PLATFORM_TOOLSET <platform_toolset>]
 
@@ -45,8 +46,8 @@ Define the settings specific to an export target.
 ``"Xcode (MacOSX)"`` and ``"Linux Makefile"``.
 
 ``CUSTOM_PLIST``, ``CUSTOM_XCODE_RESOURCE_FOLDERS``,  ``EXTRA_FRAMEWORKS``,
-``POSTBUILD_SHELL_SCRIPT`` and ``PREBUILD_SHELL_SCRIPT`` are only supported by the
-``"Xcode (MacOSX)"`` exporter.
+``POSTBUILD_SHELL_SCRIPT``, ``PREBUILD_SHELL_SCRIPT`` and ``USE_HEADERMAP`` are only
+supported by the ``"Xcode (MacOSX)"`` exporter.
 
 ``DOCUMENT_FILE_EXTENSIONS`` is only supported by the ``"Xcode (MacOSX)"`` exporter on
 ``"GUI Application"`` projects.
