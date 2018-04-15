@@ -30,7 +30,7 @@ Requirements
 ------------
 
 - CMake, version 3.4 minimum
-- JUCE, version 4.2.0 minimum (JUCE 5 support is experimental)
+- JUCE, version 4.2.0 minimum
 
 
 Supported export targets
@@ -119,6 +119,8 @@ anything about CMake. See the `CONTRIBUTING`_ file for more details.
 License
 -------
 
+|GPLv3|
+
 FRUT is free software: you can redistribute it and/or modify it under the terms of the GNU
 General Public License as published by the Free Software Foundation, either version 3 of
 the License, or (at your option) any later version.
@@ -139,6 +141,10 @@ even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE
 .. |Read_the_Docs| image:: https://readthedocs.org/projects/frut/badge/?version=latest
   :target: https://frut.readthedocs.io/en/latest/
   :alt: Documentation status
+
+.. |GPLv3| image:: https://www.gnu.org/graphics/gplv3-127x51.png
+  :target: https://www.gnu.org/licenses/gpl.html
+  :alt: GNU General Public License
 
 .. _CONTRIBUTING: CONTRIBUTING.md
 .. _LICENSE: LICENSE
