@@ -30,7 +30,7 @@ Requirements
 ------------
 
 - CMake, version 3.4 minimum
-- JUCE, version 4.2.0 minimum (JUCE 5 support is experimental)
+- JUCE, version 4.2.0 minimum
 
 
 Supported export targets
