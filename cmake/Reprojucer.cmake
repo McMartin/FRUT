@@ -210,7 +210,7 @@ function(jucer_audio_plugin_settings)
   endif()
 
   if(DEFINED _BUILD_STANDALONE_PLUGIN
-      AND DEFINED JUCER_VERSION AND JUCER_VERSION VERSION_LESS 5)
+      AND DEFINED JUCER_VERSION AND JUCER_VERSION VERSION_LESS 5.0.0)
     message(WARNING "BUILD_STANDALONE_PLUGIN is a JUCE 5 feature only")
   endif()
 
@@ -302,7 +302,7 @@ function(jucer_project_module module_name PATH_KEYWORD modules_folder)
     "${modules_folder}/${module_name}/*.mm"
   )
 
-  if(DEFINED JUCER_VERSION AND JUCER_VERSION VERSION_LESS 5)
+  if(DEFINED JUCER_VERSION AND JUCER_VERSION VERSION_LESS 5.0.0)
     set(proxy_prefix)
   else()
     set(proxy_prefix "include_")
@@ -321,7 +321,7 @@ function(jucer_project_module module_name PATH_KEYWORD modules_folder)
       set(to_compile FALSE)
     endif()
 
-    if(DEFINED JUCER_VERSION AND JUCER_VERSION VERSION_LESS 5)
+    if(DEFINED JUCER_VERSION AND JUCER_VERSION VERSION_LESS 5.0.0)
       if(src_file MATCHES "_Standalone[._]" AND NOT (JUCER_BUILD_AUDIOUNIT_V3 AND APPLE))
         set(to_compile FALSE)
       endif()
@@ -428,7 +428,7 @@ function(jucer_project_module module_name PATH_KEYWORD modules_folder)
     unset(project_cxx_standard)
     if(DEFINED JUCER_CXX_LANGUAGE_STANDARD)
       set(project_cxx_standard ${JUCER_CXX_LANGUAGE_STANDARD})
-    elseif(NOT (DEFINED JUCER_VERSION AND JUCER_VERSION VERSION_LESS 5.1))
+    elseif(NOT (DEFINED JUCER_VERSION AND JUCER_VERSION VERSION_LESS 5.1.0))
       set(project_cxx_standard 11)
     endif()
     if(DEFINED project_cxx_standard AND NOT ("${project_cxx_standard}" STREQUAL "latest")
@@ -1012,7 +1012,7 @@ function(jucer_export_target_configuration
   if(DEFINED _CXX_LANGUAGE_STANDARD)
     set(standard ${_CXX_LANGUAGE_STANDARD})
     if(standard MATCHES "^(C|GNU)\\+\\+98$"
-        AND DEFINED JUCER_VERSION AND JUCER_VERSION VERSION_LESS 5)
+        AND DEFINED JUCER_VERSION AND JUCER_VERSION VERSION_LESS 5.0.0)
       set(JUCER_CXX_LANGUAGE_STANDARD_${config} ${standard} PARENT_SCOPE)
     elseif(standard MATCHES "^(C|GNU)\\+\\+(11|14)$")
       set(JUCER_CXX_LANGUAGE_STANDARD_${config} ${standard} PARENT_SCOPE)
@@ -1264,7 +1264,7 @@ function(jucer_project_end)
 
   if(WIN32 AND NOT JUCER_PROJECT_TYPE STREQUAL "Static Library")
     if(DEFINED JUCER_COMPANY_COPYRIGHT
-        OR NOT(DEFINED JUCER_VERSION AND JUCER_VERSION VERSION_LESS 5.2))
+        OR NOT(DEFINED JUCER_VERSION AND JUCER_VERSION VERSION_LESS 5.2.0))
       set(resources_rc_legal_copyright
         "\n      VALUE \"LegalCopyright\",  \"${JUCER_COMPANY_COPYRIGHT}\\0\""
       )
@@ -1293,7 +1293,7 @@ function(jucer_project_end)
   )
 
   if(DEFINED JUCER_COMPANY_COPYRIGHT
-      OR NOT(DEFINED JUCER_VERSION AND JUCER_VERSION VERSION_LESS 5.2))
+      OR NOT(DEFINED JUCER_VERSION AND JUCER_VERSION VERSION_LESS 5.2.0))
     set(ns_human_readable_copyright "${JUCER_COMPANY_COPYRIGHT}")
   else()
     set(ns_human_readable_copyright "${JUCER_COMPANY_NAME}")
@@ -1459,7 +1459,7 @@ function(jucer_project_end)
     _FRUT_set_custom_xcode_flags(${target})
 
   elseif(JUCER_PROJECT_TYPE STREQUAL "Audio Plug-in")
-    if(NOT APPLE AND DEFINED JUCER_VERSION AND JUCER_VERSION VERSION_LESS 5)
+    if(NOT APPLE AND DEFINED JUCER_VERSION AND JUCER_VERSION VERSION_LESS 5.0.0)
       add_library(${target} MODULE ${all_sources})
       set_target_properties(${target} PROPERTIES PREFIX "")
       _FRUT_set_output_directory_properties(${target} "")
@@ -1739,12 +1739,12 @@ function(jucer_project_end)
       endif()
 
       if(JUCER_BUILD_AUDIOUNIT_V3
-          AND DEFINED JUCER_VERSION AND JUCER_VERSION VERSION_LESS 5)
+          AND DEFINED JUCER_VERSION AND JUCER_VERSION VERSION_LESS 5.0.0)
         set(juce4_standalone ON)
       endif()
 
       if(juce4_standalone OR (JUCER_BUILD_STANDALONE_PLUGIN
-          AND NOT (DEFINED JUCER_VERSION AND JUCER_VERSION VERSION_LESS 5)))
+          AND NOT (DEFINED JUCER_VERSION AND JUCER_VERSION VERSION_LESS 5.0.0)))
         if(juce4_standalone)
           set(standalone_target ${target}_AUv3_Standalone)
         else()
@@ -1973,7 +1973,7 @@ function(_FRUT_generate_AppConfig_header)
     _FRUT_bool_to_int("${JUCER_BUILD_AUDIOUNIT_V3}" Build_AUv3_value)
     _FRUT_bool_to_int("OFF" Build_RTAS_value) # Not yet supported
     _FRUT_bool_to_int("OFF" Build_AAX_value) # Not yet supported
-    if(DEFINED JUCER_VERSION AND JUCER_VERSION VERSION_LESS 5)
+    if(DEFINED JUCER_VERSION AND JUCER_VERSION VERSION_LESS 5.0.0)
       _FRUT_bool_to_int("${JUCER_BUILD_AUDIOUNIT_V3}" Build_STANDALONE_value)
     else()
       _FRUT_bool_to_int("${JUCER_BUILD_STANDALONE_PLUGIN}" Build_STANDALONE_value)
@@ -2106,7 +2106,7 @@ function(_FRUT_generate_AppConfig_header)
     endforeach()
   endif()
 
-  if(DEFINED JUCER_VERSION AND JUCER_VERSION VERSION_LESS 5)
+  if(DEFINED JUCER_VERSION AND JUCER_VERSION VERSION_LESS 5.0.0)
     string(TOUPPER "${JUCER_PROJECT_ID}" upper_project_id)
     set(template_file "${Reprojucer_templates_DIR}/AppConfig-4.h")
   else()
@@ -2209,7 +2209,7 @@ function(_FRUT_generate_JuceHeader_header)
     string(APPEND modules_includes "#include <${module_name}/${module_name}.h>\n")
   endforeach()
 
-  if(DEFINED JUCER_VERSION AND JUCER_VERSION VERSION_LESS 5)
+  if(DEFINED JUCER_VERSION AND JUCER_VERSION VERSION_LESS 5.0.0)
     string(TOUPPER "${JUCER_PROJECT_ID}" upper_project_id)
     set(template_file "${Reprojucer_templates_DIR}/JuceHeader-4.h")
   else()
@@ -2290,7 +2290,7 @@ function(_FRUT_set_output_directory_properties target subfolder)
     string(TOUPPER "${config}" upper_config)
 
     if(MSVC AND NOT "${subfolder}" STREQUAL ""
-        AND NOT (DEFINED JUCER_VERSION AND JUCER_VERSION VERSION_LESS 5))
+        AND NOT (DEFINED JUCER_VERSION AND JUCER_VERSION VERSION_LESS 5.0.0))
       if(DEFINED JUCER_BINARY_LOCATION_${config})
         set(output_directory "${JUCER_BINARY_LOCATION_${config}}/${subfolder}")
       else()
@@ -3000,7 +3000,8 @@ endfunction()
 
 function(_FRUT_set_JucePlugin_Build_defines target target_type)
 
-  if(JUCER_BUILD_AUDIOUNIT_V3 AND DEFINED JUCER_VERSION AND JUCER_VERSION VERSION_LESS 5)
+  if(JUCER_BUILD_AUDIOUNIT_V3
+      AND DEFINED JUCER_VERSION AND JUCER_VERSION VERSION_LESS 5.0.0)
     set(JUCER_BUILD_STANDALONE_PLUGIN ON)
   endif()
 
