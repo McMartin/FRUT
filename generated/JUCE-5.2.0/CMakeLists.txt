@@ -25,7 +25,7 @@ endif()
 get_filename_component(JUCE_ROOT "${JUCE_ROOT}" ABSOLUTE BASE_DIR "${CMAKE_BINARY_DIR}")
 
 
-project(JUCE-5.0.0)
+project(JUCE-5.2.0)
 
 
 # All exporters
