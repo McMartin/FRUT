@@ -198,7 +198,7 @@ int main(int argc, char* argv[])
 
       if (!converterFn)
       {
-        converterFn = [](const juce::var& value) { return value.toString(); };
+        converterFn = [](const juce::var& v) { return v.toString(); };
       }
 
       const auto value = converterFn(valueTree.getProperty(property));
@@ -263,8 +263,8 @@ int main(int argc, char* argv[])
 
       if (!converterFn)
       {
-        converterFn = [](const juce::var& value) {
-          return juce::StringArray::fromLines(value.toString());
+        converterFn = [](const juce::var& v) {
+          return juce::StringArray::fromLines(v.toString());
         };
       }
 
@@ -422,10 +422,10 @@ int main(int argc, char* argv[])
                    });
 
     convertSettingIfDefined(jucerProject, "maxBinaryFileSize", "BINARYDATACPP_SIZE_LIMIT",
-                            [](const juce::var& value) -> juce::String {
-                              if (value.toString().isEmpty())
+                            [](const juce::var& v) -> juce::String {
+                              if (v.toString().isEmpty())
                                 return "Default";
-                              return juce::File::descriptionOfSizeInBytes(int{value});
+                              return juce::File::descriptionOfSizeInBytes(int{v});
                             });
     if (jucerProject.hasProperty("includeBinaryInJuceHeader"))
     {
@@ -816,8 +816,8 @@ int main(int argc, char* argv[])
       convertOnOffSettingIfDefined(exporter, "enableGNUExtensions",
                                    "GNU_COMPILER_EXTENSIONS", {});
 
-      const auto convertIcon = [&jucerProject](const juce::var& value) -> juce::String {
-        const auto fileId = value.toString();
+      const auto convertIcon = [&jucerProject](const juce::var& v) -> juce::String {
+        const auto fileId = v.toString();
 
         if (!fileId.isEmpty())
         {
@@ -977,8 +977,8 @@ int main(int argc, char* argv[])
 
         const auto convertSearchPaths =
           [&isAbsolutePath, &jucerFileDir,
-           &targetProjectDir](const juce::var& value) -> juce::StringArray {
-          const auto searchPaths = value.toString();
+           &targetProjectDir](const juce::var& v) -> juce::StringArray {
+          const auto searchPaths = v.toString();
 
           if (searchPaths.isEmpty())
           {
@@ -1018,13 +1018,13 @@ int main(int argc, char* argv[])
                                       "PREPROCESSOR_DEFINITIONS", {});
 
         convertSettingIfDefined(configuration, "optimisation", "OPTIMISATION",
-                                [&isVSExporter](const juce::var& value) -> juce::String {
-                                  if (value.isVoid())
+                                [&isVSExporter](const juce::var& v) -> juce::String {
+                                  if (v.isVoid())
                                     return {};
 
                                   if (isVSExporter)
                                   {
-                                    switch (int{value})
+                                    switch (int{v})
                                     {
                                     case 1:
                                       return "No optimisation";
@@ -1037,7 +1037,7 @@ int main(int argc, char* argv[])
                                     return {};
                                   }
 
-                                  switch (int{value})
+                                  switch (int{v})
                                   {
                                   case 1:
                                     return "-O0 (no optimisation)";
@@ -1219,8 +1219,8 @@ int main(int argc, char* argv[])
                                   "AAX_BINARY_LOCATION", {});
 
           convertSettingIfDefined(configuration, "winWarningLevel", "WARNING_LEVEL",
-                                  [](const juce::var& value) -> juce::String {
-                                    switch (int{value})
+                                  [](const juce::var& v) -> juce::String {
+                                    switch (int{v})
                                     {
                                     case 2:
                                       return "Low";
@@ -1254,11 +1254,11 @@ int main(int argc, char* argv[])
 
           convertSettingIfDefined(configuration, "wholeProgramOptimisation",
                                   "WHOLE_PROGRAM_OPTIMISATION",
-                                  [](const juce::var& value) -> juce::String {
-                                    if (value.toString().isEmpty())
+                                  [](const juce::var& v) -> juce::String {
+                                    if (v.toString().isEmpty())
                                       return "Enable when possible";
 
-                                    if (int{value} > 0)
+                                    if (int{v} > 0)
                                       return "Always disable";
 
                                     return {};
