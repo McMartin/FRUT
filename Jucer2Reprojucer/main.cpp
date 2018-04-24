@@ -415,7 +415,11 @@ int main(int argc, char* argv[])
     }();
     wLn("  PROJECT_TYPE \"", projectTypeDescription, "\"");
 
-    convertSettingIfDefined(jucerProject, "bundleIdentifier", "BUNDLE_IDENTIFIER", {});
+    convertSetting(jucerProject, "bundleIdentifier", "BUNDLE_IDENTIFIER",
+                   [&jucerProjectName](const juce::var& v) {
+                     return v.isVoid() ? "com.yourcompany." + jucerProjectName
+                                       : v.toString();
+                   });
 
     convertSettingIfDefined(jucerProject, "maxBinaryFileSize", "BINARYDATACPP_SIZE_LIMIT",
                             [](const juce::var& value) -> juce::String {

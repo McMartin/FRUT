@@ -33,6 +33,7 @@ jucer_project_settings(
   REPORT_JUCE_APP_USAGE OFF # Required for closed source applications without an Indie or Pro JUCE license
   DISPLAY_THE_JUCE_SPLASH_SCREEN OFF # Required for closed source applications without an Indie or Pro JUCE license
   PROJECT_TYPE "GUI Application"
+  BUNDLE_IDENTIFIER "com.yourcompany.AnalyticsCollection"
 )
 
 jucer_project_files("AnalyticsCollection/Source"
