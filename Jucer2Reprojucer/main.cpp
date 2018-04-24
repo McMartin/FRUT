@@ -440,21 +440,32 @@ int main(int argc, char* argv[])
     convertSettingIfDefined(jucerProject, "binaryDataNamespace", "BINARYDATA_NAMESPACE",
                             {});
 
-    convertSettingIfDefined(jucerProject, "cppLanguageStandard", "CXX_LANGUAGE_STANDARD",
-                            [](const juce::var& v) -> juce::String {
-                              const auto value = v.toString();
+    if (jucerProject.hasProperty("cppLanguageStandard"))
+    {
+      convertSetting(jucerProject, "cppLanguageStandard", "CXX_LANGUAGE_STANDARD",
+                     [](const juce::var& v) -> juce::String {
+                       const auto value = v.toString();
 
-                              if (value == "11")
-                                return "C++11";
+                       if (value == "11")
+                         return "C++11";
 
-                              if (value == "14")
-                                return "C++14";
+                       if (value == "14")
+                         return "C++14";
 
-                              if (value == "latest")
-                                return "Use Latest";
+                       if (value == "latest")
+                         return "Use Latest";
 
-                              return {};
-                            });
+                       return {};
+                     });
+    }
+    else if (jucerVersionAsTuple > Version{5, 2, 0})
+    {
+      wLn("  ", "CXX_LANGUAGE_STANDARD", " \"C++14\"");
+    }
+    else if (jucerVersionAsTuple > Version{5, 0, 2})
+    {
+      wLn("  ", "CXX_LANGUAGE_STANDARD", " \"C++11\"");
+    }
 
     convertSettingAsListIfDefined(jucerProject, "defines", "PREPROCESSOR_DEFINITIONS",
                                   {});

@@ -34,6 +34,7 @@ jucer_project_settings(
   DISPLAY_THE_JUCE_SPLASH_SCREEN OFF # Required for closed source applications without an Indie or Pro JUCE license
   PROJECT_TYPE "Static Library"
   BUNDLE_IDENTIFIER "com.roli.jucedll"
+  CXX_LANGUAGE_STANDARD "C++14"
   PREPROCESSOR_DEFINITIONS
     "JUCE_DLL_BUILD=1"
 )

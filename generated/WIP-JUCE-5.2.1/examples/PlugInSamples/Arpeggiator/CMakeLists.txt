@@ -36,6 +36,7 @@ jucer_project_settings(
   DISPLAY_THE_JUCE_SPLASH_SCREEN OFF # Required for closed source applications without an Indie or Pro JUCE license
   PROJECT_TYPE "Audio Plug-in"
   BUNDLE_IDENTIFIER "com.roli.Arpeggiator"
+  CXX_LANGUAGE_STANDARD "C++14"
 )
 
 jucer_audio_plugin_settings(

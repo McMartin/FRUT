@@ -36,6 +36,7 @@ jucer_project_settings(
   DISPLAY_THE_JUCE_SPLASH_SCREEN ON # Required for closed source applications without an Indie or Pro JUCE license
   PROJECT_TYPE "GUI Application"
   BUNDLE_IDENTIFIER "com.roli.DSPDemo"
+  CXX_LANGUAGE_STANDARD "C++14"
 )
 
 jucer_project_files("DSPDemo/Source/Resources"
