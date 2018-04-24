@@ -299,6 +299,7 @@ int main(int argc, char* argv[])
     };
 
   const auto jucerFileName = jucerFile.getFileName();
+  const auto jucerProjectName = jucerProject.getProperty("name").toString();
 
   // Preamble
   {
@@ -306,7 +307,7 @@ int main(int argc, char* argv[])
     wLn();
     wLn("cmake_minimum_required(VERSION 3.4)");
     wLn();
-    wLn("project(\"", jucerProject.getProperty("name").toString(), "\")");
+    wLn("project(\"", jucerProjectName, "\")");
     wLn();
     wLn();
   }
