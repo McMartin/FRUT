@@ -23,7 +23,7 @@ It currently contains:
   - ``examples`` and ``extras`` projects from `JUCE 4.2.0`_ (in `generated/JUCE-4.2.0`_)
   - ``examples`` and ``extras`` projects from `JUCE 4.3.1`_ (in `generated/JUCE-4.3.1`_)
   - ``examples`` and ``extras`` projects from `JUCE 5.0.0`_ (in `generated/JUCE-5.0.0`_)
-  - ``examples`` and ``extras`` projects from `JUCE 5.2.0`_ (in `generated/JUCE-5.2.0`_)
+  - ``examples`` and ``extras`` projects from `JUCE 5.2.1`_ (in `generated/JUCE-5.2.1`_)
 
 
 Requirements
@@ -151,7 +151,7 @@ even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE
 .. _generated/JUCE-4.2.0: generated/JUCE-4.2.0
 .. _generated/JUCE-4.3.1: generated/JUCE-4.3.1
 .. _generated/JUCE-5.0.0: generated/JUCE-5.0.0
-.. _generated/JUCE-5.2.0: generated/JUCE-5.2.0
+.. _generated/JUCE-5.2.1: generated/JUCE-5.2.1
 
 .. _CMake Generators: https://cmake.org/cmake/help/latest/manual/cmake-generators.7.html
 .. _CMake: https://cmake.org/
@@ -159,5 +159,5 @@ even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE
 .. _JUCE 4.2.0: https://github.com/WeAreROLI/JUCE/tree/4.2.0
 .. _JUCE 4.3.1: https://github.com/WeAreROLI/JUCE/tree/4.3.1
 .. _JUCE 5.0.0: https://github.com/WeAreROLI/JUCE/tree/5.0.0
-.. _JUCE 5.2.0: https://github.com/WeAreROLI/JUCE/tree/5.2.0
+.. _JUCE 5.2.1: https://github.com/WeAreROLI/JUCE/tree/5.2.1
 .. _Projucer: https://www.juce.com/projucer

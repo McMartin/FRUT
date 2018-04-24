@@ -123,6 +123,7 @@ jucer_export_target(
     "-Wno-switch-enum"
     "-Wno-undeclared-selector"
     "-Wno-undef"
+    "-Wno-undefined-func-template"
     "-Wno-undefined-reinterpret-cast"
     "-Wno-unknown-warning-option"
     "-Wno-unused-template"
