@@ -118,9 +118,9 @@ jucer_project_module(
 jucer_project_module(
   juce_audio_processors
   PATH "../../modules"
-  # JUCE_PLUGINHOST_VST
+  JUCE_PLUGINHOST_VST OFF
   # JUCE_PLUGINHOST_VST3
-  # JUCE_PLUGINHOST_AU
+  JUCE_PLUGINHOST_AU OFF
 )
 
 jucer_project_module(

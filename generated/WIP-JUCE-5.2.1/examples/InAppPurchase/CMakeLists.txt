@@ -99,7 +99,7 @@ jucer_project_module(
   juce_audio_formats
   PATH "../../modules"
   # JUCE_USE_FLAC
-  # JUCE_USE_OGGVORBIS
+  JUCE_USE_OGGVORBIS ON
   # JUCE_USE_MP3AUDIOFORMAT
   # JUCE_USE_LAME_AUDIO_FORMAT
   # JUCE_USE_WINDOWS_MEDIA_FORMAT

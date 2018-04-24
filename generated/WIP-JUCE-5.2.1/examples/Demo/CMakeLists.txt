@@ -120,7 +120,7 @@ jucer_project_module(
   PATH "../../modules"
   # JUCE_ASIO
   # JUCE_WASAPI
-  # JUCE_WASAPI_EXCLUSIVE
+  JUCE_WASAPI_EXCLUSIVE ON
   # JUCE_DIRECTSOUND
   # JUCE_ALSA
   # JUCE_JACK
@@ -210,7 +210,7 @@ jucer_project_module(
   juce_gui_extra
   PATH "../../modules"
   # JUCE_WEB_BROWSER
-  # JUCE_ENABLE_LIVE_CONSTANT_EDITOR
+  JUCE_ENABLE_LIVE_CONSTANT_EDITOR ON
 )
 
 jucer_project_module(

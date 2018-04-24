@@ -63,10 +63,10 @@ jucer_project_module(
   juce_audio_devices
   PATH "../../modules"
   # JUCE_ASIO
-  # JUCE_WASAPI
+  JUCE_WASAPI ON
   # JUCE_WASAPI_EXCLUSIVE
-  # JUCE_DIRECTSOUND
-  # JUCE_ALSA
+  JUCE_DIRECTSOUND ON
+  JUCE_ALSA ON
   # JUCE_JACK
   # JUCE_USE_ANDROID_OPENSLES
   # JUCE_USE_WINRT_MIDI
@@ -76,8 +76,8 @@ jucer_project_module(
 jucer_project_module(
   juce_audio_formats
   PATH "../../modules"
-  # JUCE_USE_FLAC
-  # JUCE_USE_OGGVORBIS
+  JUCE_USE_FLAC OFF
+  JUCE_USE_OGGVORBIS OFF
   # JUCE_USE_MP3AUDIOFORMAT
   # JUCE_USE_LAME_AUDIO_FORMAT
   # JUCE_USE_WINDOWS_MEDIA_FORMAT
@@ -86,16 +86,16 @@ jucer_project_module(
 jucer_project_module(
   juce_audio_processors
   PATH "../../modules"
-  # JUCE_PLUGINHOST_VST
-  # JUCE_PLUGINHOST_VST3
-  # JUCE_PLUGINHOST_AU
+  JUCE_PLUGINHOST_VST ON
+  JUCE_PLUGINHOST_VST3 ON
+  JUCE_PLUGINHOST_AU ON
 )
 
 jucer_project_module(
   juce_audio_utils
   PATH "../../modules"
-  # JUCE_USE_CDREADER
-  # JUCE_USE_CDBURNER
+  JUCE_USE_CDREADER OFF
+  JUCE_USE_CDBURNER OFF
 )
 
 jucer_project_module(
@@ -148,7 +148,7 @@ jucer_project_module(
 jucer_project_module(
   juce_gui_extra
   PATH "../../modules"
-  # JUCE_WEB_BROWSER
+  JUCE_WEB_BROWSER OFF
   # JUCE_ENABLE_LIVE_CONSTANT_EDITOR
 )
 
@@ -160,7 +160,7 @@ jucer_project_module(
 jucer_project_module(
   juce_video
   PATH "../../modules"
-  # JUCE_USE_CAMERA
+  JUCE_USE_CAMERA OFF
 )
 
 jucer_export_target(

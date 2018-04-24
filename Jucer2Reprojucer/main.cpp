@@ -646,11 +646,11 @@ int main(int argc, char* argv[])
           const auto moduleOption = line.substring(12);
           const auto optionValue = modulesOptions.getProperty(moduleOption).toString();
 
-          if (optionValue == "enabled")
+          if (optionValue == "1" || optionValue == "enabled")
           {
             wLn("  ", moduleOption, " ON");
           }
-          else if (optionValue == "disabled")
+          else if (optionValue == "0" || optionValue == "disabled")
           {
             wLn("  ", moduleOption, " OFF");
           }
