@@ -27,7 +27,7 @@ jucer_project_begin(
 
 jucer_project_settings(
   PROJECT_NAME "BlocksDrawing"
-  # PROJECT_VERSION
+  PROJECT_VERSION "1.0.0"
   # COMPANY_COPYRIGHT
   REPORT_JUCE_APP_USAGE OFF # Required for closed source applications without an Indie or Pro JUCE license
   DISPLAY_THE_JUCE_SPLASH_SCREEN OFF # Required for closed source applications without an Indie or Pro JUCE license

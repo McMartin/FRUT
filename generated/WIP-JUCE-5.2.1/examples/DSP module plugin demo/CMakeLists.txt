@@ -27,7 +27,7 @@ jucer_project_begin(
 
 jucer_project_settings(
   PROJECT_NAME "DSPModulePluginDemo"
-  # PROJECT_VERSION
+  PROJECT_VERSION "1.0.0"
   COMPANY_NAME "ROLI Ltd."
   COMPANY_COPYRIGHT "ROLI Ltd."
   COMPANY_WEBSITE "www.juce.com"
