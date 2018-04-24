@@ -224,31 +224,34 @@ int main(int argc, char* argv[])
       }
     };
 
-  const auto convertOnOffSetting = [&wLn](const juce::ValueTree& valueTree,
-                                          const juce::Identifier& property,
-                                          const juce::String& cmakeKeyword,
-                                          std::function<juce::String(bool)> converterFn) {
-    if (!converterFn)
-    {
-      converterFn = [](bool value) -> juce::String { return value ? "ON" : "OFF"; };
-    }
+  const auto convertOnOffSetting =
+    [&wLn](const juce::ValueTree& valueTree, const juce::Identifier& property,
+           const juce::String& cmakeKeyword,
+           std::function<juce::String(const juce::var&)> converterFn) {
+      if (!converterFn)
+      {
+        converterFn = [](const juce::var& v) -> juce::String {
+          return v.isVoid() ? "" : bool{v} ? "ON" : "OFF";
+        };
+      }
 
-    const auto value = valueTree.getProperty(property);
+      const auto value = converterFn(valueTree.getProperty(property));
 
-    if (value.isVoid())
-    {
-      wLn("  # ", cmakeKeyword);
-    }
-    else
-    {
-      wLn("  ", cmakeKeyword, " ", converterFn(bool{value}));
-    }
-  };
+      if (value.isEmpty())
+      {
+        wLn("  # ", cmakeKeyword);
+      }
+      else
+      {
+        wLn("  ", cmakeKeyword, " ", value);
+      }
+    };
 
   const auto convertOnOffSettingIfDefined =
-    [&convertOnOffSetting](
-      const juce::ValueTree& valueTree, const juce::Identifier& property,
-      const juce::String& cmakeKeyword, std::function<juce::String(bool)> converterFn) {
+    [&convertOnOffSetting](const juce::ValueTree& valueTree,
+                           const juce::Identifier& property,
+                           const juce::String& cmakeKeyword,
+                           std::function<juce::String(const juce::var&)> converterFn) {
 
       if (valueTree.hasProperty(property))
       {
@@ -382,8 +385,8 @@ int main(int argc, char* argv[])
     convertSettingIfDefined(jucerProject, "companyWebsite", "COMPANY_WEBSITE", {});
     convertSettingIfDefined(jucerProject, "companyEmail", "COMPANY_EMAIL", {});
 
-    const auto booleanWithLicenseRequiredTagline = [](bool value) {
-      return juce::String{value ? "ON" : "OFF"}
+    const auto booleanWithLicenseRequiredTagline = [](const juce::var& v) {
+      return juce::String{bool{v} ? "ON" : "OFF"}
              + " # Required for closed source applications without an Indie or Pro JUCE "
                "license";
     };
