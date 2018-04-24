@@ -259,6 +259,17 @@ int main(int argc, char* argv[])
       }
     };
 
+  const auto convertOnOffSettingWithDefault =
+    [&convertOnOffSetting](const juce::ValueTree& valueTree,
+                           const juce::Identifier& property,
+                           const juce::String& cmakeKeyword, bool defaultValue) {
+      convertOnOffSetting(valueTree, property, cmakeKeyword,
+                          [defaultValue](const juce::var& v) -> juce::String {
+                            return v.isVoid() ? (defaultValue ? "ON" : "OFF")
+                                              : (bool{v} ? "ON" : "OFF");
+                          });
+    };
+
   const auto convertSettingAsList =
     [&wLn](const juce::ValueTree& valueTree, const juce::Identifier& property,
            const std::string& cmakeKeyword,
@@ -486,16 +497,17 @@ int main(int argc, char* argv[])
     if (projectType == "audioplug")
     {
       wLn("jucer_audio_plugin_settings(");
-      convertOnOffSetting(jucerProject, "buildVST", "BUILD_VST", {});
-      convertOnOffSetting(jucerProject, "buildVST3", "BUILD_VST3", {});
-      convertOnOffSetting(jucerProject, "buildAU", "BUILD_AUDIOUNIT", {});
-      convertOnOffSetting(jucerProject, "buildAUv3", "BUILD_AUDIOUNIT_V3", {});
-      convertOnOffSetting(jucerProject, "buildRTAS", "BUILD_RTAS", {});
-      convertOnOffSetting(jucerProject, "buildAAX", "BUILD_AAX", {});
+      convertOnOffSettingWithDefault(jucerProject, "buildVST", "BUILD_VST", true);
+      convertOnOffSettingWithDefault(jucerProject, "buildVST3", "BUILD_VST3", false);
+      convertOnOffSettingWithDefault(jucerProject, "buildAU", "BUILD_AUDIOUNIT", true);
+      convertOnOffSettingWithDefault(jucerProject, "buildAUv3", "BUILD_AUDIOUNIT_V3",
+                                     false);
+      convertOnOffSettingWithDefault(jucerProject, "buildRTAS", "BUILD_RTAS", false);
+      convertOnOffSettingWithDefault(jucerProject, "buildAAX", "BUILD_AAX", false);
       if (jucerVersionAsTuple >= Version{5, 0, 0})
       {
-        convertOnOffSetting(jucerProject, "buildStandalone", "BUILD_STANDALONE_PLUGIN",
-                            {});
+        convertOnOffSettingWithDefault(jucerProject, "buildStandalone",
+                                       "BUILD_STANDALONE_PLUGIN", false);
       }
       convertSetting(jucerProject, "pluginName", "PLUGIN_NAME", {});
       convertSetting(jucerProject, "pluginDesc", "PLUGIN_DESCRIPTION", {});
@@ -505,13 +517,16 @@ int main(int argc, char* argv[])
       convertSetting(jucerProject, "pluginCode", "PLUGIN_CODE", {});
       convertSetting(jucerProject, "pluginChannelConfigs",
                      "PLUGIN_CHANNEL_CONFIGURATIONS", {});
-      convertOnOffSetting(jucerProject, "pluginIsSynth", "PLUGIN_IS_A_SYNTH", {});
-      convertOnOffSetting(jucerProject, "pluginWantsMidiIn", "PLUGIN_MIDI_INPUT", {});
-      convertOnOffSetting(jucerProject, "pluginProducesMidiOut", "PLUGIN_MIDI_OUTPUT",
-                          {});
-      convertOnOffSetting(jucerProject, "pluginIsMidiEffectPlugin", "MIDI_EFFECT_PLUGIN",
-                          {});
-      convertOnOffSetting(jucerProject, "pluginEditorRequiresKeys", "KEY_FOCUS", {});
+      convertOnOffSettingWithDefault(jucerProject, "pluginIsSynth", "PLUGIN_IS_A_SYNTH",
+                                     false);
+      convertOnOffSettingWithDefault(jucerProject, "pluginWantsMidiIn",
+                                     "PLUGIN_MIDI_INPUT", false);
+      convertOnOffSettingWithDefault(jucerProject, "pluginProducesMidiOut",
+                                     "PLUGIN_MIDI_OUTPUT", false);
+      convertOnOffSettingWithDefault(jucerProject, "pluginIsMidiEffectPlugin",
+                                     "MIDI_EFFECT_PLUGIN", false);
+      convertOnOffSettingWithDefault(jucerProject, "pluginEditorRequiresKeys",
+                                     "KEY_FOCUS", false);
       convertSetting(jucerProject, "pluginAUExportPrefix", "PLUGIN_AU_EXPORT_PREFIX", {});
       convertSetting(jucerProject, "pluginAUMainType", "PLUGIN_AU_MAIN_TYPE", {});
       convertSetting(jucerProject, "pluginVSTCategory", "VST_CATEGORY", {});
