@@ -198,7 +198,7 @@ int main(int argc, char* argv[])
 
       if (!converterFn)
       {
-        converterFn = [](const juce::var& value) { return value.toString(); };
+        converterFn = [](const juce::var& v) { return v.toString(); };
       }
 
       const auto value = converterFn(valueTree.getProperty(property));
@@ -224,36 +224,50 @@ int main(int argc, char* argv[])
       }
     };
 
-  const auto convertOnOffSetting = [&wLn](const juce::ValueTree& valueTree,
-                                          const juce::Identifier& property,
-                                          const juce::String& cmakeKeyword,
-                                          std::function<juce::String(bool)> converterFn) {
-    if (!converterFn)
-    {
-      converterFn = [](bool value) -> juce::String { return value ? "ON" : "OFF"; };
-    }
+  const auto convertOnOffSetting =
+    [&wLn](const juce::ValueTree& valueTree, const juce::Identifier& property,
+           const juce::String& cmakeKeyword,
+           std::function<juce::String(const juce::var&)> converterFn) {
+      if (!converterFn)
+      {
+        converterFn = [](const juce::var& v) -> juce::String {
+          return v.isVoid() ? "" : bool{v} ? "ON" : "OFF";
+        };
+      }
 
-    const auto value = valueTree.getProperty(property);
+      const auto value = converterFn(valueTree.getProperty(property));
 
-    if (value.isVoid())
-    {
-      wLn("  # ", cmakeKeyword);
-    }
-    else
-    {
-      wLn("  ", cmakeKeyword, " ", converterFn(bool{value}));
-    }
-  };
+      if (value.isEmpty())
+      {
+        wLn("  # ", cmakeKeyword);
+      }
+      else
+      {
+        wLn("  ", cmakeKeyword, " ", value);
+      }
+    };
 
   const auto convertOnOffSettingIfDefined =
-    [&convertOnOffSetting](
-      const juce::ValueTree& valueTree, const juce::Identifier& property,
-      const juce::String& cmakeKeyword, std::function<juce::String(bool)> converterFn) {
+    [&convertOnOffSetting](const juce::ValueTree& valueTree,
+                           const juce::Identifier& property,
+                           const juce::String& cmakeKeyword,
+                           std::function<juce::String(const juce::var&)> converterFn) {
 
       if (valueTree.hasProperty(property))
       {
         convertOnOffSetting(valueTree, property, cmakeKeyword, std::move(converterFn));
       }
+    };
+
+  const auto convertOnOffSettingWithDefault =
+    [&convertOnOffSetting](const juce::ValueTree& valueTree,
+                           const juce::Identifier& property,
+                           const juce::String& cmakeKeyword, bool defaultValue) {
+      convertOnOffSetting(valueTree, property, cmakeKeyword,
+                          [defaultValue](const juce::var& v) -> juce::String {
+                            return v.isVoid() ? (defaultValue ? "ON" : "OFF")
+                                              : (bool{v} ? "ON" : "OFF");
+                          });
     };
 
   const auto convertSettingAsList =
@@ -263,8 +277,8 @@ int main(int argc, char* argv[])
 
       if (!converterFn)
       {
-        converterFn = [](const juce::var& value) {
-          return juce::StringArray::fromLines(value.toString());
+        converterFn = [](const juce::var& v) {
+          return juce::StringArray::fromLines(v.toString());
         };
       }
 
@@ -299,6 +313,7 @@ int main(int argc, char* argv[])
     };
 
   const auto jucerFileName = jucerFile.getFileName();
+  const auto jucerProjectName = jucerProject.getProperty("name").toString();
 
   // Preamble
   {
@@ -306,7 +321,7 @@ int main(int argc, char* argv[])
     wLn();
     wLn("cmake_minimum_required(VERSION 3.4)");
     wLn();
-    wLn("project(\"", jucerProject.getProperty("name").toString(), "\")");
+    wLn("project(\"", jucerProjectName, "\")");
     wLn();
     wLn();
   }
@@ -372,15 +387,17 @@ int main(int argc, char* argv[])
   {
     wLn("jucer_project_settings(");
     convertSetting(jucerProject, "name", "PROJECT_NAME", {});
-    convertSetting(jucerProject, "version", "PROJECT_VERSION", {});
+    convertSetting(jucerProject, "version", "PROJECT_VERSION", [](const juce::var& v) {
+      return v.isVoid() ? "1.0.0" : v.toString();
+    });
 
     convertSettingIfDefined(jucerProject, "companyName", "COMPANY_NAME", {});
     convertSettingIfDefined(jucerProject, "companyCopyright", "COMPANY_COPYRIGHT", {});
     convertSettingIfDefined(jucerProject, "companyWebsite", "COMPANY_WEBSITE", {});
     convertSettingIfDefined(jucerProject, "companyEmail", "COMPANY_EMAIL", {});
 
-    const auto booleanWithLicenseRequiredTagline = [](bool value) {
-      return juce::String{value ? "ON" : "OFF"}
+    const auto booleanWithLicenseRequiredTagline = [](const juce::var& v) {
+      return juce::String{bool{v} ? "ON" : "OFF"}
              + " # Required for closed source applications without an Indie or Pro JUCE "
                "license";
     };
@@ -412,13 +429,17 @@ int main(int argc, char* argv[])
     }();
     wLn("  PROJECT_TYPE \"", projectTypeDescription, "\"");
 
-    convertSettingIfDefined(jucerProject, "bundleIdentifier", "BUNDLE_IDENTIFIER", {});
+    convertSetting(jucerProject, "bundleIdentifier", "BUNDLE_IDENTIFIER",
+                   [&jucerProjectName](const juce::var& v) {
+                     return v.isVoid() ? "com.yourcompany." + jucerProjectName
+                                       : v.toString();
+                   });
 
     convertSettingIfDefined(jucerProject, "maxBinaryFileSize", "BINARYDATACPP_SIZE_LIMIT",
-                            [](const juce::var& value) -> juce::String {
-                              if (value.toString().isEmpty())
+                            [](const juce::var& v) -> juce::String {
+                              if (v.toString().isEmpty())
                                 return "Default";
-                              return juce::File::descriptionOfSizeInBytes(int{value});
+                              return juce::File::descriptionOfSizeInBytes(int{v});
                             });
     if (jucerProject.hasProperty("includeBinaryInJuceHeader"))
     {
@@ -433,21 +454,32 @@ int main(int argc, char* argv[])
     convertSettingIfDefined(jucerProject, "binaryDataNamespace", "BINARYDATA_NAMESPACE",
                             {});
 
-    convertSettingIfDefined(jucerProject, "cppLanguageStandard", "CXX_LANGUAGE_STANDARD",
-                            [](const juce::var& v) -> juce::String {
-                              const auto value = v.toString();
+    if (jucerProject.hasProperty("cppLanguageStandard"))
+    {
+      convertSetting(jucerProject, "cppLanguageStandard", "CXX_LANGUAGE_STANDARD",
+                     [](const juce::var& v) -> juce::String {
+                       const auto value = v.toString();
 
-                              if (value == "11")
-                                return "C++11";
+                       if (value == "11")
+                         return "C++11";
 
-                              if (value == "14")
-                                return "C++14";
+                       if (value == "14")
+                         return "C++14";
 
-                              if (value == "latest")
-                                return "Use Latest";
+                       if (value == "latest")
+                         return "Use Latest";
 
-                              return {};
-                            });
+                       return {};
+                     });
+    }
+    else if (jucerVersionAsTuple > Version{5, 2, 0})
+    {
+      wLn("  ", "CXX_LANGUAGE_STANDARD", " \"C++14\"");
+    }
+    else if (jucerVersionAsTuple > Version{5, 0, 2})
+    {
+      wLn("  ", "CXX_LANGUAGE_STANDARD", " \"C++11\"");
+    }
 
     convertSettingAsListIfDefined(jucerProject, "defines", "PREPROCESSOR_DEFINITIONS",
                                   {});
@@ -465,16 +497,17 @@ int main(int argc, char* argv[])
     if (projectType == "audioplug")
     {
       wLn("jucer_audio_plugin_settings(");
-      convertOnOffSetting(jucerProject, "buildVST", "BUILD_VST", {});
-      convertOnOffSetting(jucerProject, "buildVST3", "BUILD_VST3", {});
-      convertOnOffSetting(jucerProject, "buildAU", "BUILD_AUDIOUNIT", {});
-      convertOnOffSetting(jucerProject, "buildAUv3", "BUILD_AUDIOUNIT_V3", {});
-      convertOnOffSetting(jucerProject, "buildRTAS", "BUILD_RTAS", {});
-      convertOnOffSetting(jucerProject, "buildAAX", "BUILD_AAX", {});
+      convertOnOffSettingWithDefault(jucerProject, "buildVST", "BUILD_VST", true);
+      convertOnOffSettingWithDefault(jucerProject, "buildVST3", "BUILD_VST3", false);
+      convertOnOffSettingWithDefault(jucerProject, "buildAU", "BUILD_AUDIOUNIT", true);
+      convertOnOffSettingWithDefault(jucerProject, "buildAUv3", "BUILD_AUDIOUNIT_V3",
+                                     false);
+      convertOnOffSettingWithDefault(jucerProject, "buildRTAS", "BUILD_RTAS", false);
+      convertOnOffSettingWithDefault(jucerProject, "buildAAX", "BUILD_AAX", false);
       if (jucerVersionAsTuple >= Version{5, 0, 0})
       {
-        convertOnOffSetting(jucerProject, "buildStandalone", "BUILD_STANDALONE_PLUGIN",
-                            {});
+        convertOnOffSettingWithDefault(jucerProject, "buildStandalone",
+                                       "BUILD_STANDALONE_PLUGIN", false);
       }
       convertSetting(jucerProject, "pluginName", "PLUGIN_NAME", {});
       convertSetting(jucerProject, "pluginDesc", "PLUGIN_DESCRIPTION", {});
@@ -484,13 +517,16 @@ int main(int argc, char* argv[])
       convertSetting(jucerProject, "pluginCode", "PLUGIN_CODE", {});
       convertSetting(jucerProject, "pluginChannelConfigs",
                      "PLUGIN_CHANNEL_CONFIGURATIONS", {});
-      convertOnOffSetting(jucerProject, "pluginIsSynth", "PLUGIN_IS_A_SYNTH", {});
-      convertOnOffSetting(jucerProject, "pluginWantsMidiIn", "PLUGIN_MIDI_INPUT", {});
-      convertOnOffSetting(jucerProject, "pluginProducesMidiOut", "PLUGIN_MIDI_OUTPUT",
-                          {});
-      convertOnOffSetting(jucerProject, "pluginIsMidiEffectPlugin", "MIDI_EFFECT_PLUGIN",
-                          {});
-      convertOnOffSetting(jucerProject, "pluginEditorRequiresKeys", "KEY_FOCUS", {});
+      convertOnOffSettingWithDefault(jucerProject, "pluginIsSynth", "PLUGIN_IS_A_SYNTH",
+                                     false);
+      convertOnOffSettingWithDefault(jucerProject, "pluginWantsMidiIn",
+                                     "PLUGIN_MIDI_INPUT", false);
+      convertOnOffSettingWithDefault(jucerProject, "pluginProducesMidiOut",
+                                     "PLUGIN_MIDI_OUTPUT", false);
+      convertOnOffSettingWithDefault(jucerProject, "pluginIsMidiEffectPlugin",
+                                     "MIDI_EFFECT_PLUGIN", false);
+      convertOnOffSettingWithDefault(jucerProject, "pluginEditorRequiresKeys",
+                                     "KEY_FOCUS", false);
       convertSetting(jucerProject, "pluginAUExportPrefix", "PLUGIN_AU_EXPORT_PREFIX", {});
       convertSetting(jucerProject, "pluginAUMainType", "PLUGIN_AU_MAIN_TYPE", {});
       convertSetting(jucerProject, "pluginVSTCategory", "VST_CATEGORY", {});
@@ -610,11 +646,11 @@ int main(int argc, char* argv[])
           const auto moduleOption = line.substring(12);
           const auto optionValue = modulesOptions.getProperty(moduleOption).toString();
 
-          if (optionValue == "enabled")
+          if (optionValue == "1" || optionValue == "enabled")
           {
             wLn("  ", moduleOption, " ON");
           }
-          else if (optionValue == "disabled")
+          else if (optionValue == "0" || optionValue == "disabled")
           {
             wLn("  ", moduleOption, " OFF");
           }
@@ -798,8 +834,8 @@ int main(int argc, char* argv[])
       convertOnOffSettingIfDefined(exporter, "enableGNUExtensions",
                                    "GNU_COMPILER_EXTENSIONS", {});
 
-      const auto convertIcon = [&jucerProject](const juce::var& value) -> juce::String {
-        const auto fileId = value.toString();
+      const auto convertIcon = [&jucerProject](const juce::var& v) -> juce::String {
+        const auto fileId = v.toString();
 
         if (!fileId.isEmpty())
         {
@@ -959,8 +995,8 @@ int main(int argc, char* argv[])
 
         const auto convertSearchPaths =
           [&isAbsolutePath, &jucerFileDir,
-           &targetProjectDir](const juce::var& value) -> juce::StringArray {
-          const auto searchPaths = value.toString();
+           &targetProjectDir](const juce::var& v) -> juce::StringArray {
+          const auto searchPaths = v.toString();
 
           if (searchPaths.isEmpty())
           {
@@ -1000,13 +1036,13 @@ int main(int argc, char* argv[])
                                       "PREPROCESSOR_DEFINITIONS", {});
 
         convertSettingIfDefined(configuration, "optimisation", "OPTIMISATION",
-                                [&isVSExporter](const juce::var& value) -> juce::String {
-                                  if (value.isVoid())
+                                [&isVSExporter](const juce::var& v) -> juce::String {
+                                  if (v.isVoid())
                                     return {};
 
                                   if (isVSExporter)
                                   {
-                                    switch (int{value})
+                                    switch (int{v})
                                     {
                                     case 1:
                                       return "No optimisation";
@@ -1019,7 +1055,7 @@ int main(int argc, char* argv[])
                                     return {};
                                   }
 
-                                  switch (int{value})
+                                  switch (int{v})
                                   {
                                   case 1:
                                     return "-O0 (no optimisation)";
@@ -1201,8 +1237,8 @@ int main(int argc, char* argv[])
                                   "AAX_BINARY_LOCATION", {});
 
           convertSettingIfDefined(configuration, "winWarningLevel", "WARNING_LEVEL",
-                                  [](const juce::var& value) -> juce::String {
-                                    switch (int{value})
+                                  [](const juce::var& v) -> juce::String {
+                                    switch (int{v})
                                     {
                                     case 2:
                                       return "Low";
@@ -1236,11 +1272,11 @@ int main(int argc, char* argv[])
 
           convertSettingIfDefined(configuration, "wholeProgramOptimisation",
                                   "WHOLE_PROGRAM_OPTIMISATION",
-                                  [](const juce::var& value) -> juce::String {
-                                    if (value.toString().isEmpty())
+                                  [](const juce::var& v) -> juce::String {
+                                    if (v.toString().isEmpty())
                                       return "Enable when possible";
 
-                                    if (int{value} > 0)
+                                    if (int{v} > 0)
                                       return "Always disable";
 
                                     return {};
