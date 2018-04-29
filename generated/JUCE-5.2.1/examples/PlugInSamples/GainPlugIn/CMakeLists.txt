@@ -45,6 +45,7 @@ jucer_audio_plugin_settings(
   BUILD_RTAS OFF # Default
   BUILD_AAX OFF # Default
   BUILD_STANDALONE_PLUGIN OFF # Default
+  ENABLE_INTERAPP_AUDIO OFF # Default
   PLUGIN_NAME "GainPlugIn"
   PLUGIN_DESCRIPTION "GainPlugIn"
   PLUGIN_MANUFACTURER "ROLI Ltd."

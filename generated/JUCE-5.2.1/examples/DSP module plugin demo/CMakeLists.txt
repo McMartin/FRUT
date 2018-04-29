@@ -47,6 +47,7 @@ jucer_audio_plugin_settings(
   BUILD_RTAS OFF # Default
   BUILD_AAX OFF # Default
   BUILD_STANDALONE_PLUGIN ON
+  ENABLE_INTERAPP_AUDIO OFF # Default
   PLUGIN_NAME "DSP module plugin demo"
   PLUGIN_DESCRIPTION "DSP module plugin demo"
   PLUGIN_MANUFACTURER "ROLI Ltd."

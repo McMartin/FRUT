@@ -45,6 +45,7 @@ jucer_audio_plugin_settings(
   BUILD_RTAS OFF # Default
   BUILD_AAX ON
   BUILD_STANDALONE_PLUGIN OFF # Default
+  ENABLE_INTERAPP_AUDIO OFF # Default
   PLUGIN_NAME "Noise Gate"
   PLUGIN_DESCRIPTION "Noise Gate"
   PLUGIN_MANUFACTURER "ROLI Ltd."

@@ -172,6 +172,7 @@ function(jucer_audio_plugin_settings)
     "BUILD_RTAS"
     "BUILD_AAX"
     "BUILD_STANDALONE_PLUGIN"
+    "ENABLE_INTERAPP_AUDIO"
     "PLUGIN_NAME"
     "PLUGIN_DESCRIPTION"
     "PLUGIN_MANUFACTURER"
@@ -212,6 +213,11 @@ function(jucer_audio_plugin_settings)
   if(DEFINED _BUILD_STANDALONE_PLUGIN
       AND DEFINED JUCER_VERSION AND JUCER_VERSION VERSION_LESS 5.0.0)
     message(WARNING "BUILD_STANDALONE_PLUGIN is a JUCE 5 feature only")
+  endif()
+
+  if(DEFINED _ENABLE_INTERAPP_AUDIO
+      AND DEFINED JUCER_VERSION AND JUCER_VERSION VERSION_LESS 5.0.0)
+    message(WARNING "ENABLE_INTERAPP_AUDIO is a JUCE 5 feature only")
   endif()
 
   foreach(keyword ${single_value_keywords})
