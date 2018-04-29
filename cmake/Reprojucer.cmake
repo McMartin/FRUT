@@ -209,7 +209,7 @@ function(jucer_audio_plugin_settings)
     )
   endif()
 
-  if(DEFINED BUILD_STANDALONE_PLUGIN
+  if(DEFINED _BUILD_STANDALONE_PLUGIN
       AND DEFINED JUCER_VERSION AND JUCER_VERSION VERSION_LESS 5)
     message(WARNING "BUILD_STANDALONE_PLUGIN is a JUCE 5 feature only")
   endif()
