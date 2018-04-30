@@ -265,7 +265,8 @@ int main(int argc, char* argv[])
                            const juce::String& cmakeKeyword, bool defaultValue) {
       convertOnOffSetting(valueTree, property, cmakeKeyword,
                           [defaultValue](const juce::var& v) -> juce::String {
-                            return v.isVoid() ? (defaultValue ? "ON" : "OFF")
+                            return v.isVoid() ? juce::String{defaultValue ? "ON" : "OFF"}
+                                                  + " # Default"
                                               : (bool{v} ? "ON" : "OFF");
                           });
     };
@@ -508,6 +509,8 @@ int main(int argc, char* argv[])
       {
         convertOnOffSettingWithDefault(jucerProject, "buildStandalone",
                                        "BUILD_STANDALONE_PLUGIN", false);
+        convertOnOffSettingWithDefault(jucerProject, "enableIAA", "ENABLE_INTERAPP_AUDIO",
+                                       false);
       }
       convertSetting(jucerProject, "pluginName", "PLUGIN_NAME", {});
       convertSetting(jucerProject, "pluginDesc", "PLUGIN_DESCRIPTION", {});
