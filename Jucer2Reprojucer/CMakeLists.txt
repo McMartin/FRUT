@@ -207,6 +207,7 @@ jucer_export_target(
     "-Werror"
     "-Wall"
     "-Wextra"
+    "-Wno-implicit-fallthrough"
 )
 
 jucer_export_target_configuration(
