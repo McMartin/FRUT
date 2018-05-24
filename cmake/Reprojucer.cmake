@@ -1866,6 +1866,10 @@ function(_FRUT_abs_path_based_on_jucer_project_dir in_path out_path)
       "    jucer_project_begin(\n"
       "      PROJECT_FILE \"<path/to/YourProject.jucer>\"\n"
       "    )\n"
+      "If you don't have a .jucer file for your project, you can instead define "
+      "JUCER_PROJECT_DIR manually:\n"
+      "    jucer_project_begin()\n"
+      "    set(JUCER_PROJECT_DIR \"\${CMAKE_CURRENT_[LIST|SOURCE]_DIR}\")\n"
     )
   endif()
 
