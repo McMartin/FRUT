@@ -1862,7 +1862,10 @@ function(_FRUT_abs_path_based_on_jucer_project_dir in_path out_path)
 
   if(NOT IS_ABSOLUTE "${in_path}" AND NOT DEFINED JUCER_PROJECT_DIR)
     message(FATAL_ERROR "The path \"${in_path}\" must be absolute, unless you give "
-      "PROJECT_FILE when calling jucer_project_begin()."
+      "PROJECT_FILE when calling jucer_project_begin():\n"
+      "    jucer_project_begin(\n"
+      "      PROJECT_FILE \"<path/to/YourProject.jucer>\"\n"
+      "    )\n"
     )
   endif()
 
