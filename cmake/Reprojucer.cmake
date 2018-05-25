@@ -53,6 +53,8 @@ function(jucer_project_begin)
     endif()
     get_filename_component(project_dir "${_PROJECT_FILE}" DIRECTORY)
     set(JUCER_PROJECT_DIR "${project_dir}" PARENT_SCOPE)
+  else()
+    set(JUCER_PROJECT_DIR "${CMAKE_CURRENT_SOURCE_DIR}" PARENT_SCOPE)
   endif()
 
   if(DEFINED _PROJECT_ID)
@@ -2113,6 +2115,8 @@ function(_FRUT_abs_path_based_on_jucer_project_dir out_path in_path)
       "  jucer_project_begin(\n"
       "    PROJECT_FILE \"<path/to/YourProject.jucer>\"\n"
       "  )\n"
+      "or if you don't have a .jucer file:\n"
+      "  jucer_project_begin()\n"
     )
   endif()
 

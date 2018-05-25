@@ -71,7 +71,7 @@ jucer_project_settings(
 )
 
 jucer_project_files("Jucer2Reprojucer"
-  x . . "${CMAKE_CURRENT_LIST_DIR}/main.cpp"
+  x . . "main.cpp"
 )
 
 jucer_project_module(
