@@ -2360,7 +2360,7 @@ function(_FRUT_set_common_target_properties target)
       target_include_directories(${target} PRIVATE "${JUCER_VST_SDK_FOLDER}")
     elseif(DEFINED JUCER_VERSION AND JUCER_VERSION VERSION_LESS 4.2.4)
       message(WARNING "JUCER_VST_SDK_FOLDER is not defined. You should give "
-        "VST_SDK_FOLDER when calling jucer_export_target()."
+        "VST_SDK_FOLDER when calling jucer_export_target(\"${current_exporter}\")."
       )
     endif()
   endif()
@@ -2379,7 +2379,7 @@ function(_FRUT_set_common_target_properties target)
       target_include_directories(${target} PRIVATE "${JUCER_VST3_SDK_FOLDER}")
     elseif(APPLE OR MSVC)
       message(WARNING "JUCER_VST3_SDK_FOLDER is not defined. You should give "
-        "VST3_SDK_FOLDER when calling jucer_export_target()."
+        "VST3_SDK_FOLDER when calling jucer_export_target(\"${current_exporter}\")."
       )
     endif()
   endif()
@@ -2715,7 +2715,8 @@ function(_FRUT_set_common_target_properties target)
     if(all_confs_prebuild_command)
       if(NOT DEFINED JUCER_TARGET_PROJECT_FOLDER)
         message(FATAL_ERROR "JUCER_TARGET_PROJECT_FOLDER must be defined. Give "
-          "TARGET_PROJECT_FOLDER when calling jucer_export_target()."
+          "TARGET_PROJECT_FOLDER when calling "
+          "jucer_export_target(\"${current_exporter}\")."
         )
       endif()
       if(NOT IS_DIRECTORY "${JUCER_TARGET_PROJECT_FOLDER}")
@@ -2739,7 +2740,8 @@ function(_FRUT_set_common_target_properties target)
     if(all_confs_postbuild_command)
       if(NOT DEFINED JUCER_TARGET_PROJECT_FOLDER)
         message(FATAL_ERROR "JUCER_TARGET_PROJECT_FOLDER must be defined. Give "
-          "TARGET_PROJECT_FOLDER when calling jucer_export_target()."
+          "TARGET_PROJECT_FOLDER when calling "
+          "jucer_export_target(\"${current_exporter}\")."
         )
       endif()
       if(NOT IS_DIRECTORY "${JUCER_TARGET_PROJECT_FOLDER}")
