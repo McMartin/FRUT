@@ -1798,6 +1798,52 @@ function(jucer_project_end)
         _FRUT_set_custom_xcode_flags(${standalone_target})
         unset(standalone_target)
       endif()
+
+      if(JUCER_BUILD_AAX AND (APPLE OR MSVC))
+        set(aax_target ${target}_AAX)
+        add_library(${aax_target} MODULE
+          ${AAX_sources}
+          ${JUCER_PROJECT_XCODE_RESOURCES}
+          ${icon_file}
+          ${resources_rc_file}
+        )
+        target_link_libraries(${aax_target} PRIVATE ${shared_code_target})
+        _FRUT_generate_plist_file(${aax_target} "AAX" "TDMw" "PTul"
+          "${main_plist_entries}" ""
+        )
+        _FRUT_set_bundle_properties(${aax_target} "aaxplugin")
+        _FRUT_set_output_directory_properties(${aax_target} "AAX")
+        _FRUT_set_common_target_properties(${aax_target})
+        if(APPLE)
+          foreach(config ${JUCER_PROJECT_CONFIGURATIONS})
+            if(${JUCER_CONFIGURATION_IS_DEBUG_${config}})
+              set(aax_config "Debug")
+            else()
+              set(aax_config "Release")
+            endif()
+            if(JUCER_CXX_LIBRARY_${config} STREQUAL "libc++"
+                OR JUCER_OSX_DEPLOYMENT_TARGET_${config} VERSION_GREATER 10.8)
+              set(aax_libcpp "_libcpp")
+            else()
+              set(aax_libcpp "")
+            endif()
+            set(aax_lib
+              "${JUCER_AAX_SDK_FOLDER}/Libs/${aax_config}/libAAXLibrary${aax_libcpp}.a"
+            )
+            target_link_libraries(${aax_target} PRIVATE $<$<CONFIG:${config}>:${aax_lib}>)
+          endforeach()
+        elseif(MSVC)
+          set_property(TARGET ${aax_target} PROPERTY SUFFIX ".aaxdll")
+          target_compile_definitions(${aax_target} PRIVATE
+            "JucePlugin_AAXLibs_path=\"${JUCER_AAX_SDK_FOLDER}/Libs\""
+          )
+        endif()
+        _FRUT_set_JucePlugin_Build_defines(${aax_target} "AAXPlugIn")
+        _FRUT_link_osx_frameworks(${aax_target})
+        _FRUT_add_xcode_resources(${aax_target})
+        _FRUT_set_custom_xcode_flags(${aax_target})
+        unset(aax_target)
+      endif()
     endif()
 
   else()
@@ -1982,7 +2028,7 @@ function(_FRUT_generate_AppConfig_header)
     _FRUT_bool_to_int("${JUCER_BUILD_AUDIOUNIT}" Build_AU_value)
     _FRUT_bool_to_int("${JUCER_BUILD_AUDIOUNIT_V3}" Build_AUv3_value)
     _FRUT_bool_to_int("OFF" Build_RTAS_value) # Not yet supported
-    _FRUT_bool_to_int("OFF" Build_AAX_value) # Not yet supported
+    _FRUT_bool_to_int("${JUCER_BUILD_AAX}" Build_AAX_value)
     if(DEFINED JUCER_VERSION AND JUCER_VERSION VERSION_LESS 5.0.0)
       _FRUT_bool_to_int("${JUCER_BUILD_AUDIOUNIT_V3}" Build_STANDALONE_value)
     else()
@@ -2380,6 +2426,29 @@ function(_FRUT_set_common_target_properties target)
     elseif(APPLE OR MSVC)
       message(WARNING "JUCER_VST3_SDK_FOLDER is not defined. You should give "
         "VST3_SDK_FOLDER when calling jucer_export_target(\"${current_exporter}\")."
+      )
+    endif()
+  endif()
+
+  if(JUCER_BUILD_AAX)
+    if(DEFINED JUCER_AAX_SDK_FOLDER)
+      if(NOT IS_DIRECTORY "${JUCER_AAX_SDK_FOLDER}")
+        message(WARNING
+          "JUCER_AAX_SDK_FOLDER: no such directory \"${JUCER_AAX_SDK_FOLDER}\""
+        )
+      elseif(NOT EXISTS "${JUCER_AAX_SDK_FOLDER}/Interfaces/AAX_Exports.cpp")
+        message(WARNING "JUCER_AAX_SDK_FOLDER: \"${JUCER_AAX_SDK_FOLDER}\" doesn't "
+          "seem to contain the AAX SDK"
+        )
+      endif()
+      target_include_directories(${target} PRIVATE
+        "${JUCER_AAX_SDK_FOLDER}"
+        "${JUCER_AAX_SDK_FOLDER}/Interfaces"
+        "${JUCER_AAX_SDK_FOLDER}/Interfaces/ACF"
+      )
+    elseif(APPLE OR MSVC)
+      message(WARNING "JUCER_AAX_SDK_FOLDER is not defined. You should give "
+        "AAX_SDK_FOLDER when calling jucer_export_target(\"${current_exporter}\")."
       )
     endif()
   endif()
