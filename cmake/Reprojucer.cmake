@@ -1832,6 +1832,10 @@ function(jucer_project_end)
             )
             target_link_libraries(${aax_target} PRIVATE $<$<CONFIG:${config}>:${aax_lib}>)
           endforeach()
+
+          _FRUT_install_to_plugin_binary_location(${aax_target} "AAX"
+            "/Library/Application Support/Avid/Audio/Plug-Ins"
+          )
         elseif(MSVC)
           set_property(TARGET ${aax_target} PROPERTY SUFFIX ".aaxdll")
           target_compile_definitions(${aax_target} PRIVATE
@@ -1874,6 +1878,34 @@ function(jucer_project_end)
             "${all_confs_bundle}/Contents/${arch_dir}"
             "${plugin_icon}"
           )
+
+          if(CMAKE_GENERATOR_PLATFORM STREQUAL "x64" OR CMAKE_GENERATOR MATCHES "Win64")
+            set(common_files_env_var "CommonProgramW6432")
+          else()
+            set(common_files_env_var "CommonProgramFiles(x86)")
+          endif()
+          set(all_confs_destination "")
+          foreach(config ${JUCER_PROJECT_CONFIGURATIONS})
+            if(DEFINED JUCER_AAX_BINARY_LOCATION_${config})
+              set(destination ${JUCER_AAX_BINARY_LOCATION_${config}})
+            else()
+              set(destination "$ENV{${common_files_env_var}}/Avid/Audio/Plug-Ins")
+            endif()
+            if(JUCER_ENABLE_PLUGIN_COPY_STEP_${config})
+              string(APPEND all_confs_destination
+                $<$<CONFIG:${config}>:$<SHELL_PATH:${destination}>>
+              )
+            endif()
+          endforeach()
+          if(NOT all_confs_destination STREQUAL "")
+            add_custom_command(TARGET ${aax_target} POST_BUILD
+              COMMAND
+              "xcopy"
+              "$<SHELL_PATH:${all_confs_bundle}>"
+              "${all_confs_destination}\\${all_confs_output_name}.aaxplugin\\"
+              "/E" "/H" "/K" "/R" "/Y"
+            )
+          endif()
         endif()
         _FRUT_set_JucePlugin_Build_defines(${aax_target} "AAXPlugIn")
         _FRUT_link_osx_frameworks(${aax_target})
