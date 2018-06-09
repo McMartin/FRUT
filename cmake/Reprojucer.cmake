@@ -1837,6 +1837,43 @@ function(jucer_project_end)
           target_compile_definitions(${aax_target} PRIVATE
             "JucePlugin_AAXLibs_path=\"${JUCER_AAX_SDK_FOLDER}/Libs\""
           )
+
+          set(all_confs_output_name "")
+          foreach(config ${JUCER_PROJECT_CONFIGURATIONS})
+            string(TOUPPER "${config}" upper_config)
+            get_target_property(output_name ${aax_target} OUTPUT_NAME_${upper_config})
+            string(APPEND all_confs_output_name $<$<CONFIG:${config}>:${output_name}>)
+          endforeach()
+          set(all_confs_bundle
+            "$<TARGET_FILE_DIR:${aax_target}>/${all_confs_output_name}.aaxplugin"
+          )
+          if(CMAKE_GENERATOR_PLATFORM STREQUAL "x64" OR CMAKE_GENERATOR MATCHES "Win64")
+            set(arch_dir "x64")
+          else()
+            set(arch_dir "Win32")
+          endif()
+          add_custom_command(TARGET ${aax_target} PRE_BUILD
+            COMMAND
+            "${CMAKE_COMMAND}" "-E" "make_directory"
+            "${all_confs_bundle}/Contents/${arch_dir}"
+          )
+          add_custom_command(TARGET ${aax_target} POST_BUILD
+            COMMAND
+            "${CMAKE_COMMAND}" "-E" "copy_if_different"
+            "$<TARGET_FILE:${aax_target}>"
+            "${all_confs_bundle}/Contents/${arch_dir}/${all_confs_output_name}.aaxplugin"
+          )
+          if(DEFINED icon_file)
+            set(plugin_icon "${icon_file}")
+          else()
+            set(plugin_icon "${JUCER_AAX_SDK_FOLDER}/Utilities/PlugIn.ico")
+          endif()
+          add_custom_command(TARGET ${aax_target} POST_BUILD
+            COMMAND
+            "${JUCER_AAX_SDK_FOLDER}/Utilities/CreatePackage.bat"
+            "${all_confs_bundle}/Contents/${arch_dir}"
+            "${plugin_icon}"
+          )
         endif()
         _FRUT_set_JucePlugin_Build_defines(${aax_target} "AAXPlugIn")
         _FRUT_link_osx_frameworks(${aax_target})
