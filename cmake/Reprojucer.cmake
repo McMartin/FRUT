@@ -202,14 +202,6 @@ function(jucer_audio_plugin_settings)
     )
   endif()
 
-  if(_BUILD_AAX AND (APPLE OR MSVC))
-    message(WARNING "Reprojucer.cmake doesn't support building AAX plugins. If you "
-      "would like Reprojucer.cmake to support building AAX plugins, please leave a "
-      "comment on the issue \"Reprojucer.cmake doesn't support building AAX plugins\" "
-      "on GitHub: https://github.com/McMartin/FRUT/issues/267"
-    )
-  endif()
-
   if(DEFINED _BUILD_STANDALONE_PLUGIN
       AND DEFINED JUCER_VERSION AND JUCER_VERSION VERSION_LESS 5.0.0)
     message(WARNING "BUILD_STANDALONE_PLUGIN is a JUCE 5 feature only")
