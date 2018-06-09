@@ -1589,12 +1589,12 @@ function(jucer_project_end)
         elseif(MSVC)
           set_property(TARGET ${vst3_target} PROPERTY SUFFIX ".vst3")
           if(CMAKE_GENERATOR_PLATFORM STREQUAL "x64" OR CMAKE_GENERATOR MATCHES "Win64")
-            set(env_var "CommonProgramW6432")
+            set(common_files_env_var "CommonProgramW6432")
           else()
-            set(env_var "CommonProgramFiles(x86)")
+            set(common_files_env_var "CommonProgramFiles(x86)")
           endif()
           _FRUT_install_to_plugin_binary_location(${vst3_target} "VST3"
-            "$ENV{${env_var}}/VST3"
+            "$ENV{${common_files_env_var}}/VST3"
           )
         endif()
         _FRUT_set_JucePlugin_Build_defines(${vst3_target} "VST3PlugIn")
