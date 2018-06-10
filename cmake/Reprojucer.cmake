@@ -1486,8 +1486,8 @@ function(jucer_project_end)
       unset(Standalone_sources)
       unset(SharedCode_sources)
       foreach(src_file ${JUCER_PROJECT_SOURCES})
-        # See XCodeProjectExporter::getTargetTypeFromFilePath()
-        # in JUCE/extras/Projucer/Source/Project Saving/jucer_ProjectExport_XCode.h
+        # See Project::getTargetTypeFromFilePath()
+        # in JUCE/extras/Projucer/Source/Project/jucer_Project.cpp
         if(src_file MATCHES "_AU[._]")
           list(APPEND AudioUnit_sources "${src_file}")
         elseif(src_file MATCHES "_AUv3[._]")
@@ -2063,7 +2063,7 @@ function(_FRUT_generate_AppConfig_header)
     set(is_standalone_application 0)
 
     # See ProjectSaver::writePluginCharacteristicsFile()
-    # in JUCE/extras/Projucer/Source/Project Saving/jucer_ProjectSaver.cpp
+    # in JUCE/extras/Projucer/Source/ProjectSaving/jucer_ProjectSaver.cpp
 
     set(audio_plugin_setting_names
       "Build_VST" "Build_VST3" "Build_AU" "Build_AUv3" "Build_RTAS" "Build_AAX"
@@ -2173,7 +2173,7 @@ function(_FRUT_generate_AppConfig_header)
     string(LENGTH "${JUCER_PLUGIN_CHANNEL_CONFIGURATIONS}" plugin_channel_config_length)
     if(plugin_channel_config_length GREATER 0)
       # See countMaxPluginChannels()
-      # in JUCE/extras/Projucer/Source/Project Saving/jucer_ProjectSaver.cpp
+      # in JUCE/extras/Projucer/Source/ProjectSaving/jucer_ProjectSaver.cpp
       string(REGEX REPLACE "[, {}]" ";" configs "${JUCER_PLUGIN_CHANNEL_CONFIGURATIONS}")
       set(max_num_input 0)
       set(max_num_output 0)
