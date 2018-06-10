@@ -1739,13 +1739,14 @@ function(jucer_project_end)
         unset(auv3_target)
       endif()
 
-      if(JUCER_BUILD_AUDIOUNIT_V3
-          AND DEFINED JUCER_VERSION AND JUCER_VERSION VERSION_LESS 5.0.0)
-        set(juce4_standalone ON)
+      if(DEFINED JUCER_VERSION AND JUCER_VERSION VERSION_LESS 5.0.0)
+        if(JUCER_BUILD_AUDIOUNIT_V3)
+          set(juce4_standalone ON)
+        endif()
+      elseif(JUCER_BUILD_STANDALONE_PLUGIN)
+        set(juce5_standalone ON)
       endif()
-
-      if(juce4_standalone OR (JUCER_BUILD_STANDALONE_PLUGIN
-          AND NOT (DEFINED JUCER_VERSION AND JUCER_VERSION VERSION_LESS 5.0.0)))
+      if(juce4_standalone OR juce5_standalone)
         if(juce4_standalone)
           set(standalone_target ${target}_AUv3_Standalone)
         else()
