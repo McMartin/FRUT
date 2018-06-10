@@ -1462,137 +1462,137 @@ function(jucer_project_end)
     _FRUT_set_custom_xcode_flags(${target})
 
   elseif(JUCER_PROJECT_TYPE STREQUAL "Audio Plug-in")
-      unset(AudioUnit_sources)
-      unset(AudioUnitv3_sources)
-      unset(AAX_sources)
-      unset(RTAS_sources)
-      unset(VST_sources)
-      unset(VST3_sources)
-      unset(Standalone_sources)
-      unset(SharedCode_sources)
-      foreach(src_file ${JUCER_PROJECT_SOURCES})
-        # See Project::getTargetTypeFromFilePath()
-        # in JUCE/extras/Projucer/Source/Project/jucer_Project.cpp
-        if(src_file MATCHES "_AU[._]")
-          list(APPEND AudioUnit_sources "${src_file}")
-        elseif(src_file MATCHES "_AUv3[._]")
-          list(APPEND AudioUnitv3_sources "${src_file}")
-        elseif(src_file MATCHES "_AAX[._]")
-          list(APPEND AAX_sources "${src_file}")
-        elseif(src_file MATCHES "_RTAS[._]")
-          list(APPEND RTAS_sources "${src_file}")
-        elseif(src_file MATCHES "_VST2[._]")
-          list(APPEND VST_sources "${src_file}")
-        elseif(src_file MATCHES "_VST3[._]")
-          list(APPEND VST3_sources "${src_file}")
-        elseif(src_file MATCHES "_Standalone[._]")
-          list(APPEND Standalone_sources "${src_file}")
-        else()
-          list(APPEND SharedCode_sources "${src_file}")
-        endif()
-      endforeach()
+    unset(AudioUnit_sources)
+    unset(AudioUnitv3_sources)
+    unset(AAX_sources)
+    unset(RTAS_sources)
+    unset(VST_sources)
+    unset(VST3_sources)
+    unset(Standalone_sources)
+    unset(SharedCode_sources)
+    foreach(src_file ${JUCER_PROJECT_SOURCES})
+      # See Project::getTargetTypeFromFilePath()
+      # in JUCE/extras/Projucer/Source/Project/jucer_Project.cpp
+      if(src_file MATCHES "_AU[._]")
+        list(APPEND AudioUnit_sources "${src_file}")
+      elseif(src_file MATCHES "_AUv3[._]")
+        list(APPEND AudioUnitv3_sources "${src_file}")
+      elseif(src_file MATCHES "_AAX[._]")
+        list(APPEND AAX_sources "${src_file}")
+      elseif(src_file MATCHES "_RTAS[._]")
+        list(APPEND RTAS_sources "${src_file}")
+      elseif(src_file MATCHES "_VST2[._]")
+        list(APPEND VST_sources "${src_file}")
+      elseif(src_file MATCHES "_VST3[._]")
+        list(APPEND VST3_sources "${src_file}")
+      elseif(src_file MATCHES "_Standalone[._]")
+        list(APPEND Standalone_sources "${src_file}")
+      else()
+        list(APPEND SharedCode_sources "${src_file}")
+      endif()
+    endforeach()
 
-      set(shared_code_target ${target}_Shared_Code)
-      add_library(${shared_code_target} STATIC
-        ${SharedCode_sources}
-        ${JUCER_PROJECT_RESOURCES}
+    set(shared_code_target ${target}_Shared_Code)
+    add_library(${shared_code_target} STATIC
+      ${SharedCode_sources}
+      ${JUCER_PROJECT_RESOURCES}
+      ${JUCER_PROJECT_XCODE_RESOURCES}
+      ${JUCER_PROJECT_BROWSABLE_FILES}
+      ${icon_file}
+      ${resources_rc_file}
+    )
+    _FRUT_set_output_directory_properties(${shared_code_target} "Shared Code")
+    _FRUT_set_common_target_properties(${shared_code_target})
+    target_compile_definitions(${shared_code_target} PRIVATE "JUCE_SHARED_CODE=1")
+    _FRUT_set_JucePlugin_Build_defines(${shared_code_target} "SharedCodeTarget")
+    _FRUT_set_custom_xcode_flags(${shared_code_target})
+
+    if(JUCER_BUILD_VST)
+      set(vst_target ${target}_VST)
+      add_library(${vst_target} MODULE
+        ${VST_sources}
         ${JUCER_PROJECT_XCODE_RESOURCES}
-        ${JUCER_PROJECT_BROWSABLE_FILES}
         ${icon_file}
         ${resources_rc_file}
       )
-      _FRUT_set_output_directory_properties(${shared_code_target} "Shared Code")
-      _FRUT_set_common_target_properties(${shared_code_target})
-      target_compile_definitions(${shared_code_target} PRIVATE "JUCE_SHARED_CODE=1")
-      _FRUT_set_JucePlugin_Build_defines(${shared_code_target} "SharedCodeTarget")
-      _FRUT_set_custom_xcode_flags(${shared_code_target})
-
-      if(JUCER_BUILD_VST)
-        set(vst_target ${target}_VST)
-        add_library(${vst_target} MODULE
-          ${VST_sources}
-          ${JUCER_PROJECT_XCODE_RESOURCES}
-          ${icon_file}
-          ${resources_rc_file}
+      target_link_libraries(${vst_target} PRIVATE ${shared_code_target})
+      _FRUT_generate_plist_file(${vst_target} "VST" "BNDL" "????"
+        "${main_plist_entries}" ""
+      )
+      _FRUT_set_bundle_properties(${vst_target} "vst")
+      _FRUT_set_output_directory_properties(${vst_target} "VST")
+      _FRUT_set_common_target_properties(${vst_target})
+      if(APPLE)
+        _FRUT_install_to_plugin_binary_location(${vst_target} "VST"
+          "$ENV{HOME}/Library/Audio/Plug-Ins/VST"
         )
-        target_link_libraries(${vst_target} PRIVATE ${shared_code_target})
-        _FRUT_generate_plist_file(${vst_target} "VST" "BNDL" "????"
-          "${main_plist_entries}" ""
-        )
-        _FRUT_set_bundle_properties(${vst_target} "vst")
-        _FRUT_set_output_directory_properties(${vst_target} "VST")
-        _FRUT_set_common_target_properties(${vst_target})
-        if(APPLE)
-          _FRUT_install_to_plugin_binary_location(${vst_target} "VST"
-            "$ENV{HOME}/Library/Audio/Plug-Ins/VST"
-          )
-        elseif(MSVC)
-          if(CMAKE_GENERATOR_PLATFORM STREQUAL "x64" OR CMAKE_GENERATOR MATCHES "Win64")
-            set(env_var "ProgramW6432")
-          else()
-            set(env_var "programfiles(x86)")
-          endif()
-          _FRUT_install_to_plugin_binary_location(${vst_target} "VST"
-            "$ENV{${env_var}}/Steinberg/Vstplugins"
-          )
+      elseif(MSVC)
+        if(CMAKE_GENERATOR_PLATFORM STREQUAL "x64" OR CMAKE_GENERATOR MATCHES "Win64")
+          set(env_var "ProgramW6432")
+        else()
+          set(env_var "programfiles(x86)")
         endif()
-        _FRUT_set_JucePlugin_Build_defines(${vst_target} "VSTPlugIn")
-        _FRUT_link_osx_frameworks(${vst_target})
-        _FRUT_add_xcode_resources(${vst_target})
-        _FRUT_set_custom_xcode_flags(${vst_target})
-        unset(vst_target)
+        _FRUT_install_to_plugin_binary_location(${vst_target} "VST"
+          "$ENV{${env_var}}/Steinberg/Vstplugins"
+        )
       endif()
+      _FRUT_set_JucePlugin_Build_defines(${vst_target} "VSTPlugIn")
+      _FRUT_link_osx_frameworks(${vst_target})
+      _FRUT_add_xcode_resources(${vst_target})
+      _FRUT_set_custom_xcode_flags(${vst_target})
+      unset(vst_target)
+    endif()
 
-      if(JUCER_BUILD_VST3 AND (APPLE OR MSVC))
-        set(vst3_target ${target}_VST3)
-        add_library(${vst3_target} MODULE
-          ${VST3_sources}
-          ${JUCER_PROJECT_XCODE_RESOURCES}
-          ${icon_file}
-          ${resources_rc_file}
+    if(JUCER_BUILD_VST3 AND (APPLE OR MSVC))
+      set(vst3_target ${target}_VST3)
+      add_library(${vst3_target} MODULE
+        ${VST3_sources}
+        ${JUCER_PROJECT_XCODE_RESOURCES}
+        ${icon_file}
+        ${resources_rc_file}
+      )
+      target_link_libraries(${vst3_target} PRIVATE ${shared_code_target})
+      _FRUT_generate_plist_file(${vst3_target} "VST3" "BNDL" "????"
+        "${main_plist_entries}" ""
+      )
+      _FRUT_set_bundle_properties(${vst3_target} "vst3")
+      _FRUT_set_output_directory_properties(${vst3_target} "VST3")
+      _FRUT_set_common_target_properties(${vst3_target})
+      if(APPLE)
+        _FRUT_install_to_plugin_binary_location(${vst3_target} "VST3"
+          "$ENV{HOME}/Library/Audio/Plug-Ins/VST3"
         )
-        target_link_libraries(${vst3_target} PRIVATE ${shared_code_target})
-        _FRUT_generate_plist_file(${vst3_target} "VST3" "BNDL" "????"
-          "${main_plist_entries}" ""
-        )
-        _FRUT_set_bundle_properties(${vst3_target} "vst3")
-        _FRUT_set_output_directory_properties(${vst3_target} "VST3")
-        _FRUT_set_common_target_properties(${vst3_target})
-        if(APPLE)
-          _FRUT_install_to_plugin_binary_location(${vst3_target} "VST3"
-            "$ENV{HOME}/Library/Audio/Plug-Ins/VST3"
-          )
-        elseif(MSVC)
-          set_property(TARGET ${vst3_target} PROPERTY SUFFIX ".vst3")
-          if(CMAKE_GENERATOR_PLATFORM STREQUAL "x64" OR CMAKE_GENERATOR MATCHES "Win64")
-            set(common_files_env_var "CommonProgramW6432")
-          else()
-            set(common_files_env_var "CommonProgramFiles(x86)")
-          endif()
-          _FRUT_install_to_plugin_binary_location(${vst3_target} "VST3"
-            "$ENV{${common_files_env_var}}/VST3"
-          )
+      elseif(MSVC)
+        set_property(TARGET ${vst3_target} PROPERTY SUFFIX ".vst3")
+        if(CMAKE_GENERATOR_PLATFORM STREQUAL "x64" OR CMAKE_GENERATOR MATCHES "Win64")
+          set(common_files_env_var "CommonProgramW6432")
+        else()
+          set(common_files_env_var "CommonProgramFiles(x86)")
         endif()
-        _FRUT_set_JucePlugin_Build_defines(${vst3_target} "VST3PlugIn")
-        _FRUT_link_osx_frameworks(${vst3_target})
-        _FRUT_add_xcode_resources(${vst3_target})
-        _FRUT_set_custom_xcode_flags(${vst3_target})
-        unset(vst3_target)
-      endif()
-
-      if(JUCER_BUILD_AUDIOUNIT AND APPLE)
-        set(au_target ${target}_AU)
-        add_library(${au_target} MODULE
-          ${AudioUnit_sources}
-          ${JUCER_PROJECT_XCODE_RESOURCES}
-          ${icon_file}
+        _FRUT_install_to_plugin_binary_location(${vst3_target} "VST3"
+          "$ENV{${common_files_env_var}}/VST3"
         )
-        target_link_libraries(${au_target} PRIVATE ${shared_code_target})
+      endif()
+      _FRUT_set_JucePlugin_Build_defines(${vst3_target} "VST3PlugIn")
+      _FRUT_link_osx_frameworks(${vst3_target})
+      _FRUT_add_xcode_resources(${vst3_target})
+      _FRUT_set_custom_xcode_flags(${vst3_target})
+      unset(vst3_target)
+    endif()
 
-        _FRUT_get_au_main_type_code(au_main_type_code)
-        _FRUT_version_to_dec("${JUCER_PROJECT_VERSION}" dec_version)
+    if(JUCER_BUILD_AUDIOUNIT AND APPLE)
+      set(au_target ${target}_AU)
+      add_library(${au_target} MODULE
+        ${AudioUnit_sources}
+        ${JUCER_PROJECT_XCODE_RESOURCES}
+        ${icon_file}
+      )
+      target_link_libraries(${au_target} PRIVATE ${shared_code_target})
 
-        set(audio_components_entries "
+      _FRUT_get_au_main_type_code(au_main_type_code)
+      _FRUT_version_to_dec("${JUCER_PROJECT_VERSION}" dec_version)
+
+      set(audio_components_entries "
     <key>AudioComponents</key>
     <array>
       <dict>
@@ -1612,42 +1612,42 @@ function(jucer_project_end)
         <integer>${dec_version}</integer>
       </dict>
     </array>"
-        )
+      )
 
-        _FRUT_generate_plist_file(${au_target} "AU" "BNDL" "????"
-          "${main_plist_entries}" "${audio_components_entries}"
-        )
-        _FRUT_set_bundle_properties(${au_target} "component")
-        _FRUT_set_output_directory_properties(${au_target} "AU")
-        _FRUT_set_common_target_properties(${au_target})
-        _FRUT_install_to_plugin_binary_location(${au_target} "AU"
-          "$ENV{HOME}/Library/Audio/Plug-Ins/Components"
-        )
-        _FRUT_set_JucePlugin_Build_defines(${au_target} "AudioUnitPlugIn")
-        _FRUT_link_osx_frameworks(${au_target} "AudioUnit" "CoreAudioKit")
-        _FRUT_add_xcode_resources(${au_target})
-        _FRUT_set_custom_xcode_flags(${au_target})
-        unset(au_target)
+      _FRUT_generate_plist_file(${au_target} "AU" "BNDL" "????"
+        "${main_plist_entries}" "${audio_components_entries}"
+      )
+      _FRUT_set_bundle_properties(${au_target} "component")
+      _FRUT_set_output_directory_properties(${au_target} "AU")
+      _FRUT_set_common_target_properties(${au_target})
+      _FRUT_install_to_plugin_binary_location(${au_target} "AU"
+        "$ENV{HOME}/Library/Audio/Plug-Ins/Components"
+      )
+      _FRUT_set_JucePlugin_Build_defines(${au_target} "AudioUnitPlugIn")
+      _FRUT_link_osx_frameworks(${au_target} "AudioUnit" "CoreAudioKit")
+      _FRUT_add_xcode_resources(${au_target})
+      _FRUT_set_custom_xcode_flags(${au_target})
+      unset(au_target)
+    endif()
+
+    if(JUCER_BUILD_AUDIOUNIT_V3 AND APPLE)
+      set(auv3_target ${target}_AUv3_AppExtension)
+      add_library(${auv3_target} MODULE
+        ${AudioUnitv3_sources}
+        ${JUCER_PROJECT_XCODE_RESOURCES}
+        ${icon_file}
+      )
+      target_link_libraries(${auv3_target} PRIVATE ${shared_code_target})
+
+      _FRUT_get_au_main_type_code(au_main_type_code)
+      _FRUT_version_to_dec("${JUCER_PROJECT_VERSION}" dec_version)
+      if(JUCER_PLUGIN_IS_A_SYNTH)
+        set(tag "Synth")
+      else()
+        set(tag "Effects")
       endif()
 
-      if(JUCER_BUILD_AUDIOUNIT_V3 AND APPLE)
-        set(auv3_target ${target}_AUv3_AppExtension)
-        add_library(${auv3_target} MODULE
-          ${AudioUnitv3_sources}
-          ${JUCER_PROJECT_XCODE_RESOURCES}
-          ${icon_file}
-        )
-        target_link_libraries(${auv3_target} PRIVATE ${shared_code_target})
-
-        _FRUT_get_au_main_type_code(au_main_type_code)
-        _FRUT_version_to_dec("${JUCER_PROJECT_VERSION}" dec_version)
-        if(JUCER_PLUGIN_IS_A_SYNTH)
-          set(tag "Synth")
-        else()
-          set(tag "Effects")
-        endif()
-
-        set(ns_extension_entries "
+      set(ns_extension_entries "
     <key>NSExtension</key>
     <dict>
       <key>NSExtensionPrincipalClass</key>
@@ -1683,213 +1683,213 @@ function(jucer_project_end)
         </array>
       </dict>
     </dict>"
-        )
+      )
 
-        _FRUT_generate_plist_file(${auv3_target} "AUv3_AppExtension" "XPC!" "????"
-          "${main_plist_entries}" "${ns_extension_entries}"
-        )
+      _FRUT_generate_plist_file(${auv3_target} "AUv3_AppExtension" "XPC!" "????"
+        "${main_plist_entries}" "${ns_extension_entries}"
+      )
 
-        # com.yourcompany.NewProject -> com.yourcompany.NewProject.NewProjectAUv3
-        string(REPLACE "." ";" bundle_id_parts "${JUCER_BUNDLE_IDENTIFIER}")
-        list(LENGTH bundle_id_parts bundle_id_parts_length)
-        math(EXPR bundle_id_parts_last_index "${bundle_id_parts_length} - 1")
-        list(GET bundle_id_parts ${bundle_id_parts_last_index} bundle_id_last_part)
-        list(APPEND bundle_id_parts "${bundle_id_last_part}AUv3")
-        string(REPLACE ";" "." bundle_id "${bundle_id_parts}")
-        if(CMAKE_GENERATOR STREQUAL "Xcode")
-          set_target_properties(${auv3_target} PROPERTIES
-            XCODE_ATTRIBUTE_PRODUCT_BUNDLE_IDENTIFIER "${bundle_id}"
-          )
-        else()
-          set_target_properties(${auv3_target} PROPERTIES
-            MACOSX_BUNDLE_GUI_IDENTIFIER "${bundle_id}"
-          )
-        endif()
-
-        # Cannot use _FRUT_set_bundle_properties() since Projucer sets xcodeIsBundle=false
-        # for this target, though it is a bundle...
+      # com.yourcompany.NewProject -> com.yourcompany.NewProject.NewProjectAUv3
+      string(REPLACE "." ";" bundle_id_parts "${JUCER_BUNDLE_IDENTIFIER}")
+      list(LENGTH bundle_id_parts bundle_id_parts_length)
+      math(EXPR bundle_id_parts_last_index "${bundle_id_parts_length} - 1")
+      list(GET bundle_id_parts ${bundle_id_parts_last_index} bundle_id_last_part)
+      list(APPEND bundle_id_parts "${bundle_id_last_part}AUv3")
+      string(REPLACE ";" "." bundle_id "${bundle_id_parts}")
+      if(CMAKE_GENERATOR STREQUAL "Xcode")
         set_target_properties(${auv3_target} PROPERTIES
-          BUNDLE TRUE
-          BUNDLE_EXTENSION "appex"
-          XCODE_ATTRIBUTE_WRAPPER_EXTENSION "appex"
+          XCODE_ATTRIBUTE_PRODUCT_BUNDLE_IDENTIFIER "${bundle_id}"
         )
-        _FRUT_set_output_directory_properties(${auv3_target} "AUv3 AppExtension")
-        _FRUT_set_common_target_properties(${auv3_target})
-        _FRUT_set_JucePlugin_Build_defines(${auv3_target} "AudioUnitv3PlugIn")
-        _FRUT_link_osx_frameworks(
-          ${auv3_target} "AudioUnit" "CoreAudioKit" "AVFoundation"
+      else()
+        set_target_properties(${auv3_target} PROPERTIES
+          MACOSX_BUNDLE_GUI_IDENTIFIER "${bundle_id}"
         )
-        _FRUT_add_xcode_resources(${auv3_target})
-        _FRUT_set_custom_xcode_flags(${auv3_target})
-        unset(auv3_target)
       endif()
 
-      if(DEFINED JUCER_VERSION AND JUCER_VERSION VERSION_LESS 5.0.0)
-        if(JUCER_BUILD_AUDIOUNIT_V3)
-          set(juce4_standalone ON)
-        endif()
-      elseif(JUCER_BUILD_STANDALONE_PLUGIN)
-        set(juce5_standalone ON)
-      endif()
-      if(juce4_standalone OR juce5_standalone)
-        if(juce4_standalone)
-          set(standalone_target ${target}_AUv3_Standalone)
-        else()
-          set(standalone_target ${target}_StandalonePlugin)
-        endif()
-        add_executable(${standalone_target} WIN32 MACOSX_BUNDLE
-          ${Standalone_sources}
-          ${JUCER_PROJECT_XCODE_RESOURCES}
-          ${icon_file}
-          ${resources_rc_file}
-        )
-        target_link_libraries(${standalone_target} PRIVATE ${shared_code_target})
-        if(juce4_standalone)
-          _FRUT_generate_plist_file(${standalone_target} "AUv3_Standalone" "APPL" "????"
-            "${main_plist_entries}" ""
-          )
-        else()
-          _FRUT_generate_plist_file(${standalone_target} "Standalone_Plugin" "APPL" "????"
-            "${main_plist_entries}" ""
-          )
-        endif()
-        _FRUT_set_output_directory_properties(${standalone_target} "Standalone Plugin")
-        _FRUT_set_common_target_properties(${standalone_target})
-        _FRUT_set_JucePlugin_Build_defines(${standalone_target} "StandalonePlugIn")
-        _FRUT_link_osx_frameworks(${standalone_target})
-        _FRUT_add_xcode_resources(${standalone_target})
-        if(TARGET ${target}_AUv3_AppExtension)
-          add_dependencies(${standalone_target} ${target}_AUv3_AppExtension)
-          install(TARGETS ${target}_AUv3_AppExtension
-            COMPONENT _embed_app_extension_in_standalone_app
-            DESTINATION "$<TARGET_FILE_DIR:${standalone_target}>/../PlugIns"
-          )
-          add_custom_command(TARGET ${standalone_target} POST_BUILD
-            COMMAND
-            "${CMAKE_COMMAND}"
-            "-DCMAKE_INSTALL_CONFIG_NAME=$<CONFIG>"
-            "-DCMAKE_INSTALL_COMPONENT=_embed_app_extension_in_standalone_app"
-            "-P" "${CMAKE_CURRENT_BINARY_DIR}/cmake_install.cmake"
-          )
-        endif()
-        _FRUT_set_custom_xcode_flags(${standalone_target})
-        unset(standalone_target)
-      endif()
+      # Cannot use _FRUT_set_bundle_properties() since Projucer sets xcodeIsBundle=false
+      # for this target, though it is a bundle...
+      set_target_properties(${auv3_target} PROPERTIES
+        BUNDLE TRUE
+        BUNDLE_EXTENSION "appex"
+        XCODE_ATTRIBUTE_WRAPPER_EXTENSION "appex"
+      )
+      _FRUT_set_output_directory_properties(${auv3_target} "AUv3 AppExtension")
+      _FRUT_set_common_target_properties(${auv3_target})
+      _FRUT_set_JucePlugin_Build_defines(${auv3_target} "AudioUnitv3PlugIn")
+      _FRUT_link_osx_frameworks(
+        ${auv3_target} "AudioUnit" "CoreAudioKit" "AVFoundation"
+      )
+      _FRUT_add_xcode_resources(${auv3_target})
+      _FRUT_set_custom_xcode_flags(${auv3_target})
+      unset(auv3_target)
+    endif()
 
-      if(JUCER_BUILD_AAX AND (APPLE OR MSVC))
-        set(aax_target ${target}_AAX)
-        add_library(${aax_target} MODULE
-          ${AAX_sources}
-          ${JUCER_PROJECT_XCODE_RESOURCES}
-          ${icon_file}
-          ${resources_rc_file}
-        )
-        target_link_libraries(${aax_target} PRIVATE ${shared_code_target})
-        _FRUT_generate_plist_file(${aax_target} "AAX" "TDMw" "PTul"
+    if(DEFINED JUCER_VERSION AND JUCER_VERSION VERSION_LESS 5.0.0)
+      if(JUCER_BUILD_AUDIOUNIT_V3)
+        set(juce4_standalone ON)
+      endif()
+    elseif(JUCER_BUILD_STANDALONE_PLUGIN)
+      set(juce5_standalone ON)
+    endif()
+    if(juce4_standalone OR juce5_standalone)
+      if(juce4_standalone)
+        set(standalone_target ${target}_AUv3_Standalone)
+      else()
+        set(standalone_target ${target}_StandalonePlugin)
+      endif()
+      add_executable(${standalone_target} WIN32 MACOSX_BUNDLE
+        ${Standalone_sources}
+        ${JUCER_PROJECT_XCODE_RESOURCES}
+        ${icon_file}
+        ${resources_rc_file}
+      )
+      target_link_libraries(${standalone_target} PRIVATE ${shared_code_target})
+      if(juce4_standalone)
+        _FRUT_generate_plist_file(${standalone_target} "AUv3_Standalone" "APPL" "????"
           "${main_plist_entries}" ""
         )
-        _FRUT_set_bundle_properties(${aax_target} "aaxplugin")
-        _FRUT_set_output_directory_properties(${aax_target} "AAX")
-        _FRUT_set_common_target_properties(${aax_target})
-        if(APPLE)
-          foreach(config ${JUCER_PROJECT_CONFIGURATIONS})
-            if(${JUCER_CONFIGURATION_IS_DEBUG_${config}})
-              set(aax_config "Debug")
-            else()
-              set(aax_config "Release")
-            endif()
-            if(JUCER_CXX_LIBRARY_${config} STREQUAL "libc++"
-                OR JUCER_OSX_DEPLOYMENT_TARGET_${config} VERSION_GREATER 10.8)
-              set(aax_libcpp "_libcpp")
-            else()
-              set(aax_libcpp "")
-            endif()
-            set(aax_lib
-              "${JUCER_AAX_SDK_FOLDER}/Libs/${aax_config}/libAAXLibrary${aax_libcpp}.a"
-            )
-            target_link_libraries(${aax_target} PRIVATE $<$<CONFIG:${config}>:${aax_lib}>)
-          endforeach()
-
-          _FRUT_install_to_plugin_binary_location(${aax_target} "AAX"
-            "/Library/Application Support/Avid/Audio/Plug-Ins"
-          )
-        elseif(MSVC)
-          set_property(TARGET ${aax_target} PROPERTY SUFFIX ".aaxdll")
-          target_compile_definitions(${aax_target} PRIVATE
-            "JucePlugin_AAXLibs_path=\"${JUCER_AAX_SDK_FOLDER}/Libs\""
-          )
-
-          set(all_confs_output_name "")
-          foreach(config ${JUCER_PROJECT_CONFIGURATIONS})
-            string(TOUPPER "${config}" upper_config)
-            get_target_property(output_name ${aax_target} OUTPUT_NAME_${upper_config})
-            string(APPEND all_confs_output_name $<$<CONFIG:${config}>:${output_name}>)
-          endforeach()
-          set(all_confs_bundle
-            "$<TARGET_FILE_DIR:${aax_target}>/${all_confs_output_name}.aaxplugin"
-          )
-          if(CMAKE_GENERATOR_PLATFORM STREQUAL "x64" OR CMAKE_GENERATOR MATCHES "Win64")
-            set(arch_dir "x64")
-          else()
-            set(arch_dir "Win32")
-          endif()
-          add_custom_command(TARGET ${aax_target} PRE_BUILD
-            COMMAND
-            "${CMAKE_COMMAND}" "-E" "make_directory"
-            "${all_confs_bundle}/Contents/${arch_dir}"
-          )
-          add_custom_command(TARGET ${aax_target} POST_BUILD
-            COMMAND
-            "${CMAKE_COMMAND}" "-E" "copy_if_different"
-            "$<TARGET_FILE:${aax_target}>"
-            "${all_confs_bundle}/Contents/${arch_dir}/${all_confs_output_name}.aaxplugin"
-          )
-          if(DEFINED icon_file)
-            set(plugin_icon "${icon_file}")
-          else()
-            set(plugin_icon "${JUCER_AAX_SDK_FOLDER}/Utilities/PlugIn.ico")
-          endif()
-          add_custom_command(TARGET ${aax_target} POST_BUILD
-            COMMAND
-            "${JUCER_AAX_SDK_FOLDER}/Utilities/CreatePackage.bat"
-            "${all_confs_bundle}/Contents/${arch_dir}"
-            "${plugin_icon}"
-          )
-
-          if(CMAKE_GENERATOR_PLATFORM STREQUAL "x64" OR CMAKE_GENERATOR MATCHES "Win64")
-            set(common_files_env_var "CommonProgramW6432")
-          else()
-            set(common_files_env_var "CommonProgramFiles(x86)")
-          endif()
-          set(all_confs_destination "")
-          foreach(config ${JUCER_PROJECT_CONFIGURATIONS})
-            if(DEFINED JUCER_AAX_BINARY_LOCATION_${config})
-              set(destination ${JUCER_AAX_BINARY_LOCATION_${config}})
-            else()
-              set(destination "$ENV{${common_files_env_var}}/Avid/Audio/Plug-Ins")
-            endif()
-            if(JUCER_ENABLE_PLUGIN_COPY_STEP_${config})
-              string(APPEND all_confs_destination
-                $<$<CONFIG:${config}>:$<SHELL_PATH:${destination}>>
-              )
-            endif()
-          endforeach()
-          if(NOT all_confs_destination STREQUAL "")
-            add_custom_command(TARGET ${aax_target} POST_BUILD
-              COMMAND
-              "xcopy"
-              "$<SHELL_PATH:${all_confs_bundle}>"
-              "${all_confs_destination}\\${all_confs_output_name}.aaxplugin\\"
-              "/E" "/H" "/K" "/R" "/Y"
-            )
-          endif()
-        endif()
-        _FRUT_set_JucePlugin_Build_defines(${aax_target} "AAXPlugIn")
-        _FRUT_link_osx_frameworks(${aax_target})
-        _FRUT_add_xcode_resources(${aax_target})
-        _FRUT_set_custom_xcode_flags(${aax_target})
-        unset(aax_target)
+      else()
+        _FRUT_generate_plist_file(${standalone_target} "Standalone_Plugin" "APPL" "????"
+          "${main_plist_entries}" ""
+        )
       endif()
+      _FRUT_set_output_directory_properties(${standalone_target} "Standalone Plugin")
+      _FRUT_set_common_target_properties(${standalone_target})
+      _FRUT_set_JucePlugin_Build_defines(${standalone_target} "StandalonePlugIn")
+      _FRUT_link_osx_frameworks(${standalone_target})
+      _FRUT_add_xcode_resources(${standalone_target})
+      if(TARGET ${target}_AUv3_AppExtension)
+        add_dependencies(${standalone_target} ${target}_AUv3_AppExtension)
+        install(TARGETS ${target}_AUv3_AppExtension
+          COMPONENT _embed_app_extension_in_standalone_app
+          DESTINATION "$<TARGET_FILE_DIR:${standalone_target}>/../PlugIns"
+        )
+        add_custom_command(TARGET ${standalone_target} POST_BUILD
+          COMMAND
+          "${CMAKE_COMMAND}"
+          "-DCMAKE_INSTALL_CONFIG_NAME=$<CONFIG>"
+          "-DCMAKE_INSTALL_COMPONENT=_embed_app_extension_in_standalone_app"
+          "-P" "${CMAKE_CURRENT_BINARY_DIR}/cmake_install.cmake"
+        )
+      endif()
+      _FRUT_set_custom_xcode_flags(${standalone_target})
+      unset(standalone_target)
+    endif()
+
+    if(JUCER_BUILD_AAX AND (APPLE OR MSVC))
+      set(aax_target ${target}_AAX)
+      add_library(${aax_target} MODULE
+        ${AAX_sources}
+        ${JUCER_PROJECT_XCODE_RESOURCES}
+        ${icon_file}
+        ${resources_rc_file}
+      )
+      target_link_libraries(${aax_target} PRIVATE ${shared_code_target})
+      _FRUT_generate_plist_file(${aax_target} "AAX" "TDMw" "PTul"
+        "${main_plist_entries}" ""
+      )
+      _FRUT_set_bundle_properties(${aax_target} "aaxplugin")
+      _FRUT_set_output_directory_properties(${aax_target} "AAX")
+      _FRUT_set_common_target_properties(${aax_target})
+      if(APPLE)
+        foreach(config ${JUCER_PROJECT_CONFIGURATIONS})
+          if(${JUCER_CONFIGURATION_IS_DEBUG_${config}})
+            set(aax_config "Debug")
+          else()
+            set(aax_config "Release")
+          endif()
+          if(JUCER_CXX_LIBRARY_${config} STREQUAL "libc++"
+              OR JUCER_OSX_DEPLOYMENT_TARGET_${config} VERSION_GREATER 10.8)
+            set(aax_libcpp "_libcpp")
+          else()
+            set(aax_libcpp "")
+          endif()
+          set(aax_lib
+            "${JUCER_AAX_SDK_FOLDER}/Libs/${aax_config}/libAAXLibrary${aax_libcpp}.a"
+          )
+          target_link_libraries(${aax_target} PRIVATE $<$<CONFIG:${config}>:${aax_lib}>)
+        endforeach()
+
+        _FRUT_install_to_plugin_binary_location(${aax_target} "AAX"
+          "/Library/Application Support/Avid/Audio/Plug-Ins"
+        )
+      elseif(MSVC)
+        set_property(TARGET ${aax_target} PROPERTY SUFFIX ".aaxdll")
+        target_compile_definitions(${aax_target} PRIVATE
+          "JucePlugin_AAXLibs_path=\"${JUCER_AAX_SDK_FOLDER}/Libs\""
+        )
+
+        set(all_confs_output_name "")
+        foreach(config ${JUCER_PROJECT_CONFIGURATIONS})
+          string(TOUPPER "${config}" upper_config)
+          get_target_property(output_name ${aax_target} OUTPUT_NAME_${upper_config})
+          string(APPEND all_confs_output_name $<$<CONFIG:${config}>:${output_name}>)
+        endforeach()
+        set(all_confs_bundle
+          "$<TARGET_FILE_DIR:${aax_target}>/${all_confs_output_name}.aaxplugin"
+        )
+        if(CMAKE_GENERATOR_PLATFORM STREQUAL "x64" OR CMAKE_GENERATOR MATCHES "Win64")
+          set(arch_dir "x64")
+        else()
+          set(arch_dir "Win32")
+        endif()
+        add_custom_command(TARGET ${aax_target} PRE_BUILD
+          COMMAND
+          "${CMAKE_COMMAND}" "-E" "make_directory"
+          "${all_confs_bundle}/Contents/${arch_dir}"
+        )
+        add_custom_command(TARGET ${aax_target} POST_BUILD
+          COMMAND
+          "${CMAKE_COMMAND}" "-E" "copy_if_different"
+          "$<TARGET_FILE:${aax_target}>"
+          "${all_confs_bundle}/Contents/${arch_dir}/${all_confs_output_name}.aaxplugin"
+        )
+        if(DEFINED icon_file)
+          set(plugin_icon "${icon_file}")
+        else()
+          set(plugin_icon "${JUCER_AAX_SDK_FOLDER}/Utilities/PlugIn.ico")
+        endif()
+        add_custom_command(TARGET ${aax_target} POST_BUILD
+          COMMAND
+          "${JUCER_AAX_SDK_FOLDER}/Utilities/CreatePackage.bat"
+          "${all_confs_bundle}/Contents/${arch_dir}"
+          "${plugin_icon}"
+        )
+
+        if(CMAKE_GENERATOR_PLATFORM STREQUAL "x64" OR CMAKE_GENERATOR MATCHES "Win64")
+          set(common_files_env_var "CommonProgramW6432")
+        else()
+          set(common_files_env_var "CommonProgramFiles(x86)")
+        endif()
+        set(all_confs_destination "")
+        foreach(config ${JUCER_PROJECT_CONFIGURATIONS})
+          if(DEFINED JUCER_AAX_BINARY_LOCATION_${config})
+            set(destination ${JUCER_AAX_BINARY_LOCATION_${config}})
+          else()
+            set(destination "$ENV{${common_files_env_var}}/Avid/Audio/Plug-Ins")
+          endif()
+          if(JUCER_ENABLE_PLUGIN_COPY_STEP_${config})
+            string(APPEND all_confs_destination
+              $<$<CONFIG:${config}>:$<SHELL_PATH:${destination}>>
+            )
+          endif()
+        endforeach()
+        if(NOT all_confs_destination STREQUAL "")
+          add_custom_command(TARGET ${aax_target} POST_BUILD
+            COMMAND
+            "xcopy"
+            "$<SHELL_PATH:${all_confs_bundle}>"
+            "${all_confs_destination}\\${all_confs_output_name}.aaxplugin\\"
+            "/E" "/H" "/K" "/R" "/Y"
+          )
+        endif()
+      endif()
+      _FRUT_set_JucePlugin_Build_defines(${aax_target} "AAXPlugIn")
+      _FRUT_link_osx_frameworks(${aax_target})
+      _FRUT_add_xcode_resources(${aax_target})
+      _FRUT_set_custom_xcode_flags(${aax_target})
+      unset(aax_target)
+    endif()
 
   else()
     message(FATAL_ERROR "Unknown project type: ${JUCER_PROJECT_TYPE}")
