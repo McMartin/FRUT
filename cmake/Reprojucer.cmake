@@ -1462,21 +1462,6 @@ function(jucer_project_end)
     _FRUT_set_custom_xcode_flags(${target})
 
   elseif(JUCER_PROJECT_TYPE STREQUAL "Audio Plug-in")
-    if(NOT APPLE AND DEFINED JUCER_VERSION AND JUCER_VERSION VERSION_LESS 5.0.0)
-      add_library(${target} MODULE ${all_sources})
-      set_target_properties(${target} PROPERTIES PREFIX "")
-      _FRUT_set_output_directory_properties(${target} "")
-      _FRUT_set_common_target_properties(${target})
-
-      if(JUCER_BUILD_VST3 AND MSVC)
-        add_custom_command(TARGET ${target} POST_BUILD
-          COMMAND
-          "${CMAKE_COMMAND}" "-E" "copy_if_different"
-          "$<TARGET_FILE:${target}>"
-          "$<TARGET_FILE_DIR:${target}>/${target}.vst3"
-        )
-      endif()
-    else()
       unset(AudioUnit_sources)
       unset(AudioUnitv3_sources)
       unset(AAX_sources)
@@ -1905,7 +1890,6 @@ function(jucer_project_end)
         _FRUT_set_custom_xcode_flags(${aax_target})
         unset(aax_target)
       endif()
-    endif()
 
   else()
     message(FATAL_ERROR "Unknown project type: ${JUCER_PROJECT_TYPE}")
