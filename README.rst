@@ -1,6 +1,8 @@
 FRUT
 ====
 
+This is a test.
+
 .. compound::
 
   |AppVeyor| |Travis_CI| |Read_the_Docs|
