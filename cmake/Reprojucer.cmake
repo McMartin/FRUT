@@ -1724,58 +1724,6 @@ function(jucer_project_end)
       unset(auv3_target)
     endif()
 
-    if(DEFINED JUCER_VERSION AND JUCER_VERSION VERSION_LESS 5.0.0)
-      if(JUCER_BUILD_AUDIOUNIT_V3)
-        set(juce4_standalone ON)
-      endif()
-    elseif(JUCER_BUILD_STANDALONE_PLUGIN)
-      set(juce5_standalone ON)
-    endif()
-    if(juce4_standalone OR juce5_standalone)
-      if(juce4_standalone)
-        set(standalone_target ${target}_AUv3_Standalone)
-      else()
-        set(standalone_target ${target}_StandalonePlugin)
-      endif()
-      add_executable(${standalone_target} WIN32 MACOSX_BUNDLE
-        ${Standalone_sources}
-        ${JUCER_PROJECT_XCODE_RESOURCES}
-        ${icon_file}
-        ${resources_rc_file}
-      )
-      target_link_libraries(${standalone_target} PRIVATE ${shared_code_target})
-      if(juce4_standalone)
-        _FRUT_generate_plist_file(${standalone_target} "AUv3_Standalone" "APPL" "????"
-          "${main_plist_entries}" ""
-        )
-      else()
-        _FRUT_generate_plist_file(${standalone_target} "Standalone_Plugin" "APPL" "????"
-          "${main_plist_entries}" ""
-        )
-      endif()
-      _FRUT_set_output_directory_properties(${standalone_target} "Standalone Plugin")
-      _FRUT_set_common_target_properties(${standalone_target})
-      _FRUT_set_JucePlugin_Build_defines(${standalone_target} "StandalonePlugIn")
-      _FRUT_link_osx_frameworks(${standalone_target})
-      _FRUT_add_xcode_resources(${standalone_target})
-      if(TARGET ${target}_AUv3_AppExtension)
-        add_dependencies(${standalone_target} ${target}_AUv3_AppExtension)
-        install(TARGETS ${target}_AUv3_AppExtension
-          COMPONENT _embed_app_extension_in_standalone_app
-          DESTINATION "$<TARGET_FILE_DIR:${standalone_target}>/../PlugIns"
-        )
-        add_custom_command(TARGET ${standalone_target} POST_BUILD
-          COMMAND
-          "${CMAKE_COMMAND}"
-          "-DCMAKE_INSTALL_CONFIG_NAME=$<CONFIG>"
-          "-DCMAKE_INSTALL_COMPONENT=_embed_app_extension_in_standalone_app"
-          "-P" "${CMAKE_CURRENT_BINARY_DIR}/cmake_install.cmake"
-        )
-      endif()
-      _FRUT_set_custom_xcode_flags(${standalone_target})
-      unset(standalone_target)
-    endif()
-
     if(JUCER_BUILD_AAX AND (APPLE OR MSVC))
       set(aax_target ${target}_AAX)
       add_library(${aax_target} MODULE
@@ -1889,6 +1837,58 @@ function(jucer_project_end)
       _FRUT_add_xcode_resources(${aax_target})
       _FRUT_set_custom_xcode_flags(${aax_target})
       unset(aax_target)
+    endif()
+
+    if(DEFINED JUCER_VERSION AND JUCER_VERSION VERSION_LESS 5.0.0)
+      if(JUCER_BUILD_AUDIOUNIT_V3)
+        set(juce4_standalone ON)
+      endif()
+    elseif(JUCER_BUILD_STANDALONE_PLUGIN)
+      set(juce5_standalone ON)
+    endif()
+    if(juce4_standalone OR juce5_standalone)
+      if(juce4_standalone)
+        set(standalone_target ${target}_AUv3_Standalone)
+      else()
+        set(standalone_target ${target}_StandalonePlugin)
+      endif()
+      add_executable(${standalone_target} WIN32 MACOSX_BUNDLE
+        ${Standalone_sources}
+        ${JUCER_PROJECT_XCODE_RESOURCES}
+        ${icon_file}
+        ${resources_rc_file}
+      )
+      target_link_libraries(${standalone_target} PRIVATE ${shared_code_target})
+      if(juce4_standalone)
+        _FRUT_generate_plist_file(${standalone_target} "AUv3_Standalone" "APPL" "????"
+          "${main_plist_entries}" ""
+        )
+      else()
+        _FRUT_generate_plist_file(${standalone_target} "Standalone_Plugin" "APPL" "????"
+          "${main_plist_entries}" ""
+        )
+      endif()
+      _FRUT_set_output_directory_properties(${standalone_target} "Standalone Plugin")
+      _FRUT_set_common_target_properties(${standalone_target})
+      _FRUT_set_JucePlugin_Build_defines(${standalone_target} "StandalonePlugIn")
+      _FRUT_link_osx_frameworks(${standalone_target})
+      _FRUT_add_xcode_resources(${standalone_target})
+      if(TARGET ${target}_AUv3_AppExtension)
+        add_dependencies(${standalone_target} ${target}_AUv3_AppExtension)
+        install(TARGETS ${target}_AUv3_AppExtension
+          COMPONENT _embed_app_extension_in_standalone_app
+          DESTINATION "$<TARGET_FILE_DIR:${standalone_target}>/../PlugIns"
+        )
+        add_custom_command(TARGET ${standalone_target} POST_BUILD
+          COMMAND
+          "${CMAKE_COMMAND}"
+          "-DCMAKE_INSTALL_CONFIG_NAME=$<CONFIG>"
+          "-DCMAKE_INSTALL_COMPONENT=_embed_app_extension_in_standalone_app"
+          "-P" "${CMAKE_CURRENT_BINARY_DIR}/cmake_install.cmake"
+        )
+      endif()
+      _FRUT_set_custom_xcode_flags(${standalone_target})
+      unset(standalone_target)
     endif()
 
   else()
