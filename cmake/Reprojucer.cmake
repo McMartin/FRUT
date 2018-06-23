@@ -299,6 +299,7 @@ function(jucer_project_module module_name PATH_KEYWORD modules_folder)
   endif()
   list(APPEND JUCER_PROJECT_MODULES_FOLDERS "${modules_folder}")
   set(JUCER_PROJECT_MODULES_FOLDERS ${JUCER_PROJECT_MODULES_FOLDERS} PARENT_SCOPE)
+  set(JUCER_PROJECT_MODULES_${module_name}_PATH "${modules_folder}" PARENT_SCOPE)
 
   file(GLOB module_src_files
     "${modules_folder}/${module_name}/*.cpp"
@@ -1724,6 +1725,137 @@ function(jucer_project_end)
       unset(auv3_target)
     endif()
 
+    if(JUCER_BUILD_RTAS AND (APPLE OR MSVC))
+      set(rtas_target ${target}_RTAS)
+      add_library(${rtas_target} MODULE
+        ${RTAS_sources}
+        ${JUCER_PROJECT_XCODE_RESOURCES}
+        ${icon_file}
+        ${resources_rc_file}
+      )
+      target_link_libraries(${rtas_target} PRIVATE ${shared_code_target})
+      _FRUT_generate_plist_file(${rtas_target} "RTAS" "TDMw" "PTul"
+        "${main_plist_entries}" ""
+      )
+      _FRUT_set_bundle_properties(${rtas_target} "dpm")
+      _FRUT_set_output_directory_properties(${rtas_target} "RTAS")
+      _FRUT_set_common_target_properties(${rtas_target})
+      if(APPLE)
+        # See XcodeProjectExporter::XcodeTarget::getTargetExtraHeaderSearchPaths()
+        # in JUCE/extras/Projucer/Source/ProjectSaving/jucer_ProjectExport_Xcode.h
+        target_include_directories(${rtas_target} PRIVATE
+          "$(DEVELOPER_DIR)/Headers/FlatCarbon"
+          "$(SDKROOT)/Developer/Headers/FlatCarbon"
+        )
+        set(extra_rtas_include_dirs
+          "AlturaPorts/TDMPlugIns/PlugInLibrary/Controls"
+          "AlturaPorts/TDMPlugIns/PlugInLibrary/CoreClasses"
+          "AlturaPorts/TDMPlugIns/PlugInLibrary/DSPClasses"
+          "AlturaPorts/TDMPlugIns/PlugInLibrary/EffectClasses"
+          "AlturaPorts/TDMPlugIns/PlugInLibrary/MacBuild"
+          "AlturaPorts/TDMPlugIns/PlugInLibrary/Meters"
+          "AlturaPorts/TDMPlugIns/PlugInLibrary/ProcessClasses"
+          "AlturaPorts/TDMPlugIns/PlugInLibrary/ProcessClasses/Interfaces"
+          "AlturaPorts/TDMPlugIns/PlugInLibrary/RTASP_Adapt"
+          "AlturaPorts/TDMPlugIns/PlugInLibrary/Utilities"
+          "AlturaPorts/TDMPlugIns/PlugInLibrary/ViewClasses"
+          "AlturaPorts/TDMPlugIns/DSPManager/**"
+          "AlturaPorts/TDMPlugIns/SupplementalPlugInLib/Encryption"
+          "AlturaPorts/TDMPlugIns/SupplementalPlugInLib/GraphicsExtensions"
+          "AlturaPorts/TDMPlugIns/common/**"
+          "AlturaPorts/TDMPlugIns/common/PI_LibInterface"
+          "AlturaPorts/TDMPlugIns/PACEProtection/**"
+          "AlturaPorts/TDMPlugIns/SignalProcessing/**"
+          "AlturaPorts/OMS/Headers"
+          "AlturaPorts/Fic/Interfaces/**"
+          "AlturaPorts/Fic/Source/SignalNets"
+          "AlturaPorts/DSIPublicInterface/PublicHeaders"
+          "DAEWin/Include"
+          "AlturaPorts/DigiPublic/Interfaces"
+          "AlturaPorts/DigiPublic"
+          "AlturaPorts/NewFileLibs/DOA"
+          "AlturaPorts/NewFileLibs/Cmn"
+          "xplat/AVX/avx2/avx2sdk/inc"
+          "xplat/AVX/avx2/avx2sdk/utils"
+        )
+        foreach(include_dir ${extra_rtas_include_dirs})
+          target_include_directories(${rtas_target} PRIVATE
+            "${JUCER_RTAS_SDK_FOLDER}/${include_dir}"
+          )
+        endforeach()
+        target_link_libraries(${rtas_target} PRIVATE
+          "${JUCER_RTAS_SDK_FOLDER}/MacBag/Libs/Debug/libPluginLibrary.a"
+          "${JUCER_RTAS_SDK_FOLDER}/MacBag/Libs/Release/libPluginLibrary.a"
+        )
+      elseif(MSVC)
+        set_property(TARGET ${rtas_target} PROPERTY SUFFIX ".dpm")
+        target_compile_definitions(${rtas_target} PRIVATE
+          "JucePlugin_WinBag_path=\"${JUCER_RTAS_SDK_FOLDER}/WinBag\""
+        )
+        foreach(src_file ${RTAS_sources})
+          get_filename_component(src_file_basename "${src_file}" NAME)
+          if(src_file_basename MATCHES "^(include_)?juce_audio_plugin_client_RTAS_")
+            # Calling Convention: __stdcall (/Gz)
+            set_source_files_properties("${src_file}" PROPERTIES COMPILE_FLAGS "/Gz")
+          endif()
+        endforeach()
+        string(CONCAT module_definition_file
+          "${JUCER_PROJECT_MODULES_juce_audio_plugin_client_PATH}/"
+          "juce_audio_plugin_client/RTAS/juce_RTAS_WinExports.def"
+        )
+        target_sources(${rtas_target} PRIVATE "${module_definition_file}")
+        set_property(TARGET ${rtas_target} APPEND PROPERTY LINK_FLAGS
+          "/DELAYLOAD:DAE.dll"
+          "/DELAYLOAD:DigiExt.dll"
+          "/DELAYLOAD:DSI.dll"
+          "/DELAYLOAD:PluginLib.dll"
+          "/DELAYLOAD:DSPManager.dll"
+          "/DELAYLOAD:DSPManagerClientLib.dll"
+          "/DELAYLOAD:RTASClientLib.dll"
+        )
+        # See MSVCProjectExporterBase::MSVCTargetBase::getExtraSearchPaths()
+        # in JUCE/extras/Projucer/Source/ProjectSaving/jucer_ProjectExport_MSVC.h
+        set(extra_rtas_include_dirs
+          "AlturaPorts/TDMPlugins/PluginLibrary/EffectClasses"
+          "AlturaPorts/TDMPlugins/PluginLibrary/ProcessClasses"
+          "AlturaPorts/TDMPlugins/PluginLibrary/ProcessClasses/Interfaces"
+          "AlturaPorts/TDMPlugins/PluginLibrary/Utilities"
+          "AlturaPorts/TDMPlugins/PluginLibrary/RTASP_Adapt"
+          "AlturaPorts/TDMPlugins/PluginLibrary/CoreClasses"
+          "AlturaPorts/TDMPlugins/PluginLibrary/Controls"
+          "AlturaPorts/TDMPlugins/PluginLibrary/Meters"
+          "AlturaPorts/TDMPlugins/PluginLibrary/ViewClasses"
+          "AlturaPorts/TDMPlugins/PluginLibrary/DSPClasses"
+          "AlturaPorts/TDMPlugins/PluginLibrary/Interfaces"
+          "AlturaPorts/TDMPlugins/common"
+          "AlturaPorts/TDMPlugins/common/Platform"
+          "AlturaPorts/TDMPlugins/common/Macros"
+          "AlturaPorts/TDMPlugins/SignalProcessing/Public"
+          "AlturaPorts/TDMPlugIns/DSPManager/Interfaces"
+          "AlturaPorts/SADriver/Interfaces"
+          "AlturaPorts/DigiPublic/Interfaces"
+          "AlturaPorts/DigiPublic"
+          "AlturaPorts/Fic/Interfaces/DAEClient"
+          "AlturaPorts/NewFileLibs/Cmn"
+          "AlturaPorts/NewFileLibs/DOA"
+          "AlturaPorts/AlturaSource/PPC_H"
+          "AlturaPorts/AlturaSource/AppSupport"
+          "AvidCode/AVX2sdk/AVX/avx2/avx2sdk/inc"
+          "xplat/AVX/avx2/avx2sdk/inc"
+        )
+        foreach(include_dir ${extra_rtas_include_dirs})
+          target_include_directories(${rtas_target} PRIVATE
+            "${JUCER_RTAS_SDK_FOLDER}/${include_dir}"
+          )
+        endforeach()
+      endif()
+      _FRUT_set_JucePlugin_Build_defines(${rtas_target} "RTASPlugIn")
+      _FRUT_link_osx_frameworks(${rtas_target})
+      _FRUT_add_xcode_resources(${rtas_target})
+      _FRUT_set_custom_xcode_flags(${rtas_target})
+      unset(rtas_target)
+    endif()
+
     if(JUCER_BUILD_AAX AND (APPLE OR MSVC))
       set(aax_target ${target}_AAX)
       add_library(${aax_target} MODULE
@@ -2072,7 +2204,7 @@ function(_FRUT_generate_AppConfig_header)
     _FRUT_bool_to_int("${JUCER_BUILD_VST3}" Build_VST3_value)
     _FRUT_bool_to_int("${JUCER_BUILD_AUDIOUNIT}" Build_AU_value)
     _FRUT_bool_to_int("${JUCER_BUILD_AUDIOUNIT_V3}" Build_AUv3_value)
-    _FRUT_bool_to_int("OFF" Build_RTAS_value) # Not yet supported
+    _FRUT_bool_to_int("${JUCER_BUILD_RTAS}" Build_RTAS_value)
     _FRUT_bool_to_int("${JUCER_BUILD_AAX}" Build_AAX_value)
     if(DEFINED JUCER_VERSION AND JUCER_VERSION VERSION_LESS 5.0.0)
       _FRUT_bool_to_int("${JUCER_BUILD_AUDIOUNIT_V3}" Build_STANDALONE_value)
