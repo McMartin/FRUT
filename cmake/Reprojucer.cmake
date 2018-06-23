@@ -194,14 +194,6 @@ function(jucer_audio_plugin_settings)
 
   _FRUT_parse_arguments("${single_value_keywords}" "" "${ARGN}")
 
-  if(_BUILD_RTAS AND (APPLE OR MSVC))
-    message(WARNING "Reprojucer.cmake doesn't support building RTAS plugins. If you "
-      "would like Reprojucer.cmake to support building RTAS plugins, please leave a "
-      "comment on the issue \"Reprojucer.cmake doesn't support building RTAS plugins\" "
-      "on GitHub: https://github.com/McMartin/FRUT/issues/266"
-    )
-  endif()
-
   if(DEFINED JUCER_VERSION AND JUCER_VERSION VERSION_LESS 5.0.0)
     if(DEFINED _BUILD_STANDALONE_PLUGIN)
       message(WARNING "BUILD_STANDALONE_PLUGIN is a JUCE 5 feature only")
