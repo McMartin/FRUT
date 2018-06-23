@@ -1787,6 +1787,10 @@ function(jucer_project_end)
           "${JUCER_RTAS_SDK_FOLDER}/MacBag/Libs/Debug/libPluginLibrary.a"
           "${JUCER_RTAS_SDK_FOLDER}/MacBag/Libs/Release/libPluginLibrary.a"
         )
+
+        _FRUT_install_to_plugin_binary_location(${rtas_target} "RTAS"
+          "/Library/Application Support/Digidesign/Plug-Ins/"
+        )
       elseif(MSVC)
         set_property(TARGET ${rtas_target} PROPERTY SUFFIX ".dpm")
         target_compile_definitions(${rtas_target} PRIVATE
@@ -1848,6 +1852,15 @@ function(jucer_project_end)
             "${JUCER_RTAS_SDK_FOLDER}/${include_dir}"
           )
         endforeach()
+
+        if(CMAKE_GENERATOR_PLATFORM STREQUAL "x64" OR CMAKE_GENERATOR MATCHES "Win64")
+          set(common_files_env_var "CommonProgramW6432")
+        else()
+          set(common_files_env_var "CommonProgramFiles(x86)")
+        endif()
+        _FRUT_install_to_plugin_binary_location(${rtas_target} "RTAS"
+          "$ENV{${common_files_env_var}}/Digidesign/DAE/Plug-Ins"
+        )
       endif()
       _FRUT_set_JucePlugin_Build_defines(${rtas_target} "RTASPlugIn")
       _FRUT_link_osx_frameworks(${rtas_target})
