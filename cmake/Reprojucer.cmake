@@ -789,12 +789,6 @@ function(jucer_export_target_configuration
     return()
   endif()
 
-  if("${config}" IN_LIST JUCER_PROJECT_CONFIGURATIONS)
-    message(FATAL_ERROR "You cannot call jucer_export_target_configuration("
-      "\"${exporter}\" NAME \"${config}\") twice."
-    )
-  endif()
-
   list(APPEND JUCER_PROJECT_CONFIGURATIONS ${config})
   set(JUCER_PROJECT_CONFIGURATIONS ${JUCER_PROJECT_CONFIGURATIONS} PARENT_SCOPE)
 
