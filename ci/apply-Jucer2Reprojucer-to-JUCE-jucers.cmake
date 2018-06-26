@@ -45,6 +45,9 @@ file(GLOB_RECURSE jucer_files RELATIVE "${JUCE_ROOT}" "${JUCE_ROOT}/*.jucer")
 
 foreach(jucer_file ${jucer_files})
   get_filename_component(working_dir "${generated_JUCE_ROOT}/${jucer_file}" DIRECTORY)
+  if(NOT IS_DIRECTORY "${working_dir}")
+    message(FATAL_ERROR "Cannot change working directory to ${working_dir}")
+  endif()
 
   execute_process(WORKING_DIRECTORY ${working_dir}
     COMMAND

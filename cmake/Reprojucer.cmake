@@ -287,6 +287,12 @@ function(jucer_project_module module_name PATH_KEYWORD modules_folder)
   list(APPEND JUCER_PROJECT_MODULES ${module_name})
   set(JUCER_PROJECT_MODULES ${JUCER_PROJECT_MODULES} PARENT_SCOPE)
 
+  if(NOT PATH_KEYWORD STREQUAL "PATH")
+    message(FATAL_ERROR "Invalid second argument. Expected \"PATH\" keyword, "
+      "but got \"${PATH_KEYWORD}\" instead."
+    )
+  endif()
+
   _FRUT_abs_path_based_on_jucer_project_dir("${modules_folder}" modules_folder)
   if(NOT IS_DIRECTORY "${modules_folder}")
     message(FATAL_ERROR "No such directory: \"${modules_folder}\"")
@@ -781,12 +787,6 @@ function(jucer_export_target_configuration
   list(GET Reprojucer_supported_exporters_conditions ${exporter_index} condition)
   if(NOT ${condition})
     return()
-  endif()
-
-  if("${config}" IN_LIST JUCER_PROJECT_CONFIGURATIONS)
-    message(FATAL_ERROR "You cannot call jucer_export_target_configuration("
-      "\"${exporter}\" NAME \"${config}\") twice."
-    )
   endif()
 
   list(APPEND JUCER_PROJECT_CONFIGURATIONS ${config})
