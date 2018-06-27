@@ -924,23 +924,28 @@ function(jucer_export_target_configuration
   endif()
 
   if(DEFINED _VST_BINARY_LOCATION)
-    set(JUCER_VST_BINARY_LOCATION_${config} ${_VST_BINARY_LOCATION} PARENT_SCOPE)
+    _FRUT_sanitize_path_in_user_folder(binary_location "${_VST_BINARY_LOCATION}")
+    set(JUCER_VST_BINARY_LOCATION_${config} ${binary_location} PARENT_SCOPE)
   endif()
 
   if(DEFINED _VST3_BINARY_LOCATION)
-    set(JUCER_VST3_BINARY_LOCATION_${config} ${_VST3_BINARY_LOCATION} PARENT_SCOPE)
+    _FRUT_sanitize_path_in_user_folder(binary_location "${_VST3_BINARY_LOCATION}")
+    set(JUCER_VST3_BINARY_LOCATION_${config} ${binary_location} PARENT_SCOPE)
   endif()
 
   if(DEFINED _AU_BINARY_LOCATION)
-    set(JUCER_AU_BINARY_LOCATION_${config} ${_AU_BINARY_LOCATION} PARENT_SCOPE)
+    _FRUT_sanitize_path_in_user_folder(binary_location "${_AU_BINARY_LOCATION}")
+    set(JUCER_AU_BINARY_LOCATION_${config} ${binary_location} PARENT_SCOPE)
   endif()
 
   if(DEFINED _RTAS_BINARY_LOCATION)
-    set(JUCER_RTAS_BINARY_LOCATION_${config} ${_RTAS_BINARY_LOCATION} PARENT_SCOPE)
+    _FRUT_sanitize_path_in_user_folder(binary_location "${_RTAS_BINARY_LOCATION}")
+    set(JUCER_RTAS_BINARY_LOCATION_${config} ${binary_location} PARENT_SCOPE)
   endif()
 
   if(DEFINED _AAX_BINARY_LOCATION)
-    set(JUCER_AAX_BINARY_LOCATION_${config} ${_AAX_BINARY_LOCATION} PARENT_SCOPE)
+    _FRUT_sanitize_path_in_user_folder(binary_location "${_AAX_BINARY_LOCATION}")
+    set(JUCER_AAX_BINARY_LOCATION_${config} ${binary_location} PARENT_SCOPE)
   endif()
 
   if(DEFINED _OSX_BASE_SDK_VERSION)
@@ -2099,6 +2104,15 @@ function(_FRUT_abs_path_based_on_jucer_project_dir out_path in_path)
   endif()
 
   get_filename_component(in_path "${in_path}" ABSOLUTE BASE_DIR "${JUCER_PROJECT_DIR}")
+  set(${out_path} ${in_path} PARENT_SCOPE)
+
+endfunction()
+
+
+function(_FRUT_sanitize_path_in_user_folder out_path in_path)
+
+  string(REGEX REPLACE "^~" "$ENV{HOME}" in_path "${in_path}")
+  string(REGEX REPLACE "^$(HOME)" "$ENV{HOME}" in_path "${in_path}")
   set(${out_path} ${in_path} PARENT_SCOPE)
 
 endfunction()
