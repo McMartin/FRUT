@@ -276,9 +276,6 @@ endfunction()
 
 function(jucer_project_module module_name PATH_KEYWORD modules_folder)
 
-  list(APPEND JUCER_PROJECT_MODULES ${module_name})
-  set(JUCER_PROJECT_MODULES ${JUCER_PROJECT_MODULES} PARENT_SCOPE)
-
   if(NOT PATH_KEYWORD STREQUAL "PATH")
     message(FATAL_ERROR "Invalid second argument. Expected \"PATH\" keyword, "
       "but got \"${PATH_KEYWORD}\" instead."
@@ -289,9 +286,6 @@ function(jucer_project_module module_name PATH_KEYWORD modules_folder)
   if(NOT IS_DIRECTORY "${modules_folder}")
     message(FATAL_ERROR "No such directory: \"${modules_folder}\"")
   endif()
-  list(APPEND JUCER_PROJECT_MODULES_FOLDERS "${modules_folder}")
-  set(JUCER_PROJECT_MODULES_FOLDERS ${JUCER_PROJECT_MODULES_FOLDERS} PARENT_SCOPE)
-  set(JUCER_PROJECT_MODULES_${module_name}_PATH "${modules_folder}" PARENT_SCOPE)
 
   foreach(extension ".h" ".hpp" ".hxx")
     set(module_header_file "${modules_folder}/${module_name}/${module_name}${extension}")
@@ -302,6 +296,13 @@ function(jucer_project_module module_name PATH_KEYWORD modules_folder)
   if(NOT EXISTS "${module_header_file}")
     message(FATAL_ERROR "${modules_folder}/${module_name}/ is not a valid JUCE module")
   endif()
+
+  list(APPEND JUCER_PROJECT_MODULES ${module_name})
+  set(JUCER_PROJECT_MODULES ${JUCER_PROJECT_MODULES} PARENT_SCOPE)
+
+  list(APPEND JUCER_PROJECT_MODULES_FOLDERS "${modules_folder}")
+  set(JUCER_PROJECT_MODULES_FOLDERS ${JUCER_PROJECT_MODULES_FOLDERS} PARENT_SCOPE)
+  set(JUCER_PROJECT_MODULES_${module_name}_PATH "${modules_folder}" PARENT_SCOPE)
 
   file(GLOB module_src_files
     "${modules_folder}/${module_name}/*.cpp"
