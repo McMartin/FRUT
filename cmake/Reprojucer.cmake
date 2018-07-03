@@ -293,6 +293,11 @@ function(jucer_project_module module_name PATH_KEYWORD modules_folder)
   set(JUCER_PROJECT_MODULES_FOLDERS ${JUCER_PROJECT_MODULES_FOLDERS} PARENT_SCOPE)
   set(JUCER_PROJECT_MODULES_${module_name}_PATH "${modules_folder}" PARENT_SCOPE)
 
+  set(module_header_file "${modules_folder}/${module_name}/${module_name}.h")
+  if(NOT EXISTS "${module_header_file}")
+    message(FATAL_ERROR "${modules_folder}/${module_name}/ is not a valid JUCE module")
+  endif()
+
   file(GLOB module_src_files
     "${modules_folder}/${module_name}/*.cpp"
     "${modules_folder}/${module_name}/*.mm"
@@ -355,8 +360,6 @@ function(jucer_project_module module_name PATH_KEYWORD modules_folder)
   endforeach()
 
   set(JUCER_PROJECT_SOURCES ${JUCER_PROJECT_SOURCES} PARENT_SCOPE)
-
-  set(module_header_file "${modules_folder}/${module_name}/${module_name}.h")
 
   file(STRINGS "${module_header_file}" config_flags_lines REGEX "/\\*\\* Config: ")
   string(REPLACE "/** Config: " "" module_config_flags "${config_flags_lines}")
