@@ -53,6 +53,8 @@ function(jucer_project_begin)
     endif()
     get_filename_component(project_dir "${_PROJECT_FILE}" DIRECTORY)
     set(JUCER_PROJECT_DIR "${project_dir}" PARENT_SCOPE)
+  else()
+    set(JUCER_PROJECT_DIR "${CMAKE_CURRENT_SOURCE_DIR}" PARENT_SCOPE)
   endif()
 
   if(DEFINED _PROJECT_ID)
@@ -2107,8 +2109,14 @@ endfunction()
 function(_FRUT_abs_path_based_on_jucer_project_dir out_path in_path)
 
   if(NOT IS_ABSOLUTE "${in_path}" AND NOT DEFINED JUCER_PROJECT_DIR)
-    message(FATAL_ERROR "The path \"${in_path}\" must be absolute, unless you give "
-      "PROJECT_FILE when calling jucer_project_begin()."
+    message(FATAL_ERROR "Cannot join \"\${JUCER_PROJECT_DIR}\" and \"${in_path}\" to "
+      "construct an absolute path because JUCER_PROJECT_DIR is not defined. You should "
+      "call jucer_project_begin() first, e.g.:\n"
+      "  jucer_project_begin(\n"
+      "    PROJECT_FILE \"<path/to/YourProject.jucer>\"\n"
+      "  )\n"
+      "or if you don't have a .jucer file:\n"
+      "  jucer_project_begin()\n"
     )
   endif()
 
