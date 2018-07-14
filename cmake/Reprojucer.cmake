@@ -2783,7 +2783,7 @@ function(_FRUT_set_common_target_properties target)
       )
     else()
       set(osx_deployment_target "10.11")
-      if(DEFINED ${JUCER_OSX_DEPLOYMENT_TARGET_${CMAKE_BUILD_TYPE}})
+      if(DEFINED JUCER_OSX_DEPLOYMENT_TARGET_${CMAKE_BUILD_TYPE})
         set(osx_deployment_target "${JUCER_OSX_DEPLOYMENT_TARGET_${CMAKE_BUILD_TYPE}}")
       endif()
       if(target MATCHES "_AUv3_AppExtension$"
