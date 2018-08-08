@@ -8,6 +8,7 @@ Add a JUCE module to the current JUCE project.
   jucer_project_module(
     <module_name>
     PATH <modules_folder>
+    [ADD_SOURCE_TO_PROJECT <ON|OFF>]
     [<module_config_flag> <ON|OFF>]...
   )
 
