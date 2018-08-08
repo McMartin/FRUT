@@ -322,6 +322,12 @@ function(jucer_project_module module_name PATH_KEYWORD modules_folder)
     endif()
   endforeach()
 
+  foreach(keyword ${extra_keywords})
+    if(NOT DEFINED extra_values_${keyword})
+      message(WARNING "Keyword \"${keyword}\" doesn't have any associated value")
+    endif()
+  endforeach()
+
   list(APPEND JUCER_PROJECT_MODULES ${module_name})
   set(JUCER_PROJECT_MODULES ${JUCER_PROJECT_MODULES} PARENT_SCOPE)
 
