@@ -77,16 +77,19 @@ jucer_project_files("Jucer2Reprojucer"
 jucer_project_module(
   juce_core
   PATH "${JUCE_ROOT}/modules"
+  ADD_SOURCE_TO_PROJECT OFF
 )
 
 jucer_project_module(
   juce_data_structures
   PATH "${JUCE_ROOT}/modules"
+  ADD_SOURCE_TO_PROJECT OFF
 )
 
 jucer_project_module(
   juce_events
   PATH "${JUCE_ROOT}/modules"
+  ADD_SOURCE_TO_PROJECT OFF
 )
 
 jucer_export_target(
