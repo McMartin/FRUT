@@ -1413,12 +1413,12 @@ function(jucer_project_end)
 
   string(REGEX REPLACE "[^A-Za-z0-9_.+-]" "_" target "${JUCER_PROJECT_NAME}")
 
-  if(NOT APPLE)
-    unset(JUCER_PROJECT_XCODE_RESOURCES)
-  else()
+  if(APPLE)
     set_source_files_properties(${JUCER_PROJECT_XCODE_RESOURCES} ${icon_file}
       PROPERTIES MACOSX_PACKAGE_LOCATION "Resources"
     )
+  else()
+    unset(JUCER_PROJECT_XCODE_RESOURCES)
   endif()
 
   set(all_sources
