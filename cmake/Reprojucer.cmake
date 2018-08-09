@@ -336,8 +336,9 @@ function(jucer_project_module module_name PATH_KEYWORD modules_folder)
   set(JUCER_PROJECT_MODULES_${module_name}_PATH "${modules_folder}" PARENT_SCOPE)
 
   file(GLOB module_src_files
-    "${modules_folder}/${module_name}/*.cpp"
-    "${modules_folder}/${module_name}/*.mm"
+    LIST_DIRECTORIES FALSE
+    "${modules_folder}/${module_name}/${module_name}*.cpp"
+    "${modules_folder}/${module_name}/${module_name}*.mm"
   )
 
   if(DEFINED JUCER_VERSION AND JUCER_VERSION VERSION_LESS 5.0.0)
