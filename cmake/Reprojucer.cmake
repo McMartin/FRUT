@@ -1282,6 +1282,8 @@ function(jucer_project_end)
 
   set(CMAKE_CONFIGURATION_TYPES ${JUCER_PROJECT_CONFIGURATIONS} PARENT_SCOPE)
 
+  _FRUT_check_SDK_folders()
+
   _FRUT_generate_AppConfig_header()
   _FRUT_generate_JuceHeader_header()
 
@@ -2161,6 +2163,65 @@ function(_FRUT_sanitize_path_in_user_folder out_path in_path)
 endfunction()
 
 
+function(_FRUT_check_SDK_folders)
+
+  if(JUCER_BUILD_VST OR JUCER_FLAG_JUCE_PLUGINHOST_VST)
+    if(DEFINED JUCER_VST_SDK_FOLDER)
+      if(NOT IS_DIRECTORY "${JUCER_VST_SDK_FOLDER}")
+        message(WARNING
+          "JUCER_VST_SDK_FOLDER: no such directory \"${JUCER_VST_SDK_FOLDER}\""
+        )
+      elseif(NOT EXISTS "${JUCER_VST_SDK_FOLDER}/public.sdk/source/vst2.x/audioeffectx.h")
+        message(WARNING "JUCER_VST_SDK_FOLDER: \"${JUCER_VST_SDK_FOLDER}\" doesn't seem "
+          "to contain the VST SDK"
+        )
+      endif()
+    elseif(DEFINED JUCER_VERSION AND JUCER_VERSION VERSION_LESS 4.2.4)
+      message(WARNING "JUCER_VST_SDK_FOLDER is not defined. You should give "
+        "VST_SDK_FOLDER when calling jucer_export_target(\"${current_exporter}\")."
+      )
+    endif()
+  endif()
+
+  if(JUCER_BUILD_VST3 OR JUCER_FLAG_JUCE_PLUGINHOST_VST3)
+    if(DEFINED JUCER_VST3_SDK_FOLDER)
+      if(NOT IS_DIRECTORY "${JUCER_VST3_SDK_FOLDER}")
+        message(WARNING
+          "JUCER_VST3_SDK_FOLDER: no such directory \"${JUCER_VST3_SDK_FOLDER}\""
+        )
+      elseif(NOT EXISTS "${JUCER_VST3_SDK_FOLDER}/base/source/baseiids.cpp")
+        message(WARNING "JUCER_VST3_SDK_FOLDER: \"${JUCER_VST3_SDK_FOLDER}\" doesn't "
+          "seem to contain the VST3 SDK"
+        )
+      endif()
+    elseif(APPLE OR MSVC)
+      message(WARNING "JUCER_VST3_SDK_FOLDER is not defined. You should give "
+        "VST3_SDK_FOLDER when calling jucer_export_target(\"${current_exporter}\")."
+      )
+    endif()
+  endif()
+
+  if(JUCER_BUILD_AAX)
+    if(DEFINED JUCER_AAX_SDK_FOLDER)
+      if(NOT IS_DIRECTORY "${JUCER_AAX_SDK_FOLDER}")
+        message(WARNING
+          "JUCER_AAX_SDK_FOLDER: no such directory \"${JUCER_AAX_SDK_FOLDER}\""
+        )
+      elseif(NOT EXISTS "${JUCER_AAX_SDK_FOLDER}/Interfaces/AAX_Exports.cpp")
+        message(WARNING "JUCER_AAX_SDK_FOLDER: \"${JUCER_AAX_SDK_FOLDER}\" doesn't "
+          "seem to contain the AAX SDK"
+        )
+      endif()
+    elseif(APPLE OR MSVC)
+      message(WARNING "JUCER_AAX_SDK_FOLDER is not defined. You should give "
+        "AAX_SDK_FOLDER when calling jucer_export_target(\"${current_exporter}\")."
+      )
+    endif()
+  endif()
+
+endfunction()
+
+
 function(_FRUT_generate_AppConfig_header)
 
   if(DEFINED JUCER_APPCONFIG_USER_CODE_SECTION)
@@ -2633,61 +2694,22 @@ function(_FRUT_set_common_target_properties target)
 
   if(JUCER_BUILD_VST OR JUCER_FLAG_JUCE_PLUGINHOST_VST)
     if(DEFINED JUCER_VST_SDK_FOLDER)
-      if(NOT IS_DIRECTORY "${JUCER_VST_SDK_FOLDER}")
-        message(WARNING
-          "JUCER_VST_SDK_FOLDER: no such directory \"${JUCER_VST_SDK_FOLDER}\""
-        )
-      elseif(NOT EXISTS "${JUCER_VST_SDK_FOLDER}/public.sdk/source/vst2.x/audioeffectx.h")
-        message(WARNING "JUCER_VST_SDK_FOLDER: \"${JUCER_VST_SDK_FOLDER}\" doesn't seem "
-          "to contain the VST SDK"
-        )
-      endif()
       target_include_directories(${target} PRIVATE "${JUCER_VST_SDK_FOLDER}")
-    elseif(DEFINED JUCER_VERSION AND JUCER_VERSION VERSION_LESS 4.2.4)
-      message(WARNING "JUCER_VST_SDK_FOLDER is not defined. You should give "
-        "VST_SDK_FOLDER when calling jucer_export_target(\"${current_exporter}\")."
-      )
     endif()
   endif()
 
   if(JUCER_BUILD_VST3 OR JUCER_FLAG_JUCE_PLUGINHOST_VST3)
     if(DEFINED JUCER_VST3_SDK_FOLDER)
-      if(NOT IS_DIRECTORY "${JUCER_VST3_SDK_FOLDER}")
-        message(WARNING
-          "JUCER_VST3_SDK_FOLDER: no such directory \"${JUCER_VST3_SDK_FOLDER}\""
-        )
-      elseif(NOT EXISTS "${JUCER_VST3_SDK_FOLDER}/base/source/baseiids.cpp")
-        message(WARNING "JUCER_VST3_SDK_FOLDER: \"${JUCER_VST3_SDK_FOLDER}\" doesn't "
-          "seem to contain the VST3 SDK"
-        )
-      endif()
       target_include_directories(${target} PRIVATE "${JUCER_VST3_SDK_FOLDER}")
-    elseif(APPLE OR MSVC)
-      message(WARNING "JUCER_VST3_SDK_FOLDER is not defined. You should give "
-        "VST3_SDK_FOLDER when calling jucer_export_target(\"${current_exporter}\")."
-      )
     endif()
   endif()
 
   if(JUCER_BUILD_AAX)
     if(DEFINED JUCER_AAX_SDK_FOLDER)
-      if(NOT IS_DIRECTORY "${JUCER_AAX_SDK_FOLDER}")
-        message(WARNING
-          "JUCER_AAX_SDK_FOLDER: no such directory \"${JUCER_AAX_SDK_FOLDER}\""
-        )
-      elseif(NOT EXISTS "${JUCER_AAX_SDK_FOLDER}/Interfaces/AAX_Exports.cpp")
-        message(WARNING "JUCER_AAX_SDK_FOLDER: \"${JUCER_AAX_SDK_FOLDER}\" doesn't "
-          "seem to contain the AAX SDK"
-        )
-      endif()
       target_include_directories(${target} PRIVATE
         "${JUCER_AAX_SDK_FOLDER}"
         "${JUCER_AAX_SDK_FOLDER}/Interfaces"
         "${JUCER_AAX_SDK_FOLDER}/Interfaces/ACF"
-      )
-    elseif(APPLE OR MSVC)
-      message(WARNING "JUCER_AAX_SDK_FOLDER is not defined. You should give "
-        "AAX_SDK_FOLDER when calling jucer_export_target(\"${current_exporter}\")."
       )
     endif()
   endif()
