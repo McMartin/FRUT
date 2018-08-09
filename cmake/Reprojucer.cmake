@@ -1415,10 +1415,11 @@ function(jucer_project_end)
 
   if(NOT APPLE)
     unset(JUCER_PROJECT_XCODE_RESOURCES)
+  else()
+    set_source_files_properties(${JUCER_PROJECT_XCODE_RESOURCES} ${icon_file}
+      PROPERTIES MACOSX_PACKAGE_LOCATION "Resources"
+    )
   endif()
-  set_source_files_properties(${JUCER_PROJECT_XCODE_RESOURCES} ${icon_file}
-    PROPERTIES MACOSX_PACKAGE_LOCATION "Resources"
-  )
 
   set(all_sources
     ${JUCER_PROJECT_SOURCES}
