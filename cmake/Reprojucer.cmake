@@ -2704,14 +2704,12 @@ function(_FRUT_set_common_target_properties target)
     endif()
   endif()
 
-  if(JUCER_BUILD_AAX)
-    if(DEFINED JUCER_AAX_SDK_FOLDER)
-      target_include_directories(${target} PRIVATE
-        "${JUCER_AAX_SDK_FOLDER}"
-        "${JUCER_AAX_SDK_FOLDER}/Interfaces"
-        "${JUCER_AAX_SDK_FOLDER}/Interfaces/ACF"
-      )
-    endif()
+  if(JUCER_BUILD_AAX AND DEFINED JUCER_AAX_SDK_FOLDER)
+    target_include_directories(${target} PRIVATE
+      "${JUCER_AAX_SDK_FOLDER}"
+      "${JUCER_AAX_SDK_FOLDER}/Interfaces"
+      "${JUCER_AAX_SDK_FOLDER}/Interfaces/ACF"
+    )
   endif()
 
   foreach(config ${JUCER_PROJECT_CONFIGURATIONS})
