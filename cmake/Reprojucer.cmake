@@ -1496,6 +1496,7 @@ function(jucer_project_end)
     add_library(${target} SHARED ${all_sources})
     _FRUT_set_output_directory_properties(${target} "Dynamic Library")
     _FRUT_set_common_target_properties(${target})
+    _FRUT_link_osx_frameworks(${target})
     _FRUT_set_custom_xcode_flags(${target})
 
   elseif(JUCER_PROJECT_TYPE STREQUAL "Audio Plug-in")
