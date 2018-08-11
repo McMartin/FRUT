@@ -198,5 +198,5 @@ matrix:
 
     - os: osx
       env: GENERATOR=Xcode
-      osx_image: xcode9.3beta
+      osx_image: xcode9.4
       script: *script-Xcode
