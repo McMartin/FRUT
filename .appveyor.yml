@@ -88,19 +88,30 @@ test_script:
   # Configure all JUCE 4.2.0 projects
   - mkdir %APPVEYOR_BUILD_FOLDER%\ci\AllJuceProjects\4.2.0_build
   - cd %APPVEYOR_BUILD_FOLDER%\ci\AllJuceProjects\4.2.0_build
-  - cmake .. -G "%GENERATOR%" -DJUCE_VERSION="4.2.0"
+  - >
+    cmake .. -G "%GENERATOR%" -DJUCE_VERSION="4.2.0"
+    -DJUCER_AAX_SDK_FOLDER="%APPVEYOR_BUILD_FOLDER%/ci/fake-SDKs/AAX"
+    -DJUCER_VST3_SDK_FOLDER="%APPVEYOR_BUILD_FOLDER%/ci/fake-SDKs/VST3"
+    -DJUCER_VST_SDK_FOLDER="%APPVEYOR_BUILD_FOLDER%/ci/fake-SDKs/VST"
 
   # Configure all JUCE 4.3.1 projects
   - mkdir %APPVEYOR_BUILD_FOLDER%\ci\AllJuceProjects\4.3.1_build
   - cd %APPVEYOR_BUILD_FOLDER%\ci\AllJuceProjects\4.3.1_build
-  - cmake .. -G "%GENERATOR%" -DJUCE_VERSION="4.3.1"
+  - >
+    cmake .. -G "%GENERATOR%" -DJUCE_VERSION="4.3.1"
+    -DJUCER_AAX_SDK_FOLDER="%APPVEYOR_BUILD_FOLDER%/ci/fake-SDKs/AAX"
+    -DJUCER_VST3_SDK_FOLDER="%APPVEYOR_BUILD_FOLDER%/ci/fake-SDKs/VST3"
 
   # Configure all JUCE 5.0.0 projects
   - mkdir %APPVEYOR_BUILD_FOLDER%\ci\AllJuceProjects\5.0.0_build
   - cd %APPVEYOR_BUILD_FOLDER%\ci\AllJuceProjects\5.0.0_build
-  - cmake .. -G "%GENERATOR%" -DJUCE_VERSION="5.0.0"
+  - >
+    cmake .. -G "%GENERATOR%" -DJUCE_VERSION="5.0.0"
+    -DJUCER_AAX_SDK_FOLDER="%APPVEYOR_BUILD_FOLDER%/ci/fake-SDKs/AAX"
 
   # Configure all JUCE 5.2.1 projects
   - mkdir %APPVEYOR_BUILD_FOLDER%\ci\AllJuceProjects\5.2.1_build
   - cd %APPVEYOR_BUILD_FOLDER%\ci\AllJuceProjects\5.2.1_build
-  - cmake .. -G "%GENERATOR%" -DJUCE_VERSION="5.2.1"
+  - >
+    cmake .. -G "%GENERATOR%" -DJUCE_VERSION="5.2.1"
+    -DJUCER_AAX_SDK_FOLDER="%APPVEYOR_BUILD_FOLDER%/ci/fake-SDKs/AAX"
