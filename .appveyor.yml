@@ -108,6 +108,7 @@ test_script:
   - >
     cmake .. -G "%GENERATOR%" -DJUCE_VERSION="5.0.0"
     -DJUCER_AAX_SDK_FOLDER="%APPVEYOR_BUILD_FOLDER%/ci/fake-SDKs/AAX"
+    -DJUCER_VST3_SDK_FOLDER="%APPVEYOR_BUILD_FOLDER%/ci/fake-SDKs/VST3"
 
   # Configure all JUCE 5.2.1 projects
   - mkdir %APPVEYOR_BUILD_FOLDER%\ci\AllJuceProjects\5.2.1_build
@@ -115,3 +116,4 @@ test_script:
   - >
     cmake .. -G "%GENERATOR%" -DJUCE_VERSION="5.2.1"
     -DJUCER_AAX_SDK_FOLDER="%APPVEYOR_BUILD_FOLDER%/ci/fake-SDKs/AAX"
+    -DJUCER_VST3_SDK_FOLDER="%APPVEYOR_BUILD_FOLDER%/ci/fake-SDKs/VST3"

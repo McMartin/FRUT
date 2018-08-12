@@ -23,15 +23,6 @@ if(NOT DEFINED JUCE_VERSION)
 endif()
 
 
-if(JUCE_VERSION VERSION_GREATER "4.3.1")
-  if(APPLE OR WIN32)
-    set(JUCER_VST3_SDK_FOLDER
-      "${CMAKE_CURRENT_LIST_DIR}/../third-party/vstsdk367_03_03_2017_build_352/VST_SDK/VST3_SDK"
-    )
-  endif()
-endif()
-
-
 set(JUCE_ROOT "${CMAKE_CURRENT_LIST_DIR}/../tmp/JUCE-${JUCE_VERSION}")
 if(NOT IS_DIRECTORY "${JUCE_ROOT}")
   message(FATAL_ERROR "No such directory: ${JUCE_ROOT}")

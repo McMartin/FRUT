@@ -114,11 +114,13 @@ script-anchors:
     - >
       cmake .. -DCMAKE_BUILD_TYPE=Debug -DJUCE_VERSION="5.0.0"
       -DJUCER_AAX_SDK_FOLDER="${TRAVIS_BUILD_DIR}/ci/fake-SDKs/AAX"
+      -DJUCER_VST3_SDK_FOLDER="${TRAVIS_BUILD_DIR}/ci/fake-SDKs/VST3"
     - mkdir ${TRAVIS_BUILD_DIR}/ci/AllJuceProjects/Release_5.0.0_build
     - cd ${TRAVIS_BUILD_DIR}/ci/AllJuceProjects/Release_5.0.0_build
     - >
       cmake .. -DCMAKE_BUILD_TYPE=Release -DJUCE_VERSION="5.0.0"
       -DJUCER_AAX_SDK_FOLDER="${TRAVIS_BUILD_DIR}/ci/fake-SDKs/AAX"
+      -DJUCER_VST3_SDK_FOLDER="${TRAVIS_BUILD_DIR}/ci/fake-SDKs/VST3"
 
     # Configure all JUCE 5.2.1 projects
     - mkdir ${TRAVIS_BUILD_DIR}/ci/AllJuceProjects/Debug_5.2.1_build
@@ -126,11 +128,13 @@ script-anchors:
     - >
       cmake .. -DCMAKE_BUILD_TYPE=Debug -DJUCE_VERSION="5.2.1"
       -DJUCER_AAX_SDK_FOLDER="${TRAVIS_BUILD_DIR}/ci/fake-SDKs/AAX"
+      -DJUCER_VST3_SDK_FOLDER="${TRAVIS_BUILD_DIR}/ci/fake-SDKs/VST3"
     - mkdir ${TRAVIS_BUILD_DIR}/ci/AllJuceProjects/Release_5.2.1_build
     - cd ${TRAVIS_BUILD_DIR}/ci/AllJuceProjects/Release_5.2.1_build
     - >
       cmake .. -DCMAKE_BUILD_TYPE=Release -DJUCE_VERSION="5.2.1"
       -DJUCER_AAX_SDK_FOLDER="${TRAVIS_BUILD_DIR}/ci/fake-SDKs/AAX"
+      -DJUCER_VST3_SDK_FOLDER="${TRAVIS_BUILD_DIR}/ci/fake-SDKs/VST3"
 
   - &script-Xcode
     # Configure and build FRUT with JUCE 4.2.0
@@ -204,6 +208,7 @@ script-anchors:
     - >
       cmake .. -G Xcode -DJUCE_VERSION="5.0.0"
       -DJUCER_AAX_SDK_FOLDER="${TRAVIS_BUILD_DIR}/ci/fake-SDKs/AAX"
+      -DJUCER_VST3_SDK_FOLDER="${TRAVIS_BUILD_DIR}/ci/fake-SDKs/VST3"
 
     # Configure all JUCE 5.2.1 projects
     - mkdir ${TRAVIS_BUILD_DIR}/ci/AllJuceProjects/5.2.1_build
@@ -211,6 +216,7 @@ script-anchors:
     - >
       cmake .. -G Xcode -DJUCE_VERSION="5.2.1"
       -DJUCER_AAX_SDK_FOLDER="${TRAVIS_BUILD_DIR}/ci/fake-SDKs/AAX"
+      -DJUCER_VST3_SDK_FOLDER="${TRAVIS_BUILD_DIR}/ci/fake-SDKs/VST3"
 
 matrix:
   include:
