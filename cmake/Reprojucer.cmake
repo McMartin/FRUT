@@ -2158,7 +2158,7 @@ endfunction()
 function(_FRUT_sanitize_path_in_user_folder out_path in_path)
 
   string(REGEX REPLACE "^~" "$ENV{HOME}" in_path "${in_path}")
-  string(REGEX REPLACE "^$(HOME)" "$ENV{HOME}" in_path "${in_path}")
+  string(REGEX REPLACE "^\\$\\(HOME\\)" "$ENV{HOME}" in_path "${in_path}")
   set(${out_path} ${in_path} PARENT_SCOPE)
 
 endfunction()
