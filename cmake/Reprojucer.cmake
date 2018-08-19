@@ -2157,8 +2157,11 @@ endfunction()
 
 function(_FRUT_sanitize_path_in_user_folder out_path in_path)
 
-  string(REGEX REPLACE "^~" "$ENV{HOME}" in_path "${in_path}")
-  string(REGEX REPLACE "^\\$\\(HOME\\)" "$ENV{HOME}" in_path "${in_path}")
+  file(TO_CMAKE_PATH "$ENV{HOME}" user_folder)
+
+  string(REGEX REPLACE "^~" "${user_folder}" in_path "${in_path}")
+  string(REGEX REPLACE "^\\$\\(HOME\\)" "${user_folder}" in_path "${in_path}")
+
   set(${out_path} ${in_path} PARENT_SCOPE)
 
 endfunction()
