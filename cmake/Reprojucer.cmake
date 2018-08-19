@@ -2882,10 +2882,10 @@ function(_FRUT_set_common_target_properties target)
 
     get_target_property(target_type ${target} TYPE)
     if(target_type STREQUAL "EXECUTABLE" OR target_type STREQUAL "MODULE_LIBRARY")
-    unset(all_confs_strip_exe)
-    unset(all_confs_strip_opt)
-    unset(all_confs_strip_arg)
-    foreach(config ${JUCER_PROJECT_CONFIGURATIONS})
+      unset(all_confs_strip_exe)
+      unset(all_confs_strip_opt)
+      unset(all_confs_strip_arg)
+      foreach(config ${JUCER_PROJECT_CONFIGURATIONS})
         if(${JUCER_STRIP_LOCAL_SYMBOLS_${config}})
           find_program(strip_exe "strip")
           if(NOT strip_exe)
@@ -2897,12 +2897,12 @@ function(_FRUT_set_common_target_properties target)
             $<$<CONFIG:${config}>:$<TARGET_FILE:${target}>>
           )
         endif()
-    endforeach()
-    if(all_confs_strip_exe)
-      add_custom_command(TARGET ${target} POST_BUILD
-        COMMAND ${all_confs_strip_exe} ${all_confs_strip_opt} ${all_confs_strip_arg}
-      )
-    endif()
+      endforeach()
+      if(all_confs_strip_exe)
+        add_custom_command(TARGET ${target} POST_BUILD
+          COMMAND ${all_confs_strip_exe} ${all_confs_strip_opt} ${all_confs_strip_arg}
+        )
+      endif()
     endif()
 
     if(DEFINED JUCER_PREBUILD_SHELL_SCRIPT)
