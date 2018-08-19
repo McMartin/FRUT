@@ -1437,6 +1437,7 @@ function(jucer_project_end)
     _FRUT_set_output_directory_properties(${target} "ConsoleApp")
     _FRUT_set_output_name_properties(${target})
     _FRUT_set_common_target_properties(${target})
+    _FRUT_add_extra_commands(${target})
     _FRUT_link_osx_frameworks(${target})
     _FRUT_set_custom_xcode_flags(${target})
 
@@ -1484,6 +1485,7 @@ function(jucer_project_end)
     _FRUT_set_output_directory_properties(${target} "App")
     _FRUT_set_output_name_properties(${target})
     _FRUT_set_common_target_properties(${target})
+    _FRUT_add_extra_commands(${target})
     _FRUT_link_osx_frameworks(${target})
     _FRUT_add_xcode_resources(${target})
     _FRUT_set_custom_xcode_flags(${target})
@@ -1493,6 +1495,7 @@ function(jucer_project_end)
     _FRUT_set_output_directory_properties(${target} "Static Library")
     _FRUT_set_output_name_properties(${target})
     _FRUT_set_common_target_properties(${target})
+    _FRUT_add_extra_commands(${target})
     _FRUT_set_custom_xcode_flags(${target})
 
   elseif(JUCER_PROJECT_TYPE STREQUAL "Dynamic Library")
@@ -1500,6 +1503,7 @@ function(jucer_project_end)
     _FRUT_set_output_directory_properties(${target} "Dynamic Library")
     _FRUT_set_output_name_properties(${target})
     _FRUT_set_common_target_properties(${target})
+    _FRUT_add_extra_commands(${target})
     _FRUT_link_osx_frameworks(${target})
     _FRUT_set_custom_xcode_flags(${target})
 
@@ -1546,6 +1550,7 @@ function(jucer_project_end)
     _FRUT_set_output_directory_properties(${shared_code_target} "Shared Code")
     _FRUT_set_output_name_properties(${shared_code_target})
     _FRUT_set_common_target_properties(${shared_code_target})
+    _FRUT_add_extra_commands(${shared_code_target})
     target_compile_definitions(${shared_code_target} PRIVATE "JUCE_SHARED_CODE=1")
     _FRUT_set_JucePlugin_Build_defines(${shared_code_target} "SharedCodeTarget")
     _FRUT_set_custom_xcode_flags(${shared_code_target})
@@ -1566,6 +1571,7 @@ function(jucer_project_end)
       _FRUT_set_output_directory_properties(${vst_target} "VST")
       _FRUT_set_output_name_properties(${vst_target})
       _FRUT_set_common_target_properties(${vst_target})
+      _FRUT_add_extra_commands(${vst_target})
       if(APPLE)
         _FRUT_install_to_plugin_binary_location(${vst_target} "VST"
           "$ENV{HOME}/Library/Audio/Plug-Ins/VST"
@@ -1603,6 +1609,7 @@ function(jucer_project_end)
       _FRUT_set_output_directory_properties(${vst3_target} "VST3")
       _FRUT_set_output_name_properties(${vst3_target})
       _FRUT_set_common_target_properties(${vst3_target})
+      _FRUT_add_extra_commands(${vst3_target})
       if(APPLE)
         _FRUT_install_to_plugin_binary_location(${vst3_target} "VST3"
           "$ENV{HOME}/Library/Audio/Plug-Ins/VST3"
@@ -1666,6 +1673,7 @@ function(jucer_project_end)
       _FRUT_set_output_directory_properties(${au_target} "AU")
       _FRUT_set_output_name_properties(${au_target})
       _FRUT_set_common_target_properties(${au_target})
+      _FRUT_add_extra_commands(${au_target})
       _FRUT_install_to_plugin_binary_location(${au_target} "AU"
         "$ENV{HOME}/Library/Audio/Plug-Ins/Components"
       )
@@ -1762,6 +1770,7 @@ function(jucer_project_end)
       _FRUT_set_output_directory_properties(${auv3_target} "AUv3 AppExtension")
       _FRUT_set_output_name_properties(${auv3_target})
       _FRUT_set_common_target_properties(${auv3_target})
+      _FRUT_add_extra_commands(${auv3_target})
       _FRUT_set_JucePlugin_Build_defines(${auv3_target} "AudioUnitv3PlugIn")
       _FRUT_link_osx_frameworks(
         ${auv3_target} "AudioUnit" "CoreAudioKit" "AVFoundation"
@@ -1787,6 +1796,7 @@ function(jucer_project_end)
       _FRUT_set_output_directory_properties(${rtas_target} "RTAS")
       _FRUT_set_output_name_properties(${rtas_target})
       _FRUT_set_common_target_properties(${rtas_target})
+      _FRUT_add_extra_commands(${rtas_target})
       if(APPLE)
         # See XcodeProjectExporter::XcodeTarget::getTargetExtraHeaderSearchPaths()
         # in JUCE/extras/Projucer/Source/ProjectSaving/jucer_ProjectExport_Xcode.h
@@ -1932,6 +1942,7 @@ function(jucer_project_end)
       _FRUT_set_output_directory_properties(${aax_target} "AAX")
       _FRUT_set_output_name_properties(${aax_target})
       _FRUT_set_common_target_properties(${aax_target})
+      _FRUT_add_extra_commands(${aax_target})
       if(APPLE)
         foreach(config ${JUCER_PROJECT_CONFIGURATIONS})
           if(${JUCER_CONFIGURATION_IS_DEBUG_${config}})
@@ -2064,6 +2075,7 @@ function(jucer_project_end)
       _FRUT_set_output_directory_properties(${standalone_target} "Standalone Plugin")
       _FRUT_set_output_name_properties(${standalone_target})
       _FRUT_set_common_target_properties(${standalone_target})
+      _FRUT_add_extra_commands(${standalone_target})
       _FRUT_set_JucePlugin_Build_defines(${standalone_target} "StandalonePlugIn")
       _FRUT_link_osx_frameworks(${standalone_target})
       _FRUT_add_xcode_resources(${standalone_target})
@@ -2897,61 +2909,6 @@ function(_FRUT_set_common_target_properties target)
       )
     endif()
 
-    get_target_property(target_type ${target} TYPE)
-    if(target_type STREQUAL "EXECUTABLE" OR target_type STREQUAL "MODULE_LIBRARY")
-      unset(all_confs_strip_exe)
-      unset(all_confs_strip_opt)
-      unset(all_confs_strip_arg)
-      foreach(config ${JUCER_PROJECT_CONFIGURATIONS})
-        if(${JUCER_STRIP_LOCAL_SYMBOLS_${config}})
-          find_program(strip_exe "strip")
-          if(NOT strip_exe)
-            message(FATAL_ERROR "Could not find strip program")
-          endif()
-          string(APPEND all_confs_strip_exe $<$<CONFIG:${config}>:${strip_exe}>)
-          string(APPEND all_confs_strip_opt $<$<CONFIG:${config}>:-x>)
-          string(APPEND all_confs_strip_arg
-            $<$<CONFIG:${config}>:$<TARGET_FILE:${target}>>
-          )
-        endif()
-      endforeach()
-      if(all_confs_strip_exe)
-        add_custom_command(TARGET ${target} POST_BUILD
-          COMMAND ${all_confs_strip_exe} ${all_confs_strip_opt} ${all_confs_strip_arg}
-        )
-      endif()
-    endif()
-
-    if(DEFINED JUCER_PREBUILD_SHELL_SCRIPT)
-      if(NOT DEFINED JUCER_TARGET_PROJECT_FOLDER)
-        message(FATAL_ERROR "JUCER_TARGET_PROJECT_FOLDER must be defined. Give "
-          "TARGET_PROJECT_FOLDER when calling jucer_export_target(\"Xcode (MacOSX)\")."
-        )
-      endif()
-      if(NOT IS_DIRECTORY "${JUCER_TARGET_PROJECT_FOLDER}")
-        file(MAKE_DIRECTORY "${JUCER_TARGET_PROJECT_FOLDER}")
-      endif()
-      add_custom_command(TARGET ${target} PRE_BUILD
-        COMMAND "/bin/sh" "${JUCER_PREBUILD_SHELL_SCRIPT}"
-        WORKING_DIRECTORY "${JUCER_TARGET_PROJECT_FOLDER}"
-      )
-    endif()
-
-    if(DEFINED JUCER_POSTBUILD_SHELL_SCRIPT)
-      if(NOT DEFINED JUCER_TARGET_PROJECT_FOLDER)
-        message(FATAL_ERROR "JUCER_TARGET_PROJECT_FOLDER must be defined. Give "
-          "TARGET_PROJECT_FOLDER when calling jucer_export_target(\"Xcode (MacOSX)\")."
-        )
-      endif()
-      if(NOT IS_DIRECTORY "${JUCER_TARGET_PROJECT_FOLDER}")
-        file(MAKE_DIRECTORY "${JUCER_TARGET_PROJECT_FOLDER}")
-      endif()
-      add_custom_command(TARGET ${target} POST_BUILD
-        COMMAND "/bin/sh" "${JUCER_POSTBUILD_SHELL_SCRIPT}"
-        WORKING_DIRECTORY "${JUCER_TARGET_PROJECT_FOLDER}"
-      )
-    endif()
-
     if(CMAKE_GENERATOR STREQUAL "Xcode" AND DEFINED JUCER_USE_HEADERMAP)
       if(JUCER_USE_HEADERMAP)
         set_target_properties(${target} PROPERTIES XCODE_ATTRIBUTE_USE_HEADERMAP "YES")
@@ -3054,56 +3011,6 @@ function(_FRUT_set_common_target_properties target)
         endif()
       endif()
     endforeach()
-
-    unset(all_confs_prebuild_command)
-    foreach(config ${JUCER_PROJECT_CONFIGURATIONS})
-      if(DEFINED JUCER_PREBUILD_COMMAND_${config})
-        set(prebuild_command ${JUCER_PREBUILD_COMMAND_${config}})
-        string(APPEND all_confs_prebuild_command
-          $<$<CONFIG:${config}>:${prebuild_command}>
-        )
-      endif()
-    endforeach()
-    if(all_confs_prebuild_command)
-      if(NOT DEFINED JUCER_TARGET_PROJECT_FOLDER)
-        message(FATAL_ERROR "JUCER_TARGET_PROJECT_FOLDER must be defined. Give "
-          "TARGET_PROJECT_FOLDER when calling "
-          "jucer_export_target(\"${current_exporter}\")."
-        )
-      endif()
-      if(NOT IS_DIRECTORY "${JUCER_TARGET_PROJECT_FOLDER}")
-        file(MAKE_DIRECTORY "${JUCER_TARGET_PROJECT_FOLDER}")
-      endif()
-      add_custom_command(TARGET ${target} PRE_BUILD
-        COMMAND ${all_confs_prebuild_command}
-        WORKING_DIRECTORY "${JUCER_TARGET_PROJECT_FOLDER}"
-      )
-    endif()
-
-    unset(all_confs_postbuild_command)
-    foreach(config ${JUCER_PROJECT_CONFIGURATIONS})
-      if(DEFINED JUCER_POSTBUILD_COMMAND_${config})
-        set(postbuild_command ${JUCER_POSTBUILD_COMMAND_${config}})
-        string(APPEND all_confs_postbuild_command
-          $<$<CONFIG:${config}>:${postbuild_command}>
-        )
-      endif()
-    endforeach()
-    if(all_confs_postbuild_command)
-      if(NOT DEFINED JUCER_TARGET_PROJECT_FOLDER)
-        message(FATAL_ERROR "JUCER_TARGET_PROJECT_FOLDER must be defined. Give "
-          "TARGET_PROJECT_FOLDER when calling "
-          "jucer_export_target(\"${current_exporter}\")."
-        )
-      endif()
-      if(NOT IS_DIRECTORY "${JUCER_TARGET_PROJECT_FOLDER}")
-        file(MAKE_DIRECTORY "${JUCER_TARGET_PROJECT_FOLDER}")
-      endif()
-      add_custom_command(TARGET ${target} POST_BUILD
-        COMMAND ${all_confs_postbuild_command}
-        WORKING_DIRECTORY "${JUCER_TARGET_PROJECT_FOLDER}"
-      )
-    endif()
 
   elseif(CMAKE_HOST_SYSTEM_NAME STREQUAL "Linux")
     foreach(config ${JUCER_PROJECT_CONFIGURATIONS})
@@ -3266,6 +3173,119 @@ function(_FRUT_set_cxx_language_standard_properties target)
         endif()
       endif()
 
+    endif()
+  endif()
+
+endfunction()
+
+
+function(_FRUT_add_extra_commands target)
+
+  if(APPLE)
+    get_target_property(target_type ${target} TYPE)
+    if(target_type STREQUAL "EXECUTABLE" OR target_type STREQUAL "MODULE_LIBRARY")
+      unset(all_confs_strip_exe)
+      unset(all_confs_strip_opt)
+      unset(all_confs_strip_arg)
+      foreach(config ${JUCER_PROJECT_CONFIGURATIONS})
+        if(${JUCER_STRIP_LOCAL_SYMBOLS_${config}})
+          find_program(strip_exe "strip")
+          if(NOT strip_exe)
+            message(FATAL_ERROR "Could not find strip program")
+          endif()
+          string(APPEND all_confs_strip_exe $<$<CONFIG:${config}>:${strip_exe}>)
+          string(APPEND all_confs_strip_opt $<$<CONFIG:${config}>:-x>)
+          string(APPEND all_confs_strip_arg
+            $<$<CONFIG:${config}>:$<TARGET_FILE:${target}>>
+          )
+        endif()
+      endforeach()
+      if(all_confs_strip_exe)
+        add_custom_command(TARGET ${target} POST_BUILD
+          COMMAND ${all_confs_strip_exe} ${all_confs_strip_opt} ${all_confs_strip_arg}
+        )
+      endif()
+    endif()
+
+    if(DEFINED JUCER_PREBUILD_SHELL_SCRIPT)
+      if(NOT DEFINED JUCER_TARGET_PROJECT_FOLDER)
+        message(FATAL_ERROR "JUCER_TARGET_PROJECT_FOLDER must be defined. Give "
+          "TARGET_PROJECT_FOLDER when calling jucer_export_target(\"Xcode (MacOSX)\")."
+        )
+      endif()
+      if(NOT IS_DIRECTORY "${JUCER_TARGET_PROJECT_FOLDER}")
+        file(MAKE_DIRECTORY "${JUCER_TARGET_PROJECT_FOLDER}")
+      endif()
+      add_custom_command(TARGET ${target} PRE_BUILD
+        COMMAND "/bin/sh" "${JUCER_PREBUILD_SHELL_SCRIPT}"
+        WORKING_DIRECTORY "${JUCER_TARGET_PROJECT_FOLDER}"
+      )
+    endif()
+
+    if(DEFINED JUCER_POSTBUILD_SHELL_SCRIPT)
+      if(NOT DEFINED JUCER_TARGET_PROJECT_FOLDER)
+        message(FATAL_ERROR "JUCER_TARGET_PROJECT_FOLDER must be defined. Give "
+          "TARGET_PROJECT_FOLDER when calling jucer_export_target(\"Xcode (MacOSX)\")."
+        )
+      endif()
+      if(NOT IS_DIRECTORY "${JUCER_TARGET_PROJECT_FOLDER}")
+        file(MAKE_DIRECTORY "${JUCER_TARGET_PROJECT_FOLDER}")
+      endif()
+      add_custom_command(TARGET ${target} POST_BUILD
+        COMMAND "/bin/sh" "${JUCER_POSTBUILD_SHELL_SCRIPT}"
+        WORKING_DIRECTORY "${JUCER_TARGET_PROJECT_FOLDER}"
+      )
+    endif()
+
+  elseif(MSVC)
+    unset(all_confs_prebuild_command)
+    foreach(config ${JUCER_PROJECT_CONFIGURATIONS})
+      if(DEFINED JUCER_PREBUILD_COMMAND_${config})
+        set(prebuild_command ${JUCER_PREBUILD_COMMAND_${config}})
+        string(APPEND all_confs_prebuild_command
+          $<$<CONFIG:${config}>:${prebuild_command}>
+        )
+      endif()
+    endforeach()
+    if(all_confs_prebuild_command)
+      if(NOT DEFINED JUCER_TARGET_PROJECT_FOLDER)
+        message(FATAL_ERROR "JUCER_TARGET_PROJECT_FOLDER must be defined. Give "
+          "TARGET_PROJECT_FOLDER when calling "
+          "jucer_export_target(\"${current_exporter}\")."
+        )
+      endif()
+      if(NOT IS_DIRECTORY "${JUCER_TARGET_PROJECT_FOLDER}")
+        file(MAKE_DIRECTORY "${JUCER_TARGET_PROJECT_FOLDER}")
+      endif()
+      add_custom_command(TARGET ${target} PRE_BUILD
+        COMMAND ${all_confs_prebuild_command}
+        WORKING_DIRECTORY "${JUCER_TARGET_PROJECT_FOLDER}"
+      )
+    endif()
+
+    unset(all_confs_postbuild_command)
+    foreach(config ${JUCER_PROJECT_CONFIGURATIONS})
+      if(DEFINED JUCER_POSTBUILD_COMMAND_${config})
+        set(postbuild_command ${JUCER_POSTBUILD_COMMAND_${config}})
+        string(APPEND all_confs_postbuild_command
+          $<$<CONFIG:${config}>:${postbuild_command}>
+        )
+      endif()
+    endforeach()
+    if(all_confs_postbuild_command)
+      if(NOT DEFINED JUCER_TARGET_PROJECT_FOLDER)
+        message(FATAL_ERROR "JUCER_TARGET_PROJECT_FOLDER must be defined. Give "
+          "TARGET_PROJECT_FOLDER when calling "
+          "jucer_export_target(\"${current_exporter}\")."
+        )
+      endif()
+      if(NOT IS_DIRECTORY "${JUCER_TARGET_PROJECT_FOLDER}")
+        file(MAKE_DIRECTORY "${JUCER_TARGET_PROJECT_FOLDER}")
+      endif()
+      add_custom_command(TARGET ${target} POST_BUILD
+        COMMAND ${all_confs_postbuild_command}
+        WORKING_DIRECTORY "${JUCER_TARGET_PROJECT_FOLDER}"
+      )
     endif()
   endif()
 
