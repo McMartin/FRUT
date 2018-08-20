@@ -461,9 +461,9 @@ function(jucer_project_module module_name PATH_KEYWORD modules_folder)
     elseif(NOT (DEFINED JUCER_VERSION AND JUCER_VERSION VERSION_LESS 5.1.0))
       set(project_cxx_standard 11)
     endif()
-    if(DEFINED project_cxx_standard AND NOT ("${project_cxx_standard}" STREQUAL "latest")
-        AND ("${module_info_minimumCppStandard}" STREQUAL "latest"
-          OR ${module_info_minimumCppStandard} GREATER ${project_cxx_standard}))
+    if(DEFINED project_cxx_standard AND NOT (project_cxx_standard STREQUAL "latest")
+        AND (module_info_minimumCppStandard STREQUAL "latest"
+          OR module_info_minimumCppStandard GREATER project_cxx_standard))
       message(WARNING "${module_name} has a higher C++ language standard requirement"
         " (${module_info_minimumCppStandard}) than your project"
         " (${project_cxx_standard}). To use this module you need to increase the C++"
@@ -2257,7 +2257,7 @@ function(_FRUT_generate_AppConfig_header)
 
   if(DEFINED JUCER_APPCONFIG_USER_CODE_SECTION)
     set(user_code_section "\n${JUCER_APPCONFIG_USER_CODE_SECTION}\n")
-    if("${user_code_section}" STREQUAL "\n\n")
+    if(user_code_section STREQUAL "\n\n")
       set(user_code_section "\n")
     endif()
   else()
