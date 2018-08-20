@@ -2676,8 +2676,7 @@ function(_FRUT_set_output_directory_properties target subfolder)
     unset(output_directory)
     string(TOUPPER "${config}" upper_config)
 
-    if(MSVC AND NOT "${subfolder}" STREQUAL ""
-        AND NOT (DEFINED JUCER_VERSION AND JUCER_VERSION VERSION_LESS 5.0.0))
+    if(MSVC AND NOT (DEFINED JUCER_VERSION AND JUCER_VERSION VERSION_LESS 5.0.0))
       if(DEFINED JUCER_BINARY_LOCATION_${config})
         set(output_directory "${JUCER_BINARY_LOCATION_${config}}/${subfolder}")
       else()
