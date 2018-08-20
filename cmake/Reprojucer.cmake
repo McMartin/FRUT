@@ -1266,7 +1266,7 @@ function(jucer_project_end)
   endif()
 
   if(NOT DEFINED CMAKE_CONFIGURATION_TYPES)
-    if("${CMAKE_BUILD_TYPE}" STREQUAL "")
+    if(NOT DEFINED CMAKE_BUILD_TYPE)
       list(GET JUCER_PROJECT_CONFIGURATIONS 0 first_configuration)
       message(STATUS
         "Setting CMAKE_BUILD_TYPE to \"${first_configuration}\" as it was not specified."
@@ -2013,7 +2013,7 @@ function(jucer_project_end)
         else()
           set(common_files_env_var "CommonProgramFiles(x86)")
         endif()
-        set(all_confs_destination "")
+        unset(all_confs_destination)
         foreach(config ${JUCER_PROJECT_CONFIGURATIONS})
           if(DEFINED JUCER_AAX_BINARY_LOCATION_${config})
             set(destination ${JUCER_AAX_BINARY_LOCATION_${config}})
@@ -2026,7 +2026,7 @@ function(jucer_project_end)
             )
           endif()
         endforeach()
-        if(NOT all_confs_destination STREQUAL "")
+        if(DEFINED all_confs_destination)
           add_custom_command(TARGET ${aax_target} POST_BUILD
             COMMAND
             "xcopy"
@@ -3360,7 +3360,7 @@ function(_FRUT_install_to_plugin_binary_location target plugin_type default_dest
     endif()
   endforeach()
 
-  if("${all_confs_destination}" STREQUAL "")
+  if(NOT DEFINED all_confs_destination)
     return()
   endif()
 
