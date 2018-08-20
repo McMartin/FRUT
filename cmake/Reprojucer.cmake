@@ -111,7 +111,7 @@ function(jucer_project_settings)
   set(project_types "GUI Application" "Console Application" "Static Library"
     "Dynamic Library" "Audio Plug-in"
   )
-  if(NOT "${_PROJECT_TYPE}" IN_LIST project_types)
+  if(NOT _PROJECT_TYPE IN_LIST project_types)
     message(FATAL_ERROR "Unsupported project type: \"${_PROJECT_TYPE}\"\n"
       "Supported project types: ${project_types}"
     )
@@ -378,7 +378,7 @@ function(jucer_project_module module_name PATH_KEYWORD modules_folder)
         endif()
       elseif(APPLE)
         string(REGEX REPLACE "${src_file_extension}$" ".mm" objcxx_src_file "${src_file}")
-        if(NOT "${objcxx_src_file}" IN_LIST module_src_files)
+        if(NOT objcxx_src_file IN_LIST module_src_files)
           set(to_compile TRUE)
         endif()
       else()
@@ -404,7 +404,7 @@ function(jucer_project_module module_name PATH_KEYWORD modules_folder)
   set(JUCER_${module_name}_CONFIG_FLAGS ${module_config_flags} PARENT_SCOPE)
 
   foreach(config_flag ${extra_keywords})
-    if(NOT "${config_flag}" IN_LIST module_config_flags)
+    if(NOT config_flag IN_LIST module_config_flags)
       message(WARNING "Unknown config flag ${config_flag} in module ${module_name}")
     endif()
     set(JUCER_FLAG_${config_flag} ${extra_values_${config_flag}} PARENT_SCOPE)
@@ -502,7 +502,7 @@ endfunction()
 
 function(jucer_export_target exporter)
 
-  if(NOT "${exporter}" IN_LIST Reprojucer_supported_exporters)
+  if(NOT exporter IN_LIST Reprojucer_supported_exporters)
     message(FATAL_ERROR "Unsupported exporter: ${exporter}\n"
       "Supported exporters: ${Reprojucer_supported_exporters}"
     )
@@ -745,7 +745,7 @@ function(jucer_export_target exporter)
       "Multi-Threaded DLL"
       "Single-Threaded DLL"
     )
-    if("${ipp_library}" IN_LIST ipp_library_values)
+    if(ipp_library IN_LIST ipp_library_values)
       message(WARNING "Reprojucer.cmake doesn't support the setting USE_IPP_LIBRARY "
         "(\"Use IPP Library\" in Projucer). If you would like Reprojucer.cmake to "
         "support this setting, please leave a comment on the issue "
@@ -788,13 +788,13 @@ function(jucer_export_target_configuration
   exporter NAME_KEYWORD config DEBUG_MODE_KEYWORD is_debug
 )
 
-  if(NOT "${exporter}" IN_LIST Reprojucer_supported_exporters)
+  if(NOT exporter IN_LIST Reprojucer_supported_exporters)
     message(FATAL_ERROR "Unsupported exporter: ${exporter}\n"
       "Supported exporters: ${Reprojucer_supported_exporters}"
     )
   endif()
 
-  if(NOT "${exporter}" IN_LIST JUCER_PROJECT_EXPORT_TARGETS)
+  if(NOT exporter IN_LIST JUCER_PROJECT_EXPORT_TARGETS)
     message(FATAL_ERROR "You must call jucer_export_target(\"${exporter}\") before "
       "calling jucer_export_target_configuration(\"${exporter}\")."
     )
@@ -1171,7 +1171,7 @@ function(jucer_export_target_configuration
 
   if(DEFINED _CHARACTER_SET)
     set(character_sets "Default" "MultiByte" "Unicode")
-    if("${_CHARACTER_SET}" IN_LIST character_sets)
+    if(_CHARACTER_SET IN_LIST character_sets)
       set(JUCER_CHARACTER_SET_${config} ${_CHARACTER_SET} PARENT_SCOPE)
     else()
       message(FATAL_ERROR "Unsupported value for CHARACTER_SET: \"${_CHARACTER_SET}\"")
@@ -1252,7 +1252,7 @@ function(jucer_project_end)
     )
   endif()
 
-  if(NOT "${current_exporter}" IN_LIST JUCER_PROJECT_EXPORT_TARGETS)
+  if(NOT current_exporter IN_LIST JUCER_PROJECT_EXPORT_TARGETS)
     message(FATAL_ERROR "You must call jucer_export_target(\"${current_exporter}\") "
       "before calling jucer_project_end()."
     )
@@ -1273,7 +1273,7 @@ function(jucer_project_end)
       )
       set(CMAKE_BUILD_TYPE ${first_configuration})
       set(CMAKE_BUILD_TYPE ${first_configuration} PARENT_SCOPE)
-    elseif(NOT "${CMAKE_BUILD_TYPE}" IN_LIST JUCER_PROJECT_CONFIGURATIONS)
+    elseif(NOT CMAKE_BUILD_TYPE IN_LIST JUCER_PROJECT_CONFIGURATIONS)
       message(FATAL_ERROR "Undefined build configuration: ${CMAKE_BUILD_TYPE}\n"
         "Defined build configurations: ${JUCER_PROJECT_CONFIGURATIONS}"
       )
