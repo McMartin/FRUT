@@ -111,7 +111,7 @@ function(jucer_project_settings)
   set(project_types "GUI Application" "Console Application" "Static Library"
     "Dynamic Library" "Audio Plug-in"
   )
-  if(NOT "${_PROJECT_TYPE}" IN_LIST project_types)
+  if(NOT _PROJECT_TYPE IN_LIST project_types)
     message(FATAL_ERROR "Unsupported project type: \"${_PROJECT_TYPE}\"\n"
       "Supported project types: ${project_types}"
     )
@@ -378,7 +378,7 @@ function(jucer_project_module module_name PATH_KEYWORD modules_folder)
         endif()
       elseif(APPLE)
         string(REGEX REPLACE "${src_file_extension}$" ".mm" objcxx_src_file "${src_file}")
-        if(NOT "${objcxx_src_file}" IN_LIST module_src_files)
+        if(NOT objcxx_src_file IN_LIST module_src_files)
           set(to_compile TRUE)
         endif()
       else()
@@ -404,7 +404,7 @@ function(jucer_project_module module_name PATH_KEYWORD modules_folder)
   set(JUCER_${module_name}_CONFIG_FLAGS ${module_config_flags} PARENT_SCOPE)
 
   foreach(config_flag ${extra_keywords})
-    if(NOT "${config_flag}" IN_LIST module_config_flags)
+    if(NOT config_flag IN_LIST module_config_flags)
       message(WARNING "Unknown config flag ${config_flag} in module ${module_name}")
     endif()
     set(JUCER_FLAG_${config_flag} ${extra_values_${config_flag}} PARENT_SCOPE)
@@ -461,9 +461,9 @@ function(jucer_project_module module_name PATH_KEYWORD modules_folder)
     elseif(NOT (DEFINED JUCER_VERSION AND JUCER_VERSION VERSION_LESS 5.1.0))
       set(project_cxx_standard 11)
     endif()
-    if(DEFINED project_cxx_standard AND NOT ("${project_cxx_standard}" STREQUAL "latest")
-        AND ("${module_info_minimumCppStandard}" STREQUAL "latest"
-          OR ${module_info_minimumCppStandard} GREATER ${project_cxx_standard}))
+    if(DEFINED project_cxx_standard AND NOT (project_cxx_standard STREQUAL "latest")
+        AND (module_info_minimumCppStandard STREQUAL "latest"
+          OR module_info_minimumCppStandard GREATER project_cxx_standard))
       message(WARNING "${module_name} has a higher C++ language standard requirement"
         " (${module_info_minimumCppStandard}) than your project"
         " (${project_cxx_standard}). To use this module you need to increase the C++"
@@ -502,7 +502,7 @@ endfunction()
 
 function(jucer_export_target exporter)
 
-  if(NOT "${exporter}" IN_LIST Reprojucer_supported_exporters)
+  if(NOT exporter IN_LIST Reprojucer_supported_exporters)
     message(FATAL_ERROR "Unsupported exporter: ${exporter}\n"
       "Supported exporters: ${Reprojucer_supported_exporters}"
     )
@@ -745,7 +745,7 @@ function(jucer_export_target exporter)
       "Multi-Threaded DLL"
       "Single-Threaded DLL"
     )
-    if("${ipp_library}" IN_LIST ipp_library_values)
+    if(ipp_library IN_LIST ipp_library_values)
       message(WARNING "Reprojucer.cmake doesn't support the setting USE_IPP_LIBRARY "
         "(\"Use IPP Library\" in Projucer). If you would like Reprojucer.cmake to "
         "support this setting, please leave a comment on the issue "
@@ -788,13 +788,13 @@ function(jucer_export_target_configuration
   exporter NAME_KEYWORD config DEBUG_MODE_KEYWORD is_debug
 )
 
-  if(NOT "${exporter}" IN_LIST Reprojucer_supported_exporters)
+  if(NOT exporter IN_LIST Reprojucer_supported_exporters)
     message(FATAL_ERROR "Unsupported exporter: ${exporter}\n"
       "Supported exporters: ${Reprojucer_supported_exporters}"
     )
   endif()
 
-  if(NOT "${exporter}" IN_LIST JUCER_PROJECT_EXPORT_TARGETS)
+  if(NOT exporter IN_LIST JUCER_PROJECT_EXPORT_TARGETS)
     message(FATAL_ERROR "You must call jucer_export_target(\"${exporter}\") before "
       "calling jucer_export_target_configuration(\"${exporter}\")."
     )
@@ -1171,7 +1171,7 @@ function(jucer_export_target_configuration
 
   if(DEFINED _CHARACTER_SET)
     set(character_sets "Default" "MultiByte" "Unicode")
-    if("${_CHARACTER_SET}" IN_LIST character_sets)
+    if(_CHARACTER_SET IN_LIST character_sets)
       set(JUCER_CHARACTER_SET_${config} ${_CHARACTER_SET} PARENT_SCOPE)
     else()
       message(FATAL_ERROR "Unsupported value for CHARACTER_SET: \"${_CHARACTER_SET}\"")
@@ -1252,7 +1252,7 @@ function(jucer_project_end)
     )
   endif()
 
-  if(NOT "${current_exporter}" IN_LIST JUCER_PROJECT_EXPORT_TARGETS)
+  if(NOT current_exporter IN_LIST JUCER_PROJECT_EXPORT_TARGETS)
     message(FATAL_ERROR "You must call jucer_export_target(\"${current_exporter}\") "
       "before calling jucer_project_end()."
     )
@@ -1266,14 +1266,14 @@ function(jucer_project_end)
   endif()
 
   if(NOT DEFINED CMAKE_CONFIGURATION_TYPES)
-    if("${CMAKE_BUILD_TYPE}" STREQUAL "")
+    if(NOT DEFINED CMAKE_BUILD_TYPE)
       list(GET JUCER_PROJECT_CONFIGURATIONS 0 first_configuration)
       message(STATUS
         "Setting CMAKE_BUILD_TYPE to \"${first_configuration}\" as it was not specified."
       )
       set(CMAKE_BUILD_TYPE ${first_configuration})
       set(CMAKE_BUILD_TYPE ${first_configuration} PARENT_SCOPE)
-    elseif(NOT "${CMAKE_BUILD_TYPE}" IN_LIST JUCER_PROJECT_CONFIGURATIONS)
+    elseif(NOT CMAKE_BUILD_TYPE IN_LIST JUCER_PROJECT_CONFIGURATIONS)
       message(FATAL_ERROR "Undefined build configuration: ${CMAKE_BUILD_TYPE}\n"
         "Defined build configurations: ${JUCER_PROJECT_CONFIGURATIONS}"
       )
@@ -2013,7 +2013,7 @@ function(jucer_project_end)
         else()
           set(common_files_env_var "CommonProgramFiles(x86)")
         endif()
-        set(all_confs_destination "")
+        unset(all_confs_destination)
         foreach(config ${JUCER_PROJECT_CONFIGURATIONS})
           if(DEFINED JUCER_AAX_BINARY_LOCATION_${config})
             set(destination ${JUCER_AAX_BINARY_LOCATION_${config}})
@@ -2026,7 +2026,7 @@ function(jucer_project_end)
             )
           endif()
         endforeach()
-        if(NOT all_confs_destination STREQUAL "")
+        if(DEFINED all_confs_destination)
           add_custom_command(TARGET ${aax_target} POST_BUILD
             COMMAND
             "xcopy"
@@ -2257,7 +2257,7 @@ function(_FRUT_generate_AppConfig_header)
 
   if(DEFINED JUCER_APPCONFIG_USER_CODE_SECTION)
     set(user_code_section "\n${JUCER_APPCONFIG_USER_CODE_SECTION}\n")
-    if("${user_code_section}" STREQUAL "\n\n")
+    if(user_code_section STREQUAL "\n\n")
       set(user_code_section "\n")
     endif()
   else()
@@ -2676,8 +2676,7 @@ function(_FRUT_set_output_directory_properties target subfolder)
     unset(output_directory)
     string(TOUPPER "${config}" upper_config)
 
-    if(MSVC AND NOT "${subfolder}" STREQUAL ""
-        AND NOT (DEFINED JUCER_VERSION AND JUCER_VERSION VERSION_LESS 5.0.0))
+    if(MSVC AND NOT (DEFINED JUCER_VERSION AND JUCER_VERSION VERSION_LESS 5.0.0))
       if(DEFINED JUCER_BINARY_LOCATION_${config})
         set(output_directory "${JUCER_BINARY_LOCATION_${config}}/${subfolder}")
       else()
@@ -3361,7 +3360,7 @@ function(_FRUT_install_to_plugin_binary_location target plugin_type default_dest
     endif()
   endforeach()
 
-  if("${all_confs_destination}" STREQUAL "")
+  if(NOT DEFINED all_confs_destination)
     return()
   endif()
 
