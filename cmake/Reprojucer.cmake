@@ -920,9 +920,7 @@ function(jucer_export_target_configuration
       _FRUT_abs_path_based_on_jucer_project_dir(path "${path}")
       list(APPEND library_search_paths "${path}")
     endforeach()
-    set(JUCER_EXTRA_LIBRARY_SEARCH_PATHS_${config}
-      ${library_search_paths} PARENT_SCOPE
-    )
+    set(JUCER_EXTRA_LIBRARY_SEARCH_PATHS_${config} ${library_search_paths} PARENT_SCOPE)
   endif()
 
   if(DEFINED _PREPROCESSOR_DEFINITIONS)
@@ -3381,9 +3379,7 @@ function(_FRUT_install_to_plugin_binary_location target plugin_type default_dest
 
   set(component "_install_${target}_to_${plugin_type}_binary_location")
 
-  install(TARGETS ${target} COMPONENT ${component}
-    DESTINATION ${all_confs_destination}
-  )
+  install(TARGETS ${target} COMPONENT ${component} DESTINATION ${all_confs_destination})
 
   add_custom_command(TARGET ${target} POST_BUILD
     COMMAND
