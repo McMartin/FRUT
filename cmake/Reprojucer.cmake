@@ -2691,7 +2691,7 @@ function(_FRUT_set_output_directory_properties target subfolder)
     elseif(DEFINED JUCER_BINARY_LOCATION_${config})
       set(output_directory "${JUCER_BINARY_LOCATION_${config}}")
     endif()
-    if(output_directory)
+    if(DEFINED output_directory)
       set_target_properties(${target} PROPERTIES
         ARCHIVE_OUTPUT_DIRECTORY_${upper_config} "${output_directory}"
         LIBRARY_OUTPUT_DIRECTORY_${upper_config} "${output_directory}"
@@ -2908,7 +2908,7 @@ function(_FRUT_set_compiler_and_linker_settings target)
         )
       endif()
     endforeach()
-    if(all_confs_code_sign_identity)
+    if(DEFINED all_confs_code_sign_identity)
       set_target_properties(${target} PROPERTIES
         XCODE_ATTRIBUTE_CODE_SIGN_IDENTITY "${all_confs_code_sign_identity}"
       )
@@ -3212,7 +3212,7 @@ function(_FRUT_add_extra_commands target)
           )
         endif()
       endforeach()
-      if(all_confs_strip_exe)
+      if(DEFINED all_confs_strip_exe)
         add_custom_command(TARGET ${target} POST_BUILD
           COMMAND ${all_confs_strip_exe} ${all_confs_strip_opt} ${all_confs_strip_arg}
         )
@@ -3259,7 +3259,7 @@ function(_FRUT_add_extra_commands target)
         )
       endif()
     endforeach()
-    if(all_confs_prebuild_command)
+    if(DEFINED all_confs_prebuild_command)
       if(NOT DEFINED JUCER_TARGET_PROJECT_FOLDER)
         message(FATAL_ERROR "JUCER_TARGET_PROJECT_FOLDER must be defined. Give "
           "TARGET_PROJECT_FOLDER when calling "
@@ -3284,7 +3284,7 @@ function(_FRUT_add_extra_commands target)
         )
       endif()
     endforeach()
-    if(all_confs_postbuild_command)
+    if(DEFINED all_confs_postbuild_command)
       if(NOT DEFINED JUCER_TARGET_PROJECT_FOLDER)
         message(FATAL_ERROR "JUCER_TARGET_PROJECT_FOLDER must be defined. Give "
           "TARGET_PROJECT_FOLDER when calling "
@@ -3472,7 +3472,7 @@ function(_FRUT_set_custom_xcode_flags target)
     endif()
   endforeach()
 
-  if(all_flags)
+  if(DEFINED all_flags)
     list(SORT all_flags)
     list(REMOVE_DUPLICATES all_flags)
     foreach(flag ${all_flags})
