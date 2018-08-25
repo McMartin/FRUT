@@ -152,12 +152,12 @@ function(jucer_project_settings)
       _FRUT_abs_path_based_on_jucer_project_dir(path "${path}")
       list(APPEND header_search_paths "${path}")
     endforeach()
-    set(_HEADER_SEARCH_PATHS ${header_search_paths})
+    set(_HEADER_SEARCH_PATHS "${header_search_paths}")
   endif()
 
   foreach(keyword ${single_value_keywords} ${multi_value_keywords})
     if(DEFINED _${keyword})
-      set(JUCER_${keyword} ${_${keyword}} PARENT_SCOPE)
+      set(JUCER_${keyword} "${_${keyword}}" PARENT_SCOPE)
     endif()
   endforeach()
 
@@ -207,7 +207,7 @@ function(jucer_audio_plugin_settings)
 
   foreach(keyword ${single_value_keywords})
     if(DEFINED _${keyword})
-      set(JUCER_${keyword} ${_${keyword}} PARENT_SCOPE)
+      set(JUCER_${keyword} "${_${keyword}}" PARENT_SCOPE)
     endif()
   endforeach()
 
@@ -228,16 +228,16 @@ function(jucer_project_files source_group_name)
   unset(binary_resource)
   foreach(argument ${ARGN})
     if(NOT DEFINED compile)
-      set(compile ${argument})
+      set(compile "${argument}")
       __check_input("${compile}")
     elseif(NOT DEFINED xcode_resource)
-      set(xcode_resource ${argument})
+      set(xcode_resource "${argument}")
       __check_input("${xcode_resource}")
     elseif(NOT DEFINED binary_resource)
-      set(binary_resource ${argument})
+      set(binary_resource "${argument}")
       __check_input("${binary_resource}")
     else()
-      set(path ${argument})
+      set(path "${argument}")
 
       _FRUT_abs_path_based_on_jucer_project_dir(path "${path}")
       list(APPEND files "${path}")
@@ -269,9 +269,9 @@ function(jucer_project_files source_group_name)
   string(REPLACE "/" "\\" source_group_name ${source_group_name})
   source_group(${source_group_name} FILES ${files})
 
-  set(JUCER_PROJECT_SOURCES ${JUCER_PROJECT_SOURCES} PARENT_SCOPE)
-  set(JUCER_PROJECT_RESOURCES ${JUCER_PROJECT_RESOURCES} PARENT_SCOPE)
-  set(JUCER_PROJECT_XCODE_RESOURCES ${JUCER_PROJECT_XCODE_RESOURCES} PARENT_SCOPE)
+  set(JUCER_PROJECT_SOURCES "${JUCER_PROJECT_SOURCES}" PARENT_SCOPE)
+  set(JUCER_PROJECT_RESOURCES "${JUCER_PROJECT_RESOURCES}" PARENT_SCOPE)
+  set(JUCER_PROJECT_XCODE_RESOURCES "${JUCER_PROJECT_XCODE_RESOURCES}" PARENT_SCOPE)
 
 endfunction()
 
@@ -305,18 +305,18 @@ function(jucer_project_module module_name PATH_KEYWORD modules_folder)
   unset(keyword)
   foreach(argument ${ARGN})
     if(NOT DEFINED keyword)
-      set(keyword ${argument})
+      set(keyword "${argument}")
 
       if(NOT keyword STREQUAL "ADD_SOURCE_TO_PROJECT")
         list(APPEND extra_keywords "${keyword}")
       endif()
     else()
-      set(value ${argument})
+      set(value "${argument}")
 
       if(keyword STREQUAL "ADD_SOURCE_TO_PROJECT")
-        set(make_juce_code_browsable ${value})
+        set(make_juce_code_browsable "${value}")
       else()
-        set(extra_values_${keyword} ${value})
+        set(extra_values_${keyword} "${value}")
       endif()
       unset(keyword)
     endif()
@@ -329,10 +329,10 @@ function(jucer_project_module module_name PATH_KEYWORD modules_folder)
   endforeach()
 
   list(APPEND JUCER_PROJECT_MODULES ${module_name})
-  set(JUCER_PROJECT_MODULES ${JUCER_PROJECT_MODULES} PARENT_SCOPE)
+  set(JUCER_PROJECT_MODULES "${JUCER_PROJECT_MODULES}" PARENT_SCOPE)
 
   list(APPEND JUCER_PROJECT_MODULES_FOLDERS "${modules_folder}")
-  set(JUCER_PROJECT_MODULES_FOLDERS ${JUCER_PROJECT_MODULES_FOLDERS} PARENT_SCOPE)
+  set(JUCER_PROJECT_MODULES_FOLDERS "${JUCER_PROJECT_MODULES_FOLDERS}" PARENT_SCOPE)
   set(JUCER_PROJECT_MODULES_${module_name}_PATH "${modules_folder}" PARENT_SCOPE)
 
   file(GLOB module_src_files
@@ -397,17 +397,17 @@ function(jucer_project_module module_name PATH_KEYWORD modules_folder)
     endif()
   endforeach()
 
-  set(JUCER_PROJECT_SOURCES ${JUCER_PROJECT_SOURCES} PARENT_SCOPE)
+  set(JUCER_PROJECT_SOURCES "${JUCER_PROJECT_SOURCES}" PARENT_SCOPE)
 
   file(STRINGS "${module_header_file}" config_flags_lines REGEX "/\\*\\* Config: ")
   string(REPLACE "/** Config: " "" module_config_flags "${config_flags_lines}")
-  set(JUCER_${module_name}_CONFIG_FLAGS ${module_config_flags} PARENT_SCOPE)
+  set(JUCER_${module_name}_CONFIG_FLAGS "${module_config_flags}" PARENT_SCOPE)
 
   foreach(config_flag ${extra_keywords})
     if(NOT config_flag IN_LIST module_config_flags)
       message(WARNING "Unknown config flag ${config_flag} in module ${module_name}")
     endif()
-    set(JUCER_FLAG_${config_flag} ${extra_values_${config_flag}} PARENT_SCOPE)
+    set(JUCER_FLAG_${config_flag} "${extra_values_${config_flag}}" PARENT_SCOPE)
   endforeach()
 
   set(module_info_OSXFrameworks "")
@@ -434,7 +434,7 @@ function(jucer_project_module module_name PATH_KEYWORD modules_folder)
         math(EXPR colon_pos_plus_one "${colon_pos} + 1")
         string(SUBSTRING "${line}" ${colon_pos_plus_one} -1 value)
         string(STRIP "${value}" value)
-        set(module_info_${key} ${value})
+        set(module_info_${key} "${value}")
       endif()
     endif()
   endforeach()
@@ -442,22 +442,22 @@ function(jucer_project_module module_name PATH_KEYWORD modules_folder)
   string(REPLACE " " ";" osx_frameworks "${module_info_OSXFrameworks}")
   string(REPLACE "," ";" osx_frameworks "${osx_frameworks}")
   list(APPEND JUCER_PROJECT_OSX_FRAMEWORKS ${osx_frameworks})
-  set(JUCER_PROJECT_OSX_FRAMEWORKS ${JUCER_PROJECT_OSX_FRAMEWORKS} PARENT_SCOPE)
+  set(JUCER_PROJECT_OSX_FRAMEWORKS "${JUCER_PROJECT_OSX_FRAMEWORKS}" PARENT_SCOPE)
 
   string(REPLACE " " ";" linux_libs "${module_info_linuxLibs}")
   string(REPLACE "," ";" linux_libs "${linux_libs}")
   list(APPEND JUCER_PROJECT_LINUX_LIBS ${linux_libs})
-  set(JUCER_PROJECT_LINUX_LIBS ${JUCER_PROJECT_LINUX_LIBS} PARENT_SCOPE)
+  set(JUCER_PROJECT_LINUX_LIBS "${JUCER_PROJECT_LINUX_LIBS}" PARENT_SCOPE)
 
   string(REPLACE " " ";" linux_packages "${module_info_linuxPackages}")
   string(REPLACE "," ";" linux_packages "${linux_packages}")
   list(APPEND JUCER_PROJECT_LINUX_PACKAGES ${linux_packages})
-  set(JUCER_PROJECT_LINUX_PACKAGES ${JUCER_PROJECT_LINUX_PACKAGES} PARENT_SCOPE)
+  set(JUCER_PROJECT_LINUX_PACKAGES "${JUCER_PROJECT_LINUX_PACKAGES}" PARENT_SCOPE)
 
   if(DEFINED module_info_minimumCppStandard)
     unset(project_cxx_standard)
     if(DEFINED JUCER_CXX_LANGUAGE_STANDARD)
-      set(project_cxx_standard ${JUCER_CXX_LANGUAGE_STANDARD})
+      set(project_cxx_standard "${JUCER_CXX_LANGUAGE_STANDARD}")
     elseif(DEFINED JUCER_VERSION)
       if(JUCER_VERSION VERSION_LESS 5.1.0)
         # "C++ Language Standard" didn't exist before JUCE version 5.1.0
@@ -489,7 +489,7 @@ function(jucer_project_module module_name PATH_KEYWORD modules_folder)
       source_group("Juce Modules${sub_group_name}" FILES "${file_path}")
     endforeach()
     list(APPEND JUCER_PROJECT_BROWSABLE_FILES ${browsable_files})
-    set(JUCER_PROJECT_BROWSABLE_FILES ${JUCER_PROJECT_BROWSABLE_FILES} PARENT_SCOPE)
+    set(JUCER_PROJECT_BROWSABLE_FILES "${JUCER_PROJECT_BROWSABLE_FILES}" PARENT_SCOPE)
   endif()
 
 endfunction()
@@ -516,7 +516,7 @@ function(jucer_export_target exporter)
     )
   endif()
   list(APPEND JUCER_PROJECT_EXPORT_TARGETS "${exporter}")
-  set(JUCER_PROJECT_EXPORT_TARGETS ${JUCER_PROJECT_EXPORT_TARGETS} PARENT_SCOPE)
+  set(JUCER_PROJECT_EXPORT_TARGETS "${JUCER_PROJECT_EXPORT_TARGETS}" PARENT_SCOPE)
 
   list(FIND Reprojucer_supported_exporters "${exporter}" exporter_index)
   list(GET Reprojucer_supported_exporters_conditions ${exporter_index} condition)
@@ -591,53 +591,53 @@ function(jucer_export_target exporter)
   if(DEFINED _TARGET_PROJECT_FOLDER)
     file(TO_CMAKE_PATH "${_TARGET_PROJECT_FOLDER}" project_folder)
     _FRUT_abs_path_based_on_jucer_project_dir(project_folder "${project_folder}")
-    set(JUCER_TARGET_PROJECT_FOLDER ${project_folder} PARENT_SCOPE)
+    set(JUCER_TARGET_PROJECT_FOLDER "${project_folder}" PARENT_SCOPE)
   endif()
 
   if(DEFINED _VST_SDK_FOLDER)
     file(TO_CMAKE_PATH "${_VST_SDK_FOLDER}" sdk_folder)
     _FRUT_abs_path_based_on_jucer_project_dir(sdk_folder "${sdk_folder}")
-    set(JUCER_VST_SDK_FOLDER ${sdk_folder} PARENT_SCOPE)
+    set(JUCER_VST_SDK_FOLDER "${sdk_folder}" PARENT_SCOPE)
   endif()
 
   if(DEFINED _VST3_SDK_FOLDER)
     file(TO_CMAKE_PATH "${_VST3_SDK_FOLDER}" sdk_folder)
     _FRUT_abs_path_based_on_jucer_project_dir(sdk_folder "${sdk_folder}")
-    set(JUCER_VST3_SDK_FOLDER ${sdk_folder} PARENT_SCOPE)
+    set(JUCER_VST3_SDK_FOLDER "${sdk_folder}" PARENT_SCOPE)
   endif()
 
   if(DEFINED _AAX_SDK_FOLDER)
     file(TO_CMAKE_PATH "${_AAX_SDK_FOLDER}" sdk_folder)
     _FRUT_abs_path_based_on_jucer_project_dir(sdk_folder "${sdk_folder}")
-    set(JUCER_AAX_SDK_FOLDER ${sdk_folder} PARENT_SCOPE)
+    set(JUCER_AAX_SDK_FOLDER "${sdk_folder}" PARENT_SCOPE)
   endif()
 
   if(DEFINED _RTAS_SDK_FOLDER)
     file(TO_CMAKE_PATH "${_RTAS_SDK_FOLDER}" sdk_folder)
     _FRUT_abs_path_based_on_jucer_project_dir(sdk_folder "${sdk_folder}")
-    set(JUCER_RTAS_SDK_FOLDER ${sdk_folder} PARENT_SCOPE)
+    set(JUCER_RTAS_SDK_FOLDER "${sdk_folder}" PARENT_SCOPE)
   endif()
 
   if(DEFINED _EXTRA_PREPROCESSOR_DEFINITIONS)
-    set(JUCER_EXTRA_PREPROCESSOR_DEFINITIONS ${_EXTRA_PREPROCESSOR_DEFINITIONS}
+    set(JUCER_EXTRA_PREPROCESSOR_DEFINITIONS "${_EXTRA_PREPROCESSOR_DEFINITIONS}"
       PARENT_SCOPE
     )
   endif()
 
   if(DEFINED _EXTRA_COMPILER_FLAGS)
-    set(JUCER_EXTRA_COMPILER_FLAGS ${_EXTRA_COMPILER_FLAGS} PARENT_SCOPE)
+    set(JUCER_EXTRA_COMPILER_FLAGS "${_EXTRA_COMPILER_FLAGS}" PARENT_SCOPE)
   endif()
 
   if(DEFINED _EXTRA_LINKER_FLAGS)
-    set(JUCER_EXTRA_LINKER_FLAGS ${_EXTRA_LINKER_FLAGS} PARENT_SCOPE)
+    set(JUCER_EXTRA_LINKER_FLAGS "${_EXTRA_LINKER_FLAGS}" PARENT_SCOPE)
   endif()
 
   if(DEFINED _EXTERNAL_LIBRARIES_TO_LINK)
-    set(JUCER_EXTERNAL_LIBRARIES_TO_LINK ${_EXTERNAL_LIBRARIES_TO_LINK} PARENT_SCOPE)
+    set(JUCER_EXTERNAL_LIBRARIES_TO_LINK "${_EXTERNAL_LIBRARIES_TO_LINK}" PARENT_SCOPE)
   endif()
 
   if(DEFINED _GNU_COMPILER_EXTENSIONS)
-    set(JUCER_GNU_COMPILER_EXTENSIONS ${_GNU_COMPILER_EXTENSIONS} PARENT_SCOPE)
+    set(JUCER_GNU_COMPILER_EXTENSIONS "${_GNU_COMPILER_EXTENSIONS}" PARENT_SCOPE)
   endif()
 
   if(DEFINED _ICON_SMALL)
@@ -646,7 +646,7 @@ function(jucer_export_target exporter)
       if(NOT EXISTS "${small_icon}")
         message(FATAL_ERROR "No such file (ICON_SMALL): ${small_icon}")
       endif()
-      set(JUCER_SMALL_ICON ${small_icon} PARENT_SCOPE)
+      set(JUCER_SMALL_ICON "${small_icon}" PARENT_SCOPE)
     endif()
   endif()
 
@@ -656,7 +656,7 @@ function(jucer_export_target exporter)
       if(NOT EXISTS "${large_icon}")
         message(FATAL_ERROR "No such file (ICON_LARGE): ${large_icon}")
       endif()
-      set(JUCER_LARGE_ICON ${large_icon} PARENT_SCOPE)
+      set(JUCER_LARGE_ICON "${large_icon}" PARENT_SCOPE)
     endif()
   endif()
 
@@ -666,15 +666,15 @@ function(jucer_export_target exporter)
       _FRUT_abs_path_based_on_jucer_project_dir(abs_folder "${folder}")
       list(APPEND resource_folders "${abs_folder}")
     endforeach()
-    set(JUCER_CUSTOM_XCODE_RESOURCE_FOLDERS ${resource_folders} PARENT_SCOPE)
+    set(JUCER_CUSTOM_XCODE_RESOURCE_FOLDERS "${resource_folders}" PARENT_SCOPE)
   endif()
 
   if(DEFINED _DOCUMENT_FILE_EXTENSIONS)
-    set(JUCER_DOCUMENT_FILE_EXTENSIONS ${_DOCUMENT_FILE_EXTENSIONS} PARENT_SCOPE)
+    set(JUCER_DOCUMENT_FILE_EXTENSIONS "${_DOCUMENT_FILE_EXTENSIONS}" PARENT_SCOPE)
   endif()
 
   if(DEFINED _EXTRA_FRAMEWORKS)
-    set(JUCER_EXTRA_FRAMEWORKS ${_EXTRA_FRAMEWORKS} PARENT_SCOPE)
+    set(JUCER_EXTRA_FRAMEWORKS "${_EXTRA_FRAMEWORKS}" PARENT_SCOPE)
   endif()
 
   if(DEFINED _CUSTOM_PLIST)
@@ -720,11 +720,11 @@ function(jucer_export_target exporter)
         "generator. You should call `cmake -G Xcode`."
       )
     endif()
-    set(JUCER_USE_HEADERMAP ${_USE_HEADERMAP} PARENT_SCOPE)
+    set(JUCER_USE_HEADERMAP "${_USE_HEADERMAP}" PARENT_SCOPE)
   endif()
 
   if(DEFINED _PLATFORM_TOOLSET)
-    set(toolset ${_PLATFORM_TOOLSET})
+    set(toolset "${_PLATFORM_TOOLSET}")
     if((exporter STREQUAL "Visual Studio 2017"
           AND (toolset STREQUAL "v140" OR toolset STREQUAL "v140_xp"
             OR toolset STREQUAL "v141" OR toolset STREQUAL "v141_xp"))
@@ -745,7 +745,7 @@ function(jucer_export_target exporter)
   endif()
 
   if(DEFINED _USE_IPP_LIBRARY)
-    set(ipp_library ${_USE_IPP_LIBRARY})
+    set(ipp_library "${_USE_IPP_LIBRARY}")
     set(ipp_library_values
       "Yes (Default Mode)"
       "Multi-Threaded Static Library"
@@ -766,7 +766,7 @@ function(jucer_export_target exporter)
   endif()
 
   if(DEFINED _CXX_STANDARD_TO_USE AND exporter STREQUAL "Visual Studio 2017")
-    set(standard ${_CXX_STANDARD_TO_USE})
+    set(standard "${_CXX_STANDARD_TO_USE}")
     if(standard STREQUAL "C++14")
       set(JUCER_CXX_STANDARD_TO_USE "14" PARENT_SCOPE)
     elseif(standard STREQUAL "Latest C++ Standard")
@@ -777,16 +777,16 @@ function(jucer_export_target exporter)
   endif()
 
   if(DEFINED _CXX_STANDARD_TO_USE AND exporter STREQUAL "Linux Makefile")
-    set(standard ${_CXX_STANDARD_TO_USE})
+    set(standard "${_CXX_STANDARD_TO_USE}")
     if(standard MATCHES "^C\\+\\+(03|11|14)$")
-      set(JUCER_CXX_STANDARD_TO_USE ${standard} PARENT_SCOPE)
+      set(JUCER_CXX_STANDARD_TO_USE "${standard}" PARENT_SCOPE)
     else()
       message(FATAL_ERROR "Unsupported value for CXX_STANDARD_TO_USE: \"${standard}\"")
     endif()
   endif()
 
   if(DEFINED _PKGCONFIG_LIBRARIES)
-    set(JUCER_PKGCONFIG_LIBRARIES ${_PKGCONFIG_LIBRARIES} PARENT_SCOPE)
+    set(JUCER_PKGCONFIG_LIBRARIES "${_PKGCONFIG_LIBRARIES}" PARENT_SCOPE)
   endif()
 
 endfunction()
@@ -827,9 +827,9 @@ function(jucer_export_target_configuration
   endif()
 
   list(APPEND JUCER_PROJECT_CONFIGURATIONS ${config})
-  set(JUCER_PROJECT_CONFIGURATIONS ${JUCER_PROJECT_CONFIGURATIONS} PARENT_SCOPE)
+  set(JUCER_PROJECT_CONFIGURATIONS "${JUCER_PROJECT_CONFIGURATIONS}" PARENT_SCOPE)
 
-  set(JUCER_CONFIGURATION_IS_DEBUG_${config} ${is_debug} PARENT_SCOPE)
+  set(JUCER_CONFIGURATION_IS_DEBUG_${config} "${is_debug}" PARENT_SCOPE)
 
   set(single_value_keywords
     "BINARY_NAME"
@@ -895,12 +895,12 @@ function(jucer_export_target_configuration
   _FRUT_parse_arguments("${single_value_keywords}" "${multi_value_keywords}" "${ARGN}")
 
   if(DEFINED _BINARY_NAME)
-    set(JUCER_BINARY_NAME_${config} ${_BINARY_NAME} PARENT_SCOPE)
+    set(JUCER_BINARY_NAME_${config} "${_BINARY_NAME}" PARENT_SCOPE)
   endif()
 
   if(DEFINED _BINARY_LOCATION)
     get_filename_component(abs_path "${_BINARY_LOCATION}" ABSOLUTE)
-    set(JUCER_BINARY_LOCATION_${config} ${abs_path} PARENT_SCOPE)
+    set(JUCER_BINARY_LOCATION_${config} "${abs_path}" PARENT_SCOPE)
   endif()
 
   if(DEFINED _HEADER_SEARCH_PATHS)
@@ -910,7 +910,7 @@ function(jucer_export_target_configuration
       _FRUT_abs_path_based_on_jucer_project_dir(path "${path}")
       list(APPEND header_search_paths "${path}")
     endforeach()
-    set(JUCER_HEADER_SEARCH_PATHS_${config} ${header_search_paths} PARENT_SCOPE)
+    set(JUCER_HEADER_SEARCH_PATHS_${config} "${header_search_paths}" PARENT_SCOPE)
   endif()
 
   if(DEFINED _EXTRA_LIBRARY_SEARCH_PATHS)
@@ -920,17 +920,17 @@ function(jucer_export_target_configuration
       _FRUT_abs_path_based_on_jucer_project_dir(path "${path}")
       list(APPEND library_search_paths "${path}")
     endforeach()
-    set(JUCER_EXTRA_LIBRARY_SEARCH_PATHS_${config} ${library_search_paths} PARENT_SCOPE)
+    set(JUCER_EXTRA_LIBRARY_SEARCH_PATHS_${config} "${library_search_paths}" PARENT_SCOPE)
   endif()
 
   if(DEFINED _PREPROCESSOR_DEFINITIONS)
-    set(JUCER_PREPROCESSOR_DEFINITIONS_${config} ${_PREPROCESSOR_DEFINITIONS}
+    set(JUCER_PREPROCESSOR_DEFINITIONS_${config} "${_PREPROCESSOR_DEFINITIONS}"
       PARENT_SCOPE
     )
   endif()
 
   if(DEFINED _OPTIMISATION)
-    set(optimisation ${_OPTIMISATION})
+    set(optimisation "${_OPTIMISATION}")
     if(exporter MATCHES "^Visual Studio 201(7|5|3)$")
       if(optimisation STREQUAL "No optimisation")
         set(optimisation_flag "/Od")
@@ -958,40 +958,42 @@ function(jucer_export_target_configuration
         message(FATAL_ERROR "Unsupported value for OPTIMISATION: \"${optimisation}\"")
       endif()
     endif()
-    set(JUCER_OPTIMISATION_FLAG_${config} ${optimisation_flag} PARENT_SCOPE)
+    set(JUCER_OPTIMISATION_FLAG_${config} "${optimisation_flag}" PARENT_SCOPE)
   endif()
 
   if(DEFINED _ENABLE_PLUGIN_COPY_STEP)
-    set(JUCER_ENABLE_PLUGIN_COPY_STEP_${config} ${_ENABLE_PLUGIN_COPY_STEP} PARENT_SCOPE)
+    set(JUCER_ENABLE_PLUGIN_COPY_STEP_${config}
+      "${_ENABLE_PLUGIN_COPY_STEP}" PARENT_SCOPE
+    )
   endif()
 
   if(DEFINED _VST_BINARY_LOCATION)
     _FRUT_sanitize_path_in_user_folder(binary_location "${_VST_BINARY_LOCATION}")
-    set(JUCER_VST_BINARY_LOCATION_${config} ${binary_location} PARENT_SCOPE)
+    set(JUCER_VST_BINARY_LOCATION_${config} "${binary_location}" PARENT_SCOPE)
   endif()
 
   if(DEFINED _VST3_BINARY_LOCATION)
     _FRUT_sanitize_path_in_user_folder(binary_location "${_VST3_BINARY_LOCATION}")
-    set(JUCER_VST3_BINARY_LOCATION_${config} ${binary_location} PARENT_SCOPE)
+    set(JUCER_VST3_BINARY_LOCATION_${config} "${binary_location}" PARENT_SCOPE)
   endif()
 
   if(DEFINED _AU_BINARY_LOCATION)
     _FRUT_sanitize_path_in_user_folder(binary_location "${_AU_BINARY_LOCATION}")
-    set(JUCER_AU_BINARY_LOCATION_${config} ${binary_location} PARENT_SCOPE)
+    set(JUCER_AU_BINARY_LOCATION_${config} "${binary_location}" PARENT_SCOPE)
   endif()
 
   if(DEFINED _RTAS_BINARY_LOCATION)
     _FRUT_sanitize_path_in_user_folder(binary_location "${_RTAS_BINARY_LOCATION}")
-    set(JUCER_RTAS_BINARY_LOCATION_${config} ${binary_location} PARENT_SCOPE)
+    set(JUCER_RTAS_BINARY_LOCATION_${config} "${binary_location}" PARENT_SCOPE)
   endif()
 
   if(DEFINED _AAX_BINARY_LOCATION)
     _FRUT_sanitize_path_in_user_folder(binary_location "${_AAX_BINARY_LOCATION}")
-    set(JUCER_AAX_BINARY_LOCATION_${config} ${binary_location} PARENT_SCOPE)
+    set(JUCER_AAX_BINARY_LOCATION_${config} "${binary_location}" PARENT_SCOPE)
   endif()
 
   if(DEFINED _OSX_BASE_SDK_VERSION)
-    set(version ${_OSX_BASE_SDK_VERSION})
+    set(version "${_OSX_BASE_SDK_VERSION}")
     if(version MATCHES "^10\\.([5-9]|10|11|12) SDK$")
       set(JUCER_OSX_BASE_SDK_VERSION_${config} "10.${CMAKE_MATCH_1}" PARENT_SCOPE)
     elseif(NOT version STREQUAL "Use Default")
@@ -1000,7 +1002,7 @@ function(jucer_export_target_configuration
   endif()
 
   if(DEFINED _OSX_DEPLOYMENT_TARGET)
-    set(target ${_OSX_DEPLOYMENT_TARGET})
+    set(target "${_OSX_DEPLOYMENT_TARGET}")
     if(target MATCHES "^10\\.([5-9]|10|11|12)$")
       set(JUCER_OSX_DEPLOYMENT_TARGET_${config} "10.${CMAKE_MATCH_1}" PARENT_SCOPE)
     elseif(NOT target STREQUAL "Use Default")
@@ -1009,7 +1011,7 @@ function(jucer_export_target_configuration
   endif()
 
   if(DEFINED _OSX_ARCHITECTURE)
-    set(architecture ${_OSX_ARCHITECTURE})
+    set(architecture "${_OSX_ARCHITECTURE}")
     if(architecture STREQUAL "Native architecture of build machine")
       if(CMAKE_GENERATOR STREQUAL "Xcode")
         set(osx_architectures "$(NATIVE_ARCH_ACTUAL)")
@@ -1049,23 +1051,23 @@ function(jucer_export_target_configuration
         "generator. You should call `cmake -G Xcode`."
       )
     endif()
-    set(JUCER_CUSTOM_XCODE_FLAGS_${config} ${_CUSTOM_XCODE_FLAGS} PARENT_SCOPE)
+    set(JUCER_CUSTOM_XCODE_FLAGS_${config} "${_CUSTOM_XCODE_FLAGS}" PARENT_SCOPE)
   endif()
 
   if(DEFINED _CXX_LANGUAGE_STANDARD)
-    set(standard ${_CXX_LANGUAGE_STANDARD})
+    set(standard "${_CXX_LANGUAGE_STANDARD}")
     if(standard MATCHES "^(C|GNU)\\+\\+98$"
         AND DEFINED JUCER_VERSION AND JUCER_VERSION VERSION_LESS 5.0.0)
-      set(JUCER_CXX_LANGUAGE_STANDARD_${config} ${standard} PARENT_SCOPE)
+      set(JUCER_CXX_LANGUAGE_STANDARD_${config} "${standard}" PARENT_SCOPE)
     elseif(standard MATCHES "^(C|GNU)\\+\\+(11|14)$")
-      set(JUCER_CXX_LANGUAGE_STANDARD_${config} ${standard} PARENT_SCOPE)
+      set(JUCER_CXX_LANGUAGE_STANDARD_${config} "${standard}" PARENT_SCOPE)
     elseif(NOT standard STREQUAL "Use Default")
       message(FATAL_ERROR "Unsupported value for CXX_LANGUAGE_STANDARD: \"${standard}\"")
     endif()
   endif()
 
   if(DEFINED _CXX_LIBRARY)
-    set(cxx_library ${_CXX_LIBRARY})
+    set(cxx_library "${_CXX_LIBRARY}")
     if(cxx_library STREQUAL "LLVM libc++")
       set(JUCER_CXX_LIBRARY_${config} "libc++" PARENT_SCOPE)
     elseif(cxx_library STREQUAL "GNU libstdc++")
@@ -1081,23 +1083,23 @@ function(jucer_export_target_configuration
         "generator. You should call `cmake -G Xcode`."
       )
     endif()
-    set(JUCER_CODE_SIGNING_IDENTITY_${config} ${_CODE_SIGNING_IDENTITY} PARENT_SCOPE)
+    set(JUCER_CODE_SIGNING_IDENTITY_${config} "${_CODE_SIGNING_IDENTITY}" PARENT_SCOPE)
   endif()
 
   if(DEFINED _RELAX_IEEE_COMPLIANCE)
-    set(JUCER_RELAX_IEEE_COMPLIANCE_${config} ${_RELAX_IEEE_COMPLIANCE} PARENT_SCOPE)
+    set(JUCER_RELAX_IEEE_COMPLIANCE_${config} "${_RELAX_IEEE_COMPLIANCE}" PARENT_SCOPE)
   endif()
 
   if(DEFINED _LINK_TIME_OPTIMISATION)
-    set(JUCER_LINK_TIME_OPTIMISATION_${config} ${_LINK_TIME_OPTIMISATION} PARENT_SCOPE)
+    set(JUCER_LINK_TIME_OPTIMISATION_${config} "${_LINK_TIME_OPTIMISATION}" PARENT_SCOPE)
   endif()
 
   if(DEFINED _STRIP_LOCAL_SYMBOLS)
-    set(JUCER_STRIP_LOCAL_SYMBOLS_${config} ${_STRIP_LOCAL_SYMBOLS} PARENT_SCOPE)
+    set(JUCER_STRIP_LOCAL_SYMBOLS_${config} "${_STRIP_LOCAL_SYMBOLS}" PARENT_SCOPE)
   endif()
 
   if(DEFINED _WARNING_LEVEL)
-    set(warning_level ${_WARNING_LEVEL})
+    set(warning_level "${_WARNING_LEVEL}")
     if(warning_level STREQUAL "Low")
       set(level 2)
     elseif(warning_level STREQUAL "Medium")
@@ -1111,13 +1113,13 @@ function(jucer_export_target_configuration
   endif()
 
   if(DEFINED _TREAT_WARNINGS_AS_ERRORS)
-    set(JUCER_TREAT_WARNINGS_AS_ERRORS_${config} ${_TREAT_WARNINGS_AS_ERRORS}
+    set(JUCER_TREAT_WARNINGS_AS_ERRORS_${config} "${_TREAT_WARNINGS_AS_ERRORS}"
       PARENT_SCOPE
     )
   endif()
 
   if(DEFINED _RUNTIME_LIBRARY)
-    set(library ${_RUNTIME_LIBRARY})
+    set(library "${_RUNTIME_LIBRARY}")
     if(library STREQUAL "Use DLL runtime")
       if(is_debug)
         set(flag "/MDd")
@@ -1133,11 +1135,11 @@ function(jucer_export_target_configuration
     elseif(NOT library STREQUAL "(Default)")
       message(FATAL_ERROR "Unsupported value for RUNTIME_LIBRARY: \"${library}\"")
     endif()
-    set(JUCER_RUNTIME_LIBRARY_FLAG_${config} ${flag} PARENT_SCOPE)
+    set(JUCER_RUNTIME_LIBRARY_FLAG_${config} "${flag}" PARENT_SCOPE)
   endif()
 
   if(DEFINED _WHOLE_PROGRAM_OPTIMISATION)
-    set(optimisation ${_WHOLE_PROGRAM_OPTIMISATION})
+    set(optimisation "${_WHOLE_PROGRAM_OPTIMISATION}")
     if(optimisation STREQUAL "Always disable")
       set(JUCER_ALWAYS_DISABLE_WPO_${config} TRUE PARENT_SCOPE)
     elseif(NOT optimisation STREQUAL "Enable when possible")
@@ -1148,7 +1150,7 @@ function(jucer_export_target_configuration
   endif()
 
   if(DEFINED _INCREMENTAL_LINKING)
-    set(JUCER_INCREMENTAL_LINKING_${config} ${_INCREMENTAL_LINKING} PARENT_SCOPE)
+    set(JUCER_INCREMENTAL_LINKING_${config} "${_INCREMENTAL_LINKING}" PARENT_SCOPE)
   endif()
 
   if(DEFINED _PREBUILD_COMMAND)
@@ -1172,13 +1174,13 @@ function(jucer_export_target_configuration
   endif()
 
   if(DEFINED _GENERATE_MANIFEST)
-    set(JUCER_GENERATE_MANIFEST_${config} ${_GENERATE_MANIFEST} PARENT_SCOPE)
+    set(JUCER_GENERATE_MANIFEST_${config} "${_GENERATE_MANIFEST}" PARENT_SCOPE)
   endif()
 
   if(DEFINED _CHARACTER_SET)
     set(character_sets "Default" "MultiByte" "Unicode")
     if(_CHARACTER_SET IN_LIST character_sets)
-      set(JUCER_CHARACTER_SET_${config} ${_CHARACTER_SET} PARENT_SCOPE)
+      set(JUCER_CHARACTER_SET_${config} "${_CHARACTER_SET}" PARENT_SCOPE)
     else()
       message(FATAL_ERROR "Unsupported value for CHARACTER_SET: \"${_CHARACTER_SET}\"")
     endif()
@@ -1211,7 +1213,7 @@ function(jucer_export_target_configuration
   endif()
 
   if(DEFINED _ARCHITECTURE AND exporter STREQUAL "Linux Makefile")
-    set(architecture ${_ARCHITECTURE})
+    set(architecture "${_ARCHITECTURE}")
     if(architecture STREQUAL "(Default)")
       set(architecture_flag "-march=native")
     elseif(architecture STREQUAL "32-bit (-m32)")
@@ -1225,7 +1227,7 @@ function(jucer_export_target_configuration
     elseif(NOT architecture STREQUAL "<None>")
       message(FATAL_ERROR "Unsupported value for ARCHITECTURE: \"${architecture}\"")
     endif()
-    set(JUCER_ARCHITECTURE_FLAG_${config} ${architecture_flag} PARENT_SCOPE)
+    set(JUCER_ARCHITECTURE_FLAG_${config} "${architecture_flag}" PARENT_SCOPE)
   endif()
 
 endfunction()
@@ -1241,7 +1243,7 @@ function(jucer_project_end)
         message(FATAL_ERROR "There is already a current exporter: ${current_exporter}")
       else()
         list(GET Reprojucer_supported_exporters ${exporter_index} exporter)
-        set(current_exporter ${exporter})
+        set(current_exporter "${exporter}")
       endif()
     endif()
   endforeach()
@@ -1277,8 +1279,8 @@ function(jucer_project_end)
       message(STATUS
         "Setting CMAKE_BUILD_TYPE to \"${first_configuration}\" as it was not specified."
       )
-      set(CMAKE_BUILD_TYPE ${first_configuration})
-      set(CMAKE_BUILD_TYPE ${first_configuration} PARENT_SCOPE)
+      set(CMAKE_BUILD_TYPE "${first_configuration}")
+      set(CMAKE_BUILD_TYPE "${first_configuration}" PARENT_SCOPE)
     elseif(NOT CMAKE_BUILD_TYPE IN_LIST JUCER_PROJECT_CONFIGURATIONS)
       message(FATAL_ERROR "Undefined build configuration: ${CMAKE_BUILD_TYPE}\n"
         "Defined build configurations: ${JUCER_PROJECT_CONFIGURATIONS}"
@@ -1286,7 +1288,7 @@ function(jucer_project_end)
     endif()
   endif()
 
-  set(CMAKE_CONFIGURATION_TYPES ${JUCER_PROJECT_CONFIGURATIONS} PARENT_SCOPE)
+  set(CMAKE_CONFIGURATION_TYPES "${JUCER_PROJECT_CONFIGURATIONS}" PARENT_SCOPE)
 
   _FRUT_check_SDK_folders()
 
@@ -1303,7 +1305,7 @@ function(jucer_project_end)
     if(DEFINED icon_filename)
       set(icon_file "${CMAKE_CURRENT_BINARY_DIR}/${icon_filename}")
       source_group("Juce Library Code" FILES "${icon_file}")
-      set(JUCER_BUNDLE_ICON_FILE ${icon_filename})
+      set(JUCER_BUNDLE_ICON_FILE "${icon_filename}")
     endif()
   endif()
 
@@ -1544,7 +1546,7 @@ function(jucer_project_end)
       endif()
     endforeach()
 
-    set(shared_code_target ${target}_Shared_Code)
+    set(shared_code_target "${target}_Shared_Code")
     add_library(${shared_code_target} STATIC
       ${SharedCode_sources}
       ${JUCER_PROJECT_RESOURCES}
@@ -1562,7 +1564,7 @@ function(jucer_project_end)
     _FRUT_set_custom_xcode_flags(${shared_code_target})
 
     if(JUCER_BUILD_VST)
-      set(vst_target ${target}_VST)
+      set(vst_target "${target}_VST")
       add_library(${vst_target} MODULE
         ${VST_sources}
         ${JUCER_PROJECT_XCODE_RESOURCES}
@@ -1600,7 +1602,7 @@ function(jucer_project_end)
     endif()
 
     if(JUCER_BUILD_VST3 AND (APPLE OR MSVC))
-      set(vst3_target ${target}_VST3)
+      set(vst3_target "${target}_VST3")
       add_library(${vst3_target} MODULE
         ${VST3_sources}
         ${JUCER_PROJECT_XCODE_RESOURCES}
@@ -1639,7 +1641,7 @@ function(jucer_project_end)
     endif()
 
     if(JUCER_BUILD_AUDIOUNIT AND APPLE)
-      set(au_target ${target}_AU)
+      set(au_target "${target}_AU")
       add_library(${au_target} MODULE
         ${AudioUnit_sources}
         ${JUCER_PROJECT_XCODE_RESOURCES}
@@ -1691,7 +1693,7 @@ function(jucer_project_end)
     endif()
 
     if(JUCER_BUILD_AUDIOUNIT_V3 AND APPLE)
-      set(auv3_target ${target}_AUv3_AppExtension)
+      set(auv3_target "${target}_AUv3_AppExtension")
       add_library(${auv3_target} MODULE
         ${AudioUnitv3_sources}
         ${JUCER_PROJECT_XCODE_RESOURCES}
@@ -1787,7 +1789,7 @@ function(jucer_project_end)
     endif()
 
     if(JUCER_BUILD_RTAS AND (APPLE OR MSVC))
-      set(rtas_target ${target}_RTAS)
+      set(rtas_target "${target}_RTAS")
       add_library(${rtas_target} MODULE
         ${RTAS_sources}
         ${JUCER_PROJECT_XCODE_RESOURCES}
@@ -1933,7 +1935,7 @@ function(jucer_project_end)
     endif()
 
     if(JUCER_BUILD_AAX AND (APPLE OR MSVC))
-      set(aax_target ${target}_AAX)
+      set(aax_target "${target}_AAX")
       add_library(${aax_target} MODULE
         ${AAX_sources}
         ${JUCER_PROJECT_XCODE_RESOURCES}
@@ -2022,7 +2024,7 @@ function(jucer_project_end)
         unset(all_confs_destination)
         foreach(config ${JUCER_PROJECT_CONFIGURATIONS})
           if(DEFINED JUCER_AAX_BINARY_LOCATION_${config})
-            set(destination ${JUCER_AAX_BINARY_LOCATION_${config}})
+            set(destination "${JUCER_AAX_BINARY_LOCATION_${config}}")
           else()
             set(destination "$ENV{${common_files_env_var}}/Avid/Audio/Plug-Ins")
           endif()
@@ -2058,9 +2060,9 @@ function(jucer_project_end)
     endif()
     if(juce4_standalone OR juce5_standalone)
       if(juce4_standalone)
-        set(standalone_target ${target}_AUv3_Standalone)
+        set(standalone_target "${target}_AUv3_Standalone")
       else()
-        set(standalone_target ${target}_StandalonePlugin)
+        set(standalone_target "${target}_StandalonePlugin")
       endif()
       add_executable(${standalone_target} WIN32 MACOSX_BUNDLE
         ${Standalone_sources}
@@ -2125,16 +2127,16 @@ function(_FRUT_parse_arguments single_value_keywords multi_value_keywords argume
 
     if(NOT DEFINED keyword)
       if(NOT single_value_index EQUAL -1)
-        set(keyword ${argument})
+        set(keyword "${argument}")
         set(keyword_type "single")
       elseif(NOT multi_value_index EQUAL -1)
-        set(keyword ${argument})
+        set(keyword "${argument}")
         set(keyword_type "multi")
       else()
         message(FATAL_ERROR "Unknown keyword: \"${keyword}\"")
       endif()
     elseif(keyword_type STREQUAL "single")
-      set(_${keyword} ${argument})
+      set(_${keyword} "${argument}")
       unset(keyword)
     elseif(keyword_type STREQUAL "multi")
       if(DEFINED _${keyword})
@@ -2158,7 +2160,7 @@ function(_FRUT_parse_arguments single_value_keywords multi_value_keywords argume
   foreach(keyword ${single_value_keywords} ${multi_value_keywords})
     unset(_${keyword} PARENT_SCOPE)
     if(DEFINED _${keyword})
-      set(_${keyword} ${_${keyword}} PARENT_SCOPE)
+      set(_${keyword} "${_${keyword}}" PARENT_SCOPE)
     endif()
   endforeach()
 
@@ -2180,7 +2182,7 @@ function(_FRUT_abs_path_based_on_jucer_project_dir out_path in_path)
   endif()
 
   get_filename_component(in_path "${in_path}" ABSOLUTE BASE_DIR "${JUCER_PROJECT_DIR}")
-  set(${out_path} ${in_path} PARENT_SCOPE)
+  set(${out_path} "${in_path}" PARENT_SCOPE)
 
 endfunction()
 
@@ -2195,7 +2197,7 @@ function(_FRUT_sanitize_path_in_user_folder out_path in_path)
   string(REGEX REPLACE "^~/" "${user_folder}" in_path "${in_path}")
   string(REGEX REPLACE "^\\$\\(HOME\\)/" "${user_folder}" in_path "${in_path}")
 
-  set(${out_path} ${in_path} PARENT_SCOPE)
+  set(${out_path} "${in_path}" PARENT_SCOPE)
 
 endfunction()
 
@@ -2510,7 +2512,7 @@ function(_FRUT_generate_AppConfig_header)
     "${CMAKE_CURRENT_BINARY_DIR}/JuceLibraryCode/AppConfig.h"
   )
 
-  set(JUCER_PROJECT_SOURCES ${JUCER_PROJECT_SOURCES} PARENT_SCOPE)
+  set(JUCER_PROJECT_SOURCES "${JUCER_PROJECT_SOURCES}" PARENT_SCOPE)
 
 endfunction()
 
@@ -2613,7 +2615,7 @@ function(_FRUT_generate_JuceHeader_header)
     "${CMAKE_CURRENT_BINARY_DIR}/JuceLibraryCode/JuceHeader.h"
   )
 
-  set(JUCER_PROJECT_SOURCES ${JUCER_PROJECT_SOURCES} PARENT_SCOPE)
+  set(JUCER_PROJECT_SOURCES "${JUCER_PROJECT_SOURCES}" PARENT_SCOPE)
 
 endfunction()
 
@@ -2670,7 +2672,7 @@ function(_FRUT_generate_icon_file icon_format icon_file_output_dir out_icon_file
   endif()
 
   if(NOT "${icon_filename}" STREQUAL "")
-    set(${out_icon_filename} ${icon_filename} PARENT_SCOPE)
+    set(${out_icon_filename} "${icon_filename}" PARENT_SCOPE)
   endif()
 
 endfunction()
@@ -2728,7 +2730,7 @@ function(_FRUT_set_compiler_and_linker_settings target)
     ${JUCER_PROJECT_MODULES_FOLDERS}
   )
   foreach(config ${JUCER_PROJECT_CONFIGURATIONS})
-    set(search_paths ${JUCER_HEADER_SEARCH_PATHS_${config}})
+    set(search_paths "${JUCER_HEADER_SEARCH_PATHS_${config}}")
     target_include_directories(${target} PRIVATE $<$<CONFIG:${config}>:${search_paths}>)
   endforeach()
   target_include_directories(${target} PRIVATE ${JUCER_HEADER_SEARCH_PATHS})
@@ -2755,7 +2757,7 @@ function(_FRUT_set_compiler_and_linker_settings target)
 
   foreach(config ${JUCER_PROJECT_CONFIGURATIONS})
     if(JUCER_OPTIMISATION_FLAG_${config})
-      set(optimisation_flag ${JUCER_OPTIMISATION_FLAG_${config}})
+      set(optimisation_flag "${JUCER_OPTIMISATION_FLAG_${config}}")
       target_compile_options(${target} PRIVATE
         $<$<CONFIG:${config}>:${optimisation_flag}>
       )
@@ -2767,7 +2769,7 @@ function(_FRUT_set_compiler_and_linker_settings target)
     ${JUCER_EXTRA_PREPROCESSOR_DEFINITIONS}
   )
   foreach(config ${JUCER_PROJECT_CONFIGURATIONS})
-    set(definitions ${JUCER_PREPROCESSOR_DEFINITIONS_${config}})
+    set(definitions "${JUCER_PREPROCESSOR_DEFINITIONS_${config}}")
     target_compile_definitions(${target} PRIVATE $<$<CONFIG:${config}>:${definitions}>)
   endforeach()
 
@@ -2790,7 +2792,7 @@ function(_FRUT_set_compiler_and_linker_settings target)
       endif()
 
       if(DEFINED JUCER_CXX_LIBRARY_${config})
-        set(cxx_library ${JUCER_CXX_LIBRARY_${config}})
+        set(cxx_library "${JUCER_CXX_LIBRARY_${config}}")
         target_compile_options(${target} PRIVATE
           $<$<CONFIG:${config}>:-stdlib=${cxx_library}>
         )
@@ -2902,7 +2904,7 @@ function(_FRUT_set_compiler_and_linker_settings target)
     unset(all_confs_code_sign_identity)
     foreach(config ${JUCER_PROJECT_CONFIGURATIONS})
       if(NOT JUCER_CODE_SIGNING_IDENTITY_${config} STREQUAL "Mac Developer")
-        set(code_sign_identity ${JUCER_CODE_SIGNING_IDENTITY_${config}})
+        set(code_sign_identity "${JUCER_CODE_SIGNING_IDENTITY_${config}}")
         string(APPEND all_confs_code_sign_identity
           $<$<CONFIG:${config}>:${code_sign_identity}>
         )
@@ -2959,7 +2961,7 @@ function(_FRUT_set_compiler_and_linker_settings target)
       endif()
 
       if(DEFINED JUCER_RUNTIME_LIBRARY_FLAG_${config})
-        set(runtime_library_flag ${JUCER_RUNTIME_LIBRARY_FLAG_${config}})
+        set(runtime_library_flag "${JUCER_RUNTIME_LIBRARY_FLAG_${config}}")
       elseif(JUCER_BUILD_VST OR JUCER_BUILD_VST3)
         if(JUCER_CONFIGURATION_IS_DEBUG_${config})
           set(runtime_library_flag "/MDd")
@@ -2978,7 +2980,7 @@ function(_FRUT_set_compiler_and_linker_settings target)
       )
 
       if(DEFINED JUCER_WARNING_LEVEL_FLAG_${config})
-        set(warning_level_flag ${JUCER_WARNING_LEVEL_FLAG_${config}})
+        set(warning_level_flag "${JUCER_WARNING_LEVEL_FLAG_${config}}")
       else()
         set(warning_level_flag "/W4")
       endif()
@@ -3031,7 +3033,7 @@ function(_FRUT_set_compiler_and_linker_settings target)
       endif()
 
       if(DEFINED JUCER_ARCHITECTURE_FLAG_${config})
-        set(architecture_flag ${JUCER_ARCHITECTURE_FLAG_${config}})
+        set(architecture_flag "${JUCER_ARCHITECTURE_FLAG_${config}}")
       else()
         set(architecture_flag "-march=native")
       endif()
@@ -3253,7 +3255,7 @@ function(_FRUT_add_extra_commands target)
     unset(all_confs_prebuild_command)
     foreach(config ${JUCER_PROJECT_CONFIGURATIONS})
       if(DEFINED JUCER_PREBUILD_COMMAND_${config})
-        set(prebuild_command ${JUCER_PREBUILD_COMMAND_${config}})
+        set(prebuild_command "${JUCER_PREBUILD_COMMAND_${config}}")
         string(APPEND all_confs_prebuild_command
           $<$<CONFIG:${config}>:${prebuild_command}>
         )
@@ -3278,7 +3280,7 @@ function(_FRUT_add_extra_commands target)
     unset(all_confs_postbuild_command)
     foreach(config ${JUCER_PROJECT_CONFIGURATIONS})
       if(DEFINED JUCER_POSTBUILD_COMMAND_${config})
-        set(postbuild_command ${JUCER_POSTBUILD_COMMAND_${config}})
+        set(postbuild_command "${JUCER_POSTBUILD_COMMAND_${config}}")
         string(APPEND all_confs_postbuild_command
           $<$<CONFIG:${config}>:${postbuild_command}>
         )
@@ -3360,9 +3362,9 @@ function(_FRUT_install_to_plugin_binary_location target plugin_type default_dest
   unset(all_confs_destination)
   foreach(config ${JUCER_PROJECT_CONFIGURATIONS})
     if(DEFINED JUCER_${plugin_type}_BINARY_LOCATION_${config})
-      set(destination ${JUCER_${plugin_type}_BINARY_LOCATION_${config}})
+      set(destination "${JUCER_${plugin_type}_BINARY_LOCATION_${config}}")
     else()
-      set(destination ${default_destination})
+      set(destination "${default_destination}")
     endif()
     if(DEFINED JUCER_ENABLE_PLUGIN_COPY_STEP_${config})
       if(JUCER_ENABLE_PLUGIN_COPY_STEP_${config})
@@ -3510,7 +3512,7 @@ function(_FRUT_dec_to_hex dec_value out_hex_value)
   while(dec_value GREATER 0)
     math(EXPR hex_unit "${dec_value} & 15")
     if(hex_unit LESS 10)
-      set(hex_char ${hex_unit})
+      set(hex_char "${hex_unit}")
     else()
       math(EXPR hex_unit "${hex_unit} + 87")
       string(ASCII ${hex_unit} hex_char)
