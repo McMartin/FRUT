@@ -342,7 +342,7 @@ function(jucer_project_module module_name PATH_KEYWORD modules_folder)
   )
 
   if(DEFINED JUCER_VERSION AND JUCER_VERSION VERSION_LESS 5.0.0)
-    set(proxy_prefix)
+    unset(proxy_prefix)
   else()
     set(proxy_prefix "include_")
   endif()
@@ -1015,7 +1015,7 @@ function(jucer_export_target_configuration
         set(osx_architectures "$(NATIVE_ARCH_ACTUAL)")
       else()
         # Consider as default
-        set(osx_architectures)
+        unset(osx_architectures)
       endif()
     elseif(architecture STREQUAL "Universal Binary (32-bit)")
       if(CMAKE_GENERATOR STREQUAL "Xcode")
