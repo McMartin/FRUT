@@ -188,6 +188,7 @@ function(jucer_audio_plugin_settings)
     "KEY_FOCUS"
     "PLUGIN_AU_EXPORT_PREFIX"
     "PLUGIN_AU_MAIN_TYPE"
+    "PLUGIN_VST_CATEGORY"
     "VST_CATEGORY"
     "PLUGIN_RTAS_CATEGORY"
     "PLUGIN_AAX_CATEGORY"
@@ -202,6 +203,12 @@ function(jucer_audio_plugin_settings)
     endif()
     if(DEFINED _ENABLE_INTERAPP_AUDIO)
       message(WARNING "ENABLE_INTERAPP_AUDIO is a JUCE 5 feature only")
+    endif()
+  endif()
+
+  if(DEFINED _VST_CATEGORY)
+    if(NOT (DEFINED JUCER_VERSION AND JUCER_VERSION VERSION_LESS 5.3.1))
+      message(WARNING "VST_CATEGORY is deprecated. Use PLUGIN_VST_CATEGORY instead.")
     endif()
   endif()
 
@@ -2398,14 +2405,16 @@ function(_FRUT_generate_AppConfig_header)
     set(VersionString_value "\"${JUCER_PROJECT_VERSION}\"")
 
     set(VSTUniqueID_value "JucePlugin_PluginCode")
-    if(NOT DEFINED JUCER_VST_CATEGORY)
+    if(DEFINED JUCER_PLUGIN_VST_CATEGORY)
+      set(VSTCategory_value "${JUCER_PLUGIN_VST_CATEGORY}")
+    elseif(DEFINED JUCER_VST_CATEGORY)
+      set(VSTCategory_value "${JUCER_VST_CATEGORY}")
+    else()
       if(JUCER_PLUGIN_IS_A_SYNTH)
         set(VSTCategory_value "kPlugCategSynth")
       else()
         set(VSTCategory_value "kPlugCategEffect")
       endif()
-    else()
-      set(VSTCategory_value "${JUCER_VST_CATEGORY}")
     endif()
 
     if(NOT DEFINED JUCER_PLUGIN_AU_MAIN_TYPE)

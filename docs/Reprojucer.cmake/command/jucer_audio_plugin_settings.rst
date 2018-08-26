@@ -31,7 +31,7 @@ Define the settings specific to an *Audio Plug-in* project.
     [PLUGIN_AU_EXPORT_PREFIX <plugin_au_export_prefix>]
     [PLUGIN_AU_MAIN_TYPE <plugin_au_main_type>]
 
-    [VST_CATEGORY <vst_category>]
+    [PLUGIN_VST_CATEGORY <plugin_vst_category>]
 
     [PLUGIN_RTAS_CATEGORY <plugin_rtas_category>]
 
