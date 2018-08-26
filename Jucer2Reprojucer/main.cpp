@@ -532,7 +532,10 @@ int main(int argc, char* argv[])
                                      "KEY_FOCUS", false);
       convertSetting(jucerProject, "pluginAUExportPrefix", "PLUGIN_AU_EXPORT_PREFIX", {});
       convertSetting(jucerProject, "pluginAUMainType", "PLUGIN_AU_MAIN_TYPE", {});
-      convertSetting(jucerProject, "pluginVSTCategory", "VST_CATEGORY", {});
+      convertSetting(jucerProject, "pluginVSTCategory",
+                     jucerVersionAsTuple > Version{5, 3, 0} ? "PLUGIN_VST_CATEGORY"
+                                                            : "VST_CATEGORY",
+                     {});
       convertSetting(jucerProject, "pluginRTASCategory", "PLUGIN_RTAS_CATEGORY", {});
       convertSetting(jucerProject, "pluginAAXCategory", "PLUGIN_AAX_CATEGORY", {});
       convertSetting(jucerProject, "aaxIdentifier", "PLUGIN_AAX_IDENTIFIER", {});
