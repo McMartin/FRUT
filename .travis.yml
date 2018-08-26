@@ -233,6 +233,7 @@ matrix:
 
     - os: osx
       env: GENERATOR=Makefiles
+      osx_image: xcode7.3
       script: *script-Makefiles
 
     - os: osx
