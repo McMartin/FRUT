@@ -2387,12 +2387,8 @@ function(_FRUT_generate_AppConfig_header)
     set(ManufacturerWebsite_value "\"${JUCER_COMPANY_WEBSITE}\"")
     set(ManufacturerEmail_value "\"${JUCER_COMPANY_EMAIL}\"")
 
-    _FRUT_four_chars_to_hex("${JUCER_PLUGIN_MANUFACTURER_CODE}" hex_manufacturer_code)
-    set(ManufacturerCode_value
-      "${hex_manufacturer_code} // '${JUCER_PLUGIN_MANUFACTURER_CODE}'"
-    )
-    _FRUT_four_chars_to_hex("${JUCER_PLUGIN_CODE}" hex_plugin_code)
-    set(PluginCode_value "${hex_plugin_code} // '${JUCER_PLUGIN_CODE}'")
+    _FRUT_char_literal("${JUCER_PLUGIN_MANUFACTURER_CODE}" ManufacturerCode_value)
+    _FRUT_char_literal("${JUCER_PLUGIN_CODE}" PluginCode_value)
 
     _FRUT_bool_to_int("${JUCER_PLUGIN_IS_A_SYNTH}" IsSynth_value)
     _FRUT_bool_to_int("${JUCER_PLUGIN_MIDI_INPUT}" WantsMidiInput_value)
@@ -3566,7 +3562,7 @@ function(_FRUT_version_to_hex version out_hex_value)
 endfunction()
 
 
-function(_FRUT_four_chars_to_hex value out_hex_value)
+function(_FRUT_char_literal value out_char_literal)
 
   set(all_ascii_codes "")
   foreach(ascii_code RANGE 1 127)
@@ -3587,7 +3583,8 @@ function(_FRUT_four_chars_to_hex value out_hex_value)
   endforeach()
 
   _FRUT_dec_to_hex("${dec_value}" hex_value)
-  set(${out_hex_value} "${hex_value}" PARENT_SCOPE)
+
+  set(${out_char_literal} "${hex_value} // '${four_chars}'" PARENT_SCOPE)
 
 endfunction()
 
