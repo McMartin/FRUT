@@ -2387,12 +2387,8 @@ function(_FRUT_generate_AppConfig_header)
     set(ManufacturerWebsite_value "\"${JUCER_COMPANY_WEBSITE}\"")
     set(ManufacturerEmail_value "\"${JUCER_COMPANY_EMAIL}\"")
 
-    _FRUT_four_chars_to_hex("${JUCER_PLUGIN_MANUFACTURER_CODE}" hex_manufacturer_code)
-    set(ManufacturerCode_value
-      "${hex_manufacturer_code} // '${JUCER_PLUGIN_MANUFACTURER_CODE}'"
-    )
-    _FRUT_four_chars_to_hex("${JUCER_PLUGIN_CODE}" hex_plugin_code)
-    set(PluginCode_value "${hex_plugin_code} // '${JUCER_PLUGIN_CODE}'")
+    _FRUT_char_literal("${JUCER_PLUGIN_MANUFACTURER_CODE}" ManufacturerCode_value)
+    _FRUT_char_literal("${JUCER_PLUGIN_CODE}" PluginCode_value)
 
     _FRUT_bool_to_int("${JUCER_PLUGIN_IS_A_SYNTH}" IsSynth_value)
     _FRUT_bool_to_int("${JUCER_PLUGIN_MIDI_INPUT}" WantsMidiInput_value)
@@ -3566,7 +3562,7 @@ function(_FRUT_version_to_hex version out_hex_value)
 endfunction()
 
 
-function(_FRUT_four_chars_to_hex value out_hex_value)
+function(_FRUT_char_literal value out_char_literal)
 
   set(all_ascii_codes "")
   foreach(ascii_code RANGE 1 127)
@@ -3574,20 +3570,30 @@ function(_FRUT_four_chars_to_hex value out_hex_value)
   endforeach()
   string(ASCII ${all_ascii_codes} all_ascii_chars)
 
-  string(STRIP "${value}" four_chars)
+  set(four_chars "${value}")
+  if(DEFINED JUCER_VERSION AND NOT JUCER_VERSION VERSION_GREATER 5.2.0)
+    string(STRIP "${four_chars}" four_chars)
+  endif()
   string(SUBSTRING "${four_chars}" 0 4 four_chars)
+  string(LENGTH "${four_chars}" four_chars_length)
   set(dec_value 0)
   foreach(index 0 1 2 3)
-    string(SUBSTRING "${four_chars}" ${index} 1 ascii_char)
-    string(FIND "${all_ascii_chars}" "${ascii_char}" ascii_code)
-    if(ascii_code EQUAL -1)
-      message(FATAL_ERROR "${value} cannot contain non-ASCII characters")
+    if(index LESS four_chars_length)
+      string(SUBSTRING "${four_chars}" ${index} 1 ascii_char)
+      string(FIND "${all_ascii_chars}" "${ascii_char}" ascii_code)
+      if(ascii_code EQUAL -1)
+        message(FATAL_ERROR "${value} cannot contain non-ASCII characters")
+      endif()
+      math(EXPR ascii_code "${ascii_code} + 1")
+    else()
+      set(ascii_code 0)
     endif()
-    math(EXPR dec_value "(${dec_value} << 8) | ((${ascii_code} + 1) & 255)")
+    math(EXPR dec_value "(${dec_value} << 8) | (${ascii_code} & 255)")
   endforeach()
 
   _FRUT_dec_to_hex("${dec_value}" hex_value)
-  set(${out_hex_value} "${hex_value}" PARENT_SCOPE)
+
+  set(${out_char_literal} "${hex_value} // '${four_chars}'" PARENT_SCOPE)
 
 endfunction()
 
