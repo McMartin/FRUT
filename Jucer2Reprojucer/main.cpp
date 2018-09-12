@@ -536,6 +536,24 @@ int main(int argc, char* argv[])
                      jucerVersionAsTuple > Version{5, 3, 0} ? "PLUGIN_VST_CATEGORY"
                                                             : "VST_CATEGORY",
                      {});
+      if (jucerProject.hasProperty("pluginVST3Category")
+          || jucerVersionAsTuple >= Version{5, 3, 1})
+      {
+        convertSettingAsList(
+          jucerProject, "pluginVST3Category", "PLUGIN_VST3_CATEGORY",
+          [](const juce::var& v) {
+            auto vst3_category = juce::StringArray::fromTokens(v.toString(), ",", {});
+            if (vst3_category.contains("Instrument"))
+            {
+              vst3_category.move(vst3_category.indexOf("Instrument"), 0);
+            }
+            if (vst3_category.contains("Fx"))
+            {
+              vst3_category.move(vst3_category.indexOf("Fx"), 0);
+            }
+            return vst3_category;
+          });
+      }
       convertSetting(jucerProject, "pluginRTASCategory", "PLUGIN_RTAS_CATEGORY", {});
       convertSetting(jucerProject, "pluginAAXCategory", "PLUGIN_AAX_CATEGORY", {});
       convertSetting(jucerProject, "aaxIdentifier", "PLUGIN_AAX_IDENTIFIER", {});

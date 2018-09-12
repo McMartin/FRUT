@@ -33,6 +33,8 @@ Define the settings specific to an *Audio Plug-in* project.
 
     [PLUGIN_VST_CATEGORY <plugin_vst_category>]
 
+    [PLUGIN_VST3_CATEGORY <plugin_vst3_category>]
+
     [PLUGIN_RTAS_CATEGORY <plugin_rtas_category>]
 
     [PLUGIN_AAX_CATEGORY <plugin_aax_category>]
