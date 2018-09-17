@@ -194,8 +194,11 @@ function(jucer_audio_plugin_settings)
     "PLUGIN_AAX_CATEGORY"
     "PLUGIN_AAX_IDENTIFIER"
   )
+  set(multi_value_keywords
+    "PLUGIN_VST3_CATEGORY"
+  )
 
-  _FRUT_parse_arguments("${single_value_keywords}" "" "${ARGN}")
+  _FRUT_parse_arguments("${single_value_keywords}" "${multi_value_keywords}" "${ARGN}")
 
   if(DEFINED JUCER_VERSION AND JUCER_VERSION VERSION_LESS 5.0.0)
     if(DEFINED _BUILD_STANDALONE_PLUGIN)
@@ -212,7 +215,7 @@ function(jucer_audio_plugin_settings)
     endif()
   endif()
 
-  foreach(keyword ${single_value_keywords})
+  foreach(keyword ${single_value_keywords} ${multi_value_keywords})
     if(DEFINED _${keyword})
       set(JUCER_${keyword} "${_${keyword}}" PARENT_SCOPE)
     endif()
@@ -1318,7 +1321,7 @@ function(jucer_project_end)
 
   if(WIN32 AND NOT JUCER_PROJECT_TYPE STREQUAL "Static Library")
     if(DEFINED JUCER_COMPANY_COPYRIGHT
-        OR NOT(DEFINED JUCER_VERSION AND JUCER_VERSION VERSION_LESS 5.2.0))
+        OR NOT (DEFINED JUCER_VERSION AND JUCER_VERSION VERSION_LESS 5.2.0))
       set(resources_rc_legal_copyright
         "\n      VALUE \"LegalCopyright\",  \"${JUCER_COMPANY_COPYRIGHT}\\0\""
       )
@@ -1347,7 +1350,7 @@ function(jucer_project_end)
   )
 
   if(DEFINED JUCER_COMPANY_COPYRIGHT
-      OR NOT(DEFINED JUCER_VERSION AND JUCER_VERSION VERSION_LESS 5.2.0))
+      OR NOT (DEFINED JUCER_VERSION AND JUCER_VERSION VERSION_LESS 5.2.0))
     set(ns_human_readable_copyright "${JUCER_COMPANY_COPYRIGHT}")
   else()
     set(ns_human_readable_copyright "${JUCER_COMPANY_NAME}")
@@ -2360,6 +2363,12 @@ function(_FRUT_generate_AppConfig_header)
       "EditorRequiresKeyboardFocus"
       "Version" "VersionCode" "VersionString"
       "VSTUniqueID" "VSTCategory"
+    )
+    if(DEFINED JUCER_PLUGIN_VST3_CATEGORY
+        OR NOT (DEFINED JUCER_VERSION AND JUCER_VERSION VERSION_LESS 5.3.1))
+      list(APPEND audio_plugin_setting_names "Vst3Category")
+    endif()
+    list(APPEND audio_plugin_setting_names
       "AUMainType" "AUSubType" "AUExportPrefix" "AUExportPrefixQuoted"
       "AUManufacturerCode"
       "CFBundleIdentifier"
@@ -2412,6 +2421,51 @@ function(_FRUT_generate_AppConfig_header)
         set(VSTCategory_value "kPlugCategEffect")
       endif()
     endif()
+
+    if(DEFINED JUCER_PLUGIN_VST3_CATEGORY)
+      set(categories "${JUCER_PLUGIN_VST3_CATEGORY}")
+
+      # See getVST3CategoryStringFromSelection()
+      # in JUCE/extras/Projucer/Source/Project/jucer_Project.cpp
+      if(NOT "Fx" IN_LIST categories AND NOT "Instrument" IN_LIST categories)
+        if(JUCER_PLUGIN_IS_A_SYNTH)
+          list(INSERT categories 0 "Instrument")
+        else()
+          list(INSERT categories 0 "Fx")
+        endif()
+      else()
+        if("Instrument" IN_LIST categories)
+          list(FIND categories "Instrument" Instrument_index)
+          list(REMOVE_AT categories ${Instrument_index})
+          list(INSERT categories 0 "Instrument")
+        endif()
+        if("Fx" IN_LIST categories)
+          list(FIND categories "Fx" Fx_index)
+          list(REMOVE_AT categories ${Fx_index})
+          list(INSERT categories 0 "Fx")
+        endif()
+      endif()
+
+      list(LENGTH categories categories_count)
+      if(categories_count EQUAL 1)
+        set(vst3_category "${categories}")
+      else()
+        list(GET categories 0 first_category)
+        set(vst3_category "${first_category}")
+        math(EXPR categories_max "${categories_count} - 1")
+        foreach(index RANGE 1 ${categories_max})
+          list(GET categories ${index} category)
+          string(APPEND vst3_category "|${category}")
+        endforeach()
+      endif()
+    else()
+      if(JUCER_PLUGIN_IS_A_SYNTH)
+        set(vst3_category "Instrument|Synth")
+      else()
+        set(vst3_category "Fx")
+      endif()
+    endif()
+    set(Vst3Category_value "\"${vst3_category}\"")
 
     if(NOT DEFINED JUCER_PLUGIN_AU_MAIN_TYPE)
       if(JUCER_MIDI_EFFECT_PLUGIN)
