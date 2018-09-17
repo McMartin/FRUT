@@ -2424,6 +2424,20 @@ function(_FRUT_generate_AppConfig_header)
 
     if(DEFINED JUCER_PLUGIN_VST3_CATEGORY)
       set(categories "${JUCER_PLUGIN_VST3_CATEGORY}")
+
+      # See getVST3CategoryStringFromSelection()
+      # in JUCE/extras/Projucer/Source/Project/jucer_Project.cpp
+      if("Instrument" IN_LIST categories)
+        list(FIND categories "Instrument" Instrument_index)
+        list(REMOVE_AT categories ${Instrument_index})
+        list(INSERT categories 0 "Instrument")
+      endif()
+      if("Fx" IN_LIST categories)
+        list(FIND categories "Fx" Fx_index)
+        list(REMOVE_AT categories ${Fx_index})
+        list(INSERT categories 0 "Fx")
+      endif()
+
       list(LENGTH categories categories_count)
       if(categories_count EQUAL 1)
         set(vst3_category "${categories}")
