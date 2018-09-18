@@ -1284,7 +1284,7 @@ function(jucer_project_end)
   endif()
 
   if(NOT DEFINED CMAKE_CONFIGURATION_TYPES)
-    if(NOT DEFINED CMAKE_BUILD_TYPE)
+    if(NOT DEFINED CMAKE_BUILD_TYPE OR CMAKE_BUILD_TYPE STREQUAL "")
       list(GET JUCER_PROJECT_CONFIGURATIONS 0 first_configuration)
       message(STATUS
         "Setting CMAKE_BUILD_TYPE to \"${first_configuration}\" as it was not specified."
