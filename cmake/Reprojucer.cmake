@@ -3464,11 +3464,9 @@ function(_FRUT_set_bundle_properties target extension)
       XCODE_ATTRIBUTE_WRAPPER_EXTENSION "${extension}"
     )
 
-    add_custom_command(TARGET ${target} PRE_BUILD
-      COMMAND
-      "${CMAKE_COMMAND}" "-E" "copy_if_different"
-      "${Reprojucer_templates_DIR}/PkgInfo"
-      "$<TARGET_FILE_DIR:${target}>/.."
+    target_sources(${target} PRIVATE "${Reprojucer_templates_DIR}/PkgInfo")
+    set_source_files_properties("${Reprojucer_templates_DIR}/PkgInfo"
+      PROPERTIES MACOSX_PACKAGE_LOCATION "."
     )
   endif()
 
