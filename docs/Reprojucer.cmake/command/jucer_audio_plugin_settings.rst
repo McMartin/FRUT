@@ -7,6 +7,7 @@ Define the settings specific to an *Audio Plug-in* project.
 
   jucer_audio_plugin_settings(
     [PLUGIN_FORMATS <plugin_format> [<plugin_format> ...]]
+    [PLUGIN_CHARACTERISTICS <plugin_characteristic> [<plugin_characteristic> ...]]
 
     [BUILD_VST <ON|OFF>]
     [BUILD_VST3 <ON|OFF>]
@@ -24,6 +25,7 @@ Define the settings specific to an *Audio Plug-in* project.
     [PLUGIN_CODE <plugin_code>]
 
     [PLUGIN_CHANNEL_CONFIGURATIONS <plugin_channel_configurations>]
+
     [PLUGIN_IS_A_SYNTH <ON|OFF>]
     [PLUGIN_MIDI_INPUT <ON|OFF>]
     [PLUGIN_MIDI_OUTPUT <ON|OFF>]

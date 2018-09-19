@@ -176,6 +176,13 @@ function(jucer_audio_plugin_settings)
     "BUILD_STANDALONE_PLUGIN"
     "ENABLE_INTERAPP_AUDIO"
   )
+  set(plugin_characteristics_keywords
+    "PLUGIN_IS_A_SYNTH"
+    "PLUGIN_MIDI_INPUT"
+    "PLUGIN_MIDI_OUTPUT"
+    "MIDI_EFFECT_PLUGIN"
+    "KEY_FOCUS"
+  )
   set(single_value_keywords
     ${plugin_formats_keywords}
     "PLUGIN_NAME"
@@ -184,11 +191,7 @@ function(jucer_audio_plugin_settings)
     "PLUGIN_MANUFACTURER_CODE"
     "PLUGIN_CODE"
     "PLUGIN_CHANNEL_CONFIGURATIONS"
-    "PLUGIN_IS_A_SYNTH"
-    "PLUGIN_MIDI_INPUT"
-    "PLUGIN_MIDI_OUTPUT"
-    "MIDI_EFFECT_PLUGIN"
-    "KEY_FOCUS"
+    ${plugin_characteristics_keywords}
     "PLUGIN_AU_EXPORT_PREFIX"
     "PLUGIN_AU_MAIN_TYPE"
     "PLUGIN_VST_CATEGORY"
@@ -199,6 +202,7 @@ function(jucer_audio_plugin_settings)
   )
   set(multi_value_keywords
     "PLUGIN_FORMATS"
+    "PLUGIN_CHARACTERISTICS"
     "PLUGIN_VST3_CATEGORY"
   )
 
@@ -224,6 +228,41 @@ function(jucer_audio_plugin_settings)
         list(GET plugin_formats_values ${index} format_value)
         if(format_value IN_LIST _PLUGIN_FORMATS)
           set(_${format_var} ON)
+        endif()
+      endif()
+    endforeach()
+  endif()
+
+  if(DEFINED _PLUGIN_CHARACTERISTICS)
+    set(extra_rtas_aax_keywords
+      "PLUGIN_RTAS_DISABLE_BYPASS"
+      "PLUGIN_AAX_DISABLE_BYPASS"
+      "PLUGIN_RTAS_DISABLE_MULTI_MONO"
+      "PLUGIN_AAX_DISABLE_MULTI_MONO"
+    )
+    list(APPEND single_value_keywords ${extra_rtas_aax_keywords})
+
+    set(plugin_characteristics_vars
+      ${plugin_characteristics_keywords}
+      ${extra_rtas_aax_keywords}
+    )
+    set(plugin_characteristics_values
+      "Plugin is a Synth"
+      "Plugin MIDI Input"
+      "Plugin MIDI Output"
+      "MIDI Effect Plugin"
+      "Plugin Editor Requires Keyboard Focus"
+      "Disable RTAS Bypass"
+      "Disable AAX Bypass"
+      "Disable RTAS Multi-Mono"
+      "Disable AAX Multi-Mono"
+    )
+    foreach(index RANGE 0 8)
+      list(GET plugin_characteristics_vars ${index} characteristic_var)
+      if(NOT DEFINED _${characteristic_var})
+        list(GET plugin_characteristics_values ${index} characteristic_value)
+        if(characteristic_value IN_LIST _PLUGIN_CHARACTERISTICS)
+          set(_${characteristic_var} ON)
         endif()
       endif()
     endforeach()

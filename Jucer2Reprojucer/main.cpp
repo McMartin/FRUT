@@ -527,6 +527,21 @@ int main(int argc, char* argv[])
                                            {"buildStandalone", "Standalone"},
                                            {"enableIAA", "Enable IAA"}});
           });
+
+        convertSettingAsList(
+          jucerProject, "pluginCharacteristicsValue", "PLUGIN_CHARACTERISTICS",
+          [&](const juce::var& v) {
+            return convertIdsToStrings(
+              v, {{"pluginIsSynth", "Plugin is a Synth"},
+                  {"pluginWantsMidiIn", "Plugin MIDI Input"},
+                  {"pluginProducesMidiOut", "Plugin MIDI Output"},
+                  {"pluginIsMidiEffectPlugin", "MIDI Effect Plugin"},
+                  {"pluginEditorRequiresKeys", "Plugin Editor Requires Keyboard Focus"},
+                  {"pluginRTASDisableBypass", "Disable RTAS Bypass"},
+                  {"pluginAAXDisableBypass", "Disable AAX Bypass"},
+                  {"pluginRTASDisableMultiMono", "Disable RTAS Multi-Mono"},
+                  {"pluginAAXDisableMultiMono", "Disable AAX Multi-Mono"}});
+          });
       }
       else
       {
@@ -553,16 +568,19 @@ int main(int argc, char* argv[])
       convertSetting(jucerProject, "pluginCode", "PLUGIN_CODE", {});
       convertSetting(jucerProject, "pluginChannelConfigs",
                      "PLUGIN_CHANNEL_CONFIGURATIONS", {});
-      convertOnOffSettingWithDefault(jucerProject, "pluginIsSynth", "PLUGIN_IS_A_SYNTH",
-                                     false);
-      convertOnOffSettingWithDefault(jucerProject, "pluginWantsMidiIn",
-                                     "PLUGIN_MIDI_INPUT", false);
-      convertOnOffSettingWithDefault(jucerProject, "pluginProducesMidiOut",
-                                     "PLUGIN_MIDI_OUTPUT", false);
-      convertOnOffSettingWithDefault(jucerProject, "pluginIsMidiEffectPlugin",
-                                     "MIDI_EFFECT_PLUGIN", false);
-      convertOnOffSettingWithDefault(jucerProject, "pluginEditorRequiresKeys",
-                                     "KEY_FOCUS", false);
+      if (jucerVersionAsTuple < Version{5, 3, 1})
+      {
+        convertOnOffSettingWithDefault(jucerProject, "pluginIsSynth", "PLUGIN_IS_A_SYNTH",
+                                       false);
+        convertOnOffSettingWithDefault(jucerProject, "pluginWantsMidiIn",
+                                       "PLUGIN_MIDI_INPUT", false);
+        convertOnOffSettingWithDefault(jucerProject, "pluginProducesMidiOut",
+                                       "PLUGIN_MIDI_OUTPUT", false);
+        convertOnOffSettingWithDefault(jucerProject, "pluginIsMidiEffectPlugin",
+                                       "MIDI_EFFECT_PLUGIN", false);
+        convertOnOffSettingWithDefault(jucerProject, "pluginEditorRequiresKeys",
+                                       "KEY_FOCUS", false);
+      }
       convertSetting(jucerProject, "pluginAUExportPrefix", "PLUGIN_AU_EXPORT_PREFIX", {});
       convertSetting(jucerProject, "pluginAUMainType", "PLUGIN_AU_MAIN_TYPE", {});
       convertSetting(jucerProject, "pluginVSTCategory",
