@@ -192,13 +192,13 @@ function(jucer_audio_plugin_settings)
     "PLUGIN_CODE"
     "PLUGIN_CHANNEL_CONFIGURATIONS"
     ${plugin_characteristics_keywords}
+    "PLUGIN_AAX_IDENTIFIER"
     "PLUGIN_AU_EXPORT_PREFIX"
     "PLUGIN_AU_MAIN_TYPE"
     "PLUGIN_VST_CATEGORY"
     "VST_CATEGORY"
     "PLUGIN_RTAS_CATEGORY"
     "PLUGIN_AAX_CATEGORY"
-    "PLUGIN_AAX_IDENTIFIER"
   )
   set(multi_value_keywords
     "PLUGIN_FORMATS"

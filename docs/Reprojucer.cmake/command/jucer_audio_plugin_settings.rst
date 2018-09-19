@@ -32,17 +32,14 @@ Define the settings specific to an *Audio Plug-in* project.
     [MIDI_EFFECT_PLUGIN <ON|OFF>]
     [KEY_FOCUS <ON|OFF>]
 
+    [PLUGIN_AAX_IDENTIFIER <plugin_aax_identifier>]
     [PLUGIN_AU_EXPORT_PREFIX <plugin_au_export_prefix>]
     [PLUGIN_AU_MAIN_TYPE <plugin_au_main_type>]
 
     [PLUGIN_VST_CATEGORY <plugin_vst_category>]
-
     [PLUGIN_VST3_CATEGORY <plugin_vst3_category>]
-
     [PLUGIN_RTAS_CATEGORY <plugin_rtas_category>]
-
     [PLUGIN_AAX_CATEGORY <plugin_aax_category>]
-    [PLUGIN_AAX_IDENTIFIER <plugin_aax_identifier>]
   )
 
 You must call this command when you call :doc:`jucer_project_settings()
