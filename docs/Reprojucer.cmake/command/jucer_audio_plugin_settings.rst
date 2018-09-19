@@ -6,6 +6,8 @@ Define the settings specific to an *Audio Plug-in* project.
 ::
 
   jucer_audio_plugin_settings(
+    [PLUGIN_FORMATS <plugin_format> [<plugin_format> ...]]
+
     [BUILD_VST <ON|OFF>]
     [BUILD_VST3 <ON|OFF>]
     [BUILD_AUDIOUNIT <ON|OFF>]

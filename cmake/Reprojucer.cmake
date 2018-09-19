@@ -166,7 +166,7 @@ endfunction()
 
 function(jucer_audio_plugin_settings)
 
-  set(single_value_keywords
+  set(plugin_formats_keywords
     "BUILD_VST"
     "BUILD_VST3"
     "BUILD_AUDIOUNIT"
@@ -175,6 +175,9 @@ function(jucer_audio_plugin_settings)
     "BUILD_AAX"
     "BUILD_STANDALONE_PLUGIN"
     "ENABLE_INTERAPP_AUDIO"
+  )
+  set(single_value_keywords
+    ${plugin_formats_keywords}
     "PLUGIN_NAME"
     "PLUGIN_DESCRIPTION"
     "PLUGIN_MANUFACTURER"
@@ -195,6 +198,7 @@ function(jucer_audio_plugin_settings)
     "PLUGIN_AAX_IDENTIFIER"
   )
   set(multi_value_keywords
+    "PLUGIN_FORMATS"
     "PLUGIN_VST3_CATEGORY"
   )
 
@@ -207,6 +211,22 @@ function(jucer_audio_plugin_settings)
     if(DEFINED _ENABLE_INTERAPP_AUDIO)
       message(WARNING "ENABLE_INTERAPP_AUDIO is a JUCE 5 feature only")
     endif()
+  endif()
+
+  if(DEFINED _PLUGIN_FORMATS)
+    set(plugin_formats_vars "${plugin_formats_keywords}")
+    set(plugin_formats_values
+      "VST" "VST3" "AU" "AUv3" "RTAS" "AAX" "Standalone" "Enable IAA"
+    )
+    foreach(index RANGE 0 7)
+      list(GET plugin_formats_vars ${index} format_var)
+      if(NOT DEFINED _${format_var})
+        list(GET plugin_formats_values ${index} format_value)
+        if(format_value IN_LIST _PLUGIN_FORMATS)
+          set(_${format_var} ON)
+        endif()
+      endif()
+    endforeach()
   endif()
 
   if(DEFINED _VST_CATEGORY)

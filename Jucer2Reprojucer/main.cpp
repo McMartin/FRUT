@@ -498,19 +498,52 @@ int main(int argc, char* argv[])
     if (projectType == "audioplug")
     {
       wLn("jucer_audio_plugin_settings(");
-      convertOnOffSettingWithDefault(jucerProject, "buildVST", "BUILD_VST", true);
-      convertOnOffSettingWithDefault(jucerProject, "buildVST3", "BUILD_VST3", false);
-      convertOnOffSettingWithDefault(jucerProject, "buildAU", "BUILD_AUDIOUNIT", true);
-      convertOnOffSettingWithDefault(jucerProject, "buildAUv3", "BUILD_AUDIOUNIT_V3",
-                                     false);
-      convertOnOffSettingWithDefault(jucerProject, "buildRTAS", "BUILD_RTAS", false);
-      convertOnOffSettingWithDefault(jucerProject, "buildAAX", "BUILD_AAX", false);
-      if (jucerVersionAsTuple >= Version{5, 0, 0})
+
+      if (jucerVersionAsTuple >= Version{5, 3, 1})
       {
-        convertOnOffSettingWithDefault(jucerProject, "buildStandalone",
-                                       "BUILD_STANDALONE_PLUGIN", false);
-        convertOnOffSettingWithDefault(jucerProject, "enableIAA", "ENABLE_INTERAPP_AUDIO",
+        const auto convertIdsToStrings =
+          [](const juce::var& v,
+             const std::map<juce::String, const char*>& idsToStrings) {
+            const auto ids = juce::StringArray::fromTokens(v.toString(), ",", {});
+            juce::StringArray strings;
+            for (const auto& idToString : idsToStrings)
+            {
+              if (ids.contains(idToString.first))
+              {
+                strings.add(idToString.second);
+              }
+            }
+            return strings;
+          };
+
+        convertSettingAsList(
+          jucerProject, "pluginFormats", "PLUGIN_FORMATS", [&](const juce::var& v) {
+            return convertIdsToStrings(v, {{"buildVST", "VST"},
+                                           {"buildVST3", "VST3"},
+                                           {"buildAU", "AU"},
+                                           {"buildAUv3", "AUv3"},
+                                           {"buildRTAS", "RTAS"},
+                                           {"buildAAX", "AAX"},
+                                           {"buildStandalone", "Standalone"},
+                                           {"enableIAA", "Enable IAA"}});
+          });
+      }
+      else
+      {
+        convertOnOffSettingWithDefault(jucerProject, "buildVST", "BUILD_VST", true);
+        convertOnOffSettingWithDefault(jucerProject, "buildVST3", "BUILD_VST3", false);
+        convertOnOffSettingWithDefault(jucerProject, "buildAU", "BUILD_AUDIOUNIT", true);
+        convertOnOffSettingWithDefault(jucerProject, "buildAUv3", "BUILD_AUDIOUNIT_V3",
                                        false);
+        convertOnOffSettingWithDefault(jucerProject, "buildRTAS", "BUILD_RTAS", false);
+        convertOnOffSettingWithDefault(jucerProject, "buildAAX", "BUILD_AAX", false);
+        if (jucerVersionAsTuple >= Version{5, 0, 0})
+        {
+          convertOnOffSettingWithDefault(jucerProject, "buildStandalone",
+                                         "BUILD_STANDALONE_PLUGIN", false);
+          convertOnOffSettingWithDefault(jucerProject, "enableIAA",
+                                         "ENABLE_INTERAPP_AUDIO", false);
+        }
       }
       convertSetting(jucerProject, "pluginName", "PLUGIN_NAME", {});
       convertSetting(jucerProject, "pluginDesc", "PLUGIN_DESCRIPTION", {});
