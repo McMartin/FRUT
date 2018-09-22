@@ -515,21 +515,22 @@ int main(int argc, char* argv[])
             return strings;
           };
 
-        convertSettingAsList(
-          jucerProject, "pluginFormats", "PLUGIN_FORMATS", [&](const juce::var& v) {
-            return convertIdsToStrings(v, {{"buildVST", "VST"},
-                                           {"buildVST3", "VST3"},
-                                           {"buildAU", "AU"},
-                                           {"buildAUv3", "AUv3"},
-                                           {"buildRTAS", "RTAS"},
-                                           {"buildAAX", "AAX"},
-                                           {"buildStandalone", "Standalone"},
-                                           {"enableIAA", "Enable IAA"}});
-          });
+        convertSettingAsList(jucerProject, "pluginFormats", "PLUGIN_FORMATS",
+                             [&convertIdsToStrings](const juce::var& v) {
+                               return convertIdsToStrings(
+                                 v, {{"buildVST", "VST"},
+                                     {"buildVST3", "VST3"},
+                                     {"buildAU", "AU"},
+                                     {"buildAUv3", "AUv3"},
+                                     {"buildRTAS", "RTAS"},
+                                     {"buildAAX", "AAX"},
+                                     {"buildStandalone", "Standalone"},
+                                     {"enableIAA", "Enable IAA"}});
+                             });
 
         convertSettingAsList(
           jucerProject, "pluginCharacteristicsValue", "PLUGIN_CHARACTERISTICS",
-          [&](const juce::var& v) {
+          [&convertIdsToStrings](const juce::var& v) {
             return convertIdsToStrings(
               v, {{"pluginIsSynth", "Plugin is a Synth"},
                   {"pluginWantsMidiIn", "Plugin MIDI Input"},
