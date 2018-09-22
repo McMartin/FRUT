@@ -613,10 +613,12 @@ int main(int argc, char* argv[])
       convertSetting(jucerProject, "pluginAUExportPrefix", "PLUGIN_AU_EXPORT_PREFIX", {});
       convertSetting(jucerProject, "pluginAUMainType", "PLUGIN_AU_MAIN_TYPE", {});
 
-      convertSetting(jucerProject, "pluginVSTCategory",
-                     jucerVersionAsTuple > Version{5, 3, 0} ? "PLUGIN_VST_CATEGORY"
-                                                            : "VST_CATEGORY",
-                     {});
+      convertSettingWithDefault(
+        jucerProject, "pluginVSTCategory",
+        jucerVersionAsTuple > Version{5, 3, 0} ? "PLUGIN_VST_CATEGORY" : "VST_CATEGORY",
+        jucerVersionAsTuple >= Version{5, 3, 1}
+          ? (isSynthAudioPlugin ? "kPlugCategSynth" : "kPlugCategEffect")
+          : "");
       if (jucerProject.hasProperty("pluginVST3Category")
           || jucerVersionAsTuple >= Version{5, 3, 1})
       {
