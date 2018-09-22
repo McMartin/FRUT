@@ -624,7 +624,12 @@ int main(int argc, char* argv[])
       {
         convertSettingAsList(
           jucerProject, "pluginVST3Category", "PLUGIN_VST3_CATEGORY",
-          [](const juce::var& v) {
+          [isSynthAudioPlugin](const juce::var& v) {
+            if (v.isVoid())
+            {
+              return isSynthAudioPlugin ? juce::StringArray{"Instrument", "Synth"}
+                                        : juce::StringArray{"Fx"};
+            }
             auto vst3_category = juce::StringArray::fromTokens(v.toString(), ",", {});
             if (vst3_category.contains("Instrument"))
             {
