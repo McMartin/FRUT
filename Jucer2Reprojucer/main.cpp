@@ -265,8 +265,7 @@ int main(int argc, char* argv[])
                            const juce::String& cmakeKeyword, bool defaultValue) {
       convertOnOffSetting(valueTree, property, cmakeKeyword,
                           [defaultValue](const juce::var& v) -> juce::String {
-                            return v.isVoid() ? juce::String{defaultValue ? "ON" : "OFF"}
-                                                  + " # Default"
+                            return v.isVoid() ? (defaultValue ? "ON" : "OFF")
                                               : (bool{v} ? "ON" : "OFF");
                           });
     };
