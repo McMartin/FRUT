@@ -585,10 +585,17 @@ int main(int argc, char* argv[])
       convertSetting(jucerProject, "pluginChannelConfigs",
                      "PLUGIN_CHANNEL_CONFIGURATIONS", {});
 
+      const auto isSynthAudioPlugin =
+        jucerVersionAsTuple >= Version{5, 3, 1}
+          ? juce::StringArray::fromTokens(
+              jucerProject.getProperty("pluginCharacteristics").toString(), ",", {})
+              .contains("pluginIsSynth")
+          : jucerProject.hasProperty("pluginIsSynth")
+              && bool{jucerProject.getProperty("pluginIsSynth")};
+
       if (jucerVersionAsTuple < Version{5, 3, 1})
       {
-        convertOnOffSettingWithDefault(jucerProject, "pluginIsSynth", "PLUGIN_IS_A_SYNTH",
-                                       false);
+        wLn(juce::String{"  PLUGIN_IS_A_SYNTH "} + (isSynthAudioPlugin ? "ON" : "OFF"));
         convertOnOffSettingWithDefault(jucerProject, "pluginWantsMidiIn",
                                        "PLUGIN_MIDI_INPUT", false);
         convertOnOffSettingWithDefault(jucerProject, "pluginProducesMidiOut",
