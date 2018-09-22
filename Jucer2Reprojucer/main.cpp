@@ -517,6 +517,10 @@ int main(int argc, char* argv[])
 
         convertSettingAsList(jucerProject, "pluginFormats", "PLUGIN_FORMATS",
                              [&convertIdsToStrings](const juce::var& v) {
+                               if (v.isVoid())
+                               {
+                                 return juce::StringArray{"VST", "AU"};
+                               }
                                return convertIdsToStrings(
                                  v, {{"buildVST", "VST"},
                                      {"buildVST3", "VST3"},
