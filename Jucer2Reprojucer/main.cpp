@@ -224,6 +224,16 @@ int main(int argc, char* argv[])
       }
     };
 
+  const auto convertSettingWithDefault =
+    [&convertSetting](const juce::ValueTree& valueTree, const juce::Identifier& property,
+                      const juce::String& cmakeKeyword,
+                      const juce::String& defaultValue) {
+      convertSetting(valueTree, property, cmakeKeyword,
+                     [&defaultValue](const juce::var& v) -> juce::String {
+                       return v.isVoid() ? defaultValue : v.toString();
+                     });
+    };
+
   const auto convertOnOffSetting =
     [&wLn](const juce::ValueTree& valueTree, const juce::Identifier& property,
            const juce::String& cmakeKeyword,
@@ -387,9 +397,7 @@ int main(int argc, char* argv[])
   {
     wLn("jucer_project_settings(");
     convertSetting(jucerProject, "name", "PROJECT_NAME", {});
-    convertSetting(jucerProject, "version", "PROJECT_VERSION", [](const juce::var& v) {
-      return v.isVoid() ? "1.0.0" : v.toString();
-    });
+    convertSettingWithDefault(jucerProject, "version", "PROJECT_VERSION", "1.0.0");
 
     convertSettingIfDefined(jucerProject, "companyName", "COMPANY_NAME", {});
     convertSettingIfDefined(jucerProject, "companyCopyright", "COMPANY_COPYRIGHT", {});
@@ -429,11 +437,8 @@ int main(int argc, char* argv[])
     }();
     wLn("  PROJECT_TYPE \"", projectTypeDescription, "\"");
 
-    convertSetting(jucerProject, "bundleIdentifier", "BUNDLE_IDENTIFIER",
-                   [&jucerProjectName](const juce::var& v) {
-                     return v.isVoid() ? "com.yourcompany." + jucerProjectName
-                                       : v.toString();
-                   });
+    convertSettingWithDefault(jucerProject, "bundleIdentifier", "BUNDLE_IDENTIFIER",
+                              "com.yourcompany." + jucerProjectName);
 
     convertSettingIfDefined(jucerProject, "maxBinaryFileSize", "BINARYDATACPP_SIZE_LIMIT",
                             [](const juce::var& v) -> juce::String {
