@@ -535,6 +535,10 @@ int main(int argc, char* argv[])
         convertSettingAsList(
           jucerProject, "pluginCharacteristicsValue", "PLUGIN_CHARACTERISTICS",
           [&convertIdsToStrings](const juce::var& v) {
+            if (v.isVoid())
+            {
+              return juce::StringArray{};
+            }
             return convertIdsToStrings(
               v, {{"pluginIsSynth", "Plugin is a Synth"},
                   {"pluginWantsMidiIn", "Plugin MIDI Input"},
