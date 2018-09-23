@@ -15,6 +15,8 @@ install:
     -- https://github.com/WeAreROLI/JUCE.git "${TRAVIS_BUILD_DIR}/ci/tmp/JUCE-5.0.0"
   - git clone --branch=5.2.1 --depth=1 --single-branch
     -- https://github.com/WeAreROLI/JUCE.git "${TRAVIS_BUILD_DIR}/ci/tmp/JUCE-5.2.1"
+  - git clone --branch=5.3.1 --depth=1 --single-branch
+    -- https://github.com/WeAreROLI/JUCE.git "${TRAVIS_BUILD_DIR}/ci/tmp/JUCE-5.3.1"
 
 script-anchors:
   - &script-Makefiles
@@ -54,6 +56,15 @@ script-anchors:
     - cd ${TRAVIS_BUILD_DIR}/Release_5.2.1_build
     - cmake .. -DJUCE_ROOT="${TRAVIS_BUILD_DIR}/ci/tmp/JUCE-5.2.1" -DCMAKE_BUILD_TYPE=Release
 
+    # Configure and build FRUT with JUCE 5.3.1
+    - mkdir ${TRAVIS_BUILD_DIR}/Debug_5.3.1_build
+    - cd ${TRAVIS_BUILD_DIR}/Debug_5.3.1_build
+    - cmake .. -DJUCE_ROOT="${TRAVIS_BUILD_DIR}/ci/tmp/JUCE-5.3.1" -DCMAKE_BUILD_TYPE=Debug
+    - cmake --build .
+    - mkdir ${TRAVIS_BUILD_DIR}/Release_5.3.1_build
+    - cd ${TRAVIS_BUILD_DIR}/Release_5.3.1_build
+    - cmake .. -DJUCE_ROOT="${TRAVIS_BUILD_DIR}/ci/tmp/JUCE-5.3.1" -DCMAKE_BUILD_TYPE=Release
+
     # Build and install FRUT in ./prefix
     - cmake .. -DCMAKE_INSTALL_PREFIX="${TRAVIS_BUILD_DIR}/prefix"
     - cmake --build . --target install
@@ -74,6 +85,11 @@ script-anchors:
       -P ci/apply-Jucer2Reprojucer-to-JUCE-jucers.cmake
     - >
       cmake -DJUCE_VERSION="5.2.1"
+      -DJucer2Reprojucer_EXE="prefix/FRUT/bin/Jucer2Reprojucer"
+      -P ci/apply-Jucer2Reprojucer-to-JUCE-jucers.cmake
+    - git diff --quiet
+    - >
+      cmake -DJUCE_VERSION="5.3.1"
       -DJucer2Reprojucer_EXE="prefix/FRUT/bin/Jucer2Reprojucer"
       -P ci/apply-Jucer2Reprojucer-to-JUCE-jucers.cmake
     - git diff --quiet
@@ -136,6 +152,18 @@ script-anchors:
       -DJUCER_AAX_SDK_FOLDER="${TRAVIS_BUILD_DIR}/ci/fake-SDKs/AAX"
       -DJUCER_VST3_SDK_FOLDER="${TRAVIS_BUILD_DIR}/ci/fake-SDKs/VST3"
 
+    # Configure all JUCE 5.3.1 projects
+    - mkdir ${TRAVIS_BUILD_DIR}/ci/AllJuceProjects/Debug_5.3.1_build
+    - cd ${TRAVIS_BUILD_DIR}/ci/AllJuceProjects/Debug_5.3.1_build
+    - >
+      cmake .. -DCMAKE_BUILD_TYPE=Debug -DJUCE_VERSION="5.3.1"
+      -DJUCER_VST3_SDK_FOLDER="${TRAVIS_BUILD_DIR}/ci/fake-SDKs/VST3"
+    - mkdir ${TRAVIS_BUILD_DIR}/ci/AllJuceProjects/Release_5.3.1_build
+    - cd ${TRAVIS_BUILD_DIR}/ci/AllJuceProjects/Release_5.3.1_build
+    - >
+      cmake .. -DCMAKE_BUILD_TYPE=Release -DJUCE_VERSION="5.3.1"
+      -DJUCER_VST3_SDK_FOLDER="${TRAVIS_BUILD_DIR}/ci/fake-SDKs/VST3"
+
   - &script-Xcode
     # Configure and build FRUT with JUCE 4.2.0
     - mkdir ${TRAVIS_BUILD_DIR}/4.2.0_build
@@ -161,6 +189,12 @@ script-anchors:
     - cmake .. -G Xcode -DJUCE_ROOT="${TRAVIS_BUILD_DIR}/ci/tmp/JUCE-5.2.1"
     - cmake --build . --config Debug
 
+    # Configure and build FRUT with JUCE 5.3.1
+    - mkdir ${TRAVIS_BUILD_DIR}/5.3.1_build
+    - cd ${TRAVIS_BUILD_DIR}/5.3.1_build
+    - cmake .. -G Xcode -DJUCE_ROOT="${TRAVIS_BUILD_DIR}/ci/tmp/JUCE-5.3.1"
+    - cmake --build . --config Debug
+
     # Build and install FRUT in ./prefix
     - cmake .. -DCMAKE_INSTALL_PREFIX="${TRAVIS_BUILD_DIR}/prefix"
     - cmake --build . --config Release --target install
@@ -181,6 +215,11 @@ script-anchors:
       -P ci/apply-Jucer2Reprojucer-to-JUCE-jucers.cmake
     - >
       cmake -DJUCE_VERSION="5.2.1"
+      -DJucer2Reprojucer_EXE="prefix/FRUT/bin/Jucer2Reprojucer"
+      -P ci/apply-Jucer2Reprojucer-to-JUCE-jucers.cmake
+    - git diff --quiet
+    - >
+      cmake -DJUCE_VERSION="5.3.1"
       -DJucer2Reprojucer_EXE="prefix/FRUT/bin/Jucer2Reprojucer"
       -P ci/apply-Jucer2Reprojucer-to-JUCE-jucers.cmake
     - git diff --quiet
@@ -216,6 +255,13 @@ script-anchors:
     - >
       cmake .. -G Xcode -DJUCE_VERSION="5.2.1"
       -DJUCER_AAX_SDK_FOLDER="${TRAVIS_BUILD_DIR}/ci/fake-SDKs/AAX"
+      -DJUCER_VST3_SDK_FOLDER="${TRAVIS_BUILD_DIR}/ci/fake-SDKs/VST3"
+
+    # Configure all JUCE 5.3.1 projects
+    - mkdir ${TRAVIS_BUILD_DIR}/ci/AllJuceProjects/5.3.1_build
+    - cd ${TRAVIS_BUILD_DIR}/ci/AllJuceProjects/5.3.1_build
+    - >
+      cmake .. -G Xcode -DJUCE_VERSION="5.3.1"
       -DJUCER_VST3_SDK_FOLDER="${TRAVIS_BUILD_DIR}/ci/fake-SDKs/VST3"
 
 matrix:
