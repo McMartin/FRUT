@@ -224,6 +224,16 @@ int main(int argc, char* argv[])
       }
     };
 
+  const auto convertSettingWithDefault =
+    [&convertSetting](const juce::ValueTree& valueTree, const juce::Identifier& property,
+                      const juce::String& cmakeKeyword,
+                      const juce::String& defaultValue) {
+      convertSetting(valueTree, property, cmakeKeyword,
+                     [&defaultValue](const juce::var& v) -> juce::String {
+                       return v.isVoid() ? defaultValue : v.toString();
+                     });
+    };
+
   const auto convertOnOffSetting =
     [&wLn](const juce::ValueTree& valueTree, const juce::Identifier& property,
            const juce::String& cmakeKeyword,
@@ -387,9 +397,7 @@ int main(int argc, char* argv[])
   {
     wLn("jucer_project_settings(");
     convertSetting(jucerProject, "name", "PROJECT_NAME", {});
-    convertSetting(jucerProject, "version", "PROJECT_VERSION", [](const juce::var& v) {
-      return v.isVoid() ? "1.0.0" : v.toString();
-    });
+    convertSettingWithDefault(jucerProject, "version", "PROJECT_VERSION", "1.0.0");
 
     convertSettingIfDefined(jucerProject, "companyName", "COMPANY_NAME", {});
     convertSettingIfDefined(jucerProject, "companyCopyright", "COMPANY_COPYRIGHT", {});
@@ -429,11 +437,8 @@ int main(int argc, char* argv[])
     }();
     wLn("  PROJECT_TYPE \"", projectTypeDescription, "\"");
 
-    convertSetting(jucerProject, "bundleIdentifier", "BUNDLE_IDENTIFIER",
-                   [&jucerProjectName](const juce::var& v) {
-                     return v.isVoid() ? "com.yourcompany." + jucerProjectName
-                                       : v.toString();
-                   });
+    convertSettingWithDefault(jucerProject, "bundleIdentifier", "BUNDLE_IDENTIFIER",
+                              "com.yourcompany." + jucerProjectName);
 
     convertSettingIfDefined(jucerProject, "maxBinaryFileSize", "BINARYDATACPP_SIZE_LIMIT",
                             [](const juce::var& v) -> juce::String {
@@ -515,21 +520,30 @@ int main(int argc, char* argv[])
             return strings;
           };
 
-        convertSettingAsList(
-          jucerProject, "pluginFormats", "PLUGIN_FORMATS", [&](const juce::var& v) {
-            return convertIdsToStrings(v, {{"buildVST", "VST"},
-                                           {"buildVST3", "VST3"},
-                                           {"buildAU", "AU"},
-                                           {"buildAUv3", "AUv3"},
-                                           {"buildRTAS", "RTAS"},
-                                           {"buildAAX", "AAX"},
-                                           {"buildStandalone", "Standalone"},
-                                           {"enableIAA", "Enable IAA"}});
-          });
+        convertSettingAsList(jucerProject, "pluginFormats", "PLUGIN_FORMATS",
+                             [&convertIdsToStrings](const juce::var& v) {
+                               if (v.isVoid())
+                               {
+                                 return juce::StringArray{"VST", "AU"};
+                               }
+                               return convertIdsToStrings(
+                                 v, {{"buildVST", "VST"},
+                                     {"buildVST3", "VST3"},
+                                     {"buildAU", "AU"},
+                                     {"buildAUv3", "AUv3"},
+                                     {"buildRTAS", "RTAS"},
+                                     {"buildAAX", "AAX"},
+                                     {"buildStandalone", "Standalone"},
+                                     {"enableIAA", "Enable IAA"}});
+                             });
 
         convertSettingAsList(
           jucerProject, "pluginCharacteristicsValue", "PLUGIN_CHARACTERISTICS",
-          [&](const juce::var& v) {
+          [&convertIdsToStrings](const juce::var& v) {
+            if (v.isVoid())
+            {
+              return juce::StringArray{};
+            }
             return convertIdsToStrings(
               v, {{"pluginIsSynth", "Plugin is a Synth"},
                   {"pluginWantsMidiIn", "Plugin MIDI Input"},
@@ -571,10 +585,17 @@ int main(int argc, char* argv[])
       convertSetting(jucerProject, "pluginChannelConfigs",
                      "PLUGIN_CHANNEL_CONFIGURATIONS", {});
 
+      const auto isSynthAudioPlugin =
+        jucerVersionAsTuple >= Version{5, 3, 1}
+          ? juce::StringArray::fromTokens(
+              jucerProject.getProperty("pluginCharacteristics").toString(), ",", {})
+              .contains("pluginIsSynth")
+          : jucerProject.hasProperty("pluginIsSynth")
+              && bool{jucerProject.getProperty("pluginIsSynth")};
+
       if (jucerVersionAsTuple < Version{5, 3, 1})
       {
-        convertOnOffSettingWithDefault(jucerProject, "pluginIsSynth", "PLUGIN_IS_A_SYNTH",
-                                       false);
+        wLn(juce::String{"  PLUGIN_IS_A_SYNTH "} + (isSynthAudioPlugin ? "ON" : "OFF"));
         convertOnOffSettingWithDefault(jucerProject, "pluginWantsMidiIn",
                                        "PLUGIN_MIDI_INPUT", false);
         convertOnOffSettingWithDefault(jucerProject, "pluginProducesMidiOut",
@@ -592,16 +613,23 @@ int main(int argc, char* argv[])
       convertSetting(jucerProject, "pluginAUExportPrefix", "PLUGIN_AU_EXPORT_PREFIX", {});
       convertSetting(jucerProject, "pluginAUMainType", "PLUGIN_AU_MAIN_TYPE", {});
 
-      convertSetting(jucerProject, "pluginVSTCategory",
-                     jucerVersionAsTuple > Version{5, 3, 0} ? "PLUGIN_VST_CATEGORY"
-                                                            : "VST_CATEGORY",
-                     {});
+      convertSettingWithDefault(
+        jucerProject, "pluginVSTCategory",
+        jucerVersionAsTuple > Version{5, 3, 0} ? "PLUGIN_VST_CATEGORY" : "VST_CATEGORY",
+        jucerVersionAsTuple >= Version{5, 3, 1}
+          ? (isSynthAudioPlugin ? "kPlugCategSynth" : "kPlugCategEffect")
+          : "");
       if (jucerProject.hasProperty("pluginVST3Category")
           || jucerVersionAsTuple >= Version{5, 3, 1})
       {
         convertSettingAsList(
           jucerProject, "pluginVST3Category", "PLUGIN_VST3_CATEGORY",
-          [](const juce::var& v) {
+          [isSynthAudioPlugin](const juce::var& v) {
+            if (v.isVoid())
+            {
+              return isSynthAudioPlugin ? juce::StringArray{"Instrument", "Synth"}
+                                        : juce::StringArray{"Fx"};
+            }
             auto vst3_category = juce::StringArray::fromTokens(v.toString(), ",", {});
             if (vst3_category.contains("Instrument"))
             {
