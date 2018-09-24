@@ -322,6 +322,20 @@ int main(int argc, char* argv[])
       }
     };
 
+  const auto convertIdsToStrings =
+    [](const juce::var& v, const std::map<juce::String, const char*>& idsToStrings) {
+      const auto ids = juce::StringArray::fromTokens(v.toString(), ",", {});
+      juce::StringArray strings;
+      for (const auto& idToString : idsToStrings)
+      {
+        if (ids.contains(idToString.first))
+        {
+          strings.add(idToString.second);
+        }
+      }
+      return strings;
+    };
+
   const auto jucerFileName = jucerFile.getFileName();
   const auto jucerProjectName = jucerProject.getProperty("name").toString();
 
@@ -505,21 +519,6 @@ int main(int argc, char* argv[])
 
       if (jucerVersionAsTuple >= Version{5, 3, 1})
       {
-        const auto convertIdsToStrings =
-          [](const juce::var& v,
-             const std::map<juce::String, const char*>& idsToStrings) {
-            const auto ids = juce::StringArray::fromTokens(v.toString(), ",", {});
-            juce::StringArray strings;
-            for (const auto& idToString : idsToStrings)
-            {
-              if (ids.contains(idToString.first))
-              {
-                strings.add(idToString.second);
-              }
-            }
-            return strings;
-          };
-
         convertSettingAsList(jucerProject, "pluginFormats", "PLUGIN_FORMATS",
                              [&convertIdsToStrings](const juce::var& v) {
                                if (v.isVoid())
