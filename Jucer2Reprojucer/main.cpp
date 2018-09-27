@@ -322,6 +322,20 @@ int main(int argc, char* argv[])
       }
     };
 
+  const auto convertIdsToStrings =
+    [](const juce::var& v, const std::map<juce::String, const char*>& idsToStrings) {
+      const auto ids = juce::StringArray::fromTokens(v.toString(), ",", {});
+      juce::StringArray strings;
+      for (const auto& idToString : idsToStrings)
+      {
+        if (ids.contains(idToString.first))
+        {
+          strings.add(idToString.second);
+        }
+      }
+      return strings;
+    };
+
   const auto jucerFileName = jucerFile.getFileName();
   const auto jucerProjectName = jucerProject.getProperty("name").toString();
 
@@ -505,21 +519,6 @@ int main(int argc, char* argv[])
 
       if (jucerVersionAsTuple >= Version{5, 3, 1})
       {
-        const auto convertIdsToStrings =
-          [](const juce::var& v,
-             const std::map<juce::String, const char*>& idsToStrings) {
-            const auto ids = juce::StringArray::fromTokens(v.toString(), ",", {});
-            juce::StringArray strings;
-            for (const auto& idToString : idsToStrings)
-            {
-              if (ids.contains(idToString.first))
-              {
-                strings.add(idToString.second);
-              }
-            }
-            return strings;
-          };
-
         convertSettingAsList(jucerProject, "pluginFormats", "PLUGIN_FORMATS",
                              [&convertIdsToStrings](const juce::var& v) {
                                if (v.isVoid())
@@ -642,8 +641,65 @@ int main(int argc, char* argv[])
             return vst3_category;
           });
       }
-      convertSetting(jucerProject, "pluginRTASCategory", "PLUGIN_RTAS_CATEGORY", {});
-      convertSetting(jucerProject, "pluginAAXCategory", "PLUGIN_AAX_CATEGORY", {});
+
+      if (jucerVersionAsTuple >= Version{5, 3, 1})
+      {
+        convertSettingAsList(
+          jucerProject, "pluginRTASCategory", "PLUGIN_RTAS_CATEGORY",
+          [isSynthAudioPlugin, &convertIdsToStrings](const juce::var& v) {
+            if (v.isVoid())
+            {
+              return juce::StringArray{isSynthAudioPlugin ? "ePlugInCategory_SWGenerators"
+                                                          : "ePlugInCategory_None"};
+            }
+            return convertIdsToStrings(v, {{"0", "ePlugInCategory_None"},
+                                           {"1", "ePlugInCategory_EQ"},
+                                           {"2", "ePlugInCategory_Dynamics"},
+                                           {"4", "ePlugInCategory_PitchShift"},
+                                           {"8", "ePlugInCategory_Reverb"},
+                                           {"16", "ePlugInCategory_Delay"},
+                                           {"32", "ePlugInCategory_Modulation"},
+                                           {"64", "ePlugInCategory_Harmonic"},
+                                           {"128", "ePlugInCategory_NoiseReduction"},
+                                           {"256", "ePlugInCategory_Dither"},
+                                           {"512", "ePlugInCategory_SoundField"},
+                                           {"1024", "ePlugInCategory_HWGenerators"},
+                                           {"2048", "ePlugInCategory_SWGenerators"},
+                                           {"4096", "ePlugInCategory_WrappedPlugin"},
+                                           {"8192", "ePlugInCategory_Effect"}});
+          });
+        convertSettingAsList(
+          jucerProject, "pluginAAXCategory", "PLUGIN_AAX_CATEGORY",
+          [isSynthAudioPlugin,
+           &convertIdsToStrings](const juce::var& v) -> juce::StringArray {
+            if (v.isVoid())
+            {
+              return juce::StringArray{isSynthAudioPlugin
+                                         ? "AAX_ePlugInCategory_SWGenerators"
+                                         : "AAX_ePlugInCategory_None"};
+            }
+            return convertIdsToStrings(v, {{"0", "AAX_ePlugInCategory_None"},
+                                           {"1", "AAX_ePlugInCategory_EQ"},
+                                           {"2", "AAX_ePlugInCategory_Dynamics"},
+                                           {"4", "AAX_ePlugInCategory_PitchShift"},
+                                           {"8", "AAX_ePlugInCategory_Reverb"},
+                                           {"16", "AAX_ePlugInCategory_Delay"},
+                                           {"32", "AAX_ePlugInCategory_Modulation"},
+                                           {"64", "AAX_ePlugInCategory_Harmonic"},
+                                           {"128", "AAX_ePlugInCategory_NoiseReduction"},
+                                           {"256", "AAX_ePlugInCategory_Dither"},
+                                           {"512", "AAX_ePlugInCategory_SoundField"},
+                                           {"1024", "AAX_ePlugInCategory_HWGenerators"},
+                                           {"2048", "AAX_ePlugInCategory_SWGenerators"},
+                                           {"4096", "AAX_ePlugInCategory_WrappedPlugin"},
+                                           {"8192", "AAX_EPlugInCategory_Effect"}});
+          });
+      }
+      else
+      {
+        convertSetting(jucerProject, "pluginRTASCategory", "PLUGIN_RTAS_CATEGORY", {});
+        convertSetting(jucerProject, "pluginAAXCategory", "PLUGIN_AAX_CATEGORY", {});
+      }
 
       if (jucerVersionAsTuple < Version{5, 3, 1})
       {

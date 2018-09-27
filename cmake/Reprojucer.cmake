@@ -197,13 +197,13 @@ function(jucer_audio_plugin_settings)
     "PLUGIN_AU_MAIN_TYPE"
     "PLUGIN_VST_CATEGORY"
     "VST_CATEGORY"
-    "PLUGIN_RTAS_CATEGORY"
-    "PLUGIN_AAX_CATEGORY"
   )
   set(multi_value_keywords
     "PLUGIN_FORMATS"
     "PLUGIN_CHARACTERISTICS"
     "PLUGIN_VST3_CATEGORY"
+    "PLUGIN_RTAS_CATEGORY"
+    "PLUGIN_AAX_CATEGORY"
   )
 
   _FRUT_parse_arguments("${single_value_keywords}" "${multi_value_keywords}" "${ARGN}")
@@ -2546,12 +2546,24 @@ function(_FRUT_generate_AppConfig_header)
 
     set(CFBundleIdentifier_value "${JUCER_BUNDLE_IDENTIFIER}")
 
-    if(JUCER_PLUGIN_IS_A_SYNTH)
-      set(RTASCategory_value "ePlugInCategory_SWGenerators")
-    elseif(NOT DEFINED JUCER_PLUGIN_RTAS_CATEGORY)
-      set(RTASCategory_value "ePlugInCategory_None")
+    if(DEFINED JUCER_VERSION AND JUCER_VERSION LESS 5.3.1)
+      if(JUCER_PLUGIN_IS_A_SYNTH)
+        set(RTASCategory_value "ePlugInCategory_SWGenerators")
+      elseif(NOT DEFINED JUCER_PLUGIN_RTAS_CATEGORY)
+        set(RTASCategory_value "ePlugInCategory_None")
+      else()
+        set(RTASCategory_value "${JUCER_PLUGIN_RTAS_CATEGORY}")
+      endif()
     else()
-      set(RTASCategory_value "${JUCER_PLUGIN_RTAS_CATEGORY}")
+      if(DEFINED JUCER_PLUGIN_RTAS_CATEGORY)
+        _FRUT_compute_rtas_aax_category("RTAS" "ePlugInCategory" RTASCategory_value)
+      else()
+        if(JUCER_PLUGIN_IS_A_SYNTH)
+          set(RTASCategory_value "2048") # ePlugInCategory_SWGenerators
+        else()
+          set(RTASCategory_value "0") # ePlugInCategory_None
+        endif()
+      endif()
     endif()
     set(RTASManufacturerCode_value "JucePlugin_ManufacturerCode")
     set(RTASProductId_value "JucePlugin_PluginCode")
@@ -2563,7 +2575,19 @@ function(_FRUT_generate_AppConfig_header)
     set(AAXIdentifier_value "${JUCER_PLUGIN_AAX_IDENTIFIER}")
     set(AAXManufacturerCode_value "JucePlugin_ManufacturerCode")
     set(AAXProductId_value "JucePlugin_PluginCode")
-    set(AAXCategory_value "${JUCER_PLUGIN_AAX_CATEGORY}")
+    if(DEFINED JUCER_VERSION AND JUCER_VERSION LESS 5.3.1)
+      set(AAXCategory_value "${JUCER_PLUGIN_AAX_CATEGORY}")
+    else()
+      if(DEFINED JUCER_PLUGIN_AAX_CATEGORY)
+        _FRUT_compute_rtas_aax_category("AAX" "AAX_ePlugInCategory" AAXCategory_value)
+      else()
+        if(JUCER_PLUGIN_IS_A_SYNTH)
+          set(AAXCategory_value "2048") # AAX_ePlugInCategory_SWGenerators
+        else()
+          set(AAXCategory_value "0") # AAX_ePlugInCategory_None
+        endif()
+      endif()
+    endif()
     _FRUT_bool_to_int("${JUCER_PLUGIN_AAX_DISABLE_BYPASS}" AAXDisableBypass_value)
     _FRUT_bool_to_int("${JUCER_PLUGIN_AAX_DISABLE_MULTI_MONO}" AAXDisableMultiMono_value)
 
@@ -3726,5 +3750,47 @@ function(_FRUT_get_au_main_type_code out_value)
   endif()
 
   set(${out_value} "${code}" PARENT_SCOPE)
+
+endfunction()
+
+
+function(_FRUT_compute_rtas_aax_category RTAS_or_AAX category_prefix out_var)
+
+  set(category_suffixes
+    "None"
+    "EQ"
+    "Dynamics"
+    "PitchShift"
+    "Reverb"
+    "Delay"
+    "Modulation"
+    "Harmonic"
+    "NoiseReduction"
+    "Dither"
+    "SoundField"
+    "HWGenerators"
+    "SWGenerators"
+    "WrappedPlugin"
+    "Effect"
+  )
+
+  set(categories_as_int 0)
+
+  foreach(category ${JUCER_PLUGIN_${RTAS_or_AAX}_CATEGORY})
+    if(NOT category MATCHES "^${category_prefix}_(.+)$"
+        OR NOT CMAKE_MATCH_1 IN_LIST category_suffixes)
+      message(WARNING "Ignoring unknown ${RTAS_or_AAX} category: ${category}")
+      continue()
+    endif()
+    list(FIND category_suffixes "${CMAKE_MATCH_1}" suffix_index)
+    if(suffix_index EQUAL 0)
+      set(category_as_int 0)
+    else()
+      math(EXPR category_as_int "1 << (${suffix_index} - 1)")
+    endif()
+    math(EXPR categories_as_int "${categories_as_int} | ${category_as_int}")
+  endforeach()
+
+  set(${out_var} "${categories_as_int}" PARENT_SCOPE)
 
 endfunction()
