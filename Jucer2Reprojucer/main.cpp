@@ -93,6 +93,54 @@ juce::String escape(const juce::String& charsToEscape, juce::String value)
 }
 
 
+juce::StringArray parsePreprocessorDefinitions(const juce::String& input)
+{
+  juce::StringArray output;
+
+  for (auto s = input.getCharPointer(); !s.isEmpty();)
+  {
+    s = s.findEndOfWhitespace();
+    juce::String definition;
+
+    while (!s.isEmpty() && !s.isWhitespace() && *s != '=')
+    {
+      definition << s.getAndAdvance();
+    }
+
+    s = s.findEndOfWhitespace();
+    juce::String value;
+
+    if (*s == '=')
+    {
+      ++s;
+
+      while (!s.isEmpty() && !s.isWhitespace())
+      {
+        if (*s == ',')
+        {
+          ++s;
+          break;
+        }
+
+        if (*s == '\\' && (s[1] == ' ' || s[1] == ','))
+        {
+          ++s;
+        }
+
+        value << s.getAndAdvance();
+      }
+    }
+
+    if (definition.isNotEmpty())
+    {
+      output.add(value.isEmpty() ? definition : definition + '=' + value);
+    }
+  }
+
+  return output;
+}
+
+
 juce::ValueTree getChildWithPropertyRecursively(const juce::ValueTree& valueTree,
                                                 const juce::Identifier& propertyName,
                                                 const juce::var& propertyValue)
@@ -500,8 +548,9 @@ int main(int argc, char* argv[])
       wLn("  ", "CXX_LANGUAGE_STANDARD", " \"C++11\"");
     }
 
-    convertSettingAsListIfDefined(jucerProject, "defines", "PREPROCESSOR_DEFINITIONS",
-                                  {});
+    convertSettingAsListIfDefined(
+      jucerProject, "defines", "PREPROCESSOR_DEFINITIONS",
+      [](const juce::var& v) { return parsePreprocessorDefinitions(v.toString()); });
     convertSettingAsListIfDefined(
       jucerProject, "headerPath", "HEADER_SEARCH_PATHS", [](const juce::var& v) {
         return juce::StringArray::fromTokens(v.toString(), ";\r\n", {});
@@ -991,8 +1040,9 @@ int main(int argc, char* argv[])
         }
       }
 
-      convertSettingAsListIfDefined(exporter, "extraDefs",
-                                    "EXTRA_PREPROCESSOR_DEFINITIONS", {});
+      convertSettingAsListIfDefined(
+        exporter, "extraDefs", "EXTRA_PREPROCESSOR_DEFINITIONS",
+        [](const juce::var& v) { return parsePreprocessorDefinitions(v.toString()); });
       convertSettingAsListIfDefined(
         exporter, "extraCompilerFlags", "EXTRA_COMPILER_FLAGS", [](const juce::var& v) {
           return juce::StringArray::fromTokens(v.toString(), false);
@@ -1205,8 +1255,9 @@ int main(int argc, char* argv[])
         convertSettingAsListIfDefined(configuration, "libraryPath",
                                       "EXTRA_LIBRARY_SEARCH_PATHS", convertSearchPaths);
 
-        convertSettingAsListIfDefined(configuration, "defines",
-                                      "PREPROCESSOR_DEFINITIONS", {});
+        convertSettingAsListIfDefined(
+          configuration, "defines", "PREPROCESSOR_DEFINITIONS",
+          [](const juce::var& v) { return parsePreprocessorDefinitions(v.toString()); });
 
         convertSettingIfDefined(configuration, "optimisation", "OPTIMISATION",
                                 [&isVSExporter](const juce::var& v) -> juce::String {
