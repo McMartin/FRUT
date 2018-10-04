@@ -1820,6 +1820,16 @@ function(jucer_project_end)
         "${main_plist_entries}" "${ns_extension_entries}"
       )
 
+      if(CMAKE_GENERATOR STREQUAL "Xcode")
+        configure_file("${Reprojucer_templates_DIR}/AUv3.entitlements"
+          "${target}.entitlements" COPYONLY
+        )
+        set_property(TARGET ${auv3_target} PROPERTY
+          XCODE_ATTRIBUTE_CODE_SIGN_ENTITLEMENTS
+          "${CMAKE_CURRENT_BINARY_DIR}/${target}.entitlements"
+        )
+      endif()
+
       # com.yourcompany.NewProject -> com.yourcompany.NewProject.NewProjectAUv3
       string(REPLACE "." ";" bundle_id_parts "${JUCER_BUNDLE_IDENTIFIER}")
       list(LENGTH bundle_id_parts bundle_id_parts_length)
