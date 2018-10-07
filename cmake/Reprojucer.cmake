@@ -611,6 +611,8 @@ function(jucer_export_target exporter)
       "VST3_SDK_FOLDER"
       "AAX_SDK_FOLDER"
       "RTAS_SDK_FOLDER"
+      "INAPP_PURCHASES_CAPABILITY"
+      "PUSH_NOTIFICATIONS_CAPABILITY"
       "CUSTOM_PLIST"
       "PLIST_PREPROCESS"
       "PLIST_PREFIX_HEADER"
@@ -746,6 +748,18 @@ function(jucer_export_target exporter)
 
   if(DEFINED _EXTRA_FRAMEWORKS)
     set(JUCER_EXTRA_FRAMEWORKS "${_EXTRA_FRAMEWORKS}" PARENT_SCOPE)
+  endif()
+
+  if(DEFINED _INAPP_PURCHASES_CAPABILITY AND _INAPP_PURCHASES_CAPABILITY)
+    _FRUT_warn_about_unsupported_setting(
+      "INAPP_PURCHASES_CAPABILITY" "In-App Purchases Capability" 395
+    )
+  endif()
+
+  if(DEFINED _PUSH_NOTIFICATIONS_CAPABILITY AND _PUSH_NOTIFICATIONS_CAPABILITY)
+    _FRUT_warn_about_unsupported_setting(
+      "PUSH_NOTIFICATIONS_CAPABILITY" "Push Notifications Capability" 396
+    )
   endif()
 
   if(DEFINED _CUSTOM_PLIST)

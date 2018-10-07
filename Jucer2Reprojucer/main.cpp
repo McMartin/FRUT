@@ -1091,6 +1091,10 @@ int main(int argc, char* argv[])
             });
         }
 
+        convertOnOffSettingIfDefined(exporter, "iosInAppPurchasesValue",
+                                     "INAPP_PURCHASES_CAPABILITY", {});
+        convertOnOffSettingIfDefined(exporter, "iosPushNotifications",
+                                     "PUSH_NOTIFICATIONS_CAPABILITY", {});
         convertSettingIfDefined(exporter, "customPList", "CUSTOM_PLIST", {});
         convertOnOffSettingIfDefined(exporter, "PListPreprocess", "PLIST_PREPROCESS", {});
         convertSettingIfDefined(exporter, "PListPrefixHeader", "PLIST_PREFIX_HEADER", {});
