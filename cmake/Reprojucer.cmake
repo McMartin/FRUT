@@ -612,6 +612,8 @@ function(jucer_export_target exporter)
       "AAX_SDK_FOLDER"
       "RTAS_SDK_FOLDER"
       "CUSTOM_PLIST"
+      "PLIST_PREPROCESS"
+      "PLIST_PREFIX_HEADER"
       "PREBUILD_SHELL_SCRIPT"
       "POSTBUILD_SHELL_SCRIPT"
       "DEVELOPMENT_TEAM_ID"
@@ -748,6 +750,14 @@ function(jucer_export_target exporter)
 
   if(DEFINED _CUSTOM_PLIST)
     set(JUCER_CUSTOM_PLIST "${_CUSTOM_PLIST}" PARENT_SCOPE)
+  endif()
+
+  if(DEFINED _PLIST_PREPROCESS AND _PLIST_PREPROCESS)
+    _FRUT_warn_about_unsupported_setting("PLIST_PREPROCESS" "PList Preprocess" 394)
+  endif()
+
+  if(DEFINED _PLIST_PREFIX_HEADER)
+    # TODO with PLIST_PREPROCESS
   endif()
 
   if(DEFINED _PREBUILD_SHELL_SCRIPT)
@@ -921,6 +931,7 @@ function(jucer_export_target_configuration
     )
     list(APPEND multi_value_keywords
       "CUSTOM_XCODE_FLAGS"
+      "PLIST_PREPROCESSOR_DEFINITIONS"
     )
   endif()
 
@@ -1134,6 +1145,10 @@ function(jucer_export_target_configuration
     elseif(NOT cxx_library STREQUAL "Use Default")
       message(FATAL_ERROR "Unsupported value for CXX_LIBRARY: \"${cxx_library}\"")
     endif()
+  endif()
+
+  if(DEFINED _PLIST_PREPROCESSOR_DEFINITIONS)
+    # TODO with PLIST_PREPROCESS
   endif()
 
   if(DEFINED _CODE_SIGNING_IDENTITY)

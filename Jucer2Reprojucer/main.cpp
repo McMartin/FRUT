@@ -1092,6 +1092,8 @@ int main(int argc, char* argv[])
         }
 
         convertSettingIfDefined(exporter, "customPList", "CUSTOM_PLIST", {});
+        convertOnOffSettingIfDefined(exporter, "PListPreprocess", "PLIST_PREPROCESS", {});
+        convertSettingIfDefined(exporter, "PListPrefixHeader", "PLIST_PREFIX_HEADER", {});
         convertSettingAsListIfDefined(
           exporter, "extraFrameworks", "EXTRA_FRAMEWORKS", [](const juce::var& v) {
             auto frameworks = juce::StringArray::fromTokens(v.toString(), ",;", "\"'");
@@ -1391,6 +1393,9 @@ int main(int argc, char* argv[])
                                           return juce::StringArray::fromTokens(
                                             v.toString(), ",", "\"'");
                                         });
+
+          convertSettingAsListIfDefined(configuration, "plistPreprocessorDefinitions",
+                                        "PLIST_PREPROCESSOR_DEFINITIONS", {});
 
           convertSettingIfDefined(configuration, "cppLanguageStandard",
                                   "CXX_LANGUAGE_STANDARD",
