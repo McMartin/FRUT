@@ -767,12 +767,7 @@ function(jucer_export_target exporter)
   endif()
 
   if(DEFINED _DEVELOPMENT_TEAM_ID)
-    message(WARNING "Reprojucer.cmake doesn't support the setting "
-      "DEVELOPMENT_TEAM_ID (\"Development Team ID\" in Projucer). If you would like "
-      "Reprojucer.cmake to support this setting, please leave a comment on the issue "
-      "\"Reprojucer.cmake doesn't support the setting DEVELOPMENT_TEAM_ID\" on "
-      "GitHub: https://github.com/McMartin/FRUT/issues/251"
-    )
+    _FRUT_warn_about_unsupported_setting("DEVELOPMENT_TEAM_ID" "Development Team ID" 251)
   endif()
 
   if(DEFINED _KEEP_CUSTOM_XCODE_SCHEMES)
@@ -823,12 +818,7 @@ function(jucer_export_target exporter)
       "Single-Threaded DLL"
     )
     if(ipp_library IN_LIST ipp_library_values)
-      message(WARNING "Reprojucer.cmake doesn't support the setting USE_IPP_LIBRARY "
-        "(\"Use IPP Library\" in Projucer). If you would like Reprojucer.cmake to "
-        "support this setting, please leave a comment on the issue "
-        "\"Reprojucer.cmake doesn't support the setting USE_IPP_LIBRARY\" on GitHub: "
-        "https://github.com/McMartin/FRUT/issues/252"
-      )
+      _FRUT_warn_about_unsupported_setting("USE_IPP_LIBRARY" "Use IPP Library" 252)
     elseif(NOT ipp_library STREQUAL "No")
       message(FATAL_ERROR "Unsupported value for USE_IPP_LIBRARY: \"${ipp_library}\"")
     endif()
@@ -2242,6 +2232,18 @@ function(_FRUT_parse_arguments single_value_keywords multi_value_keywords argume
       set(_${keyword} "${_${keyword}}" PARENT_SCOPE)
     endif()
   endforeach()
+
+endfunction()
+
+
+function(_FRUT_warn_about_unsupported_setting setting projucer_setting issue_number)
+
+  message(WARNING "Reprojucer.cmake doesn't support the setting ${setting} "
+    "(\"${projucer_setting}\" in Projucer). If you would like Reprojucer.cmake to "
+    "support this setting, please leave a comment on the issue \"Reprojucer.cmake "
+    "doesn't support the setting ${setting}\" on GitHub: "
+    "https://github.com/McMartin/FRUT/issues/${issue_number}"
+  )
 
 endfunction()
 
