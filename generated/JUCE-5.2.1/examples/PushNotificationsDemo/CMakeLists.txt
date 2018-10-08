@@ -174,6 +174,7 @@ jucer_export_target(
   "Xcode (MacOSX)"
   CUSTOM_XCODE_RESOURCE_FOLDERS
     "./BinaryResources/images"
+  PUSH_NOTIFICATIONS_CAPABILITY ON
 )
 
 jucer_export_target_configuration(

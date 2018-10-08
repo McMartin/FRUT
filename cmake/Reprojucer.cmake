@@ -611,7 +611,11 @@ function(jucer_export_target exporter)
       "VST3_SDK_FOLDER"
       "AAX_SDK_FOLDER"
       "RTAS_SDK_FOLDER"
+      "INAPP_PURCHASES_CAPABILITY"
+      "PUSH_NOTIFICATIONS_CAPABILITY"
       "CUSTOM_PLIST"
+      "PLIST_PREPROCESS"
+      "PLIST_PREFIX_HEADER"
       "PREBUILD_SHELL_SCRIPT"
       "POSTBUILD_SHELL_SCRIPT"
       "DEVELOPMENT_TEAM_ID"
@@ -746,8 +750,28 @@ function(jucer_export_target exporter)
     set(JUCER_EXTRA_FRAMEWORKS "${_EXTRA_FRAMEWORKS}" PARENT_SCOPE)
   endif()
 
+  if(DEFINED _INAPP_PURCHASES_CAPABILITY AND _INAPP_PURCHASES_CAPABILITY)
+    _FRUT_warn_about_unsupported_setting(
+      "INAPP_PURCHASES_CAPABILITY" "In-App Purchases Capability" 395
+    )
+  endif()
+
+  if(DEFINED _PUSH_NOTIFICATIONS_CAPABILITY AND _PUSH_NOTIFICATIONS_CAPABILITY)
+    _FRUT_warn_about_unsupported_setting(
+      "PUSH_NOTIFICATIONS_CAPABILITY" "Push Notifications Capability" 396
+    )
+  endif()
+
   if(DEFINED _CUSTOM_PLIST)
     set(JUCER_CUSTOM_PLIST "${_CUSTOM_PLIST}" PARENT_SCOPE)
+  endif()
+
+  if(DEFINED _PLIST_PREPROCESS AND _PLIST_PREPROCESS)
+    _FRUT_warn_about_unsupported_setting("PLIST_PREPROCESS" "PList Preprocess" 394)
+  endif()
+
+  if(DEFINED _PLIST_PREFIX_HEADER)
+    # TODO with PLIST_PREPROCESS
   endif()
 
   if(DEFINED _PREBUILD_SHELL_SCRIPT)
@@ -767,12 +791,7 @@ function(jucer_export_target exporter)
   endif()
 
   if(DEFINED _DEVELOPMENT_TEAM_ID)
-    message(WARNING "Reprojucer.cmake doesn't support the setting "
-      "DEVELOPMENT_TEAM_ID (\"Development Team ID\" in Projucer). If you would like "
-      "Reprojucer.cmake to support this setting, please leave a comment on the issue "
-      "\"Reprojucer.cmake doesn't support the setting DEVELOPMENT_TEAM_ID\" on "
-      "GitHub: https://github.com/McMartin/FRUT/issues/251"
-    )
+    _FRUT_warn_about_unsupported_setting("DEVELOPMENT_TEAM_ID" "Development Team ID" 251)
   endif()
 
   if(DEFINED _KEEP_CUSTOM_XCODE_SCHEMES)
@@ -823,12 +842,7 @@ function(jucer_export_target exporter)
       "Single-Threaded DLL"
     )
     if(ipp_library IN_LIST ipp_library_values)
-      message(WARNING "Reprojucer.cmake doesn't support the setting USE_IPP_LIBRARY "
-        "(\"Use IPP Library\" in Projucer). If you would like Reprojucer.cmake to "
-        "support this setting, please leave a comment on the issue "
-        "\"Reprojucer.cmake doesn't support the setting USE_IPP_LIBRARY\" on GitHub: "
-        "https://github.com/McMartin/FRUT/issues/252"
-      )
+      _FRUT_warn_about_unsupported_setting("USE_IPP_LIBRARY" "Use IPP Library" 252)
     elseif(NOT ipp_library STREQUAL "No")
       message(FATAL_ERROR "Unsupported value for USE_IPP_LIBRARY: \"${ipp_library}\"")
     endif()
@@ -931,6 +945,7 @@ function(jucer_export_target_configuration
     )
     list(APPEND multi_value_keywords
       "CUSTOM_XCODE_FLAGS"
+      "PLIST_PREPROCESSOR_DEFINITIONS"
     )
   endif()
 
@@ -1144,6 +1159,10 @@ function(jucer_export_target_configuration
     elseif(NOT cxx_library STREQUAL "Use Default")
       message(FATAL_ERROR "Unsupported value for CXX_LIBRARY: \"${cxx_library}\"")
     endif()
+  endif()
+
+  if(DEFINED _PLIST_PREPROCESSOR_DEFINITIONS)
+    # TODO with PLIST_PREPROCESS
   endif()
 
   if(DEFINED _CODE_SIGNING_IDENTITY)
@@ -2242,6 +2261,18 @@ function(_FRUT_parse_arguments single_value_keywords multi_value_keywords argume
       set(_${keyword} "${_${keyword}}" PARENT_SCOPE)
     endif()
   endforeach()
+
+endfunction()
+
+
+function(_FRUT_warn_about_unsupported_setting setting projucer_setting issue_number)
+
+  message(WARNING "Reprojucer.cmake doesn't support the setting ${setting} "
+    "(\"${projucer_setting}\" in Projucer). If you would like Reprojucer.cmake to "
+    "support this setting, please leave a comment on the issue \"Reprojucer.cmake "
+    "doesn't support the setting ${setting}\" on GitHub: "
+    "https://github.com/McMartin/FRUT/issues/${issue_number}"
+  )
 
 endfunction()
 
