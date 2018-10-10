@@ -408,6 +408,7 @@ function(jucer_project_module module_name PATH_KEYWORD modules_folder)
     LIST_DIRECTORIES FALSE
     "${modules_folder}/${module_name}/${module_name}*.cpp"
     "${modules_folder}/${module_name}/${module_name}*.mm"
+    "${modules_folder}/${module_name}/${module_name}*.r"
   )
 
   if(DEFINED JUCER_VERSION AND JUCER_VERSION VERSION_LESS 5.0.0)
@@ -1736,6 +1737,34 @@ function(jucer_project_end)
         ${icon_file}
       )
       target_link_libraries(${au_target} PRIVATE ${shared_code_target})
+
+      unset(rez_sources)
+      foreach(source_file ${AudioUnit_sources})
+        get_filename_component(file_extension "${source_file}" EXT)
+        if(file_extension STREQUAL ".r")
+          list(APPEND rez_sources "${source_file}")
+        endif()
+      endforeach()
+      if(DEFINED rez_sources)
+        find_program(Rez_exe "Rez")
+        if(Rez_exe)
+          set(rez_output "${CMAKE_CURRENT_BINARY_DIR}/${target}.rsrc")
+          add_custom_command(TARGET ${au_target} PRE_BUILD
+            COMMAND
+            "${Rez_exe}"
+            "-I" "${CMAKE_CURRENT_BINARY_DIR}/JuceLibraryCode"
+            "-o" "${rez_output}"
+            "${rez_sources}"
+          )
+          set_source_files_properties("${rez_output}" PROPERTIES
+            GENERATED TRUE
+            MACOSX_PACKAGE_LOCATION "Resources"
+          )
+          target_sources(${au_target} PRIVATE "${rez_sources}" "${rez_output}")
+        else()
+          message(WARNING "Could not find Rez executable")
+        endif()
+      endif()
 
       _FRUT_get_au_main_type_code(au_main_type_code)
       _FRUT_version_to_dec("${JUCER_PROJECT_VERSION}" dec_version)
