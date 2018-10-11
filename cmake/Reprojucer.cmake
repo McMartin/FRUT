@@ -458,7 +458,11 @@ function(jucer_project_module module_name PATH_KEYWORD modules_folder)
 
     if(to_compile)
       get_filename_component(src_file_basename "${src_file}" NAME)
-      configure_file("${Reprojucer_templates_DIR}/JuceLibraryCode-Wrapper.cpp"
+      set(template_file "JuceLibraryCode-Wrapper.cpp")
+      if(src_file_extension STREQUAL ".r")
+        set(template_file "JuceLibraryCode-Wrapper.r")
+      endif()
+      configure_file("${Reprojucer_templates_DIR}/${template_file}"
         "JuceLibraryCode/${proxy_prefix}${src_file_basename}"
       )
       list(APPEND JUCER_PROJECT_SOURCES
@@ -1748,12 +1752,25 @@ function(jucer_project_end)
       if(DEFINED rez_sources)
         find_program(Rez_exe "Rez")
         if(Rez_exe)
-          set(rez_output "${CMAKE_CURRENT_BINARY_DIR}/${target}.rsrc")
+          set(rez_output "${CMAKE_CURRENT_BINARY_DIR}/${JUCER_PLUGIN_NAME}.rsrc")
+
+          set(rez_search_path_module_plugin_client "")
+          list(GET JUCER_PROJECT_MODULES_FOLDERS 0 rez_search_path_module_plugin_client)
+          set(rez_search_path_module_plugin_client "${rez_search_path_module_plugin_client}/juce_audio_plugin_client")
+
           add_custom_command(TARGET ${au_target} PRE_BUILD
             COMMAND
             "${Rez_exe}"
-            "-I" "${CMAKE_CURRENT_BINARY_DIR}/JuceLibraryCode"
             "-o" "${rez_output}"
+            "-d" "SystemSevenOrLater=1"
+            "-script" "Roman"
+            "-d" "i386_YES"
+            "-d" "x86_64_YES"
+            "-useDF"
+            "-isysroot" "${CMAKE_OSX_SYSROOT}"
+            "-I" "${CMAKE_OSX_SYSROOT}/System/Library/Frameworks/CoreServices.framework/Frameworks/CarbonCore.framework/Versions/A/Headers"
+            "-I" "${CMAKE_CURRENT_BINARY_DIR}/JuceLibraryCode"
+            "-I" "${rez_search_path_module_plugin_client}"
             "${rez_sources}"
           )
           set_source_files_properties("${rez_output}" PROPERTIES
