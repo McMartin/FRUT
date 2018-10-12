@@ -457,6 +457,7 @@ function(jucer_project_module module_name PATH_KEYWORD modules_folder)
 
     if(to_compile)
       get_filename_component(src_file_basename "${src_file}" NAME)
+      set(proxied_src_file "${module_name}/${src_file_basename}")
       configure_file("${Reprojucer_templates_DIR}/JuceLibraryCode-Wrapper.cpp"
         "JuceLibraryCode/${proxy_prefix}${src_file_basename}"
       )
