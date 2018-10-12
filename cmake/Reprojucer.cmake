@@ -402,7 +402,7 @@ function(jucer_project_module module_name PATH_KEYWORD modules_folder)
 
   list(APPEND JUCER_PROJECT_MODULES_FOLDERS "${modules_folder}")
   set(JUCER_PROJECT_MODULES_FOLDERS "${JUCER_PROJECT_MODULES_FOLDERS}" PARENT_SCOPE)
-  set(JUCER_PROJECT_MODULES_${module_name}_PATH "${modules_folder}" PARENT_SCOPE)
+  set(JUCER_PROJECT_MODULE_${module_name}_PATH "${modules_folder}" PARENT_SCOPE)
 
   file(GLOB module_src_files
     LIST_DIRECTORIES FALSE
@@ -1967,7 +1967,7 @@ function(jucer_project_end)
           endif()
         endforeach()
         string(CONCAT module_definition_file
-          "${JUCER_PROJECT_MODULES_juce_audio_plugin_client_PATH}/"
+          "${JUCER_PROJECT_MODULE_juce_audio_plugin_client_PATH}/"
           "juce_audio_plugin_client/RTAS/juce_RTAS_WinExports.def"
         )
         target_sources(${rtas_target} PRIVATE "${module_definition_file}")
