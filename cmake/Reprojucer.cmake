@@ -408,6 +408,7 @@ function(jucer_project_module module_name PATH_KEYWORD modules_folder)
     LIST_DIRECTORIES FALSE
     "${modules_folder}/${module_name}/${module_name}*.cpp"
     "${modules_folder}/${module_name}/${module_name}*.mm"
+    "${modules_folder}/${module_name}/${module_name}*.r"
   )
 
   if(DEFINED JUCER_VERSION AND JUCER_VERSION VERSION_LESS 5.0.0)
@@ -457,7 +458,11 @@ function(jucer_project_module module_name PATH_KEYWORD modules_folder)
 
     if(to_compile)
       get_filename_component(src_file_basename "${src_file}" NAME)
-      set(proxied_src_file "${module_name}/${src_file_basename}")
+      if(src_file_extension STREQUAL ".r")
+        set(proxied_src_file "${src_file_basename}")
+      else()
+        set(proxied_src_file "${module_name}/${src_file_basename}")
+      endif()
       configure_file("${Reprojucer_templates_DIR}/JuceLibraryCode-Wrapper.cpp"
         "JuceLibraryCode/${proxy_prefix}${src_file_basename}"
       )
@@ -1737,6 +1742,67 @@ function(jucer_project_end)
         ${icon_file}
       )
       target_link_libraries(${au_target} PRIVATE ${shared_code_target})
+
+      unset(rez_inputs)
+      foreach(src_file ${AudioUnit_sources})
+        get_filename_component(file_extension "${src_file}" EXT)
+        if(file_extension STREQUAL ".r")
+          list(APPEND rez_inputs "${src_file}")
+        endif()
+      endforeach()
+      if(DEFINED rez_inputs)
+        find_program(Rez_tool "Rez")
+        if(Rez_tool)
+          set(rez_output "${CMAKE_CURRENT_BINARY_DIR}/${JUCER_PROJECT_NAME}.rsrc")
+
+          set(rez_defines "")
+          set(rez_archs "")
+          foreach(config ${JUCER_PROJECT_CONFIGURATIONS})
+            foreach(osx_architecture ${JUCER_OSX_ARCHITECTURES_${config}})
+              list(APPEND rez_defines
+                "$<$<CONFIG:${config}>:-d>"
+                "$<$<CONFIG:${config}>:${osx_architecture}_YES>"
+              )
+              list(APPEND rez_archs
+                "$<$<CONFIG:${config}>:-arch>"
+                "$<$<CONFIG:${config}>:${osx_architecture}>"
+              )
+            endforeach()
+          endforeach()
+
+          string(CONCAT carbon_include_dir
+            "/System/Library/Frameworks/CoreServices.framework/Frameworks/"
+            "CarbonCore.framework/Versions/A/Headers"
+          )
+          string(CONCAT juce_audio_plugin_client_include_dir
+            "${JUCER_PROJECT_MODULE_juce_audio_plugin_client_PATH}/"
+            "juce_audio_plugin_client"
+          )
+
+          add_custom_command(TARGET ${au_target} PRE_BUILD
+            COMMAND
+            "${Rez_tool}"
+            "-o" "${rez_output}"
+            "-d" "SystemSevenOrLater=1"
+            "-useDF"
+            ${rez_defines}
+            ${rez_archs}
+            "-i" "${carbon_include_dir}"
+            "-i" "${CMAKE_CURRENT_BINARY_DIR}/JuceLibraryCode"
+            "-i" "${juce_audio_plugin_client_include_dir}"
+            ${rez_inputs}
+          )
+          set_source_files_properties("${rez_output}" PROPERTIES
+            GENERATED TRUE
+            MACOSX_PACKAGE_LOCATION "Resources"
+          )
+          target_sources(${au_target} PRIVATE ${rez_inputs} "${rez_output}")
+        else()
+          message(WARNING
+            "Could not find Rez tool. Discovery of AU plugins might not work."
+          )
+        endif()
+      endif()
 
       _FRUT_get_au_main_type_code(au_main_type_code)
       _FRUT_version_to_dec("${JUCER_PROJECT_VERSION}" dec_version)
