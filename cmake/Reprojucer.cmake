@@ -777,16 +777,16 @@ function(jucer_export_target exporter)
   if(DEFINED _PREBUILD_SHELL_SCRIPT)
     set(script_content "${_PREBUILD_SHELL_SCRIPT}")
     configure_file("${Reprojucer_templates_DIR}/script.in" "prebuild.sh" @ONLY)
-    set(JUCER_PREBUILD_SHELL_SCRIPT
-      "${CMAKE_CURRENT_BINARY_DIR}/prebuild.sh" PARENT_SCOPE
+    set(JUCER_PREBUILD_SHELL_SCRIPT "${CMAKE_CURRENT_BINARY_DIR}/prebuild.sh"
+      PARENT_SCOPE
     )
   endif()
 
   if(DEFINED _POSTBUILD_SHELL_SCRIPT)
     set(script_content "${_POSTBUILD_SHELL_SCRIPT}")
     configure_file("${Reprojucer_templates_DIR}/script.in" "postbuild.sh" @ONLY)
-    set(JUCER_POSTBUILD_SHELL_SCRIPT
-      "${CMAKE_CURRENT_BINARY_DIR}/postbuild.sh" PARENT_SCOPE
+    set(JUCER_POSTBUILD_SHELL_SCRIPT "${CMAKE_CURRENT_BINARY_DIR}/postbuild.sh"
+      PARENT_SCOPE
     )
   endif()
 
@@ -1046,8 +1046,8 @@ function(jucer_export_target_configuration
   endif()
 
   if(DEFINED _ENABLE_PLUGIN_COPY_STEP)
-    set(JUCER_ENABLE_PLUGIN_COPY_STEP_${config}
-      "${_ENABLE_PLUGIN_COPY_STEP}" PARENT_SCOPE
+    set(JUCER_ENABLE_PLUGIN_COPY_STEP_${config} "${_ENABLE_PLUGIN_COPY_STEP}"
+      PARENT_SCOPE
     )
   endif()
 
