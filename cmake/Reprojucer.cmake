@@ -2995,17 +2995,6 @@ function(_FRUT_set_compiler_and_linker_settings target)
     endif()
   endforeach()
 
-  target_compile_definitions(${target} PRIVATE
-    ${JUCER_PREPROCESSOR_DEFINITIONS}
-    ${JUCER_EXTRA_PREPROCESSOR_DEFINITIONS}
-  )
-  foreach(config ${JUCER_PROJECT_CONFIGURATIONS})
-    set(definitions "${JUCER_PREPROCESSOR_DEFINITIONS_${config}}")
-    target_compile_definitions(${target} PRIVATE $<$<CONFIG:${config}>:${definitions}>)
-  endforeach()
-
-  target_link_libraries(${target} PRIVATE ${JUCER_EXTERNAL_LIBRARIES_TO_LINK})
-
   _FRUT_set_cxx_language_standard_properties(${target})
 
   if(APPLE)
@@ -3299,8 +3288,19 @@ function(_FRUT_set_compiler_and_linker_settings target)
     endif()
   endif()
 
+  target_compile_definitions(${target} PRIVATE
+    ${JUCER_PREPROCESSOR_DEFINITIONS}
+    ${JUCER_EXTRA_PREPROCESSOR_DEFINITIONS}
+  )
+  foreach(config ${JUCER_PROJECT_CONFIGURATIONS})
+    set(definitions "${JUCER_PREPROCESSOR_DEFINITIONS_${config}}")
+    target_compile_definitions(${target} PRIVATE $<$<CONFIG:${config}>:${definitions}>)
+  endforeach()
+
   target_compile_options(${target} PRIVATE ${JUCER_EXTRA_COMPILER_FLAGS})
+
   target_link_libraries(${target} PRIVATE ${JUCER_EXTRA_LINKER_FLAGS})
+  target_link_libraries(${target} PRIVATE ${JUCER_EXTERNAL_LIBRARIES_TO_LINK})
 
 endfunction()
 
