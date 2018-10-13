@@ -790,8 +790,8 @@ function(jucer_export_target exporter)
 
   if(DEFINED _KEEP_CUSTOM_XCODE_SCHEMES)
     if(_KEEP_CUSTOM_XCODE_SCHEMES AND CMAKE_GENERATOR STREQUAL "Xcode")
-      message(WARNING "Reprojucer.cmake won't create any Xcode schemes, so it won't "
-        "delete any either."
+      message(WARNING "KEEP_CUSTOM_XCODE_SCHEMES is ignored. Reprojucer.cmake won't "
+        "create any Xcode schemes, so it won't delete any either."
       )
     endif()
   endif()
