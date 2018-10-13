@@ -83,10 +83,7 @@ function(jucer_project_settings)
     "BINARYDATA_NAMESPACE"
     "CXX_LANGUAGE_STANDARD"
   )
-  set(multi_value_keywords
-    "PREPROCESSOR_DEFINITIONS"
-    "HEADER_SEARCH_PATHS"
-  )
+  set(multi_value_keywords "PREPROCESSOR_DEFINITIONS" "HEADER_SEARCH_PATHS")
 
   _FRUT_parse_arguments("${single_value_keywords}" "${multi_value_keywords}" "${ARGN}")
 
@@ -628,15 +625,10 @@ function(jucer_export_target exporter)
       "KEEP_CUSTOM_XCODE_SCHEMES"
       "USE_HEADERMAP"
     )
-    list(APPEND multi_value_keywords
-      "CUSTOM_XCODE_RESOURCE_FOLDERS"
-      "EXTRA_FRAMEWORKS"
-    )
+    list(APPEND multi_value_keywords "CUSTOM_XCODE_RESOURCE_FOLDERS" "EXTRA_FRAMEWORKS")
 
     if(JUCER_PROJECT_TYPE STREQUAL "GUI Application")
-      list(APPEND multi_value_keywords
-        "DOCUMENT_FILE_EXTENSIONS"
-      )
+      list(APPEND multi_value_keywords "DOCUMENT_FILE_EXTENSIONS")
     endif()
   endif()
 
@@ -657,12 +649,8 @@ function(jucer_export_target exporter)
   endif()
 
   if(exporter STREQUAL "Linux Makefile")
-    list(APPEND single_value_keywords
-      "CXX_STANDARD_TO_USE"
-    )
-    list(APPEND multi_value_keywords
-      "PKGCONFIG_LIBRARIES"
-    )
+    list(APPEND single_value_keywords "CXX_STANDARD_TO_USE")
+    list(APPEND multi_value_keywords "PKGCONFIG_LIBRARIES")
   endif()
 
   _FRUT_parse_arguments("${single_value_keywords}" "${multi_value_keywords}" "${ARGN}")
@@ -920,11 +908,7 @@ function(jucer_export_target_configuration
 
   set(JUCER_CONFIGURATION_IS_DEBUG_${config} "${is_debug}" PARENT_SCOPE)
 
-  set(single_value_keywords
-    "BINARY_NAME"
-    "BINARY_LOCATION"
-    "OPTIMISATION"
-  )
+  set(single_value_keywords "BINARY_NAME" "BINARY_LOCATION" "OPTIMISATION")
   set(multi_value_keywords
     "HEADER_SEARCH_PATHS"
     "EXTRA_LIBRARY_SEARCH_PATHS"
@@ -977,9 +961,7 @@ function(jucer_export_target_configuration
   endif()
 
   if(exporter STREQUAL "Linux Makefile")
-    list(APPEND single_value_keywords
-      "ARCHITECTURE"
-    )
+    list(APPEND single_value_keywords "ARCHITECTURE")
   endif()
 
   _FRUT_parse_arguments("${single_value_keywords}" "${multi_value_keywords}" "${ARGN}")
@@ -3185,22 +3167,16 @@ function(_FRUT_set_compiler_and_linker_settings target)
           $<$<CONFIG:${config}>:_DEBUG>
         )
       else()
-        target_compile_definitions(${target} PRIVATE
-          $<$<CONFIG:${config}>:NDEBUG>
-        )
+        target_compile_definitions(${target} PRIVATE $<$<CONFIG:${config}>:NDEBUG>)
 
         if(NOT JUCER_ALWAYS_DISABLE_WPO_${config})
-          target_compile_options(${target} PRIVATE
-            $<$<CONFIG:${config}>:/GL>
-          )
+          target_compile_options(${target} PRIVATE $<$<CONFIG:${config}>:/GL>)
         endif()
       endif()
 
       if(NOT DEFINED JUCER_CHARACTER_SET_${config}
           OR JUCER_CHARACTER_SET_${config} STREQUAL "Default")
-        target_compile_definitions(${target} PRIVATE
-          $<$<CONFIG:${config}>:_SBCS>
-        )
+        target_compile_definitions(${target} PRIVATE $<$<CONFIG:${config}>:_SBCS>)
       elseif(JUCER_CHARACTER_SET_${config} STREQUAL "MultiByte")
         # Nothing to do, this is CMake's default
       elseif(JUCER_CHARACTER_SET_${config} STREQUAL "Unicode")
@@ -3277,9 +3253,7 @@ function(_FRUT_set_compiler_and_linker_settings target)
           $<$<CONFIG:${config}>:_DEBUG=1>
         )
       else()
-        target_compile_definitions(${target} PRIVATE
-          $<$<CONFIG:${config}>:NDEBUG=1>
-        )
+        target_compile_definitions(${target} PRIVATE $<$<CONFIG:${config}>:NDEBUG=1>)
       endif()
 
       if(DEFINED JUCER_ARCHITECTURE_FLAG_${config})
@@ -3660,13 +3634,9 @@ function(_FRUT_set_JucePlugin_Build_defines target target_type)
 
     if(target_type STREQUAL "${plugin_type}PlugIn"
         OR (target_type STREQUAL "SharedCodeTarget" AND JUCER_BUILD_${setting_suffix}))
-      target_compile_definitions(${target} PRIVATE
-        "JucePlugin_Build_${define_suffix}=1"
-      )
+      target_compile_definitions(${target} PRIVATE "JucePlugin_Build_${define_suffix}=1")
     else()
-      target_compile_definitions(${target} PRIVATE
-        "JucePlugin_Build_${define_suffix}=0"
-      )
+      target_compile_definitions(${target} PRIVATE "JucePlugin_Build_${define_suffix}=0")
     endif()
   endforeach()
 
