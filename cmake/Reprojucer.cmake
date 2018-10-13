@@ -810,8 +810,8 @@ function(jucer_export_target exporter)
 
   if(DEFINED _USE_HEADERMAP)
     if(_USE_HEADERMAP)
-      message(WARNING "USE_HEADERMAP is only supported when using the Xcode "
-        "generator. You should call `cmake -G Xcode`."
+      message(WARNING "USE_HEADERMAP is only supported when using the Xcode generator. "
+        "You should call `cmake -G Xcode`."
       )
     endif()
     set(JUCER_USE_HEADERMAP "${_USE_HEADERMAP}" PARENT_SCOPE)
