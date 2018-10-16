@@ -1785,6 +1785,7 @@ function(jucer_project_end)
             "-o" "${rez_output}"
             "-d" "SystemSevenOrLater=1"
             "-useDF"
+            "-isysroot" "${CMAKE_OSX_SYSROOT}"
             ${rez_defines}
             ${rez_archs}
             "-i" "${carbon_include_dir}"
