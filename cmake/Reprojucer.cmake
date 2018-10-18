@@ -83,10 +83,7 @@ function(jucer_project_settings)
     "BINARYDATA_NAMESPACE"
     "CXX_LANGUAGE_STANDARD"
   )
-  set(multi_value_keywords
-    "PREPROCESSOR_DEFINITIONS"
-    "HEADER_SEARCH_PATHS"
-  )
+  set(multi_value_keywords "PREPROCESSOR_DEFINITIONS" "HEADER_SEARCH_PATHS")
 
   _FRUT_parse_arguments("${single_value_keywords}" "${multi_value_keywords}" "${ARGN}")
 
@@ -628,15 +625,10 @@ function(jucer_export_target exporter)
       "KEEP_CUSTOM_XCODE_SCHEMES"
       "USE_HEADERMAP"
     )
-    list(APPEND multi_value_keywords
-      "CUSTOM_XCODE_RESOURCE_FOLDERS"
-      "EXTRA_FRAMEWORKS"
-    )
+    list(APPEND multi_value_keywords "CUSTOM_XCODE_RESOURCE_FOLDERS" "EXTRA_FRAMEWORKS")
 
     if(JUCER_PROJECT_TYPE STREQUAL "GUI Application")
-      list(APPEND multi_value_keywords
-        "DOCUMENT_FILE_EXTENSIONS"
-      )
+      list(APPEND multi_value_keywords "DOCUMENT_FILE_EXTENSIONS")
     endif()
   endif()
 
@@ -657,12 +649,8 @@ function(jucer_export_target exporter)
   endif()
 
   if(exporter STREQUAL "Linux Makefile")
-    list(APPEND single_value_keywords
-      "CXX_STANDARD_TO_USE"
-    )
-    list(APPEND multi_value_keywords
-      "PKGCONFIG_LIBRARIES"
-    )
+    list(APPEND single_value_keywords "CXX_STANDARD_TO_USE")
+    list(APPEND multi_value_keywords "PKGCONFIG_LIBRARIES")
   endif()
 
   _FRUT_parse_arguments("${single_value_keywords}" "${multi_value_keywords}" "${ARGN}")
@@ -802,16 +790,16 @@ function(jucer_export_target exporter)
 
   if(DEFINED _KEEP_CUSTOM_XCODE_SCHEMES)
     if(_KEEP_CUSTOM_XCODE_SCHEMES AND CMAKE_GENERATOR STREQUAL "Xcode")
-      message(WARNING "Reprojucer.cmake won't create any Xcode schemes, so it won't "
-        "delete any either."
+      message(WARNING "KEEP_CUSTOM_XCODE_SCHEMES is ignored. Reprojucer.cmake won't "
+        "create any Xcode schemes, so it won't delete any either."
       )
     endif()
   endif()
 
   if(DEFINED _USE_HEADERMAP)
     if(_USE_HEADERMAP)
-      message(WARNING "USE_HEADERMAP is only supported when using the Xcode "
-        "generator. You should call `cmake -G Xcode`."
+      message(WARNING "USE_HEADERMAP is only supported when using the Xcode generator. "
+        "You should call `cmake -G Xcode`."
       )
     endif()
     set(JUCER_USE_HEADERMAP "${_USE_HEADERMAP}" PARENT_SCOPE)
@@ -920,11 +908,7 @@ function(jucer_export_target_configuration
 
   set(JUCER_CONFIGURATION_IS_DEBUG_${config} "${is_debug}" PARENT_SCOPE)
 
-  set(single_value_keywords
-    "BINARY_NAME"
-    "BINARY_LOCATION"
-    "OPTIMISATION"
-  )
+  set(single_value_keywords "BINARY_NAME" "BINARY_LOCATION" "OPTIMISATION")
   set(multi_value_keywords
     "HEADER_SEARCH_PATHS"
     "EXTRA_LIBRARY_SEARCH_PATHS"
@@ -977,9 +961,7 @@ function(jucer_export_target_configuration
   endif()
 
   if(exporter STREQUAL "Linux Makefile")
-    list(APPEND single_value_keywords
-      "ARCHITECTURE"
-    )
+    list(APPEND single_value_keywords "ARCHITECTURE")
   endif()
 
   _FRUT_parse_arguments("${single_value_keywords}" "${multi_value_keywords}" "${ARGN}")
@@ -1036,12 +1018,12 @@ function(jucer_export_target_configuration
         set(optimisation_flag "-O0")
       elseif(optimisation STREQUAL "-Os (minimise code size)")
         set(optimisation_flag "-Os")
-      elseif(optimisation STREQUAL "-O3 (fastest with safe optimisations)")
-        set(optimisation_flag "-O3")
       elseif(optimisation STREQUAL "-O1 (fast)")
         set(optimisation_flag "-O1")
       elseif(optimisation STREQUAL "-O2 (faster)")
         set(optimisation_flag "-O2")
+      elseif(optimisation STREQUAL "-O3 (fastest with safe optimisations)")
+        set(optimisation_flag "-O3")
       elseif(optimisation STREQUAL "-Ofast (uses aggressive optimisations)")
         set(optimisation_flag "-Ofast")
       else()
@@ -3007,23 +2989,11 @@ function(_FRUT_set_compiler_and_linker_settings target)
 
   foreach(config ${JUCER_PROJECT_CONFIGURATIONS})
     if(JUCER_OPTIMISATION_FLAG_${config})
-      set(optimisation_flag "${JUCER_OPTIMISATION_FLAG_${config}}")
       target_compile_options(${target} PRIVATE
-        $<$<CONFIG:${config}>:${optimisation_flag}>
+        $<$<CONFIG:${config}>:${JUCER_OPTIMISATION_FLAG_${config}}>
       )
     endif()
   endforeach()
-
-  target_compile_definitions(${target} PRIVATE
-    ${JUCER_PREPROCESSOR_DEFINITIONS}
-    ${JUCER_EXTRA_PREPROCESSOR_DEFINITIONS}
-  )
-  foreach(config ${JUCER_PROJECT_CONFIGURATIONS})
-    set(definitions "${JUCER_PREPROCESSOR_DEFINITIONS_${config}}")
-    target_compile_definitions(${target} PRIVATE $<$<CONFIG:${config}>:${definitions}>)
-  endforeach()
-
-  target_link_libraries(${target} PRIVATE ${JUCER_EXTERNAL_LIBRARIES_TO_LINK})
 
   _FRUT_set_cxx_language_standard_properties(${target})
 
@@ -3042,9 +3012,8 @@ function(_FRUT_set_compiler_and_linker_settings target)
       endif()
 
       if(DEFINED JUCER_CXX_LIBRARY_${config})
-        set(cxx_library "${JUCER_CXX_LIBRARY_${config}}")
         target_compile_options(${target} PRIVATE
-          $<$<CONFIG:${config}>:-stdlib=${cxx_library}>
+          $<$<CONFIG:${config}>:-stdlib=${JUCER_CXX_LIBRARY_${config}}>
         )
       endif()
 
@@ -3154,9 +3123,8 @@ function(_FRUT_set_compiler_and_linker_settings target)
     unset(all_confs_code_sign_identity)
     foreach(config ${JUCER_PROJECT_CONFIGURATIONS})
       if(NOT JUCER_CODE_SIGNING_IDENTITY_${config} STREQUAL "Mac Developer")
-        set(code_sign_identity "${JUCER_CODE_SIGNING_IDENTITY_${config}}")
         string(APPEND all_confs_code_sign_identity
-          $<$<CONFIG:${config}>:${code_sign_identity}>
+          $<$<CONFIG:${config}>:${JUCER_CODE_SIGNING_IDENTITY_${config}}>
         )
       endif()
     endforeach()
@@ -3185,22 +3153,16 @@ function(_FRUT_set_compiler_and_linker_settings target)
           $<$<CONFIG:${config}>:_DEBUG>
         )
       else()
-        target_compile_definitions(${target} PRIVATE
-          $<$<CONFIG:${config}>:NDEBUG>
-        )
+        target_compile_definitions(${target} PRIVATE $<$<CONFIG:${config}>:NDEBUG>)
 
         if(NOT JUCER_ALWAYS_DISABLE_WPO_${config})
-          target_compile_options(${target} PRIVATE
-            $<$<CONFIG:${config}>:/GL>
-          )
+          target_compile_options(${target} PRIVATE $<$<CONFIG:${config}>:/GL>)
         endif()
       endif()
 
       if(NOT DEFINED JUCER_CHARACTER_SET_${config}
           OR JUCER_CHARACTER_SET_${config} STREQUAL "Default")
-        target_compile_definitions(${target} PRIVATE
-          $<$<CONFIG:${config}>:_SBCS>
-        )
+        target_compile_definitions(${target} PRIVATE $<$<CONFIG:${config}>:_SBCS>)
       elseif(JUCER_CHARACTER_SET_${config} STREQUAL "MultiByte")
         # Nothing to do, this is CMake's default
       elseif(JUCER_CHARACTER_SET_${config} STREQUAL "Unicode")
@@ -3211,32 +3173,30 @@ function(_FRUT_set_compiler_and_linker_settings target)
       endif()
 
       if(DEFINED JUCER_RUNTIME_LIBRARY_FLAG_${config})
-        set(runtime_library_flag "${JUCER_RUNTIME_LIBRARY_FLAG_${config}}")
+        target_compile_options(${target} PRIVATE
+          $<$<CONFIG:${config}>:${JUCER_RUNTIME_LIBRARY_FLAG_${config}}>
+        )
       elseif(JUCER_BUILD_VST OR JUCER_BUILD_VST3)
         if(JUCER_CONFIGURATION_IS_DEBUG_${config})
-          set(runtime_library_flag "/MDd")
+          target_compile_options(${target} PRIVATE $<$<CONFIG:${config}>:/MDd>)
         else()
-          set(runtime_library_flag "/MD")
+          target_compile_options(${target} PRIVATE $<$<CONFIG:${config}>:/MD>)
         endif()
       else()
         if(JUCER_CONFIGURATION_IS_DEBUG_${config})
-          set(runtime_library_flag "/MTd")
+          target_compile_options(${target} PRIVATE $<$<CONFIG:${config}>:/MTd>)
         else()
-          set(runtime_library_flag "/MT")
+          target_compile_options(${target} PRIVATE $<$<CONFIG:${config}>:/MT>)
         endif()
       endif()
-      target_compile_options(${target} PRIVATE
-        $<$<CONFIG:${config}>:${runtime_library_flag}>
-      )
 
       if(DEFINED JUCER_WARNING_LEVEL_FLAG_${config})
-        set(warning_level_flag "${JUCER_WARNING_LEVEL_FLAG_${config}}")
+        target_compile_options(${target} PRIVATE
+          $<$<CONFIG:${config}>:${JUCER_WARNING_LEVEL_FLAG_${config}}>
+        )
       else()
-        set(warning_level_flag "/W4")
+        target_compile_options(${target} PRIVATE $<$<CONFIG:${config}>:/W4>)
       endif()
-      target_compile_options(${target} PRIVATE
-        $<$<CONFIG:${config}>:${warning_level_flag}>
-      )
 
       if(JUCER_TREAT_WARNINGS_AS_ERRORS_${config})
         target_compile_options(${target} PRIVATE $<$<CONFIG:${config}>:/WX>)
@@ -3277,19 +3237,16 @@ function(_FRUT_set_compiler_and_linker_settings target)
           $<$<CONFIG:${config}>:_DEBUG=1>
         )
       else()
-        target_compile_definitions(${target} PRIVATE
-          $<$<CONFIG:${config}>:NDEBUG=1>
-        )
+        target_compile_definitions(${target} PRIVATE $<$<CONFIG:${config}>:NDEBUG=1>)
       endif()
 
       if(DEFINED JUCER_ARCHITECTURE_FLAG_${config})
-        set(architecture_flag "${JUCER_ARCHITECTURE_FLAG_${config}}")
+        target_compile_options(${target} PRIVATE
+          $<$<CONFIG:${config}>:${JUCER_ARCHITECTURE_FLAG_${config}}>
+        )
       else()
-        set(architecture_flag "-march=native")
+        target_compile_options(${target} PRIVATE $<$<CONFIG:${config}>:-march=native>)
       endif()
-      target_compile_options(${target} PRIVATE
-        $<$<CONFIG:${config}>:${architecture_flag}>
-      )
 
       foreach(path ${JUCER_EXTRA_LIBRARY_SEARCH_PATHS_${config}})
         target_link_libraries(${target} PRIVATE $<$<CONFIG:${config}>:-L${path}>)
@@ -3331,8 +3288,19 @@ function(_FRUT_set_compiler_and_linker_settings target)
     endif()
   endif()
 
+  target_compile_definitions(${target} PRIVATE
+    ${JUCER_PREPROCESSOR_DEFINITIONS}
+    ${JUCER_EXTRA_PREPROCESSOR_DEFINITIONS}
+  )
+  foreach(config ${JUCER_PROJECT_CONFIGURATIONS})
+    set(definitions "${JUCER_PREPROCESSOR_DEFINITIONS_${config}}")
+    target_compile_definitions(${target} PRIVATE $<$<CONFIG:${config}>:${definitions}>)
+  endforeach()
+
   target_compile_options(${target} PRIVATE ${JUCER_EXTRA_COMPILER_FLAGS})
+
   target_link_libraries(${target} PRIVATE ${JUCER_EXTRA_LINKER_FLAGS})
+  target_link_libraries(${target} PRIVATE ${JUCER_EXTERNAL_LIBRARIES_TO_LINK})
 
 endfunction()
 
@@ -3660,13 +3628,9 @@ function(_FRUT_set_JucePlugin_Build_defines target target_type)
 
     if(target_type STREQUAL "${plugin_type}PlugIn"
         OR (target_type STREQUAL "SharedCodeTarget" AND JUCER_BUILD_${setting_suffix}))
-      target_compile_definitions(${target} PRIVATE
-        "JucePlugin_Build_${define_suffix}=1"
-      )
+      target_compile_definitions(${target} PRIVATE "JucePlugin_Build_${define_suffix}=1")
     else()
-      target_compile_definitions(${target} PRIVATE
-        "JucePlugin_Build_${define_suffix}=0"
-      )
+      target_compile_definitions(${target} PRIVATE "JucePlugin_Build_${define_suffix}=0")
     endif()
   endforeach()
 
