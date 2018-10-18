@@ -1195,6 +1195,30 @@ int main(int argc, char* argv[])
           });
       }
 
+      if (exporterType == "CODEBLOCKS_WINDOWS")
+      {
+        const auto windowsTargets = std::map<juce::String, const char*>{
+          {"0x0400", "Windows NT 4.0"}, {"0x0500", "Windows 2000"},
+          {"0x0501", "Windows XP"},     {"0x0502", "Windows Server 2003"},
+          {"0x0600", "Windows Vista"},  {"0x0601", "Windows 7"},
+          {"0x0602", "Windows 8"},      {"0x0603", "Windows 8.1"},
+          {"0x0A00", "Windows 10"},
+        };
+
+        convertSettingIfDefined(exporter, "codeBlocksWindowsTarget", "TARGET_PLATFORM",
+                                [&windowsTargets](const juce::var& v) -> juce::String {
+                                  const auto value = v.toString();
+
+                                  auto search = windowsTargets.find(value);
+                                  if (search != windowsTargets.end())
+                                  {
+                                    return search->second;
+                                  }
+
+                                  return {};
+                                });
+      }
+
       writeUserNotes(wLn, exporter);
 
       wLn(")");

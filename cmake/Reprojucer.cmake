@@ -661,6 +661,10 @@ function(jucer_export_target exporter)
     list(APPEND multi_value_keywords "PKGCONFIG_LIBRARIES")
   endif()
 
+  if(exporter STREQUAL "Code::Blocks (Windows)")
+    list(APPEND single_value_keywords "TARGET_PLATFORM")
+  endif()
+
   _FRUT_parse_arguments("${single_value_keywords}" "${multi_value_keywords}" "${ARGN}")
 
   if(DEFINED _TARGET_PROJECT_FOLDER)
@@ -872,6 +876,18 @@ function(jucer_export_target exporter)
 
   if(DEFINED _PKGCONFIG_LIBRARIES)
     set(JUCER_PKGCONFIG_LIBRARIES "${_PKGCONFIG_LIBRARIES}" PARENT_SCOPE)
+  endif()
+
+  if(DEFINED _TARGET_PLATFORM)
+    set(target_platform "${_TARGET_PLATFORM}")
+    set(target_platform_values "Default" "Windows NT 4.0" "Windows 2000" "Windows XP"
+      "Windows Server 2003" "Windows Vista" "Windows Server 2008" "Windows 7" "Windows 8"
+      "Windows 8.1" "Windows 10"
+    )
+    if(NOT target_platform IN_LIST target_platform_values)
+      message(FATAL_ERROR "Unsupported value for TARGET_PLATFORM: \"${target_platform}\"")
+    endif()
+    set(JUCER_TARGET_PLATFORM "${target_platform}" PARENT_SCOPE)
   endif()
 
 endfunction()
@@ -3297,6 +3313,25 @@ function(_FRUT_set_compiler_and_linker_settings target)
 
   elseif(WIN32 AND NOT MSVC)
     target_compile_definitions(${target} PRIVATE "__MINGW__=1" "__MINGW_EXTENSION=")
+
+    if(DEFINED JUCER_TARGET_PLATFORM AND NOT JUCER_TARGET_PLATFORM STREQUAL "Default")
+      set(target_platform_values "Windows NT 4.0" "Windows 2000" "Windows XP"
+        "Windows Server 2003" "Windows Vista" "Windows Server 2008" "Windows 7"
+        "Windows 8" "Windows 8.1" "Windows 10"
+      )
+      set(winver_define_values "0x0400" "0x0500" "0x0501"
+        "0x0502" "0x0600" "0x0600" "0x0601"
+        "0x0602" "0x0603" "0x0A00"
+      )
+      list(FIND target_platform_values "${JUCER_TARGET_PLATFORM}" target_platform_index)
+      if(target_platform_index EQUAL -1)
+        message(FATAL_ERROR
+          "Unsupported value for JUCER_TARGET_PLATFORM: \"${target_platform}\""
+        )
+      endif()
+      list(GET winver_define_values ${target_platform_index} winver_define_value)
+      target_compile_definitions(${target} PRIVATE "WINVER=${winver_define_value}")
+    endif()
 
     foreach(config ${JUCER_PROJECT_CONFIGURATIONS})
       if(${JUCER_CONFIGURATION_IS_DEBUG_${config}})
