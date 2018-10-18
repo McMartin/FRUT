@@ -35,6 +35,8 @@ Define the settings specific to an export target.
 
     [CXX_STANDARD_TO_USE <cxx_standard>]
     [PKGCONFIG_LIBRARIES <library> [<library> ...]]
+
+    [TARGET_PLATFORM <target_platform>]
   )
 
 ``<exporter>`` must be one of the :ref:`supported exporters <supported-export-targets>`.
@@ -57,3 +59,5 @@ supported by the ``"Xcode (MacOSX)"`` exporter.
 
 ``CXX_STANDARD_TO_USE`` and ``PKGCONFIG_LIBRARIES`` are only supported by the
 ``"Linux Makefile"`` exporter.
+
+``TARGET_PLATFORM`` is only supported by the ``"Code::Blocks (Windows)"`` exporter.

@@ -931,12 +931,12 @@ int main(int argc, char* argv[])
 
   // jucer_export_target() and jucer_export_target_configuration()
   {
-    const auto supportedExporters =
-      juce::StringArray{"XCODE_MAC", "VS2017", "VS2015", "VS2013", "LINUX_MAKE"};
+    const auto supportedExporters = juce::StringArray{
+      "XCODE_MAC", "VS2017", "VS2015", "VS2013", "LINUX_MAKE", "CODEBLOCKS_WINDOWS"};
     const auto exporterNames = std::map<juce::String, const char*>{
       {"XCODE_MAC", "Xcode (MacOSX)"},  {"VS2017", "Visual Studio 2017"},
       {"VS2015", "Visual Studio 2015"}, {"VS2013", "Visual Studio 2013"},
-      {"LINUX_MAKE", "Linux Makefile"},
+      {"LINUX_MAKE", "Linux Makefile"}, {"CODEBLOCKS_WINDOWS", "Code::Blocks (Windows)"},
     };
 
     const auto exportFormats = jucerProject.getChildWithName("EXPORTFORMATS");
@@ -1193,6 +1193,30 @@ int main(int argc, char* argv[])
           exporter, "linuxExtraPkgConfig", "PKGCONFIG_LIBRARIES", [](const juce::var& v) {
             return juce::StringArray::fromTokens(v.toString(), " ", "\"'");
           });
+      }
+
+      if (exporterType == "CODEBLOCKS_WINDOWS")
+      {
+        const auto windowsTargets = std::map<juce::String, const char*>{
+          {"0x0400", "Windows NT 4.0"}, {"0x0500", "Windows 2000"},
+          {"0x0501", "Windows XP"},     {"0x0502", "Windows Server 2003"},
+          {"0x0600", "Windows Vista"},  {"0x0601", "Windows 7"},
+          {"0x0602", "Windows 8"},      {"0x0603", "Windows 8.1"},
+          {"0x0A00", "Windows 10"},
+        };
+
+        convertSettingIfDefined(exporter, "codeBlocksWindowsTarget", "TARGET_PLATFORM",
+                                [&windowsTargets](const juce::var& v) -> juce::String {
+                                  const auto value = v.toString();
+
+                                  auto search = windowsTargets.find(value);
+                                  if (search != windowsTargets.end())
+                                  {
+                                    return search->second;
+                                  }
+
+                                  return {};
+                                });
       }
 
       writeUserNotes(wLn, exporter);
@@ -1569,6 +1593,28 @@ int main(int argc, char* argv[])
                                       return "32-bit (-m32)";
 
                                     if (value == "-m64")
+                                      return "64-bit (-m64)";
+
+                                    if (value == "-march=armv6")
+                                      return "ARM v6";
+
+                                    if (value == "-march=armv7")
+                                      return "ARM v7";
+
+                                    return {};
+                                  });
+        }
+
+        if (exporterType == "CODEBLOCKS_WINDOWS")
+        {
+          convertSettingIfDefined(configuration, "windowsCodeBlocksArchitecture",
+                                  "ARCHITECTURE", [](const juce::var& v) -> juce::String {
+                                    const auto value = v.toString();
+
+                                    if (value == "-m32")
+                                      return "32-bit (-m32)";
+
+                                    if (value == "-m64" || value.isEmpty())
                                       return "64-bit (-m64)";
 
                                     if (value == "-march=armv6")

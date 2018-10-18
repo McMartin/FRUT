@@ -29,6 +29,7 @@ set(Reprojucer_supported_exporters
   "Visual Studio 2015"
   "Visual Studio 2013"
   "Linux Makefile"
+  "Code::Blocks (Windows)"
 )
 set(Reprojucer_supported_exporters_conditions
   "APPLE"
@@ -36,6 +37,7 @@ set(Reprojucer_supported_exporters_conditions
   "MSVC_VERSION\;EQUAL\;1900"
   "MSVC_VERSION\;EQUAL\;1800"
   "CMAKE_HOST_SYSTEM_NAME\;STREQUAL\;Linux"
+  "WIN32\;AND\;NOT\;MSVC"
 )
 
 
@@ -485,6 +487,7 @@ function(jucer_project_module module_name PATH_KEYWORD modules_folder)
   set(module_info_OSXFrameworks "")
   set(module_info_linuxLibs "")
   set(module_info_linuxPackages "")
+  set(module_info_mingwLibs "")
   unset(module_info_minimumCppStandard)
 
   file(STRINGS "${module_header_file}" all_lines)
@@ -525,6 +528,11 @@ function(jucer_project_module module_name PATH_KEYWORD modules_folder)
   string(REPLACE "," ";" linux_packages "${linux_packages}")
   list(APPEND JUCER_PROJECT_LINUX_PACKAGES ${linux_packages})
   set(JUCER_PROJECT_LINUX_PACKAGES "${JUCER_PROJECT_LINUX_PACKAGES}" PARENT_SCOPE)
+
+  string(REPLACE " " ";" mingw_libs "${module_info_mingwLibs}")
+  string(REPLACE "," ";" mingw_libs "${mingw_libs}")
+  list(APPEND JUCER_PROJECT_MINGW_LIBS ${mingw_libs})
+  set(JUCER_PROJECT_MINGW_LIBS "${JUCER_PROJECT_MINGW_LIBS}" PARENT_SCOPE)
 
   if(DEFINED module_info_minimumCppStandard)
     unset(project_cxx_standard)
@@ -592,7 +600,7 @@ function(jucer_export_target exporter)
 
   list(FIND Reprojucer_supported_exporters "${exporter}" exporter_index)
   list(GET Reprojucer_supported_exporters_conditions ${exporter_index} condition)
-  if(NOT ${condition})
+  if(NOT (${condition}))
     return()
   endif()
 
@@ -651,6 +659,10 @@ function(jucer_export_target exporter)
   if(exporter STREQUAL "Linux Makefile")
     list(APPEND single_value_keywords "CXX_STANDARD_TO_USE")
     list(APPEND multi_value_keywords "PKGCONFIG_LIBRARIES")
+  endif()
+
+  if(exporter STREQUAL "Code::Blocks (Windows)")
+    list(APPEND single_value_keywords "TARGET_PLATFORM")
   endif()
 
   _FRUT_parse_arguments("${single_value_keywords}" "${multi_value_keywords}" "${ARGN}")
@@ -866,6 +878,18 @@ function(jucer_export_target exporter)
     set(JUCER_PKGCONFIG_LIBRARIES "${_PKGCONFIG_LIBRARIES}" PARENT_SCOPE)
   endif()
 
+  if(DEFINED _TARGET_PLATFORM)
+    set(target_platform "${_TARGET_PLATFORM}")
+    set(target_platform_values "Default" "Windows NT 4.0" "Windows 2000" "Windows XP"
+      "Windows Server 2003" "Windows Vista" "Windows Server 2008" "Windows 7" "Windows 8"
+      "Windows 8.1" "Windows 10"
+    )
+    if(NOT target_platform IN_LIST target_platform_values)
+      message(FATAL_ERROR "Unsupported value for TARGET_PLATFORM: \"${target_platform}\"")
+    endif()
+    set(JUCER_TARGET_PLATFORM "${target_platform}" PARENT_SCOPE)
+  endif()
+
 endfunction()
 
 
@@ -899,7 +923,7 @@ function(jucer_export_target_configuration
 
   list(FIND Reprojucer_supported_exporters "${exporter}" exporter_index)
   list(GET Reprojucer_supported_exporters_conditions ${exporter_index} condition)
-  if(NOT ${condition})
+  if(NOT (${condition}))
     return()
   endif()
 
@@ -961,6 +985,10 @@ function(jucer_export_target_configuration
   endif()
 
   if(exporter STREQUAL "Linux Makefile")
+    list(APPEND single_value_keywords "ARCHITECTURE")
+  endif()
+
+  if(exporter STREQUAL "Code::Blocks (Windows)")
     list(APPEND single_value_keywords "ARCHITECTURE")
   endif()
 
@@ -1306,13 +1334,29 @@ function(jucer_export_target_configuration
     set(JUCER_ARCHITECTURE_FLAG_${config} "${architecture_flag}" PARENT_SCOPE)
   endif()
 
+  if(DEFINED _ARCHITECTURE AND exporter STREQUAL "Code::Blocks (Windows)")
+    set(architecture "${_ARCHITECTURE}")
+    if(architecture STREQUAL "32-bit (-m32)")
+      set(architecture_flag "-m32")
+    elseif(architecture STREQUAL "64-bit (-m64)")
+      set(architecture_flag "-m64")
+    elseif(architecture STREQUAL "ARM v6")
+      set(architecture_flag "-march=armv6")
+    elseif(architecture STREQUAL "ARM v7")
+      set(architecture_flag "-march=armv7")
+    else()
+      message(FATAL_ERROR "Unsupported value for ARCHITECTURE: \"${architecture}\"")
+    endif()
+    set(JUCER_ARCHITECTURE_FLAG_${config} "${architecture_flag}" PARENT_SCOPE)
+  endif()
+
 endfunction()
 
 
 function(jucer_project_end)
 
   unset(current_exporter)
-  foreach(exporter_index RANGE 4)
+  foreach(exporter_index RANGE 5)
     list(GET Reprojucer_supported_exporters_conditions ${exporter_index} condition)
     if(${condition})
       if(DEFINED current_exporter)
@@ -3286,6 +3330,64 @@ function(_FRUT_set_compiler_and_linker_settings target)
         target_link_libraries(${target} PRIVATE "-l${item}")
       endforeach()
     endif()
+
+  elseif(WIN32 AND NOT MSVC)
+    target_compile_definitions(${target} PRIVATE "__MINGW__=1" "__MINGW_EXTENSION=")
+
+    if(DEFINED JUCER_TARGET_PLATFORM AND NOT JUCER_TARGET_PLATFORM STREQUAL "Default")
+      set(target_platform_values "Windows NT 4.0" "Windows 2000" "Windows XP"
+        "Windows Server 2003" "Windows Vista" "Windows Server 2008" "Windows 7"
+        "Windows 8" "Windows 8.1" "Windows 10"
+      )
+      set(winver_define_values "0x0400" "0x0500" "0x0501"
+        "0x0502" "0x0600" "0x0600" "0x0601"
+        "0x0602" "0x0603" "0x0A00"
+      )
+      list(FIND target_platform_values "${JUCER_TARGET_PLATFORM}" target_platform_index)
+      if(target_platform_index EQUAL -1)
+        message(FATAL_ERROR
+          "Unsupported value for JUCER_TARGET_PLATFORM: \"${target_platform}\""
+        )
+      endif()
+      list(GET winver_define_values ${target_platform_index} winver_define_value)
+      target_compile_definitions(${target} PRIVATE "WINVER=${winver_define_value}")
+    endif()
+
+    foreach(config ${JUCER_PROJECT_CONFIGURATIONS})
+      string(TOUPPER "${config}" upper_config)
+
+      if(${JUCER_CONFIGURATION_IS_DEBUG_${config}})
+        target_compile_definitions(${target} PRIVATE
+          $<$<CONFIG:${config}>:DEBUG=1>
+          $<$<CONFIG:${config}>:_DEBUG=1>
+        )
+
+        target_compile_options(${target} PRIVATE $<$<CONFIG:${config}>:-g>)
+      else()
+        target_compile_definitions(${target} PRIVATE $<$<CONFIG:${config}>:NDEBUG=1>)
+
+        set_property(TARGET ${target} APPEND PROPERTY LINK_FLAGS_${upper_config} "-s")
+      endif()
+
+      if(DEFINED JUCER_ARCHITECTURE_FLAG_${config})
+        target_compile_options(${target} PRIVATE
+          $<$<CONFIG:${config}>:${JUCER_ARCHITECTURE_FLAG_${config}}>
+        )
+        set_property(TARGET ${target} APPEND PROPERTY
+          LINK_FLAGS_${upper_config} "${JUCER_ARCHITECTURE_FLAG_${config}}"
+        )
+      else()
+        target_compile_options(${target} PRIVATE $<$<CONFIG:${config}>:-m64>)
+        set_property(TARGET ${target} APPEND PROPERTY LINK_FLAGS_${upper_config} "-m64")
+      endif()
+    endforeach()
+
+    target_compile_options(${target} PRIVATE "-mstackrealign")
+
+    if(JUCER_PROJECT_MINGW_LIBS)
+      target_link_libraries(${target} PRIVATE ${JUCER_PROJECT_MINGW_LIBS})
+    endif()
+
   endif()
 
   target_compile_definitions(${target} PRIVATE

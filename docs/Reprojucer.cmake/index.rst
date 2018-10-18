@@ -29,6 +29,7 @@ Supported export targets
 - Visual Studio 2015
 - Visual Studio 2013
 - Linux Makefile
+- Code::Blocks (Windows)
 
 .. _Reprojucer-commands:
 
