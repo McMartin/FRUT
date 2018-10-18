@@ -29,6 +29,7 @@ set(Reprojucer_supported_exporters
   "Visual Studio 2015"
   "Visual Studio 2013"
   "Linux Makefile"
+  "Code::Blocks (Windows)"
 )
 set(Reprojucer_supported_exporters_conditions
   "APPLE"
@@ -36,6 +37,7 @@ set(Reprojucer_supported_exporters_conditions
   "MSVC_VERSION\;EQUAL\;1900"
   "MSVC_VERSION\;EQUAL\;1800"
   "CMAKE_HOST_SYSTEM_NAME\;STREQUAL\;Linux"
+  "WIN32\;AND\;NOT\;MSVC"
 )
 
 
@@ -485,6 +487,7 @@ function(jucer_project_module module_name PATH_KEYWORD modules_folder)
   set(module_info_OSXFrameworks "")
   set(module_info_linuxLibs "")
   set(module_info_linuxPackages "")
+  set(module_info_mingwLibs "")
   unset(module_info_minimumCppStandard)
 
   file(STRINGS "${module_header_file}" all_lines)
@@ -525,6 +528,11 @@ function(jucer_project_module module_name PATH_KEYWORD modules_folder)
   string(REPLACE "," ";" linux_packages "${linux_packages}")
   list(APPEND JUCER_PROJECT_LINUX_PACKAGES ${linux_packages})
   set(JUCER_PROJECT_LINUX_PACKAGES "${JUCER_PROJECT_LINUX_PACKAGES}" PARENT_SCOPE)
+
+  string(REPLACE " " ";" mingw_libs "${module_info_mingwLibs}")
+  string(REPLACE "," ";" mingw_libs "${mingw_libs}")
+  list(APPEND JUCER_PROJECT_MINGW_LIBS ${mingw_libs})
+  set(JUCER_PROJECT_MINGW_LIBS "${JUCER_PROJECT_MINGW_LIBS}" PARENT_SCOPE)
 
   if(DEFINED module_info_minimumCppStandard)
     unset(project_cxx_standard)
@@ -592,7 +600,7 @@ function(jucer_export_target exporter)
 
   list(FIND Reprojucer_supported_exporters "${exporter}" exporter_index)
   list(GET Reprojucer_supported_exporters_conditions ${exporter_index} condition)
-  if(NOT ${condition})
+  if(NOT (${condition}))
     return()
   endif()
 
@@ -899,7 +907,7 @@ function(jucer_export_target_configuration
 
   list(FIND Reprojucer_supported_exporters "${exporter}" exporter_index)
   list(GET Reprojucer_supported_exporters_conditions ${exporter_index} condition)
-  if(NOT ${condition})
+  if(NOT (${condition}))
     return()
   endif()
 
@@ -1312,7 +1320,7 @@ endfunction()
 function(jucer_project_end)
 
   unset(current_exporter)
-  foreach(exporter_index RANGE 4)
+  foreach(exporter_index RANGE 5)
     list(GET Reprojucer_supported_exporters_conditions ${exporter_index} condition)
     if(${condition})
       if(DEFINED current_exporter)
@@ -3286,6 +3294,32 @@ function(_FRUT_set_compiler_and_linker_settings target)
         target_link_libraries(${target} PRIVATE "-l${item}")
       endforeach()
     endif()
+
+  elseif(WIN32 AND NOT MSVC)
+    target_compile_definitions(${target} PRIVATE "__MINGW__=1" "__MINGW_EXTENSION=")
+
+    foreach(config ${JUCER_PROJECT_CONFIGURATIONS})
+      if(${JUCER_CONFIGURATION_IS_DEBUG_${config}})
+        target_compile_definitions(${target} PRIVATE
+          $<$<CONFIG:${config}>:DEBUG=1>
+          $<$<CONFIG:${config}>:_DEBUG=1>
+        )
+
+        target_compile_options(${target} PRIVATE $<$<CONFIG:${config}>:-g>)
+      else()
+        target_compile_definitions(${target} PRIVATE $<$<CONFIG:${config}>:NDEBUG=1>)
+
+        string(TOUPPER "${config}" upper_config)
+        set_property(TARGET ${target} APPEND PROPERTY LINK_FLAGS_${upper_config} "-s")
+      endif()
+    endforeach()
+
+    target_compile_options(${target} PRIVATE "-mstackrealign")
+
+    if(JUCER_PROJECT_MINGW_LIBS)
+      target_link_libraries(${target} PRIVATE ${JUCER_PROJECT_MINGW_LIBS})
+    endif()
+
   endif()
 
   target_compile_definitions(${target} PRIVATE

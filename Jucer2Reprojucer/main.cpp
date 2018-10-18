@@ -931,12 +931,12 @@ int main(int argc, char* argv[])
 
   // jucer_export_target() and jucer_export_target_configuration()
   {
-    const auto supportedExporters =
-      juce::StringArray{"XCODE_MAC", "VS2017", "VS2015", "VS2013", "LINUX_MAKE"};
+    const auto supportedExporters = juce::StringArray{
+      "XCODE_MAC", "VS2017", "VS2015", "VS2013", "LINUX_MAKE", "CODEBLOCKS_WINDOWS"};
     const auto exporterNames = std::map<juce::String, const char*>{
       {"XCODE_MAC", "Xcode (MacOSX)"},  {"VS2017", "Visual Studio 2017"},
       {"VS2015", "Visual Studio 2015"}, {"VS2013", "Visual Studio 2013"},
-      {"LINUX_MAKE", "Linux Makefile"},
+      {"LINUX_MAKE", "Linux Makefile"}, {"CODEBLOCKS_WINDOWS", "Code::Blocks (Windows)"},
     };
 
     const auto exportFormats = jucerProject.getChildWithName("EXPORTFORMATS");
