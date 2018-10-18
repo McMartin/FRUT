@@ -1783,6 +1783,7 @@ function(jucer_project_end)
 
           set(rez_defines "")
           set(rez_archs "")
+          set(all_confs_sysroot "")
           foreach(config ${JUCER_PROJECT_CONFIGURATIONS})
             foreach(osx_architecture ${JUCER_OSX_ARCHITECTURES_${config}})
               list(APPEND rez_defines
@@ -1794,6 +1795,19 @@ function(jucer_project_end)
                 "$<$<CONFIG:${config}>:${osx_architecture}>"
               )
             endforeach()
+
+            set(sdk_version "${JUCER_OSX_BASE_SDK_VERSION_${config}}")
+            if(sdk_version)
+              set(sdk_option "--sdk" "macosx${sdk_version}")
+            else()
+              set(sdk_option "")
+            endif()
+            execute_process(
+              COMMAND "xcrun" ${sdk_option} "--show-sdk-path"
+              OUTPUT_VARIABLE sysroot
+              OUTPUT_STRIP_TRAILING_WHITESPACE
+            )
+            list(APPEND all_confs_sysroot "$<$<CONFIG:${config}>:${sysroot}>")
           endforeach()
 
           string(CONCAT carbon_include_dir
@@ -1816,6 +1830,7 @@ function(jucer_project_end)
             "-i" "${carbon_include_dir}"
             "-i" "${CMAKE_CURRENT_BINARY_DIR}/JuceLibraryCode"
             "-i" "${juce_audio_plugin_client_include_dir}"
+            "-isysroot" ${all_confs_sysroot}
             ${rez_inputs}
           )
           set_source_files_properties("${rez_output}" PROPERTIES
