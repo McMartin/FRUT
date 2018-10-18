@@ -988,6 +988,10 @@ function(jucer_export_target_configuration
     list(APPEND single_value_keywords "ARCHITECTURE")
   endif()
 
+  if(exporter STREQUAL "Code::Blocks (Windows)")
+    list(APPEND single_value_keywords "ARCHITECTURE")
+  endif()
+
   _FRUT_parse_arguments("${single_value_keywords}" "${multi_value_keywords}" "${ARGN}")
 
   if(DEFINED _BINARY_NAME)
@@ -1325,6 +1329,22 @@ function(jucer_export_target_configuration
     elseif(architecture STREQUAL "ARM v7")
       set(architecture_flag "-march=armv7")
     elseif(NOT architecture STREQUAL "<None>")
+      message(FATAL_ERROR "Unsupported value for ARCHITECTURE: \"${architecture}\"")
+    endif()
+    set(JUCER_ARCHITECTURE_FLAG_${config} "${architecture_flag}" PARENT_SCOPE)
+  endif()
+
+  if(DEFINED _ARCHITECTURE AND exporter STREQUAL "Code::Blocks (Windows)")
+    set(architecture "${_ARCHITECTURE}")
+    if(architecture STREQUAL "32-bit (-m32)")
+      set(architecture_flag "-m32")
+    elseif(architecture STREQUAL "64-bit (-m64)")
+      set(architecture_flag "-m64")
+    elseif(architecture STREQUAL "ARM v6")
+      set(architecture_flag "-march=armv6")
+    elseif(architecture STREQUAL "ARM v7")
+      set(architecture_flag "-march=armv7")
+    else()
       message(FATAL_ERROR "Unsupported value for ARCHITECTURE: \"${architecture}\"")
     endif()
     set(JUCER_ARCHITECTURE_FLAG_${config} "${architecture_flag}" PARENT_SCOPE)
@@ -3334,6 +3354,8 @@ function(_FRUT_set_compiler_and_linker_settings target)
     endif()
 
     foreach(config ${JUCER_PROJECT_CONFIGURATIONS})
+      string(TOUPPER "${config}" upper_config)
+
       if(${JUCER_CONFIGURATION_IS_DEBUG_${config}})
         target_compile_definitions(${target} PRIVATE
           $<$<CONFIG:${config}>:DEBUG=1>
@@ -3344,8 +3366,19 @@ function(_FRUT_set_compiler_and_linker_settings target)
       else()
         target_compile_definitions(${target} PRIVATE $<$<CONFIG:${config}>:NDEBUG=1>)
 
-        string(TOUPPER "${config}" upper_config)
         set_property(TARGET ${target} APPEND PROPERTY LINK_FLAGS_${upper_config} "-s")
+      endif()
+
+      if(DEFINED JUCER_ARCHITECTURE_FLAG_${config})
+        target_compile_options(${target} PRIVATE
+          $<$<CONFIG:${config}>:${JUCER_ARCHITECTURE_FLAG_${config}}>
+        )
+        set_property(TARGET ${target} APPEND PROPERTY
+          LINK_FLAGS_${upper_config} "${JUCER_ARCHITECTURE_FLAG_${config}}"
+        )
+      else()
+        target_compile_options(${target} PRIVATE $<$<CONFIG:${config}>:-m64>)
+        set_property(TARGET ${target} APPEND PROPERTY LINK_FLAGS_${upper_config} "-m64")
       endif()
     endforeach()
 
