@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<JUCERPROJECT id="F8GnGq" name="consoleapp420" projectType="consoleapp" version="1.0.0"
+              bundleIdentifier="com.yourcompany.consoleapp420" includeBinaryInAppConfig="1"
+              jucerVersion="4.2.0">
+  <MAINGROUP id="DgoFxf" name="consoleapp420">
+    <GROUP id="{BD88B3FF-7D5C-83AC-E20D-2A738353DB04}" name="Source">
+      <FILE id="jzVERO" name="foo.cpp" compile="1" resource="0" file="Source/foo.cpp"/>
+    </GROUP>
+  </MAINGROUP>
+  <EXPORTFORMATS>
+    <XCODE_MAC targetFolder="Builds/MacOSX">
+      <CONFIGURATIONS>
+        <CONFIGURATION name="Debug" osxSDK="default" osxCompatibility="default" osxArchitecture="default"
+                       isDebug="1" optimisation="1" targetName="consoleapp420"/>
+        <CONFIGURATION name="Release" osxSDK="default" osxCompatibility="default" osxArchitecture="default"
+                       isDebug="0" optimisation="3" targetName="consoleapp420"/>
+      </CONFIGURATIONS>
+      <MODULEPATHS/>
+    </XCODE_MAC>
+    <VS2015 targetFolder="Builds/VisualStudio2015">
+      <CONFIGURATIONS>
+        <CONFIGURATION name="Debug" winWarningLevel="4" generateManifest="1" winArchitecture="32-bit"
+                       isDebug="1" optimisation="1" targetName="consoleapp420"/>
+        <CONFIGURATION name="Release" winWarningLevel="4" generateManifest="1" winArchitecture="32-bit"
+                       isDebug="0" optimisation="3" targetName="consoleapp420"/>
+      </CONFIGURATIONS>
+      <MODULEPATHS/>
+    </VS2015>
+    <VS2013 targetFolder="Builds/VisualStudio2013">
+      <CONFIGURATIONS>
+        <CONFIGURATION name="Debug" winWarningLevel="4" generateManifest="1" winArchitecture="32-bit"
+                       isDebug="1" optimisation="1" targetName="consoleapp420"/>
+        <CONFIGURATION name="Release" winWarningLevel="4" generateManifest="1" winArchitecture="32-bit"
+                       isDebug="0" optimisation="3" targetName="consoleapp420"/>
+      </CONFIGURATIONS>
+      <MODULEPATHS/>
+    </VS2013>
+    <LINUX_MAKE targetFolder="Builds/LinuxMakefile">
+      <CONFIGURATIONS>
+        <CONFIGURATION name="Debug" libraryPath="/usr/X11R6/lib/" isDebug="1" optimisation="1"
+                       targetName="consoleapp420"/>
+        <CONFIGURATION name="Release" libraryPath="/usr/X11R6/lib/" isDebug="0" optimisation="3"
+                       targetName="consoleapp420"/>
+      </CONFIGURATIONS>
+      <MODULEPATHS/>
+    </LINUX_MAKE>
+    <CODEBLOCKS_WINDOWS targetFolder="Builds/CodeBlocksWindows">
+      <CONFIGURATIONS>
+        <CONFIGURATION name="Debug" isDebug="1" optimisation="1" targetName="consoleapp420"/>
+        <CONFIGURATION name="Release" isDebug="0" optimisation="3" targetName="consoleapp420"/>
+      </CONFIGURATIONS>
+      <MODULEPATHS/>
+    </CODEBLOCKS_WINDOWS>
+  </EXPORTFORMATS>
+  <MODULES/>
+  <JUCEOPTIONS/>
+</JUCERPROJECT>
