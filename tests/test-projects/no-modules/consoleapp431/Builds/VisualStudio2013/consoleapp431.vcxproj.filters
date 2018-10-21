@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<Project ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="consoleapp431">
+      <UniqueIdentifier>{3AF5CB61-282F-EBDE-1C19-75C818A0E7F8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="consoleapp431\Source">
+      <UniqueIdentifier>{0FD6D297-1519-EAC4-B770-1F7F2D5F05FD}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Juce Library Code">
+      <UniqueIdentifier>{8B4D1BAA-6DB4-CAEC-A0FA-271F354D5C61}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\Source\foo.cpp">
+      <Filter>consoleapp431\Source</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\JuceLibraryCode\AppConfig.h">
+      <Filter>Juce Library Code</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\JuceLibraryCode\JuceHeader.h">
+      <Filter>Juce Library Code</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include=".\resources.rc">
+      <Filter>Juce Library Code</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+</Project>

@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<JUCERPROJECT id="wlNiAx" name="consoleapp431" projectType="consoleapp" version="1.0.0"
+              bundleIdentifier="com.yourcompany.consoleapp431" includeBinaryInAppConfig="1"
+              jucerVersion="4.3.1">
+  <MAINGROUP id="pcA730" name="consoleapp431">
+    <GROUP id="{237D21A5-F2A8-64A4-5977-E31764D69449}" name="Source">
+      <FILE id="mj1csX" name="foo.cpp" compile="1" resource="0" file="Source/foo.cpp"/>
+    </GROUP>
+  </MAINGROUP>
+  <EXPORTFORMATS>
+    <XCODE_MAC targetFolder="Builds/MacOSX">
+      <CONFIGURATIONS>
+        <CONFIGURATION name="Debug" isDebug="1" optimisation="1" targetName="consoleapp431"/>
+        <CONFIGURATION name="Release" isDebug="0" optimisation="3" targetName="consoleapp431"/>
+      </CONFIGURATIONS>
+      <MODULEPATHS/>
+    </XCODE_MAC>
+    <VS2015 targetFolder="Builds/VisualStudio2015">
+      <CONFIGURATIONS>
+        <CONFIGURATION name="Debug" winWarningLevel="4" generateManifest="1" winArchitecture="32-bit"
+                       isDebug="1" optimisation="1" targetName="consoleapp431"/>
+        <CONFIGURATION name="Release" winWarningLevel="4" generateManifest="1" winArchitecture="32-bit"
+                       isDebug="0" optimisation="3" targetName="consoleapp431"/>
+      </CONFIGURATIONS>
+      <MODULEPATHS/>
+    </VS2015>
+    <VS2013 targetFolder="Builds/VisualStudio2013">
+      <CONFIGURATIONS>
+        <CONFIGURATION name="Debug" winWarningLevel="4" generateManifest="1" winArchitecture="32-bit"
+                       isDebug="1" optimisation="1" targetName="consoleapp431"/>
+        <CONFIGURATION name="Release" winWarningLevel="4" generateManifest="1" winArchitecture="32-bit"
+                       isDebug="0" optimisation="3" targetName="consoleapp431"/>
+      </CONFIGURATIONS>
+      <MODULEPATHS/>
+    </VS2013>
+    <LINUX_MAKE targetFolder="Builds/LinuxMakefile">
+      <CONFIGURATIONS>
+        <CONFIGURATION name="Debug" isDebug="1" optimisation="1" targetName="consoleapp431"/>
+        <CONFIGURATION name="Release" isDebug="0" optimisation="3" targetName="consoleapp431"/>
+      </CONFIGURATIONS>
+      <MODULEPATHS/>
+    </LINUX_MAKE>
+    <CODEBLOCKS_WINDOWS targetFolder="Builds/CodeBlocksWindows">
+      <CONFIGURATIONS>
+        <CONFIGURATION name="Debug" isDebug="1" optimisation="1" targetName="consoleapp431"/>
+        <CONFIGURATION name="Release" isDebug="0" optimisation="3" targetName="consoleapp431"/>
+      </CONFIGURATIONS>
+      <MODULEPATHS/>
+    </CODEBLOCKS_WINDOWS>
+  </EXPORTFORMATS>
+  <MODULES/>
+  <JUCEOPTIONS/>
+</JUCERPROJECT>

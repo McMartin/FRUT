@@ -1,0 +1,129 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+		4844FCF3E4DAE02914780C45 = {isa = PBXBuildFile; fileRef = 9C0048CEEA22B3ACDC242990; };
+		1AF3492F5623B2AB8F8D7920 = {isa = PBXBuildFile; fileRef = F5020019A7D272E4C91D81C8; };
+		5BD4E43B3B8BBE6EB8F4A5E2 = {isa = PBXBuildFile; fileRef = 070555C10FC2738475EF17F1; };
+		070555C10FC2738475EF17F1 = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = foo.cpp; path = ../../Source/foo.cpp; sourceTree = "SOURCE_ROOT"; };
+		9C0048CEEA22B3ACDC242990 = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = consoleapp431; sourceTree = "BUILT_PRODUCTS_DIR"; };
+		EBAB9ADCADE141764DB1DEB7 = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = AppConfig.h; path = ../../JuceLibraryCode/AppConfig.h; sourceTree = "SOURCE_ROOT"; };
+		F5020019A7D272E4C91D81C8 = {isa = PBXFileReference; lastKnownFileType = file.nib; name = RecentFilesMenuTemplate.nib; path = RecentFilesMenuTemplate.nib; sourceTree = "SOURCE_ROOT"; };
+		FCDF282D8421BEDE34693D5D = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = JuceHeader.h; path = ../../JuceLibraryCode/JuceHeader.h; sourceTree = "SOURCE_ROOT"; };
+		5F7E31C1CCF5FDE5B669B295 = {isa = PBXGroup; children = (
+					070555C10FC2738475EF17F1, ); name = Source; sourceTree = "<group>"; };
+		403B98178EA773EB0E14B75D = {isa = PBXGroup; children = (
+					5F7E31C1CCF5FDE5B669B295, ); name = consoleapp431; sourceTree = "<group>"; };
+		36BC5175AC7281B53611702F = {isa = PBXGroup; children = (
+					EBAB9ADCADE141764DB1DEB7,
+					FCDF282D8421BEDE34693D5D, ); name = "Juce Library Code"; sourceTree = "<group>"; };
+		F2F4EAF83129209239E3A29C = {isa = PBXGroup; children = (
+					F5020019A7D272E4C91D81C8, ); name = Resources; sourceTree = "<group>"; };
+		E46F43D962D08EAA9CBD3678 = {isa = PBXGroup; children = (  ); name = Frameworks; sourceTree = "<group>"; };
+		33A08E2DE1EC5CC1E3119654 = {isa = PBXGroup; children = (
+					9C0048CEEA22B3ACDC242990, ); name = Products; sourceTree = "<group>"; };
+		1CDE8C24AF264608F19F0011 = {isa = PBXGroup; children = (
+					403B98178EA773EB0E14B75D,
+					36BC5175AC7281B53611702F,
+					F2F4EAF83129209239E3A29C,
+					E46F43D962D08EAA9CBD3678,
+					33A08E2DE1EC5CC1E3119654, ); name = Source; sourceTree = "<group>"; };
+		750837464263D523886DDD3C = {isa = XCBuildConfiguration; buildSettings = {
+				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
+				CLANG_LINK_OBJC_RUNTIME = NO;
+				COMBINE_HIDPI_IMAGES = YES;
+				CONFIGURATION_BUILD_DIR = "$(PROJECT_DIR)/build/$(CONFIGURATION)";
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"_DEBUG=1",
+					"DEBUG=1",
+					"JUCER_XCODE_MAC_F6D2F4CF=1",
+					"JUCE_APP_VERSION=1.0.0",
+					"JUCE_APP_VERSION_HEX=0x10000", );
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				HEADER_SEARCH_PATHS = ("../../JuceLibraryCode", "$(inherited)");
+				INSTALL_PATH = "/usr/bin";
+				MACOSX_DEPLOYMENT_TARGET = 10.11;
+				MACOSX_DEPLOYMENT_TARGET_ppc = 10.4;
+				PRODUCT_BUNDLE_IDENTIFIER = com.yourcompany.consoleapp431;
+				SDKROOT_ppc = macosx10.5; }; name = Debug; };
+		F1A3F1BB3537AC4C43F15C1E = {isa = XCBuildConfiguration; buildSettings = {
+				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
+				CLANG_LINK_OBJC_RUNTIME = NO;
+				COMBINE_HIDPI_IMAGES = YES;
+				CONFIGURATION_BUILD_DIR = "$(PROJECT_DIR)/build/$(CONFIGURATION)";
+				DEAD_CODE_STRIPPING = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+				GCC_OPTIMIZATION_LEVEL = 3;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"_NDEBUG=1",
+					"NDEBUG=1",
+					"JUCER_XCODE_MAC_F6D2F4CF=1",
+					"JUCE_APP_VERSION=1.0.0",
+					"JUCE_APP_VERSION_HEX=0x10000", );
+				GCC_SYMBOLS_PRIVATE_EXTERN = YES;
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				HEADER_SEARCH_PATHS = ("../../JuceLibraryCode", "$(inherited)");
+				INSTALL_PATH = "/usr/bin";
+				MACOSX_DEPLOYMENT_TARGET = 10.11;
+				MACOSX_DEPLOYMENT_TARGET_ppc = 10.4;
+				PRODUCT_BUNDLE_IDENTIFIER = com.yourcompany.consoleapp431;
+				SDKROOT_ppc = macosx10.5; }; name = Release; };
+		54544015089A18ADCE8FA17E = {isa = XCBuildConfiguration; buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf";
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = c99;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_CHECK_SWITCH_STATEMENTS = YES;
+				GCC_WARN_MISSING_PARENTHESES = YES;
+				GCC_WARN_NON_VIRTUAL_DESTRUCTOR = YES;
+				GCC_WARN_TYPECHECK_CALLS_TO_PRINTF = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "consoleapp431";
+				WARNING_CFLAGS = -Wreorder;
+				ZERO_LINK = NO; }; name = Debug; };
+		5B018ABB0C147E048BC5520F = {isa = XCBuildConfiguration; buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf";
+				GCC_C_LANGUAGE_STANDARD = c99;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_CHECK_SWITCH_STATEMENTS = YES;
+				GCC_WARN_MISSING_PARENTHESES = YES;
+				GCC_WARN_NON_VIRTUAL_DESTRUCTOR = YES;
+				GCC_WARN_TYPECHECK_CALLS_TO_PRINTF = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				PRODUCT_NAME = "consoleapp431";
+				WARNING_CFLAGS = -Wreorder;
+				ZERO_LINK = NO; }; name = Release; };
+		42BE26A1F6D700651EC05D2C = {isa = PBXTargetDependency; target = E3DF1DD3DBFEEDB1EFB37EB2; };
+		963EAA10E5FC96523088E0EF = {isa = XCConfigurationList; buildConfigurations = (
+					54544015089A18ADCE8FA17E,
+					5B018ABB0C147E048BC5520F, ); defaultConfigurationIsVisible = 0; defaultConfigurationName = Debug; };
+		B41CE223155AF3A9CBF9C4A0 = {isa = XCConfigurationList; buildConfigurations = (
+					750837464263D523886DDD3C,
+					F1A3F1BB3537AC4C43F15C1E, ); defaultConfigurationIsVisible = 0; defaultConfigurationName = Debug; };
+		80A41FCC9AB3088036996764 = {isa = PBXResourcesBuildPhase; buildActionMask = 2147483647; files = (
+					1AF3492F5623B2AB8F8D7920, ); runOnlyForDeploymentPostprocessing = 0; };
+		67DC7A04B42691337D724FB4 = {isa = PBXSourcesBuildPhase; buildActionMask = 2147483647; files = (
+					5BD4E43B3B8BBE6EB8F4A5E2, ); runOnlyForDeploymentPostprocessing = 0; };
+		79E1E6BA5C8F7D04393AF845 = {isa = PBXFrameworksBuildPhase; buildActionMask = 2147483647; files = (  ); runOnlyForDeploymentPostprocessing = 0; };
+		E3DF1DD3DBFEEDB1EFB37EB2 = {isa = PBXNativeTarget; buildConfigurationList = B41CE223155AF3A9CBF9C4A0; buildPhases = (
+					80A41FCC9AB3088036996764,
+					67DC7A04B42691337D724FB4,
+					79E1E6BA5C8F7D04393AF845, ); buildRules = ( ); dependencies = (  ); name = "consoleapp431 (ConsoleApp)"; productName = consoleapp431; productReference = 9C0048CEEA22B3ACDC242990; productType = "com.apple.product-type.tool"; };
+		7EB8352EBF19FE4647B3677D = {isa = PBXProject; buildConfigurationList = 963EAA10E5FC96523088E0EF; attributes = { LastUpgradeCheck = 0440; }; compatibilityVersion = "Xcode 3.2"; hasScannedForEncodings = 0; mainGroup = 1CDE8C24AF264608F19F0011; projectDirPath = ""; projectRoot = ""; targets = (E3DF1DD3DBFEEDB1EFB37EB2); };
+	};
+	rootObject = 7EB8352EBF19FE4647B3677D;
+}
