@@ -38,7 +38,7 @@
 @module_available_defines@
 //==============================================================================
 #ifndef    JUCE_STANDALONE_APPLICATION
- #ifdef JucePlugin_Build_Standalone
+ #if defined(JucePlugin_Name) && defined(JucePlugin_Build_Standalone)
   #define  JUCE_STANDALONE_APPLICATION JucePlugin_Build_Standalone
  #else
   #define  JUCE_STANDALONE_APPLICATION @is_standalone_application@
