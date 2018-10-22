@@ -2487,8 +2487,8 @@ function(_FRUT_generate_AppConfig_header)
       set(user_code_section "\n")
     endif()
   else()
-    string(CONCAT user_code_section "\n\n// (You can call jucer_appconfig_header() to "
-      "add your own code to this section)\n\n"
+    string(CONCAT user_code_section "\n\n// (You can get your own code in this section "
+      "by calling jucer_appconfig_header)\n\n"
     )
   endif()
 
