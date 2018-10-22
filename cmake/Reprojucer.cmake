@@ -2532,7 +2532,7 @@ function(_FRUT_generate_AppConfig_header)
       "#define JUCE_MODULE_AVAILABLE_${module_name}${padding_spaces} 1\n"
     )
 
-    if(DEFINED JUCER_${module_name}_CONFIG_FLAGS)
+    if(JUCER_${module_name}_CONFIG_FLAGS)
       string(APPEND config_flags_defines
         "//=============================================================================="
         "\n// ${module_name} flags:\n\n"
