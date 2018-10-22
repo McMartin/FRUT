@@ -2897,11 +2897,18 @@ function(_FRUT_generate_JuceHeader_header)
 
   if(DEFINED JUCER_VERSION AND JUCER_VERSION VERSION_LESS 5.0.0)
     string(TOUPPER "${JUCER_PROJECT_ID}" upper_project_id)
-    set(template_file "${Reprojucer_templates_DIR}/JuceHeader-4.h")
+    string(CONCAT include_guard_top
+      "#ifndef __APPHEADERFILE_${upper_project_id}__\n"
+      "#define __APPHEADERFILE_${upper_project_id}__"
+    )
+    set(include_guard_bottom "\n\n#endif   // __APPHEADERFILE_${upper_project_id}__")
   else()
-    set(template_file "${Reprojucer_templates_DIR}/JuceHeader.h")
+    set(include_guard_top "#pragma once")
+    set(include_guard_bottom "")
   endif()
-  configure_file("${template_file}" "JuceLibraryCode/JuceHeader.h")
+  configure_file("${Reprojucer_templates_DIR}/JuceHeader.h"
+    "JuceLibraryCode/JuceHeader.h"
+  )
   list(APPEND JUCER_PROJECT_SOURCES
     "${CMAKE_CURRENT_BINARY_DIR}/JuceLibraryCode/JuceHeader.h"
   )

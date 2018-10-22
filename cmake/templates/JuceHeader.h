@@ -7,7 +7,7 @@
 
 */
 
-#pragma once
+@include_guard_top@
 
 #include "AppConfig.h"
 
@@ -26,4 +26,4 @@ namespace ProjectInfo
     const char* const  versionString  = "@JUCER_PROJECT_VERSION@";
     const int          versionNumber  = @JUCER_PROJECT_VERSION_AS_HEX@;
 }
-#endif
+#endif@include_guard_bottom@
