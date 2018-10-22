@@ -1,5 +1,8 @@
 /*
 
+    IMPORTANT! This file is auto-generated each time you run cmake on your
+    project - if you alter its contents, your changes may be overwritten!
+
     This is the header file that your files should include in order to get all the
     JUCE library headers. You should avoid including the JUCE headers directly in
     your own source files, because that wouldn't pick up the correct configuration
