@@ -2565,6 +2565,11 @@ function(_FRUT_generate_AppConfig_header)
     set(audio_plugin_setting_names
       "Build_VST" "Build_VST3" "Build_AU" "Build_AUv3" "Build_RTAS" "Build_AAX"
       "Build_STANDALONE"
+    )
+    if(NOT (DEFINED JUCER_VERSION AND JUCER_VERSION VERSION_LESS 5.0.0))
+      list(APPEND audio_plugin_setting_names "Enable_IAA")
+    endif()
+    list(APPEND audio_plugin_setting_names
       "Name" "Desc" "Manufacturer" "ManufacturerWebsite" "ManufacturerEmail"
       "ManufacturerCode" "PluginCode"
       "IsSynth" "WantsMidiInput" "ProducesMidiOutput" "IsMidiEffect"
@@ -2585,6 +2590,11 @@ function(_FRUT_generate_AppConfig_header)
       "AAXIdentifier" "AAXManufacturerCode" "AAXProductId" "AAXCategory"
       "AAXDisableBypass" "AAXDisableMultiMono"
     )
+    if(NOT (DEFINED JUCER_VERSION AND JUCER_VERSION VERSION_LESS 5.0.0))
+      list(APPEND audio_plugin_setting_names
+        "IAAType" "IAASubType" "IAAName"
+      )
+    endif()
 
     _FRUT_bool_to_int("${JUCER_BUILD_VST}" Build_VST_value)
     _FRUT_bool_to_int("${JUCER_BUILD_VST3}" Build_VST3_value)
@@ -2597,6 +2607,7 @@ function(_FRUT_generate_AppConfig_header)
     else()
       _FRUT_bool_to_int("${JUCER_BUILD_STANDALONE_PLUGIN}" Build_STANDALONE_value)
     endif()
+    _FRUT_bool_to_int("${JUCER_ENABLE_INTERAPP_AUDIO}" Enable_IAA_value)
 
     set(Name_value "\"${JUCER_PLUGIN_NAME}\"")
     set(Desc_value "\"${JUCER_PLUGIN_DESCRIPTION}\"")
@@ -2739,6 +2750,23 @@ function(_FRUT_generate_AppConfig_header)
     endif()
     _FRUT_bool_to_int("${JUCER_PLUGIN_AAX_DISABLE_BYPASS}" AAXDisableBypass_value)
     _FRUT_bool_to_int("${JUCER_PLUGIN_AAX_DISABLE_MULTI_MONO}" AAXDisableMultiMono_value)
+
+    if(JUCER_PLUGIN_MIDI_INPUT)
+      if(JUCER_PLUGIN_IS_A_SYNTH)
+        set(iaa_type_code "auri")
+      else()
+        set(iaa_type_code "aurm")
+      endif()
+    else()
+      if(JUCER_PLUGIN_IS_A_SYNTH)
+        set(iaa_type_code "aurg")
+      else()
+        set(iaa_type_code "aurx")
+      endif()
+    endif()
+    _FRUT_char_literal("${iaa_type_code}" IAAType_value)
+    set(IAASubType_value "JucePlugin_PluginCode")
+    set(IAAName_value "\"${JUCER_PLUGIN_MANUFACTURER}: ${JUCER_PLUGIN_NAME}\"")
 
     string(LENGTH "${JUCER_PLUGIN_CHANNEL_CONFIGURATIONS}" plugin_channel_config_length)
     if(plugin_channel_config_length GREATER 0)
