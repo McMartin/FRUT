@@ -38,7 +38,6 @@
 //==============================================================================
 @module_available_defines@
 #define JUCE_GLOBAL_MODULE_SETTINGS_INCLUDED 1
-
 @config_flags_defines@
 //==============================================================================
 #ifndef    JUCE_STANDALONE_APPLICATION

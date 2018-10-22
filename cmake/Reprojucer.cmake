@@ -2534,12 +2534,13 @@ function(_FRUT_generate_AppConfig_header)
 
     if(JUCER_${module_name}_CONFIG_FLAGS)
       string(APPEND config_flags_defines
+        "\n"
         "//=============================================================================="
-        "\n// ${module_name} flags:\n\n"
+        "\n// ${module_name} flags:\n"
       )
     endif()
     foreach(config_flag ${JUCER_${module_name}_CONFIG_FLAGS})
-      string(APPEND config_flags_defines "#ifndef    ${config_flag}\n")
+      string(APPEND config_flags_defines "\n#ifndef    ${config_flag}\n")
       if(NOT DEFINED JUCER_FLAG_${config_flag})
         string(APPEND config_flags_defines " //#define ${config_flag}\n")
       elseif(JUCER_FLAG_${config_flag})
@@ -2547,7 +2548,7 @@ function(_FRUT_generate_AppConfig_header)
       else()
         string(APPEND config_flags_defines " #define   ${config_flag} 0\n")
       endif()
-      string(APPEND config_flags_defines "#endif\n\n")
+      string(APPEND config_flags_defines "#endif\n")
     endforeach()
   endforeach()
 
@@ -2924,14 +2925,20 @@ function(_FRUT_generate_JuceHeader_header)
     if(DEFINED JUCER_INCLUDE_BINARYDATA AND NOT JUCER_INCLUDE_BINARYDATA)
       set(binary_data_include "")
     else()
-      set(binary_data_include "\n#include \"BinaryData.h\"")
+      set(binary_data_include "#include \"BinaryData.h\"\n")
     endif()
   endif()
 
   set(modules_includes "")
+  if(JUCER_PROJECT_MODULES)
+    set(modules_includes "\n")
+  endif()
   foreach(module_name ${JUCER_PROJECT_MODULES})
     string(APPEND modules_includes "#include <${module_name}/${module_name}.h>\n")
   endforeach()
+  if(JUCER_PROJECT_MODULES)
+    string(APPEND modules_includes "\n")
+  endif()
 
   if(DEFINED JUCER_VERSION AND JUCER_VERSION VERSION_LESS 5.0.0)
     string(TOUPPER "${JUCER_PROJECT_ID}" upper_project_id)
