@@ -3443,9 +3443,6 @@ function(_FRUT_set_compiler_and_linker_settings target)
         set_property(TARGET ${target} APPEND PROPERTY
           LINK_FLAGS_${upper_config} "${JUCER_ARCHITECTURE_FLAG_${config}}"
         )
-      else()
-        target_compile_options(${target} PRIVATE $<$<CONFIG:${config}>:-m64>)
-        set_property(TARGET ${target} APPEND PROPERTY LINK_FLAGS_${upper_config} "-m64")
       endif()
     endforeach()
 
