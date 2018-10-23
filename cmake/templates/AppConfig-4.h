@@ -1,5 +1,9 @@
 /*
 
+    IMPORTANT! This file is auto-generated each time you run cmake on your
+    project - if you alter its contents, your changes may be overwritten!
+
+    Any commented-out settings will assume their default values.
 
 */
 
@@ -21,6 +25,6 @@
 #endif
 
 #define JUCE_GLOBAL_MODULE_SETTINGS_INCLUDED 1
-
-@config_flags_defines@@audio_plugin_settings_defines@
+@config_flags_defines@
+@audio_plugin_settings_defines@
 #endif  // __JUCE_APPCONFIG_@upper_project_id@__

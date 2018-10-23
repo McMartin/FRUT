@@ -1,5 +1,9 @@
 /*
 
+    IMPORTANT! This file is auto-generated each time you run cmake on your
+    project - if you alter its contents, your changes may be overwritten!
+
+    Any commented-out settings will assume their default values.
 
 */
 
@@ -17,6 +21,7 @@
    under the GPL v3 license.
 
    End User License Agreement: www.juce.com/juce-5-licence
+
   ==============================================================================
 */
 
@@ -36,15 +41,14 @@
 
 //==============================================================================
 @module_available_defines@
+#define JUCE_GLOBAL_MODULE_SETTINGS_INCLUDED 1
+@config_flags_defines@
 //==============================================================================
 #ifndef    JUCE_STANDALONE_APPLICATION
- #ifdef JucePlugin_Build_Standalone
+ #if defined(JucePlugin_Name) && defined(JucePlugin_Build_Standalone)
   #define  JUCE_STANDALONE_APPLICATION JucePlugin_Build_Standalone
  #else
   #define  JUCE_STANDALONE_APPLICATION @is_standalone_application@
  #endif
 #endif
-
-#define JUCE_GLOBAL_MODULE_SETTINGS_INCLUDED 1
-
-@config_flags_defines@@audio_plugin_settings_defines@
+@audio_plugin_settings_defines@

@@ -2487,8 +2487,8 @@ function(_FRUT_generate_AppConfig_header)
       set(user_code_section "\n")
     endif()
   else()
-    string(CONCAT user_code_section "\n\n// (You can call jucer_appconfig_header() to "
-      "add your own code to this section)\n\n"
+    string(CONCAT user_code_section "\n\n// (You can get your own code in this section "
+      "by calling jucer_appconfig_header)\n\n"
     )
   endif()
 
@@ -2532,14 +2532,15 @@ function(_FRUT_generate_AppConfig_header)
       "#define JUCE_MODULE_AVAILABLE_${module_name}${padding_spaces} 1\n"
     )
 
-    if(DEFINED JUCER_${module_name}_CONFIG_FLAGS)
+    if(JUCER_${module_name}_CONFIG_FLAGS)
       string(APPEND config_flags_defines
+        "\n"
         "//=============================================================================="
-        "\n// ${module_name} flags:\n\n"
+        "\n// ${module_name} flags:\n"
       )
     endif()
     foreach(config_flag ${JUCER_${module_name}_CONFIG_FLAGS})
-      string(APPEND config_flags_defines "#ifndef    ${config_flag}\n")
+      string(APPEND config_flags_defines "\n#ifndef    ${config_flag}\n")
       if(NOT DEFINED JUCER_FLAG_${config_flag})
         string(APPEND config_flags_defines " //#define ${config_flag}\n")
       elseif(JUCER_FLAG_${config_flag})
@@ -2547,7 +2548,7 @@ function(_FRUT_generate_AppConfig_header)
       else()
         string(APPEND config_flags_defines " #define   ${config_flag} 0\n")
       endif()
-      string(APPEND config_flags_defines "#endif\n\n")
+      string(APPEND config_flags_defines "#endif\n")
     endforeach()
   endforeach()
 
@@ -2564,7 +2565,19 @@ function(_FRUT_generate_AppConfig_header)
 
     set(audio_plugin_setting_names
       "Build_VST" "Build_VST3" "Build_AU" "Build_AUv3" "Build_RTAS" "Build_AAX"
-      "Build_STANDALONE"
+    )
+    if(DEFINED JUCER_VERSION AND JUCER_VERSION VERSION_LESS 5.0.0)
+      list(APPEND audio_plugin_setting_names "Build_STANDALONE")
+    elseif(DEFINED JUCER_VERSION AND JUCER_VERSION VERSION_LESS 5.1.0)
+      list(APPEND audio_plugin_setting_names "Build_Standalone")
+      list(APPEND audio_plugin_setting_names "Build_STANDALONE")
+    else()
+      list(APPEND audio_plugin_setting_names "Build_Standalone")
+    endif()
+    if(NOT (DEFINED JUCER_VERSION AND JUCER_VERSION VERSION_LESS 5.0.0))
+      list(APPEND audio_plugin_setting_names "Enable_IAA")
+    endif()
+    list(APPEND audio_plugin_setting_names
       "Name" "Desc" "Manufacturer" "ManufacturerWebsite" "ManufacturerEmail"
       "ManufacturerCode" "PluginCode"
       "IsSynth" "WantsMidiInput" "ProducesMidiOutput" "IsMidiEffect"
@@ -2585,6 +2598,11 @@ function(_FRUT_generate_AppConfig_header)
       "AAXIdentifier" "AAXManufacturerCode" "AAXProductId" "AAXCategory"
       "AAXDisableBypass" "AAXDisableMultiMono"
     )
+    if(NOT (DEFINED JUCER_VERSION AND JUCER_VERSION VERSION_LESS 5.0.0))
+      list(APPEND audio_plugin_setting_names
+        "IAAType" "IAASubType" "IAAName"
+      )
+    endif()
 
     _FRUT_bool_to_int("${JUCER_BUILD_VST}" Build_VST_value)
     _FRUT_bool_to_int("${JUCER_BUILD_VST3}" Build_VST3_value)
@@ -2594,9 +2612,13 @@ function(_FRUT_generate_AppConfig_header)
     _FRUT_bool_to_int("${JUCER_BUILD_AAX}" Build_AAX_value)
     if(DEFINED JUCER_VERSION AND JUCER_VERSION VERSION_LESS 5.0.0)
       _FRUT_bool_to_int("${JUCER_BUILD_AUDIOUNIT_V3}" Build_STANDALONE_value)
+    elseif(DEFINED JUCER_VERSION AND JUCER_VERSION VERSION_LESS 5.1.0)
+      _FRUT_bool_to_int("${JUCER_BUILD_STANDALONE_PLUGIN}" Build_Standalone_value)
+      set(Build_STANDALONE_value "JucePlugin_Build_Standalone")
     else()
-      _FRUT_bool_to_int("${JUCER_BUILD_STANDALONE_PLUGIN}" Build_STANDALONE_value)
+      _FRUT_bool_to_int("${JUCER_BUILD_STANDALONE_PLUGIN}" Build_Standalone_value)
     endif()
+    _FRUT_bool_to_int("${JUCER_ENABLE_INTERAPP_AUDIO}" Enable_IAA_value)
 
     set(Name_value "\"${JUCER_PLUGIN_NAME}\"")
     set(Desc_value "\"${JUCER_PLUGIN_DESCRIPTION}\"")
@@ -2739,6 +2761,23 @@ function(_FRUT_generate_AppConfig_header)
     endif()
     _FRUT_bool_to_int("${JUCER_PLUGIN_AAX_DISABLE_BYPASS}" AAXDisableBypass_value)
     _FRUT_bool_to_int("${JUCER_PLUGIN_AAX_DISABLE_MULTI_MONO}" AAXDisableMultiMono_value)
+
+    if(JUCER_PLUGIN_MIDI_INPUT)
+      if(JUCER_PLUGIN_IS_A_SYNTH)
+        set(iaa_type_code "auri")
+      else()
+        set(iaa_type_code "aurm")
+      endif()
+    else()
+      if(JUCER_PLUGIN_IS_A_SYNTH)
+        set(iaa_type_code "aurg")
+      else()
+        set(iaa_type_code "aurx")
+      endif()
+    endif()
+    _FRUT_char_literal("${iaa_type_code}" IAAType_value)
+    set(IAASubType_value "JucePlugin_PluginCode")
+    set(IAAName_value "\"${JUCER_PLUGIN_MANUFACTURER}: ${JUCER_PLUGIN_NAME}\"")
 
     string(LENGTH "${JUCER_PLUGIN_CHANNEL_CONFIGURATIONS}" plugin_channel_config_length)
     if(plugin_channel_config_length GREATER 0)
@@ -2886,22 +2925,35 @@ function(_FRUT_generate_JuceHeader_header)
     if(DEFINED JUCER_INCLUDE_BINARYDATA AND NOT JUCER_INCLUDE_BINARYDATA)
       set(binary_data_include "")
     else()
-      set(binary_data_include "\n#include \"BinaryData.h\"")
+      set(binary_data_include "#include \"BinaryData.h\"\n")
     endif()
   endif()
 
   set(modules_includes "")
+  if(JUCER_PROJECT_MODULES)
+    set(modules_includes "\n")
+  endif()
   foreach(module_name ${JUCER_PROJECT_MODULES})
     string(APPEND modules_includes "#include <${module_name}/${module_name}.h>\n")
   endforeach()
+  if(JUCER_PROJECT_MODULES)
+    string(APPEND modules_includes "\n")
+  endif()
 
   if(DEFINED JUCER_VERSION AND JUCER_VERSION VERSION_LESS 5.0.0)
     string(TOUPPER "${JUCER_PROJECT_ID}" upper_project_id)
-    set(template_file "${Reprojucer_templates_DIR}/JuceHeader-4.h")
+    string(CONCAT include_guard_top
+      "#ifndef __APPHEADERFILE_${upper_project_id}__\n"
+      "#define __APPHEADERFILE_${upper_project_id}__"
+    )
+    set(include_guard_bottom "\n\n#endif   // __APPHEADERFILE_${upper_project_id}__")
   else()
-    set(template_file "${Reprojucer_templates_DIR}/JuceHeader.h")
+    set(include_guard_top "#pragma once")
+    set(include_guard_bottom "")
   endif()
-  configure_file("${template_file}" "JuceLibraryCode/JuceHeader.h")
+  configure_file("${Reprojucer_templates_DIR}/JuceHeader.h"
+    "JuceLibraryCode/JuceHeader.h"
+  )
   list(APPEND JUCER_PROJECT_SOURCES
     "${CMAKE_CURRENT_BINARY_DIR}/JuceLibraryCode/JuceHeader.h"
   )
