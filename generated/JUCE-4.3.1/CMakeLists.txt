@@ -33,6 +33,11 @@ if(MSVC_VERSION GREATER 1909)
     "\"Visual Studio 2017\" exporter"
   )
   return()
+elseif(WIN32 AND NOT MSVC)
+  message(WARNING "Skipping JUCE-4.3.1 because none of its sub-projects supports the "
+    "\"Code::Blocks (Windows)\" exporter"
+  )
+  return()
 endif()
 
 
