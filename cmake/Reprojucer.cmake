@@ -3574,6 +3574,10 @@ function(_FRUT_set_cxx_language_standard_properties target)
         endif()
       endif()
 
+    elseif(WIN32 AND NOT MSVC)
+      set_target_properties(${target} PROPERTIES CXX_EXTENSIONS OFF)
+      set_target_properties(${target} PROPERTIES CXX_STANDARD 11)
+
     endif()
   endif()
 
