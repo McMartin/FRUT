@@ -1,0 +1,36 @@
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2015
+
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "consoleapp500 - ConsoleApp", "consoleapp500_ConsoleApp.vcxproj", "{3B954EAB-04E5-112D-9867-B87089E32023}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "consoleapp500", "consoleapp500", "{8581EC2B-DC99-E4F8-99B7-1B163A161BB4}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Source", "Source", "{DC8F9DF6-67C6-2DB3-3D87-5E8D0E396C93}"
+	ProjectSection(SolutionItems) = preProject
+		..\..\Source\foo.cpp = ..\..\Source\foo.cpp
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Juce Library Code", "Juce Library Code", "{B1E33BF4-EA8D-4371-52E9-7A62B5843215}"
+	ProjectSection(SolutionItems) = preProject
+		..\..\JuceLibraryCode\AppConfig.h = ..\..\JuceLibraryCode\AppConfig.h
+		..\..\JuceLibraryCode\JuceHeader.h = ..\..\JuceLibraryCode\JuceHeader.h
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x64 = Debug|x64
+		Release|x64 = Release|x64
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{3B954EAB-04E5-112D-9867-B87089E32023}.Debug|x64.Build.0 = Debug|x64
+		{3B954EAB-04E5-112D-9867-B87089E32023}.Debug|x64.ActiveCfg = Debug|x64
+		{3B954EAB-04E5-112D-9867-B87089E32023}.Release|x64.Build.0 = Release|x64
+		{3B954EAB-04E5-112D-9867-B87089E32023}.Release|x64.ActiveCfg = Release|x64
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{DC8F9DF6-67C6-2DB3-3D87-5E8D0E396C93} = {8581EC2B-DC99-E4F8-99B7-1B163A161BB4}
+	EndGlobalSection
+EndGlobal

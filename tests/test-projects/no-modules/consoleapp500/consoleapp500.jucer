@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<JUCERPROJECT id="lctLWP" name="consoleapp500" displaySplashScreen="0" reportAppUsage="0"
+              splashScreenColour="Dark" projectType="consoleapp" version="1.0.0"
+              bundleIdentifier="com.yourcompany.consoleapp500" includeBinaryInAppConfig="1"
+              jucerVersion="5.0.0">
+  <MAINGROUP id="AxOSyi" name="consoleapp500">
+    <GROUP id="{05273242-8B6D-838A-551C-72051CA5CE56}" name="Source">
+      <FILE id="Hbmkf8" name="foo.cpp" compile="1" resource="0" file="Source/foo.cpp"/>
+    </GROUP>
+  </MAINGROUP>
+  <EXPORTFORMATS>
+    <XCODE_MAC targetFolder="Builds/MacOSX">
+      <CONFIGURATIONS>
+        <CONFIGURATION name="Debug" isDebug="1" optimisation="1" targetName="consoleapp500"/>
+        <CONFIGURATION name="Release" isDebug="0" optimisation="3" targetName="consoleapp500"/>
+      </CONFIGURATIONS>
+      <MODULEPATHS/>
+    </XCODE_MAC>
+    <VS2017 targetFolder="Builds/VisualStudio2017">
+      <CONFIGURATIONS>
+        <CONFIGURATION name="Debug" winWarningLevel="4" generateManifest="1" winArchitecture="x64"
+                       isDebug="1" optimisation="1" targetName="consoleapp500"/>
+        <CONFIGURATION name="Release" winWarningLevel="4" generateManifest="1" winArchitecture="x64"
+                       isDebug="0" optimisation="3" targetName="consoleapp500"/>
+      </CONFIGURATIONS>
+      <MODULEPATHS/>
+    </VS2017>
+    <VS2015 targetFolder="Builds/VisualStudio2015">
+      <CONFIGURATIONS>
+        <CONFIGURATION name="Debug" winWarningLevel="4" generateManifest="1" winArchitecture="x64"
+                       isDebug="1" optimisation="1" targetName="consoleapp500"/>
+        <CONFIGURATION name="Release" winWarningLevel="4" generateManifest="1" winArchitecture="x64"
+                       isDebug="0" optimisation="3" targetName="consoleapp500"/>
+      </CONFIGURATIONS>
+      <MODULEPATHS/>
+    </VS2015>
+    <VS2013 targetFolder="Builds/VisualStudio2013">
+      <CONFIGURATIONS>
+        <CONFIGURATION name="Debug" winWarningLevel="4" generateManifest="1" winArchitecture="x64"
+                       isDebug="1" optimisation="1" targetName="consoleapp500"/>
+        <CONFIGURATION name="Release" winWarningLevel="4" generateManifest="1" winArchitecture="x64"
+                       isDebug="0" optimisation="3" targetName="consoleapp500"/>
+      </CONFIGURATIONS>
+      <MODULEPATHS/>
+    </VS2013>
+    <LINUX_MAKE targetFolder="Builds/LinuxMakefile">
+      <CONFIGURATIONS>
+        <CONFIGURATION name="Debug" isDebug="1" optimisation="1" targetName="consoleapp500"/>
+        <CONFIGURATION name="Release" isDebug="0" optimisation="3" targetName="consoleapp500"/>
+      </CONFIGURATIONS>
+      <MODULEPATHS/>
+    </LINUX_MAKE>
+    <CODEBLOCKS_WINDOWS targetFolder="Builds/CodeBlocksWindows">
+      <CONFIGURATIONS>
+        <CONFIGURATION name="Debug" windowsCodeBlocksArchitecture="-m64" isDebug="1"
+                       optimisation="1" targetName="consoleapp500"/>
+        <CONFIGURATION name="Release" windowsCodeBlocksArchitecture="-m64" isDebug="0"
+                       optimisation="3" targetName="consoleapp500"/>
+      </CONFIGURATIONS>
+      <MODULEPATHS/>
+    </CODEBLOCKS_WINDOWS>
+  </EXPORTFORMATS>
+  <MODULES/>
+  <JUCEOPTIONS/>
+</JUCERPROJECT>
