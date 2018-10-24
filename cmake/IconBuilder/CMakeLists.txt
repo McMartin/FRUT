@@ -133,6 +133,17 @@ if(CMAKE_HOST_SYSTEM_NAME STREQUAL "Linux")
   target_link_libraries(IconBuilder PRIVATE dl pthread)
 endif()
 
+if(WIN32 AND NOT MSVC)
+  target_link_libraries(IconBuilder PRIVATE
+    -limm32
+    -lshlwapi
+    -lversion
+    -lwininet
+    -lwinmm
+    -lws2_32
+  )
+endif()
+
 
 get_cmake_property(is_in_try_compile IN_TRY_COMPILE)
 if(is_in_try_compile)

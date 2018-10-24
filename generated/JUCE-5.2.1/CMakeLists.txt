@@ -28,6 +28,14 @@ get_filename_component(JUCE_ROOT "${JUCE_ROOT}" ABSOLUTE BASE_DIR "${CMAKE_BINAR
 project(JUCE-5.2.1)
 
 
+if(WIN32 AND NOT MSVC)
+  message(WARNING "Skipping JUCE-5.2.1 because none of its sub-projects supports the "
+    "\"Code::Blocks (Windows)\" exporter"
+  )
+  return()
+endif()
+
+
 # All exporters
 
 set(JuceDemo_jucer_FILE "${JUCE_ROOT}/examples/Demo/JuceDemo.jucer")

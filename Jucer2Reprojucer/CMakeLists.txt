@@ -225,6 +225,32 @@ jucer_export_target_configuration(
   DEBUG_MODE OFF
 )
 
+jucer_export_target(
+  "Code::Blocks (Windows)"
+  EXTRA_COMPILER_FLAGS
+    "-Werror"
+    "-Wall"
+    "-Wextra"
+    "-Wno-cpp"
+    "-Wno-misleading-indentation"
+    "-Wno-missing-field-initializers"
+    "-Wno-sign-compare"
+    "-Wno-type-limits"
+    "-Wno-unknown-pragmas"
+)
+
+jucer_export_target_configuration(
+  "Code::Blocks (Windows)"
+  NAME "Debug"
+  DEBUG_MODE ON
+)
+
+jucer_export_target_configuration(
+  "Code::Blocks (Windows)"
+  NAME "Release"
+  DEBUG_MODE OFF
+)
+
 jucer_project_end()
 
 

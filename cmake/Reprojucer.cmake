@@ -2717,7 +2717,7 @@ function(_FRUT_generate_AppConfig_header)
 
     set(CFBundleIdentifier_value "${JUCER_BUNDLE_IDENTIFIER}")
 
-    if(DEFINED JUCER_VERSION AND JUCER_VERSION LESS 5.3.1)
+    if(DEFINED JUCER_VERSION AND JUCER_VERSION VERSION_LESS 5.3.1)
       if(JUCER_PLUGIN_IS_A_SYNTH)
         set(RTASCategory_value "ePlugInCategory_SWGenerators")
       elseif(NOT DEFINED JUCER_PLUGIN_RTAS_CATEGORY)
@@ -2746,7 +2746,7 @@ function(_FRUT_generate_AppConfig_header)
     set(AAXIdentifier_value "${JUCER_PLUGIN_AAX_IDENTIFIER}")
     set(AAXManufacturerCode_value "JucePlugin_ManufacturerCode")
     set(AAXProductId_value "JucePlugin_PluginCode")
-    if(DEFINED JUCER_VERSION AND JUCER_VERSION LESS 5.3.1)
+    if(DEFINED JUCER_VERSION AND JUCER_VERSION VERSION_LESS 5.3.1)
       set(AAXCategory_value "${JUCER_PLUGIN_AAX_CATEGORY}")
     else()
       if(DEFINED JUCER_PLUGIN_AAX_CATEGORY)
@@ -3443,9 +3443,6 @@ function(_FRUT_set_compiler_and_linker_settings target)
         set_property(TARGET ${target} APPEND PROPERTY
           LINK_FLAGS_${upper_config} "${JUCER_ARCHITECTURE_FLAG_${config}}"
         )
-      else()
-        target_compile_options(${target} PRIVATE $<$<CONFIG:${config}>:-m64>)
-        set_property(TARGET ${target} APPEND PROPERTY LINK_FLAGS_${upper_config} "-m64")
       endif()
     endforeach()
 
@@ -3573,6 +3570,10 @@ function(_FRUT_set_cxx_language_standard_properties target)
           set_target_properties(${target} PROPERTIES CXX_STANDARD 14)
         endif()
       endif()
+
+    elseif(WIN32 AND NOT MSVC)
+      set_target_properties(${target} PROPERTIES CXX_EXTENSIONS OFF)
+      set_target_properties(${target} PROPERTIES CXX_STANDARD 11)
 
     endif()
   endif()

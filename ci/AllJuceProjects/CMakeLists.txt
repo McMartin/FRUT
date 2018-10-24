@@ -29,6 +29,8 @@ if(NOT IS_DIRECTORY "${JUCE_ROOT}")
 endif()
 
 
+project(AllJuceProjects)
+
 add_subdirectory(
   "${CMAKE_CURRENT_LIST_DIR}/../../generated/JUCE-${JUCE_VERSION}"
   "JUCE-${JUCE_VERSION}"

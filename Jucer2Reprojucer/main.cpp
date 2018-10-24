@@ -1607,24 +1607,29 @@ int main(int argc, char* argv[])
 
         if (exporterType == "CODEBLOCKS_WINDOWS")
         {
-          convertSettingIfDefined(configuration, "windowsCodeBlocksArchitecture",
-                                  "ARCHITECTURE", [](const juce::var& v) -> juce::String {
-                                    const auto value = v.toString();
+          if (jucerProject.hasProperty("windowsCodeBlocksArchitecture")
+              || jucerVersionAsTuple >= Version{5, 0, 0})
+          {
+            convertSetting(configuration, "windowsCodeBlocksArchitecture",
+                                    "ARCHITECTURE",
+                                    [](const juce::var& v) -> juce::String {
+                                      const auto value = v.toString();
 
-                                    if (value == "-m32")
-                                      return "32-bit (-m32)";
+                                      if (value == "-m32")
+                                        return "32-bit (-m32)";
 
-                                    if (value == "-m64" || value.isEmpty())
-                                      return "64-bit (-m64)";
+                                      if (value == "-m64" || value.isEmpty())
+                                        return "64-bit (-m64)";
 
-                                    if (value == "-march=armv6")
-                                      return "ARM v6";
+                                      if (value == "-march=armv6")
+                                        return "ARM v6";
 
-                                    if (value == "-march=armv7")
-                                      return "ARM v7";
+                                      if (value == "-march=armv7")
+                                        return "ARM v7";
 
-                                    return {};
-                                  });
+                                      return {};
+                                    });
+          }
         }
 
         writeUserNotes(wLn, configuration);
