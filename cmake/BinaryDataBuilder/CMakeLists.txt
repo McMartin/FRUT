@@ -25,7 +25,6 @@ list(REMOVE_DUPLICATES JUCE_modules_DIRS)
 
 foreach(modules_dir ${JUCE_modules_DIRS})
   if (EXISTS "${modules_dir}/juce_core/juce_core.h"
-    AND EXISTS "${modules_dir}/juce_cryptography/juce_cryptography.h"
     AND EXISTS "${modules_dir}/juce_data_structures/juce_data_structures.h"
     AND EXISTS "${modules_dir}/juce_events/juce_events.h"
     AND EXISTS "${modules_dir}/juce_graphics/juce_graphics.h"
@@ -38,9 +37,9 @@ foreach(modules_dir ${JUCE_modules_DIRS})
 endforeach()
 
 if(NOT DEFINED JUCE_modules_DIR)
-  message(FATAL_ERROR "Could not find juce_core, juce_cryptography, juce_data_structures,"
-    " juce_events, juce_graphics, juce_gui_basics and juce_gui_extra when searching in"
-    " the following directories: ${JUCE_modules_DIRS}"
+  message(FATAL_ERROR "Could not find juce_core, juce_data_structures, juce_events, "
+    "juce_graphics, juce_gui_basics and juce_gui_extra when searching in the following "
+    "directories: ${JUCE_modules_DIRS}"
   )
 endif()
 
@@ -69,7 +68,6 @@ add_executable(BinaryDataBuilder
 if(APPLE)
   target_sources(BinaryDataBuilder PRIVATE
     "${JUCE_modules_DIR}/juce_core/juce_core.mm"
-    "${JUCE_modules_DIR}/juce_cryptography/juce_cryptography.mm"
     "${JUCE_modules_DIR}/juce_data_structures/juce_data_structures.mm"
     "${JUCE_modules_DIR}/juce_events/juce_events.mm"
     "${JUCE_modules_DIR}/juce_graphics/juce_graphics.mm"
@@ -79,7 +77,6 @@ if(APPLE)
 else()
   target_sources(BinaryDataBuilder PRIVATE
     "${JUCE_modules_DIR}/juce_core/juce_core.cpp"
-    "${JUCE_modules_DIR}/juce_cryptography/juce_cryptography.cpp"
     "${JUCE_modules_DIR}/juce_data_structures/juce_data_structures.cpp"
     "${JUCE_modules_DIR}/juce_events/juce_events.cpp"
     "${JUCE_modules_DIR}/juce_graphics/juce_graphics.cpp"
@@ -99,7 +96,6 @@ target_compile_definitions(BinaryDataBuilder PRIVATE
   JUCE_DISABLE_JUCE_VERSION_PRINTING=1
   JUCE_GLOBAL_MODULE_SETTINGS_INCLUDED=1
   JUCE_MODULE_AVAILABLE_juce_core=1
-  JUCE_MODULE_AVAILABLE_juce_cryptography=1
   JUCE_MODULE_AVAILABLE_juce_data_structures=1
   JUCE_MODULE_AVAILABLE_juce_events=1
   JUCE_MODULE_AVAILABLE_juce_graphics=1
