@@ -318,12 +318,8 @@ function(jucer_project_files source_group_name)
         list(APPEND JUCER_PROJECT_SOURCES "${path}")
 
         get_filename_component(file_extension "${path}" EXT)
-
-        if(NOT file_extension STREQUAL ".h" AND compile STREQUAL ".")
-          set_source_files_properties("${path}" PROPERTIES HEADER_FILE_ONLY TRUE)
-        endif()
-
-        if(file_extension STREQUAL ".mm" AND NOT APPLE)
+        if((NOT file_extension STREQUAL ".h" AND compile STREQUAL ".")
+            OR (file_extension STREQUAL ".mm" AND NOT APPLE))
           set_source_files_properties("${path}" PROPERTIES HEADER_FILE_ONLY TRUE)
         endif()
       endif()
