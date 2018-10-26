@@ -312,9 +312,11 @@ function(jucer_project_files source_group_name)
 
       if(xcode_resource STREQUAL "x")
         list(APPEND JUCER_PROJECT_XCODE_RESOURCES "${path}")
-      elseif(binary_resource STREQUAL "x")
+      endif()
+      if(binary_resource STREQUAL "x")
         list(APPEND JUCER_PROJECT_RESOURCES "${path}")
-      else()
+      endif()
+      if(xcode_resource STREQUAL "." AND binary_resource STREQUAL ".")
         list(APPEND JUCER_PROJECT_SOURCES "${path}")
 
         get_filename_component(file_extension "${path}" EXT)
