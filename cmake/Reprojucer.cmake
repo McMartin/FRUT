@@ -1451,11 +1451,6 @@ function(jucer_project_end)
     REGULAR_EXPRESSION "${CMAKE_CURRENT_BINARY_DIR}/JuceLibraryCode/*"
   )
 
-  set_source_files_properties(
-    ${JUCER_PROJECT_MODULES_BROWSABLE_FILES}
-    PROPERTIES HEADER_FILE_ONLY TRUE
-  )
-
   if(DEFINED JUCER_COMPANY_COPYRIGHT
       OR NOT (DEFINED JUCER_VERSION AND JUCER_VERSION VERSION_LESS 5.2.0))
     set(ns_human_readable_copyright "${JUCER_COMPANY_COPYRIGHT}")
@@ -1547,6 +1542,10 @@ function(jucer_project_end)
   else()
     unset(JUCER_PROJECT_XCODE_RESOURCES)
   endif()
+
+  set_source_files_properties(${JUCER_PROJECT_MODULES_BROWSABLE_FILES}
+    PROPERTIES HEADER_FILE_ONLY TRUE
+  )
 
   set(all_sources
     ${JUCER_PROJECT_FILES}
