@@ -568,8 +568,10 @@ function(jucer_project_module module_name PATH_KEYWORD modules_folder)
       string(REPLACE "/" "\\" sub_group_name "${rel_file_dir}")
       source_group("Juce Modules${sub_group_name}" FILES "${file_path}")
     endforeach()
-    list(APPEND JUCER_PROJECT_BROWSABLE_FILES ${browsable_files})
-    set(JUCER_PROJECT_BROWSABLE_FILES "${JUCER_PROJECT_BROWSABLE_FILES}" PARENT_SCOPE)
+    list(APPEND JUCER_PROJECT_MODULES_BROWSABLE_FILES ${browsable_files})
+    set(JUCER_PROJECT_MODULES_BROWSABLE_FILES "${JUCER_PROJECT_MODULES_BROWSABLE_FILES}"
+      PARENT_SCOPE
+    )
   endif()
 
 endfunction()
@@ -1454,7 +1456,7 @@ function(jucer_project_end)
   )
 
   set_source_files_properties(
-    ${JUCER_PROJECT_BROWSABLE_FILES}
+    ${JUCER_PROJECT_MODULES_BROWSABLE_FILES}
     ${JUCER_PROJECT_RESOURCES}
     PROPERTIES HEADER_FILE_ONLY TRUE
   )
@@ -1554,7 +1556,7 @@ function(jucer_project_end)
   set(all_sources
     ${JUCER_PROJECT_SOURCES}
     ${JUCER_PROJECT_RESOURCES}
-    ${JUCER_PROJECT_BROWSABLE_FILES}
+    ${JUCER_PROJECT_MODULES_BROWSABLE_FILES}
     ${JUCER_PROJECT_XCODE_RESOURCES}
     ${icon_file}
     ${resources_rc_file}
@@ -1671,7 +1673,7 @@ function(jucer_project_end)
       ${SharedCode_sources}
       ${JUCER_PROJECT_RESOURCES}
       ${JUCER_PROJECT_XCODE_RESOURCES}
-      ${JUCER_PROJECT_BROWSABLE_FILES}
+      ${JUCER_PROJECT_MODULES_BROWSABLE_FILES}
       ${icon_file}
       ${resources_rc_file}
     )
