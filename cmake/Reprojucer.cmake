@@ -312,20 +312,15 @@ function(jucer_project_files source_group_name)
 
       if(xcode_resource STREQUAL "x")
         list(APPEND JUCER_PROJECT_XCODE_RESOURCES "${path}")
-      elseif(binary_resource STREQUAL "x")
+      endif()
+      if(binary_resource STREQUAL "x")
         list(APPEND JUCER_PROJECT_RESOURCES "${path}")
-      else()
-        list(APPEND JUCER_PROJECT_SOURCES "${path}")
+      endif()
 
-        get_filename_component(file_extension "${path}" EXT)
-
-        if(NOT file_extension STREQUAL ".h" AND compile STREQUAL ".")
-          set_source_files_properties("${path}" PROPERTIES HEADER_FILE_ONLY TRUE)
-        endif()
-
-        if(file_extension STREQUAL ".mm" AND NOT APPLE)
-          set_source_files_properties("${path}" PROPERTIES HEADER_FILE_ONLY TRUE)
-        endif()
+      get_filename_component(file_extension "${path}" EXT)
+      if((NOT file_extension STREQUAL ".h" AND compile STREQUAL ".")
+          OR (file_extension STREQUAL ".mm" AND NOT APPLE))
+        set_source_files_properties("${path}" PROPERTIES HEADER_FILE_ONLY TRUE)
       endif()
 
       unset(compile)
@@ -337,7 +332,8 @@ function(jucer_project_files source_group_name)
   string(REPLACE "/" "\\" source_group_name ${source_group_name})
   source_group(${source_group_name} FILES ${files})
 
-  set(JUCER_PROJECT_SOURCES "${JUCER_PROJECT_SOURCES}" PARENT_SCOPE)
+  list(APPEND JUCER_PROJECT_FILES ${files})
+  set(JUCER_PROJECT_FILES "${JUCER_PROJECT_FILES}" PARENT_SCOPE)
   set(JUCER_PROJECT_RESOURCES "${JUCER_PROJECT_RESOURCES}" PARENT_SCOPE)
   set(JUCER_PROJECT_XCODE_RESOURCES "${JUCER_PROJECT_XCODE_RESOURCES}" PARENT_SCOPE)
 
@@ -465,13 +461,13 @@ function(jucer_project_module module_name PATH_KEYWORD modules_folder)
       configure_file("${Reprojucer_templates_DIR}/JuceLibraryCode-Wrapper.cpp"
         "JuceLibraryCode/${proxy_prefix}${src_file_basename}"
       )
-      list(APPEND JUCER_PROJECT_SOURCES
+      list(APPEND JUCER_PROJECT_FILES
         "${CMAKE_CURRENT_BINARY_DIR}/JuceLibraryCode/${proxy_prefix}${src_file_basename}"
       )
     endif()
   endforeach()
 
-  set(JUCER_PROJECT_SOURCES "${JUCER_PROJECT_SOURCES}" PARENT_SCOPE)
+  set(JUCER_PROJECT_FILES "${JUCER_PROJECT_FILES}" PARENT_SCOPE)
 
   file(STRINGS "${module_header_file}" config_flags_lines REGEX "/\\*\\* Config: ")
   string(REPLACE "/** Config: " "" module_config_flags "${config_flags_lines}")
@@ -568,8 +564,10 @@ function(jucer_project_module module_name PATH_KEYWORD modules_folder)
       string(REPLACE "/" "\\" sub_group_name "${rel_file_dir}")
       source_group("Juce Modules${sub_group_name}" FILES "${file_path}")
     endforeach()
-    list(APPEND JUCER_PROJECT_BROWSABLE_FILES ${browsable_files})
-    set(JUCER_PROJECT_BROWSABLE_FILES "${JUCER_PROJECT_BROWSABLE_FILES}" PARENT_SCOPE)
+    list(APPEND JUCER_PROJECT_MODULES_BROWSABLE_FILES ${browsable_files})
+    set(JUCER_PROJECT_MODULES_BROWSABLE_FILES "${JUCER_PROJECT_MODULES_BROWSABLE_FILES}"
+      PARENT_SCOPE
+    )
   endif()
 
 endfunction()
@@ -1453,12 +1451,6 @@ function(jucer_project_end)
     REGULAR_EXPRESSION "${CMAKE_CURRENT_BINARY_DIR}/JuceLibraryCode/*"
   )
 
-  set_source_files_properties(
-    ${JUCER_PROJECT_BROWSABLE_FILES}
-    ${JUCER_PROJECT_RESOURCES}
-    PROPERTIES HEADER_FILE_ONLY TRUE
-  )
-
   if(DEFINED JUCER_COMPANY_COPYRIGHT
       OR NOT (DEFINED JUCER_VERSION AND JUCER_VERSION VERSION_LESS 5.2.0))
     set(ns_human_readable_copyright "${JUCER_COMPANY_COPYRIGHT}")
@@ -1551,11 +1543,13 @@ function(jucer_project_end)
     unset(JUCER_PROJECT_XCODE_RESOURCES)
   endif()
 
+  set_source_files_properties(${JUCER_PROJECT_MODULES_BROWSABLE_FILES}
+    PROPERTIES HEADER_FILE_ONLY TRUE
+  )
+
   set(all_sources
-    ${JUCER_PROJECT_SOURCES}
-    ${JUCER_PROJECT_RESOURCES}
-    ${JUCER_PROJECT_BROWSABLE_FILES}
-    ${JUCER_PROJECT_XCODE_RESOURCES}
+    ${JUCER_PROJECT_FILES}
+    ${JUCER_PROJECT_MODULES_BROWSABLE_FILES}
     ${icon_file}
     ${resources_rc_file}
   )
@@ -1615,7 +1609,7 @@ function(jucer_project_end)
     _FRUT_set_compiler_and_linker_settings(${target})
     _FRUT_add_extra_commands(${target})
     _FRUT_link_osx_frameworks(${target})
-    _FRUT_add_xcode_resources(${target})
+    _FRUT_add_xcode_resource_folders(${target})
     _FRUT_set_custom_xcode_flags(${target})
 
   elseif(JUCER_PROJECT_TYPE STREQUAL "Static Library")
@@ -1644,7 +1638,7 @@ function(jucer_project_end)
     set(VST3_sources "")
     set(Standalone_sources "")
     set(SharedCode_sources "")
-    foreach(src_file ${JUCER_PROJECT_SOURCES})
+    foreach(src_file ${JUCER_PROJECT_FILES})
       # See Project::getTargetTypeFromFilePath()
       # in JUCE/extras/Projucer/Source/Project/jucer_Project.cpp
       if(src_file MATCHES "_AU[._]")
@@ -1669,9 +1663,7 @@ function(jucer_project_end)
     set(shared_code_target "${target}_Shared_Code")
     add_library(${shared_code_target} STATIC
       ${SharedCode_sources}
-      ${JUCER_PROJECT_RESOURCES}
-      ${JUCER_PROJECT_XCODE_RESOURCES}
-      ${JUCER_PROJECT_BROWSABLE_FILES}
+      ${JUCER_PROJECT_MODULES_BROWSABLE_FILES}
       ${icon_file}
       ${resources_rc_file}
     )
@@ -1716,7 +1708,7 @@ function(jucer_project_end)
       endif()
       _FRUT_set_JucePlugin_Build_defines(${vst_target} "VSTPlugIn")
       _FRUT_link_osx_frameworks(${vst_target})
-      _FRUT_add_xcode_resources(${vst_target})
+      _FRUT_add_xcode_resource_folders(${vst_target})
       _FRUT_set_custom_xcode_flags(${vst_target})
       unset(vst_target)
     endif()
@@ -1755,7 +1747,7 @@ function(jucer_project_end)
       endif()
       _FRUT_set_JucePlugin_Build_defines(${vst3_target} "VST3PlugIn")
       _FRUT_link_osx_frameworks(${vst3_target})
-      _FRUT_add_xcode_resources(${vst3_target})
+      _FRUT_add_xcode_resource_folders(${vst3_target})
       _FRUT_set_custom_xcode_flags(${vst3_target})
       unset(vst3_target)
     endif()
@@ -1883,7 +1875,7 @@ function(jucer_project_end)
       )
       _FRUT_set_JucePlugin_Build_defines(${au_target} "AudioUnitPlugIn")
       _FRUT_link_osx_frameworks(${au_target} "AudioUnit" "CoreAudioKit")
-      _FRUT_add_xcode_resources(${au_target})
+      _FRUT_add_xcode_resource_folders(${au_target})
       _FRUT_set_custom_xcode_flags(${au_target})
       unset(au_target)
     endif()
@@ -1989,7 +1981,7 @@ function(jucer_project_end)
       _FRUT_link_osx_frameworks(
         ${auv3_target} "AudioUnit" "CoreAudioKit" "AVFoundation"
       )
-      _FRUT_add_xcode_resources(${auv3_target})
+      _FRUT_add_xcode_resource_folders(${auv3_target})
       _FRUT_set_custom_xcode_flags(${auv3_target})
       unset(auv3_target)
     endif()
@@ -2135,7 +2127,7 @@ function(jucer_project_end)
       endif()
       _FRUT_set_JucePlugin_Build_defines(${rtas_target} "RTASPlugIn")
       _FRUT_link_osx_frameworks(${rtas_target})
-      _FRUT_add_xcode_resources(${rtas_target})
+      _FRUT_add_xcode_resource_folders(${rtas_target})
       _FRUT_set_custom_xcode_flags(${rtas_target})
       unset(rtas_target)
     endif()
@@ -2252,7 +2244,7 @@ function(jucer_project_end)
       endif()
       _FRUT_set_JucePlugin_Build_defines(${aax_target} "AAXPlugIn")
       _FRUT_link_osx_frameworks(${aax_target})
-      _FRUT_add_xcode_resources(${aax_target})
+      _FRUT_add_xcode_resource_folders(${aax_target})
       _FRUT_set_custom_xcode_flags(${aax_target})
       unset(aax_target)
     endif()
@@ -2292,7 +2284,7 @@ function(jucer_project_end)
       _FRUT_add_extra_commands(${standalone_target})
       _FRUT_set_JucePlugin_Build_defines(${standalone_target} "StandalonePlugIn")
       _FRUT_link_osx_frameworks(${standalone_target})
-      _FRUT_add_xcode_resources(${standalone_target})
+      _FRUT_add_xcode_resource_folders(${standalone_target})
       if(TARGET ${target}_AUv3_AppExtension)
         add_dependencies(${standalone_target} ${target}_AUv3_AppExtension)
         install(TARGETS ${target}_AUv3_AppExtension
@@ -2838,11 +2830,11 @@ function(_FRUT_generate_AppConfig_header)
     set(template_file "${Reprojucer_templates_DIR}/AppConfig.h")
   endif()
   configure_file("${template_file}" "JuceLibraryCode/AppConfig.h")
-  list(APPEND JUCER_PROJECT_SOURCES
+  list(APPEND JUCER_PROJECT_FILES
     "${CMAKE_CURRENT_BINARY_DIR}/JuceLibraryCode/AppConfig.h"
   )
 
-  set(JUCER_PROJECT_SOURCES "${JUCER_PROJECT_SOURCES}" PARENT_SCOPE)
+  set(JUCER_PROJECT_FILES "${JUCER_PROJECT_FILES}" PARENT_SCOPE)
 
 endfunction()
 
@@ -2918,7 +2910,7 @@ function(_FRUT_generate_JuceHeader_header)
     endif()
 
     foreach(filename ${binary_data_filenames})
-      list(APPEND JUCER_PROJECT_SOURCES
+      list(APPEND JUCER_PROJECT_FILES
         "${CMAKE_CURRENT_BINARY_DIR}/JuceLibraryCode/${filename}"
       )
     endforeach()
@@ -2954,11 +2946,11 @@ function(_FRUT_generate_JuceHeader_header)
   configure_file("${Reprojucer_templates_DIR}/JuceHeader.h"
     "JuceLibraryCode/JuceHeader.h"
   )
-  list(APPEND JUCER_PROJECT_SOURCES
+  list(APPEND JUCER_PROJECT_FILES
     "${CMAKE_CURRENT_BINARY_DIR}/JuceLibraryCode/JuceHeader.h"
   )
 
-  set(JUCER_PROJECT_SOURCES "${JUCER_PROJECT_SOURCES}" PARENT_SCOPE)
+  set(JUCER_PROJECT_FILES "${JUCER_PROJECT_FILES}" PARENT_SCOPE)
 
 endfunction()
 
@@ -3826,7 +3818,7 @@ function(_FRUT_link_osx_frameworks target)
 endfunction()
 
 
-function(_FRUT_add_xcode_resources target)
+function(_FRUT_add_xcode_resource_folders target)
 
   if(APPLE)
     foreach(folder ${JUCER_CUSTOM_XCODE_RESOURCE_FOLDERS})
