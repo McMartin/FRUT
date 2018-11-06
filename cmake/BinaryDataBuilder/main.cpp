@@ -89,5 +89,5 @@ int juce_gtkWebkitMain(int, const char**)
 {
   return 0;
 }
-}
+} // namespace juce
 #endif
