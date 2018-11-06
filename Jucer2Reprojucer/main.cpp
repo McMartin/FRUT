@@ -243,7 +243,6 @@ int main(int argc, char* argv[])
     [&wLn](const juce::ValueTree& valueTree, const juce::Identifier& property,
            const juce::String& cmakeKeyword,
            std::function<juce::String(const juce::var&)> converterFn) {
-
       if (!converterFn)
       {
         converterFn = [](const juce::var& v) { return v.toString(); };
@@ -265,7 +264,6 @@ int main(int argc, char* argv[])
     [&convertSetting](const juce::ValueTree& valueTree, const juce::Identifier& property,
                       const juce::String& cmakeKeyword,
                       std::function<juce::String(const juce::var&)> converterFn) {
-
       if (valueTree.hasProperty(property))
       {
         convertSetting(valueTree, property, cmakeKeyword, std::move(converterFn));
@@ -310,7 +308,6 @@ int main(int argc, char* argv[])
                            const juce::Identifier& property,
                            const juce::String& cmakeKeyword,
                            std::function<juce::String(const juce::var&)> converterFn) {
-
       if (valueTree.hasProperty(property))
       {
         convertOnOffSetting(valueTree, property, cmakeKeyword, std::move(converterFn));
@@ -332,7 +329,6 @@ int main(int argc, char* argv[])
     [&wLn](const juce::ValueTree& valueTree, const juce::Identifier& property,
            const std::string& cmakeKeyword,
            std::function<juce::StringArray(const juce::var&)> converterFn) {
-
       if (!converterFn)
       {
         converterFn = [](const juce::var& v) {
@@ -363,7 +359,6 @@ int main(int argc, char* argv[])
       const juce::ValueTree& valueTree, const juce::Identifier& property,
       const std::string& cmakeKeyword,
       std::function<juce::StringArray(const juce::var&)> converterFn) {
-
       if (valueTree.hasProperty(property))
       {
         convertSettingAsList(valueTree, property, cmakeKeyword, std::move(converterFn));
@@ -1610,25 +1605,24 @@ int main(int argc, char* argv[])
           if (jucerProject.hasProperty("windowsCodeBlocksArchitecture")
               || jucerVersionAsTuple >= Version{5, 0, 0})
           {
-            convertSetting(configuration, "windowsCodeBlocksArchitecture",
-                                    "ARCHITECTURE",
-                                    [](const juce::var& v) -> juce::String {
-                                      const auto value = v.toString();
+            convertSetting(configuration, "windowsCodeBlocksArchitecture", "ARCHITECTURE",
+                           [](const juce::var& v) -> juce::String {
+                             const auto value = v.toString();
 
-                                      if (value == "-m32")
-                                        return "32-bit (-m32)";
+                             if (value == "-m32")
+                               return "32-bit (-m32)";
 
-                                      if (value == "-m64" || value.isEmpty())
-                                        return "64-bit (-m64)";
+                             if (value == "-m64" || value.isEmpty())
+                               return "64-bit (-m64)";
 
-                                      if (value == "-march=armv6")
-                                        return "ARM v6";
+                             if (value == "-march=armv6")
+                               return "ARM v6";
 
-                                      if (value == "-march=armv7")
-                                        return "ARM v7";
+                             if (value == "-march=armv7")
+                               return "ARM v7";
 
-                                      return {};
-                                    });
+                             return {};
+                           });
           }
         }
 

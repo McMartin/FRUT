@@ -37,8 +37,8 @@ public:
   {
     if (index > 0)
     {
-      return binaryDataFilesOuputDir.getChildFile(
-        "BinaryData" + String{index + 1} + ".cpp");
+      return binaryDataFilesOuputDir.getChildFile("BinaryData" + String{index + 1}
+                                                  + ".cpp");
     }
 
     return binaryDataFilesOuputDir.getChildFile("BinaryData.cpp");
