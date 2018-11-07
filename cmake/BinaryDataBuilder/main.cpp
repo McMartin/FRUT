@@ -63,7 +63,8 @@ int main(int argc, char* argv[])
 
   Array<File> binaryDataFiles;
 
-  const auto result = resourceFile.write(binaryDataFiles, maxSize);
+  const auto result =
+    resourceFile.write<ProjucerVersion::v4_2_0>(binaryDataFiles, maxSize);
 
   if (!result.wasOk())
   {

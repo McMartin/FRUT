@@ -17,7 +17,7 @@
 
 // clang-format off
 
-// Lines 24-80 of this file were copied from
+// Lines 24-51, 60-70, 73-80, 83, and 85-89 of this file were copied from
 // https://github.com/WeAreROLI/JUCE/blob/4.2.0/extras/Projucer/Source/Project%20Saving/jucer_ResourceFile.h
 
 
@@ -51,6 +51,12 @@
 #include "../Project/jucer_Project.h"
 
 
+enum class ProjucerVersion
+{
+  v4_2_0,
+};
+
+
 //==============================================================================
 class ResourceFile
 {
@@ -63,6 +69,7 @@ public:
 
     void addFile (const File& file);
 
+    template <ProjucerVersion>
     Result write (Array<File>& filesCreated, int maxFileSize);
 
     //==============================================================================
@@ -72,7 +79,9 @@ private:
     Project& project;
     String className;
 
+    template <ProjucerVersion>
     Result writeHeader (MemoryOutputStream&);
+    template <ProjucerVersion>
     Result writeCpp (MemoryOutputStream&, const File& headerFile, int& index, int maxFileSize);
 };
 

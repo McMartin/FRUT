@@ -17,7 +17,7 @@
 
 // clang-format off
 
-// Lines 24-280 of this file were copied from
+// Lines 24-91, 94-145, 148-238, 241-246, 249-265, and 269-283 of this file were copied from
 // https://github.com/WeAreROLI/JUCE/blob/4.2.0/extras/Projucer/Source/Project%20Saving/jucer_ResourceFile.cpp
 
 
@@ -90,6 +90,7 @@ static String getComment()
     return comment;
 }
 
+template <ProjucerVersion>
 Result ResourceFile::writeHeader (MemoryOutputStream& header)
 {
     const String headerGuard ("BINARYDATA_H_" + String (project.getProjectUID().hashCode() & 0x7ffffff) + "_INCLUDED");
@@ -143,6 +144,7 @@ Result ResourceFile::writeHeader (MemoryOutputStream& header)
     return Result::ok();
 }
 
+template <ProjucerVersion>
 Result ResourceFile::writeCpp (MemoryOutputStream& cpp, const File& headerFile, int& i, const int maxFileSize)
 {
     const bool isFirstFile = (i == 0);
@@ -235,13 +237,14 @@ Result ResourceFile::writeCpp (MemoryOutputStream& cpp, const File& headerFile, 
     return Result::ok();
 }
 
+template <ProjucerVersion jucerVersion>
 Result ResourceFile::write (Array<File>& filesCreated, const int maxFileSize)
 {
     const File headerFile (project.getBinaryDataHeaderFile());
 
     {
         MemoryOutputStream mo;
-        Result r (writeHeader (mo));
+        Result r (writeHeader<jucerVersion> (mo));
 
         if (r.failed())
             return r;
@@ -261,7 +264,7 @@ Result ResourceFile::write (Array<File>& filesCreated, const int maxFileSize)
 
         MemoryOutputStream mo;
 
-        Result r (writeCpp (mo, headerFile, i, maxFileSize));
+        Result r (writeCpp<jucerVersion> (mo, headerFile, i, maxFileSize));
 
         if (r.failed())
             return r;
@@ -278,3 +281,6 @@ Result ResourceFile::write (Array<File>& filesCreated, const int maxFileSize)
 
     return Result::ok();
 }
+
+
+template Result ResourceFile::write<ProjucerVersion::v4_2_0>(Array<File>&, const int);
