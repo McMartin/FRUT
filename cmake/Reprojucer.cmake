@@ -1485,6 +1485,9 @@ function(jucer_project_end)
 
   if(JUCER_CUSTOM_PLIST)
     set(PListMerger_file_name "PListMerger-0.1.0")
+    if(NOT PListMerger_exe MATCHES "${PListMerger_file_name}")
+      unset(PListMerger_exe CACHE)
+    endif()
     find_program(PListMerger_exe "${PListMerger_file_name}"
       PATHS "${Reprojucer.cmake_DIR}/bin"
       NO_DEFAULT_PATH
@@ -2844,6 +2847,9 @@ function(_FRUT_generate_JuceHeader_header)
   list(LENGTH JUCER_PROJECT_RESOURCES resources_count)
   if(resources_count GREATER 0)
     set(BinaryDataBuilder_file_name "BinaryDataBuilder-0.1.0")
+    if(NOT BinaryDataBuilder_exe MATCHES "${BinaryDataBuilder_file_name}")
+      unset(BinaryDataBuilder_exe CACHE)
+    endif()
     find_program(BinaryDataBuilder_exe "${BinaryDataBuilder_file_name}"
       PATHS "${Reprojucer.cmake_DIR}/bin"
       NO_DEFAULT_PATH
@@ -2956,6 +2962,9 @@ endfunction()
 function(_FRUT_generate_icon_file icon_format icon_file_output_dir out_icon_filename)
 
   set(IconBuilder_file_name "IconBuilder-0.1.0")
+  if(NOT IconBuilder_exe MATCHES "${IconBuilder_file_name}")
+    unset(IconBuilder_exe CACHE)
+  endif()
   find_program(IconBuilder_exe "${IconBuilder_file_name}"
     PATHS "${Reprojucer.cmake_DIR}/bin"
     NO_DEFAULT_PATH
