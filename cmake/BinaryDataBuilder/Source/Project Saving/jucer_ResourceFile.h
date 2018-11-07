@@ -17,8 +17,8 @@
 
 // clang-format off
 
-// From line 24 onward, the content of this file was copied from
-// https://github.com/WeAreROLI/JUCE/blob/4.3.1/extras/Projucer/Source/Project%20Saving/jucer_ResourceFile.h
+// Lines 24-51, 60-70, 73-80, 83, and 85-89 of this file were copied from
+// https://github.com/WeAreROLI/JUCE/blob/4.2.0/extras/Projucer/Source/Project%20Saving/jucer_ResourceFile.h
 
 
 /*
@@ -51,27 +51,27 @@
 #include "../Project/jucer_Project.h"
 
 
+enum class ProjucerVersion
+{
+  v4_2_0,
+  v5_0_0,
+  v5_3_1,
+};
+
+
 //==============================================================================
 class ResourceFile
 {
 public:
     //==============================================================================
     ResourceFile (Project& project);
-    ~ResourceFile();
 
     //==============================================================================
     void setClassName (const String& className);
-    String getClassName() const       { return className; }
 
     void addFile (const File& file);
-    String getDataVariableFor (const File& file) const;
-    String getSizeVariableFor (const File& file) const;
 
-    int getNumFiles() const                 { return files.size(); }
-    const File& getFile (int index) const   { return files.getReference (index); }
-
-    int64 getTotalDataSize() const;
-
+    template <ProjucerVersion>
     Result write (Array<File>& filesCreated, int maxFileSize);
 
     //==============================================================================
@@ -81,10 +81,10 @@ private:
     Project& project;
     String className;
 
+    template <ProjucerVersion>
     Result writeHeader (MemoryOutputStream&);
+    template <ProjucerVersion>
     Result writeCpp (MemoryOutputStream&, const File& headerFile, int& index, int maxFileSize);
-
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (ResourceFile)
 };
 
 

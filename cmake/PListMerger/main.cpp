@@ -33,9 +33,9 @@ int main(int argc, char* argv[])
     return 1;
   }
 
-  std::vector<std::string> args{argv, argv + argc};
+  const std::vector<std::string> args{argv, argv + argc};
 
-  juce::ScopedPointer<juce::XmlElement> firstPlistElement =
+  const juce::ScopedPointer<juce::XmlElement> firstPlistElement =
     juce::XmlDocument::parse(args.at(1));
   if (!firstPlistElement || !firstPlistElement->hasTagName("plist"))
   {
@@ -43,7 +43,7 @@ int main(int argc, char* argv[])
     return 1;
   }
 
-  auto firstDictElement = firstPlistElement->getChildByName("dict");
+  const auto firstDictElement = firstPlistElement->getChildByName("dict");
   if (!firstDictElement)
   {
     std::cerr << "Invalid first plist content, expected <dict> element" << std::endl;
@@ -85,7 +85,7 @@ int main(int argc, char* argv[])
     }
   }
 
-  juce::ScopedPointer<juce::XmlElement> secondPlistElement =
+  const juce::ScopedPointer<juce::XmlElement> secondPlistElement =
     juce::XmlDocument::parse(args.at(2));
   if (!secondPlistElement || !secondPlistElement->hasTagName("plist"))
   {
@@ -93,7 +93,7 @@ int main(int argc, char* argv[])
     return 1;
   }
 
-  auto secondDictElement = secondPlistElement->getChildByName("dict");
+  const auto secondDictElement = secondPlistElement->getChildByName("dict");
   if (!secondDictElement)
   {
     std::cerr << "Invalid second plist content, expected <dict> element" << std::endl;
