@@ -2846,7 +2846,7 @@ function(_FRUT_generate_JuceHeader_header)
 
   list(LENGTH JUCER_PROJECT_RESOURCES resources_count)
   if(resources_count GREATER 0)
-    set(BinaryDataBuilder_file_name "BinaryDataBuilder-0.1.0")
+    set(BinaryDataBuilder_file_name "BinaryDataBuilder-0.2.0")
     if(NOT BinaryDataBuilder_exe MATCHES "${BinaryDataBuilder_file_name}")
       unset(BinaryDataBuilder_exe CACHE)
     endif()
@@ -2877,6 +2877,11 @@ function(_FRUT_generate_JuceHeader_header)
       endif()
     endif()
 
+    if(DEFINED JUCER_VERSION)
+      set(projucer_version "${JUCER_VERSION}")
+    else()
+      set(projucer_version "latest")
+    endif()
     if(DEFINED JUCER_PROJECT_ID)
       set(project_uid "${JUCER_PROJECT_ID}")
     else()
@@ -2895,6 +2900,7 @@ function(_FRUT_generate_JuceHeader_header)
       set(JUCER_BINARYDATA_NAMESPACE "BinaryData")
     endif()
     set(BinaryDataBuilder_args
+      "${projucer_version}"
       "${CMAKE_CURRENT_BINARY_DIR}/JuceLibraryCode/"
       "${project_uid}"
       ${size_limit_in_bytes}

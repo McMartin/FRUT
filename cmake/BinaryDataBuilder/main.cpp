@@ -29,6 +29,7 @@ int main(int argc, char* argv[])
   if (argc < 5)
   {
     std::cerr << "usage: BinaryDataBuilder"
+              << " <Projucer-version>"
               << " <BinaryData-files-output-dir>"
               << " <Project-UID>"
               << " <BinaryData.cpp-size-limit>"
@@ -39,12 +40,40 @@ int main(int argc, char* argv[])
 
   const std::vector<std::string> args{argv, argv + argc};
 
-  Project project{args.at(1), args.at(2)};
+  using Version = std::tuple<int, int, int>;
+
+  const auto jucerVersion = [&args]() {
+    if (args.at(1) == "latest")
+    {
+      return Version{5, 3, 1};
+    }
+
+    const auto versionTokens = StringArray::fromTokens(String{args.at(1)}, ".", {});
+    if (versionTokens.size() != 3)
+    {
+      std::cerr << "Invalid Projucer version" << std::endl;
+      std::exit(1);
+    }
+
+    try
+    {
+      return Version{std::stoi(versionTokens[0].toStdString()),
+                     std::stoi(versionTokens[1].toStdString()),
+                     std::stoi(versionTokens[2].toStdString())};
+    }
+    catch (const std::invalid_argument&)
+    {
+      std::cerr << "Invalid Projucer version" << std::endl;
+      std::exit(1);
+    }
+  }();
+
+  Project project{args.at(2), args.at(3)};
 
   const auto maxSize = [&args]() {
     try
     {
-      return std::stoi(args.at(3));
+      return std::stoi(args.at(4));
     }
     catch (const std::invalid_argument&)
     {
@@ -54,9 +83,9 @@ int main(int argc, char* argv[])
   }();
 
   ResourceFile resourceFile{project};
-  resourceFile.setClassName(args.at(4));
+  resourceFile.setClassName(args.at(5));
 
-  for (auto i = 5u; i < args.size(); ++i)
+  for (auto i = 6u; i < args.size(); ++i)
   {
     resourceFile.addFile(File{args.at(i)});
   }
@@ -64,7 +93,11 @@ int main(int argc, char* argv[])
   Array<File> binaryDataFiles;
 
   const auto result =
-    resourceFile.write<ProjucerVersion::v4_2_0>(binaryDataFiles, maxSize);
+    jucerVersion < Version{5, 0, 0}
+      ? resourceFile.write<ProjucerVersion::v4_2_0>(binaryDataFiles, maxSize)
+      : jucerVersion < Version{5, 3, 1}
+          ? resourceFile.write<ProjucerVersion::v5_0_0>(binaryDataFiles, maxSize)
+          : resourceFile.write<ProjucerVersion::v5_3_1>(binaryDataFiles, maxSize);
 
   if (!result.wasOk())
   {

@@ -55,7 +55,7 @@ if(CMAKE_BUILD_TYPE STREQUAL "")
 endif()
 
 
-project(BinaryDataBuilder VERSION 0.1.0)
+project(BinaryDataBuilder VERSION 0.2.0)
 
 add_executable(BinaryDataBuilder
   "${CMAKE_CURRENT_LIST_DIR}/main.cpp"
