@@ -17,7 +17,7 @@
 
 // clang-format off
 
-// Lines 24-306 of this file were copied from
+// Lines 24-280 of this file were copied from
 // https://github.com/WeAreROLI/JUCE/blob/4.3.1/extras/Projucer/Source/Project%20Saving/jucer_ResourceFile.cpp
 
 
@@ -58,10 +58,6 @@ ResourceFile::ResourceFile (Project& p)
 {
 }
 
-ResourceFile::~ResourceFile()
-{
-}
-
 //==============================================================================
 void ResourceFile::setClassName (const String& name)
 {
@@ -80,28 +76,6 @@ void ResourceFile::addFile (const File& file)
         variableName = variableNameRoot + String (suffix++);
 
     variableNames.add (variableName);
-}
-
-String ResourceFile::getDataVariableFor (const File& file) const
-{
-    jassert (files.indexOf (file) >= 0);
-    return variableNames [files.indexOf (file)];
-}
-
-String ResourceFile::getSizeVariableFor (const File& file) const
-{
-    jassert (files.indexOf (file) >= 0);
-    return variableNames [files.indexOf (file)] + "Size";
-}
-
-int64 ResourceFile::getTotalDataSize() const
-{
-    int64 total = 0;
-
-    for (int i = 0; i < files.size(); ++i)
-        total += files.getReference(i).getSize();
-
-    return total;
 }
 
 static String getComment()

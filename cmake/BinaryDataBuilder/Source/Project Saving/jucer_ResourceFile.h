@@ -17,7 +17,7 @@
 
 // clang-format off
 
-// Lines 24-91 of this file were copied from
+// Lines 24-80 of this file were copied from
 // https://github.com/WeAreROLI/JUCE/blob/4.3.1/extras/Projucer/Source/Project%20Saving/jucer_ResourceFile.h
 
 
@@ -57,20 +57,11 @@ class ResourceFile
 public:
     //==============================================================================
     ResourceFile (Project& project);
-    ~ResourceFile();
 
     //==============================================================================
     void setClassName (const String& className);
-    String getClassName() const       { return className; }
 
     void addFile (const File& file);
-    String getDataVariableFor (const File& file) const;
-    String getSizeVariableFor (const File& file) const;
-
-    int getNumFiles() const                 { return files.size(); }
-    const File& getFile (int index) const   { return files.getReference (index); }
-
-    int64 getTotalDataSize() const;
 
     Result write (Array<File>& filesCreated, int maxFileSize);
 
@@ -83,8 +74,6 @@ private:
 
     Result writeHeader (MemoryOutputStream&);
     Result writeCpp (MemoryOutputStream&, const File& headerFile, int& index, int maxFileSize);
-
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (ResourceFile)
 };
 
 
