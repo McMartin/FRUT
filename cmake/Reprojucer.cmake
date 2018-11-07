@@ -2873,7 +2873,7 @@ function(_FRUT_generate_JuceHeader_header)
       endif()
     endif()
 
-    if(NOT JUCER_PROJECT_ID)
+    if(NOT DEFINED JUCER_PROJECT_ID)
       set(project_uid "FRUT")
     else()
       set(project_uid "${JUCER_PROJECT_ID}")
