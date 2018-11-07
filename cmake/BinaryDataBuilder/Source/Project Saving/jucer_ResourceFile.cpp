@@ -283,4 +283,85 @@ Result ResourceFile::write (Array<File>& filesCreated, const int maxFileSize)
 }
 
 
+// Lines 290-314, and 318-363 of this file were copied from
+// https://github.com/WeAreROLI/JUCE/blob/5.0.0/extras/Projucer/Source/Project%20Saving/jucer_ResourceFile.cpp
+
+
+/*
+  ==============================================================================
+
+   This file is part of the JUCE library.
+   Copyright (c) 2017 - ROLI Ltd.
+
+   JUCE is an open source library subject to commercial or open-source
+   licensing.
+
+   By using JUCE, you agree to the terms of both the JUCE 5 End-User License
+   Agreement and JUCE 5 Privacy Policy (both updated and effective as of the
+   27th April 2017).
+
+   End User License Agreement: www.juce.com/juce-5-licence
+   Privacy Policy: www.juce.com/juce-5-privacy-policy
+
+   Or: You may also use this code under the terms of the GPL v3 (see
+   www.gnu.org/licenses).
+
+   JUCE IS PROVIDED "AS IS" WITHOUT ANY WARRANTY, AND ALL WARRANTIES, WHETHER
+   EXPRESSED OR IMPLIED, INCLUDING MERCHANTABILITY AND FITNESS FOR PURPOSE, ARE
+   DISCLAIMED.
+
+  ==============================================================================
+*/
+
+template <>
+Result ResourceFile::writeHeader<ProjucerVersion::v5_0_0> (MemoryOutputStream& header)
+{
+    header << "/* ========================================================================================="
+           << getComment()
+           << "#pragma once" << newLine
+           << newLine
+           << "namespace " << className << newLine
+           << "{" << newLine;
+
+    bool containsAnyImages = false;
+
+    for (int i = 0; i < files.size(); ++i)
+    {
+        const File& file = files.getReference(i);
+
+        if (! file.existsAsFile())
+            return Result::fail ("Can't open resource file: " + file.getFullPathName());
+
+        const int64 dataSize = file.getSize();
+
+        const String variableName (variableNames[i]);
+
+        FileInputStream fileStream (file);
+
+        if (fileStream.openedOk())
+        {
+            containsAnyImages = containsAnyImages
+                                 || (ImageFileFormat::findImageFormatForStream (fileStream) != nullptr);
+
+            header << "    extern const char*   " << variableName << ";" << newLine;
+            header << "    const int            " << variableName << "Size = " << (int) dataSize << ";" << newLine << newLine;
+        }
+    }
+
+    header << "    // Points to the start of a list of resource names." << newLine
+           << "    extern const char* namedResourceList[];" << newLine
+           << newLine
+           << "    // Number of elements in the namedResourceList array." << newLine
+           << "    const int namedResourceListSize = " << files.size() <<  ";" << newLine
+           << newLine
+           << "    // If you provide the name of one of the binary resource variables above, this function will" << newLine
+           << "    // return the corresponding data and its size (or a null pointer if the name isn't found)." << newLine
+           << "    const char* getNamedResource (const char* resourceNameUTF8, int& dataSizeInBytes) throw();" << newLine
+           << "}" << newLine;
+
+    return Result::ok();
+}
+
+
 template Result ResourceFile::write<ProjucerVersion::v4_2_0>(Array<File>&, const int);
+template Result ResourceFile::write<ProjucerVersion::v5_0_0>(Array<File>&, const int);
