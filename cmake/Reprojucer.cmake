@@ -1484,8 +1484,8 @@ function(jucer_project_end)
   )
 
   if(JUCER_CUSTOM_PLIST)
-    set(PListMerger_version "0.1.0")
-    find_program(PListMerger_exe "PListMerger-${PListMerger_version}"
+    set(PListMerger_file_name "PListMerger-0.1.0")
+    find_program(PListMerger_exe "${PListMerger_file_name}"
       PATHS "${Reprojucer.cmake_DIR}/bin"
       NO_DEFAULT_PATH
     )
@@ -1503,12 +1503,12 @@ function(jucer_project_end)
         message(FATAL_ERROR "Failed to build PListMerger")
       endif()
       message(STATUS "PListMerger has been successfully built")
-      find_program(PListMerger_exe "PListMerger-${PListMerger_version}"
+      find_program(PListMerger_exe "${PListMerger_file_name}"
         PATHS "${Reprojucer.cmake_DIR}/bin"
         NO_DEFAULT_PATH
       )
       if(NOT PListMerger_exe)
-        message(FATAL_ERROR "Could not find PListMerger-${PListMerger_version}")
+        message(FATAL_ERROR "Could not find ${PListMerger_file_name}")
       endif()
     endif()
 
@@ -2843,8 +2843,8 @@ function(_FRUT_generate_JuceHeader_header)
 
   list(LENGTH JUCER_PROJECT_RESOURCES resources_count)
   if(resources_count GREATER 0)
-    set(BinaryDataBuilder_version "0.1.0")
-    find_program(BinaryDataBuilder_exe "BinaryDataBuilder-${BinaryDataBuilder_version}"
+    set(BinaryDataBuilder_file_name "BinaryDataBuilder-0.1.0")
+    find_program(BinaryDataBuilder_exe "${BinaryDataBuilder_file_name}"
       PATHS "${Reprojucer.cmake_DIR}/bin"
       NO_DEFAULT_PATH
     )
@@ -2862,14 +2862,12 @@ function(_FRUT_generate_JuceHeader_header)
         message(FATAL_ERROR "Failed to build BinaryDataBuilder")
       endif()
       message(STATUS "BinaryDataBuilder has been successfully built")
-      find_program(BinaryDataBuilder_exe "BinaryDataBuilder-${BinaryDataBuilder_version}"
+      find_program(BinaryDataBuilder_exe "${BinaryDataBuilder_file_name}"
         PATHS "${Reprojucer.cmake_DIR}/bin"
         NO_DEFAULT_PATH
       )
       if(NOT BinaryDataBuilder_exe)
-        message(FATAL_ERROR
-          "Could not find BinaryDataBuilder-${BinaryDataBuilder_version}"
-        )
+        message(FATAL_ERROR "Could not find ${BinaryDataBuilder_file_name}")
       endif()
     endif()
 
@@ -2957,8 +2955,8 @@ endfunction()
 
 function(_FRUT_generate_icon_file icon_format icon_file_output_dir out_icon_filename)
 
-  set(IconBuilder_version "0.1.0")
-  find_program(IconBuilder_exe "IconBuilder-${IconBuilder_version}"
+  set(IconBuilder_file_name "IconBuilder-0.1.0")
+  find_program(IconBuilder_exe "${IconBuilder_file_name}"
     PATHS "${Reprojucer.cmake_DIR}/bin"
     NO_DEFAULT_PATH
   )
@@ -2976,12 +2974,12 @@ function(_FRUT_generate_icon_file icon_format icon_file_output_dir out_icon_file
       message(FATAL_ERROR "Failed to build IconBuilder")
     endif()
     message(STATUS "IconBuilder has been successfully built")
-    find_program(IconBuilder_exe "IconBuilder-${IconBuilder_version}"
+    find_program(IconBuilder_exe "${IconBuilder_file_name}"
       PATHS "${Reprojucer.cmake_DIR}/bin"
       NO_DEFAULT_PATH
     )
     if(NOT IconBuilder_exe)
-      message(FATAL_ERROR "Could not find IconBuilder-${IconBuilder_version}")
+      message(FATAL_ERROR "Could not find ${IconBuilder_file_name}")
     endif()
   endif()
 
