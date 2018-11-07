@@ -18,7 +18,7 @@
 // clang-format off
 
 // Lines 24-80 of this file were copied from
-// https://github.com/WeAreROLI/JUCE/blob/4.3.1/extras/Projucer/Source/Project%20Saving/jucer_ResourceFile.h
+// https://github.com/WeAreROLI/JUCE/blob/4.2.0/extras/Projucer/Source/Project%20Saving/jucer_ResourceFile.h
 
 
 /*
