@@ -55,6 +55,7 @@ enum class ProjucerVersion
 {
   v4_2_0,
   v5_0_0,
+  v5_3_1,
 };
 
 
