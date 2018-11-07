@@ -37,7 +37,7 @@ int main(int argc, char* argv[])
     return 1;
   }
 
-  std::vector<std::string> args{argv, argv + argc};
+  const std::vector<std::string> args{argv, argv + argc};
 
   Project project{args.at(1), args.at(2)};
 
