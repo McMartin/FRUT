@@ -1445,7 +1445,7 @@ function(jucer_project_end)
       endif()
     endforeach()
 
-    if(DEFINED icon_filename)
+    if(DEFINED icon_filename AND NOT icon_filename STREQUAL "")
       string(CONCAT resources_rc_icon_settings
         "\nIDI_ICON1 ICON DISCARDABLE \"${icon_filename}\""
         "\nIDI_ICON2 ICON DISCARDABLE \"${icon_filename}\""
