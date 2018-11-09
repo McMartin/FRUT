@@ -22,5 +22,4 @@ BEGIN
   END
 END
 
-#endif
-@resources_rc_icon_settings@
+#endif@resources_rc_icon_settings@
