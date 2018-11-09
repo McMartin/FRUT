@@ -13,12 +13,7 @@ BEGIN
   BEGIN
     BLOCK "040904E4"
     BEGIN
-      VALUE "CompanyName",  "@JUCER_COMPANY_NAME@\0"@resources_rc_legal_copyright@
-      VALUE "FileDescription",  "@JUCER_PROJECT_NAME@\0"
-      VALUE "FileVersion",  "@JUCER_PROJECT_VERSION@\0"
-      VALUE "ProductName",  "@JUCER_PROJECT_NAME@\0"
-      VALUE "ProductVersion",  "@JUCER_PROJECT_VERSION@\0"
-    END
+@rc_string_file_info_values@    END
   END
 
   BLOCK "VarFileInfo"

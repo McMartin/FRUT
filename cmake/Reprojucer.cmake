@@ -1428,12 +1428,23 @@ function(jucer_project_end)
   endif()
 
   if(WIN32 AND NOT JUCER_PROJECT_TYPE STREQUAL "Static Library")
-    if(DEFINED JUCER_COMPANY_COPYRIGHT
-        OR NOT (DEFINED JUCER_VERSION AND JUCER_VERSION VERSION_LESS 5.2.0))
-      set(resources_rc_legal_copyright
-        "\n      VALUE \"LegalCopyright\",  \"${JUCER_COMPANY_COPYRIGHT}\\0\""
-      )
-    endif()
+    set(rc_keys "CompanyName" "LegalCopyright" "FileDescription" "FileVersion"
+      "ProductName" "ProductVersion"
+    )
+    set(rc_values "JUCER_COMPANY_NAME" "JUCER_COMPANY_COPYRIGHT" "JUCER_PROJECT_NAME"
+      "JUCER_PROJECT_VERSION" "JUCER_PROJECT_NAME" "JUCER_PROJECT_VERSION"
+    )
+    set(rc_string_file_info_values "")
+    foreach(index RANGE 5)
+      list(GET rc_keys ${index} rc_key)
+      list(GET rc_values ${index} rc_value)
+      if(DEFINED ${rc_value} AND NOT ${rc_value} STREQUAL "")
+        string(APPEND rc_string_file_info_values
+          "      VALUE \"${rc_key}\",  \"${${rc_value}}\\0\"\n"
+        )
+      endif()
+    endforeach()
+
     if(DEFINED icon_filename)
       string(CONCAT resources_rc_icon_settings
         "\nIDI_ICON1 ICON DISCARDABLE \"${icon_filename}\""
