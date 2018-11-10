@@ -1428,20 +1428,39 @@ function(jucer_project_end)
   endif()
 
   if(WIN32 AND NOT JUCER_PROJECT_TYPE STREQUAL "Static Library")
-    if(DEFINED JUCER_COMPANY_COPYRIGHT
-        OR NOT (DEFINED JUCER_VERSION AND JUCER_VERSION VERSION_LESS 5.2.0))
-      set(resources_rc_legal_copyright
-        "\n      VALUE \"LegalCopyright\",  \"${JUCER_COMPANY_COPYRIGHT}\\0\""
-      )
-    endif()
-    if(DEFINED icon_filename)
+    set(rc_keys "CompanyName" "LegalCopyright" "FileDescription" "FileVersion"
+      "ProductName" "ProductVersion"
+    )
+    set(rc_values "JUCER_COMPANY_NAME" "JUCER_COMPANY_COPYRIGHT" "JUCER_PROJECT_NAME"
+      "JUCER_PROJECT_VERSION" "JUCER_PROJECT_NAME" "JUCER_PROJECT_VERSION"
+    )
+    set(rc_string_file_info_values "")
+    foreach(index RANGE 5)
+      list(GET rc_keys ${index} rc_key)
+      list(GET rc_values ${index} rc_value)
+      if(DEFINED ${rc_value} AND NOT ${rc_value} STREQUAL "")
+        string(APPEND rc_string_file_info_values
+          "      VALUE \"${rc_key}\",  \"${${rc_value}}\\0\"\n"
+        )
+      endif()
+    endforeach()
+
+    if(DEFINED icon_filename AND NOT icon_filename STREQUAL "")
       string(CONCAT resources_rc_icon_settings
+        "\n"
         "\nIDI_ICON1 ICON DISCARDABLE \"${icon_filename}\""
         "\nIDI_ICON2 ICON DISCARDABLE \"${icon_filename}\""
       )
     endif()
 
-    string(REPLACE "." "," comma_separated_version_number "${JUCER_PROJECT_VERSION}")
+    string(REPLACE "." ";" version_parts "${JUCER_PROJECT_VERSION}")
+    list(LENGTH version_parts version_parts_length)
+    while(version_parts_length LESS 4)
+      list(APPEND version_parts 0)
+      list(LENGTH version_parts version_parts_length)
+    endwhile()
+    string(REPLACE ";" "," comma_separated_version_number "${version_parts}")
+
     configure_file("${Reprojucer_templates_DIR}/resources.rc" "resources.rc")
     set(resources_rc_file "${CMAKE_CURRENT_BINARY_DIR}/resources.rc")
     source_group("Juce Library Code" FILES "${CMAKE_CURRENT_BINARY_DIR}/resources.rc")
