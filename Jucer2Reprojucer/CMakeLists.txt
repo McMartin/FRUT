@@ -251,6 +251,27 @@ jucer_export_target_configuration(
   DEBUG_MODE OFF
 )
 
+jucer_export_target(
+  "Code::Blocks (Linux)"
+  EXTRA_COMPILER_FLAGS
+    "-Werror"
+    "-Wall"
+    "-Wextra"
+    "-Wno-implicit-fallthrough"
+)
+
+jucer_export_target_configuration(
+  "Code::Blocks (Linux)"
+  NAME "Debug"
+  DEBUG_MODE ON
+)
+
+jucer_export_target_configuration(
+  "Code::Blocks (Linux)"
+  NAME "Release"
+  DEBUG_MODE OFF
+)
+
 jucer_project_end()
 
 

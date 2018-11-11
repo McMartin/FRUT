@@ -30,14 +30,16 @@ set(Reprojucer_supported_exporters
   "Visual Studio 2013"
   "Linux Makefile"
   "Code::Blocks (Windows)"
+  "Code::Blocks (Linux)"
 )
 set(Reprojucer_supported_exporters_conditions
   "APPLE"
   "MSVC_VERSION\;GREATER\;1909"
   "MSVC_VERSION\;EQUAL\;1900"
   "MSVC_VERSION\;EQUAL\;1800"
-  "CMAKE_HOST_SYSTEM_NAME\;STREQUAL\;Linux"
+  "CMAKE_HOST_SYSTEM_NAME\;STREQUAL\;Linux\;AND\;NOT\;CMAKE_EXTRA_GENERATOR\;STREQUAL\;CodeBlocks"
   "WIN32\;AND\;NOT\;MSVC"
+  "CMAKE_HOST_SYSTEM_NAME\;STREQUAL\;Linux\;AND\;CMAKE_EXTRA_GENERATOR\;STREQUAL\;CodeBlocks"
 )
 
 
@@ -1354,7 +1356,7 @@ endfunction()
 function(jucer_project_end)
 
   unset(current_exporter)
-  foreach(exporter_index RANGE 5)
+  foreach(exporter_index RANGE 6)
     list(GET Reprojucer_supported_exporters_conditions ${exporter_index} condition)
     if(${condition})
       if(DEFINED current_exporter)
