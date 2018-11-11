@@ -3358,6 +3358,8 @@ function(_FRUT_set_compiler_and_linker_settings target)
 
   elseif(CMAKE_HOST_SYSTEM_NAME STREQUAL "Linux")
     foreach(config ${JUCER_PROJECT_CONFIGURATIONS})
+      target_compile_definitions(${target} PRIVATE "LINUX=1")
+
       if(${JUCER_CONFIGURATION_IS_DEBUG_${config}})
         target_compile_definitions(${target} PRIVATE
           $<$<CONFIG:${config}>:DEBUG=1>
