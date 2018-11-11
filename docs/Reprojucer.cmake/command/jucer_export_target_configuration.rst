@@ -71,4 +71,4 @@ and ``WHOLE_PROGRAM_OPTIMISATION`` are only supported by the following exporters
 
 ``ARCHITECTURE`` is only supported by the following exporters: ``"Visual Studio 2017"``,
 ``"Visual Studio 2015"``, ``"Visual Studio 2013"``, ``"Linux Makefile"`` and
-``"Code::Blocks (Windows)".
+``"Code::Blocks (Windows)"``.
