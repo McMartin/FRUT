@@ -988,7 +988,7 @@ function(jucer_export_target_configuration
     list(APPEND single_value_keywords "ARCHITECTURE")
   endif()
 
-  if(exporter STREQUAL "Code::Blocks (Windows)")
+  if(exporter MATCHES "^Code::Blocks \((Windows|Linux)\)$")
     list(APPEND single_value_keywords "ARCHITECTURE")
   endif()
 
@@ -1334,7 +1334,7 @@ function(jucer_export_target_configuration
     set(JUCER_ARCHITECTURE_FLAG_${config} "${architecture_flag}" PARENT_SCOPE)
   endif()
 
-  if(DEFINED _ARCHITECTURE AND exporter STREQUAL "Code::Blocks (Windows)")
+  if(DEFINED _ARCHITECTURE AND exporter MATCHES "^Code::Blocks \((Windows|Linux)\)$")
     set(architecture "${_ARCHITECTURE}")
     if(architecture STREQUAL "32-bit (-m32)")
       set(architecture_flag "-m32")
@@ -3371,12 +3371,23 @@ function(_FRUT_set_compiler_and_linker_settings target)
         target_compile_definitions(${target} PRIVATE $<$<CONFIG:${config}>:NDEBUG=1>)
       endif()
 
-      if(DEFINED JUCER_ARCHITECTURE_FLAG_${config})
-        target_compile_options(${target} PRIVATE
-          $<$<CONFIG:${config}>:${JUCER_ARCHITECTURE_FLAG_${config}}>
-        )
+      if(CMAKE_EXTRA_GENERATOR STREQUAL "CodeBlocks")
+        if(DEFINED JUCER_ARCHITECTURE_FLAG_${config})
+          target_compile_options(${target} PRIVATE
+            $<$<CONFIG:${config}>:${JUCER_ARCHITECTURE_FLAG_${config}}>
+          )
+          set_property(TARGET ${target} APPEND PROPERTY
+            LINK_FLAGS_${upper_config} "${JUCER_ARCHITECTURE_FLAG_${config}}"
+          )
+        endif()
       else()
-        target_compile_options(${target} PRIVATE $<$<CONFIG:${config}>:-march=native>)
+        if(DEFINED JUCER_ARCHITECTURE_FLAG_${config})
+          target_compile_options(${target} PRIVATE
+            $<$<CONFIG:${config}>:${JUCER_ARCHITECTURE_FLAG_${config}}>
+          )
+        else()
+          target_compile_options(${target} PRIVATE $<$<CONFIG:${config}>:-march=native>)
+        endif()
       endif()
     endforeach()
 

@@ -1633,6 +1633,16 @@ int main(int argc, char* argv[])
           }
         }
 
+        if (exporterType == "CODEBLOCKS_LINUX")
+        {
+          if (jucerProject.hasProperty("linuxCodeBlocksArchitecture")
+              || jucerVersionAsTuple >= Version{5, 0, 0})
+          {
+            convertSetting(configuration, "linuxCodeBlocksArchitecture", "ARCHITECTURE",
+                           codeBlocksArchitecture);
+          }
+        }
+
         writeUserNotes(wLn, configuration);
 
         wLn(")");
