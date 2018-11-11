@@ -3468,6 +3468,10 @@ function(_FRUT_set_compiler_and_linker_settings target)
           LINK_FLAGS_${upper_config} "${JUCER_ARCHITECTURE_FLAG_${config}}"
         )
       endif()
+
+      foreach(path ${JUCER_EXTRA_LIBRARY_SEARCH_PATHS_${config}})
+        target_link_libraries(${target} PRIVATE $<$<CONFIG:${config}>:-L${path}>)
+      endforeach()
     endforeach()
 
     target_compile_options(${target} PRIVATE "-mstackrealign")
