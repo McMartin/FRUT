@@ -46,6 +46,7 @@ targets:
 - Visual Studio 2013
 - Linux Makefile
 - Code::Blocks (Windows)
+- Code::Blocks (Linux)
 
 
 Documentation

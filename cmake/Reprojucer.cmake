@@ -30,14 +30,16 @@ set(Reprojucer_supported_exporters
   "Visual Studio 2013"
   "Linux Makefile"
   "Code::Blocks (Windows)"
+  "Code::Blocks (Linux)"
 )
 set(Reprojucer_supported_exporters_conditions
   "APPLE"
   "MSVC_VERSION\;GREATER\;1909"
   "MSVC_VERSION\;EQUAL\;1900"
   "MSVC_VERSION\;EQUAL\;1800"
-  "CMAKE_HOST_SYSTEM_NAME\;STREQUAL\;Linux"
+  "CMAKE_HOST_SYSTEM_NAME\;STREQUAL\;Linux\;AND\;NOT\;CMAKE_EXTRA_GENERATOR\;STREQUAL\;CodeBlocks"
   "WIN32\;AND\;NOT\;MSVC"
+  "CMAKE_HOST_SYSTEM_NAME\;STREQUAL\;Linux\;AND\;CMAKE_EXTRA_GENERATOR\;STREQUAL\;CodeBlocks"
 )
 
 
@@ -986,7 +988,7 @@ function(jucer_export_target_configuration
     list(APPEND single_value_keywords "ARCHITECTURE")
   endif()
 
-  if(exporter STREQUAL "Code::Blocks (Windows)")
+  if(exporter MATCHES "^Code::Blocks \((Windows|Linux)\)$")
     list(APPEND single_value_keywords "ARCHITECTURE")
   endif()
 
@@ -1332,7 +1334,7 @@ function(jucer_export_target_configuration
     set(JUCER_ARCHITECTURE_FLAG_${config} "${architecture_flag}" PARENT_SCOPE)
   endif()
 
-  if(DEFINED _ARCHITECTURE AND exporter STREQUAL "Code::Blocks (Windows)")
+  if(DEFINED _ARCHITECTURE AND exporter MATCHES "^Code::Blocks \((Windows|Linux)\)$")
     set(architecture "${_ARCHITECTURE}")
     if(architecture STREQUAL "32-bit (-m32)")
       set(architecture_flag "-m32")
@@ -1354,7 +1356,7 @@ endfunction()
 function(jucer_project_end)
 
   unset(current_exporter)
-  foreach(exporter_index RANGE 5)
+  foreach(exporter_index RANGE 6)
     list(GET Reprojucer_supported_exporters_conditions ${exporter_index} condition)
     if(${condition})
       if(DEFINED current_exporter)
@@ -3159,10 +3161,6 @@ function(_FRUT_set_compiler_and_linker_settings target)
       if(JUCER_LINK_TIME_OPTIMISATION_${config})
         target_compile_options(${target} PRIVATE $<$<CONFIG:${config}>:-flto>)
       endif()
-
-      foreach(path ${JUCER_EXTRA_LIBRARY_SEARCH_PATHS_${config}})
-        target_link_libraries(${target} PRIVATE $<$<CONFIG:${config}>:-L${path}>)
-      endforeach()
     endforeach()
 
     if(target MATCHES "_AUv3_AppExtension$")
@@ -3341,10 +3339,6 @@ function(_FRUT_set_compiler_and_linker_settings target)
         target_compile_options(${target} PRIVATE $<$<CONFIG:${config}>:/fp:fast>)
       endif()
 
-      foreach(path ${JUCER_EXTRA_LIBRARY_SEARCH_PATHS_${config}})
-        target_link_libraries(${target} PRIVATE $<$<CONFIG:${config}>:-LIBPATH:${path}>)
-      endforeach()
-
       if(DEFINED JUCER_INCREMENTAL_LINKING_${config})
         if(JUCER_INCREMENTAL_LINKING_${config})
           string(TOUPPER "${config}" upper_config)
@@ -3366,6 +3360,8 @@ function(_FRUT_set_compiler_and_linker_settings target)
 
   elseif(CMAKE_HOST_SYSTEM_NAME STREQUAL "Linux")
     foreach(config ${JUCER_PROJECT_CONFIGURATIONS})
+      target_compile_definitions(${target} PRIVATE "LINUX=1")
+
       if(${JUCER_CONFIGURATION_IS_DEBUG_${config}})
         target_compile_definitions(${target} PRIVATE
           $<$<CONFIG:${config}>:DEBUG=1>
@@ -3375,17 +3371,24 @@ function(_FRUT_set_compiler_and_linker_settings target)
         target_compile_definitions(${target} PRIVATE $<$<CONFIG:${config}>:NDEBUG=1>)
       endif()
 
-      if(DEFINED JUCER_ARCHITECTURE_FLAG_${config})
-        target_compile_options(${target} PRIVATE
-          $<$<CONFIG:${config}>:${JUCER_ARCHITECTURE_FLAG_${config}}>
-        )
+      if(CMAKE_EXTRA_GENERATOR STREQUAL "CodeBlocks")
+        if(DEFINED JUCER_ARCHITECTURE_FLAG_${config})
+          target_compile_options(${target} PRIVATE
+            $<$<CONFIG:${config}>:${JUCER_ARCHITECTURE_FLAG_${config}}>
+          )
+          set_property(TARGET ${target} APPEND PROPERTY
+            LINK_FLAGS_${upper_config} "${JUCER_ARCHITECTURE_FLAG_${config}}"
+          )
+        endif()
       else()
-        target_compile_options(${target} PRIVATE $<$<CONFIG:${config}>:-march=native>)
+        if(DEFINED JUCER_ARCHITECTURE_FLAG_${config})
+          target_compile_options(${target} PRIVATE
+            $<$<CONFIG:${config}>:${JUCER_ARCHITECTURE_FLAG_${config}}>
+          )
+        else()
+          target_compile_options(${target} PRIVATE $<$<CONFIG:${config}>:-march=native>)
+        endif()
       endif()
-
-      foreach(path ${JUCER_EXTRA_LIBRARY_SEARCH_PATHS_${config}})
-        target_link_libraries(${target} PRIVATE $<$<CONFIG:${config}>:-L${path}>)
-      endforeach()
     endforeach()
 
     set(linux_packages ${JUCER_PROJECT_LINUX_PACKAGES} ${JUCER_PKGCONFIG_LIBRARIES})
@@ -3489,6 +3492,15 @@ function(_FRUT_set_compiler_and_linker_settings target)
 
   target_compile_options(${target} PRIVATE ${JUCER_EXTRA_COMPILER_FLAGS})
 
+  foreach(config ${JUCER_PROJECT_CONFIGURATIONS})
+    foreach(path ${JUCER_EXTRA_LIBRARY_SEARCH_PATHS_${config}})
+      if(MSVC)
+        target_link_libraries(${target} PRIVATE $<$<CONFIG:${config}>:-LIBPATH:${path}>)
+      else()
+        target_link_libraries(${target} PRIVATE $<$<CONFIG:${config}>:-L${path}>)
+      endif()
+    endforeach()
+  endforeach()
   target_link_libraries(${target} PRIVATE ${JUCER_EXTRA_LINKER_FLAGS})
   target_link_libraries(${target} PRIVATE ${JUCER_EXTERNAL_LIBRARIES_TO_LINK})
 

@@ -45,7 +45,8 @@ Define the settings specific to an export target.
 ``"Visual Studio 2017"``, ``"Visual Studio 2015"`` and ``"Visual Studio 2013"``.
 
 ``GNU_COMPILER_EXTENSIONS`` is only supported by the following exporters:
-``"Xcode (MacOSX)"`` and ``"Linux Makefile"``.
+``"Xcode (MacOSX)"``, ``"Linux Makefile"``, ``"Code::Blocks (Windows)"`` and
+``"Code::Blocks (Linux)"``.
 
 ``CUSTOM_PLIST``, ``CUSTOM_XCODE_RESOURCE_FOLDERS``,  ``EXTRA_FRAMEWORKS``,
 ``POSTBUILD_SHELL_SCRIPT``, ``PREBUILD_SHELL_SCRIPT`` and ``USE_HEADERMAP`` are only
