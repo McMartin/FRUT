@@ -39,6 +39,7 @@ Define the settings specific to a configuration associated with an export target
     [RUNTIME_LIBRARY <runtime_library>]
     [WHOLE_PROGRAM_OPTIMISATION <whole_program_optimisation>]
     [INCREMENTAL_LINKING <ON|OFF>]
+    [FORCE_GENERATION_OF_DEBUG_SYMBOLS <ON|OFF>]
     [PREBUILD_COMMAND <command_content>]
     [POSTBUILD_COMMAND <command_content>]
     [GENERATE_MANIFEST <ON|OFF>]
@@ -64,6 +65,10 @@ supported by the following exporters: ``"Xcode (MacOSX)"``, ``"Visual Studio 201
 ``PREBUILD_COMMAND``, ``RUNTIME_LIBRARY``, ``TREAT_WARNINGS_AS_ERRORS``, ``WARNING_LEVEL``
 and ``WHOLE_PROGRAM_OPTIMISATION`` are only supported by the following exporters:
 ``"Visual Studio 2017"``, ``"Visual Studio 2015"`` and ``"Visual Studio 2013"``.
+
+``FORCE_GENERATION_OF_DEBUG_SYMBOLS`` is only supported when ``DEBUG_MODE`` is ``OFF`` and
+only by the following exporters: ``"Visual Studio 2017"``, ``"Visual Studio 2015"`` and
+``"Visual Studio 2013"``.
 
 ``RELAX_IEEE_COMPLIANCE`` is only supported by the following exporters:
 ``"Xcode (MacOSX)"``, ``"Visual Studio 2017"``, ``"Visual Studio 2015"`` and
