@@ -3339,9 +3339,10 @@ function(_FRUT_set_compiler_and_linker_settings target)
         target_compile_options(${target} PRIVATE $<$<CONFIG:${config}>:/fp:fast>)
       endif()
 
+      string(TOUPPER "${config}" upper_config)
+
       if(DEFINED JUCER_INCREMENTAL_LINKING_${config})
         if(JUCER_INCREMENTAL_LINKING_${config})
-          string(TOUPPER "${config}" upper_config)
           set_property(TARGET ${target}
             APPEND PROPERTY LINK_FLAGS_${upper_config} "/INCREMENTAL"
           )
@@ -3350,7 +3351,6 @@ function(_FRUT_set_compiler_and_linker_settings target)
 
       if(DEFINED JUCER_GENERATE_MANIFEST_${config})
         if(NOT JUCER_GENERATE_MANIFEST_${config})
-          string(TOUPPER "${config}" upper_config)
           set_property(TARGET ${target}
             APPEND PROPERTY LINK_FLAGS_${upper_config} "/MANIFEST:NO"
           )
