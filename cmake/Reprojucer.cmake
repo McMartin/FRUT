@@ -2355,7 +2355,7 @@ function(_FRUT_parse_arguments single_value_keywords multi_value_keywords argume
         set(keyword "${argument}")
         set(keyword_type "multi")
       else()
-        message(FATAL_ERROR "Unknown keyword: \"${keyword}\"")
+        message(FATAL_ERROR "Unknown keyword: \"${argument}\"")
       endif()
     elseif(keyword_type STREQUAL "single")
       set(_${keyword} "${argument}")
