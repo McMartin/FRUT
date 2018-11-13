@@ -948,6 +948,7 @@ function(jucer_export_target_configuration
     "HEADER_SEARCH_PATHS"
     "EXTRA_LIBRARY_SEARCH_PATHS"
     "PREPROCESSOR_DEFINITIONS"
+    "LINK_TIME_OPTIMISATION"
   )
 
   if(exporter STREQUAL "Xcode (MacOSX)")
@@ -965,7 +966,6 @@ function(jucer_export_target_configuration
       "CXX_LIBRARY"
       "CODE_SIGNING_IDENTITY"
       "RELAX_IEEE_COMPLIANCE"
-      "LINK_TIME_OPTIMISATION"
       "STRIP_LOCAL_SYMBOLS"
     )
     list(APPEND multi_value_keywords
@@ -1043,6 +1043,10 @@ function(jucer_export_target_configuration
     set(JUCER_PREPROCESSOR_DEFINITIONS_${config} "${_PREPROCESSOR_DEFINITIONS}"
       PARENT_SCOPE
     )
+  endif()
+
+  if(DEFINED _LINK_TIME_OPTIMISATION)
+    set(JUCER_LINK_TIME_OPTIMISATION_${config} "${_LINK_TIME_OPTIMISATION}" PARENT_SCOPE)
   endif()
 
   if(DEFINED _OPTIMISATION)
@@ -1208,10 +1212,6 @@ function(jucer_export_target_configuration
 
   if(DEFINED _RELAX_IEEE_COMPLIANCE)
     set(JUCER_RELAX_IEEE_COMPLIANCE_${config} "${_RELAX_IEEE_COMPLIANCE}" PARENT_SCOPE)
-  endif()
-
-  if(DEFINED _LINK_TIME_OPTIMISATION)
-    set(JUCER_LINK_TIME_OPTIMISATION_${config} "${_LINK_TIME_OPTIMISATION}" PARENT_SCOPE)
   endif()
 
   if(DEFINED _STRIP_LOCAL_SYMBOLS)
@@ -3196,8 +3196,21 @@ function(_FRUT_set_compiler_and_linker_settings target)
         target_compile_options(${target} PRIVATE $<$<CONFIG:${config}>:-ffast-math>)
       endif()
 
-      if(JUCER_LINK_TIME_OPTIMISATION_${config})
-        target_compile_options(${target} PRIVATE $<$<CONFIG:${config}>:-flto>)
+      if(DEFINED JUCER_VERSION AND JUCER_VERSION VERSION_LESS 5.2.0)
+        if(JUCER_LINK_TIME_OPTIMISATION_${config})
+          target_compile_options(${target} PRIVATE $<$<CONFIG:${config}>:-flto>)
+        endif()
+      else()
+        if(JUCER_CONFIGURATION_IS_DEBUG_${config})
+          if(JUCER_LINK_TIME_OPTIMISATION_${config})
+            target_compile_options(${target} PRIVATE $<$<CONFIG:${config}>:-flto>)
+          endif()
+        else()
+          if(NOT (DEFINED JUCER_LINK_TIME_OPTIMISATION_${config}
+                  AND NOT JUCER_LINK_TIME_OPTIMISATION_${config}))
+            target_compile_options(${target} PRIVATE $<$<CONFIG:${config}>:-flto>)
+          endif()
+        endif()
       endif()
     endforeach()
 
@@ -3323,10 +3336,16 @@ function(_FRUT_set_compiler_and_linker_settings target)
           $<$<CONFIG:${config}>:DEBUG>
           $<$<CONFIG:${config}>:_DEBUG>
         )
+
+        if(JUCER_LINK_TIME_OPTIMISATION_${config})
+          target_compile_options(${target} PRIVATE $<$<CONFIG:${config}>:/GL>)
+        endif()
       else()
         target_compile_definitions(${target} PRIVATE $<$<CONFIG:${config}>:NDEBUG>)
 
-        if(NOT JUCER_ALWAYS_DISABLE_WPO_${config})
+        if(NOT JUCER_ALWAYS_DISABLE_WPO_${config}
+            AND NOT (DEFINED JUCER_LINK_TIME_OPTIMISATION_${config}
+                     AND NOT JUCER_LINK_TIME_OPTIMISATION_${config}))
           target_compile_options(${target} PRIVATE $<$<CONFIG:${config}>:/GL>)
         endif()
       endif()
@@ -3425,6 +3444,11 @@ function(_FRUT_set_compiler_and_linker_settings target)
 
       string(TOUPPER "${config}" upper_config)
 
+      if(JUCER_LINK_TIME_OPTIMISATION_${config})
+        target_compile_options(${target} PRIVATE $<$<CONFIG:${config}>:-flto>)
+        set_property(TARGET ${target} APPEND PROPERTY LINK_FLAGS_${upper_config} "-flto")
+      endif()
+
       if(CMAKE_EXTRA_GENERATOR STREQUAL "CodeBlocks")
         if(DEFINED JUCER_ARCHITECTURE_FLAG_${config})
           target_compile_options(${target} PRIVATE
@@ -3515,6 +3539,11 @@ function(_FRUT_set_compiler_and_linker_settings target)
         target_compile_definitions(${target} PRIVATE $<$<CONFIG:${config}>:NDEBUG=1>)
 
         set_property(TARGET ${target} APPEND PROPERTY LINK_FLAGS_${upper_config} "-s")
+      endif()
+
+      if(JUCER_LINK_TIME_OPTIMISATION_${config})
+        target_compile_options(${target} PRIVATE $<$<CONFIG:${config}>:-flto>)
+        set_property(TARGET ${target} APPEND PROPERTY LINK_FLAGS_${upper_config} "-flto")
       endif()
 
       if(DEFINED JUCER_ARCHITECTURE_FLAG_${config})
