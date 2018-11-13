@@ -647,6 +647,7 @@ function(jucer_export_target exporter)
       "RTAS_SDK_FOLDER"
       "PLATFORM_TOOLSET"
       "USE_IPP_LIBRARY"
+      "WINDOWS_TARGET_PLATFORM"
     )
 
     if(exporter STREQUAL "Visual Studio 2017")
@@ -851,6 +852,16 @@ function(jucer_export_target exporter)
       _FRUT_warn_about_unsupported_setting("USE_IPP_LIBRARY" "Use IPP Library" 252)
     elseif(NOT ipp_library STREQUAL "No")
       message(FATAL_ERROR "Unsupported value for USE_IPP_LIBRARY: \"${ipp_library}\"")
+    endif()
+  endif()
+
+  if(DEFINED _WINDOWS_TARGET_PLATFORM)
+    set(platform "${_WINDOWS_TARGET_PLATFORM}")
+    if(NOT platform STREQUAL CMAKE_VS_WINDOWS_TARGET_PLATFORM_VERSION)
+      message(STATUS "CMAKE_VS_WINDOWS_TARGET_PLATFORM_VERSION "
+        "(${CMAKE_VS_WINDOWS_TARGET_PLATFORM_VERSION}) doesn't match "
+        "WINDOWS_TARGET_PLATFORM (${platform})."
+      )
     endif()
   endif()
 
