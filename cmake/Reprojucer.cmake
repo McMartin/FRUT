@@ -2213,7 +2213,7 @@ function(jucer_project_end)
       _FRUT_add_extra_commands(${aax_target})
       if(APPLE)
         foreach(config ${JUCER_PROJECT_CONFIGURATIONS})
-          if(${JUCER_CONFIGURATION_IS_DEBUG_${config}})
+          if(JUCER_CONFIGURATION_IS_DEBUG_${config})
             set(aax_config "Debug")
           else()
             set(aax_config "Release")
@@ -3174,7 +3174,7 @@ function(_FRUT_set_compiler_and_linker_settings target)
 
   if(APPLE)
     foreach(config ${JUCER_PROJECT_CONFIGURATIONS})
-      if(${JUCER_CONFIGURATION_IS_DEBUG_${config}})
+      if(JUCER_CONFIGURATION_IS_DEBUG_${config})
         target_compile_definitions(${target} PRIVATE
           $<$<CONFIG:${config}>:_DEBUG=1>
           $<$<CONFIG:${config}>:DEBUG=1>
@@ -3318,7 +3318,7 @@ function(_FRUT_set_compiler_and_linker_settings target)
     target_compile_options(${target} PRIVATE "/MP")
 
     foreach(config ${JUCER_PROJECT_CONFIGURATIONS})
-      if(${JUCER_CONFIGURATION_IS_DEBUG_${config}})
+      if(JUCER_CONFIGURATION_IS_DEBUG_${config})
         target_compile_definitions(${target} PRIVATE
           $<$<CONFIG:${config}>:DEBUG>
           $<$<CONFIG:${config}>:_DEBUG>
@@ -3414,7 +3414,7 @@ function(_FRUT_set_compiler_and_linker_settings target)
     foreach(config ${JUCER_PROJECT_CONFIGURATIONS})
       target_compile_definitions(${target} PRIVATE "LINUX=1")
 
-      if(${JUCER_CONFIGURATION_IS_DEBUG_${config}})
+      if(JUCER_CONFIGURATION_IS_DEBUG_${config})
         target_compile_definitions(${target} PRIVATE
           $<$<CONFIG:${config}>:DEBUG=1>
           $<$<CONFIG:${config}>:_DEBUG=1>
@@ -3504,7 +3504,7 @@ function(_FRUT_set_compiler_and_linker_settings target)
     foreach(config ${JUCER_PROJECT_CONFIGURATIONS})
       string(TOUPPER "${config}" upper_config)
 
-      if(${JUCER_CONFIGURATION_IS_DEBUG_${config}})
+      if(JUCER_CONFIGURATION_IS_DEBUG_${config})
         target_compile_definitions(${target} PRIVATE
           $<$<CONFIG:${config}>:DEBUG=1>
           $<$<CONFIG:${config}>:_DEBUG=1>
@@ -3680,7 +3680,7 @@ function(_FRUT_add_extra_commands target)
       unset(all_confs_strip_opt)
       unset(all_confs_strip_arg)
       foreach(config ${JUCER_PROJECT_CONFIGURATIONS})
-        if(${JUCER_STRIP_LOCAL_SYMBOLS_${config}})
+        if(JUCER_STRIP_LOCAL_SYMBOLS_${config})
           find_program(strip_exe "strip")
           if(NOT strip_exe)
             message(FATAL_ERROR "Could not find strip program")
