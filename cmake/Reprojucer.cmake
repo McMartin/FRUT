@@ -970,6 +970,7 @@ function(jucer_export_target_configuration
       "VST3_BINARY_LOCATION"
       "RTAS_BINARY_LOCATION"
       "AAX_BINARY_LOCATION"
+      "DEBUG_INFORMATION_FORMAT"
       "WARNING_LEVEL"
       "TREAT_WARNINGS_AS_ERRORS"
       "RUNTIME_LIBRARY"
@@ -1204,6 +1205,20 @@ function(jucer_export_target_configuration
 
   if(DEFINED _STRIP_LOCAL_SYMBOLS)
     set(JUCER_STRIP_LOCAL_SYMBOLS_${config} "${_STRIP_LOCAL_SYMBOLS}" PARENT_SCOPE)
+  endif()
+
+  if(DEFINED _DEBUG_INFORMATION_FORMAT)
+    set(format "${_DEBUG_INFORMATION_FORMAT}")
+    if(format STREQUAL "C7 Compatible (/Z7)")
+      set(format_flag "/Z7")
+    elseif(format STREQUAL "Program Database (/Zi)")
+      set(format_flag "/Zi")
+    elseif(format STREQUAL "Program Database for Edit And Continue (/ZI)")
+      set(format_flag "/ZI")
+    elseif(NOT format STREQUAL "None")
+      message(FATAL_ERROR "Unsupported value for DEBUG_INFORMATION_FORMAT: \"${format}\"")
+    endif()
+    set(JUCER_DEBUG_INFORMATION_FORMAT_FLAG_${config} "${format_flag}" PARENT_SCOPE)
   endif()
 
   if(DEFINED _WARNING_LEVEL)
@@ -3331,6 +3346,12 @@ function(_FRUT_set_compiler_and_linker_settings target)
         else()
           target_compile_options(${target} PRIVATE $<$<CONFIG:${config}>:/MT>)
         endif()
+      endif()
+
+      if(DEFINED JUCER_DEBUG_INFORMATION_FORMAT_FLAG_${config})
+        target_compile_options(${target} PRIVATE
+          $<$<CONFIG:${config}>:${JUCER_DEBUG_INFORMATION_FORMAT_FLAG_${config}}>
+        )
       endif()
 
       if(DEFINED JUCER_WARNING_LEVEL_FLAG_${config})

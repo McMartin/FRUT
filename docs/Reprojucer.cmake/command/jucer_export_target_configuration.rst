@@ -34,6 +34,7 @@ Define the settings specific to a configuration associated with an export target
     [LINK_TIME_OPTIMISATION <ON|OFF>]
     [STRIP_LOCAL_SYMBOLS <ON|OFF>]
 
+    [DEBUG_INFORMATION_FORMAT <debug_information_format>]
     [WARNING_LEVEL <warning_level>]
     [TREAT_WARNINGS_AS_ERRORS <ON|OFF>]
     [RUNTIME_LIBRARY <runtime_library>]
@@ -61,10 +62,11 @@ Define the settings specific to a configuration associated with an export target
 supported by the following exporters: ``"Xcode (MacOSX)"``, ``"Visual Studio 2017"``,
 ``"Visual Studio 2015"`` and ``"Visual Studio 2013"``.
 
-``CHARACTER_SET``, ``GENERATE_MANIFEST``, ``INCREMENTAL_LINKING``, ``POSTBUILD_COMMAND``,
-``PREBUILD_COMMAND``, ``RUNTIME_LIBRARY``, ``TREAT_WARNINGS_AS_ERRORS``, ``WARNING_LEVEL``
-and ``WHOLE_PROGRAM_OPTIMISATION`` are only supported by the following exporters:
-``"Visual Studio 2017"``, ``"Visual Studio 2015"`` and ``"Visual Studio 2013"``.
+``CHARACTER_SET``, ``DEBUG_INFORMATION_FORMAT``, ``GENERATE_MANIFEST``,
+``INCREMENTAL_LINKING``, ``POSTBUILD_COMMAND``, ``PREBUILD_COMMAND``, ``RUNTIME_LIBRARY``,
+``TREAT_WARNINGS_AS_ERRORS``, ``WARNING_LEVEL`` and ``WHOLE_PROGRAM_OPTIMISATION`` are
+only supported by the following exporters: ``"Visual Studio 2017"``,
+``"Visual Studio 2015"`` and ``"Visual Studio 2013"``.
 
 ``FORCE_GENERATION_OF_DEBUG_SYMBOLS`` is only supported when ``DEBUG_MODE`` is ``OFF`` and
 only by the following exporters: ``"Visual Studio 2017"``, ``"Visual Studio 2015"`` and

@@ -207,6 +207,7 @@ jucer_export_target_configuration(
   NAME "Release"
   DEBUG_MODE OFF
   BINARY_NAME "PushNotificationsDemo"
+  DEBUG_INFORMATION_FORMAT "None"
 )
 
 jucer_project_end()
