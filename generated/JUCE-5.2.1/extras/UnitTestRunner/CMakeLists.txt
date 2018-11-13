@@ -255,6 +255,7 @@ jucer_export_target_configuration(
   DEBUG_MODE OFF
   BINARY_NAME "UnitTestRunner"
   TREAT_WARNINGS_AS_ERRORS ON
+  DEBUG_INFORMATION_FORMAT "None"
 )
 
 jucer_project_end()

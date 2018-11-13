@@ -615,6 +615,7 @@ jucer_export_target_configuration(
   # PREPROCESSOR_DEFINITIONS
   RUNTIME_LIBRARY "Use DLL runtime"
   WHOLE_PROGRAM_OPTIMISATION "Always disable"
+  DEBUG_INFORMATION_FORMAT "Program Database (/Zi)"
 )
 
 jucer_export_target_configuration(
@@ -625,6 +626,7 @@ jucer_export_target_configuration(
   # HEADER_SEARCH_PATHS
   # EXTRA_LIBRARY_SEARCH_PATHS
   RUNTIME_LIBRARY "Use static runtime"
+  DEBUG_INFORMATION_FORMAT "None"
 )
 
 jucer_export_target(
@@ -641,6 +643,7 @@ jucer_export_target_configuration(
   # HEADER_SEARCH_PATHS
   # EXTRA_LIBRARY_SEARCH_PATHS
   RUNTIME_LIBRARY "Use DLL runtime"
+  DEBUG_INFORMATION_FORMAT "Program Database (/Zi)"
 )
 
 jucer_export_target_configuration(
@@ -651,6 +654,7 @@ jucer_export_target_configuration(
   # HEADER_SEARCH_PATHS
   # EXTRA_LIBRARY_SEARCH_PATHS
   RUNTIME_LIBRARY "Use static runtime"
+  DEBUG_INFORMATION_FORMAT "None"
 )
 
 jucer_export_target(
@@ -673,6 +677,7 @@ jucer_export_target_configuration(
   BINARY_NAME "Projucer"
   OPTIMISATION "Maximise speed"
   RUNTIME_LIBRARY "Use static runtime"
+  DEBUG_INFORMATION_FORMAT "None"
 )
 
 jucer_export_target(

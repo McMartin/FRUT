@@ -260,6 +260,7 @@ jucer_export_target_configuration(
   DEBUG_MODE OFF
   BINARY_NAME "AudioPluginHost"
   # ARCHITECTURE "32-bit"
+  DEBUG_INFORMATION_FORMAT "Program Database (/Zi)"
 )
 
 jucer_export_target(
@@ -280,6 +281,7 @@ jucer_export_target_configuration(
   NAME "Release"
   DEBUG_MODE OFF
   BINARY_NAME "AudioPluginHost"
+  DEBUG_INFORMATION_FORMAT "Program Database (/Zi)"
 )
 
 jucer_export_target(
@@ -300,6 +302,7 @@ jucer_export_target_configuration(
   NAME "Release"
   DEBUG_MODE OFF
   BINARY_NAME "AudioPluginHost"
+  DEBUG_INFORMATION_FORMAT "Program Database (/Zi)"
 )
 
 jucer_project_end()
