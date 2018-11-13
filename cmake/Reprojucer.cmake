@@ -982,6 +982,10 @@ function(jucer_export_target_configuration
       "ARCHITECTURE"
       "RELAX_IEEE_COMPLIANCE"
     )
+
+    if(NOT is_debug)
+      list(APPEND single_value_keywords "FORCE_GENERATION_OF_DEBUG_SYMBOLS")
+    endif()
   endif()
 
   if(exporter STREQUAL "Linux Makefile")
@@ -1255,6 +1259,12 @@ function(jucer_export_target_configuration
 
   if(DEFINED _INCREMENTAL_LINKING)
     set(JUCER_INCREMENTAL_LINKING_${config} "${_INCREMENTAL_LINKING}" PARENT_SCOPE)
+  endif()
+
+  if(DEFINED _FORCE_GENERATION_OF_DEBUG_SYMBOLS)
+    set(JUCER_FORCE_GENERATION_OF_DEBUG_SYMBOLS_${config}
+      ${_FORCE_GENERATION_OF_DEBUG_SYMBOLS} PARENT_SCOPE
+    )
   endif()
 
   if(DEFINED _PREBUILD_COMMAND)
@@ -2355,7 +2365,7 @@ function(_FRUT_parse_arguments single_value_keywords multi_value_keywords argume
         set(keyword "${argument}")
         set(keyword_type "multi")
       else()
-        message(FATAL_ERROR "Unknown keyword: \"${keyword}\"")
+        message(FATAL_ERROR "Unknown keyword: \"${argument}\"")
       endif()
     elseif(keyword_type STREQUAL "single")
       set(_${keyword} "${argument}")
@@ -3339,18 +3349,26 @@ function(_FRUT_set_compiler_and_linker_settings target)
         target_compile_options(${target} PRIVATE $<$<CONFIG:${config}>:/fp:fast>)
       endif()
 
+      string(TOUPPER "${config}" upper_config)
+
       if(DEFINED JUCER_INCREMENTAL_LINKING_${config})
         if(JUCER_INCREMENTAL_LINKING_${config})
-          string(TOUPPER "${config}" upper_config)
           set_property(TARGET ${target}
             APPEND PROPERTY LINK_FLAGS_${upper_config} "/INCREMENTAL"
           )
         endif()
       endif()
 
+      if(DEFINED JUCER_FORCE_GENERATION_OF_DEBUG_SYMBOLS_${config})
+        if(JUCER_FORCE_GENERATION_OF_DEBUG_SYMBOLS_${config})
+          set_property(TARGET ${target}
+            APPEND PROPERTY LINK_FLAGS_${upper_config} "/DEBUG"
+          )
+        endif()
+      endif()
+
       if(DEFINED JUCER_GENERATE_MANIFEST_${config})
         if(NOT JUCER_GENERATE_MANIFEST_${config})
-          string(TOUPPER "${config}" upper_config)
           set_property(TARGET ${target}
             APPEND PROPERTY LINK_FLAGS_${upper_config} "/MANIFEST:NO"
           )
