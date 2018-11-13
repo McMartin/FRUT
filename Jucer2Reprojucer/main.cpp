@@ -1293,9 +1293,6 @@ int main(int argc, char* argv[])
 
         convertSettingIfDefined(configuration, "optimisation", "OPTIMISATION",
                                 [&isVSExporter](const juce::var& v) -> juce::String {
-                                  if (v.isVoid())
-                                    return {};
-
                                   if (isVSExporter)
                                   {
                                     switch (int{v})
@@ -1590,9 +1587,6 @@ int main(int argc, char* argv[])
         {
           convertSettingIfDefined(configuration, "linuxArchitecture", "ARCHITECTURE",
                                   [](const juce::var& v) -> juce::String {
-                                    if (v.isVoid())
-                                      return "(Default)";
-
                                     const auto value = v.toString();
 
                                     if (value.isEmpty())
