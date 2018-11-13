@@ -1579,6 +1579,26 @@ int main(int argc, char* argv[])
             }
           }
 
+          convertSettingIfDefined(
+            configuration, "debugInformationFormat", "DEBUG_INFORMATION_FORMAT",
+            [](const juce::var& v) -> juce::String {
+              const auto value = v.toString();
+
+              if (value == "None")
+                return "None";
+
+              if (value == "OldStyle")
+                return "C7 Compatible (/Z7)";
+
+              if (value == "ProgramDatabase")
+                return "Program Database (/Zi)";
+
+              if (value == "EditAndContinue")
+                return "Program Database for Edit And Continue (/ZI)";
+
+              return {};
+            });
+
           convertOnOffSettingIfDefined(configuration, "fastMath", "RELAX_IEEE_COMPLIANCE",
                                        {});
         }
