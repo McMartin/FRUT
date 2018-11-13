@@ -3423,6 +3423,8 @@ function(_FRUT_set_compiler_and_linker_settings target)
         target_compile_definitions(${target} PRIVATE $<$<CONFIG:${config}>:NDEBUG=1>)
       endif()
 
+      string(TOUPPER "${config}" upper_config)
+
       if(CMAKE_EXTRA_GENERATOR STREQUAL "CodeBlocks")
         if(DEFINED JUCER_ARCHITECTURE_FLAG_${config})
           target_compile_options(${target} PRIVATE
