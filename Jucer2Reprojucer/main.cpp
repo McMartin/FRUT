@@ -1154,6 +1154,9 @@ int main(int argc, char* argv[])
                                   return {};
                                 });
 
+        convertSettingIfDefined(exporter, "windowsTargetPlatformVersion",
+                                "WINDOWS_TARGET_PLATFORM", {});
+
         if (exporterType == "VS2017")
         {
           convertSettingIfDefined(exporter, "cppLanguageStandard", "CXX_STANDARD_TO_USE",

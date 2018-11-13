@@ -32,6 +32,7 @@ Define the settings specific to an export target.
     [USE_HEADERMAP <ON|OFF>]
 
     [PLATFORM_TOOLSET <platform_toolset>]
+    [WINDOWS_TARGET_PLATFORM <windows_target_platform>]
 
     [CXX_STANDARD_TO_USE <cxx_standard>]
     [PKGCONFIG_LIBRARIES <library> [<library> ...]]
@@ -55,8 +56,9 @@ supported by the ``"Xcode (MacOSX)"`` exporter.
 ``DOCUMENT_FILE_EXTENSIONS`` is only supported by the ``"Xcode (MacOSX)"`` exporter on
 ``"GUI Application"`` projects.
 
-``PLATFORM_TOOLSET`` is only supported by the following exporters:
-``"Visual Studio 2017"``, ``"Visual Studio 2015"`` and ``"Visual Studio 2013"``.
+``PLATFORM_TOOLSET`` and ``WINDOWS_TARGET_PLATFORM`` are only supported by the following
+exporters: ``"Visual Studio 2017"``, ``"Visual Studio 2015"`` and
+``"Visual Studio 2013"``.
 
 ``CXX_STANDARD_TO_USE`` and ``PKGCONFIG_LIBRARIES`` are only supported by the
 ``"Linux Makefile"`` exporter.
