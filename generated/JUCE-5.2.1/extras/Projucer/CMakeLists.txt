@@ -614,7 +614,6 @@ jucer_export_target_configuration(
   # EXTRA_LIBRARY_SEARCH_PATHS
   # PREPROCESSOR_DEFINITIONS
   RUNTIME_LIBRARY "Use DLL runtime"
-  WHOLE_PROGRAM_OPTIMISATION "Always disable"
   DEBUG_INFORMATION_FORMAT "Program Database (/Zi)"
 )
 
