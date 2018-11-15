@@ -3,7 +3,7 @@ FRUT
 
 .. compound::
 
-  |AppVeyor| |Travis_CI| |Read_the_Docs|
+  |Code_of_Conduct| |AppVeyor| |Travis_CI| |Read_the_Docs|
 
 
 ``FRUT`` is a collection of tools dedicated to building `JUCE <https://juce.com/>`__
@@ -132,6 +132,10 @@ FRUT is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY
 even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 `LICENSE`_ file for more details.
 
+
+.. |Code_of_Conduct| image:: https://img.shields.io/badge/code%20of%20conduct-Contributor%20Covenant-blue.svg?style=flat
+  :target: https://github.com/McMartin/FRUT/blob/master/CODE_OF_CONDUCT.md
+  :alt: Contributor Covenant Code of Conduct
 
 .. |AppVeyor| image:: https://ci.appveyor.com/api/projects/status/github/McMartin/frut?branch=master&svg=true
   :target: https://ci.appveyor.com/project/McMartin/frut
