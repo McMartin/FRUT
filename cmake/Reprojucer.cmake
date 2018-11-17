@@ -1354,7 +1354,7 @@ function(jucer_export_target_configuration
 
   if(DEFINED _ARCHITECTURE AND exporter STREQUAL "Linux Makefile")
     set(architecture "${_ARCHITECTURE}")
-    if(architecture STREQUAL "(Default)")
+    if(architecture STREQUAL "(Default)" OR architecture STREQUAL "Native")
       set(architecture_flag "-march=native")
     elseif(architecture STREQUAL "<None>")
       set(architecture_flag "")

@@ -1615,6 +1615,9 @@ int main(int argc, char* argv[])
                                     if (value.isEmpty())
                                       return "<None>";
 
+                                    if (value == "-march=native")
+                                      return "Native";
+
                                     if (value == "-m32")
                                       return "32-bit (-m32)";
 
