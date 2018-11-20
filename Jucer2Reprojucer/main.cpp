@@ -236,6 +236,17 @@ int main(int argc, char* argv[])
     }
   }();
 
+  const auto& reprojucerFilePath = args.at(2);
+  const auto reprojucerFile =
+    juce::File::getCurrentWorkingDirectory().getChildFile(reprojucerFilePath);
+
+  if (!reprojucerFile.existsAsFile()
+      || !reprojucerFile.getFileName().endsWith("Reprojucer.cmake"))
+  {
+    printError(reprojucerFilePath + " is not a valid Reprojucer.cmake file.");
+    return 1;
+  }
+
   std::ofstream out{"CMakeLists.txt", std::ios_base::out | std::ios_base::binary};
   LineWriter wLn{out};
 
@@ -395,17 +406,6 @@ int main(int argc, char* argv[])
 
   // include(Reprojucer)
   {
-    const auto& reprojucerFilePath = args.at(2);
-    const auto reprojucerFile =
-      juce::File::getCurrentWorkingDirectory().getChildFile(reprojucerFilePath);
-
-    if (!reprojucerFile.existsAsFile()
-        || !reprojucerFile.getFileName().endsWith("Reprojucer.cmake"))
-    {
-      printError(reprojucerFilePath + " is not a valid Reprojucer.cmake file.");
-      return 1;
-    }
-
     wLn("list(APPEND CMAKE_MODULE_PATH \"${CMAKE_CURRENT_LIST_DIR}/",
         reprojucerFile.getParentDirectory()
           .getRelativePathFrom(juce::File::getCurrentWorkingDirectory())
