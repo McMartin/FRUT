@@ -22,6 +22,7 @@ Define the settings specific to a configuration associated with an export target
     [VST3_BINARY_LOCATION <binary_location>]
     [AU_BINARY_LOCATION <binary_location>]
 
+    [LINK_TIME_OPTIMISATION <ON|OFF>]
     [OPTIMISATION <optimisation>]
 
     [OSX_BASE_SDK_VERSION <osx_sdk>]
@@ -31,7 +32,6 @@ Define the settings specific to a configuration associated with an export target
     [CXX_LANGUAGE_STANDARD <cxx_standard>]
     [CXX_LIBRARY <cxx_library>]
     [CODE_SIGNING_IDENTITY <code_signing_identity>]
-    [LINK_TIME_OPTIMISATION <ON|OFF>]
     [STRIP_LOCAL_SYMBOLS <ON|OFF>]
 
     [DEBUG_INFORMATION_FORMAT <debug_information_format>]
@@ -54,9 +54,9 @@ Define the settings specific to a configuration associated with an export target
 ``<exporter>`` must be one of the :ref:`supported exporters <supported-export-targets>`.
 
 ``AU_BINARY_LOCATION``, ``CODE_SIGNING_IDENTITY``, ``CUSTOM_XCODE_FLAGS``,
-``CXX_LANGUAGE_STANDARD``, ``CXX_LIBRARY``, ``LINK_TIME_OPTIMISATION``,
-``OSX_ARCHITECTURE``, ``OSX_BASE_SDK_VERSION``, ``OSX_DEPLOYMENT_TARGET`` and
-``STRIP_LOCAL_SYMBOLS`` are only supported by the ``"Xcode (MacOSX)"`` exporter.
+``CXX_LANGUAGE_STANDARD``, ``CXX_LIBRARY``, ``OSX_ARCHITECTURE``,
+``OSX_BASE_SDK_VERSION``, ``OSX_DEPLOYMENT_TARGET`` and ``STRIP_LOCAL_SYMBOLS`` are only
+supported by the ``"Xcode (MacOSX)"`` exporter.
 
 ``ENABLE_PLUGIN_COPY_STEP``, ``VST3_BINARY_LOCATION`` and ``VST_BINARY_LOCATION`` are only
 supported by the following exporters: ``"Xcode (MacOSX)"``, ``"Visual Studio 2017"``,

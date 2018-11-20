@@ -1294,6 +1294,21 @@ int main(int argc, char* argv[])
           configuration, "defines", "PREPROCESSOR_DEFINITIONS",
           [](const juce::var& v) { return parsePreprocessorDefinitions(v.toString()); });
 
+        convertOnOffSettingIfDefined(configuration, "linkTimeOptimisation",
+                                     "LINK_TIME_OPTIMISATION", {});
+
+        if (!configuration.hasProperty("linkTimeOptimisation") && isVSExporter && !isDebug
+            && jucerVersionAsTuple >= Version{5, 2, 0})
+        {
+          convertOnOffSettingIfDefined(configuration, "wholeProgramOptimisation",
+                                       "LINK_TIME_OPTIMISATION", [](const juce::var& v) {
+                                         if (int{v} == 0)
+                                           return "ON";
+
+                                         return "OFF";
+                                       });
+        }
+
         convertSettingIfDefined(configuration, "optimisation", "OPTIMISATION",
                                 [&isVSExporter](const juce::var& v) -> juce::String {
                                   if (isVSExporter)
@@ -1476,8 +1491,6 @@ int main(int argc, char* argv[])
                                   "CODE_SIGNING_IDENTITY", {});
           convertOnOffSettingIfDefined(configuration, "fastMath", "RELAX_IEEE_COMPLIANCE",
                                        {});
-          convertOnOffSettingIfDefined(configuration, "linkTimeOptimisation",
-                                       "LINK_TIME_OPTIMISATION", {});
           convertOnOffSettingIfDefined(configuration, "stripLocalSymbols",
                                        "STRIP_LOCAL_SYMBOLS", {});
         }
@@ -1530,17 +1543,20 @@ int main(int argc, char* argv[])
                                     return {};
                                   });
 
-          convertSettingIfDefined(configuration, "wholeProgramOptimisation",
-                                  "WHOLE_PROGRAM_OPTIMISATION",
-                                  [](const juce::var& v) -> juce::String {
-                                    if (v.toString().isEmpty())
-                                      return "Enable when possible";
+          if (jucerVersionAsTuple < Version{5, 2, 0})
+          {
+            convertSettingIfDefined(configuration, "wholeProgramOptimisation",
+                                    "WHOLE_PROGRAM_OPTIMISATION",
+                                    [](const juce::var& v) -> juce::String {
+                                      if (v.toString().isEmpty())
+                                        return "Enable when possible";
 
-                                    if (int{v} > 0)
-                                      return "Always disable";
+                                      if (int{v} > 0)
+                                        return "Always disable";
 
-                                    return {};
-                                  });
+                                      return {};
+                                    });
+          }
 
           convertOnOffSettingIfDefined(configuration, "enableIncrementalLinking",
                                        "INCREMENTAL_LINKING", {});
