@@ -826,20 +826,16 @@ int main(int argc, char* argv[])
 
   // jucer_project_module()
   {
-    juce::StringArray moduleNames;
-    const auto modules = jucerProject.getChildWithName("MODULES");
-    for (auto i = 0; i < modules.getNumChildren(); ++i)
-    {
-      const auto module = modules.getChild(i);
-      moduleNames.add(module.getProperty("id").toString());
-    }
-
     const auto modulePaths = jucerProject.getChildWithName("EXPORTFORMATS")
                                .getChild(0)
                                .getChildWithName("MODULEPATHS");
 
-    for (const auto& moduleName : moduleNames)
+    const auto modules = jucerProject.getChildWithName("MODULES");
+    for (auto i = 0; i < modules.getNumChildren(); ++i)
     {
+      const auto& module = modules.getChild(i);
+      const auto moduleName = module.getProperty("id").toString();
+
       const auto relativeModulePath =
         modulePaths.getChildWithProperty("id", moduleName).getProperty("path").toString();
 
