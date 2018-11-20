@@ -185,10 +185,15 @@ int main(int argc, char* argv[])
 {
   if (argc != 3)
   {
-    std::cerr << "usage: Jucer2Reprojucer"
-                 " <jucer_project_file>"
-                 " <Reprojucer.cmake_file>"
-              << std::endl;
+    std::cerr
+      << "usage: Jucer2Reprojucer <jucer_project_file> <Reprojucer.cmake_file>\n"
+      << "\n"
+      << "Converts a .jucer file into a CMakeLists.txt file that uses Reprojucer.cmake.\n"
+      << "The CMakeLists.txt file is written in the current working directory.\n"
+      << "\n"
+      << "    <jucer_project_file>        path to the .jucer file to convert\n"
+      << "    <Reprojucer.cmake_file>     path to Reprojucer.cmake\n"
+      << std::endl;
     return 1;
   }
 
