@@ -922,17 +922,41 @@ int main(int argc, char* argv[])
       const auto& module = modules.getChild(i);
       const auto moduleName = module.getProperty("id").toString();
 
+      const auto useGlobalPath = bool{module.getProperty("useGlobalPath")};
+      const auto isJuceModule = moduleName.startsWith("juce_");
+
+      if (useGlobalPath)
+      {
+        if (isJuceModule && juceModulesPath.isEmpty())
+        {
+          printError("The module " + moduleName.toStdString()
+                     + " requires a global path. You should pass the JUCE modules global "
+                       "path using --juce-modules.");
+        }
+        if (!isJuceModule && userModulesPath.isEmpty())
+        {
+          printError("The module " + moduleName.toStdString()
+                     + " requires a global path. You should pass the user modules global "
+                       "path using --user-modules.");
+        }
+      }
+
       const auto relativeModulePath =
         modulePaths.getChildWithProperty("id", moduleName).getProperty("path").toString();
 
       wLn("jucer_project_module(");
       wLn("  ", moduleName);
-      wLn("  PATH \"", relativeModulePath, "\"");
+      wLn("  PATH \"",
+          useGlobalPath ? (isJuceModule ? "${JUCE_MODULES_GLOBAL_PATH}"
+                                        : "${USER_MODULES_GLOBAL_PATH}")
+                        : relativeModulePath,
+          "\"");
 
-      const auto moduleHeader = jucerFile.getParentDirectory()
-                                  .getChildFile(relativeModulePath)
-                                  .getChildFile(moduleName)
-                                  .getChildFile(moduleName + ".h");
+      const auto moduleHeader =
+        (useGlobalPath ? (isJuceModule ? juceModules : userModules)
+                       : jucerFile.getParentDirectory().getChildFile(relativeModulePath))
+          .getChildFile(moduleName)
+          .getChildFile(moduleName + ".h");
       if (!moduleHeader.existsAsFile())
       {
         std::cerr << "warning: Couldn't a find module header for " << moduleName
