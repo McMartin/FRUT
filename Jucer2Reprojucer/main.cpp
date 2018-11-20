@@ -17,6 +17,26 @@
 
 #include "JuceHeader.h"
 
+#if defined(__clang__)
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wsign-conversion"
+#endif
+
+#if defined(_MSC_VER)
+#pragma warning(push)
+#pragma warning(disable : 4800)
+#endif
+
+#include <argh/argh.h>
+
+#if defined(_MSC_VER)
+#pragma warning(pop)
+#endif
+
+#if defined(__clang__)
+#pragma clang diagnostic pop
+#endif
+
 #include <algorithm>
 #include <cstdlib>
 #include <fstream>
@@ -183,7 +203,10 @@ void writeUserNotes(LineWriter& wLn, const juce::ValueTree& valueTree)
 
 int main(int argc, char* argv[])
 {
-  if (argc != 3)
+  argh::parser argumentParser;
+  argumentParser.parse(argc, argv);
+
+  if (argumentParser.size() != 3 || argumentParser[{"-h", "--help"}])
   {
     std::cerr
       << "usage: Jucer2Reprojucer <jucer_project_file> <Reprojucer.cmake_file>\n"
@@ -197,9 +220,7 @@ int main(int argc, char* argv[])
     return 1;
   }
 
-  const auto args = std::vector<juce::String>{argv, argv + argc};
-
-  const auto& jucerFilePath = args.at(1);
+  const auto jucerFilePath = juce::String{argumentParser[1]};
   const auto jucerFile =
     juce::File::getCurrentWorkingDirectory().getChildFile(jucerFilePath);
 
@@ -241,7 +262,7 @@ int main(int argc, char* argv[])
     }
   }();
 
-  const auto& reprojucerFilePath = args.at(2);
+  const auto reprojucerFilePath = juce::String{argumentParser[2]};
   const auto reprojucerFile =
     juce::File::getCurrentWorkingDirectory().getChildFile(reprojucerFilePath);
 

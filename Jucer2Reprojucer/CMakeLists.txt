@@ -68,6 +68,8 @@ jucer_project_settings(
     "DONT_SET_USING_JUCE_NAMESPACE=1"
     "JUCE_DISABLE_JUCE_VERSION_PRINTING=1"
     "USE_CRLF_LINE_ENDINGS=${use_crlf_line_endings_define}"
+  HEADER_SEARCH_PATHS
+    "${CMAKE_CURRENT_LIST_DIR}/third-party"
 )
 
 jucer_project_files("Jucer2Reprojucer"
