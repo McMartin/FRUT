@@ -847,6 +847,12 @@ int main(int argc, char* argv[])
                                   .getChildFile(relativeModulePath)
                                   .getChildFile(moduleName)
                                   .getChildFile(moduleName + ".h");
+      if (!moduleHeader.existsAsFile())
+      {
+        std::cerr << "warning: Couldn't a find module header for " << moduleName
+                  << " module at \"" << moduleHeader.getFullPathName() << "\"."
+                  << std::endl;
+      }
       juce::StringArray moduleHeaderLines;
       moduleHeader.readLines(moduleHeaderLines);
 
