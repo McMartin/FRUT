@@ -17,6 +17,26 @@
 
 #include "JuceHeader.h"
 
+#if defined(__clang__)
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wsign-conversion"
+#endif
+
+#if defined(_MSC_VER)
+#pragma warning(push)
+#pragma warning(disable : 4800)
+#endif
+
+#include <argh/argh.h>
+
+#if defined(_MSC_VER)
+#pragma warning(pop)
+#endif
+
+#if defined(__clang__)
+#pragma clang diagnostic pop
+#endif
+
 #include <algorithm>
 #include <cstdlib>
 #include <fstream>
@@ -183,18 +203,29 @@ void writeUserNotes(LineWriter& wLn, const juce::ValueTree& valueTree)
 
 int main(int argc, char* argv[])
 {
-  if (argc != 3)
+  argh::parser argumentParser;
+  argumentParser.add_params({"--juce-modules", "--user-modules"});
+  argumentParser.parse(argc, argv);
+
+  if (argumentParser.size() != 3 || argumentParser[{"-h", "--help"}])
   {
-    std::cerr << "usage: Jucer2Reprojucer"
-                 " <jucer_project_file>"
-                 " <Reprojucer.cmake_file>"
-              << std::endl;
+    std::cerr
+      << "usage: Jucer2Reprojucer <jucer_project_file> <Reprojucer.cmake_file>\n"
+      << "                        [--juce-modules=<path>] [--user-modules=<path>]\n"
+      << "\n"
+      << "Converts a .jucer file into a CMakeLists.txt file that uses Reprojucer.cmake.\n"
+      << "The CMakeLists.txt file is written in the current working directory.\n"
+      << "\n"
+      << "    <jucer_project_file>        path to the .jucer file to convert\n"
+      << "    <Reprojucer.cmake_file>     path to Reprojucer.cmake\n"
+      << "\n"
+      << "    --juce-modules <path>       global path to JUCE modules\n"
+      << "    --user-modules <path>       global path to user modules\n"
+      << std::endl;
     return 1;
   }
 
-  const auto args = std::vector<juce::String>{argv, argv + argc};
-
-  const auto& jucerFilePath = args.at(1);
+  const auto jucerFilePath = juce::String{argumentParser[1]};
   const auto jucerFile =
     juce::File::getCurrentWorkingDirectory().getChildFile(jucerFilePath);
 
@@ -235,6 +266,35 @@ int main(int argc, char* argv[])
       std::exit(1);
     }
   }();
+
+  const auto reprojucerFilePath = juce::String{argumentParser[2]};
+  const auto reprojucerFile =
+    juce::File::getCurrentWorkingDirectory().getChildFile(reprojucerFilePath);
+
+  if (!reprojucerFile.existsAsFile()
+      || !reprojucerFile.getFileName().endsWith("Reprojucer.cmake"))
+  {
+    printError(reprojucerFilePath + " is not a valid Reprojucer.cmake file.");
+    return 1;
+  }
+
+  const auto juceModulesPath = juce::String{argumentParser("--juce-modules").str()};
+  const auto juceModules =
+    juce::File::getCurrentWorkingDirectory().getChildFile(juceModulesPath);
+  if (!juceModules.isDirectory())
+  {
+    printError("No such directory (--juce-modules): " + juceModulesPath);
+    return 1;
+  }
+
+  const auto userModulesPath = juce::String{argumentParser("--user-modules").str()};
+  const auto userModules =
+    juce::File::getCurrentWorkingDirectory().getChildFile(userModulesPath);
+  if (!userModules.isDirectory())
+  {
+    printError("No such directory (--user-modules): " + userModulesPath);
+    return 1;
+  }
 
   std::ofstream out{"CMakeLists.txt", std::ios_base::out | std::ios_base::binary};
   LineWriter wLn{out};
@@ -395,17 +455,6 @@ int main(int argc, char* argv[])
 
   // include(Reprojucer)
   {
-    const auto& reprojucerFilePath = args.at(2);
-    const auto reprojucerFile =
-      juce::File::getCurrentWorkingDirectory().getChildFile(reprojucerFilePath);
-
-    if (!reprojucerFile.existsAsFile()
-        || !reprojucerFile.getFileName().endsWith("Reprojucer.cmake"))
-    {
-      printError(reprojucerFilePath + " is not a valid Reprojucer.cmake file.");
-      return 1;
-    }
-
     wLn("list(APPEND CMAKE_MODULE_PATH \"${CMAKE_CURRENT_LIST_DIR}/",
         reprojucerFile.getParentDirectory()
           .getRelativePathFrom(juce::File::getCurrentWorkingDirectory())
@@ -436,6 +485,43 @@ int main(int argc, char* argv[])
     wLn(")");
     wLn();
     wLn();
+  }
+
+  // set({JUCE,USER}_MODULES_GLOBAL_PATH)
+  {
+    auto shouldAddEmptyLines = false;
+
+    if (!juceModulesPath.isEmpty())
+    {
+      const auto juceModulesGlobalPath =
+        juce::File::isAbsolutePath(juceModulesPath)
+          ? juceModulesPath.replace("\\", "/")
+          : "${CMAKE_CURRENT_LIST_DIR}/"
+              + juceModules.getRelativePathFrom(juce::File::getCurrentWorkingDirectory())
+                  .replace("\\", "/");
+
+      wLn("set(JUCE_MODULES_GLOBAL_PATH \"", juceModulesGlobalPath, "\")");
+      shouldAddEmptyLines = true;
+    }
+
+    if (!userModulesPath.isEmpty())
+    {
+      const auto userModulesGlobalPath =
+        juce::File::isAbsolutePath(userModulesPath)
+          ? userModulesPath.replace("\\", "/")
+          : "${CMAKE_CURRENT_LIST_DIR}/"
+              + userModules.getRelativePathFrom(juce::File::getCurrentWorkingDirectory())
+                  .replace("\\", "/");
+
+      wLn("set(USER_MODULES_GLOBAL_PATH \"", userModulesGlobalPath, "\")");
+      shouldAddEmptyLines = true;
+    }
+
+    if (shouldAddEmptyLines)
+    {
+      wLn();
+      wLn();
+    }
   }
 
   // jucer_project_begin()
@@ -826,31 +912,57 @@ int main(int argc, char* argv[])
 
   // jucer_project_module()
   {
-    juce::StringArray moduleNames;
-    const auto modules = jucerProject.getChildWithName("MODULES");
-    for (auto i = 0; i < modules.getNumChildren(); ++i)
-    {
-      const auto module = modules.getChild(i);
-      moduleNames.add(module.getProperty("id").toString());
-    }
-
     const auto modulePaths = jucerProject.getChildWithName("EXPORTFORMATS")
                                .getChild(0)
                                .getChildWithName("MODULEPATHS");
 
-    for (const auto& moduleName : moduleNames)
+    const auto modules = jucerProject.getChildWithName("MODULES");
+    for (auto i = 0; i < modules.getNumChildren(); ++i)
     {
+      const auto& module = modules.getChild(i);
+      const auto moduleName = module.getProperty("id").toString();
+
+      const auto useGlobalPath = bool{module.getProperty("useGlobalPath")};
+      const auto isJuceModule = moduleName.startsWith("juce_");
+
+      if (useGlobalPath)
+      {
+        if (isJuceModule && juceModulesPath.isEmpty())
+        {
+          printError("The module " + moduleName.toStdString()
+                     + " requires a global path. You should pass the JUCE modules global "
+                       "path using --juce-modules.");
+        }
+        if (!isJuceModule && userModulesPath.isEmpty())
+        {
+          printError("The module " + moduleName.toStdString()
+                     + " requires a global path. You should pass the user modules global "
+                       "path using --user-modules.");
+        }
+      }
+
       const auto relativeModulePath =
         modulePaths.getChildWithProperty("id", moduleName).getProperty("path").toString();
 
       wLn("jucer_project_module(");
       wLn("  ", moduleName);
-      wLn("  PATH \"", relativeModulePath, "\"");
+      wLn("  PATH \"",
+          useGlobalPath ? (isJuceModule ? "${JUCE_MODULES_GLOBAL_PATH}"
+                                        : "${USER_MODULES_GLOBAL_PATH}")
+                        : relativeModulePath,
+          "\"");
 
-      const auto moduleHeader = jucerFile.getParentDirectory()
-                                  .getChildFile(relativeModulePath)
-                                  .getChildFile(moduleName)
-                                  .getChildFile(moduleName + ".h");
+      const auto moduleHeader =
+        (useGlobalPath ? (isJuceModule ? juceModules : userModules)
+                       : jucerFile.getParentDirectory().getChildFile(relativeModulePath))
+          .getChildFile(moduleName)
+          .getChildFile(moduleName + ".h");
+      if (!moduleHeader.existsAsFile())
+      {
+        std::cerr << "warning: Couldn't a find module header for " << moduleName
+                  << " module at \"" << moduleHeader.getFullPathName() << "\"."
+                  << std::endl;
+      }
       juce::StringArray moduleHeaderLines;
       moduleHeader.readLines(moduleHeaderLines);
 
