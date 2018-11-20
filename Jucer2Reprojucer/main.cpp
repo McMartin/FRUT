@@ -204,18 +204,23 @@ void writeUserNotes(LineWriter& wLn, const juce::ValueTree& valueTree)
 int main(int argc, char* argv[])
 {
   argh::parser argumentParser;
+  argumentParser.add_params({"--juce-modules", "--user-modules"});
   argumentParser.parse(argc, argv);
 
   if (argumentParser.size() != 3 || argumentParser[{"-h", "--help"}])
   {
     std::cerr
       << "usage: Jucer2Reprojucer <jucer_project_file> <Reprojucer.cmake_file>\n"
+      << "                        [--juce-modules=<path>] [--user-modules=<path>]\n"
       << "\n"
       << "Converts a .jucer file into a CMakeLists.txt file that uses Reprojucer.cmake.\n"
       << "The CMakeLists.txt file is written in the current working directory.\n"
       << "\n"
       << "    <jucer_project_file>        path to the .jucer file to convert\n"
       << "    <Reprojucer.cmake_file>     path to Reprojucer.cmake\n"
+      << "\n"
+      << "    --juce-modules <path>       global path to JUCE modules\n"
+      << "    --user-modules <path>       global path to user modules\n"
       << std::endl;
     return 1;
   }
@@ -270,6 +275,24 @@ int main(int argc, char* argv[])
       || !reprojucerFile.getFileName().endsWith("Reprojucer.cmake"))
   {
     printError(reprojucerFilePath + " is not a valid Reprojucer.cmake file.");
+    return 1;
+  }
+
+  const auto juceModulesPath = juce::String{argumentParser("--juce-modules").str()};
+  const auto juceModules =
+    juce::File::getCurrentWorkingDirectory().getChildFile(juceModulesPath);
+  if (!juceModules.isDirectory())
+  {
+    printError("No such directory (--juce-modules): " + juceModulesPath);
+    return 1;
+  }
+
+  const auto userModulesPath = juce::String{argumentParser("--user-modules").str()};
+  const auto userModules =
+    juce::File::getCurrentWorkingDirectory().getChildFile(userModulesPath);
+  if (!userModules.isDirectory())
+  {
+    printError("No such directory (--user-modules): " + userModulesPath);
     return 1;
   }
 
@@ -462,6 +485,43 @@ int main(int argc, char* argv[])
     wLn(")");
     wLn();
     wLn();
+  }
+
+  // set({JUCE,USER}_MODULES_GLOBAL_PATH)
+  {
+    auto shouldAddEmptyLines = false;
+
+    if (!juceModulesPath.isEmpty())
+    {
+      const auto juceModulesGlobalPath =
+        juce::File::isAbsolutePath(juceModulesPath)
+          ? juceModulesPath.replace("\\", "/")
+          : "${CMAKE_CURRENT_LIST_DIR}/"
+              + juceModules.getRelativePathFrom(juce::File::getCurrentWorkingDirectory())
+                  .replace("\\", "/");
+
+      wLn("set(JUCE_MODULES_GLOBAL_PATH \"", juceModulesGlobalPath, "\")");
+      shouldAddEmptyLines = true;
+    }
+
+    if (!userModulesPath.isEmpty())
+    {
+      const auto userModulesGlobalPath =
+        juce::File::isAbsolutePath(userModulesPath)
+          ? userModulesPath.replace("\\", "/")
+          : "${CMAKE_CURRENT_LIST_DIR}/"
+              + userModules.getRelativePathFrom(juce::File::getCurrentWorkingDirectory())
+                  .replace("\\", "/");
+
+      wLn("set(USER_MODULES_GLOBAL_PATH \"", userModulesGlobalPath, "\")");
+      shouldAddEmptyLines = true;
+    }
+
+    if (shouldAddEmptyLines)
+    {
+      wLn();
+      wLn();
+    }
   }
 
   // jucer_project_begin()
