@@ -243,7 +243,7 @@ matrix:
         - docker build --tag mcmartin/frut - < ci/ubuntu-xenial.dockerfile
         - |
           function cmake {
-            docker run --rm -v "${TRAVIS_BUILD_DIR}":"${TRAVIS_BUILD_DIR}" -w "$PWD" mcmartin/frut /usr/bin/cmake $@
+            docker run --rm -v "${TRAVIS_BUILD_DIR}":"${TRAVIS_BUILD_DIR}" -w "$PWD" mcmartin/frut /usr/bin/cmake "$@"
           }
       script: *script-Makefiles
 
@@ -255,7 +255,7 @@ matrix:
         - docker build --tag mcmartin/frut - < ci/ubuntu-xenial.dockerfile
         - |
           function cmake {
-            docker run --rm -v "${TRAVIS_BUILD_DIR}":"${TRAVIS_BUILD_DIR}" -w "$PWD" mcmartin/frut /usr/bin/cmake $@
+            docker run --rm -v "${TRAVIS_BUILD_DIR}":"${TRAVIS_BUILD_DIR}" -w "$PWD" mcmartin/frut /usr/bin/cmake "$@"
           }
       script: *script-Makefiles
 
