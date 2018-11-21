@@ -25,41 +25,51 @@ script-anchors:
 
     # Configure and build FRUT with JUCE 4.2.0
     - cd ${TRAVIS_BUILD_DIR}/Debug_build
-    - cmake .. -DJUCE_ROOT="${TRAVIS_BUILD_DIR}/ci/tmp/JUCE-4.2.0" -DCMAKE_BUILD_TYPE=Debug
+    - cmake .. -G"${GENERATOR}" -DCMAKE_BUILD_TYPE=Debug
+      -DJUCE_ROOT="${TRAVIS_BUILD_DIR}/ci/tmp/JUCE-4.2.0"
     - cmake --build . -- -j4
     - cd ${TRAVIS_BUILD_DIR}/Release_build
-    - cmake .. -DJUCE_ROOT="${TRAVIS_BUILD_DIR}/ci/tmp/JUCE-4.2.0" -DCMAKE_BUILD_TYPE=Release
+    - cmake .. -G"${GENERATOR}" -DCMAKE_BUILD_TYPE=Release
+      -DJUCE_ROOT="${TRAVIS_BUILD_DIR}/ci/tmp/JUCE-4.2.0"
 
     # Configure and build FRUT with JUCE 4.3.1
     - cd ${TRAVIS_BUILD_DIR}/Debug_build
-    - cmake .. -DJUCE_ROOT="${TRAVIS_BUILD_DIR}/ci/tmp/JUCE-4.3.1" -DCMAKE_BUILD_TYPE=Debug
+    - cmake .. -G"${GENERATOR}" -DCMAKE_BUILD_TYPE=Debug
+      -DJUCE_ROOT="${TRAVIS_BUILD_DIR}/ci/tmp/JUCE-4.3.1"
     - cmake --build . -- -j4
     - cd ${TRAVIS_BUILD_DIR}/Release_build
-    - cmake .. -DJUCE_ROOT="${TRAVIS_BUILD_DIR}/ci/tmp/JUCE-4.3.1" -DCMAKE_BUILD_TYPE=Release
+    - cmake .. -G"${GENERATOR}" -DCMAKE_BUILD_TYPE=Release
+      -DJUCE_ROOT="${TRAVIS_BUILD_DIR}/ci/tmp/JUCE-4.3.1"
 
     # Configure and build FRUT with JUCE 5.0.0
     - cd ${TRAVIS_BUILD_DIR}/Debug_build
-    - cmake .. -DJUCE_ROOT="${TRAVIS_BUILD_DIR}/ci/tmp/JUCE-5.0.0" -DCMAKE_BUILD_TYPE=Debug
+    - cmake .. -G"${GENERATOR}" -DCMAKE_BUILD_TYPE=Debug
+      -DJUCE_ROOT="${TRAVIS_BUILD_DIR}/ci/tmp/JUCE-5.0.0"
     - cmake --build . -- -j4
     - cd ${TRAVIS_BUILD_DIR}/Release_build
-    - cmake .. -DJUCE_ROOT="${TRAVIS_BUILD_DIR}/ci/tmp/JUCE-5.0.0" -DCMAKE_BUILD_TYPE=Release
+    - cmake .. -G"${GENERATOR}" -DCMAKE_BUILD_TYPE=Release
+      -DJUCE_ROOT="${TRAVIS_BUILD_DIR}/ci/tmp/JUCE-5.0.0"
 
     # Configure and build FRUT with JUCE 5.2.1
     - cd ${TRAVIS_BUILD_DIR}/Debug_build
-    - cmake .. -DJUCE_ROOT="${TRAVIS_BUILD_DIR}/ci/tmp/JUCE-5.2.1" -DCMAKE_BUILD_TYPE=Debug
+    - cmake .. -G"${GENERATOR}" -DCMAKE_BUILD_TYPE=Debug
+      -DJUCE_ROOT="${TRAVIS_BUILD_DIR}/ci/tmp/JUCE-5.2.1"
     - cmake --build . -- -j4
     - cd ${TRAVIS_BUILD_DIR}/Release_build
-    - cmake .. -DJUCE_ROOT="${TRAVIS_BUILD_DIR}/ci/tmp/JUCE-5.2.1" -DCMAKE_BUILD_TYPE=Release
+    - cmake .. -G"${GENERATOR}" -DCMAKE_BUILD_TYPE=Release
+      -DJUCE_ROOT="${TRAVIS_BUILD_DIR}/ci/tmp/JUCE-5.2.1"
 
     # Configure and build FRUT with JUCE 5.3.1
     - cd ${TRAVIS_BUILD_DIR}/Debug_build
-    - cmake .. -DJUCE_ROOT="${TRAVIS_BUILD_DIR}/ci/tmp/JUCE-5.3.1" -DCMAKE_BUILD_TYPE=Debug
+    - cmake .. -G"${GENERATOR}" -DCMAKE_BUILD_TYPE=Debug
+      -DJUCE_ROOT="${TRAVIS_BUILD_DIR}/ci/tmp/JUCE-5.3.1"
     - cmake --build . -- -j4
     - cd ${TRAVIS_BUILD_DIR}/Release_build
-    - cmake .. -DJUCE_ROOT="${TRAVIS_BUILD_DIR}/ci/tmp/JUCE-5.3.1" -DCMAKE_BUILD_TYPE=Release
+    - cmake .. -G"${GENERATOR}" -DCMAKE_BUILD_TYPE=Release
+      -DJUCE_ROOT="${TRAVIS_BUILD_DIR}/ci/tmp/JUCE-5.3.1"
 
     # Build and install FRUT in ./prefix
-    - cmake .. -DCMAKE_INSTALL_PREFIX="${TRAVIS_BUILD_DIR}/prefix"
+    - cmake .. -G"${GENERATOR}" -DCMAKE_INSTALL_PREFIX="${TRAVIS_BUILD_DIR}/prefix"
     - cmake --build . --target install -- -j4
 
     # Check that generated CMakeLists.txt files are up-to-date
@@ -92,13 +102,13 @@ script-anchors:
     # Configure all JUCE 4.2.0 projects
     - cd ${TRAVIS_BUILD_DIR}/ci/AllJuceProjects/Debug_build
     - >
-      cmake .. -DCMAKE_BUILD_TYPE=Debug -DJUCE_VERSION="4.2.0"
+      cmake .. -G"${GENERATOR}" -DCMAKE_BUILD_TYPE=Debug -DJUCE_VERSION="4.2.0"
       -DJUCER_AAX_SDK_FOLDER="${TRAVIS_BUILD_DIR}/ci/fake-SDKs/AAX"
       -DJUCER_VST_SDK_FOLDER="${TRAVIS_BUILD_DIR}/ci/fake-SDKs/VST"
       -DJUCER_VST3_SDK_FOLDER="${TRAVIS_BUILD_DIR}/ci/fake-SDKs/VST3"
     - cd ${TRAVIS_BUILD_DIR}/ci/AllJuceProjects/Release_build
     - >
-      cmake .. -DCMAKE_BUILD_TYPE=Release -DJUCE_VERSION="4.2.0"
+      cmake .. -G"${GENERATOR}" -DCMAKE_BUILD_TYPE=Release -DJUCE_VERSION="4.2.0"
       -DJUCER_AAX_SDK_FOLDER="${TRAVIS_BUILD_DIR}/ci/fake-SDKs/AAX"
       -DJUCER_VST_SDK_FOLDER="${TRAVIS_BUILD_DIR}/ci/fake-SDKs/VST"
       -DJUCER_VST3_SDK_FOLDER="${TRAVIS_BUILD_DIR}/ci/fake-SDKs/VST3"
@@ -106,47 +116,47 @@ script-anchors:
     # Configure all JUCE 4.3.1 projects
     - cd ${TRAVIS_BUILD_DIR}/ci/AllJuceProjects/Debug_build
     - >
-      cmake .. -DCMAKE_BUILD_TYPE=Debug -DJUCE_VERSION="4.3.1"
+      cmake .. -G"${GENERATOR}" -DCMAKE_BUILD_TYPE=Debug -DJUCE_VERSION="4.3.1"
       -DJUCER_AAX_SDK_FOLDER="${TRAVIS_BUILD_DIR}/ci/fake-SDKs/AAX"
       -DJUCER_VST3_SDK_FOLDER="${TRAVIS_BUILD_DIR}/ci/fake-SDKs/VST3"
     - cd ${TRAVIS_BUILD_DIR}/ci/AllJuceProjects/Release_build
     - >
-      cmake .. -DCMAKE_BUILD_TYPE=Release -DJUCE_VERSION="4.3.1"
+      cmake .. -G"${GENERATOR}" -DCMAKE_BUILD_TYPE=Release -DJUCE_VERSION="4.3.1"
       -DJUCER_AAX_SDK_FOLDER="${TRAVIS_BUILD_DIR}/ci/fake-SDKs/AAX"
       -DJUCER_VST3_SDK_FOLDER="${TRAVIS_BUILD_DIR}/ci/fake-SDKs/VST3"
 
     # Configure all JUCE 5.0.0 projects
     - cd ${TRAVIS_BUILD_DIR}/ci/AllJuceProjects/Debug_build
     - >
-      cmake .. -DCMAKE_BUILD_TYPE=Debug -DJUCE_VERSION="5.0.0"
+      cmake .. -G"${GENERATOR}" -DCMAKE_BUILD_TYPE=Debug -DJUCE_VERSION="5.0.0"
       -DJUCER_AAX_SDK_FOLDER="${TRAVIS_BUILD_DIR}/ci/fake-SDKs/AAX"
       -DJUCER_VST3_SDK_FOLDER="${TRAVIS_BUILD_DIR}/ci/fake-SDKs/VST3"
     - cd ${TRAVIS_BUILD_DIR}/ci/AllJuceProjects/Release_build
     - >
-      cmake .. -DCMAKE_BUILD_TYPE=Release -DJUCE_VERSION="5.0.0"
+      cmake .. -G"${GENERATOR}" -DCMAKE_BUILD_TYPE=Release -DJUCE_VERSION="5.0.0"
       -DJUCER_AAX_SDK_FOLDER="${TRAVIS_BUILD_DIR}/ci/fake-SDKs/AAX"
       -DJUCER_VST3_SDK_FOLDER="${TRAVIS_BUILD_DIR}/ci/fake-SDKs/VST3"
 
     # Configure all JUCE 5.2.1 projects
     - cd ${TRAVIS_BUILD_DIR}/ci/AllJuceProjects/Debug_build
     - >
-      cmake .. -DCMAKE_BUILD_TYPE=Debug -DJUCE_VERSION="5.2.1"
+      cmake .. -G"${GENERATOR}" -DCMAKE_BUILD_TYPE=Debug -DJUCE_VERSION="5.2.1"
       -DJUCER_AAX_SDK_FOLDER="${TRAVIS_BUILD_DIR}/ci/fake-SDKs/AAX"
       -DJUCER_VST3_SDK_FOLDER="${TRAVIS_BUILD_DIR}/ci/fake-SDKs/VST3"
     - cd ${TRAVIS_BUILD_DIR}/ci/AllJuceProjects/Release_build
     - >
-      cmake .. -DCMAKE_BUILD_TYPE=Release -DJUCE_VERSION="5.2.1"
+      cmake .. -G"${GENERATOR}" -DCMAKE_BUILD_TYPE=Release -DJUCE_VERSION="5.2.1"
       -DJUCER_AAX_SDK_FOLDER="${TRAVIS_BUILD_DIR}/ci/fake-SDKs/AAX"
       -DJUCER_VST3_SDK_FOLDER="${TRAVIS_BUILD_DIR}/ci/fake-SDKs/VST3"
 
     # Configure all JUCE 5.3.1 projects
     - cd ${TRAVIS_BUILD_DIR}/ci/AllJuceProjects/Debug_build
     - >
-      cmake .. -DCMAKE_BUILD_TYPE=Debug -DJUCE_VERSION="5.3.1"
+      cmake .. -G"${GENERATOR}" -DCMAKE_BUILD_TYPE=Debug -DJUCE_VERSION="5.3.1"
       -DJUCER_VST3_SDK_FOLDER="${TRAVIS_BUILD_DIR}/ci/fake-SDKs/VST3"
     - cd ${TRAVIS_BUILD_DIR}/ci/AllJuceProjects/Release_build
     - >
-      cmake .. -DCMAKE_BUILD_TYPE=Release -DJUCE_VERSION="5.3.1"
+      cmake .. -G"${GENERATOR}" -DCMAKE_BUILD_TYPE=Release -DJUCE_VERSION="5.3.1"
       -DJUCER_VST3_SDK_FOLDER="${TRAVIS_BUILD_DIR}/ci/fake-SDKs/VST3"
 
   - &script-Xcode
@@ -237,6 +247,7 @@ script-anchors:
 matrix:
   include:
     - os: linux
+      env: GENERATOR="Unix Makefiles"
       services:
         - docker
       before_install:
@@ -260,7 +271,7 @@ matrix:
       script: *script-Makefiles
 
     - os: osx
-      env: GENERATOR=Makefiles
+      env: GENERATOR="Unix Makefiles"
       osx_image: xcode7.3
       script: *script-Makefiles
 
