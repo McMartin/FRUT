@@ -33,6 +33,12 @@ if(WIN32 AND NOT MSVC)
     "\"Code::Blocks (Windows)\" exporter"
   )
   return()
+elseif(CMAKE_HOST_SYSTEM_NAME STREQUAL Linux
+    AND CMAKE_EXTRA_GENERATOR STREQUAL CodeBlocks)
+  message(WARNING "Skipping JUCE-5.3.1 because none of its sub-projects supports the "
+    "\"Code::Blocks (Linux)\" exporter"
+  )
+  return()
 endif()
 
 
