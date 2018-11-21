@@ -3430,9 +3430,9 @@ function(_FRUT_set_compiler_and_linker_settings target)
     endforeach()
 
   elseif(CMAKE_HOST_SYSTEM_NAME STREQUAL "Linux")
-    foreach(config ${JUCER_PROJECT_CONFIGURATIONS})
-      target_compile_definitions(${target} PRIVATE "LINUX=1")
+    target_compile_definitions(${target} PRIVATE "LINUX=1")
 
+    foreach(config ${JUCER_PROJECT_CONFIGURATIONS})
       if(JUCER_CONFIGURATION_IS_DEBUG_${config})
         target_compile_definitions(${target} PRIVATE
           $<$<CONFIG:${config}>:DEBUG=1>
@@ -3929,11 +3929,11 @@ endfunction()
 function(_FRUT_link_osx_frameworks target)
 
   set(osx_frameworks ${JUCER_PROJECT_OSX_FRAMEWORKS} ${JUCER_EXTRA_FRAMEWORKS} ${ARGN})
+  if(JUCER_FLAG_JUCE_PLUGINHOST_AU)
+    list(APPEND osx_frameworks "AudioUnit" "CoreAudioKit")
+  endif()
 
-  if(APPLE)
-    if(JUCER_FLAG_JUCE_PLUGINHOST_AU)
-      list(APPEND osx_frameworks "AudioUnit" "CoreAudioKit")
-    endif()
+  if(APPLE AND osx_frameworks)
     list(SORT osx_frameworks)
     list(REMOVE_DUPLICATES osx_frameworks)
     foreach(framework_name ${osx_frameworks})
