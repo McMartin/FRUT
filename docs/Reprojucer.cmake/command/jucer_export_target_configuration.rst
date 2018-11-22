@@ -64,10 +64,10 @@ supported by the following exporters: ``"Xcode (MacOSX)"``, ``"Visual Studio 201
 ``"Visual Studio 2015"`` and ``"Visual Studio 2013"``.
 
 ``CHARACTER_SET``, ``DEBUG_INFORMATION_FORMAT``, ``GENERATE_MANIFEST``,
-``INCREMENTAL_LINKING``, ``POSTBUILD_COMMAND``, ``PREBUILD_COMMAND``, ``RUNTIME_LIBRARY``,
-``TREAT_WARNINGS_AS_ERRORS``, ``WARNING_LEVEL`` and ``WHOLE_PROGRAM_OPTIMISATION`` are
-only supported by the following exporters: ``"Visual Studio 2017"``,
-``"Visual Studio 2015"`` and ``"Visual Studio 2013"``.
+``INCREMENTAL_LINKING``, ``MULTI_PROCESSOR_COMPILATION``, ``POSTBUILD_COMMAND``,
+``PREBUILD_COMMAND``, ``RUNTIME_LIBRARY``, ``TREAT_WARNINGS_AS_ERRORS``, ``WARNING_LEVEL``
+and ``WHOLE_PROGRAM_OPTIMISATION`` are only supported by the following exporters:
+``"Visual Studio 2017"``, ``"Visual Studio 2015"`` and ``"Visual Studio 2013"``.
 
 ``FORCE_GENERATION_OF_DEBUG_SYMBOLS`` is only supported when ``DEBUG_MODE`` is ``OFF`` and
 only by the following exporters: ``"Visual Studio 2017"``, ``"Visual Studio 2015"`` and
