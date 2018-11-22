@@ -623,6 +623,10 @@ function(jucer_export_target exporter)
       "VST3_SDK_FOLDER"
       "AAX_SDK_FOLDER"
       "RTAS_SDK_FOLDER"
+      "MICROPHONE_ACCESS"
+      "MICROPHONE_ACCESS_TEXT"
+      "CAMERA_ACCESS"
+      "CAMERA_ACCESS_TEXT"
       "INAPP_PURCHASES_CAPABILITY"
       "PUSH_NOTIFICATIONS_CAPABILITY"
       "CUSTOM_PLIST"
@@ -756,6 +760,22 @@ function(jucer_export_target exporter)
 
   if(DEFINED _EXTRA_FRAMEWORKS)
     set(JUCER_EXTRA_FRAMEWORKS "${_EXTRA_FRAMEWORKS}" PARENT_SCOPE)
+  endif()
+
+  if(DEFINED _MICROPHONE_ACCESS)
+    set(JUCER_MICROPHONE_ACCESS "${_MICROPHONE_ACCESS}" PARENT_SCOPE)
+  endif()
+
+  if(DEFINED _MICROPHONE_ACCESS_TEXT)
+    set(JUCER_MICROPHONE_ACCESS_TEXT "${_MICROPHONE_ACCESS_TEXT}" PARENT_SCOPE)
+  endif()
+
+  if(DEFINED _CAMERA_ACCESS)
+    set(JUCER_CAMERA_ACCESS "${_CAMERA_ACCESS}" PARENT_SCOPE)
+  endif()
+
+  if(DEFINED _CAMERA_ACCESS_TEXT)
+    set(JUCER_CAMERA_ACCESS_TEXT "${_CAMERA_ACCESS_TEXT}" PARENT_SCOPE)
   endif()
 
   if(DEFINED _INAPP_PURCHASES_CAPABILITY AND _INAPP_PURCHASES_CAPABILITY)
@@ -1549,6 +1569,36 @@ function(jucer_project_end)
     <key>NSHighResolutionCapable</key>
     <true/>"
   )
+
+  if(JUCER_CAMERA_ACCESS)
+    if(DEFINED JUCER_CAMERA_ACCESS_TEXT)
+      set(camera_usage_description "${JUCER_CAMERA_ACCESS_TEXT}")
+    else()
+      string(CONCAT camera_usage_description "This app requires access to the camera to "
+        "function correctly."
+      )
+    endif()
+    string(CONCAT main_plist_entries "
+    <key>NSCameraUsageDescription</key>
+    <string>${camera_usage_description}</string>"
+      "${main_plist_entries}"
+    )
+  endif()
+
+  if(JUCER_MICROPHONE_ACCESS)
+    if(DEFINED JUCER_MICROPHONE_ACCESS_TEXT)
+      set(microphone_usage_description "${JUCER_MICROPHONE_ACCESS_TEXT}")
+    else()
+      string(CONCAT microphone_usage_description "This app requires audio input. If you "
+        "do not have an audio interface connected it will use the built-in microphone."
+      )
+    endif()
+    string(CONCAT main_plist_entries "
+    <key>NSMicrophoneUsageDescription</key>
+    <string>${microphone_usage_description}</string>"
+      "${main_plist_entries}"
+    )
+  endif()
 
   if(JUCER_CUSTOM_PLIST)
     set(PListMerger_file_name "PListMerger-0.1.0")
