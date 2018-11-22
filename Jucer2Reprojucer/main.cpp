@@ -1670,6 +1670,8 @@ int main(int argc, char* argv[])
                                     });
           }
 
+          convertOnOffSettingIfDefined(configuration, "multiProcessorCompilation",
+                                       "MULTI_PROCESSOR_COMPILATION", {});
           convertOnOffSettingIfDefined(configuration, "enableIncrementalLinking",
                                        "INCREMENTAL_LINKING", {});
 
