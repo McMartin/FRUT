@@ -1934,6 +1934,16 @@ function(jucer_project_end)
         <key>sandboxSafe</key>
         <true/>"
         )
+      elseif(NOT (DEFINED JUCER_VERSION AND JUCER_VERSION VERSION_LESS 5.4.0))
+        string(APPEND audio_components_entries "
+        <key>resourceUsage</key>
+        <dict>
+          <key>network.client</key>
+          <true/>
+          <key>temporary-exception.files.all.read-write</key>
+          <true/>
+        </dict>"
+        )
       endif()
       string(APPEND audio_components_entries "
       </dict>
