@@ -986,6 +986,7 @@ function(jucer_export_target_configuration
       "TREAT_WARNINGS_AS_ERRORS"
       "RUNTIME_LIBRARY"
       "WHOLE_PROGRAM_OPTIMISATION"
+      "MULTI_PROCESSOR_COMPILATION"
       "INCREMENTAL_LINKING"
       "PREBUILD_COMMAND"
       "POSTBUILD_COMMAND"
@@ -1283,13 +1284,19 @@ function(jucer_export_target_configuration
     endif()
   endif()
 
+  if(DEFINED _MULTI_PROCESSOR_COMPILATION)
+    set(JUCER_MULTI_PROCESSOR_COMPILATION_${config}
+      "${_MULTI_PROCESSOR_COMPILATION}" PARENT_SCOPE
+    )
+  endif()
+
   if(DEFINED _INCREMENTAL_LINKING)
     set(JUCER_INCREMENTAL_LINKING_${config} "${_INCREMENTAL_LINKING}" PARENT_SCOPE)
   endif()
 
   if(DEFINED _FORCE_GENERATION_OF_DEBUG_SYMBOLS)
     set(JUCER_FORCE_GENERATION_OF_DEBUG_SYMBOLS_${config}
-      ${_FORCE_GENERATION_OF_DEBUG_SYMBOLS} PARENT_SCOPE
+      "${_FORCE_GENERATION_OF_DEBUG_SYMBOLS}" PARENT_SCOPE
     )
   endif()
 
@@ -3328,9 +3335,13 @@ function(_FRUT_set_compiler_and_linker_settings target)
 
   elseif(MSVC)
     target_compile_definitions(${target} PRIVATE "_CRT_SECURE_NO_WARNINGS")
-    target_compile_options(${target} PRIVATE "/MP")
 
     foreach(config ${JUCER_PROJECT_CONFIGURATIONS})
+      if(NOT DEFINED JUCER_MULTI_PROCESSOR_COMPILATION_${config}
+          OR JUCER_MULTI_PROCESSOR_COMPILATION_${config})
+        target_compile_options(${target} PRIVATE "/MP")
+      endif()
+
       if(JUCER_CONFIGURATION_IS_DEBUG_${config})
         target_compile_definitions(${target} PRIVATE
           $<$<CONFIG:${config}>:DEBUG>

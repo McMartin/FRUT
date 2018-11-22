@@ -39,6 +39,7 @@ Define the settings specific to a configuration associated with an export target
     [TREAT_WARNINGS_AS_ERRORS <ON|OFF>]
     [RUNTIME_LIBRARY <runtime_library>]
     [WHOLE_PROGRAM_OPTIMISATION <whole_program_optimisation>]
+    [MULTI_PROCESSOR_COMPILATION <ON|OFF>]
     [INCREMENTAL_LINKING <ON|OFF>]
     [FORCE_GENERATION_OF_DEBUG_SYMBOLS <ON|OFF>]
     [PREBUILD_COMMAND <command_content>]
