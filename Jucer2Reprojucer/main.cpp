@@ -740,6 +740,8 @@ int main(int argc, char* argv[])
         convertSetting(jucerProject, "aaxIdentifier", "PLUGIN_AAX_IDENTIFIER", {});
       }
       convertSetting(jucerProject, "pluginAUExportPrefix", "PLUGIN_AU_EXPORT_PREFIX", {});
+      convertOnOffSettingIfDefined(jucerProject, "pluginAUIsSandboxSafe",
+                                   "PLUGIN_AU_IS_SANDBOX_SAFE", {});
       convertSetting(jucerProject, "pluginAUMainType", "PLUGIN_AU_MAIN_TYPE", {});
 
       convertSettingWithDefault(
