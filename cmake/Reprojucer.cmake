@@ -196,6 +196,7 @@ function(jucer_audio_plugin_settings)
     "PLUGIN_AAX_IDENTIFIER"
     "PLUGIN_AU_EXPORT_PREFIX"
     "PLUGIN_AU_MAIN_TYPE"
+    "PLUGIN_AU_IS_SANDBOX_SAFE"
     "PLUGIN_VST_CATEGORY"
     "VST_CATEGORY"
   )
@@ -1926,7 +1927,25 @@ function(jucer_project_end)
         <key>subtype</key>
         <string>@JUCER_PLUGIN_CODE@</string>
         <key>version</key>
-        <integer>${dec_version}</integer>
+        <integer>${dec_version}</integer>"
+      )
+      if(JUCER_PLUGIN_AU_IS_SANDBOX_SAFE)
+        string(APPEND audio_components_entries "
+        <key>sandboxSafe</key>
+        <true/>"
+        )
+      elseif(NOT (DEFINED JUCER_VERSION AND JUCER_VERSION VERSION_LESS 5.4.0))
+        string(APPEND audio_components_entries "
+        <key>resourceUsage</key>
+        <dict>
+          <key>network.client</key>
+          <true/>
+          <key>temporary-exception.files.all.read-write</key>
+          <true/>
+        </dict>"
+        )
+      endif()
+      string(APPEND audio_components_entries "
       </dict>
     </array>"
       )
