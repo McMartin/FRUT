@@ -1205,6 +1205,15 @@ int main(int argc, char* argv[])
             });
         }
 
+        convertOnOffSettingIfDefined(exporter, "microphonePermissionNeeded",
+                                     "MICROPHONE_ACCESS", {});
+        convertSettingIfDefined(exporter, "microphonePermissionsText",
+                                "MICROPHONE_ACCESS_TEXT", {});
+        convertOnOffSettingIfDefined(exporter, "cameraPermissionNeeded", "CAMERA_ACCESS",
+                                     {});
+        convertSettingIfDefined(exporter, "cameraPermissionText", "CAMERA_ACCESS_TEXT",
+                                {});
+
         convertOnOffSettingIfDefined(exporter, "iosInAppPurchasesValue",
                                      "INAPP_PURCHASES_CAPABILITY", {});
         convertOnOffSettingIfDefined(exporter, "iosPushNotifications",
