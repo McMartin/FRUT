@@ -99,6 +99,17 @@ void printError(const juce::String& error)
 }
 
 
+juce::String cmakeAbsolutePath(const juce::String& path)
+{
+  const auto file = juce::File::getCurrentWorkingDirectory().getChildFile(path);
+  return (juce::File::isAbsolutePath(path)
+            ? file.getFullPathName()
+            : "${CMAKE_CURRENT_LIST_DIR}/"
+                + file.getRelativePathFrom(juce::File::getCurrentWorkingDirectory()))
+    .replace("\\", "/");
+}
+
+
 juce::String escape(const juce::String& charsToEscape, juce::String value)
 {
   auto pos = 0;
@@ -493,27 +504,13 @@ int main(int argc, char* argv[])
 
     if (!juceModulesPath.isEmpty())
     {
-      const auto juceModulesGlobalPath =
-        juce::File::isAbsolutePath(juceModulesPath)
-          ? juceModulesPath.replace("\\", "/")
-          : "${CMAKE_CURRENT_LIST_DIR}/"
-              + juceModules.getRelativePathFrom(juce::File::getCurrentWorkingDirectory())
-                  .replace("\\", "/");
-
-      wLn("set(JUCE_MODULES_GLOBAL_PATH \"", juceModulesGlobalPath, "\")");
+      wLn("set(JUCE_MODULES_GLOBAL_PATH \"", cmakeAbsolutePath(juceModulesPath), "\")");
       shouldAddEmptyLines = true;
     }
 
     if (!userModulesPath.isEmpty())
     {
-      const auto userModulesGlobalPath =
-        juce::File::isAbsolutePath(userModulesPath)
-          ? userModulesPath.replace("\\", "/")
-          : "${CMAKE_CURRENT_LIST_DIR}/"
-              + userModules.getRelativePathFrom(juce::File::getCurrentWorkingDirectory())
-                  .replace("\\", "/");
-
-      wLn("set(USER_MODULES_GLOBAL_PATH \"", userModulesGlobalPath, "\")");
+      wLn("set(USER_MODULES_GLOBAL_PATH \"", cmakeAbsolutePath(userModulesPath), "\")");
       shouldAddEmptyLines = true;
     }
 
