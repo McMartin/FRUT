@@ -223,6 +223,7 @@ int main(int argc, char* argv[])
     std::cerr
       << "usage: Jucer2Reprojucer <jucer_project_file> <Reprojucer.cmake_file>\n"
       << "                        [--juce-modules=<path>] [--user-modules=<path>]\n"
+      << "                        [--relocatable]\n"
       << "\n"
       << "Converts a .jucer file into a CMakeLists.txt file that uses Reprojucer.cmake.\n"
       << "The CMakeLists.txt file is written in the current working directory.\n"
@@ -232,6 +233,10 @@ int main(int argc, char* argv[])
       << "\n"
       << "    --juce-modules <path>     global path to JUCE modules\n"
       << "    --user-modules <path>     global path to user modules\n"
+      << "\n"
+      << "    --relocatable             makes the CMakeLists.txt file independent from\n"
+      << "                              the location of the .jucer file, but requires\n"
+      << "                              defining a variable when calling cmake\n"
       << std::endl;
     return 1;
   }
@@ -485,16 +490,25 @@ int main(int argc, char* argv[])
                   '_');
   const auto jucerFileCMakeVar = escapedJucerFileName + "_FILE";
 
-  // get_filename_component()
+  // get_filename_component() or set(*_FILE)
   {
-    wLn("if(NOT DEFINED ", jucerFileCMakeVar, ")");
-    wLn("  message(FATAL_ERROR \"", jucerFileCMakeVar, " must be defined\")");
-    wLn("endif()");
-    wLn();
-    wLn("get_filename_component(", jucerFileCMakeVar);
-    wLn("  \"${", jucerFileCMakeVar, "}\" ABSOLUTE");
-    wLn("  BASE_DIR \"${CMAKE_BINARY_DIR}\"");
-    wLn(")");
+    if (argumentParser["--relocatable"])
+    {
+      wLn("if(NOT DEFINED ", jucerFileCMakeVar, ")");
+      wLn("  message(FATAL_ERROR \"", jucerFileCMakeVar, " must be defined\")");
+      wLn("endif()");
+      wLn();
+      wLn("get_filename_component(", jucerFileCMakeVar);
+      wLn("  \"${", jucerFileCMakeVar, "}\" ABSOLUTE");
+      wLn("  BASE_DIR \"${CMAKE_BINARY_DIR}\"");
+      wLn(")");
+    }
+    else
+    {
+      wLn("set(", jucerFileCMakeVar);
+      wLn("  \"", cmakeAbsolutePath(jucerFilePath), "\"");
+      wLn(")");
+    }
     wLn();
     wLn();
   }

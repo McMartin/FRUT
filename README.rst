@@ -98,7 +98,7 @@ Now we can build ``MyGreatProject`` using CMake: ::
 
   $ mkdir build && cd build/
 
-  $ cmake .. -G<generator> -DMyGreatProject_jucer_FILE=../MyGreatProject.jucer
+  $ cmake .. -G<generator>
   ...
   -- Configuring done
   -- Generating done
