@@ -8,15 +8,6 @@ environment:
   matrix:
     - MinGW: true
 
-    - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2013
-      GENERATOR: "Visual Studio 12 2013"
-
-    - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
-      GENERATOR: "Visual Studio 14 2015"
-
-    - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
-      GENERATOR: "Visual Studio 15 2017"
-
 install:
   - cmake --version
 
@@ -75,45 +66,6 @@ build_script:
   - if "%MinGW%"=="true" cmake .. -DCMAKE_INSTALL_PREFIX="%APPVEYOR_BUILD_FOLDER%/prefix"
   - if "%MinGW%"=="true" cmake --build . --target install -- -j4
 
-  - if "%MinGW%"=="true" appveyor exit
-
-  - mkdir %APPVEYOR_BUILD_FOLDER%\build
-  - cd %APPVEYOR_BUILD_FOLDER%\build
-
-  # Configure and build FRUT with JUCE 4.2.0
-  - >
-    cmake .. -G "%GENERATOR%" -DUSE_CRLF_LINE_ENDINGS=OFF
-    -DJUCE_ROOT="%APPVEYOR_BUILD_FOLDER%/ci/tmp/JUCE-4.2.0"
-  - cmake --build . --config Debug -- -v:m -maxcpucount
-
-  # Configure and build FRUT with JUCE 4.3.1
-  - >
-    cmake .. -G "%GENERATOR%" -DUSE_CRLF_LINE_ENDINGS=OFF
-    -DJUCE_ROOT="%APPVEYOR_BUILD_FOLDER%/ci/tmp/JUCE-4.3.1"
-  - cmake --build . --config Debug -- -v:m -maxcpucount
-
-  # Configure and build FRUT with JUCE 5.0.0
-  - >
-    cmake .. -G "%GENERATOR%" -DUSE_CRLF_LINE_ENDINGS=OFF
-    -DJUCE_ROOT="%APPVEYOR_BUILD_FOLDER%/ci/tmp/JUCE-5.0.0"
-  - cmake --build . --config Debug -- -v:m -maxcpucount
-
-  # Configure and build FRUT with JUCE 5.2.1
-  - >
-    cmake .. -G "%GENERATOR%" -DUSE_CRLF_LINE_ENDINGS=OFF
-    -DJUCE_ROOT="%APPVEYOR_BUILD_FOLDER%/ci/tmp/JUCE-5.2.1"
-  - cmake --build . --config Debug -- -v:m -maxcpucount
-
-  # Configure and build FRUT with JUCE 5.3.1
-  - >
-    cmake .. -G "%GENERATOR%" -DUSE_CRLF_LINE_ENDINGS=OFF
-    -DJUCE_ROOT="%APPVEYOR_BUILD_FOLDER%/ci/tmp/JUCE-5.3.1"
-  - cmake --build . --config Debug -- -v:m -maxcpucount
-
-  # Build and install FRUT in ./prefix
-  - cmake .. -DCMAKE_INSTALL_PREFIX="%APPVEYOR_BUILD_FOLDER%/prefix"
-  - cmake --build . --config Release --target install -- -v:m -maxcpucount
-
 test_script:
   # Check that generated CMakeLists.txt files are up-to-date
   - cd %APPVEYOR_BUILD_FOLDER%
@@ -138,36 +90,3 @@ test_script:
     -DJucer2Reprojucer_EXE="prefix/FRUT/bin/Jucer2Reprojucer.exe"
     -P ci/apply-Jucer2Reprojucer-to-JUCE-jucers.cmake
   - git diff --quiet
-
-  - mkdir %APPVEYOR_BUILD_FOLDER%\ci\AllJuceProjects\build
-  - cd %APPVEYOR_BUILD_FOLDER%\ci\AllJuceProjects\build
-
-  # Configure all JUCE 4.2.0 projects
-  - >
-    cmake .. -G "%GENERATOR%" -DJUCE_VERSION="4.2.0"
-    -DJUCER_AAX_SDK_FOLDER="%APPVEYOR_BUILD_FOLDER%/ci/fake-SDKs/AAX"
-    -DJUCER_VST3_SDK_FOLDER="%APPVEYOR_BUILD_FOLDER%/ci/fake-SDKs/VST3"
-    -DJUCER_VST_SDK_FOLDER="%APPVEYOR_BUILD_FOLDER%/ci/fake-SDKs/VST"
-
-  # Configure all JUCE 4.3.1 projects
-  - >
-    cmake .. -G "%GENERATOR%" -DJUCE_VERSION="4.3.1"
-    -DJUCER_AAX_SDK_FOLDER="%APPVEYOR_BUILD_FOLDER%/ci/fake-SDKs/AAX"
-    -DJUCER_VST3_SDK_FOLDER="%APPVEYOR_BUILD_FOLDER%/ci/fake-SDKs/VST3"
-
-  # Configure all JUCE 5.0.0 projects
-  - >
-    cmake .. -G "%GENERATOR%" -DJUCE_VERSION="5.0.0"
-    -DJUCER_AAX_SDK_FOLDER="%APPVEYOR_BUILD_FOLDER%/ci/fake-SDKs/AAX"
-    -DJUCER_VST3_SDK_FOLDER="%APPVEYOR_BUILD_FOLDER%/ci/fake-SDKs/VST3"
-
-  # Configure all JUCE 5.2.1 projects
-  - >
-    cmake .. -G "%GENERATOR%" -DJUCE_VERSION="5.2.1"
-    -DJUCER_AAX_SDK_FOLDER="%APPVEYOR_BUILD_FOLDER%/ci/fake-SDKs/AAX"
-    -DJUCER_VST3_SDK_FOLDER="%APPVEYOR_BUILD_FOLDER%/ci/fake-SDKs/VST3"
-
-  # Configure all JUCE 5.3.1 projects
-  - >
-    cmake .. -G "%GENERATOR%" -DJUCE_VERSION="5.3.1"
-    -DJUCER_VST3_SDK_FOLDER="%APPVEYOR_BUILD_FOLDER%/ci/fake-SDKs/VST3"
