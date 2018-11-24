@@ -7,17 +7,23 @@ jobs:
   - job: VS2013
     pool:
       vmImage: vs2015-win2012r2
+    variables:
+      cmakeGenerator: "Visual Studio 12 2013"
     steps:
       - template: ci/azure-pipelines-steps.yml
 
   - job: VS2015
     pool:
       vmImage: vs2015-win2012r2
+    variables:
+      cmakeGenerator: "Visual Studio 14 2015"
     steps:
       - template: ci/azure-pipelines-steps.yml
 
   - job: VS2017
     pool:
       vmImage: vs2017-win2016
+    variables:
+      cmakeGenerator: "Visual Studio 15 2017"
     steps:
       - template: ci/azure-pipelines-steps.yml
