@@ -3,7 +3,7 @@ FRUT
 
 .. compound::
 
-  |Code_of_Conduct| |AppVeyor| |Travis_CI| |Read_the_Docs|
+  |Code_of_Conduct| |AppVeyor| |Azure_Pipelines| |Travis_CI| |Read_the_Docs|
 
 
 ``FRUT`` is a collection of tools dedicated to building `JUCE <https://juce.com/>`__
@@ -140,6 +140,10 @@ even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE
 .. |AppVeyor| image:: https://ci.appveyor.com/api/projects/status/github/McMartin/frut?branch=master&svg=true
   :target: https://ci.appveyor.com/project/McMartin/frut
   :alt: AppVeyor build status
+
+.. |Azure_Pipelines| image:: https://dev.azure.com/McMartin/FRUT/_apis/build/status/McMartin.FRUT?branchName=master
+  :target: https://dev.azure.com/McMartin/FRUT/_build/latest?definitionId=2
+  :alt: Azure Pipelines build status
 
 .. |Travis_CI| image:: https://travis-ci.org/McMartin/FRUT.svg?branch=master
   :target: https://travis-ci.org/McMartin/FRUT
