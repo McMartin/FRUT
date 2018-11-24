@@ -1,0 +1,23 @@
+trigger:
+  branches:
+    include:
+      - master
+
+jobs:
+  - job: VS2013
+    pool:
+      vmImage: vs2015-win2012r2
+    steps:
+      - template: ci/azure-pipelines-steps.yml
+
+  - job: VS2015
+    pool:
+      vmImage: vs2015-win2012r2
+    steps:
+      - template: ci/azure-pipelines-steps.yml
+
+  - job: VS2017
+    pool:
+      vmImage: vs2017-win2016
+    steps:
+      - template: ci/azure-pipelines-steps.yml
