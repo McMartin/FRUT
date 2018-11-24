@@ -227,11 +227,11 @@ int main(int argc, char* argv[])
       << "Converts a .jucer file into a CMakeLists.txt file that uses Reprojucer.cmake.\n"
       << "The CMakeLists.txt file is written in the current working directory.\n"
       << "\n"
-      << "    <jucer_project_file>        path to the .jucer file to convert\n"
-      << "    <Reprojucer.cmake_file>     path to Reprojucer.cmake\n"
+      << "    <jucer_project_file>      path to the .jucer file to convert\n"
+      << "    <Reprojucer.cmake_file>   path to Reprojucer.cmake\n"
       << "\n"
-      << "    --juce-modules <path>       global path to JUCE modules\n"
-      << "    --user-modules <path>       global path to user modules\n"
+      << "    --juce-modules <path>     global path to JUCE modules\n"
+      << "    --user-modules <path>     global path to user modules\n"
       << std::endl;
     return 1;
   }
