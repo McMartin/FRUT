@@ -483,15 +483,16 @@ int main(int argc, char* argv[])
                              || std::isdigit(c, std::locale::classic()));
                   },
                   '_');
+  const auto jucerFileCMakeVar = escapedJucerFileName + "_FILE";
 
   // get_filename_component()
   {
-    wLn("if(NOT DEFINED ", escapedJucerFileName, "_FILE)");
-    wLn("  message(FATAL_ERROR \"", escapedJucerFileName, "_FILE must be defined\")");
+    wLn("if(NOT DEFINED ", jucerFileCMakeVar, ")");
+    wLn("  message(FATAL_ERROR \"", jucerFileCMakeVar, " must be defined\")");
     wLn("endif()");
     wLn();
-    wLn("get_filename_component(", escapedJucerFileName, "_FILE");
-    wLn("  \"${", escapedJucerFileName, "_FILE}\" ABSOLUTE");
+    wLn("get_filename_component(", jucerFileCMakeVar);
+    wLn("  \"${", jucerFileCMakeVar, "}\" ABSOLUTE");
     wLn("  BASE_DIR \"${CMAKE_BINARY_DIR}\"");
     wLn(")");
     wLn();
@@ -525,7 +526,7 @@ int main(int argc, char* argv[])
   {
     wLn("jucer_project_begin(");
     wLn("  JUCER_VERSION \"", jucerVersion, "\"");
-    wLn("  PROJECT_FILE \"${", escapedJucerFileName, "_FILE}\"");
+    wLn("  PROJECT_FILE \"${", jucerFileCMakeVar, "}\"");
     convertSetting(jucerProject, "id", "PROJECT_ID", {});
     wLn(")");
     wLn();
