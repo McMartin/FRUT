@@ -1,0 +1,17 @@
+trigger:
+  branches:
+    include:
+      - master
+
+jobs:
+  - job: VS2015
+    pool:
+      vmImage: vs2015-win2012r2
+    steps:
+      - script: echo hello from Visual Studio 2015 on Windows Server 2012R2
+
+  - job: VS2017
+    pool:
+      vmImage: vs2017-win2016
+    steps:
+      - script: echo hello from Visual Studio 2017 on Windows Server 2016
