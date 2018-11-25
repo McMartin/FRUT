@@ -187,6 +187,7 @@ jucer_appconfig_header(
 
 jucer_export_target(
   "Xcode (MacOSX)"
+  # VST3_SDK_FOLDER
   EXTRA_COMPILER_FLAGS
     "-Wall"
     "-Wshadow"
@@ -241,6 +242,7 @@ jucer_export_target_configuration(
 
 jucer_export_target(
   "Visual Studio 2013"
+  # VST3_SDK_FOLDER
   ICON_SMALL "Source/JUCEAppIcon.png"
   ICON_LARGE "Source/JUCEAppIcon.png"
 )
@@ -265,6 +267,7 @@ jucer_export_target_configuration(
 
 jucer_export_target(
   "Visual Studio 2015"
+  # VST3_SDK_FOLDER
   ICON_SMALL "Source/JUCEAppIcon.png"
   ICON_LARGE "Source/JUCEAppIcon.png"
 )
@@ -286,6 +289,7 @@ jucer_export_target_configuration(
 
 jucer_export_target(
   "Visual Studio 2017"
+  # VST3_SDK_FOLDER
   ICON_SMALL "Source/JUCEAppIcon.png"
   ICON_LARGE "Source/JUCEAppIcon.png"
 )
