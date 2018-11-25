@@ -17,6 +17,8 @@ install:
     -- https://github.com/WeAreROLI/JUCE.git "%APPVEYOR_BUILD_FOLDER%/ci/tmp/JUCE-5.2.1"
   - git clone --branch=5.3.1 --depth=1 --single-branch
     -- https://github.com/WeAreROLI/JUCE.git "%APPVEYOR_BUILD_FOLDER%/ci/tmp/JUCE-5.3.1"
+  - git clone --branch=5.4.1 --depth=1 --single-branch
+    -- https://github.com/WeAreROLI/JUCE.git "%APPVEYOR_BUILD_FOLDER%/ci/tmp/JUCE-5.4.1"
 
   - set PATH=%PATH:C:\Program Files\Git\usr\bin;=%
   - set PATH=C:\mingw-w64\i686-5.3.0-posix-dwarf-rt_v4-rev0\mingw32\bin;%PATH%
@@ -58,6 +60,17 @@ build_script:
     cmake .. -G "MinGW Makefiles" -DCMAKE_BUILD_TYPE=Release
     -DUSE_CRLF_LINE_ENDINGS=OFF -DJUCE_ROOT="%APPVEYOR_BUILD_FOLDER%/ci/tmp/JUCE-5.2.1"
 
+  # Configure and build FRUT with JUCE 5.4.1
+  - cd %APPVEYOR_BUILD_FOLDER%\build_Debug
+  - >
+    cmake .. -G "MinGW Makefiles" -DCMAKE_BUILD_TYPE=Debug
+    -DUSE_CRLF_LINE_ENDINGS=OFF -DJUCE_ROOT="%APPVEYOR_BUILD_FOLDER%/ci/tmp/JUCE-5.4.1"
+  - cmake --build . -- -j4
+  - cd %APPVEYOR_BUILD_FOLDER%\build_Release
+  - >
+    cmake .. -G "MinGW Makefiles" -DCMAKE_BUILD_TYPE=Release
+    -DUSE_CRLF_LINE_ENDINGS=OFF -DJUCE_ROOT="%APPVEYOR_BUILD_FOLDER%/ci/tmp/JUCE-5.4.1"
+
   # Build and install FRUT in ./prefix
   - cmake .. -DCMAKE_INSTALL_PREFIX="%APPVEYOR_BUILD_FOLDER%/prefix"
   - cmake --build . --target install -- -j4
@@ -83,6 +96,10 @@ test_script:
     -P ci/apply-Jucer2Reprojucer-to-JUCE-jucers.cmake
   - >
     cmake -DJUCE_VERSION="5.3.1"
+    -DJucer2Reprojucer_EXE="prefix/FRUT/bin/Jucer2Reprojucer.exe"
+    -P ci/apply-Jucer2Reprojucer-to-JUCE-jucers.cmake
+  - >
+    cmake -DJUCE_VERSION="5.4.1"
     -DJucer2Reprojucer_EXE="prefix/FRUT/bin/Jucer2Reprojucer.exe"
     -P ci/apply-Jucer2Reprojucer-to-JUCE-jucers.cmake
   - git diff --quiet

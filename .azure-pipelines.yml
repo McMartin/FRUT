@@ -27,3 +27,5 @@ jobs:
       cmakeGenerator: "Visual Studio 15 2017"
     steps:
       - template: ci/azure-pipelines-steps.yml
+        parameters:
+          cmakeOptions: -DCMAKE_SYSTEM_VERSION=10.0.15063.0
