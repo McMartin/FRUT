@@ -96,6 +96,7 @@ target_compile_definitions(IconBuilder PRIVATE
   JUCE_MODULE_AVAILABLE_juce_graphics=1
   JUCE_MODULE_AVAILABLE_juce_gui_basics=1
   JUCE_STANDALONE_APPLICATION=1
+  JUCE_USE_CURL=0
 )
 
 set_target_properties(IconBuilder PROPERTIES

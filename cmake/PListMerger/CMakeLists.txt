@@ -76,6 +76,7 @@ target_compile_definitions(PListMerger PRIVATE
   JUCE_GLOBAL_MODULE_SETTINGS_INCLUDED=1
   JUCE_MODULE_AVAILABLE_juce_core=1
   JUCE_STANDALONE_APPLICATION=1
+  JUCE_USE_CURL=0
 )
 
 set_target_properties(PListMerger PROPERTIES
