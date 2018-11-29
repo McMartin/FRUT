@@ -662,22 +662,25 @@ int main(int argc, char* argv[])
 
       if (jucerVersionAsTuple >= Version{5, 3, 1})
       {
-        convertSettingAsList(jucerProject, "pluginFormats", "PLUGIN_FORMATS",
-                             [&convertIdsToStrings](const juce::var& v) {
-                               if (v.isVoid())
-                               {
-                                 return juce::StringArray{"VST", "AU"};
-                               }
-                               return convertIdsToStrings(
-                                 v, {{"buildVST", "VST"},
-                                     {"buildVST3", "VST3"},
-                                     {"buildAU", "AU"},
-                                     {"buildAUv3", "AUv3"},
-                                     {"buildRTAS", "RTAS"},
-                                     {"buildAAX", "AAX"},
-                                     {"buildStandalone", "Standalone"},
-                                     {"enableIAA", "Enable IAA"}});
-                             });
+        convertSettingAsList(
+          jucerProject, "pluginFormats", "PLUGIN_FORMATS",
+          [&jucerVersionAsTuple, &convertIdsToStrings](const juce::var& v) {
+            if (v.isVoid())
+            {
+              return juce::StringArray{"VST", "AU"};
+            }
+            const auto supportsUnity = jucerVersionAsTuple >= Version{5, 3, 2};
+            return convertIdsToStrings(
+              v, {{"buildVST", "VST"},
+                  {"buildVST3", "VST3"},
+                  {"buildAU", "AU"},
+                  {"buildAUv3", "AUv3"},
+                  {"buildRTAS", "RTAS"},
+                  {"buildAAX", "AAX"},
+                  {"buildStandalone", "Standalone"},
+                  {supportsUnity ? "buildUnity" : "", supportsUnity ? "Unity" : ""},
+                  {"enableIAA", "Enable IAA"}});
+          });
 
         convertSettingAsList(
           jucerProject, "pluginCharacteristicsValue", "PLUGIN_CHARACTERISTICS",

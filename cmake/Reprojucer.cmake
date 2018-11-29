@@ -175,6 +175,7 @@ function(jucer_audio_plugin_settings)
     "BUILD_RTAS"
     "BUILD_AAX"
     "BUILD_STANDALONE_PLUGIN"
+    "BUILD_UNITY_PLUGIN"
     "ENABLE_INTERAPP_AUDIO"
   )
   set(plugin_characteristics_keywords
@@ -222,7 +223,7 @@ function(jucer_audio_plugin_settings)
   if(DEFINED _PLUGIN_FORMATS)
     set(plugin_formats_vars "${plugin_formats_keywords}")
     set(plugin_formats_values
-      "VST" "VST3" "AU" "AUv3" "RTAS" "AAX" "Standalone" "Enable IAA"
+      "VST" "VST3" "AU" "AUv3" "RTAS" "AAX" "Standalone" "Unity" "Enable IAA"
     )
     foreach(index RANGE 0 7)
       list(GET plugin_formats_vars ${index} format_var)
@@ -434,6 +435,12 @@ function(jucer_project_module module_name PATH_KEYWORD modules_folder)
       endif()
     else()
       if(src_file MATCHES "_Standalone[._]" AND NOT JUCER_BUILD_STANDALONE_PLUGIN)
+        set(to_compile FALSE)
+      endif()
+    endif()
+
+    if(NOT (DEFINED JUCER_VERSION AND JUCER_VERSION VERSION_LESS 5.3.2))
+      if(src_file MATCHES "_Unity[._]" AND NOT JUCER_BUILD_UNITY_PLUGIN)
         set(to_compile FALSE)
       endif()
     endif()
@@ -1757,6 +1764,7 @@ function(jucer_project_end)
     set(VST_sources "")
     set(VST3_sources "")
     set(Standalone_sources "")
+    set(Unity_sources "")
     set(SharedCode_sources "")
     foreach(src_file ${JUCER_PROJECT_FILES})
       # See Project::getTargetTypeFromFilePath()
@@ -1775,6 +1783,8 @@ function(jucer_project_end)
         list(APPEND VST3_sources "${src_file}")
       elseif(src_file MATCHES "_Standalone[._]")
         list(APPEND Standalone_sources "${src_file}")
+      elseif(src_file MATCHES "_Unity[._]")
+        list(APPEND Unity_sources "${src_file}")
       else()
         list(APPEND SharedCode_sources "${src_file}")
       endif()
@@ -2441,6 +2451,76 @@ function(jucer_project_end)
       unset(standalone_target)
     endif()
 
+    if(JUCER_BUILD_UNITY_PLUGIN)
+      set(unity_target "${target}_Unity_Plugin")
+      add_library(${unity_target} MODULE
+        ${Unity_sources}
+        ${JUCER_PROJECT_XCODE_RESOURCES}
+        ${icon_file}
+        ${resources_rc_file}
+      )
+      target_link_libraries(${unity_target} PRIVATE ${shared_code_target})
+      _FRUT_generate_plist_file(${unity_target} "Unity_Plugin" "BNDL" "????"
+        "${main_plist_entries}" ""
+      )
+      _FRUT_set_bundle_properties(${unity_target} "bundle")
+      _FRUT_set_output_directory_properties(${unity_target} "Unity Plugin")
+
+      # Like _FRUT_set_output_name_properties(${unity_target}), but handles the
+      # "audioplugin" prefix as well
+      foreach(config ${JUCER_PROJECT_CONFIGURATIONS})
+        string(TOUPPER "${config}" upper_config)
+
+        if(JUCER_BINARY_NAME_${config})
+          set(output_name "${JUCER_BINARY_NAME_${config}}")
+        else()
+          set(output_name "${JUCER_PROJECT_NAME}")
+        endif()
+        if(NOT output_name MATCHES "^[Aa][Uu][Dd][Ii][Oo][Pp][Ll][Uu][Gg][Ii][Nn]")
+          string(CONCAT output_name "audioplugin_" "${output_name}")
+        endif()
+        set_target_properties(${unity_target} PROPERTIES
+          OUTPUT_NAME_${upper_config} "${output_name}"
+        )
+      endforeach()
+
+      _FRUT_set_compiler_and_linker_settings(${unity_target})
+      _FRUT_add_extra_commands(${unity_target})
+
+      set(project_name "${JUCER_PROJECT_NAME}")
+      if(NOT project_name MATCHES "^[Aa][Uu][Dd][Ii][Oo][Pp][Ll][Uu][Gg][Ii][Nn]")
+        string(CONCAT project_name "audioplugin_" "${project_name}")
+      endif()
+      set(plugin_name "${project_name}")
+      string(REPLACE " " "_" plugin_class_name "${plugin_name}")
+      set(plugin_vendor "${JUCER_PLUGIN_MANUFACTURER}")
+      set(plugin_description "${JUCER_PLUGIN_DESCRIPTION}")
+      set(unity_script_file
+        "${CMAKE_CURRENT_BINARY_DIR}/JuceLibraryCode/${project_name}_UnityScript.cs"
+      )
+      configure_file("${Reprojucer_templates_DIR}/UnityScript.cs"
+        "${unity_script_file}" @ONLY
+      )
+      if(APPLE)
+        target_sources(${unity_target} PRIVATE "${unity_script_file}")
+        set_source_files_properties("${unity_script_file}" PROPERTIES
+          MACOSX_PACKAGE_LOCATION ".."
+        )
+      else()
+        add_custom_command(TARGET ${unity_target} POST_BUILD
+          COMMAND "${CMAKE_COMMAND}" "-E" "copy_if_different"
+          "${unity_script_file}"
+          "$<TARGET_FILE_DIR:${unity_target}>"
+        )
+      endif()
+
+      _FRUT_set_JucePlugin_Build_defines(${unity_target} "UnityPlugIn")
+      _FRUT_link_osx_frameworks(${unity_target})
+      _FRUT_add_xcode_resource_folders(${unity_target})
+      _FRUT_set_custom_xcode_flags(${unity_target})
+      unset(unity_target)
+    endif()
+
   else()
     message(FATAL_ERROR "Unknown project type: ${JUCER_PROJECT_TYPE}")
 
@@ -2708,6 +2788,9 @@ function(_FRUT_generate_AppConfig_header)
     else()
       list(APPEND audio_plugin_setting_names "Build_Standalone")
     endif()
+    if(NOT (DEFINED JUCER_VERSION AND JUCER_VERSION VERSION_LESS 5.3.2))
+      list(APPEND audio_plugin_setting_names "Build_Unity")
+    endif()
     if(NOT (DEFINED JUCER_VERSION AND JUCER_VERSION VERSION_LESS 5.0.0))
       list(APPEND audio_plugin_setting_names "Enable_IAA")
     endif()
@@ -2752,6 +2835,7 @@ function(_FRUT_generate_AppConfig_header)
     else()
       _FRUT_bool_to_int("${JUCER_BUILD_STANDALONE_PLUGIN}" Build_Standalone_value)
     endif()
+    _FRUT_bool_to_int("${JUCER_BUILD_UNITY_PLUGIN}" Build_Unity_value)
     _FRUT_bool_to_int("${JUCER_ENABLE_INTERAPP_AUDIO}" Enable_IAA_value)
 
     set(Name_value "\"${JUCER_PLUGIN_NAME}\"")
@@ -4005,8 +4089,16 @@ function(_FRUT_set_JucePlugin_Build_defines target target_type)
   set(plugin_types     VST VST3 AudioUnit AudioUnitv3  RTAS AAX Standalone       )
   set(setting_suffixes VST VST3 AUDIOUNIT AUDIOUNIT_V3 RTAS AAX STANDALONE_PLUGIN)
   set(define_suffixes  VST VST3 AU        AUv3         RTAS AAX Standalone       )
+  set(range_max 6)
 
-  foreach(index RANGE 6)
+  if(NOT (DEFINED JUCER_VERSION AND JUCER_VERSION VERSION_LESS 5.3.2))
+    list(APPEND plugin_types Unity)
+    list(APPEND setting_suffixes UNITY_PLUGIN)
+    list(APPEND define_suffixes Unity)
+    set(range_max 7)
+  endif()
+
+  foreach(index RANGE ${range_max})
     list(GET setting_suffixes ${index} setting_suffix)
     list(GET plugin_types ${index} plugin_type)
     list(GET define_suffixes ${index} define_suffix)
