@@ -99,6 +99,17 @@ void printError(const juce::String& error)
 }
 
 
+juce::String cmakeAbsolutePath(const juce::String& path)
+{
+  const auto file = juce::File::getCurrentWorkingDirectory().getChildFile(path);
+  return (juce::File::isAbsolutePath(path)
+            ? file.getFullPathName()
+            : "${CMAKE_CURRENT_LIST_DIR}/"
+                + file.getRelativePathFrom(juce::File::getCurrentWorkingDirectory()))
+    .replace("\\", "/");
+}
+
+
 juce::String escape(const juce::String& charsToEscape, juce::String value)
 {
   auto pos = 0;
@@ -212,15 +223,20 @@ int main(int argc, char* argv[])
     std::cerr
       << "usage: Jucer2Reprojucer <jucer_project_file> <Reprojucer.cmake_file>\n"
       << "                        [--juce-modules=<path>] [--user-modules=<path>]\n"
+      << "                        [--relocatable]\n"
       << "\n"
       << "Converts a .jucer file into a CMakeLists.txt file that uses Reprojucer.cmake.\n"
       << "The CMakeLists.txt file is written in the current working directory.\n"
       << "\n"
-      << "    <jucer_project_file>        path to the .jucer file to convert\n"
-      << "    <Reprojucer.cmake_file>     path to Reprojucer.cmake\n"
+      << "    <jucer_project_file>      path to the .jucer file to convert\n"
+      << "    <Reprojucer.cmake_file>   path to Reprojucer.cmake\n"
       << "\n"
-      << "    --juce-modules <path>       global path to JUCE modules\n"
-      << "    --user-modules <path>       global path to user modules\n"
+      << "    --juce-modules <path>     global path to JUCE modules\n"
+      << "    --user-modules <path>     global path to user modules\n"
+      << "\n"
+      << "    --relocatable             makes the CMakeLists.txt file independent from\n"
+      << "                              the location of the .jucer file, but requires\n"
+      << "                              defining a variable when calling cmake\n"
       << std::endl;
     return 1;
   }
@@ -472,17 +488,27 @@ int main(int argc, char* argv[])
                              || std::isdigit(c, std::locale::classic()));
                   },
                   '_');
+  const auto jucerFileCMakeVar = escapedJucerFileName + "_FILE";
 
-  // get_filename_component()
+  // get_filename_component() or set(*_FILE)
   {
-    wLn("if(NOT DEFINED ", escapedJucerFileName, "_FILE)");
-    wLn("  message(FATAL_ERROR \"", escapedJucerFileName, "_FILE must be defined\")");
-    wLn("endif()");
-    wLn();
-    wLn("get_filename_component(", escapedJucerFileName, "_FILE");
-    wLn("  \"${", escapedJucerFileName, "_FILE}\" ABSOLUTE");
-    wLn("  BASE_DIR \"${CMAKE_BINARY_DIR}\"");
-    wLn(")");
+    if (argumentParser["--relocatable"])
+    {
+      wLn("if(NOT DEFINED ", jucerFileCMakeVar, ")");
+      wLn("  message(FATAL_ERROR \"", jucerFileCMakeVar, " must be defined\")");
+      wLn("endif()");
+      wLn();
+      wLn("get_filename_component(", jucerFileCMakeVar);
+      wLn("  \"${", jucerFileCMakeVar, "}\" ABSOLUTE");
+      wLn("  BASE_DIR \"${CMAKE_BINARY_DIR}\"");
+      wLn(")");
+    }
+    else
+    {
+      wLn("set(", jucerFileCMakeVar);
+      wLn("  \"", cmakeAbsolutePath(jucerFilePath), "\"");
+      wLn(")");
+    }
     wLn();
     wLn();
   }
@@ -493,27 +519,13 @@ int main(int argc, char* argv[])
 
     if (!juceModulesPath.isEmpty())
     {
-      const auto juceModulesGlobalPath =
-        juce::File::isAbsolutePath(juceModulesPath)
-          ? juceModulesPath.replace("\\", "/")
-          : "${CMAKE_CURRENT_LIST_DIR}/"
-              + juceModules.getRelativePathFrom(juce::File::getCurrentWorkingDirectory())
-                  .replace("\\", "/");
-
-      wLn("set(JUCE_MODULES_GLOBAL_PATH \"", juceModulesGlobalPath, "\")");
+      wLn("set(JUCE_MODULES_GLOBAL_PATH \"", cmakeAbsolutePath(juceModulesPath), "\")");
       shouldAddEmptyLines = true;
     }
 
     if (!userModulesPath.isEmpty())
     {
-      const auto userModulesGlobalPath =
-        juce::File::isAbsolutePath(userModulesPath)
-          ? userModulesPath.replace("\\", "/")
-          : "${CMAKE_CURRENT_LIST_DIR}/"
-              + userModules.getRelativePathFrom(juce::File::getCurrentWorkingDirectory())
-                  .replace("\\", "/");
-
-      wLn("set(USER_MODULES_GLOBAL_PATH \"", userModulesGlobalPath, "\")");
+      wLn("set(USER_MODULES_GLOBAL_PATH \"", cmakeAbsolutePath(userModulesPath), "\")");
       shouldAddEmptyLines = true;
     }
 
@@ -528,7 +540,7 @@ int main(int argc, char* argv[])
   {
     wLn("jucer_project_begin(");
     wLn("  JUCER_VERSION \"", jucerVersion, "\"");
-    wLn("  PROJECT_FILE \"${", escapedJucerFileName, "_FILE}\"");
+    wLn("  PROJECT_FILE \"${", jucerFileCMakeVar, "}\"");
     convertSetting(jucerProject, "id", "PROJECT_ID", {});
     wLn(")");
     wLn();

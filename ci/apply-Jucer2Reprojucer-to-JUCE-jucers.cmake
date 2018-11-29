@@ -54,6 +54,7 @@ foreach(jucer_file ${jucer_files})
     "${Jucer2Reprojucer_EXE}"
     "${JUCE_ROOT}/${jucer_file}"
     "${CMAKE_CURRENT_LIST_DIR}/../cmake/Reprojucer.cmake"
+    "--relocatable"
     RESULT_VARIABLE result
   )
 
