@@ -987,6 +987,7 @@ function(jucer_export_target_configuration
       "AU_BINARY_LOCATION"
       "RTAS_BINARY_LOCATION"
       "AAX_BINARY_LOCATION"
+      "UNITY_BINARY_LOCATION"
       "OSX_BASE_SDK_VERSION"
       "OSX_DEPLOYMENT_TARGET"
       "OSX_ARCHITECTURE"
@@ -1009,6 +1010,7 @@ function(jucer_export_target_configuration
       "VST3_BINARY_LOCATION"
       "RTAS_BINARY_LOCATION"
       "AAX_BINARY_LOCATION"
+      "UNITY_BINARY_LOCATION"
       "DEBUG_INFORMATION_FORMAT"
       "WARNING_LEVEL"
       "TREAT_WARNINGS_AS_ERRORS"
@@ -1139,6 +1141,11 @@ function(jucer_export_target_configuration
   if(DEFINED _AAX_BINARY_LOCATION)
     _FRUT_sanitize_path_in_user_folder(binary_location "${_AAX_BINARY_LOCATION}")
     set(JUCER_AAX_BINARY_LOCATION_${config} "${binary_location}" PARENT_SCOPE)
+  endif()
+
+  if(DEFINED _UNITY_BINARY_LOCATION)
+    _FRUT_sanitize_path_in_user_folder(binary_location "${_UNITY_BINARY_LOCATION}")
+    set(JUCER_UNITY_BINARY_LOCATION_${config} "${binary_location}" PARENT_SCOPE)
   endif()
 
   if(DEFINED _OSX_BASE_SDK_VERSION)
@@ -2514,6 +2521,26 @@ function(jucer_project_end)
         )
       endif()
 
+      if(APPLE)
+        _FRUT_install_to_plugin_binary_location(${unity_target} "UNITY" "")
+      elseif(MSVC)
+        _FRUT_install_to_plugin_binary_location(${unity_target} "UNITY" "")
+
+        unset(all_confs_destination)
+        foreach(config ${JUCER_PROJECT_CONFIGURATIONS})
+          if(DEFINED JUCER_UNITY_BINARY_LOCATION_${config}
+              AND JUCER_ENABLE_PLUGIN_COPY_STEP_${config})
+            set(destination "${JUCER_UNITY_BINARY_LOCATION_${config}}")
+            string(APPEND all_confs_destination $<$<CONFIG:${config}>:${destination}>)
+          endif()
+        endforeach()
+        if(DEFINED all_confs_destination)
+          install(FILES "${unity_script_file}"
+            COMPONENT "_install_${unity_target}_to_UNITY_binary_location"
+            DESTINATION ${all_confs_destination}
+          )
+        endif()
+      endif()
       _FRUT_set_JucePlugin_Build_defines(${unity_target} "UnityPlugIn")
       _FRUT_link_osx_frameworks(${unity_target})
       _FRUT_add_xcode_resource_folders(${unity_target})

@@ -1520,6 +1520,9 @@ int main(int argc, char* argv[])
             }
           }
 
+          convertSettingIfDefined(configuration, "unityPluginBinaryLocation",
+                                  "UNITY_BINARY_LOCATION", {});
+
           const auto sdks = juce::StringArray{
             "10.5 SDK",  "10.6 SDK",  "10.7 SDK",  "10.8 SDK",  "10.9 SDK",
             "10.10 SDK", "10.11 SDK", "10.12 SDK", "10.13 SDK", "10.14 SDK",
@@ -1649,6 +1652,8 @@ int main(int argc, char* argv[])
                                   "RTAS_BINARY_LOCATION", {});
           convertSettingIfDefined(configuration, "aaxBinaryLocation",
                                   "AAX_BINARY_LOCATION", {});
+          convertSettingIfDefined(configuration, "unityPluginBinaryLocation",
+                                  "UNITY_BINARY_LOCATION", {});
 
           convertSettingIfDefined(configuration, "winWarningLevel", "WARNING_LEVEL",
                                   [](const juce::var& v) -> juce::String {
