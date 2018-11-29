@@ -1118,17 +1118,20 @@ int main(int argc, char* argv[])
       }
 
       const auto isAudioPlugin = projectType == "audioplug";
+      const auto hasJuceAudioProcessorsModule =
+        jucerProject.getChildWithName("MODULES")
+          .getChildWithProperty("id", "juce_audio_processors")
+          .isValid();
 
       const auto hasVst2Interface = jucerVersionAsTuple > Version{4, 2, 3};
       const auto isVstAudioPlugin =
         isAudioPlugin && bool{jucerProject.getProperty("buildVST")};
-      const auto isVstPluginHost = jucerProject.getChildWithName("MODULES")
-                                     .getChildWithProperty("id", "juce_audio_processors")
-                                     .isValid()
-                                   && jucerProject.getChildWithName("JUCEOPTIONS")
-                                          .getProperty("JUCE_PLUGINHOST_VST")
-                                          .toString()
-                                        == "enabled";
+      const auto pluginHostVstOption = jucerProject.getChildWithName("JUCEOPTIONS")
+                                         .getProperty("JUCE_PLUGINHOST_VST")
+                                         .toString();
+      const auto isVstPluginHost =
+        hasJuceAudioProcessorsModule
+        && (pluginHostVstOption == "enabled" || pluginHostVstOption == "1");
 
       if (!hasVst2Interface && (isVstAudioPlugin || isVstPluginHost))
       {
@@ -1138,13 +1141,12 @@ int main(int argc, char* argv[])
       const auto supportsVst3 = exporterType == "XCODE_MAC" || isVSExporter;
       const auto isVst3AudioPlugin =
         isAudioPlugin && bool{jucerProject.getProperty("buildVST3")};
-      const auto isVst3PluginHost = jucerProject.getChildWithName("MODULES")
-                                      .getChildWithProperty("id", "juce_audio_processors")
-                                      .isValid()
-                                    && jucerProject.getChildWithName("JUCEOPTIONS")
-                                           .getProperty("JUCE_PLUGINHOST_VST3")
-                                           .toString()
-                                         == "enabled";
+      const auto pluginHostVst3Option = jucerProject.getChildWithName("JUCEOPTIONS")
+                                          .getProperty("JUCE_PLUGINHOST_VST3")
+                                          .toString();
+      const auto isVst3PluginHost =
+        hasJuceAudioProcessorsModule
+        && (pluginHostVst3Option == "enabled" || pluginHostVst3Option == "1");
 
       if (supportsVst3 && (isVst3AudioPlugin || isVst3PluginHost))
       {

@@ -1,5 +1,6 @@
 parameters:
-  juceVersions: [4.2.0, 4.3.1, 5.0.0, 5.2.1, 5.3.1]
+  cmakeOptions: ''
+  juceVersions: [4.2.0, 4.3.1, 5.0.0, 5.2.1, 5.3.1, 5.4.1]
 
 steps:
   - script: cmake --version
@@ -18,6 +19,7 @@ steps:
     - script: >
         cmake .. -G "$(cmakeGenerator)"
         -DJUCE_ROOT="$(Build.SourcesDirectory)/ci/tmp/JUCE-${{ juceVersion }}"
+        ${{ parameters.cmakeOptions }}
       workingDirectory: build
       displayName: Configure FRUT with JUCE ${{ juceVersion }}
     - script: cmake --build . --config Debug -- -v:m -maxcpucount
@@ -77,3 +79,7 @@ steps:
       -DJUCER_VST3_SDK_FOLDER="$(Build.SourcesDirectory)/ci/fake-SDKs/VST3"
     workingDirectory: ci/AllJuceProjects/build
     displayName: Configure all JUCE 5.3.1 projects
+
+  - script: cmake .. -G "$(cmakeGenerator)" -DJUCE_VERSION="5.4.1"
+    workingDirectory: ci/AllJuceProjects/build
+    displayName: Configure all JUCE 5.4.1 projects

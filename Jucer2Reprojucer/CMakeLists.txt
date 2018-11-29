@@ -80,6 +80,7 @@ jucer_project_module(
   juce_core
   PATH "${JUCE_ROOT}/modules"
   ADD_SOURCE_TO_PROJECT OFF
+  JUCE_USE_CURL OFF
 )
 
 jucer_project_module(

@@ -20,7 +20,7 @@ get_filename_component(AudioPluginHost_jucer_FILE
 
 
 jucer_project_begin(
-  JUCER_VERSION "5.3.1"
+  JUCER_VERSION "5.4.1"
   PROJECT_FILE "${AudioPluginHost_jucer_FILE}"
   PROJECT_ID "NTe0XB0ij"
 )
@@ -73,6 +73,7 @@ jucer_project_module(
 jucer_project_module(
   juce_audio_devices
   PATH "../../modules"
+  # JUCE_USE_WINRT_MIDI
   # JUCE_ASIO
   JUCE_WASAPI ON
   # JUCE_WASAPI_EXCLUSIVE
@@ -82,7 +83,6 @@ jucer_project_module(
   # JUCE_BELA
   # JUCE_USE_ANDROID_OBOE
   # JUCE_USE_ANDROID_OPENSLES
-  # JUCE_USE_WINRT_MIDI
   # JUCE_DISABLE_AUDIO_MIXING_WITH_OTHER_APPS
 )
 
@@ -99,9 +99,10 @@ jucer_project_module(
 jucer_project_module(
   juce_audio_processors
   PATH "../../modules"
-  JUCE_PLUGINHOST_VST ON
+  # JUCE_PLUGINHOST_VST
   JUCE_PLUGINHOST_VST3 ON
   JUCE_PLUGINHOST_AU ON
+  JUCE_PLUGINHOST_LADSPA ON
 )
 
 jucer_project_module(
@@ -120,8 +121,10 @@ jucer_project_module(
   # JUCE_DONT_AUTOLINK_TO_WIN32_LIBRARIES
   # JUCE_INCLUDE_ZLIB_CODE
   # JUCE_USE_CURL
+  # JUCE_LOAD_CURL_SYMBOLS_LAZILY
   # JUCE_CATCH_UNHANDLED_EXCEPTIONS
   # JUCE_ALLOW_STATIC_NULL_VARIABLES
+  # JUCE_STRICT_REFCOUNTEDPOINTER
 )
 
 jucer_project_module(
@@ -145,6 +148,7 @@ jucer_project_module(
   PATH "../../modules"
   # JUCE_USE_COREIMAGE_LOADER
   # JUCE_USE_DIRECTWRITE
+  # JUCE_DISABLE_COREGRAPHICS_FONT_SMOOTHING
 )
 
 jucer_project_module(
@@ -156,6 +160,7 @@ jucer_project_module(
   # JUCE_USE_XSHM
   # JUCE_USE_XRENDER
   # JUCE_USE_XCURSOR
+  # JUCE_WIN_PER_MONITOR_DPI_AWARE
 )
 
 jucer_project_module(
@@ -174,6 +179,7 @@ jucer_project_module(
   juce_video
   PATH "../../modules"
   JUCE_USE_CAMERA OFF
+  # JUCE_SYNC_VIDEO_VOLUME_WITH_OS_MEDIA_VOLUME
 )
 
 jucer_appconfig_header(
@@ -198,6 +204,7 @@ jucer_export_target(
     "-Wextra-semi"
   ICON_SMALL "Source/JUCEAppIcon.png"
   ICON_LARGE "Source/JUCEAppIcon.png"
+  MICROPHONE_ACCESS ON
 )
 
 jucer_export_target_configuration(
@@ -290,6 +297,10 @@ jucer_export_target_configuration(
 jucer_export_target(
   "Visual Studio 2017"
   # VST3_SDK_FOLDER
+  EXTRA_COMPILER_FLAGS
+    "/w44265"
+    "/w45038"
+    "/w44062"
   ICON_SMALL "Source/JUCEAppIcon.png"
   ICON_LARGE "Source/JUCEAppIcon.png"
 )

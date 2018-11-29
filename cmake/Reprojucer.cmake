@@ -2571,6 +2571,10 @@ function(_FRUT_check_SDK_folders)
   endif()
 
   if(JUCER_BUILD_VST3 OR JUCER_FLAG_JUCE_PLUGINHOST_VST3)
+    string(CONCAT juce_internal_vst3_sdk_path
+      "${JUCER_PROJECT_MODULE_juce_audio_processors_PATH}/"
+      "juce_audio_processors/format_types/VST3_SDK"
+    )
     if(DEFINED JUCER_VST3_SDK_FOLDER)
       if(NOT IS_DIRECTORY "${JUCER_VST3_SDK_FOLDER}")
         message(WARNING
@@ -2581,7 +2585,7 @@ function(_FRUT_check_SDK_folders)
           "seem to contain the VST3 SDK"
         )
       endif()
-    elseif(APPLE OR MSVC)
+    elseif((APPLE OR MSVC) AND NOT EXISTS "${juce_internal_vst3_sdk_path}")
       message(WARNING "JUCER_VST3_SDK_FOLDER is not defined. You should give "
         "VST3_SDK_FOLDER when calling jucer_export_target(\"${current_exporter}\")."
       )
@@ -3225,8 +3229,14 @@ function(_FRUT_set_compiler_and_linker_settings target)
   endif()
 
   if(JUCER_BUILD_VST3 OR JUCER_FLAG_JUCE_PLUGINHOST_VST3)
+    string(CONCAT juce_internal_vst3_sdk_path
+      "${JUCER_PROJECT_MODULE_juce_audio_processors_PATH}/"
+      "juce_audio_processors/format_types/VST3_SDK"
+    )
     if(DEFINED JUCER_VST3_SDK_FOLDER)
       target_include_directories(${target} PRIVATE "${JUCER_VST3_SDK_FOLDER}")
+    elseif(EXISTS "${juce_internal_vst3_sdk_path}")
+      target_include_directories(${target} PRIVATE "${juce_internal_vst3_sdk_path}")
     endif()
   endif()
 
