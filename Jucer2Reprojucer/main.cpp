@@ -442,7 +442,8 @@ int main(int argc, char* argv[])
     };
 
   const auto convertIdsToStrings =
-    [](const juce::var& v, const std::map<juce::String, const char*>& idsToStrings) {
+    [](const juce::var& v,
+       const std::vector<std::pair<juce::String, const char*>>& idsToStrings) {
       const auto ids = juce::StringArray::fromTokens(v.toString(), ",", {});
       juce::StringArray strings;
       for (const auto& idToString : idsToStrings)
