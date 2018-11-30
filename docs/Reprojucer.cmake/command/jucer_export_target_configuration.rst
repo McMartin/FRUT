@@ -21,6 +21,9 @@ Define the settings specific to a configuration associated with an export target
     [VST_BINARY_LOCATION <binary_location>]
     [VST3_BINARY_LOCATION <binary_location>]
     [AU_BINARY_LOCATION <binary_location>]
+    [RTAS_BINARY_LOCATION <binary_location>]
+    [AAX_BINARY_LOCATION <binary_location>]
+    [UNITY_BINARY_LOCATION <binary_location>]
 
     [LINK_TIME_OPTIMISATION <ON|OFF>]
     [OPTIMISATION <optimisation>]
@@ -59,7 +62,8 @@ Define the settings specific to a configuration associated with an export target
 ``OSX_BASE_SDK_VERSION``, ``OSX_DEPLOYMENT_TARGET`` and ``STRIP_LOCAL_SYMBOLS`` are only
 supported by the ``"Xcode (MacOSX)"`` exporter.
 
-``ENABLE_PLUGIN_COPY_STEP``, ``VST3_BINARY_LOCATION`` and ``VST_BINARY_LOCATION`` are only
+``AAX_BINARY_LOCATION``, ``ENABLE_PLUGIN_COPY_STEP``, ``RTAS_BINARY_LOCATION``,
+``UNITY_BINARY_LOCATION``, ``VST3_BINARY_LOCATION`` and ``VST_BINARY_LOCATION`` are only
 supported by the following exporters: ``"Xcode (MacOSX)"``, ``"Visual Studio 2017"``,
 ``"Visual Studio 2015"`` and ``"Visual Studio 2013"``.
 

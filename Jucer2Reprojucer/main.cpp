@@ -442,7 +442,8 @@ int main(int argc, char* argv[])
     };
 
   const auto convertIdsToStrings =
-    [](const juce::var& v, const std::map<juce::String, const char*>& idsToStrings) {
+    [](const juce::var& v,
+       const std::vector<std::pair<juce::String, const char*>>& idsToStrings) {
       const auto ids = juce::StringArray::fromTokens(v.toString(), ",", {});
       juce::StringArray strings;
       for (const auto& idToString : idsToStrings)
@@ -661,22 +662,25 @@ int main(int argc, char* argv[])
 
       if (jucerVersionAsTuple >= Version{5, 3, 1})
       {
-        convertSettingAsList(jucerProject, "pluginFormats", "PLUGIN_FORMATS",
-                             [&convertIdsToStrings](const juce::var& v) {
-                               if (v.isVoid())
-                               {
-                                 return juce::StringArray{"VST", "AU"};
-                               }
-                               return convertIdsToStrings(
-                                 v, {{"buildVST", "VST"},
-                                     {"buildVST3", "VST3"},
-                                     {"buildAU", "AU"},
-                                     {"buildAUv3", "AUv3"},
-                                     {"buildRTAS", "RTAS"},
-                                     {"buildAAX", "AAX"},
-                                     {"buildStandalone", "Standalone"},
-                                     {"enableIAA", "Enable IAA"}});
-                             });
+        convertSettingAsList(
+          jucerProject, "pluginFormats", "PLUGIN_FORMATS",
+          [&jucerVersionAsTuple, &convertIdsToStrings](const juce::var& v) {
+            if (v.isVoid())
+            {
+              return juce::StringArray{"VST", "AU"};
+            }
+            const auto supportsUnity = jucerVersionAsTuple >= Version{5, 3, 2};
+            return convertIdsToStrings(
+              v, {{"buildVST", "VST"},
+                  {"buildVST3", "VST3"},
+                  {"buildAU", "AU"},
+                  {"buildAUv3", "AUv3"},
+                  {"buildRTAS", "RTAS"},
+                  {"buildAAX", "AAX"},
+                  {"buildStandalone", "Standalone"},
+                  {supportsUnity ? "buildUnity" : "", supportsUnity ? "Unity" : ""},
+                  {"enableIAA", "Enable IAA"}});
+          });
 
         convertSettingAsList(
           jucerProject, "pluginCharacteristicsValue", "PLUGIN_CHARACTERISTICS",
@@ -1516,6 +1520,9 @@ int main(int argc, char* argv[])
             }
           }
 
+          convertSettingIfDefined(configuration, "unityPluginBinaryLocation",
+                                  "UNITY_BINARY_LOCATION", {});
+
           const auto sdks = juce::StringArray{
             "10.5 SDK",  "10.6 SDK",  "10.7 SDK",  "10.8 SDK",  "10.9 SDK",
             "10.10 SDK", "10.11 SDK", "10.12 SDK", "10.13 SDK", "10.14 SDK",
@@ -1645,6 +1652,8 @@ int main(int argc, char* argv[])
                                   "RTAS_BINARY_LOCATION", {});
           convertSettingIfDefined(configuration, "aaxBinaryLocation",
                                   "AAX_BINARY_LOCATION", {});
+          convertSettingIfDefined(configuration, "unityPluginBinaryLocation",
+                                  "UNITY_BINARY_LOCATION", {});
 
           convertSettingIfDefined(configuration, "winWarningLevel", "WARNING_LEVEL",
                                   [](const juce::var& v) -> juce::String {
