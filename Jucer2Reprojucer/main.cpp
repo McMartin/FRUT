@@ -1240,7 +1240,10 @@ int main(int argc, char* argv[])
         convertOnOffSettingIfDefined(exporter, "PListPreprocess", "PLIST_PREPROCESS", {});
         convertSettingIfDefined(exporter, "PListPrefixHeader", "PLIST_PREFIX_HEADER", {});
         convertSettingAsListIfDefined(
-          exporter, "extraFrameworks", "EXTRA_FRAMEWORKS", [](const juce::var& v) {
+          exporter, "extraFrameworks",
+          jucerVersionAsTuple > Version{5, 3, 2} ? "EXTRA_SYSTEM_FRAMEWORKS"
+                                                 : "EXTRA_FRAMEWORKS",
+          [](const juce::var& v) {
             auto frameworks = juce::StringArray::fromTokens(v.toString(), ",;", "\"'");
             frameworks.trim();
             return frameworks;
