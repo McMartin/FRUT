@@ -661,6 +661,7 @@ function(jucer_export_target exporter)
       "VST3_SDK_FOLDER"
       "AAX_SDK_FOLDER"
       "RTAS_SDK_FOLDER"
+      "MANIFEST_FILE"
       "PLATFORM_TOOLSET"
       "USE_IPP_LIBRARY"
       "WINDOWS_TARGET_PLATFORM"
@@ -852,6 +853,10 @@ function(jucer_export_target exporter)
       )
     endif()
     set(JUCER_USE_HEADERMAP "${_USE_HEADERMAP}" PARENT_SCOPE)
+  endif()
+
+  if(DEFINED _MANIFEST_FILE)
+    _FRUT_warn_about_unsupported_setting("MANIFEST_FILE" "Manifest file" 440)
   endif()
 
   if(DEFINED _PLATFORM_TOOLSET)
