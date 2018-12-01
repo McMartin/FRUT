@@ -1255,6 +1255,8 @@ int main(int argc, char* argv[])
             frameworks.trim();
             return frameworks;
           });
+        convertSettingAsListIfDefined(exporter, "extraCustomFrameworks",
+                                      "EXTRA_CUSTOM_FRAMEWORKS", {});
         convertSettingIfDefined(exporter, "prebuildCommand", "PREBUILD_SHELL_SCRIPT", {});
         convertSettingIfDefined(exporter, "postbuildCommand", "POSTBUILD_SHELL_SCRIPT",
                                 {});
