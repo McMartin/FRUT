@@ -652,6 +652,7 @@ function(jucer_export_target exporter)
       "FRAMEWORK_SEARCH_PATHS"
       "EXTRA_CUSTOM_FRAMEWORKS"
       "EMBEDDED_FRAMEWORKS"
+      "XCODE_SUBPROJECTS"
     )
 
     if(JUCER_PROJECT_TYPE STREQUAL "Audio Plug-in")
@@ -846,6 +847,10 @@ function(jucer_export_target exporter)
 
   if(DEFINED _EMBEDDED_FRAMEWORKS)
     _FRUT_warn_about_unsupported_setting("EMBEDDED_FRAMEWORKS" "Embedded Frameworks" 443)
+  endif()
+
+  if(DEFINED _XCODE_SUBPROJECTS)
+    _FRUT_warn_about_unsupported_setting("XCODE_SUBPROJECTS" "Xcode Subprojects" 445)
   endif()
 
   if(DEFINED _PREBUILD_SHELL_SCRIPT)

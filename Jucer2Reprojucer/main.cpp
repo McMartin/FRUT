@@ -1261,6 +1261,8 @@ int main(int argc, char* argv[])
                                       "EXTRA_CUSTOM_FRAMEWORKS", {});
         convertSettingAsListIfDefined(exporter, "embeddedFrameworks",
                                       "EMBEDDED_FRAMEWORKS", {});
+        convertSettingAsListIfDefined(exporter, "xcodeSubprojects", "XCODE_SUBPROJECTS",
+                                      {});
         convertSettingIfDefined(exporter, "prebuildCommand", "PREBUILD_SHELL_SCRIPT", {});
         convertSettingIfDefined(exporter, "postbuildCommand", "POSTBUILD_SHELL_SCRIPT",
                                 {});
