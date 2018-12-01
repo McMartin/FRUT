@@ -1257,6 +1257,8 @@ int main(int argc, char* argv[])
           });
         convertSettingAsListIfDefined(exporter, "extraCustomFrameworks",
                                       "EXTRA_CUSTOM_FRAMEWORKS", {});
+        convertSettingAsListIfDefined(exporter, "embeddedFrameworks",
+                                      "EMBEDDED_FRAMEWORKS", {});
         convertSettingIfDefined(exporter, "prebuildCommand", "PREBUILD_SHELL_SCRIPT", {});
         convertSettingIfDefined(exporter, "postbuildCommand", "POSTBUILD_SHELL_SCRIPT",
                                 {});

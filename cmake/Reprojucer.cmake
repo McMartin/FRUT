@@ -650,6 +650,7 @@ function(jucer_export_target exporter)
       "EXTRA_SYSTEM_FRAMEWORKS"
       "EXTRA_FRAMEWORKS"
       "EXTRA_CUSTOM_FRAMEWORKS"
+      "EMBEDDED_FRAMEWORKS"
     )
 
     if(JUCER_PROJECT_TYPE STREQUAL "Audio Plug-in")
@@ -834,6 +835,10 @@ function(jucer_export_target exporter)
     _FRUT_warn_about_unsupported_setting(
       "EXTRA_CUSTOM_FRAMEWORKS" "Extra Custom Frameworks" 442
     )
+  endif()
+
+  if(DEFINED _EMBEDDED_FRAMEWORKS)
+    _FRUT_warn_about_unsupported_setting("EMBEDDED_FRAMEWORKS" "Embedded Frameworks" 443)
   endif()
 
   if(DEFINED _PREBUILD_SHELL_SCRIPT)
