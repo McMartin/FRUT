@@ -225,7 +225,7 @@ function(jucer_audio_plugin_settings)
     set(plugin_formats_values
       "VST" "VST3" "AU" "AUv3" "RTAS" "AAX" "Standalone" "Unity" "Enable IAA"
     )
-    foreach(index RANGE 0 7)
+    foreach(index RANGE 8)
       list(GET plugin_formats_vars ${index} format_var)
       if(NOT DEFINED _${format_var})
         list(GET plugin_formats_values ${index} format_value)
@@ -260,7 +260,7 @@ function(jucer_audio_plugin_settings)
       "Disable RTAS Multi-Mono"
       "Disable AAX Multi-Mono"
     )
-    foreach(index RANGE 0 8)
+    foreach(index RANGE 8)
       list(GET plugin_characteristics_vars ${index} characteristic_var)
       if(NOT DEFINED _${characteristic_var})
         list(GET plugin_characteristics_values ${index} characteristic_value)
