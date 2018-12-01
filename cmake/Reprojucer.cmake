@@ -649,6 +649,7 @@ function(jucer_export_target exporter)
       "CUSTOM_XCODE_RESOURCE_FOLDERS"
       "EXTRA_SYSTEM_FRAMEWORKS"
       "EXTRA_FRAMEWORKS"
+      "FRAMEWORK_SEARCH_PATHS"
       "EXTRA_CUSTOM_FRAMEWORKS"
       "EMBEDDED_FRAMEWORKS"
     )
@@ -829,6 +830,12 @@ function(jucer_export_target exporter)
 
   if(DEFINED _EXTRA_FRAMEWORKS)
     set(JUCER_EXTRA_FRAMEWORKS "${_EXTRA_FRAMEWORKS}" PARENT_SCOPE)
+  endif()
+
+  if(DEFINED _FRAMEWORK_SEARCH_PATHS)
+    _FRUT_warn_about_unsupported_setting(
+      "FRAMEWORK_SEARCH_PATHS" "Framework Search Paths" 444
+    )
   endif()
 
   if(DEFINED _EXTRA_CUSTOM_FRAMEWORKS)

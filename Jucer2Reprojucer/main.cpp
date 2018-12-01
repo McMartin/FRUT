@@ -1255,6 +1255,8 @@ int main(int argc, char* argv[])
             frameworks.trim();
             return frameworks;
           });
+        convertSettingAsListIfDefined(exporter, "frameworkSearchPaths",
+                                      "FRAMEWORK_SEARCH_PATHS", {});
         convertSettingAsListIfDefined(exporter, "extraCustomFrameworks",
                                       "EXTRA_CUSTOM_FRAMEWORKS", {});
         convertSettingAsListIfDefined(exporter, "embeddedFrameworks",
