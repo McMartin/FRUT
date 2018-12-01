@@ -1214,6 +1214,13 @@ int main(int argc, char* argv[])
         convertSettingAsListIfDefined(exporter, "customXcodeResourceFolders",
                                       "CUSTOM_XCODE_RESOURCE_FOLDERS", {});
 
+        if (isAudioPlugin)
+        {
+          convertOnOffSettingIfDefined(exporter, "duplicateAppExResourcesFolder",
+                                       "ADD_DUPLICATE_RESOURCES_FOLDER_TO_APP_EXTENSION",
+                                       {});
+        }
+
         if (projectType == "guiapp")
         {
           convertSettingAsListIfDefined(

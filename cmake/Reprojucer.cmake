@@ -651,6 +651,10 @@ function(jucer_export_target exporter)
       "EXTRA_FRAMEWORKS"
     )
 
+    if(JUCER_PROJECT_TYPE STREQUAL "Audio Plug-in")
+      list(APPEND single_value_keywords "ADD_DUPLICATE_RESOURCES_FOLDER_TO_APP_EXTENSION")
+    endif()
+
     if(JUCER_PROJECT_TYPE STREQUAL "GUI Application")
       list(APPEND multi_value_keywords "DOCUMENT_FILE_EXTENSIONS")
     endif()
@@ -764,6 +768,13 @@ function(jucer_export_target exporter)
       list(APPEND resource_folders "${abs_folder}")
     endforeach()
     set(JUCER_CUSTOM_XCODE_RESOURCE_FOLDERS "${resource_folders}" PARENT_SCOPE)
+  endif()
+
+  if(DEFINED _ADD_DUPLICATE_RESOURCES_FOLDER_TO_APP_EXTENSION)
+    _FRUT_warn_about_unsupported_setting(
+      "ADD_DUPLICATE_RESOURCES_FOLDER_TO_APP_EXTENSION"
+      "Add Duplicate Resources Folder to App Extension" 441
+    )
   endif()
 
   if(DEFINED _DOCUMENT_FILE_EXTENSIONS)
