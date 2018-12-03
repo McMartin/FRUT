@@ -649,7 +649,15 @@ function(jucer_export_target exporter)
       "CUSTOM_XCODE_RESOURCE_FOLDERS"
       "EXTRA_SYSTEM_FRAMEWORKS"
       "EXTRA_FRAMEWORKS"
+      "FRAMEWORK_SEARCH_PATHS"
+      "EXTRA_CUSTOM_FRAMEWORKS"
+      "EMBEDDED_FRAMEWORKS"
+      "XCODE_SUBPROJECTS"
     )
+
+    if(JUCER_PROJECT_TYPE STREQUAL "Audio Plug-in")
+      list(APPEND single_value_keywords "ADD_DUPLICATE_RESOURCES_FOLDER_TO_APP_EXTENSION")
+    endif()
 
     if(JUCER_PROJECT_TYPE STREQUAL "GUI Application")
       list(APPEND multi_value_keywords "DOCUMENT_FILE_EXTENSIONS")
@@ -661,6 +669,7 @@ function(jucer_export_target exporter)
       "VST3_SDK_FOLDER"
       "AAX_SDK_FOLDER"
       "RTAS_SDK_FOLDER"
+      "MANIFEST_FILE"
       "PLATFORM_TOOLSET"
       "USE_IPP_LIBRARY"
       "WINDOWS_TARGET_PLATFORM"
@@ -765,6 +774,13 @@ function(jucer_export_target exporter)
     set(JUCER_CUSTOM_XCODE_RESOURCE_FOLDERS "${resource_folders}" PARENT_SCOPE)
   endif()
 
+  if(DEFINED _ADD_DUPLICATE_RESOURCES_FOLDER_TO_APP_EXTENSION)
+    _FRUT_warn_about_unsupported_setting(
+      "ADD_DUPLICATE_RESOURCES_FOLDER_TO_APP_EXTENSION"
+      "Add Duplicate Resources Folder to App Extension" 441
+    )
+  endif()
+
   if(DEFINED _DOCUMENT_FILE_EXTENSIONS)
     set(JUCER_DOCUMENT_FILE_EXTENSIONS "${_DOCUMENT_FILE_EXTENSIONS}" PARENT_SCOPE)
   endif()
@@ -817,6 +833,26 @@ function(jucer_export_target exporter)
     set(JUCER_EXTRA_FRAMEWORKS "${_EXTRA_FRAMEWORKS}" PARENT_SCOPE)
   endif()
 
+  if(DEFINED _FRAMEWORK_SEARCH_PATHS)
+    _FRUT_warn_about_unsupported_setting(
+      "FRAMEWORK_SEARCH_PATHS" "Framework Search Paths" 444
+    )
+  endif()
+
+  if(DEFINED _EXTRA_CUSTOM_FRAMEWORKS)
+    _FRUT_warn_about_unsupported_setting(
+      "EXTRA_CUSTOM_FRAMEWORKS" "Extra Custom Frameworks" 442
+    )
+  endif()
+
+  if(DEFINED _EMBEDDED_FRAMEWORKS)
+    _FRUT_warn_about_unsupported_setting("EMBEDDED_FRAMEWORKS" "Embedded Frameworks" 443)
+  endif()
+
+  if(DEFINED _XCODE_SUBPROJECTS)
+    _FRUT_warn_about_unsupported_setting("XCODE_SUBPROJECTS" "Xcode Subprojects" 445)
+  endif()
+
   if(DEFINED _PREBUILD_SHELL_SCRIPT)
     set(script_content "${_PREBUILD_SHELL_SCRIPT}")
     configure_file("${Reprojucer_templates_DIR}/script.in" "prebuild.sh" @ONLY)
@@ -852,6 +888,10 @@ function(jucer_export_target exporter)
       )
     endif()
     set(JUCER_USE_HEADERMAP "${_USE_HEADERMAP}" PARENT_SCOPE)
+  endif()
+
+  if(DEFINED _MANIFEST_FILE)
+    _FRUT_warn_about_unsupported_setting("MANIFEST_FILE" "Manifest file" 440)
   endif()
 
   if(DEFINED _PLATFORM_TOOLSET)

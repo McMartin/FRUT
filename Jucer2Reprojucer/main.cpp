@@ -1214,6 +1214,13 @@ int main(int argc, char* argv[])
         convertSettingAsListIfDefined(exporter, "customXcodeResourceFolders",
                                       "CUSTOM_XCODE_RESOURCE_FOLDERS", {});
 
+        if (isAudioPlugin)
+        {
+          convertOnOffSettingIfDefined(exporter, "duplicateAppExResourcesFolder",
+                                       "ADD_DUPLICATE_RESOURCES_FOLDER_TO_APP_EXTENSION",
+                                       {});
+        }
+
         if (projectType == "guiapp")
         {
           convertSettingAsListIfDefined(
@@ -1248,6 +1255,14 @@ int main(int argc, char* argv[])
             frameworks.trim();
             return frameworks;
           });
+        convertSettingAsListIfDefined(exporter, "frameworkSearchPaths",
+                                      "FRAMEWORK_SEARCH_PATHS", {});
+        convertSettingAsListIfDefined(exporter, "extraCustomFrameworks",
+                                      "EXTRA_CUSTOM_FRAMEWORKS", {});
+        convertSettingAsListIfDefined(exporter, "embeddedFrameworks",
+                                      "EMBEDDED_FRAMEWORKS", {});
+        convertSettingAsListIfDefined(exporter, "xcodeSubprojects", "XCODE_SUBPROJECTS",
+                                      {});
         convertSettingIfDefined(exporter, "prebuildCommand", "PREBUILD_SHELL_SCRIPT", {});
         convertSettingIfDefined(exporter, "postbuildCommand", "POSTBUILD_SHELL_SCRIPT",
                                 {});
@@ -1260,6 +1275,8 @@ int main(int argc, char* argv[])
 
       if (isVSExporter)
       {
+        convertSettingIfDefined(exporter, "msvcManifestFile", "MANIFEST_FILE", {});
+
         if (exporter.hasProperty("toolset"))
         {
           const auto toolset = exporter.getProperty("toolset").toString();
