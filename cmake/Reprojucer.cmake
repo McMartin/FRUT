@@ -222,8 +222,8 @@ function(jucer_audio_plugin_settings)
 
   if(DEFINED _PLUGIN_FORMATS)
     set(plugin_formats_vars "${plugin_formats_keywords}")
-    set(plugin_formats_values
-      "VST" "VST3" "AU" "AUv3" "RTAS" "AAX" "Standalone" "Unity" "Enable IAA"
+    set(plugin_formats_values "VST" "VST3" "AU" "AUv3" "RTAS" "AAX" "Standalone"
+      "Unity" "Enable IAA"
     )
     foreach(index RANGE 8)
       list(GET plugin_formats_vars ${index} format_var)
