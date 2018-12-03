@@ -645,7 +645,11 @@ function(jucer_export_target exporter)
       "KEEP_CUSTOM_XCODE_SCHEMES"
       "USE_HEADERMAP"
     )
-    list(APPEND multi_value_keywords "CUSTOM_XCODE_RESOURCE_FOLDERS" "EXTRA_FRAMEWORKS")
+    list(APPEND multi_value_keywords
+      "CUSTOM_XCODE_RESOURCE_FOLDERS"
+      "EXTRA_SYSTEM_FRAMEWORKS"
+      "EXTRA_FRAMEWORKS"
+    )
 
     if(JUCER_PROJECT_TYPE STREQUAL "GUI Application")
       list(APPEND multi_value_keywords "DOCUMENT_FILE_EXTENSIONS")
@@ -765,10 +769,6 @@ function(jucer_export_target exporter)
     set(JUCER_DOCUMENT_FILE_EXTENSIONS "${_DOCUMENT_FILE_EXTENSIONS}" PARENT_SCOPE)
   endif()
 
-  if(DEFINED _EXTRA_FRAMEWORKS)
-    set(JUCER_EXTRA_FRAMEWORKS "${_EXTRA_FRAMEWORKS}" PARENT_SCOPE)
-  endif()
-
   if(DEFINED _MICROPHONE_ACCESS)
     set(JUCER_MICROPHONE_ACCESS "${_MICROPHONE_ACCESS}" PARENT_SCOPE)
   endif()
@@ -807,6 +807,14 @@ function(jucer_export_target exporter)
 
   if(DEFINED _PLIST_PREFIX_HEADER)
     # TODO with PLIST_PREPROCESS
+  endif()
+
+  if(DEFINED _EXTRA_SYSTEM_FRAMEWORKS)
+    set(JUCER_EXTRA_SYSTEM_FRAMEWORKS "${_EXTRA_SYSTEM_FRAMEWORKS}" PARENT_SCOPE)
+  endif()
+
+  if(DEFINED _EXTRA_FRAMEWORKS)
+    set(JUCER_EXTRA_FRAMEWORKS "${_EXTRA_FRAMEWORKS}" PARENT_SCOPE)
   endif()
 
   if(DEFINED _PREBUILD_SHELL_SCRIPT)
@@ -4145,7 +4153,12 @@ endfunction()
 
 function(_FRUT_link_osx_frameworks target)
 
-  set(osx_frameworks ${JUCER_PROJECT_OSX_FRAMEWORKS} ${JUCER_EXTRA_FRAMEWORKS} ${ARGN})
+  set(osx_frameworks
+    ${JUCER_PROJECT_OSX_FRAMEWORKS}
+    ${JUCER_EXTRA_SYSTEM_FRAMEWORKS}
+    ${JUCER_EXTRA_FRAMEWORKS}
+    ${ARGN}
+  )
   if(JUCER_FLAG_JUCE_PLUGINHOST_AU)
     list(APPEND osx_frameworks "AudioUnit" "CoreAudioKit")
   endif()
@@ -4153,6 +4166,9 @@ function(_FRUT_link_osx_frameworks target)
   if(APPLE AND osx_frameworks)
     list(SORT osx_frameworks)
     list(REMOVE_DUPLICATES osx_frameworks)
+    if(NOT JUCER_FLAG_JUCE_QUICKTIME)
+      list(REMOVE_ITEM osx_frameworks "QuickTime")
+    endif()
     foreach(framework_name ${osx_frameworks})
       find_library(${framework_name}_framework ${framework_name})
       target_link_libraries(${target} PRIVATE "${${framework_name}_framework}")

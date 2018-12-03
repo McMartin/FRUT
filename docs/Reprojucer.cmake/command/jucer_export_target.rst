@@ -23,13 +23,14 @@ Define the settings specific to an export target.
     [ICON_SMALL <icon_file>]
     [ICON_LARGE <icon_file>]
 
-    [CUSTOM_XCODE_RESOURCE_FOLDERS <xcode_resource_folder> [<xcode_resource_folders> ...]]
+    [CUSTOM_XCODE_RESOURCE_FOLDERS <xcode_resource_folder> [<xcode_resource_folder> ...]]
     [DOCUMENT_FILE_EXTENSIONS <file_extension> [<file_extension> ...]]
     [MICROPHONE_ACCESS <ON|OFF>]
     [MICROPHONE_ACCESS_TEXT <microphone_access_text>]
     [CAMERA_ACCESS <ON|OFF>]
     [CAMERA_ACCESS_TEXT <camera_access_text>]
     [CUSTOM_PLIST <plist_content>]
+    [EXTRA_SYSTEM_FRAMEWORKS <osx_framework> [<osx_framework> ...]]
     [EXTRA_FRAMEWORKS <osx_framework> [<osx_framework> ...]]
     [PREBUILD_SHELL_SCRIPT <shell_script_content>]
     [POSTBUILD_SHELL_SCRIPT <shell_script_content>]
@@ -54,9 +55,10 @@ Define the settings specific to an export target.
 ``"Code::Blocks (Linux)"``.
 
 ``CAMERA_ACCESS``, ``CAMERA_ACCESS_TEXT``, ``CUSTOM_PLIST``,
-``CUSTOM_XCODE_RESOURCE_FOLDERS``,  ``EXTRA_FRAMEWORKS``, ``MICROPHONE_ACCESS``,
-``MICROPHONE_ACCESS_TEXT``, ``POSTBUILD_SHELL_SCRIPT``, ``PREBUILD_SHELL_SCRIPT`` and
-``USE_HEADERMAP`` are only supported by the ``"Xcode (MacOSX)"`` exporter.
+``CUSTOM_XCODE_RESOURCE_FOLDERS``,  ``EXTRA_FRAMEWORKS``, ``EXTRA_SYSTEM_FRAMEWORKS``,
+``MICROPHONE_ACCESS``, ``MICROPHONE_ACCESS_TEXT``, ``POSTBUILD_SHELL_SCRIPT``,
+``PREBUILD_SHELL_SCRIPT`` and ``USE_HEADERMAP`` are only supported by the
+``"Xcode (MacOSX)"`` exporter.
 
 ``DOCUMENT_FILE_EXTENSIONS`` is only supported by the ``"Xcode (MacOSX)"`` exporter on
 ``"GUI Application"`` projects.

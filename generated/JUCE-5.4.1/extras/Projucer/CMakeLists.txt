@@ -591,7 +591,7 @@ jucer_export_target(
 	</dict>
 </dict>
 </plist>"
-  EXTRA_FRAMEWORKS
+  EXTRA_SYSTEM_FRAMEWORKS
     "AudioUnit"
     "Accelerate"
     "AVFoundation"
