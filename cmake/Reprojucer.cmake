@@ -2747,6 +2747,27 @@ function(_FRUT_check_SDK_folders)
     endif()
   endif()
 
+  if(JUCER_BUILD_RTAS)
+    if(DEFINED JUCER_RTAS_SDK_FOLDER)
+      set(file_to_check_for
+        "AlturaPorts/TDMPlugIns/PlugInLibrary/EffectClasses/CEffectProcessMIDI.cpp"
+      )
+      if(NOT IS_DIRECTORY "${JUCER_RTAS_SDK_FOLDER}")
+        message(WARNING
+          "JUCER_RTAS_SDK_FOLDER: no such directory \"${JUCER_RTAS_SDK_FOLDER}\""
+        )
+      elseif(NOT EXISTS "${JUCER_RTAS_SDK_FOLDER}/${file_to_check_for}")
+        message(WARNING "JUCER_RTAS_SDK_FOLDER: \"${JUCER_RTAS_SDK_FOLDER}\" doesn't "
+          "seem to contain the RTAS SDK"
+        )
+      endif()
+    elseif(APPLE OR MSVC)
+      message(WARNING "JUCER_RTAS_SDK_FOLDER is not defined. You should give "
+        "RTAS_SDK_FOLDER when calling jucer_export_target(\"${current_exporter}\")."
+      )
+    endif()
+  endif()
+
   if(JUCER_BUILD_AAX)
     if(DEFINED JUCER_AAX_SDK_FOLDER)
       if(NOT IS_DIRECTORY "${JUCER_AAX_SDK_FOLDER}")
