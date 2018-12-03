@@ -198,6 +198,7 @@ function(jucer_audio_plugin_settings)
     "PLUGIN_AU_EXPORT_PREFIX"
     "PLUGIN_AU_MAIN_TYPE"
     "PLUGIN_AU_IS_SANDBOX_SAFE"
+    "PLUGIN_VST_LEGACY_CATEGORY"
     "PLUGIN_VST_CATEGORY"
     "VST_CATEGORY"
   )
@@ -221,11 +222,11 @@ function(jucer_audio_plugin_settings)
   endif()
 
   if(DEFINED _PLUGIN_FORMATS)
-    set(plugin_formats_vars "${plugin_formats_keywords}")
+    set(plugin_formats_vars ${plugin_formats_keywords} "BUILD_VST")
     set(plugin_formats_values "VST" "VST3" "AU" "AUv3" "RTAS" "AAX" "Standalone"
-      "Unity" "Enable IAA"
+      "Unity" "Enable IAA" "VST (Legacy)"
     )
-    foreach(index RANGE 8)
+    foreach(index RANGE 9)
       list(GET plugin_formats_vars ${index} format_var)
       if(NOT DEFINED _${format_var})
         list(GET plugin_formats_values ${index} format_value)
@@ -614,6 +615,7 @@ function(jucer_export_target exporter)
 
   set(single_value_keywords
     "TARGET_PROJECT_FOLDER"
+    "VST_LEGACY_SDK_FOLDER"
     "VST_SDK_FOLDER"
     "ICON_SMALL"
     "ICON_LARGE"
@@ -697,6 +699,12 @@ function(jucer_export_target exporter)
     file(TO_CMAKE_PATH "${_TARGET_PROJECT_FOLDER}" project_folder)
     _FRUT_abs_path_based_on_jucer_project_dir(project_folder "${project_folder}")
     set(JUCER_TARGET_PROJECT_FOLDER "${project_folder}" PARENT_SCOPE)
+  endif()
+
+  if(DEFINED _VST_LEGACY_SDK_FOLDER)
+    file(TO_CMAKE_PATH "${_VST_LEGACY_SDK_FOLDER}" sdk_folder)
+    _FRUT_abs_path_based_on_jucer_project_dir(sdk_folder "${sdk_folder}")
+    set(JUCER_VST_LEGACY_SDK_FOLDER "${sdk_folder}" PARENT_SCOPE)
   endif()
 
   if(DEFINED _VST_SDK_FOLDER)
@@ -1036,6 +1044,7 @@ function(jucer_export_target_configuration
       "RTAS_BINARY_LOCATION"
       "AAX_BINARY_LOCATION"
       "UNITY_BINARY_LOCATION"
+      "VST_LEGACY_BINARY_LOCATION"
       "OSX_BASE_SDK_VERSION"
       "OSX_DEPLOYMENT_TARGET"
       "OSX_ARCHITECTURE"
@@ -1059,6 +1068,7 @@ function(jucer_export_target_configuration
       "RTAS_BINARY_LOCATION"
       "AAX_BINARY_LOCATION"
       "UNITY_BINARY_LOCATION"
+      "VST_LEGACY_BINARY_LOCATION"
       "DEBUG_INFORMATION_FORMAT"
       "WARNING_LEVEL"
       "TREAT_WARNINGS_AS_ERRORS"
@@ -1194,6 +1204,11 @@ function(jucer_export_target_configuration
   if(DEFINED _UNITY_BINARY_LOCATION)
     _FRUT_sanitize_path_in_user_folder(binary_location "${_UNITY_BINARY_LOCATION}")
     set(JUCER_UNITY_BINARY_LOCATION_${config} "${binary_location}" PARENT_SCOPE)
+  endif()
+
+  if(DEFINED _VST_LEGACY_BINARY_LOCATION)
+    _FRUT_sanitize_path_in_user_folder(binary_location "${_VST_LEGACY_BINARY_LOCATION}")
+    set(JUCER_VST_BINARY_LOCATION_${config} "${binary_location}" PARENT_SCOPE)
   endif()
 
   if(DEFINED _OSX_BASE_SDK_VERSION)
@@ -2708,6 +2723,22 @@ endfunction()
 function(_FRUT_check_SDK_folders)
 
   if(JUCER_BUILD_VST OR JUCER_FLAG_JUCE_PLUGINHOST_VST)
+    if(DEFINED JUCER_VST_LEGACY_SDK_FOLDER)
+      if(NOT IS_DIRECTORY "${JUCER_VST_LEGACY_SDK_FOLDER}")
+        message(WARNING "JUCER_VST_LEGACY_SDK_FOLDER: no such directory "
+          "\"${JUCER_VST_LEGACY_SDK_FOLDER}\""
+        )
+      elseif(NOT EXISTS "${JUCER_VST_LEGACY_SDK_FOLDER}/pluginterfaces/vst2.x/aeffect.h")
+        message(WARNING "JUCER_VST_LEGACY_SDK_FOLDER: \"${JUCER_VST_LEGACY_SDK_FOLDER}\" "
+          "doesn't seem to contain the VST SDK"
+        )
+      endif()
+    elseif(NOT DEFINED JUCER_VERSION OR JUCER_VERSION VERSION_GREATER 5.3.2)
+      message(WARNING "JUCER_VST_LEGACY_SDK_FOLDER is not defined. You should give "
+        "VST_LEGACY_SDK_FOLDER when calling jucer_export_target(\"${current_exporter}\")."
+      )
+    endif()
+
     if(DEFINED JUCER_VST_SDK_FOLDER)
       if(NOT IS_DIRECTORY "${JUCER_VST_SDK_FOLDER}")
         message(WARNING
@@ -2954,7 +2985,9 @@ function(_FRUT_generate_AppConfig_header)
     set(VersionString_value "\"${JUCER_PROJECT_VERSION}\"")
 
     set(VSTUniqueID_value "JucePlugin_PluginCode")
-    if(DEFINED JUCER_PLUGIN_VST_CATEGORY)
+    if(DEFINED JUCER_PLUGIN_VST_LEGACY_CATEGORY)
+      set(VSTCategory_value "${JUCER_PLUGIN_VST_LEGACY_CATEGORY}")
+    elseif(DEFINED JUCER_PLUGIN_VST_CATEGORY)
       set(VSTCategory_value "${JUCER_PLUGIN_VST_CATEGORY}")
     elseif(DEFINED JUCER_VST_CATEGORY)
       set(VSTCategory_value "${JUCER_VST_CATEGORY}")
@@ -3403,6 +3436,9 @@ function(_FRUT_set_compiler_and_linker_settings target)
   target_include_directories(${target} PRIVATE ${JUCER_HEADER_SEARCH_PATHS})
 
   if(JUCER_BUILD_VST OR JUCER_FLAG_JUCE_PLUGINHOST_VST)
+    if(DEFINED JUCER_VST_LEGACY_SDK_FOLDER)
+      target_include_directories(${target} PRIVATE "${JUCER_VST_LEGACY_SDK_FOLDER}")
+    endif()
     if(DEFINED JUCER_VST_SDK_FOLDER)
       target_include_directories(${target} PRIVATE "${JUCER_VST_SDK_FOLDER}")
     endif()

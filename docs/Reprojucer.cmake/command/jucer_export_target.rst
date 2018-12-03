@@ -10,6 +10,7 @@ Define the settings specific to an export target.
 
     [TARGET_PROJECT_FOLDER <target_project_folder>]
 
+    [VST_LEGACY_SDK_FOLDER <vst_legacy_sdk_folder>]
     [VST_SDK_FOLDER <vst_sdk_folder>]
     [VST3_SDK_FOLDER <vst3_sdk_folder>]
 
