@@ -667,7 +667,7 @@ int main(int argc, char* argv[])
           [&jucerVersionAsTuple, &convertIdsToStrings](const juce::var& v) {
             if (v.isVoid())
             {
-              return juce::StringArray{"VST", "AU"};
+              return juce::StringArray{"VST", "AU", "Standalone"};
             }
             const auto supportsUnity = jucerVersionAsTuple >= Version{5, 3, 2};
             return convertIdsToStrings(
