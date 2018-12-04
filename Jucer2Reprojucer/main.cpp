@@ -660,18 +660,20 @@ int main(int argc, char* argv[])
     {
       wLn("jucer_audio_plugin_settings(");
 
+      const auto vstIsLegacy = jucerVersionAsTuple > Version{5, 3, 2};
+
       if (jucerVersionAsTuple >= Version{5, 3, 1})
       {
         convertSettingAsList(
           jucerProject, "pluginFormats", "PLUGIN_FORMATS",
-          [&jucerVersionAsTuple, &convertIdsToStrings](const juce::var& v) {
+          [&jucerVersionAsTuple, &convertIdsToStrings, &vstIsLegacy](const juce::var& v) {
             if (v.isVoid())
             {
-              return juce::StringArray{"VST", "AU"};
+              return juce::StringArray{vstIsLegacy ? "VST3" : "VST", "AU", "Standalone"};
             }
             const auto supportsUnity = jucerVersionAsTuple >= Version{5, 3, 2};
             return convertIdsToStrings(
-              v, {{"buildVST", "VST"},
+              v, {{vstIsLegacy ? "" : "buildVST", vstIsLegacy ? "" : "VST"},
                   {"buildVST3", "VST3"},
                   {"buildAU", "AU"},
                   {"buildAUv3", "AUv3"},
@@ -679,7 +681,8 @@ int main(int argc, char* argv[])
                   {"buildAAX", "AAX"},
                   {"buildStandalone", "Standalone"},
                   {supportsUnity ? "buildUnity" : "", supportsUnity ? "Unity" : ""},
-                  {"enableIAA", "Enable IAA"}});
+                  {"enableIAA", "Enable IAA"},
+                  {vstIsLegacy ? "buildVST" : "", vstIsLegacy ? "VST (Legacy)" : ""}});
           });
 
         convertSettingAsList(
@@ -756,16 +759,20 @@ int main(int argc, char* argv[])
         convertSetting(jucerProject, "aaxIdentifier", "PLUGIN_AAX_IDENTIFIER", {});
       }
       convertSetting(jucerProject, "pluginAUExportPrefix", "PLUGIN_AU_EXPORT_PREFIX", {});
+      convertSetting(jucerProject, "pluginAUMainType", "PLUGIN_AU_MAIN_TYPE", {});
       convertOnOffSettingIfDefined(jucerProject, "pluginAUIsSandboxSafe",
                                    "PLUGIN_AU_IS_SANDBOX_SAFE", {});
-      convertSetting(jucerProject, "pluginAUMainType", "PLUGIN_AU_MAIN_TYPE", {});
 
-      convertSettingWithDefault(
-        jucerProject, "pluginVSTCategory",
-        jucerVersionAsTuple > Version{5, 3, 0} ? "PLUGIN_VST_CATEGORY" : "VST_CATEGORY",
-        jucerVersionAsTuple >= Version{5, 3, 1}
-          ? (isSynthAudioPlugin ? "kPlugCategSynth" : "kPlugCategEffect")
-          : "");
+      if (!vstIsLegacy)
+      {
+        convertSettingWithDefault(
+          jucerProject, "pluginVSTCategory",
+          jucerVersionAsTuple > Version{5, 3, 0} ? "PLUGIN_VST_CATEGORY" : "VST_CATEGORY",
+          jucerVersionAsTuple >= Version{5, 3, 1}
+            ? (isSynthAudioPlugin ? "kPlugCategSynth" : "kPlugCategEffect")
+            : "");
+      }
+
       if (jucerProject.hasProperty("pluginVST3Category")
           || jucerVersionAsTuple >= Version{5, 3, 1})
       {
@@ -847,6 +854,13 @@ int main(int argc, char* argv[])
       {
         convertSetting(jucerProject, "pluginRTASCategory", "PLUGIN_RTAS_CATEGORY", {});
         convertSetting(jucerProject, "pluginAAXCategory", "PLUGIN_AAX_CATEGORY", {});
+      }
+
+      if (vstIsLegacy)
+      {
+        convertSettingWithDefault(
+          jucerProject, "pluginVSTCategory", "PLUGIN_VST_LEGACY_CATEGORY",
+          isSynthAudioPlugin ? "kPlugCategSynth" : "kPlugCategEffect");
       }
 
       if (jucerVersionAsTuple < Version{5, 3, 1})
@@ -1140,6 +1154,13 @@ int main(int argc, char* argv[])
       if (!hasVst2Interface && (isVstAudioPlugin || isVstPluginHost))
       {
         convertSetting(exporter, "vstFolder", "VST_SDK_FOLDER", {});
+      }
+
+      const auto vstIsLegacy = jucerVersionAsTuple > Version{5, 3, 2};
+
+      if (vstIsLegacy && (isVstAudioPlugin || isVstPluginHost))
+      {
+        convertSetting(exporter, "vstLegacyFolder", "VST_LEGACY_SDK_FOLDER", {});
       }
 
       const auto supportsVst3 = exporterType == "XCODE_MAC" || isVSExporter;
@@ -1511,9 +1532,21 @@ int main(int argc, char* argv[])
           convertOnOffSettingIfDefined(configuration, "enablePluginBinaryCopyStep",
                                        "ENABLE_PLUGIN_COPY_STEP", {});
 
+          if (!vstIsLegacy)
+          {
+            if (configuration.hasProperty("xcodeVstBinaryLocation"))
+            {
+              convertSetting(configuration, "xcodeVstBinaryLocation",
+                             "VST_BINARY_LOCATION", {});
+            }
+            else
+            {
+              convertSettingIfDefined(configuration, "vstBinaryLocation",
+                                      "VST_BINARY_LOCATION", {});
+            }
+          }
+
           const auto binaryLocationTuples = {
-            std::make_tuple("xcodeVstBinaryLocation", "vstBinaryLocation",
-                            "VST_BINARY_LOCATION"),
             std::make_tuple("xcodeVst3BinaryLocation", "vst3BinaryLocation",
                             "VST3_BINARY_LOCATION"),
             std::make_tuple("xcodeAudioUnitBinaryLocation", "auBinaryLocation",
@@ -1542,6 +1575,11 @@ int main(int argc, char* argv[])
 
           convertSettingIfDefined(configuration, "unityPluginBinaryLocation",
                                   "UNITY_BINARY_LOCATION", {});
+          if (vstIsLegacy)
+          {
+            convertSettingIfDefined(configuration, "vstBinaryLocation",
+                                    "VST_LEGACY_BINARY_LOCATION", {});
+          }
 
           const auto sdks = juce::StringArray{
             "10.5 SDK",  "10.6 SDK",  "10.7 SDK",  "10.8 SDK",  "10.9 SDK",
@@ -1664,8 +1702,11 @@ int main(int argc, char* argv[])
           convertOnOffSettingIfDefined(configuration, "enablePluginBinaryCopyStep",
                                        "ENABLE_PLUGIN_COPY_STEP", {});
 
-          convertSettingIfDefined(configuration, "vstBinaryLocation",
-                                  "VST_BINARY_LOCATION", {});
+          if (!vstIsLegacy)
+          {
+            convertSettingIfDefined(configuration, "vstBinaryLocation",
+                                    "VST_BINARY_LOCATION", {});
+          }
           convertSettingIfDefined(configuration, "vst3BinaryLocation",
                                   "VST3_BINARY_LOCATION", {});
           convertSettingIfDefined(configuration, "rtasBinaryLocation",
@@ -1674,6 +1715,11 @@ int main(int argc, char* argv[])
                                   "AAX_BINARY_LOCATION", {});
           convertSettingIfDefined(configuration, "unityPluginBinaryLocation",
                                   "UNITY_BINARY_LOCATION", {});
+          if (vstIsLegacy)
+          {
+            convertSettingIfDefined(configuration, "vstBinaryLocation",
+                                    "VST_LEGACY_BINARY_LOCATION", {});
+          }
 
           convertSettingIfDefined(configuration, "winWarningLevel", "WARNING_LEVEL",
                                   [](const juce::var& v) -> juce::String {

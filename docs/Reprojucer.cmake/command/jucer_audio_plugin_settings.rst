@@ -41,6 +41,7 @@ Define the settings specific to an *Audio Plug-in* project.
     [PLUGIN_VST3_CATEGORY <plugin_vst3_category>]
     [PLUGIN_RTAS_CATEGORY <plugin_rtas_category>]
     [PLUGIN_AAX_CATEGORY <plugin_aax_category>]
+    [PLUGIN_VST_LEGACY_CATEGORY <plugin_vst_legacy_category>]
   )
 
 You must call this command when you call :doc:`jucer_project_settings()
