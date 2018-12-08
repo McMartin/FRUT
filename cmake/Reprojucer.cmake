@@ -491,6 +491,7 @@ function(jucer_project_module module_name PATH_KEYWORD modules_folder)
     set(JUCER_FLAG_${config_flag} "${extra_values_${config_flag}}" PARENT_SCOPE)
   endforeach()
 
+  set(module_info_searchpaths "")
   set(module_info_OSXFrameworks "")
   set(module_info_linuxLibs "")
   set(module_info_linuxPackages "")
@@ -520,6 +521,17 @@ function(jucer_project_module module_name PATH_KEYWORD modules_folder)
       endif()
     endif()
   endforeach()
+
+  string(REPLACE " " ";" search_paths "${module_info_searchpaths}")
+  string(REPLACE "," ";" search_paths "${search_paths}")
+  foreach(search_path ${search_paths})
+    list(APPEND JUCER_PROJECT_MODULES_INTERNAL_SEARCH_PATHS
+      "${modules_folder}/${module_name}/${search_path}"
+    )
+  endforeach()
+  set(JUCER_PROJECT_MODULES_INTERNAL_SEARCH_PATHS
+    "${JUCER_PROJECT_MODULES_INTERNAL_SEARCH_PATHS}" PARENT_SCOPE
+  )
 
   string(REPLACE " " ";" osx_frameworks "${module_info_OSXFrameworks}")
   string(REPLACE "," ";" osx_frameworks "${osx_frameworks}")
@@ -3428,6 +3440,7 @@ function(_FRUT_set_compiler_and_linker_settings target)
   target_include_directories(${target} PRIVATE
     "${CMAKE_CURRENT_BINARY_DIR}/JuceLibraryCode"
     ${JUCER_PROJECT_MODULES_FOLDERS}
+    ${JUCER_PROJECT_MODULES_INTERNAL_SEARCH_PATHS}
   )
   foreach(config ${JUCER_PROJECT_CONFIGURATIONS})
     set(search_paths "${JUCER_HEADER_SEARCH_PATHS_${config}}")
