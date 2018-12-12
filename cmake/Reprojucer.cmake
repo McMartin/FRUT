@@ -3789,6 +3789,11 @@ function(_FRUT_set_compiler_and_linker_settings target)
     endforeach()
 
     set(linux_packages ${JUCER_PROJECT_LINUX_PACKAGES} ${JUCER_PKGCONFIG_LIBRARIES})
+    if(NOT (DEFINED JUCER_VERSION AND JUCER_VERSION VERSION_LESS 5.0.0)
+        AND "juce_gui_extra" IN_LIST JUCER_PROJECT_MODULES
+        AND (NOT DEFINED JUCER_FLAG_JUCE_WEB_BROWSER OR JUCER_FLAG_JUCE_WEB_BROWSER))
+      list(APPEND linux_packages "webkit2gtk-4.0" "gtk+-x11-3.0")
+    endif()
     if(linux_packages)
       find_package(PkgConfig REQUIRED)
       list(SORT linux_packages)
