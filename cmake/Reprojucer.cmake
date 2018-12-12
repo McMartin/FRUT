@@ -2586,7 +2586,7 @@ function(jucer_project_end)
       if(APPLE)
         target_sources(${unity_target} PRIVATE "${unity_script_file}")
         set_source_files_properties("${unity_script_file}" PROPERTIES
-          MACOSX_PACKAGE_LOCATION ".."
+          MACOSX_PACKAGE_LOCATION "."
         )
       else()
         add_custom_command(TARGET ${unity_target} POST_BUILD
