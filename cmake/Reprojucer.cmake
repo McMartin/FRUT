@@ -2586,7 +2586,7 @@ function(jucer_project_end)
       if(APPLE)
         target_sources(${unity_target} PRIVATE "${unity_script_file}")
         set_source_files_properties("${unity_script_file}" PROPERTIES
-          MACOSX_PACKAGE_LOCATION ".."
+          MACOSX_PACKAGE_LOCATION "."
         )
       else()
         add_custom_command(TARGET ${unity_target} POST_BUILD
@@ -3789,6 +3789,17 @@ function(_FRUT_set_compiler_and_linker_settings target)
     endforeach()
 
     set(linux_packages ${JUCER_PROJECT_LINUX_PACKAGES} ${JUCER_PKGCONFIG_LIBRARIES})
+    if(NOT (DEFINED JUCER_VERSION AND JUCER_VERSION VERSION_LESS 5.0.0)
+        AND "juce_gui_extra" IN_LIST JUCER_PROJECT_MODULES
+        AND (NOT DEFINED JUCER_FLAG_JUCE_WEB_BROWSER OR JUCER_FLAG_JUCE_WEB_BROWSER))
+      list(APPEND linux_packages "webkit2gtk-4.0" "gtk+-x11-3.0")
+    endif()
+    if((NOT DEFINED JUCER_VERSION OR JUCER_VERSION VERSION_GREATER 5.3.2)
+        AND "juce_core" IN_LIST JUCER_PROJECT_MODULES
+        AND (NOT DEFINED JUCER_FLAG_JUCE_USE_CURL OR JUCER_FLAG_JUCE_USE_CURL)
+        AND NOT JUCER_FLAG_JUCE_LOAD_CURL_SYMBOLS_LAZILY)
+      list(APPEND linux_packages "libcurl")
+    endif()
     if(linux_packages)
       find_package(PkgConfig REQUIRED)
       list(SORT linux_packages)
