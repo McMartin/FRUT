@@ -59,6 +59,9 @@ static const auto kNewLine = '\n';
 #endif
 
 
+namespace
+{
+
 template <class Head>
 void writeToStream(std::ostream& stream, Head&& head)
 {
@@ -212,6 +215,8 @@ void writeUserNotes(LineWriter& wLn, const juce::ValueTree& valueTree)
     }
   }
 }
+
+} // namespace
 
 
 int main(int argc, char* argv[])
