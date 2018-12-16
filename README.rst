@@ -143,7 +143,7 @@ even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE
   :alt: AppVeyor build status
 
 .. |Azure_Pipelines| image:: https://dev.azure.com/McMartin/FRUT/_apis/build/status/McMartin.FRUT?branchName=master
-  :target: https://dev.azure.com/McMartin/FRUT/_build/latest?definitionId=2
+  :target: https://dev.azure.com/McMartin/FRUT/_build?definitionId=2
   :alt: Azure Pipelines build status
 
 .. |Travis_CI| image:: https://travis-ci.org/McMartin/FRUT.svg?branch=master
