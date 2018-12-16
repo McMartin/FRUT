@@ -77,7 +77,9 @@ void writeToStream(std::ostream& stream, Head&& head, Tail&&... tail)
 struct LineWriter
 {
   explicit LineWriter(std::ostream& stream)
-    : mStream(stream){};
+    : mStream(stream)
+  {
+  }
 
   LineWriter(const LineWriter&) = delete;
   LineWriter& operator=(const LineWriter&) = delete;
