@@ -135,7 +135,7 @@ even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE
 
 
 .. |Code_of_Conduct| image:: https://img.shields.io/badge/code%20of%20conduct-Contributor%20Covenant-blue.svg?style=flat
-  :target: https://github.com/McMartin/FRUT/blob/master/CODE_OF_CONDUCT.md
+  :target: CODE_OF_CONDUCT.md
   :alt: Contributor Covenant Code of Conduct
 
 .. |AppVeyor| image:: https://ci.appveyor.com/api/projects/status/github/McMartin/frut?branch=master&svg=true
