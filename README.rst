@@ -135,7 +135,7 @@ even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE
 
 
 .. |Code_of_Conduct| image:: https://img.shields.io/badge/code%20of%20conduct-Contributor%20Covenant-blue.svg?style=flat
-  :target: https://github.com/McMartin/FRUT/blob/master/CODE_OF_CONDUCT.md
+  :target: CODE_OF_CONDUCT.md
   :alt: Contributor Covenant Code of Conduct
 
 .. |AppVeyor| image:: https://ci.appveyor.com/api/projects/status/github/McMartin/frut?branch=master&svg=true
@@ -143,7 +143,7 @@ even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE
   :alt: AppVeyor build status
 
 .. |Azure_Pipelines| image:: https://dev.azure.com/McMartin/FRUT/_apis/build/status/McMartin.FRUT?branchName=master
-  :target: https://dev.azure.com/McMartin/FRUT/_build/latest?definitionId=2
+  :target: https://dev.azure.com/McMartin/FRUT/_build?definitionId=2
   :alt: Azure Pipelines build status
 
 .. |Travis_CI| image:: https://travis-ci.org/McMartin/FRUT.svg?branch=master
