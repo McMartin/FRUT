@@ -102,39 +102,7 @@ jucer_export_target(
     "-Weverything"
     "-Wno-c++98-compat"
     "-Wno-c++98-compat-pedantic"
-    "-Wno-cast-align"
-    "-Wno-cast-qual"
-    "-Wno-comma"
-    "-Wno-covered-switch-default"
-    "-Wno-date-time"
-    "-Wno-deprecated"
-    "-Wno-disabled-macro-expansion"
-    "-Wno-documentation"
-    "-Wno-documentation-unknown-command"
-    "-Wno-exit-time-destructors"
-    "-Wno-extra-semi"
-    "-Wno-float-equal"
-    "-Wno-global-constructors"
-    "-Wno-implicit-fallthrough"
-    "-Wno-inconsistent-missing-destructor-override"
-    "-Wno-missing-noreturn"
-    "-Wno-missing-prototypes"
-    "-Wno-missing-variable-declarations"
-    "-Wno-nullable-to-nonnull-conversion"
-    "-Wno-old-style-cast"
     "-Wno-padded"
-    "-Wno-reorder"
-    "-Wno-reserved-id-macro"
-    "-Wno-strict-selector-match"
-    "-Wno-switch-enum"
-    "-Wno-undeclared-selector"
-    "-Wno-undef"
-    "-Wno-undefined-func-template"
-    "-Wno-undefined-reinterpret-cast"
-    "-Wno-unknown-warning-option"
-    "-Wno-unused-template"
-    "-Wno-weak-vtables"
-    "-Wno-zero-as-null-pointer-constant"
 )
 
 jucer_export_target_configuration(
@@ -173,7 +141,6 @@ jucer_export_target(
   EXTRA_COMPILER_FLAGS
     "/WX"
     "/W4"
-    "/wd4592"
 )
 
 jucer_export_target_configuration(
@@ -213,7 +180,6 @@ jucer_export_target(
     "-Werror"
     "-Wall"
     "-Wextra"
-    "-Wno-implicit-fallthrough"
 )
 
 jucer_export_target_configuration(
@@ -234,12 +200,6 @@ jucer_export_target(
     "-Werror"
     "-Wall"
     "-Wextra"
-    "-Wno-cpp"
-    "-Wno-misleading-indentation"
-    "-Wno-missing-field-initializers"
-    "-Wno-sign-compare"
-    "-Wno-type-limits"
-    "-Wno-unknown-pragmas"
 )
 
 jucer_export_target_configuration(
@@ -260,7 +220,6 @@ jucer_export_target(
     "-Werror"
     "-Wall"
     "-Wextra"
-    "-Wno-implicit-fallthrough"
 )
 
 jucer_export_target_configuration(
@@ -276,6 +235,19 @@ jucer_export_target_configuration(
 )
 
 jucer_project_end()
+
+
+# Disable all warnings when compiling JUCE modules
+set(JUCE_modules_sources
+  ${JUCER_PROJECT_MODULE_juce_core_SOURCES}
+  ${JUCER_PROJECT_MODULE_juce_data_structures_SOURCES}
+  ${JUCER_PROJECT_MODULE_juce_events_SOURCES}
+)
+if(MSVC)
+  set_source_files_properties(${JUCE_modules_sources} PROPERTIES COMPILE_FLAGS "/W0")
+else()
+  set_source_files_properties(${JUCE_modules_sources} PROPERTIES COMPILE_FLAGS "-w")
+endif()
 
 
 install(TARGETS Jucer2Reprojucer DESTINATION "FRUT/bin")
