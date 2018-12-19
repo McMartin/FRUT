@@ -120,6 +120,89 @@ Contributions to FRUT are very welcomed and you can contribute even if you don't
 anything about CMake. See the `CONTRIBUTING`_ file for more details.
 
 
+Contributors
+------------
+
+FRUT follows the `all-contributors`_ specification and is brought to you by these awesome
+contributors:
+
+.. raw:: html
+
+  <table>
+  <tbody align="center">
+  <tr>
+    <td>
+      <a href="https://github.com/McMartin"><img src="https://github.com/McMartin.png" width="100">Alain Martin</a>
+      <br />
+      <a href="https://github.com/McMartin/FRUT/pulls?q=state%3Amerged+author%3AMcMartin" title="Code">💻</a>
+      <a href="https://github.com/McMartin/FRUT/pulls?q=state%3Amerged+reviewed-by%3AMcMartin+-author%3AMcMartin+" title="Pull Request reviews">👀</a>
+      <a href="https://github.com/McMartin/FRUT/commits/master/docs?author=McMartin" title="Documentation">📖</a>
+    </td>
+    <td>
+      <a href="https://github.com/MartyLake"><img src="https://github.com/MartyLake.png" width="100">Matthieu Talbot</a>
+      <br />
+      <a href="https://github.com/McMartin/FRUT/pulls?q=state%3Amerged+reviewed-by%3AMartyLake+-author%3AMartyLake+" title="Pull Request reviews">👀</a>
+      <a href="https://github.com/McMartin/FRUT/pulls?q=state%3Amerged+author%3AMartyLake" title="Code">💻</a>
+      <a href="https://github.com/McMartin/FRUT/issues?q=is%3Aissue+author%3AMartyLake" title="Bug reports">🐛</a>
+    </td>
+    <td>
+      <a href="https://github.com/gonzaloflirt"><img src="https://github.com/gonzaloflirt.png" width="100">Florian Goltz</a>
+      <br />
+      <a href="https://github.com/McMartin/FRUT/pulls?q=state%3Amerged+author%3Agonzaloflirt" title="Code">💻</a>
+    </td>
+    <td>
+      <a href="https://github.com/WGuLL"><img src="https://github.com/WGuLL.png" width="100">Fabien Roussel</a>
+      <br />
+      <a href="https://github.com/McMartin/FRUT/issues?q=is%3Aissue+author%3AWGuLL" title="Bug reports">🐛</a>
+      <a href="https://github.com/McMartin/FRUT/pulls?q=state%3Amerged+reviewed-by%3AWGuLL+-author%3AWGuLL+" title="Pull Request reviews">👀</a>
+    </td>
+    <td>
+      <a href="https://github.com/Xav83"><img src="https://github.com/Xav83.png" width="100">Xavier Jouvenot</a>
+      <br />
+      <a href="https://github.com/McMartin/FRUT/issues?q=is%3Aissue+author%3AXav83" title="Bug reports">🐛</a>
+      <a href="https://github.com/McMartin/FRUT/pulls?q=state%3Amerged+reviewed-by%3AXav83+-author%3AXav83+" title="Pull Request reviews">👀</a>
+    </td>
+    <td>
+      <a href="https://github.com/lethal-guitar"><img src="https://github.com/lethal-guitar.png" width="100">Nikolai Wuttke</a>
+      <br />
+      <a href="https://github.com/McMartin/FRUT/pulls?q=state%3Amerged+reviewed-by%3Alethal-guitar+-author%3Alethal-guitar+" title="Pull Request reviews">👀</a>
+    </td>
+  </tr>
+  <tr>
+    <td>
+      <a href="https://github.com/PioBeat"><img src="https://github.com/PioBeat.png" width="100">Dominik Grzelak</a>
+      <br />
+      <a href="https://github.com/McMartin/FRUT/issues?q=is%3Aissue+author%3APioBeat" title="Bug reports">🐛</a>
+    </td>
+    <td>
+      <a href="https://github.com/dscheffer"><img src="https://github.com/dscheffer.png" width="100">Dennis Scheffer</a>
+      <br />
+      <a href="https://github.com/McMartin/FRUT/issues?q=is%3Aissue+author%3Adscheffer" title="Bug reports">🐛</a>
+      <a href="https://github.com/McMartin/FRUT/pulls?q=state%3Amerged+author%3Adscheffer" title="Code">💻</a>
+    </td>
+    <td>
+      <a href="https://github.com/scotchi"><img src="https://github.com/scotchi.png" width="100">Scott Wheeler</a>
+      <br />
+      <a href="https://github.com/McMartin/FRUT/pulls?q=state%3Amerged+author%3Ascotchi" title="Code">💻</a>
+      <a href="https://github.com/McMartin/FRUT/issues?q=is%3Aissue+author%3Ascotchi" title="Bug reports">🐛</a>
+    </td>
+    <td>
+      <a href="https://github.com/IqraShahzad1"><img src="https://github.com/IqraShahzad1.png" width="100">Iqra Shahzad</a>
+      <br />
+      <a href="https://github.com/McMartin/FRUT/issues?q=is%3Aissue+author%3AIqraShahzad1" title="Bug reports">🐛</a>
+    </td>
+    <td>
+      <a href="https://github.com/rclement"><img src="https://github.com/rclement.png" width="100">Romain Clement</a>
+      <br />
+      <a href="https://github.com/McMartin/FRUT/issues?q=is%3Aissue+author%3Arclement" title="Bug reports">🐛</a>
+    </td>
+    <td>
+    </td>
+  </tr>
+  </tbody>
+  </table>
+
+
 License
 -------
 
@@ -177,3 +260,4 @@ even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE
 .. _JUCE 5.3.1: https://github.com/WeAreROLI/JUCE/tree/5.3.1
 .. _JUCE 5.4.1: https://github.com/WeAreROLI/JUCE/tree/5.4.1
 .. _Projucer: https://www.juce.com/projucer
+.. _all-contributors: https://github.com/kentcdodds/all-contributors
