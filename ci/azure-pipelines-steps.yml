@@ -33,6 +33,10 @@ steps:
     workingDirectory: build
     displayName: Build and install FRUT in ./prefix
 
+  - script: >
+      cmake -DJucer2Reprojucer_EXE="prefix/FRUT/bin/Jucer2Reprojucer.exe"
+      -P ci/apply-Jucer2Reprojucer-to-test-jucers.cmake
+    displayName: Re-generate CMakeLists.txt files for test projects
   - ${{ each juceVersion in parameters.juceVersions }}:
     - script: >
         cmake -DJUCE_VERSION="${{ juceVersion }}"
