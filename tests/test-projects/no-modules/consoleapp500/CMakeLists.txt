@@ -177,4 +177,26 @@ jucer_export_target_configuration(
   ARCHITECTURE "64-bit (-m64)"
 )
 
+jucer_export_target(
+  "Code::Blocks (Linux)"
+)
+
+jucer_export_target_configuration(
+  "Code::Blocks (Linux)"
+  NAME "Debug"
+  DEBUG_MODE ON
+  BINARY_NAME "consoleapp500"
+  OPTIMISATION "-O0 (no optimisation)"
+  ARCHITECTURE "64-bit (-m64)"
+)
+
+jucer_export_target_configuration(
+  "Code::Blocks (Linux)"
+  NAME "Release"
+  DEBUG_MODE OFF
+  BINARY_NAME "consoleapp500"
+  OPTIMISATION "-O3 (fastest with safe optimisations)"
+  ARCHITECTURE "64-bit (-m64)"
+)
+
 jucer_project_end()

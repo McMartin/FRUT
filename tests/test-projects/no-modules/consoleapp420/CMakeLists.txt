@@ -156,4 +156,24 @@ jucer_export_target_configuration(
   OPTIMISATION "-O3 (fastest with safe optimisations)"
 )
 
+jucer_export_target(
+  "Code::Blocks (Linux)"
+)
+
+jucer_export_target_configuration(
+  "Code::Blocks (Linux)"
+  NAME "Debug"
+  DEBUG_MODE ON
+  BINARY_NAME "consoleapp420"
+  OPTIMISATION "-O0 (no optimisation)"
+)
+
+jucer_export_target_configuration(
+  "Code::Blocks (Linux)"
+  NAME "Release"
+  DEBUG_MODE OFF
+  BINARY_NAME "consoleapp420"
+  OPTIMISATION "-O3 (fastest with safe optimisations)"
+)
+
 jucer_project_end()

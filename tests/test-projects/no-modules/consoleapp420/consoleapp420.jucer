@@ -52,6 +52,12 @@
       </CONFIGURATIONS>
       <MODULEPATHS/>
     </CODEBLOCKS_WINDOWS>
+    <CODEBLOCKS_LINUX targetFolder="Builds/CodeBlocksLinux">
+      <CONFIGURATIONS>
+        <CONFIGURATION name="Debug" isDebug="1" optimisation="1" targetName="consoleapp420"/>
+        <CONFIGURATION name="Release" isDebug="0" optimisation="3" targetName="consoleapp420"/>
+      </CONFIGURATIONS>
+    </CODEBLOCKS_LINUX>
   </EXPORTFORMATS>
   <MODULES/>
   <JUCEOPTIONS/>
