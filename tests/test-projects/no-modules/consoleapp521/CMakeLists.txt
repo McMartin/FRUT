@@ -22,7 +22,7 @@ get_filename_component(consoleapp521_jucer_FILE
 jucer_project_begin(
   JUCER_VERSION "5.2.1"
   PROJECT_FILE "${consoleapp521_jucer_FILE}"
-  # PROJECT_ID
+  PROJECT_ID "A9Ca2m"
 )
 
 jucer_project_settings(
