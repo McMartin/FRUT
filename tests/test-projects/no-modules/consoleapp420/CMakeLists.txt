@@ -9,13 +9,8 @@ list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/../../../../cmake")
 include(Reprojucer)
 
 
-if(NOT DEFINED consoleapp420_jucer_FILE)
-  message(FATAL_ERROR "consoleapp420_jucer_FILE must be defined")
-endif()
-
-get_filename_component(consoleapp420_jucer_FILE
-  "${consoleapp420_jucer_FILE}" ABSOLUTE
-  BASE_DIR "${CMAKE_BINARY_DIR}"
+set(consoleapp420_jucer_FILE
+  "${CMAKE_CURRENT_LIST_DIR}/consoleapp420.jucer"
 )
 
 
