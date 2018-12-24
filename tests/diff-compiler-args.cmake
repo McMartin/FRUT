@@ -30,7 +30,6 @@ macro(parse_script_arguments)
   get_filename_component(jucer_dir "${jucer_file}" DIRECTORY)
   get_filename_component(jucer_file_name "${jucer_file}" NAME)
   get_filename_component(jucer_file_name_we "${jucer_file_name}" NAME_WE)
-  string(REGEX REPLACE "[^A-Za-z0-9]" "_" escaped_jucer_file_name "${jucer_file_name}")
 
   if(NOT DEFINED exporter)
     message(FATAL_ERROR "exporter must be defined")
@@ -123,7 +122,6 @@ macro(generate_reprojucer_build_system)
   execute_process(
     COMMAND "${CMAKE_COMMAND}" "../.." "-G" "${cmake_generator}"
     "-DCMAKE_BUILD_TYPE=${configuration}"
-    "-D${escaped_jucer_file_name}_FILE=${jucer_file}"
     WORKING_DIRECTORY "${reprojucer_build_dir}"
     RESULT_VARIABLE cmake_result
   )

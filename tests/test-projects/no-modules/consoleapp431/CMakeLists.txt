@@ -9,13 +9,8 @@ list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/../../../../cmake")
 include(Reprojucer)
 
 
-if(NOT DEFINED consoleapp431_jucer_FILE)
-  message(FATAL_ERROR "consoleapp431_jucer_FILE must be defined")
-endif()
-
-get_filename_component(consoleapp431_jucer_FILE
-  "${consoleapp431_jucer_FILE}" ABSOLUTE
-  BASE_DIR "${CMAKE_BINARY_DIR}"
+set(consoleapp431_jucer_FILE
+  "${CMAKE_CURRENT_LIST_DIR}/consoleapp431.jucer"
 )
 
 
@@ -145,6 +140,26 @@ jucer_export_target_configuration(
 
 jucer_export_target_configuration(
   "Code::Blocks (Windows)"
+  NAME "Release"
+  DEBUG_MODE OFF
+  BINARY_NAME "consoleapp431"
+  OPTIMISATION "-O3 (fastest with safe optimisations)"
+)
+
+jucer_export_target(
+  "Code::Blocks (Linux)"
+)
+
+jucer_export_target_configuration(
+  "Code::Blocks (Linux)"
+  NAME "Debug"
+  DEBUG_MODE ON
+  BINARY_NAME "consoleapp431"
+  OPTIMISATION "-O0 (no optimisation)"
+)
+
+jucer_export_target_configuration(
+  "Code::Blocks (Linux)"
   NAME "Release"
   DEBUG_MODE OFF
   BINARY_NAME "consoleapp431"

@@ -1,14 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<JUCERPROJECT id="LM6RBT" name="consoleapp531" projectType="consoleapp" jucerVersion="5.3.1">
-  <MAINGROUP id="yI7yGa" name="consoleapp531">
-    <GROUP id="{EBDAC6A2-614C-45DB-0152-953AB5847CCF}" name="Source">
-      <FILE id="qgVGOZ" name="foo.cpp" compile="1" resource="0" file="Source/foo.cpp"/>
+<JUCERPROJECT id="ybulR4" name="consoleapp541" projectType="consoleapp" jucerVersion="5.4.1">
+  <MAINGROUP id="qRTZDi" name="consoleapp541">
+    <GROUP id="{AC5BAF56-7567-0A2B-E31D-34EAC139B6E7}" name="Source">
+      <FILE id="FJkNTg" name="foo.cpp" compile="1" resource="0" file="Source/foo.cpp"/>
     </GROUP>
   </MAINGROUP>
-  <LIVE_SETTINGS>
-    <WINDOWS/>
-  </LIVE_SETTINGS>
   <EXPORTFORMATS>
     <XCODE_MAC targetFolder="Builds/MacOSX">
       <CONFIGURATIONS>
@@ -60,5 +57,8 @@
     </CODEBLOCKS_LINUX>
   </EXPORTFORMATS>
   <MODULES/>
-  <JUCEOPTIONS/>
+  <LIVE_SETTINGS>
+    <WINDOWS/>
+  </LIVE_SETTINGS>
+  <JUCEOPTIONS JUCE_STRICT_REFCOUNTEDPOINTER="1"/>
 </JUCERPROJECT>

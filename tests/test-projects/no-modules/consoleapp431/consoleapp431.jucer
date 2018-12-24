@@ -48,6 +48,12 @@
       </CONFIGURATIONS>
       <MODULEPATHS/>
     </CODEBLOCKS_WINDOWS>
+    <CODEBLOCKS_LINUX targetFolder="Builds/CodeBlocksLinux">
+      <CONFIGURATIONS>
+        <CONFIGURATION name="Debug" isDebug="1" optimisation="1" targetName="consoleapp431"/>
+        <CONFIGURATION name="Release" isDebug="0" optimisation="3" targetName="consoleapp431"/>
+      </CONFIGURATIONS>
+    </CODEBLOCKS_LINUX>
   </EXPORTFORMATS>
   <MODULES/>
   <JUCEOPTIONS/>

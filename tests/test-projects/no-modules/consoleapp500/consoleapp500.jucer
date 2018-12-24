@@ -60,6 +60,14 @@
       </CONFIGURATIONS>
       <MODULEPATHS/>
     </CODEBLOCKS_WINDOWS>
+    <CODEBLOCKS_LINUX targetFolder="Builds/CodeBlocksLinux">
+      <CONFIGURATIONS>
+        <CONFIGURATION name="Debug" linuxCodeBlocksArchitecture="-m64" isDebug="1" optimisation="1"
+                       targetName="consoleapp500"/>
+        <CONFIGURATION name="Release" linuxCodeBlocksArchitecture="-m64" isDebug="0"
+                       optimisation="3" targetName="consoleapp500"/>
+      </CONFIGURATIONS>
+    </CODEBLOCKS_LINUX>
   </EXPORTFORMATS>
   <MODULES/>
   <JUCEOPTIONS/>

@@ -9,20 +9,15 @@ list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/../../../../cmake")
 include(Reprojucer)
 
 
-if(NOT DEFINED consoleapp521_jucer_FILE)
-  message(FATAL_ERROR "consoleapp521_jucer_FILE must be defined")
-endif()
-
-get_filename_component(consoleapp521_jucer_FILE
-  "${consoleapp521_jucer_FILE}" ABSOLUTE
-  BASE_DIR "${CMAKE_BINARY_DIR}"
+set(consoleapp521_jucer_FILE
+  "${CMAKE_CURRENT_LIST_DIR}/consoleapp521.jucer"
 )
 
 
 jucer_project_begin(
   JUCER_VERSION "5.2.1"
   PROJECT_FILE "${consoleapp521_jucer_FILE}"
-  # PROJECT_ID
+  PROJECT_ID "A9Ca2m"
 )
 
 jucer_project_settings(
@@ -127,12 +122,32 @@ jucer_export_target_configuration(
   "Code::Blocks (Windows)"
   NAME "Debug"
   DEBUG_MODE ON
+  ARCHITECTURE "64-bit (-m64)"
 )
 
 jucer_export_target_configuration(
   "Code::Blocks (Windows)"
   NAME "Release"
   DEBUG_MODE OFF
+  ARCHITECTURE "64-bit (-m64)"
+)
+
+jucer_export_target(
+  "Code::Blocks (Linux)"
+)
+
+jucer_export_target_configuration(
+  "Code::Blocks (Linux)"
+  NAME "Debug"
+  DEBUG_MODE ON
+  ARCHITECTURE "64-bit (-m64)"
+)
+
+jucer_export_target_configuration(
+  "Code::Blocks (Linux)"
+  NAME "Release"
+  DEBUG_MODE OFF
+  ARCHITECTURE "64-bit (-m64)"
 )
 
 jucer_project_end()
