@@ -3967,7 +3967,7 @@ function(_FRUT_set_cxx_language_standard_properties target)
       endif()
 
     else()
-      if(GNU_COMPILER_EXTENSIONS)
+      if(JUCER_GNU_COMPILER_EXTENSIONS)
         set_target_properties(${target} PROPERTIES CXX_EXTENSIONS ON)
       else()
         set_target_properties(${target} PROPERTIES CXX_EXTENSIONS OFF)
