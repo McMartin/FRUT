@@ -22,9 +22,10 @@ its header is located at ``~/dev/JUCE/modules/juce_core/juce_core.h``, then
 ``COMPILE_AS_TARGET`` is a feature that doesn't exist in Projucer. It allows you to
 compile the source files of the JUCE module as a specific CMake target, instead of with
 the code of your project. This is particularly useful when you want to:
- - disable compiler warnings coming from the JUCE module without disabling them on your
-own code,
- - speed-up compiling the JUCE module by using pre-compiled headers.
+
+- disable compiler warnings coming from the JUCE module without disabling them on your own
+  code,
+- speed-up compiling the JUCE module by using pre-compiled headers.
 
 
 Examples
