@@ -376,7 +376,9 @@ function(jucer_project_module module_name PATH_KEYWORD modules_folder)
     if(NOT DEFINED keyword)
       set(keyword "${argument}")
 
-      if(NOT keyword STREQUAL "ADD_SOURCE_TO_PROJECT")
+      if(keyword STREQUAL "ADD_SOURCE_TO_PROJECT")
+        # Nothing to do
+      else()
         list(APPEND extra_keywords "${keyword}")
       endif()
     else()
