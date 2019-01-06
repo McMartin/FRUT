@@ -3445,6 +3445,11 @@ endfunction()
 
 function(_FRUT_set_compiler_and_linker_settings target)
 
+  set(with_linker_settings TRUE)
+  if(ARGV1 STREQUAL "COMPILER_SETTINGS_ONLY")
+    set(with_linker_settings FALSE)
+  endif()
+
   target_include_directories(${target} PRIVATE
     "${CMAKE_CURRENT_BINARY_DIR}/JuceLibraryCode"
     ${JUCER_PROJECT_MODULES_FOLDERS}
@@ -3729,29 +3734,31 @@ function(_FRUT_set_compiler_and_linker_settings target)
         target_compile_options(${target} PRIVATE $<$<CONFIG:${config}>:/fp:fast>)
       endif()
 
-      string(TOUPPER "${config}" upper_config)
+      if(with_linker_settings)
+        string(TOUPPER "${config}" upper_config)
 
-      if(DEFINED JUCER_INCREMENTAL_LINKING_${config})
-        if(JUCER_INCREMENTAL_LINKING_${config})
-          set_property(TARGET ${target}
-            APPEND PROPERTY LINK_FLAGS_${upper_config} "/INCREMENTAL"
-          )
+        if(DEFINED JUCER_INCREMENTAL_LINKING_${config})
+          if(JUCER_INCREMENTAL_LINKING_${config})
+              set_property(TARGET ${target}
+              APPEND PROPERTY LINK_FLAGS_${upper_config} "/INCREMENTAL"
+            )
+          endif()
         endif()
-      endif()
 
-      if(DEFINED JUCER_FORCE_GENERATION_OF_DEBUG_SYMBOLS_${config})
-        if(JUCER_FORCE_GENERATION_OF_DEBUG_SYMBOLS_${config})
-          set_property(TARGET ${target}
-            APPEND PROPERTY LINK_FLAGS_${upper_config} "/DEBUG"
-          )
+        if(DEFINED JUCER_FORCE_GENERATION_OF_DEBUG_SYMBOLS_${config})
+          if(JUCER_FORCE_GENERATION_OF_DEBUG_SYMBOLS_${config})
+            set_property(TARGET ${target}
+              APPEND PROPERTY LINK_FLAGS_${upper_config} "/DEBUG"
+            )
+          endif()
         endif()
-      endif()
 
-      if(DEFINED JUCER_GENERATE_MANIFEST_${config})
-        if(NOT JUCER_GENERATE_MANIFEST_${config})
-          set_property(TARGET ${target}
-            APPEND PROPERTY LINK_FLAGS_${upper_config} "/MANIFEST:NO"
-          )
+        if(DEFINED JUCER_GENERATE_MANIFEST_${config})
+          if(NOT JUCER_GENERATE_MANIFEST_${config})
+            set_property(TARGET ${target}
+              APPEND PROPERTY LINK_FLAGS_${upper_config} "/MANIFEST:NO"
+            )
+          endif()
         endif()
       endif()
     endforeach()
@@ -3819,7 +3826,9 @@ function(_FRUT_set_compiler_and_linker_settings target)
           string(APPEND missing_packages " ${pkg}")
         endif()
         target_compile_options(${target} PRIVATE ${${pkg}_CFLAGS})
-        target_link_libraries(${target} PRIVATE ${${pkg}_LIBRARIES})
+        if(with_linker_settings)
+          target_link_libraries(${target} PRIVATE ${${pkg}_LIBRARIES})
+        endif()
       endforeach()
       if(DEFINED missing_packages)
         message(FATAL_ERROR "pkg-config could not find the following packages:"
@@ -3830,7 +3839,7 @@ function(_FRUT_set_compiler_and_linker_settings target)
       if("juce_graphics" IN_LIST JUCER_PROJECT_MODULES)
         target_include_directories(${target} PRIVATE "/usr/include/freetype2")
       endif()
-      if(JUCER_FLAG_JUCE_USE_CURL)
+      if(JUCER_FLAG_JUCE_USE_CURL AND with_linker_settings)
         target_link_libraries(${target} PRIVATE "-lcurl")
       endif()
     endif()
@@ -3843,7 +3852,9 @@ function(_FRUT_set_compiler_and_linker_settings target)
         if(item STREQUAL "pthread")
           target_compile_options(${target} PRIVATE "-pthread")
         endif()
-        target_link_libraries(${target} PRIVATE "-l${item}")
+        if(with_linker_settings)
+          target_link_libraries(${target} PRIVATE "-l${item}")
+        endif()
       endforeach()
     endif()
 
@@ -3902,7 +3913,7 @@ function(_FRUT_set_compiler_and_linker_settings target)
 
     target_compile_options(${target} PRIVATE "-mstackrealign")
 
-    if(JUCER_PROJECT_MINGW_LIBS)
+    if(JUCER_PROJECT_MINGW_LIBS AND with_linker_settings)
       target_link_libraries(${target} PRIVATE ${JUCER_PROJECT_MINGW_LIBS})
     endif()
 
@@ -3919,17 +3930,19 @@ function(_FRUT_set_compiler_and_linker_settings target)
 
   target_compile_options(${target} PRIVATE ${JUCER_EXTRA_COMPILER_FLAGS})
 
-  foreach(config ${JUCER_PROJECT_CONFIGURATIONS})
-    foreach(path ${JUCER_EXTRA_LIBRARY_SEARCH_PATHS_${config}})
-      if(MSVC)
-        target_link_libraries(${target} PRIVATE $<$<CONFIG:${config}>:-LIBPATH:${path}>)
-      else()
-        target_link_libraries(${target} PRIVATE $<$<CONFIG:${config}>:-L${path}>)
-      endif()
+  if(with_linker_settings)
+    foreach(config ${JUCER_PROJECT_CONFIGURATIONS})
+      foreach(path ${JUCER_EXTRA_LIBRARY_SEARCH_PATHS_${config}})
+        if(MSVC)
+          target_link_libraries(${target} PRIVATE $<$<CONFIG:${config}>:-LIBPATH:${path}>)
+        else()
+          target_link_libraries(${target} PRIVATE $<$<CONFIG:${config}>:-L${path}>)
+        endif()
+      endforeach()
     endforeach()
-  endforeach()
-  target_link_libraries(${target} PRIVATE ${JUCER_EXTRA_LINKER_FLAGS})
-  target_link_libraries(${target} PRIVATE ${JUCER_EXTERNAL_LIBRARIES_TO_LINK})
+    target_link_libraries(${target} PRIVATE ${JUCER_EXTRA_LINKER_FLAGS})
+    target_link_libraries(${target} PRIVATE ${JUCER_EXTERNAL_LIBRARIES_TO_LINK})
+  endif()
 
 endfunction()
 
