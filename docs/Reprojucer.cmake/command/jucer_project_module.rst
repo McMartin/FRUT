@@ -9,6 +9,7 @@ Add a JUCE module to the current JUCE project.
     <module_name>
     PATH <modules_folder>
     [ADD_SOURCE_TO_PROJECT <ON|OFF>]
+    [COMPILE_IN_TARGET <target_name>]
     [<module_config_flag> <ON|OFF>]...
   )
 
@@ -17,6 +18,14 @@ Add a JUCE module to the current JUCE project.
 the module folder itself. For instance, if you want to add the module ``juce_core`` and
 its header is located at ``~/dev/JUCE/modules/juce_core/juce_core.h``, then
 ``<modules_folder>`` must be ``~/dev/JUCE/modules``.
+
+``COMPILE_IN_TARGET`` is a feature that doesn't exist in Projucer. It allows you to
+compile the source files of the JUCE module in a specific CMake target, instead of with
+the code of your project. This is particularly useful when you want to:
+ - disable compiler warnings coming from the JUCE module without disabling them on your
+own code,
+ - speed-up compiling the JUCE module by using pre-compiled headers.
+
 
 Example
 -------
