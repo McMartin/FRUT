@@ -81,18 +81,21 @@ jucer_project_module(
   PATH "${JUCE_ROOT}/modules"
   ADD_SOURCE_TO_PROJECT OFF
   JUCE_USE_CURL OFF
+  COMPILE_IN_TARGET "JuceModules"
 )
 
 jucer_project_module(
   juce_data_structures
   PATH "${JUCE_ROOT}/modules"
   ADD_SOURCE_TO_PROJECT OFF
+  COMPILE_IN_TARGET "JuceModules"
 )
 
 jucer_project_module(
   juce_events
   PATH "${JUCE_ROOT}/modules"
   ADD_SOURCE_TO_PROJECT OFF
+  COMPILE_IN_TARGET "JuceModules"
 )
 
 jucer_export_target(
@@ -238,15 +241,10 @@ jucer_project_end()
 
 
 # Disable all warnings when compiling JUCE modules
-set(JUCE_modules_sources
-  ${JUCER_PROJECT_MODULE_juce_core_SOURCES}
-  ${JUCER_PROJECT_MODULE_juce_data_structures_SOURCES}
-  ${JUCER_PROJECT_MODULE_juce_events_SOURCES}
-)
 if(MSVC)
-  set_source_files_properties(${JUCE_modules_sources} PROPERTIES COMPILE_FLAGS "/W0")
+  target_compile_options(JuceModules PRIVATE "/W0")
 else()
-  set_source_files_properties(${JUCE_modules_sources} PROPERTIES COMPILE_FLAGS "-w")
+  target_compile_options(JuceModules PRIVATE "-w")
 endif()
 
 
