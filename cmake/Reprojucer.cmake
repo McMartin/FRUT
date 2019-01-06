@@ -369,7 +369,7 @@ function(jucer_project_module module_name PATH_KEYWORD modules_folder)
   endif()
 
   set(make_juce_code_browsable ON)
-  unset(compile_in_target)
+  unset(compile_as_target)
 
   set(extra_keywords "")
   unset(keyword)
@@ -377,7 +377,7 @@ function(jucer_project_module module_name PATH_KEYWORD modules_folder)
     if(NOT DEFINED keyword)
       set(keyword "${argument}")
 
-      if(keyword STREQUAL "ADD_SOURCE_TO_PROJECT" OR keyword STREQUAL "COMPILE_IN_TARGET")
+      if(keyword STREQUAL "ADD_SOURCE_TO_PROJECT" OR keyword STREQUAL "COMPILE_AS_TARGET")
         # Nothing to do
       else()
         list(APPEND extra_keywords "${keyword}")
@@ -387,8 +387,8 @@ function(jucer_project_module module_name PATH_KEYWORD modules_folder)
 
       if(keyword STREQUAL "ADD_SOURCE_TO_PROJECT")
         set(make_juce_code_browsable "${value}")
-      elseif(keyword STREQUAL "COMPILE_IN_TARGET")
-        set(compile_in_target "${value}")
+      elseif(keyword STREQUAL "COMPILE_AS_TARGET")
+        set(compile_as_target "${value}")
       else()
         set(extra_values_${keyword} "${value}")
       endif()
@@ -409,8 +409,8 @@ function(jucer_project_module module_name PATH_KEYWORD modules_folder)
   set(JUCER_PROJECT_MODULES_FOLDERS "${JUCER_PROJECT_MODULES_FOLDERS}" PARENT_SCOPE)
   set(JUCER_PROJECT_MODULE_${module_name}_PATH "${modules_folder}" PARENT_SCOPE)
 
-  if(DEFINED compile_in_target)
-    set(JUCER_PROJECT_MODULE_${module_name}_TARGET "${compile_in_target}" PARENT_SCOPE)
+  if(DEFINED compile_as_target)
+    set(JUCER_PROJECT_MODULE_${module_name}_TARGET "${compile_as_target}" PARENT_SCOPE)
   endif()
 
   file(GLOB module_src_files
