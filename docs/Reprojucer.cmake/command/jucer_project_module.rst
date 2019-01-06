@@ -60,7 +60,7 @@ CMakeLists.txt#L79-L85>`_:
     PATH "${JUCE_ROOT}/modules"
     ADD_SOURCE_TO_PROJECT OFF
     JUCE_USE_CURL OFF
-    COMPILE_IN_TARGET "JuceModules"
+    COMPILE_AS_TARGET "JuceModules"
   )
 
 In this case, ``juce_core.cpp`` is compiled in the ``JuceModules`` target instead of in
