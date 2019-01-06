@@ -27,8 +27,11 @@ own code,
  - speed-up compiling the JUCE module by using pre-compiled headers.
 
 
-Example
--------
+Examples
+--------
+
+From `the Plugin Host example of JUCE 5.2.1 <https://github.com/McMartin/FRUT/blob/
+master/generated/JUCE-5.2.1/examples/audio%20plugin%20host/CMakeLists.txt#L86-L99>`_:
 
 .. code:: cmake
 
@@ -47,5 +50,18 @@ Example
     JUCE_USE_CDBURNER OFF
   )
 
-Taken from `the Plugin Host example of JUCE 5.2.1 <https://github.com/McMartin/FRUT/blob/
-master/generated/JUCE-5.2.1/examples/audio%20plugin%20host/CMakeLists.txt#L86-L99>`_.
+From `Jucer2Reprojucer <https://github.com/McMartin/FRUT/blob/master/Jucer2Reprojucer/
+CMakeLists.txt#L79-L85>`_:
+
+.. code:: cmake
+
+  jucer_project_module(
+    juce_core
+    PATH "${JUCE_ROOT}/modules"
+    ADD_SOURCE_TO_PROJECT OFF
+    JUCE_USE_CURL OFF
+    COMPILE_IN_TARGET "JuceModules"
+  )
+
+In this case, ``juce_core.cpp`` is compiled in the ``JuceModules`` target instead of in
+the ``Jucer2Reprojucer`` target.
