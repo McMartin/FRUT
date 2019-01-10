@@ -2031,7 +2031,7 @@ function(jucer_project_end)
             "juce_audio_plugin_client"
           )
 
-          add_custom_command(TARGET ${au_target} PRE_BUILD
+          add_custom_command(OUTPUT ${rez_output}
             COMMAND
             "${Rez_tool}"
             "-o" "${rez_output}"
