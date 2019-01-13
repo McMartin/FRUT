@@ -3618,7 +3618,7 @@ function(_FRUT_set_compiler_and_linker_settings target)
           OUTPUT_STRIP_TRAILING_WHITESPACE
         )
         if(IS_DIRECTORY "${sysroot}")
-          target_compile_options(${target} PRIVATE "-isysroot ${sysroot}")
+          target_compile_options(${target} PRIVATE -isysroot "${sysroot}")
         else()
           message(WARNING "Running `xcrun --sdk macosx${sdkroot} --show-sdk-path` didn't"
             " output a valid directory."
