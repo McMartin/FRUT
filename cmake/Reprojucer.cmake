@@ -3609,6 +3609,9 @@ function(_FRUT_set_compiler_and_linker_settings target)
       target_compile_options(${target} PRIVATE
         "-mmacosx-version-min=${osx_deployment_target}"
       )
+      set_property(TARGET ${target} APPEND_STRING PROPERTY LINK_FLAGS
+        " -mmacosx-version-min=${osx_deployment_target}"
+      )
 
       set(sdkroot "${JUCER_OSX_BASE_SDK_VERSION_${CMAKE_BUILD_TYPE}}")
       if(sdkroot)
@@ -3618,7 +3621,10 @@ function(_FRUT_set_compiler_and_linker_settings target)
           OUTPUT_STRIP_TRAILING_WHITESPACE
         )
         if(IS_DIRECTORY "${sysroot}")
-          target_compile_options(${target} PRIVATE "-isysroot ${sysroot}")
+          target_compile_options(${target} PRIVATE -isysroot "${sysroot}")
+          set_property(TARGET ${target} APPEND_STRING PROPERTY LINK_FLAGS
+            " -isysroot ${sysroot}"
+          )
         else()
           message(WARNING "Running `xcrun --sdk macosx${sdkroot} --show-sdk-path` didn't"
             " output a valid directory."
