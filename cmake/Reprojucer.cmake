@@ -2309,14 +2309,17 @@ function(jucer_project_end)
           "juce_audio_plugin_client/RTAS/juce_RTAS_WinExports.def"
         )
         target_sources(${rtas_target} PRIVATE "${module_definition_file}")
-        set_property(TARGET ${rtas_target} APPEND PROPERTY LINK_FLAGS
-          "/DELAYLOAD:DAE.dll"
-          "/DELAYLOAD:DigiExt.dll"
-          "/DELAYLOAD:DSI.dll"
-          "/DELAYLOAD:PluginLib.dll"
-          "/DELAYLOAD:DSPManager.dll"
-          "/DELAYLOAD:DSPManagerClientLib.dll"
-          "/DELAYLOAD:RTASClientLib.dll"
+        string(CONCAT rtas_link_flags
+          " /DELAYLOAD:DAE.dll"
+          " /DELAYLOAD:DigiExt.dll"
+          " /DELAYLOAD:DSI.dll"
+          " /DELAYLOAD:PluginLib.dll"
+          " /DELAYLOAD:DSPManager.dll"
+          " /DELAYLOAD:DSPManagerClientLib.dll"
+          " /DELAYLOAD:RTASClientLib.dll"
+        )
+        set_property(TARGET ${rtas_target} APPEND_STRING PROPERTY LINK_FLAGS
+          "${rtas_link_flags}"
         )
         # See MSVCProjectExporterBase::MSVCTargetBase::getExtraSearchPaths()
         # in JUCE/extras/Projucer/Source/ProjectSaving/jucer_ProjectExport_MSVC.h
@@ -3740,7 +3743,7 @@ function(_FRUT_set_compiler_and_linker_settings target)
       if(DEFINED JUCER_INCREMENTAL_LINKING_${config})
         if(JUCER_INCREMENTAL_LINKING_${config})
           set_property(TARGET ${target}
-            APPEND PROPERTY LINK_FLAGS_${upper_config} "/INCREMENTAL"
+            APPEND_STRING PROPERTY LINK_FLAGS_${upper_config} " /INCREMENTAL"
           )
         endif()
       endif()
@@ -3748,7 +3751,7 @@ function(_FRUT_set_compiler_and_linker_settings target)
       if(DEFINED JUCER_FORCE_GENERATION_OF_DEBUG_SYMBOLS_${config})
         if(JUCER_FORCE_GENERATION_OF_DEBUG_SYMBOLS_${config})
           set_property(TARGET ${target}
-            APPEND PROPERTY LINK_FLAGS_${upper_config} "/DEBUG"
+            APPEND_STRING PROPERTY LINK_FLAGS_${upper_config} " /DEBUG"
           )
         endif()
       endif()
@@ -3756,7 +3759,7 @@ function(_FRUT_set_compiler_and_linker_settings target)
       if(DEFINED JUCER_GENERATE_MANIFEST_${config})
         if(NOT JUCER_GENERATE_MANIFEST_${config})
           set_property(TARGET ${target}
-            APPEND PROPERTY LINK_FLAGS_${upper_config} "/MANIFEST:NO"
+            APPEND_STRING PROPERTY LINK_FLAGS_${upper_config} " /MANIFEST:NO"
           )
         endif()
       endif()
@@ -3779,7 +3782,9 @@ function(_FRUT_set_compiler_and_linker_settings target)
 
       if(JUCER_LINK_TIME_OPTIMISATION_${config})
         target_compile_options(${target} PRIVATE $<$<CONFIG:${config}>:-flto>)
-        set_property(TARGET ${target} APPEND PROPERTY LINK_FLAGS_${upper_config} "-flto")
+        set_property(TARGET ${target} APPEND_STRING PROPERTY
+          LINK_FLAGS_${upper_config} " -flto"
+        )
       endif()
 
       if(CMAKE_EXTRA_GENERATOR STREQUAL "CodeBlocks")
@@ -3787,8 +3792,8 @@ function(_FRUT_set_compiler_and_linker_settings target)
           target_compile_options(${target} PRIVATE
             $<$<CONFIG:${config}>:${JUCER_ARCHITECTURE_FLAG_${config}}>
           )
-          set_property(TARGET ${target} APPEND PROPERTY
-            LINK_FLAGS_${upper_config} "${JUCER_ARCHITECTURE_FLAG_${config}}"
+          set_property(TARGET ${target} APPEND_STRING PROPERTY
+            LINK_FLAGS_${upper_config} " ${JUCER_ARCHITECTURE_FLAG_${config}}"
           )
         endif()
       else()
@@ -3888,20 +3893,24 @@ function(_FRUT_set_compiler_and_linker_settings target)
       else()
         target_compile_definitions(${target} PRIVATE $<$<CONFIG:${config}>:NDEBUG=1>)
 
-        set_property(TARGET ${target} APPEND PROPERTY LINK_FLAGS_${upper_config} "-s")
+        set_property(TARGET ${target} APPEND_STRING PROPERTY
+          LINK_FLAGS_${upper_config} " -s"
+        )
       endif()
 
       if(JUCER_LINK_TIME_OPTIMISATION_${config})
         target_compile_options(${target} PRIVATE $<$<CONFIG:${config}>:-flto>)
-        set_property(TARGET ${target} APPEND PROPERTY LINK_FLAGS_${upper_config} "-flto")
+        set_property(TARGET ${target} APPEND_STRING PROPERTY
+          LINK_FLAGS_${upper_config} " -flto"
+        )
       endif()
 
       if(DEFINED JUCER_ARCHITECTURE_FLAG_${config})
         target_compile_options(${target} PRIVATE
           $<$<CONFIG:${config}>:${JUCER_ARCHITECTURE_FLAG_${config}}>
         )
-        set_property(TARGET ${target} APPEND PROPERTY
-          LINK_FLAGS_${upper_config} "${JUCER_ARCHITECTURE_FLAG_${config}}"
+        set_property(TARGET ${target} APPEND_STRING PROPERTY
+          LINK_FLAGS_${upper_config} " ${JUCER_ARCHITECTURE_FLAG_${config}}"
         )
       endif()
     endforeach()
