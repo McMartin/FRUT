@@ -59,10 +59,10 @@ project(BinaryDataBuilder VERSION 0.2.0)
 
 add_executable(BinaryDataBuilder
   "${CMAKE_CURRENT_LIST_DIR}/main.cpp"
-  "${CMAKE_CURRENT_LIST_DIR}/Source/Project Saving/jucer_ResourceFile.cpp"
-  "${CMAKE_CURRENT_LIST_DIR}/Source/Utility/jucer_CodeHelpers.cpp"
-  "${CMAKE_CURRENT_LIST_DIR}/Source/Utility/jucer_FileHelpers.cpp"
-  "${CMAKE_CURRENT_LIST_DIR}/Source/Utility/jucer_MiscUtilities.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/extras/Projucer/Source/Project Saving/jucer_ResourceFile.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/extras/Projucer/Source/Utility/jucer_CodeHelpers.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/extras/Projucer/Source/Utility/jucer_FileHelpers.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/extras/Projucer/Source/Utility/jucer_MiscUtilities.cpp"
 )
 
 if(APPLE)
