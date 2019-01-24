@@ -15,9 +15,9 @@
 // You should have received a copy of the GNU General Public License
 // along with FRUT.  If not, see <http://www.gnu.org/licenses/>.
 
-#include "Source/jucer_Headers.h"
+#include "extras/Projucer/Source/jucer_Headers.h"
 
-#include "Source/Project Saving/jucer_ResourceFile.h"
+#include "extras/Projucer/Source/Project Saving/jucer_ResourceFile.h"
 
 #include <iostream>
 #include <string>

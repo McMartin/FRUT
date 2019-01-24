@@ -17,7 +17,7 @@
 
 // clang-format off
 
-// Lines 24-91, 94-145, 148-238, 241-246, 249-265, and 269-283 of this file were copied from
+// Lines 24-91, 94-104, 108-122, 126-145, 148-155, 159-167, 171-238, 241-246, 249-265, and 269-283 of this file were copied from
 // https://github.com/WeAreROLI/JUCE/blob/4.2.0/extras/Projucer/Source/Project%20Saving/jucer_ResourceFile.cpp
 
 
@@ -103,7 +103,7 @@ Result ResourceFile::writeHeader (MemoryOutputStream& header)
            << "namespace " << className << newLine
            << "{" << newLine;
 
-    bool containsAnyImages = false;
+    // bool containsAnyImages = false;
 
     for (int i = 0; i < files.size(); ++i)
     {
@@ -120,8 +120,8 @@ Result ResourceFile::writeHeader (MemoryOutputStream& header)
 
         if (fileStream.openedOk())
         {
-            containsAnyImages = containsAnyImages
-                                 || (ImageFileFormat::findImageFormatForStream (fileStream) != nullptr);
+            // containsAnyImages = containsAnyImages
+            //                      || (ImageFileFormat::findImageFormatForStream (fileStream) != nullptr);
 
             header << "    extern const char*   " << variableName << ";" << newLine;
             header << "    const int            " << variableName << "Size = " << (int) dataSize << ";" << newLine << newLine;
@@ -154,7 +154,7 @@ Result ResourceFile::writeCpp (MemoryOutputStream& cpp, const File& headerFile, 
         << "namespace " << className << newLine
         << "{" << newLine;
 
-    bool containsAnyImages = false;
+    // bool containsAnyImages = false;
 
     while (i < files.size())
     {
@@ -165,8 +165,8 @@ Result ResourceFile::writeCpp (MemoryOutputStream& cpp, const File& headerFile, 
 
         if (fileStream.openedOk())
         {
-            containsAnyImages = containsAnyImages
-                                 || (ImageFileFormat::findImageFormatForStream (fileStream) != nullptr);
+            // containsAnyImages = containsAnyImages
+            //                      || (ImageFileFormat::findImageFormatForStream (fileStream) != nullptr);
 
             const String tempVariable ("temp_binary_data_" + String (i));
 
@@ -283,7 +283,7 @@ Result ResourceFile::write (Array<File>& filesCreated, const int maxFileSize)
 }
 
 
-// Lines 290-314, and 318-363 of this file were copied from
+// Lines 290-314, 318-324, 328-342, and 346-363 of this file were copied from
 // https://github.com/WeAreROLI/JUCE/blob/5.0.0/extras/Projucer/Source/Project%20Saving/jucer_ResourceFile.cpp
 
 
@@ -323,7 +323,7 @@ Result ResourceFile::writeHeader<ProjucerVersion::v5_0_0> (MemoryOutputStream& h
            << "namespace " << className << newLine
            << "{" << newLine;
 
-    bool containsAnyImages = false;
+    // bool containsAnyImages = false;
 
     for (int i = 0; i < files.size(); ++i)
     {
@@ -340,8 +340,8 @@ Result ResourceFile::writeHeader<ProjucerVersion::v5_0_0> (MemoryOutputStream& h
 
         if (fileStream.openedOk())
         {
-            containsAnyImages = containsAnyImages
-                                 || (ImageFileFormat::findImageFormatForStream (fileStream) != nullptr);
+            // containsAnyImages = containsAnyImages
+            //                      || (ImageFileFormat::findImageFormatForStream (fileStream) != nullptr);
 
             header << "    extern const char*   " << variableName << ";" << newLine;
             header << "    const int            " << variableName << "Size = " << (int) dataSize << ";" << newLine << newLine;
@@ -363,7 +363,7 @@ Result ResourceFile::writeHeader<ProjucerVersion::v5_0_0> (MemoryOutputStream& h
 }
 
 
-// Lines 370-394, 398-450, and 454-561 of this file were copied from
+// Lines 370-394, 398-404, 408-422, 426-450, 454-460, 464-472, and 476-561 of this file were copied from
 // https://github.com/WeAreROLI/JUCE/blob/5.3.2/extras/Projucer/Source/ProjectSaving/jucer_ResourceFile.cpp
 
 
@@ -403,7 +403,7 @@ Result ResourceFile::writeHeader<ProjucerVersion::v5_3_1> (MemoryOutputStream& h
            << "namespace " << className << newLine
            << "{" << newLine;
 
-    bool containsAnyImages = false;
+    // bool containsAnyImages = false;
 
     for (int i = 0; i < files.size(); ++i)
     {
@@ -420,8 +420,8 @@ Result ResourceFile::writeHeader<ProjucerVersion::v5_3_1> (MemoryOutputStream& h
 
         if (fileStream.openedOk())
         {
-            containsAnyImages = containsAnyImages
-                                 || (ImageFileFormat::findImageFormatForStream (fileStream) != nullptr);
+            // containsAnyImages = containsAnyImages
+            //                      || (ImageFileFormat::findImageFormatForStream (fileStream) != nullptr);
 
             header << "    extern const char*   " << variableName << ";" << newLine;
             header << "    const int            " << variableName << "Size = " << (int) dataSize << ";" << newLine << newLine;
@@ -459,7 +459,7 @@ Result ResourceFile::writeCpp<ProjucerVersion::v5_3_1> (MemoryOutputStream& cpp,
         << "namespace " << className << newLine
         << "{" << newLine;
 
-    bool containsAnyImages = false;
+    // bool containsAnyImages = false;
 
     while (i < files.size())
     {
@@ -470,8 +470,8 @@ Result ResourceFile::writeCpp<ProjucerVersion::v5_3_1> (MemoryOutputStream& cpp,
 
         if (fileStream.openedOk())
         {
-            containsAnyImages = containsAnyImages
-                                 || (ImageFileFormat::findImageFormatForStream (fileStream) != nullptr);
+            // containsAnyImages = containsAnyImages
+            //                      || (ImageFileFormat::findImageFormatForStream (fileStream) != nullptr);
 
             auto tempVariable = "temp_binary_data_" + String (i);
 

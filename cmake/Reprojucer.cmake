@@ -3221,7 +3221,7 @@ function(_FRUT_generate_JuceHeader_header)
 
   list(LENGTH JUCER_PROJECT_RESOURCES resources_count)
   if(resources_count GREATER 0)
-    set(BinaryDataBuilder_file_name "BinaryDataBuilder-0.2.0")
+    set(BinaryDataBuilder_file_name "BinaryDataBuilder-0.3.0")
     if(NOT BinaryDataBuilder_exe MATCHES "${BinaryDataBuilder_file_name}")
       unset(BinaryDataBuilder_exe CACHE)
     endif()
