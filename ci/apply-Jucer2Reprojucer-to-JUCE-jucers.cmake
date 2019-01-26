@@ -43,7 +43,7 @@ get_filename_component(Jucer2Reprojucer_EXE "${Jucer2Reprojucer_EXE}" ABSOLUTE)
 
 file(GLOB_RECURSE jucer_files RELATIVE "${JUCE_ROOT}" "${JUCE_ROOT}/*.jucer")
 
-foreach(jucer_file ${jucer_files})
+foreach(jucer_file IN LISTS jucer_files)
   get_filename_component(working_dir "${generated_JUCE_ROOT}/${jucer_file}" DIRECTORY)
   if(NOT IS_DIRECTORY "${working_dir}")
     message(FATAL_ERROR "Cannot change working directory to ${working_dir}")
