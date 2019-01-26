@@ -358,7 +358,7 @@ function(jucer_project_module module_name PATH_KEYWORD modules_folder)
     message(FATAL_ERROR "No such directory: \"${modules_folder}\"")
   endif()
 
-  foreach(extension ".h" ".hpp" ".hxx")
+  foreach(extension IN ITEMS ".h" ".hpp" ".hxx")
     set(module_header_file "${modules_folder}/${module_name}/${module_name}${extension}")
     if(EXISTS "${module_header_file}")
       break()
@@ -2248,7 +2248,7 @@ function(jucer_project_end)
           "$(DEVELOPER_DIR)/Headers/FlatCarbon"
           "$(SDKROOT)/Developer/Headers/FlatCarbon"
         )
-        foreach(include_dir
+        foreach(include_dir IN ITEMS
           "AlturaPorts/TDMPlugIns/PlugInLibrary/Controls"
           "AlturaPorts/TDMPlugIns/PlugInLibrary/CoreClasses"
           "AlturaPorts/TDMPlugIns/PlugInLibrary/DSPClasses"
@@ -2322,7 +2322,7 @@ function(jucer_project_end)
         )
         # See MSVCProjectExporterBase::MSVCTargetBase::getExtraSearchPaths()
         # in JUCE/extras/Projucer/Source/ProjectSaving/jucer_ProjectExport_MSVC.h
-        foreach(include_dir
+        foreach(include_dir IN ITEMS
           "AlturaPorts/TDMPlugins/PluginLibrary/EffectClasses"
           "AlturaPorts/TDMPlugins/PluginLibrary/ProcessClasses"
           "AlturaPorts/TDMPlugins/PluginLibrary/ProcessClasses/Interfaces"
@@ -4448,7 +4448,7 @@ function(_FRUT_char_literal value out_char_literal)
   string(SUBSTRING "${four_chars}" 0 4 four_chars)
   string(LENGTH "${four_chars}" four_chars_length)
   set(dec_value 0)
-  foreach(index 0 1 2 3)
+  foreach(index IN ITEMS 0 1 2 3)
     if(index LESS four_chars_length)
       string(SUBSTRING "${four_chars}" ${index} 1 ascii_char)
       string(FIND "${all_ascii_chars}" "${ascii_char}" ascii_code)
