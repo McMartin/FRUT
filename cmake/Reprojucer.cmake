@@ -2248,7 +2248,7 @@ function(jucer_project_end)
           "$(DEVELOPER_DIR)/Headers/FlatCarbon"
           "$(SDKROOT)/Developer/Headers/FlatCarbon"
         )
-        set(extra_rtas_include_dirs
+        foreach(include_dir
           "AlturaPorts/TDMPlugIns/PlugInLibrary/Controls"
           "AlturaPorts/TDMPlugIns/PlugInLibrary/CoreClasses"
           "AlturaPorts/TDMPlugIns/PlugInLibrary/DSPClasses"
@@ -2279,7 +2279,6 @@ function(jucer_project_end)
           "xplat/AVX/avx2/avx2sdk/inc"
           "xplat/AVX/avx2/avx2sdk/utils"
         )
-        foreach(include_dir ${extra_rtas_include_dirs})
           target_include_directories(${rtas_target} PRIVATE
             "${JUCER_RTAS_SDK_FOLDER}/${include_dir}"
           )
@@ -2323,7 +2322,7 @@ function(jucer_project_end)
         )
         # See MSVCProjectExporterBase::MSVCTargetBase::getExtraSearchPaths()
         # in JUCE/extras/Projucer/Source/ProjectSaving/jucer_ProjectExport_MSVC.h
-        set(extra_rtas_include_dirs
+        foreach(include_dir
           "AlturaPorts/TDMPlugins/PluginLibrary/EffectClasses"
           "AlturaPorts/TDMPlugins/PluginLibrary/ProcessClasses"
           "AlturaPorts/TDMPlugins/PluginLibrary/ProcessClasses/Interfaces"
@@ -2351,7 +2350,6 @@ function(jucer_project_end)
           "AvidCode/AVX2sdk/AVX/avx2/avx2sdk/inc"
           "xplat/AVX/avx2/avx2sdk/inc"
         )
-        foreach(include_dir ${extra_rtas_include_dirs})
           target_include_directories(${rtas_target} PRIVATE
             "${JUCER_RTAS_SDK_FOLDER}/${include_dir}"
           )
