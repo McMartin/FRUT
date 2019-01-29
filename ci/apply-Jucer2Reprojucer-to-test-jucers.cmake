@@ -34,7 +34,7 @@ get_filename_component(Jucer2Reprojucer_EXE "${Jucer2Reprojucer_EXE}" ABSOLUTE)
 
 file(GLOB_RECURSE jucer_files RELATIVE "${tests_DIR}" "${tests_DIR}/*.jucer")
 
-foreach(jucer_file ${jucer_files})
+foreach(jucer_file IN LISTS jucer_files)
   get_filename_component(working_dir "${tests_DIR}/${jucer_file}" DIRECTORY)
   get_filename_component(jucer_file_name "${jucer_file}" NAME)
 
