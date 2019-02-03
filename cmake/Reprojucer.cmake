@@ -3614,10 +3614,10 @@ function(_FRUT_set_compiler_and_linker_settings target)
         LINK_FLAGS " -mmacosx-version-min=${osx_deployment_target}"
       )
 
-      set(sdkroot "${JUCER_OSX_BASE_SDK_VERSION_${CMAKE_BUILD_TYPE}}")
-      if(sdkroot)
+      set(sdk_version "${JUCER_OSX_BASE_SDK_VERSION_${CMAKE_BUILD_TYPE}}")
+      if(sdk_version)
         execute_process(
-          COMMAND "xcrun" "--sdk" "macosx${sdkroot}" "--show-sdk-path"
+          COMMAND "xcrun" "--sdk" "macosx${sdk_version}" "--show-sdk-path"
           OUTPUT_VARIABLE sysroot
           OUTPUT_STRIP_TRAILING_WHITESPACE
         )
@@ -3627,8 +3627,8 @@ function(_FRUT_set_compiler_and_linker_settings target)
             LINK_FLAGS " -isysroot ${sysroot}"
           )
         else()
-          message(WARNING "Running `xcrun --sdk macosx${sdkroot} --show-sdk-path` didn't"
-            " output a valid directory."
+          message(WARNING "Running `xcrun --sdk macosx${sdk_version} --show-sdk-path`"
+            " didn't output a valid directory."
           )
         endif()
       endif()
