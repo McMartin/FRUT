@@ -1549,7 +1549,9 @@ function(jucer_project_end)
     )
   endif()
 
-  if(NOT DEFINED CMAKE_CONFIGURATION_TYPES)
+  if(DEFINED CMAKE_CONFIGURATION_TYPES)
+    set(CMAKE_CONFIGURATION_TYPES "${JUCER_PROJECT_CONFIGURATIONS}" PARENT_SCOPE)
+  else()
     if(NOT DEFINED CMAKE_BUILD_TYPE OR CMAKE_BUILD_TYPE STREQUAL "")
       list(GET JUCER_PROJECT_CONFIGURATIONS 0 first_configuration)
       message(STATUS
@@ -1563,8 +1565,6 @@ function(jucer_project_end)
       )
     endif()
   endif()
-
-  set(CMAKE_CONFIGURATION_TYPES "${JUCER_PROJECT_CONFIGURATIONS}" PARENT_SCOPE)
 
   _FRUT_check_SDK_folders()
 
