@@ -471,7 +471,7 @@ function(jucer_project_module module_name PATH_KEYWORD modules_folder)
         set(proxied_src_file "${module_name}/${src_file_basename}")
       endif()
       configure_file("${Reprojucer_templates_DIR}/JuceLibraryCode-Wrapper.cpp"
-        "JuceLibraryCode/${proxy_prefix}${src_file_basename}"
+        "JuceLibraryCode/${proxy_prefix}${src_file_basename}" @ONLY
       )
       list(APPEND module_sources
         "${CMAKE_CURRENT_BINARY_DIR}/JuceLibraryCode/${proxy_prefix}${src_file_basename}"
@@ -1619,7 +1619,7 @@ function(jucer_project_end)
     endwhile()
     string(REPLACE ";" "," comma_separated_version_number "${version_parts}")
 
-    configure_file("${Reprojucer_templates_DIR}/resources.rc" "resources.rc")
+    configure_file("${Reprojucer_templates_DIR}/resources.rc" "resources.rc" @ONLY)
     set(resources_rc_file "${CMAKE_CURRENT_BINARY_DIR}/resources.rc")
     source_group("Juce Library Code" FILES "${CMAKE_CURRENT_BINARY_DIR}/resources.rc")
   endif()
@@ -3205,7 +3205,7 @@ function(_FRUT_generate_AppConfig_header)
   else()
     set(template_file "${Reprojucer_templates_DIR}/AppConfig.h")
   endif()
-  configure_file("${template_file}" "JuceLibraryCode/AppConfig.h")
+  configure_file("${template_file}" "JuceLibraryCode/AppConfig.h" @ONLY)
   list(APPEND JUCER_PROJECT_FILES
     "${CMAKE_CURRENT_BINARY_DIR}/JuceLibraryCode/AppConfig.h"
   )
@@ -3327,7 +3327,7 @@ function(_FRUT_generate_JuceHeader_header)
     set(include_guard_bottom "")
   endif()
   configure_file("${Reprojucer_templates_DIR}/JuceHeader.h"
-    "JuceLibraryCode/JuceHeader.h"
+    "JuceLibraryCode/JuceHeader.h" @ONLY
   )
   list(APPEND JUCER_PROJECT_FILES
     "${CMAKE_CURRENT_BINARY_DIR}/JuceLibraryCode/JuceHeader.h"
