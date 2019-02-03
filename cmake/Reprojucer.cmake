@@ -1989,8 +1989,8 @@ function(jucer_project_end)
         endif()
       endforeach()
       if(DEFINED rez_inputs)
-        find_program(Rez_tool "Rez")
-        if(Rez_tool)
+        find_program(Rez_exe "Rez")
+        if(Rez_exe)
           set(rez_output "${CMAKE_CURRENT_BINARY_DIR}/${JUCER_PROJECT_NAME}.rsrc")
 
           set(rez_defines "")
@@ -2033,7 +2033,7 @@ function(jucer_project_end)
 
           add_custom_command(OUTPUT ${rez_output}
             COMMAND
-            "${Rez_tool}"
+            "${Rez_exe}"
             "-o" "${rez_output}"
             "-d" "SystemSevenOrLater=1"
             "-useDF"
