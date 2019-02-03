@@ -109,11 +109,15 @@ set_target_properties(IconBuilder PROPERTIES
 )
 
 if(APPLE)
-  find_library(Cocoa "Cocoa")
-  find_library(IOKit "IOKit")
-  find_library(QuartzCore "QuartzCore")
+  find_library(Cocoa_framework "Cocoa")
+  find_library(IOKit_framework "IOKit")
+  find_library(QuartzCore_framework "QuartzCore")
 
-  target_link_libraries(IconBuilder PRIVATE ${Cocoa} ${IOKit} ${QuartzCore})
+  target_link_libraries(IconBuilder PRIVATE
+    ${Cocoa_framework}
+    ${IOKit_framework}
+    ${QuartzCore_framework}
+  )
 endif()
 
 if(CMAKE_HOST_SYSTEM_NAME STREQUAL "Linux")

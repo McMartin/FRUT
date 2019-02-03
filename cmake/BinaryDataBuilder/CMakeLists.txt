@@ -94,10 +94,10 @@ set_target_properties(BinaryDataBuilder PROPERTIES
 )
 
 if(APPLE)
-  find_library(Cocoa "Cocoa")
-  find_library(IOKit "IOKit")
+  find_library(Cocoa_framework "Cocoa")
+  find_library(IOKit_framework "IOKit")
 
-  target_link_libraries(BinaryDataBuilder PRIVATE ${Cocoa} ${IOKit})
+  target_link_libraries(BinaryDataBuilder PRIVATE ${Cocoa_framework} ${IOKit_framework})
 endif()
 
 if(CMAKE_HOST_SYSTEM_NAME STREQUAL "Linux")
