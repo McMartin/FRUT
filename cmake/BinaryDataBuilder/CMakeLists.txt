@@ -42,9 +42,11 @@ get_filename_component(JUCE_modules_DIR
 )
 
 
-if(CMAKE_BUILD_TYPE STREQUAL "")
-  message(STATUS "Setting CMAKE_BUILD_TYPE to \"Debug\" as it was not specified.")
-  set(CMAKE_BUILD_TYPE Debug)
+if(NOT DEFINED CMAKE_CONFIGURATION_TYPES)
+  if(NOT DEFINED CMAKE_BUILD_TYPE OR CMAKE_BUILD_TYPE STREQUAL "")
+    message(STATUS "Setting CMAKE_BUILD_TYPE to \"Debug\" as it was not specified.")
+    set(CMAKE_BUILD_TYPE Debug)
+  endif()
 endif()
 
 
@@ -92,10 +94,10 @@ set_target_properties(BinaryDataBuilder PROPERTIES
 )
 
 if(APPLE)
-  find_library(Cocoa "Cocoa")
-  find_library(IOKit "IOKit")
+  find_library(Cocoa_framework "Cocoa")
+  find_library(IOKit_framework "IOKit")
 
-  target_link_libraries(BinaryDataBuilder PRIVATE ${Cocoa} ${IOKit})
+  target_link_libraries(BinaryDataBuilder PRIVATE ${Cocoa_framework} ${IOKit_framework})
 endif()
 
 if(CMAKE_HOST_SYSTEM_NAME STREQUAL "Linux")

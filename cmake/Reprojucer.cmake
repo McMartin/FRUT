@@ -471,7 +471,7 @@ function(jucer_project_module module_name PATH_KEYWORD modules_folder)
         set(proxied_src_file "${module_name}/${src_file_basename}")
       endif()
       configure_file("${Reprojucer_templates_DIR}/JuceLibraryCode-Wrapper.cpp"
-        "JuceLibraryCode/${proxy_prefix}${src_file_basename}"
+        "JuceLibraryCode/${proxy_prefix}${src_file_basename}" @ONLY
       )
       list(APPEND module_sources
         "${CMAKE_CURRENT_BINARY_DIR}/JuceLibraryCode/${proxy_prefix}${src_file_basename}"
@@ -1549,7 +1549,9 @@ function(jucer_project_end)
     )
   endif()
 
-  if(NOT DEFINED CMAKE_CONFIGURATION_TYPES)
+  if(DEFINED CMAKE_CONFIGURATION_TYPES)
+    set(CMAKE_CONFIGURATION_TYPES "${JUCER_PROJECT_CONFIGURATIONS}" PARENT_SCOPE)
+  else()
     if(NOT DEFINED CMAKE_BUILD_TYPE OR CMAKE_BUILD_TYPE STREQUAL "")
       list(GET JUCER_PROJECT_CONFIGURATIONS 0 first_configuration)
       message(STATUS
@@ -1564,9 +1566,7 @@ function(jucer_project_end)
     endif()
   endif()
 
-  set(CMAKE_CONFIGURATION_TYPES "${JUCER_PROJECT_CONFIGURATIONS}" PARENT_SCOPE)
-
-  _FRUT_check_SDK_folders()
+  _FRUT_check_SDK_folders("${current_exporter}")
 
   _FRUT_generate_AppConfig_header()
   _FRUT_generate_JuceHeader_header()
@@ -1619,7 +1619,7 @@ function(jucer_project_end)
     endwhile()
     string(REPLACE ";" "," comma_separated_version_number "${version_parts}")
 
-    configure_file("${Reprojucer_templates_DIR}/resources.rc" "resources.rc")
+    configure_file("${Reprojucer_templates_DIR}/resources.rc" "resources.rc" @ONLY)
     set(resources_rc_file "${CMAKE_CURRENT_BINARY_DIR}/resources.rc")
     source_group("Juce Library Code" FILES "${CMAKE_CURRENT_BINARY_DIR}/resources.rc")
   endif()
@@ -1776,7 +1776,7 @@ function(jucer_project_end)
     _FRUT_set_output_directory_properties(${target} "ConsoleApp")
     _FRUT_set_output_name_properties(${target})
     _FRUT_set_compiler_and_linker_settings(${target})
-    _FRUT_add_extra_commands(${target})
+    _FRUT_add_extra_commands(${target} "${current_exporter}")
     _FRUT_link_osx_frameworks(${target})
     _FRUT_set_custom_xcode_flags(${target})
 
@@ -1824,7 +1824,7 @@ function(jucer_project_end)
     _FRUT_set_output_directory_properties(${target} "App")
     _FRUT_set_output_name_properties(${target})
     _FRUT_set_compiler_and_linker_settings(${target})
-    _FRUT_add_extra_commands(${target})
+    _FRUT_add_extra_commands(${target} "${current_exporter}")
     _FRUT_link_osx_frameworks(${target})
     _FRUT_add_xcode_resource_folders(${target})
     _FRUT_set_custom_xcode_flags(${target})
@@ -1834,7 +1834,7 @@ function(jucer_project_end)
     _FRUT_set_output_directory_properties(${target} "Static Library")
     _FRUT_set_output_name_properties(${target})
     _FRUT_set_compiler_and_linker_settings(${target})
-    _FRUT_add_extra_commands(${target})
+    _FRUT_add_extra_commands(${target} "${current_exporter}")
     _FRUT_set_custom_xcode_flags(${target})
 
   elseif(JUCER_PROJECT_TYPE STREQUAL "Dynamic Library")
@@ -1842,7 +1842,7 @@ function(jucer_project_end)
     _FRUT_set_output_directory_properties(${target} "Dynamic Library")
     _FRUT_set_output_name_properties(${target})
     _FRUT_set_compiler_and_linker_settings(${target})
-    _FRUT_add_extra_commands(${target})
+    _FRUT_add_extra_commands(${target} "${current_exporter}")
     _FRUT_link_osx_frameworks(${target})
     _FRUT_set_custom_xcode_flags(${target})
 
@@ -1890,7 +1890,7 @@ function(jucer_project_end)
     _FRUT_set_output_directory_properties(${shared_code_target} "Shared Code")
     _FRUT_set_output_name_properties(${shared_code_target})
     _FRUT_set_compiler_and_linker_settings(${shared_code_target})
-    _FRUT_add_extra_commands(${shared_code_target})
+    _FRUT_add_extra_commands(${shared_code_target} "${current_exporter}")
     target_compile_definitions(${shared_code_target} PRIVATE "JUCE_SHARED_CODE=1")
     _FRUT_set_JucePlugin_Build_defines(${shared_code_target} "SharedCodeTarget")
     _FRUT_set_custom_xcode_flags(${shared_code_target})
@@ -1911,7 +1911,7 @@ function(jucer_project_end)
       _FRUT_set_output_directory_properties(${vst_target} "VST")
       _FRUT_set_output_name_properties(${vst_target})
       _FRUT_set_compiler_and_linker_settings(${vst_target})
-      _FRUT_add_extra_commands(${vst_target})
+      _FRUT_add_extra_commands(${vst_target} "${current_exporter}")
       if(APPLE)
         _FRUT_install_to_plugin_binary_location(${vst_target} "VST"
           "$ENV{HOME}/Library/Audio/Plug-Ins/VST"
@@ -1949,7 +1949,7 @@ function(jucer_project_end)
       _FRUT_set_output_directory_properties(${vst3_target} "VST3")
       _FRUT_set_output_name_properties(${vst3_target})
       _FRUT_set_compiler_and_linker_settings(${vst3_target})
-      _FRUT_add_extra_commands(${vst3_target})
+      _FRUT_add_extra_commands(${vst3_target} "${current_exporter}")
       if(APPLE)
         _FRUT_install_to_plugin_binary_location(${vst3_target} "VST3"
           "$ENV{HOME}/Library/Audio/Plug-Ins/VST3"
@@ -1989,8 +1989,8 @@ function(jucer_project_end)
         endif()
       endforeach()
       if(DEFINED rez_inputs)
-        find_program(Rez_tool "Rez")
-        if(Rez_tool)
+        find_program(Rez_exe "Rez")
+        if(Rez_exe)
           set(rez_output "${CMAKE_CURRENT_BINARY_DIR}/${JUCER_PROJECT_NAME}.rsrc")
 
           set(rez_defines "")
@@ -2033,7 +2033,7 @@ function(jucer_project_end)
 
           add_custom_command(OUTPUT ${rez_output}
             COMMAND
-            "${Rez_tool}"
+            "${Rez_exe}"
             "-o" "${rez_output}"
             "-d" "SystemSevenOrLater=1"
             "-useDF"
@@ -2107,7 +2107,7 @@ function(jucer_project_end)
       _FRUT_set_output_directory_properties(${au_target} "AU")
       _FRUT_set_output_name_properties(${au_target})
       _FRUT_set_compiler_and_linker_settings(${au_target})
-      _FRUT_add_extra_commands(${au_target})
+      _FRUT_add_extra_commands(${au_target} "${current_exporter}")
       _FRUT_install_to_plugin_binary_location(${au_target} "AU"
         "$ENV{HOME}/Library/Audio/Plug-Ins/Components"
       )
@@ -2214,7 +2214,7 @@ function(jucer_project_end)
       _FRUT_set_output_directory_properties(${auv3_target} "AUv3 AppExtension")
       _FRUT_set_output_name_properties(${auv3_target})
       _FRUT_set_compiler_and_linker_settings(${auv3_target})
-      _FRUT_add_extra_commands(${auv3_target})
+      _FRUT_add_extra_commands(${auv3_target} "${current_exporter}")
       _FRUT_set_JucePlugin_Build_defines(${auv3_target} "AudioUnitv3PlugIn")
       _FRUT_link_osx_frameworks(
         ${auv3_target} "AudioUnit" "CoreAudioKit" "AVFoundation"
@@ -2240,7 +2240,7 @@ function(jucer_project_end)
       _FRUT_set_output_directory_properties(${rtas_target} "RTAS")
       _FRUT_set_output_name_properties(${rtas_target})
       _FRUT_set_compiler_and_linker_settings(${rtas_target})
-      _FRUT_add_extra_commands(${rtas_target})
+      _FRUT_add_extra_commands(${rtas_target} "${current_exporter}")
       if(APPLE)
         # See XcodeProjectExporter::XcodeTarget::getTargetExtraHeaderSearchPaths()
         # in JUCE/extras/Projucer/Source/ProjectSaving/jucer_ProjectExport_Xcode.h
@@ -2387,7 +2387,7 @@ function(jucer_project_end)
       _FRUT_set_output_directory_properties(${aax_target} "AAX")
       _FRUT_set_output_name_properties(${aax_target})
       _FRUT_set_compiler_and_linker_settings(${aax_target})
-      _FRUT_add_extra_commands(${aax_target})
+      _FRUT_add_extra_commands(${aax_target} "${current_exporter}")
       if(APPLE)
         foreach(config IN LISTS JUCER_PROJECT_CONFIGURATIONS)
           if(JUCER_CONFIGURATION_IS_DEBUG_${config})
@@ -2520,7 +2520,7 @@ function(jucer_project_end)
       _FRUT_set_output_directory_properties(${standalone_target} "Standalone Plugin")
       _FRUT_set_output_name_properties(${standalone_target})
       _FRUT_set_compiler_and_linker_settings(${standalone_target})
-      _FRUT_add_extra_commands(${standalone_target})
+      _FRUT_add_extra_commands(${standalone_target} "${current_exporter}")
       _FRUT_set_JucePlugin_Build_defines(${standalone_target} "StandalonePlugIn")
       _FRUT_link_osx_frameworks(${standalone_target})
       _FRUT_add_xcode_resource_folders(${standalone_target})
@@ -2576,7 +2576,7 @@ function(jucer_project_end)
       endforeach()
 
       _FRUT_set_compiler_and_linker_settings(${unity_target})
-      _FRUT_add_extra_commands(${unity_target})
+      _FRUT_add_extra_commands(${unity_target} "${current_exporter}")
 
       set(project_name "${JUCER_PROJECT_NAME}")
       if(NOT project_name MATCHES "^[Aa][Uu][Dd][Ii][Oo][Pp][Ll][Uu][Gg][Ii][Nn]")
@@ -2741,7 +2741,7 @@ function(_FRUT_sanitize_path_in_user_folder out_path in_path)
 endfunction()
 
 
-function(_FRUT_check_SDK_folders)
+function(_FRUT_check_SDK_folders exporter)
 
   if(JUCER_BUILD_VST OR JUCER_FLAG_JUCE_PLUGINHOST_VST)
     if(DEFINED JUCER_VST_LEGACY_SDK_FOLDER)
@@ -2756,7 +2756,7 @@ function(_FRUT_check_SDK_folders)
       endif()
     elseif(NOT DEFINED JUCER_VERSION OR JUCER_VERSION VERSION_GREATER 5.3.2)
       message(WARNING "JUCER_VST_LEGACY_SDK_FOLDER is not defined. You should give "
-        "VST_LEGACY_SDK_FOLDER when calling jucer_export_target(\"${current_exporter}\")."
+        "VST_LEGACY_SDK_FOLDER when calling jucer_export_target(\"${exporter}\")."
       )
     endif()
 
@@ -2772,7 +2772,7 @@ function(_FRUT_check_SDK_folders)
       endif()
     elseif(DEFINED JUCER_VERSION AND JUCER_VERSION VERSION_LESS 4.2.4)
       message(WARNING "JUCER_VST_SDK_FOLDER is not defined. You should give "
-        "VST_SDK_FOLDER when calling jucer_export_target(\"${current_exporter}\")."
+        "VST_SDK_FOLDER when calling jucer_export_target(\"${exporter}\")."
       )
     endif()
   endif()
@@ -2794,7 +2794,7 @@ function(_FRUT_check_SDK_folders)
       endif()
     elseif((APPLE OR MSVC) AND NOT EXISTS "${juce_internal_vst3_sdk_path}")
       message(WARNING "JUCER_VST3_SDK_FOLDER is not defined. You should give "
-        "VST3_SDK_FOLDER when calling jucer_export_target(\"${current_exporter}\")."
+        "VST3_SDK_FOLDER when calling jucer_export_target(\"${exporter}\")."
       )
     endif()
   endif()
@@ -2815,7 +2815,7 @@ function(_FRUT_check_SDK_folders)
       endif()
     elseif(APPLE OR MSVC)
       message(WARNING "JUCER_RTAS_SDK_FOLDER is not defined. You should give "
-        "RTAS_SDK_FOLDER when calling jucer_export_target(\"${current_exporter}\")."
+        "RTAS_SDK_FOLDER when calling jucer_export_target(\"${exporter}\")."
       )
     endif()
   endif()
@@ -2833,7 +2833,7 @@ function(_FRUT_check_SDK_folders)
       endif()
     elseif(APPLE OR MSVC)
       message(WARNING "JUCER_AAX_SDK_FOLDER is not defined. You should give "
-        "AAX_SDK_FOLDER when calling jucer_export_target(\"${current_exporter}\")."
+        "AAX_SDK_FOLDER when calling jucer_export_target(\"${exporter}\")."
       )
     endif()
   endif()
@@ -3205,7 +3205,7 @@ function(_FRUT_generate_AppConfig_header)
   else()
     set(template_file "${Reprojucer_templates_DIR}/AppConfig.h")
   endif()
-  configure_file("${template_file}" "JuceLibraryCode/AppConfig.h")
+  configure_file("${template_file}" "JuceLibraryCode/AppConfig.h" @ONLY)
   list(APPEND JUCER_PROJECT_FILES
     "${CMAKE_CURRENT_BINARY_DIR}/JuceLibraryCode/AppConfig.h"
   )
@@ -3327,7 +3327,7 @@ function(_FRUT_generate_JuceHeader_header)
     set(include_guard_bottom "")
   endif()
   configure_file("${Reprojucer_templates_DIR}/JuceHeader.h"
-    "JuceLibraryCode/JuceHeader.h"
+    "JuceLibraryCode/JuceHeader.h" @ONLY
   )
   list(APPEND JUCER_PROJECT_FILES
     "${CMAKE_CURRENT_BINARY_DIR}/JuceLibraryCode/JuceHeader.h"
@@ -3614,10 +3614,10 @@ function(_FRUT_set_compiler_and_linker_settings target)
         LINK_FLAGS " -mmacosx-version-min=${osx_deployment_target}"
       )
 
-      set(sdkroot "${JUCER_OSX_BASE_SDK_VERSION_${CMAKE_BUILD_TYPE}}")
-      if(sdkroot)
+      set(sdk_version "${JUCER_OSX_BASE_SDK_VERSION_${CMAKE_BUILD_TYPE}}")
+      if(sdk_version)
         execute_process(
-          COMMAND "xcrun" "--sdk" "macosx${sdkroot}" "--show-sdk-path"
+          COMMAND "xcrun" "--sdk" "macosx${sdk_version}" "--show-sdk-path"
           OUTPUT_VARIABLE sysroot
           OUTPUT_STRIP_TRAILING_WHITESPACE
         )
@@ -3627,8 +3627,8 @@ function(_FRUT_set_compiler_and_linker_settings target)
             LINK_FLAGS " -isysroot ${sysroot}"
           )
         else()
-          message(WARNING "Running `xcrun --sdk macosx${sdkroot} --show-sdk-path` didn't"
-            " output a valid directory."
+          message(WARNING "Running `xcrun --sdk macosx${sdk_version} --show-sdk-path`"
+            " didn't output a valid directory."
           )
         endif()
       endif()
@@ -4057,7 +4057,7 @@ function(_FRUT_set_cxx_language_standard_properties target)
 endfunction()
 
 
-function(_FRUT_add_extra_commands target)
+function(_FRUT_add_extra_commands target exporter)
 
   if(APPLE)
     get_target_property(target_type ${target} TYPE)
@@ -4088,7 +4088,7 @@ function(_FRUT_add_extra_commands target)
     if(DEFINED JUCER_PREBUILD_SHELL_SCRIPT)
       if(NOT DEFINED JUCER_TARGET_PROJECT_FOLDER)
         message(FATAL_ERROR "JUCER_TARGET_PROJECT_FOLDER must be defined. Give "
-          "TARGET_PROJECT_FOLDER when calling jucer_export_target(\"Xcode (MacOSX)\")."
+          "TARGET_PROJECT_FOLDER when calling jucer_export_target(\"${exporter}\")."
         )
       endif()
       if(NOT IS_DIRECTORY "${JUCER_TARGET_PROJECT_FOLDER}")
@@ -4103,7 +4103,7 @@ function(_FRUT_add_extra_commands target)
     if(DEFINED JUCER_POSTBUILD_SHELL_SCRIPT)
       if(NOT DEFINED JUCER_TARGET_PROJECT_FOLDER)
         message(FATAL_ERROR "JUCER_TARGET_PROJECT_FOLDER must be defined. Give "
-          "TARGET_PROJECT_FOLDER when calling jucer_export_target(\"Xcode (MacOSX)\")."
+          "TARGET_PROJECT_FOLDER when calling jucer_export_target(\"${exporter}\")."
         )
       endif()
       if(NOT IS_DIRECTORY "${JUCER_TARGET_PROJECT_FOLDER}")
@@ -4128,8 +4128,7 @@ function(_FRUT_add_extra_commands target)
     if(DEFINED all_confs_prebuild_command)
       if(NOT DEFINED JUCER_TARGET_PROJECT_FOLDER)
         message(FATAL_ERROR "JUCER_TARGET_PROJECT_FOLDER must be defined. Give "
-          "TARGET_PROJECT_FOLDER when calling "
-          "jucer_export_target(\"${current_exporter}\")."
+          "TARGET_PROJECT_FOLDER when calling jucer_export_target(\"${exporter}\")."
         )
       endif()
       if(NOT IS_DIRECTORY "${JUCER_TARGET_PROJECT_FOLDER}")
@@ -4153,8 +4152,7 @@ function(_FRUT_add_extra_commands target)
     if(DEFINED all_confs_postbuild_command)
       if(NOT DEFINED JUCER_TARGET_PROJECT_FOLDER)
         message(FATAL_ERROR "JUCER_TARGET_PROJECT_FOLDER must be defined. Give "
-          "TARGET_PROJECT_FOLDER when calling "
-          "jucer_export_target(\"${current_exporter}\")."
+          "TARGET_PROJECT_FOLDER when calling jucer_export_target(\"${exporter}\")."
         )
       endif()
       if(NOT IS_DIRECTORY "${JUCER_TARGET_PROJECT_FOLDER}")
