@@ -4310,9 +4310,29 @@ function(_FRUT_link_osx_frameworks target)
     if(NOT JUCER_FLAG_JUCE_QUICKTIME)
       list(REMOVE_ITEM osx_frameworks "QuickTime")
     endif()
-    foreach(framework_name IN LISTS osx_frameworks)
-      find_library(${framework_name}_framework ${framework_name})
-      target_link_libraries(${target} PRIVATE "${${framework_name}_framework}")
+
+    foreach(config IN LISTS JUCER_PROJECT_CONFIGURATIONS)
+      set(CMAKE_FRAMEWORK_PATH "")
+      set(sdk_version "${JUCER_OSX_BASE_SDK_VERSION_${config}}")
+      execute_process(
+        COMMAND "xcrun" "--sdk" "macosx${sdk_version}" "--show-sdk-path"
+        OUTPUT_VARIABLE sdk_path
+        OUTPUT_STRIP_TRAILING_WHITESPACE
+      )
+      if(IS_DIRECTORY "${sdk_path}")
+        set(CMAKE_FRAMEWORK_PATH "${sdk_path}/System/Library/Frameworks")
+      else()
+        message(WARNING "Running `xcrun --sdk macosx${sdk_version} --show-sdk-path`"
+          " didn't output a valid directory."
+        )
+      endif()
+
+      foreach(framework_name IN LISTS osx_frameworks)
+        find_library(${framework_name}_framework_${sdk_version} ${framework_name})
+        target_link_libraries(${target} PRIVATE
+          "$<$<CONFIG:${config}>:${${framework_name}_framework_${sdk_version}}>"
+        )
+      endforeach()
     endforeach()
   endif()
 
