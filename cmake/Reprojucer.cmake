@@ -3618,22 +3618,20 @@ function(_FRUT_set_compiler_and_linker_settings target)
       )
 
       set(sdk_version "${JUCER_OSX_BASE_SDK_VERSION_${CMAKE_BUILD_TYPE}}")
-      if(sdk_version)
-        execute_process(
-          COMMAND "xcrun" "--sdk" "macosx${sdk_version}" "--show-sdk-path"
-          OUTPUT_VARIABLE sysroot
-          OUTPUT_STRIP_TRAILING_WHITESPACE
+      execute_process(
+        COMMAND "xcrun" "--sdk" "macosx${sdk_version}" "--show-sdk-path"
+        OUTPUT_VARIABLE sysroot
+        OUTPUT_STRIP_TRAILING_WHITESPACE
+      )
+      if(IS_DIRECTORY "${sysroot}")
+        target_compile_options(${target} PRIVATE -isysroot "${sysroot}")
+        set_property(TARGET ${target} APPEND_STRING PROPERTY
+          LINK_FLAGS " -isysroot ${sysroot}"
         )
-        if(IS_DIRECTORY "${sysroot}")
-          target_compile_options(${target} PRIVATE -isysroot "${sysroot}")
-          set_property(TARGET ${target} APPEND_STRING PROPERTY
-            LINK_FLAGS " -isysroot ${sysroot}"
-          )
-        else()
-          message(WARNING "Running `xcrun --sdk macosx${sdk_version} --show-sdk-path`"
-            " didn't output a valid directory."
-          )
-        endif()
+      else()
+        message(WARNING "Running `xcrun --sdk macosx${sdk_version} --show-sdk-path`"
+          " didn't output a valid directory."
+        )
       endif()
     endif()
 
