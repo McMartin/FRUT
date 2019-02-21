@@ -2009,13 +2009,8 @@ function(jucer_project_end)
             endforeach()
 
             set(sdk_version "${JUCER_OSX_BASE_SDK_VERSION_${config}}")
-            if(sdk_version)
-              set(sdk_option "--sdk" "macosx${sdk_version}")
-            else()
-              set(sdk_option "")
-            endif()
             execute_process(
-              COMMAND "xcrun" ${sdk_option} "--show-sdk-path"
+              COMMAND "xcrun" "--sdk" "macosx${sdk_version}" "--show-sdk-path"
               OUTPUT_VARIABLE sysroot
               OUTPUT_STRIP_TRAILING_WHITESPACE
             )
