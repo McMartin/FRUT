@@ -2014,7 +2014,15 @@ function(jucer_project_end)
               OUTPUT_VARIABLE sysroot
               OUTPUT_STRIP_TRAILING_WHITESPACE
             )
-            list(APPEND all_confs_sysroot "$<$<CONFIG:${config}>:${sysroot}>")
+            if(IS_DIRECTORY "${sysroot}")
+              list(APPEND all_confs_sysroot
+                "$<$<CONFIG:${config}>:-isysroot>" "$<$<CONFIG:${config}>:${sysroot}>"
+              )
+            else()
+              message(WARNING "Running `xcrun --sdk macosx${sdk_version} --show-sdk-path`"
+                " didn't output a valid directory."
+              )
+            endif()
           endforeach()
 
           string(CONCAT carbon_include_dir
@@ -2037,7 +2045,7 @@ function(jucer_project_end)
             "-i" "${carbon_include_dir}"
             "-i" "${CMAKE_CURRENT_BINARY_DIR}/JuceLibraryCode"
             "-i" "${juce_audio_plugin_client_include_dir}"
-            "-isysroot" ${all_confs_sysroot}
+            ${all_confs_sysroot}
             ${rez_inputs}
           )
           set_source_files_properties("${rez_output}" PROPERTIES
