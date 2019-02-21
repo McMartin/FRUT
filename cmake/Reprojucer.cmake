@@ -1566,6 +1566,24 @@ function(jucer_project_end)
     endif()
   endif()
 
+  if(APPLE)
+    foreach(config IN LISTS JUCER_PROJECT_CONFIGURATIONS)
+      set(sdk_version "${JUCER_OSX_BASE_SDK_VERSION_${config}}")
+      execute_process(
+        COMMAND "xcrun" "--sdk" "macosx${sdk_version}" "--show-sdk-path"
+        OUTPUT_VARIABLE sdk_path
+        OUTPUT_STRIP_TRAILING_WHITESPACE
+      )
+      if(IS_DIRECTORY "${sdk_path}")
+        set(JUCER_MACOSX_SDK_PATH_${config} "${sdk_path}")
+      else()
+        message(WARNING "Running `xcrun --sdk macosx${sdk_version} --show-sdk-path`"
+          " didn't output a valid directory."
+        )
+      endif()
+    endforeach()
+  endif()
+
   _FRUT_check_SDK_folders("${current_exporter}")
 
   _FRUT_generate_AppConfig_header()
@@ -2008,19 +2026,10 @@ function(jucer_project_end)
               )
             endforeach()
 
-            set(sdk_version "${JUCER_OSX_BASE_SDK_VERSION_${config}}")
-            execute_process(
-              COMMAND "xcrun" "--sdk" "macosx${sdk_version}" "--show-sdk-path"
-              OUTPUT_VARIABLE sysroot
-              OUTPUT_STRIP_TRAILING_WHITESPACE
-            )
+            set(sysroot "${JUCER_MACOSX_SDK_PATH_${config}}")
             if(IS_DIRECTORY "${sysroot}")
               list(APPEND all_confs_sysroot
                 "$<$<CONFIG:${config}>:-isysroot>" "$<$<CONFIG:${config}>:${sysroot}>"
-              )
-            else()
-              message(WARNING "Running `xcrun --sdk macosx${sdk_version} --show-sdk-path`"
-                " didn't output a valid directory."
               )
             endif()
           endforeach()
@@ -3617,20 +3626,11 @@ function(_FRUT_set_compiler_and_linker_settings target)
         LINK_FLAGS " -mmacosx-version-min=${osx_deployment_target}"
       )
 
-      set(sdk_version "${JUCER_OSX_BASE_SDK_VERSION_${CMAKE_BUILD_TYPE}}")
-      execute_process(
-        COMMAND "xcrun" "--sdk" "macosx${sdk_version}" "--show-sdk-path"
-        OUTPUT_VARIABLE sysroot
-        OUTPUT_STRIP_TRAILING_WHITESPACE
-      )
+      set(sysroot "${JUCER_MACOSX_SDK_PATH_${CMAKE_BUILD_TYPE}}")
       if(IS_DIRECTORY "${sysroot}")
         target_compile_options(${target} PRIVATE -isysroot "${sysroot}")
         set_property(TARGET ${target} APPEND_STRING PROPERTY
           LINK_FLAGS " -isysroot ${sysroot}"
-        )
-      else()
-        message(WARNING "Running `xcrun --sdk macosx${sdk_version} --show-sdk-path`"
-          " didn't output a valid directory."
         )
       endif()
     endif()
@@ -4314,17 +4314,9 @@ function(_FRUT_link_osx_frameworks target)
     foreach(config IN LISTS JUCER_PROJECT_CONFIGURATIONS)
       set(CMAKE_FRAMEWORK_PATH "")
       set(sdk_version "${JUCER_OSX_BASE_SDK_VERSION_${config}}")
-      execute_process(
-        COMMAND "xcrun" "--sdk" "macosx${sdk_version}" "--show-sdk-path"
-        OUTPUT_VARIABLE sdk_path
-        OUTPUT_STRIP_TRAILING_WHITESPACE
-      )
+      set(sdk_path "${JUCER_MACOSX_SDK_PATH_${config}}")
       if(IS_DIRECTORY "${sdk_path}")
         set(CMAKE_FRAMEWORK_PATH "${sdk_path}/System/Library/Frameworks")
-      else()
-        message(WARNING "Running `xcrun --sdk macosx${sdk_version} --show-sdk-path`"
-          " didn't output a valid directory."
-        )
       endif()
 
       foreach(framework_name IN LISTS osx_frameworks)
