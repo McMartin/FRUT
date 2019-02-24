@@ -1566,6 +1566,24 @@ function(jucer_project_end)
     endif()
   endif()
 
+  if(APPLE)
+    foreach(config IN LISTS JUCER_PROJECT_CONFIGURATIONS)
+      set(sdk_version "${JUCER_OSX_BASE_SDK_VERSION_${config}}")
+      execute_process(
+        COMMAND "xcrun" "--sdk" "macosx${sdk_version}" "--show-sdk-path"
+        OUTPUT_VARIABLE sdk_path
+        OUTPUT_STRIP_TRAILING_WHITESPACE
+      )
+      if(IS_DIRECTORY "${sdk_path}")
+        set(JUCER_MACOSX_SDK_PATH_${config} "${sdk_path}")
+      else()
+        message(WARNING "Running `xcrun --sdk macosx${sdk_version} --show-sdk-path`"
+          " didn't output a valid directory."
+        )
+      endif()
+    endforeach()
+  endif()
+
   _FRUT_check_SDK_folders("${current_exporter}")
 
   _FRUT_generate_AppConfig_header()
@@ -2008,18 +2026,12 @@ function(jucer_project_end)
               )
             endforeach()
 
-            set(sdk_version "${JUCER_OSX_BASE_SDK_VERSION_${config}}")
-            if(sdk_version)
-              set(sdk_option "--sdk" "macosx${sdk_version}")
-            else()
-              set(sdk_option "")
+            set(sysroot "${JUCER_MACOSX_SDK_PATH_${config}}")
+            if(IS_DIRECTORY "${sysroot}")
+              list(APPEND all_confs_sysroot
+                "$<$<CONFIG:${config}>:-isysroot>" "$<$<CONFIG:${config}>:${sysroot}>"
+              )
             endif()
-            execute_process(
-              COMMAND "xcrun" ${sdk_option} "--show-sdk-path"
-              OUTPUT_VARIABLE sysroot
-              OUTPUT_STRIP_TRAILING_WHITESPACE
-            )
-            list(APPEND all_confs_sysroot "$<$<CONFIG:${config}>:${sysroot}>")
           endforeach()
 
           string(CONCAT carbon_include_dir
@@ -2042,7 +2054,7 @@ function(jucer_project_end)
             "-i" "${carbon_include_dir}"
             "-i" "${CMAKE_CURRENT_BINARY_DIR}/JuceLibraryCode"
             "-i" "${juce_audio_plugin_client_include_dir}"
-            "-isysroot" ${all_confs_sysroot}
+            ${all_confs_sysroot}
             ${rez_inputs}
           )
           set_source_files_properties("${rez_output}" PROPERTIES
@@ -3614,23 +3626,12 @@ function(_FRUT_set_compiler_and_linker_settings target)
         LINK_FLAGS " -mmacosx-version-min=${osx_deployment_target}"
       )
 
-      set(sdk_version "${JUCER_OSX_BASE_SDK_VERSION_${CMAKE_BUILD_TYPE}}")
-      if(sdk_version)
-        execute_process(
-          COMMAND "xcrun" "--sdk" "macosx${sdk_version}" "--show-sdk-path"
-          OUTPUT_VARIABLE sysroot
-          OUTPUT_STRIP_TRAILING_WHITESPACE
+      set(sysroot "${JUCER_MACOSX_SDK_PATH_${CMAKE_BUILD_TYPE}}")
+      if(IS_DIRECTORY "${sysroot}")
+        target_compile_options(${target} PRIVATE -isysroot "${sysroot}")
+        set_property(TARGET ${target} APPEND_STRING PROPERTY
+          LINK_FLAGS " -isysroot ${sysroot}"
         )
-        if(IS_DIRECTORY "${sysroot}")
-          target_compile_options(${target} PRIVATE -isysroot "${sysroot}")
-          set_property(TARGET ${target} APPEND_STRING PROPERTY
-            LINK_FLAGS " -isysroot ${sysroot}"
-          )
-        else()
-          message(WARNING "Running `xcrun --sdk macosx${sdk_version} --show-sdk-path`"
-            " didn't output a valid directory."
-          )
-        endif()
       endif()
     endif()
 
@@ -4309,9 +4310,21 @@ function(_FRUT_link_osx_frameworks target)
     if(NOT JUCER_FLAG_JUCE_QUICKTIME)
       list(REMOVE_ITEM osx_frameworks "QuickTime")
     endif()
-    foreach(framework_name IN LISTS osx_frameworks)
-      find_library(${framework_name}_framework ${framework_name})
-      target_link_libraries(${target} PRIVATE "${${framework_name}_framework}")
+
+    foreach(config IN LISTS JUCER_PROJECT_CONFIGURATIONS)
+      set(CMAKE_FRAMEWORK_PATH "")
+      set(sdk_version "${JUCER_OSX_BASE_SDK_VERSION_${config}}")
+      set(sdk_path "${JUCER_MACOSX_SDK_PATH_${config}}")
+      if(IS_DIRECTORY "${sdk_path}")
+        set(CMAKE_FRAMEWORK_PATH "${sdk_path}/System/Library/Frameworks")
+      endif()
+
+      foreach(framework_name IN LISTS osx_frameworks)
+        find_library(${framework_name}_framework_${sdk_version} ${framework_name})
+        target_link_libraries(${target} PRIVATE
+          "$<$<CONFIG:${config}>:${${framework_name}_framework_${sdk_version}}>"
+        )
+      endforeach()
     endforeach()
   endif()
 
