@@ -4202,18 +4202,20 @@ endfunction()
 
 function(_FRUT_set_bundle_properties target extension)
 
-  if(APPLE)
-    set_target_properties(${target} PROPERTIES
-      BUNDLE TRUE
-      BUNDLE_EXTENSION "${extension}"
-      XCODE_ATTRIBUTE_WRAPPER_EXTENSION "${extension}"
-    )
-
-    target_sources(${target} PRIVATE "${Reprojucer_templates_DIR}/PkgInfo")
-    set_source_files_properties("${Reprojucer_templates_DIR}/PkgInfo"
-      PROPERTIES MACOSX_PACKAGE_LOCATION "."
-    )
+  if(NOT APPLE)
+    return()
   endif()
+
+  set_target_properties(${target} PROPERTIES
+    BUNDLE TRUE
+    BUNDLE_EXTENSION "${extension}"
+    XCODE_ATTRIBUTE_WRAPPER_EXTENSION "${extension}"
+  )
+
+  target_sources(${target} PRIVATE "${Reprojucer_templates_DIR}/PkgInfo")
+  set_source_files_properties("${Reprojucer_templates_DIR}/PkgInfo"
+    PROPERTIES MACOSX_PACKAGE_LOCATION "."
+  )
 
 endfunction()
 
@@ -4304,42 +4306,46 @@ function(_FRUT_link_osx_frameworks target)
     list(APPEND osx_frameworks "AudioUnit" "CoreAudioKit")
   endif()
 
-  if(APPLE AND osx_frameworks)
-    list(SORT osx_frameworks)
-    list(REMOVE_DUPLICATES osx_frameworks)
-    if(NOT JUCER_FLAG_JUCE_QUICKTIME)
-      list(REMOVE_ITEM osx_frameworks "QuickTime")
+  if(NOT (APPLE AND osx_frameworks))
+    return()
+  endif()
+
+  list(SORT osx_frameworks)
+  list(REMOVE_DUPLICATES osx_frameworks)
+  if(NOT JUCER_FLAG_JUCE_QUICKTIME)
+    list(REMOVE_ITEM osx_frameworks "QuickTime")
+  endif()
+
+  foreach(config IN LISTS JUCER_PROJECT_CONFIGURATIONS)
+    set(CMAKE_FRAMEWORK_PATH "")
+    set(sdk_version "${JUCER_OSX_BASE_SDK_VERSION_${config}}")
+    set(sdk_path "${JUCER_MACOSX_SDK_PATH_${config}}")
+    if(IS_DIRECTORY "${sdk_path}")
+      set(CMAKE_FRAMEWORK_PATH "${sdk_path}/System/Library/Frameworks")
     endif()
 
-    foreach(config IN LISTS JUCER_PROJECT_CONFIGURATIONS)
-      set(CMAKE_FRAMEWORK_PATH "")
-      set(sdk_version "${JUCER_OSX_BASE_SDK_VERSION_${config}}")
-      set(sdk_path "${JUCER_MACOSX_SDK_PATH_${config}}")
-      if(IS_DIRECTORY "${sdk_path}")
-        set(CMAKE_FRAMEWORK_PATH "${sdk_path}/System/Library/Frameworks")
-      endif()
-
-      foreach(framework_name IN LISTS osx_frameworks)
-        find_library(${framework_name}_framework_${sdk_version} ${framework_name})
-        target_link_libraries(${target} PRIVATE
-          "$<$<CONFIG:${config}>:${${framework_name}_framework_${sdk_version}}>"
-        )
-      endforeach()
+    foreach(framework_name IN LISTS osx_frameworks)
+      find_library(${framework_name}_framework_${sdk_version} ${framework_name})
+      target_link_libraries(${target} PRIVATE
+        "$<$<CONFIG:${config}>:${${framework_name}_framework_${sdk_version}}>"
+      )
     endforeach()
-  endif()
+  endforeach()
 
 endfunction()
 
 
 function(_FRUT_add_xcode_resource_folders target)
 
-  if(APPLE)
-    foreach(folder IN LISTS JUCER_CUSTOM_XCODE_RESOURCE_FOLDERS)
-      add_custom_command(TARGET ${target} PRE_BUILD
-        COMMAND rsync -r "${folder}" "$<TARGET_FILE_DIR:${target}>/../Resources"
-      )
-    endforeach()
+  if(NOT APPLE)
+    return()
   endif()
+
+  foreach(folder IN LISTS JUCER_CUSTOM_XCODE_RESOURCE_FOLDERS)
+    add_custom_command(TARGET ${target} PRE_BUILD
+      COMMAND rsync -r "${folder}" "$<TARGET_FILE_DIR:${target}>/../Resources"
+    )
+  endforeach()
 
 endfunction()
 
