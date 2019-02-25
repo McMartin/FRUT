@@ -4084,109 +4084,120 @@ endfunction()
 function(_FRUT_add_extra_commands target exporter)
 
   if(APPLE)
-    get_target_property(target_type ${target} TYPE)
-    if(target_type STREQUAL "EXECUTABLE" OR target_type STREQUAL "MODULE_LIBRARY")
-      unset(all_confs_strip_exe)
-      unset(all_confs_strip_opt)
-      unset(all_confs_strip_arg)
-      foreach(config IN LISTS JUCER_PROJECT_CONFIGURATIONS)
-        if(JUCER_STRIP_LOCAL_SYMBOLS_${config})
-          find_program(strip_exe "strip")
-          if(NOT strip_exe)
-            message(FATAL_ERROR "Could not find strip program")
-          endif()
-          string(APPEND all_confs_strip_exe $<$<CONFIG:${config}>:${strip_exe}>)
-          string(APPEND all_confs_strip_opt $<$<CONFIG:${config}>:-x>)
-          string(APPEND all_confs_strip_arg
-            $<$<CONFIG:${config}>:$<TARGET_FILE:${target}>>
-          )
-        endif()
-      endforeach()
-      if(DEFINED all_confs_strip_exe)
-        add_custom_command(TARGET ${target} POST_BUILD
-          COMMAND ${all_confs_strip_exe} ${all_confs_strip_opt} ${all_confs_strip_arg}
-        )
-      endif()
-    endif()
-
-    if(DEFINED JUCER_PREBUILD_SHELL_SCRIPT)
-      if(NOT DEFINED JUCER_TARGET_PROJECT_FOLDER)
-        message(FATAL_ERROR "JUCER_TARGET_PROJECT_FOLDER must be defined. Give "
-          "TARGET_PROJECT_FOLDER when calling jucer_export_target(\"${exporter}\")."
-        )
-      endif()
-      if(NOT IS_DIRECTORY "${JUCER_TARGET_PROJECT_FOLDER}")
-        file(MAKE_DIRECTORY "${JUCER_TARGET_PROJECT_FOLDER}")
-      endif()
-      add_custom_command(TARGET ${target} PRE_BUILD
-        COMMAND "/bin/sh" "${JUCER_PREBUILD_SHELL_SCRIPT}"
-        WORKING_DIRECTORY "${JUCER_TARGET_PROJECT_FOLDER}"
-      )
-    endif()
-
-    if(DEFINED JUCER_POSTBUILD_SHELL_SCRIPT)
-      if(NOT DEFINED JUCER_TARGET_PROJECT_FOLDER)
-        message(FATAL_ERROR "JUCER_TARGET_PROJECT_FOLDER must be defined. Give "
-          "TARGET_PROJECT_FOLDER when calling jucer_export_target(\"${exporter}\")."
-        )
-      endif()
-      if(NOT IS_DIRECTORY "${JUCER_TARGET_PROJECT_FOLDER}")
-        file(MAKE_DIRECTORY "${JUCER_TARGET_PROJECT_FOLDER}")
-      endif()
-      add_custom_command(TARGET ${target} POST_BUILD
-        COMMAND "/bin/sh" "${JUCER_POSTBUILD_SHELL_SCRIPT}"
-        WORKING_DIRECTORY "${JUCER_TARGET_PROJECT_FOLDER}"
-      )
-    endif()
-
+    _FRUT_add_extra_commands_APPLE(${target} "${exporter}")
   elseif(MSVC)
-    unset(all_confs_prebuild_command)
-    foreach(config IN LISTS JUCER_PROJECT_CONFIGURATIONS)
-      if(DEFINED JUCER_PREBUILD_COMMAND_${config})
-        set(prebuild_command "${JUCER_PREBUILD_COMMAND_${config}}")
-        string(APPEND all_confs_prebuild_command
-          $<$<CONFIG:${config}>:${prebuild_command}>
-        )
-      endif()
-    endforeach()
-    if(DEFINED all_confs_prebuild_command)
-      if(NOT DEFINED JUCER_TARGET_PROJECT_FOLDER)
-        message(FATAL_ERROR "JUCER_TARGET_PROJECT_FOLDER must be defined. Give "
-          "TARGET_PROJECT_FOLDER when calling jucer_export_target(\"${exporter}\")."
-        )
-      endif()
-      if(NOT IS_DIRECTORY "${JUCER_TARGET_PROJECT_FOLDER}")
-        file(MAKE_DIRECTORY "${JUCER_TARGET_PROJECT_FOLDER}")
-      endif()
-      add_custom_command(TARGET ${target} PRE_BUILD
-        COMMAND ${all_confs_prebuild_command}
-        WORKING_DIRECTORY "${JUCER_TARGET_PROJECT_FOLDER}"
-      )
-    endif()
+    _FRUT_add_extra_commands_MSVC(${target} "${exporter}")
+  endif()
 
-    unset(all_confs_postbuild_command)
+endfunction()
+
+
+function(_FRUT_add_extra_commands_APPLE target exporter)
+
+  get_target_property(target_type ${target} TYPE)
+  if(target_type STREQUAL "EXECUTABLE" OR target_type STREQUAL "MODULE_LIBRARY")
+    unset(all_confs_strip_exe)
+    unset(all_confs_strip_opt)
+    unset(all_confs_strip_arg)
     foreach(config IN LISTS JUCER_PROJECT_CONFIGURATIONS)
-      if(DEFINED JUCER_POSTBUILD_COMMAND_${config})
-        set(postbuild_command "${JUCER_POSTBUILD_COMMAND_${config}}")
-        string(APPEND all_confs_postbuild_command
-          $<$<CONFIG:${config}>:${postbuild_command}>
-        )
+      if(JUCER_STRIP_LOCAL_SYMBOLS_${config})
+        find_program(strip_exe "strip")
+        if(NOT strip_exe)
+          message(FATAL_ERROR "Could not find strip program")
+        endif()
+        string(APPEND all_confs_strip_exe $<$<CONFIG:${config}>:${strip_exe}>)
+        string(APPEND all_confs_strip_opt $<$<CONFIG:${config}>:-x>)
+        string(APPEND all_confs_strip_arg $<$<CONFIG:${config}>:$<TARGET_FILE:${target}>>)
       endif()
     endforeach()
-    if(DEFINED all_confs_postbuild_command)
-      if(NOT DEFINED JUCER_TARGET_PROJECT_FOLDER)
-        message(FATAL_ERROR "JUCER_TARGET_PROJECT_FOLDER must be defined. Give "
-          "TARGET_PROJECT_FOLDER when calling jucer_export_target(\"${exporter}\")."
-        )
-      endif()
-      if(NOT IS_DIRECTORY "${JUCER_TARGET_PROJECT_FOLDER}")
-        file(MAKE_DIRECTORY "${JUCER_TARGET_PROJECT_FOLDER}")
-      endif()
+    if(DEFINED all_confs_strip_exe)
       add_custom_command(TARGET ${target} POST_BUILD
-        COMMAND ${all_confs_postbuild_command}
-        WORKING_DIRECTORY "${JUCER_TARGET_PROJECT_FOLDER}"
+        COMMAND ${all_confs_strip_exe} ${all_confs_strip_opt} ${all_confs_strip_arg}
       )
     endif()
+  endif()
+
+  if(DEFINED JUCER_PREBUILD_SHELL_SCRIPT)
+    if(NOT DEFINED JUCER_TARGET_PROJECT_FOLDER)
+      message(FATAL_ERROR "JUCER_TARGET_PROJECT_FOLDER must be defined. Give "
+        "TARGET_PROJECT_FOLDER when calling jucer_export_target(\"${exporter}\")."
+      )
+    endif()
+    if(NOT IS_DIRECTORY "${JUCER_TARGET_PROJECT_FOLDER}")
+      file(MAKE_DIRECTORY "${JUCER_TARGET_PROJECT_FOLDER}")
+    endif()
+    add_custom_command(TARGET ${target} PRE_BUILD
+      COMMAND "/bin/sh" "${JUCER_PREBUILD_SHELL_SCRIPT}"
+      WORKING_DIRECTORY "${JUCER_TARGET_PROJECT_FOLDER}"
+    )
+  endif()
+
+  if(DEFINED JUCER_POSTBUILD_SHELL_SCRIPT)
+    if(NOT DEFINED JUCER_TARGET_PROJECT_FOLDER)
+      message(FATAL_ERROR "JUCER_TARGET_PROJECT_FOLDER must be defined. Give "
+        "TARGET_PROJECT_FOLDER when calling jucer_export_target(\"${exporter}\")."
+      )
+    endif()
+    if(NOT IS_DIRECTORY "${JUCER_TARGET_PROJECT_FOLDER}")
+      file(MAKE_DIRECTORY "${JUCER_TARGET_PROJECT_FOLDER}")
+    endif()
+    add_custom_command(TARGET ${target} POST_BUILD
+      COMMAND "/bin/sh" "${JUCER_POSTBUILD_SHELL_SCRIPT}"
+      WORKING_DIRECTORY "${JUCER_TARGET_PROJECT_FOLDER}"
+    )
+  endif()
+
+endfunction()
+
+
+function(_FRUT_add_extra_commands_MSVC target exporter)
+
+  unset(all_confs_prebuild_command)
+  foreach(config IN LISTS JUCER_PROJECT_CONFIGURATIONS)
+    if(DEFINED JUCER_PREBUILD_COMMAND_${config})
+      set(prebuild_command "${JUCER_PREBUILD_COMMAND_${config}}")
+      string(APPEND all_confs_prebuild_command
+        $<$<CONFIG:${config}>:${prebuild_command}>
+      )
+    endif()
+  endforeach()
+  if(DEFINED all_confs_prebuild_command)
+    if(NOT DEFINED JUCER_TARGET_PROJECT_FOLDER)
+      message(FATAL_ERROR "JUCER_TARGET_PROJECT_FOLDER must be defined. Give "
+        "TARGET_PROJECT_FOLDER when calling jucer_export_target(\"${exporter}\")."
+      )
+    endif()
+    if(NOT IS_DIRECTORY "${JUCER_TARGET_PROJECT_FOLDER}")
+      file(MAKE_DIRECTORY "${JUCER_TARGET_PROJECT_FOLDER}")
+    endif()
+    add_custom_command(TARGET ${target} PRE_BUILD
+      COMMAND ${all_confs_prebuild_command}
+      WORKING_DIRECTORY "${JUCER_TARGET_PROJECT_FOLDER}"
+    )
+  endif()
+
+  unset(all_confs_postbuild_command)
+  foreach(config IN LISTS JUCER_PROJECT_CONFIGURATIONS)
+    if(DEFINED JUCER_POSTBUILD_COMMAND_${config})
+      set(postbuild_command "${JUCER_POSTBUILD_COMMAND_${config}}")
+      string(APPEND all_confs_postbuild_command
+        $<$<CONFIG:${config}>:${postbuild_command}>
+      )
+    endif()
+  endforeach()
+  if(DEFINED all_confs_postbuild_command)
+    if(NOT DEFINED JUCER_TARGET_PROJECT_FOLDER)
+      message(FATAL_ERROR "JUCER_TARGET_PROJECT_FOLDER must be defined. Give "
+        "TARGET_PROJECT_FOLDER when calling jucer_export_target(\"${exporter}\")."
+      )
+    endif()
+    if(NOT IS_DIRECTORY "${JUCER_TARGET_PROJECT_FOLDER}")
+      file(MAKE_DIRECTORY "${JUCER_TARGET_PROJECT_FOLDER}")
+    endif()
+    add_custom_command(TARGET ${target} POST_BUILD
+      COMMAND ${all_confs_postbuild_command}
+      WORKING_DIRECTORY "${JUCER_TARGET_PROJECT_FOLDER}"
+    )
   endif()
 
 endfunction()
