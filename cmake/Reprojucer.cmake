@@ -2061,7 +2061,7 @@ function(jucer_project_end)
             GENERATED TRUE
             MACOSX_PACKAGE_LOCATION "Resources"
           )
-          target_sources(${au_target} PRIVATE ${rez_inputs} "${rez_output}")
+          target_sources(${au_target} PRIVATE "${rez_output}")
         else()
           message(WARNING
             "Could not find Rez tool. Discovery of AU plugins might not work."
