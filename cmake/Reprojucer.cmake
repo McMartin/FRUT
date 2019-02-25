@@ -1969,66 +1969,7 @@ function(jucer_project_end)
         endif()
       endforeach()
       if(DEFINED rez_inputs)
-        find_program(Rez_exe "Rez")
-        if(Rez_exe)
-          set(rez_output "${CMAKE_CURRENT_BINARY_DIR}/${JUCER_PROJECT_NAME}.rsrc")
-
-          set(rez_defines "")
-          set(rez_archs "")
-          set(all_confs_sysroot "")
-          foreach(config IN LISTS JUCER_PROJECT_CONFIGURATIONS)
-            foreach(osx_architecture IN LISTS JUCER_OSX_ARCHITECTURES_${config})
-              list(APPEND rez_defines
-                "$<$<CONFIG:${config}>:-d>"
-                "$<$<CONFIG:${config}>:${osx_architecture}_YES>"
-              )
-              list(APPEND rez_archs
-                "$<$<CONFIG:${config}>:-arch>"
-                "$<$<CONFIG:${config}>:${osx_architecture}>"
-              )
-            endforeach()
-
-            set(sysroot "${JUCER_MACOSX_SDK_PATH_${config}}")
-            if(IS_DIRECTORY "${sysroot}")
-              list(APPEND all_confs_sysroot
-                "$<$<CONFIG:${config}>:-isysroot>" "$<$<CONFIG:${config}>:${sysroot}>"
-              )
-            endif()
-          endforeach()
-
-          string(CONCAT carbon_include_dir
-            "/System/Library/Frameworks/CoreServices.framework/Frameworks/"
-            "CarbonCore.framework/Versions/A/Headers"
-          )
-          string(CONCAT juce_audio_plugin_client_include_dir
-            "${JUCER_PROJECT_MODULE_juce_audio_plugin_client_PATH}/"
-            "juce_audio_plugin_client"
-          )
-
-          add_custom_command(OUTPUT ${rez_output}
-            COMMAND
-            "${Rez_exe}"
-            "-o" "${rez_output}"
-            "-d" "SystemSevenOrLater=1"
-            "-useDF"
-            ${rez_defines}
-            ${rez_archs}
-            "-i" "${carbon_include_dir}"
-            "-i" "${CMAKE_CURRENT_BINARY_DIR}/JuceLibraryCode"
-            "-i" "${juce_audio_plugin_client_include_dir}"
-            ${all_confs_sysroot}
-            ${rez_inputs}
-          )
-          set_source_files_properties("${rez_output}" PROPERTIES
-            GENERATED TRUE
-            MACOSX_PACKAGE_LOCATION "Resources"
-          )
-          target_sources(${au_target} PRIVATE "${rez_output}")
-        else()
-          message(WARNING
-            "Could not find Rez tool. Discovery of AU plugins might not work."
-          )
-        endif()
+        _FRUT_add_Rez_command_to_AU_plugin(${au_target} ${rez_inputs})
       endif()
 
       _FRUT_generate_plist_file_AU(${au_target})
@@ -2067,30 +2008,7 @@ function(jucer_project_end)
         )
       endif()
 
-      # com.yourcompany.NewProject -> com.yourcompany.NewProject.NewProjectAUv3
-      string(REPLACE "." ";" bundle_id_parts "${JUCER_BUNDLE_IDENTIFIER}")
-      list(LENGTH bundle_id_parts bundle_id_parts_length)
-      math(EXPR bundle_id_parts_last_index "${bundle_id_parts_length} - 1")
-      list(GET bundle_id_parts ${bundle_id_parts_last_index} bundle_id_last_part)
-      list(APPEND bundle_id_parts "${bundle_id_last_part}AUv3")
-      string(REPLACE ";" "." bundle_id "${bundle_id_parts}")
-      if(CMAKE_GENERATOR STREQUAL "Xcode")
-        set_target_properties(${auv3_target} PROPERTIES
-          XCODE_ATTRIBUTE_PRODUCT_BUNDLE_IDENTIFIER "${bundle_id}"
-        )
-      else()
-        set_target_properties(${auv3_target} PROPERTIES
-          MACOSX_BUNDLE_GUI_IDENTIFIER "${bundle_id}"
-        )
-      endif()
-
-      # Cannot use _FRUT_set_bundle_properties() since Projucer sets xcodeIsBundle=false
-      # for this target, though it is a bundle...
-      set_target_properties(${auv3_target} PROPERTIES
-        BUNDLE TRUE
-        BUNDLE_EXTENSION "appex"
-        XCODE_ATTRIBUTE_WRAPPER_EXTENSION "appex"
-      )
+      _FRUT_set_AUv3_bundle_properties(${auv3_target})
       _FRUT_set_output_directory_properties(${auv3_target} "AUv3 AppExtension")
       _FRUT_set_output_name_properties(${auv3_target})
       _FRUT_set_compiler_and_linker_settings(${auv3_target})
@@ -2436,25 +2354,7 @@ function(jucer_project_end)
       )
       _FRUT_set_bundle_properties(${unity_target} "bundle")
       _FRUT_set_output_directory_properties(${unity_target} "Unity Plugin")
-
-      # Like _FRUT_set_output_name_properties(${unity_target}), but handles the
-      # "audioplugin" prefix as well
-      foreach(config IN LISTS JUCER_PROJECT_CONFIGURATIONS)
-        string(TOUPPER "${config}" upper_config)
-
-        if(JUCER_BINARY_NAME_${config})
-          set(output_name "${JUCER_BINARY_NAME_${config}}")
-        else()
-          set(output_name "${JUCER_PROJECT_NAME}")
-        endif()
-        if(NOT output_name MATCHES "^[Aa][Uu][Dd][Ii][Oo][Pp][Ll][Uu][Gg][Ii][Nn]")
-          string(CONCAT output_name "audioplugin_" "${output_name}")
-        endif()
-        set_target_properties(${unity_target} PROPERTIES
-          OUTPUT_NAME_${upper_config} "${output_name}"
-        )
-      endforeach()
-
+      _FRUT_set_output_name_properties_Unity(${unity_target})
       _FRUT_set_compiler_and_linker_settings(${unity_target})
       _FRUT_add_extra_commands(${unity_target} "${current_exporter}")
 
@@ -3282,6 +3182,29 @@ function(_FRUT_set_output_name_properties target)
       set(output_name "${JUCER_PROJECT_NAME}")
     endif()
     set_target_properties(${target} PROPERTIES
+      OUTPUT_NAME_${upper_config} "${output_name}"
+    )
+  endforeach()
+
+endfunction()
+
+
+function(_FRUT_set_output_name_properties_Unity unity_target)
+
+  # Like _FRUT_set_output_name_properties(${unity_target}), but handles the
+  # "audioplugin" prefix as well
+  foreach(config IN LISTS JUCER_PROJECT_CONFIGURATIONS)
+    string(TOUPPER "${config}" upper_config)
+
+    if(JUCER_BINARY_NAME_${config})
+      set(output_name "${JUCER_BINARY_NAME_${config}}")
+    else()
+      set(output_name "${JUCER_PROJECT_NAME}")
+    endif()
+    if(NOT output_name MATCHES "^[Aa][Uu][Dd][Ii][Oo][Pp][Ll][Uu][Gg][Ii][Nn]")
+      string(CONCAT output_name "audioplugin_" "${output_name}")
+    endif()
+    set_target_properties(${unity_target} PROPERTIES
       OUTPUT_NAME_${upper_config} "${output_name}"
     )
   endforeach()
@@ -4241,6 +4164,36 @@ function(_FRUT_set_bundle_properties target extension)
 endfunction()
 
 
+function(_FRUT_set_AUv3_bundle_properties auv3_target)
+
+  # com.yourcompany.NewProject -> com.yourcompany.NewProject.NewProjectAUv3
+  string(REPLACE "." ";" bundle_id_parts "${JUCER_BUNDLE_IDENTIFIER}")
+  list(LENGTH bundle_id_parts bundle_id_parts_length)
+  math(EXPR bundle_id_parts_last_index "${bundle_id_parts_length} - 1")
+  list(GET bundle_id_parts ${bundle_id_parts_last_index} bundle_id_last_part)
+  list(APPEND bundle_id_parts "${bundle_id_last_part}AUv3")
+  string(REPLACE ";" "." bundle_id "${bundle_id_parts}")
+  if(CMAKE_GENERATOR STREQUAL "Xcode")
+    set_target_properties(${auv3_target} PROPERTIES
+      XCODE_ATTRIBUTE_PRODUCT_BUNDLE_IDENTIFIER "${bundle_id}"
+    )
+  else()
+    set_target_properties(${auv3_target} PROPERTIES
+      MACOSX_BUNDLE_GUI_IDENTIFIER "${bundle_id}"
+    )
+  endif()
+
+  # Cannot use _FRUT_set_bundle_properties() since Projucer sets xcodeIsBundle=false
+  # for this target, though it is a bundle...
+  set_target_properties(${auv3_target} PROPERTIES
+    BUNDLE TRUE
+    BUNDLE_EXTENSION "appex"
+    XCODE_ATTRIBUTE_WRAPPER_EXTENSION "appex"
+  )
+
+endfunction()
+
+
 function(_FRUT_install_to_plugin_binary_location target plugin_type default_destination)
 
   unset(all_confs_destination)
@@ -4503,6 +4456,71 @@ function(_FRUT_char_literal value out_char_literal)
   _FRUT_dec_to_hex("${dec_value}" hex_value)
 
   set(${out_char_literal} "${hex_value} // '${four_chars}'" PARENT_SCOPE)
+
+endfunction()
+
+
+function(_FRUT_add_Rez_command_to_AU_plugin au_target)
+
+  find_program(Rez_exe "Rez")
+  if(NOT Rez_exe)
+    message(WARNING "Could not find Rez tool. Discovery of AU plugins might not work.")
+    return()
+  endif()
+
+  set(rez_output "${CMAKE_CURRENT_BINARY_DIR}/${JUCER_PROJECT_NAME}.rsrc")
+
+  set(rez_defines "")
+  set(rez_archs "")
+  set(all_confs_sysroot "")
+  foreach(config IN LISTS JUCER_PROJECT_CONFIGURATIONS)
+    foreach(osx_architecture IN LISTS JUCER_OSX_ARCHITECTURES_${config})
+      list(APPEND rez_defines
+        "$<$<CONFIG:${config}>:-d>"
+        "$<$<CONFIG:${config}>:${osx_architecture}_YES>"
+      )
+      list(APPEND rez_archs
+        "$<$<CONFIG:${config}>:-arch>"
+        "$<$<CONFIG:${config}>:${osx_architecture}>"
+      )
+    endforeach()
+
+    set(sysroot "${JUCER_MACOSX_SDK_PATH_${config}}")
+    if(IS_DIRECTORY "${sysroot}")
+      list(APPEND all_confs_sysroot
+        "$<$<CONFIG:${config}>:-isysroot>" "$<$<CONFIG:${config}>:${sysroot}>"
+      )
+    endif()
+  endforeach()
+
+  string(CONCAT carbon_include_dir
+    "/System/Library/Frameworks/CoreServices.framework/Frameworks/"
+    "CarbonCore.framework/Versions/A/Headers"
+  )
+  string(CONCAT juce_audio_plugin_client_include_dir
+    "${JUCER_PROJECT_MODULE_juce_audio_plugin_client_PATH}/"
+    "juce_audio_plugin_client"
+  )
+
+  add_custom_command(OUTPUT ${rez_output}
+    COMMAND
+    "${Rez_exe}"
+    "-o" "${rez_output}"
+    "-d" "SystemSevenOrLater=1"
+    "-useDF"
+    ${rez_defines}
+    ${rez_archs}
+    "-i" "${carbon_include_dir}"
+    "-i" "${CMAKE_CURRENT_BINARY_DIR}/JuceLibraryCode"
+    "-i" "${juce_audio_plugin_client_include_dir}"
+    ${all_confs_sysroot}
+    ${ARGN}
+  )
+  set_source_files_properties("${rez_output}" PROPERTIES
+    GENERATED TRUE
+    MACOSX_PACKAGE_LOCATION "Resources"
+  )
+  target_sources(${au_target} PRIVATE "${rez_output}")
 
 endfunction()
 
