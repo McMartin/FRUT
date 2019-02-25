@@ -74,10 +74,10 @@
 #include <vector>
 
 
-#if !defined(USE_CRLF_LINE_ENDINGS)
-#error USE_CRLF_LINE_ENDINGS must be defined
+#if !defined(WRITE_CRLF_LINE_ENDINGS)
+#error WRITE_CRLF_LINE_ENDINGS must be defined
 #endif
-#if USE_CRLF_LINE_ENDINGS
+#if WRITE_CRLF_LINE_ENDINGS
 static const auto kNewLine = "\r\n";
 #else
 static const auto kNewLine = '\n';
