@@ -38,15 +38,9 @@ if(NOT IS_DIRECTORY "${JUCE_ROOT}")
 endif()
 
 
-if(WIN32)
-  set(crlf_line_endings_default ON)
-else()
-  set(crlf_line_endings_default OFF)
-endif()
-
 option(USE_CRLF_LINE_ENDINGS
   "Use CR+LF line endings in generated CMakeLists.txt files"
-  ${crlf_line_endings_default}
+  OFF
 )
 
 
