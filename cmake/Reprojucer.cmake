@@ -3509,417 +3509,13 @@ function(_FRUT_set_compiler_and_linker_settings target)
   _FRUT_set_cxx_language_standard_properties(${target})
 
   if(APPLE)
-    foreach(config IN LISTS JUCER_PROJECT_CONFIGURATIONS)
-      if(JUCER_CONFIGURATION_IS_DEBUG_${config})
-        target_compile_definitions(${target} PRIVATE
-          $<$<CONFIG:${config}>:_DEBUG=1>
-          $<$<CONFIG:${config}>:DEBUG=1>
-        )
-      else()
-        target_compile_definitions(${target} PRIVATE
-          $<$<CONFIG:${config}>:_NDEBUG=1>
-          $<$<CONFIG:${config}>:NDEBUG=1>
-        )
-      endif()
-
-      if(DEFINED JUCER_CXX_LIBRARY_${config})
-        target_compile_options(${target} PRIVATE
-          $<$<CONFIG:${config}>:-stdlib=${JUCER_CXX_LIBRARY_${config}}>
-        )
-      endif()
-
-      if(JUCER_RELAX_IEEE_COMPLIANCE_${config})
-        target_compile_options(${target} PRIVATE $<$<CONFIG:${config}>:-ffast-math>)
-      endif()
-
-      if(DEFINED JUCER_VERSION AND JUCER_VERSION VERSION_LESS 5.2.0)
-        if(JUCER_LINK_TIME_OPTIMISATION_${config})
-          target_compile_options(${target} PRIVATE $<$<CONFIG:${config}>:-flto>)
-        endif()
-      else()
-        if(JUCER_CONFIGURATION_IS_DEBUG_${config})
-          if(JUCER_LINK_TIME_OPTIMISATION_${config})
-            target_compile_options(${target} PRIVATE $<$<CONFIG:${config}>:-flto>)
-          endif()
-        else()
-          if(NOT (DEFINED JUCER_LINK_TIME_OPTIMISATION_${config}
-                  AND NOT JUCER_LINK_TIME_OPTIMISATION_${config}))
-            target_compile_options(${target} PRIVATE $<$<CONFIG:${config}>:-flto>)
-          endif()
-        endif()
-      endif()
-    endforeach()
-
-    if(target MATCHES "_AUv3_AppExtension$")
-      if(CMAKE_GENERATOR STREQUAL "Xcode")
-        set_target_properties(${target} PROPERTIES
-          XCODE_ATTRIBUTE_ARCHS "$(ARCHS_STANDARD_64_BIT)"
-        )
-      else()
-        set_target_properties(${target} PROPERTIES OSX_ARCHITECTURES "x86_64")
-      endif()
-    else()
-      if(CMAKE_GENERATOR STREQUAL "Xcode")
-        set(all_confs_archs "")
-        foreach(config IN LISTS JUCER_PROJECT_CONFIGURATIONS)
-          if(DEFINED JUCER_XCODE_ARCHS_${config})
-            set(xcode_archs "${JUCER_XCODE_ARCHS_${config}}")
-            string(APPEND all_confs_archs "$<$<CONFIG:${config}>:${xcode_archs}>")
-          endif()
-        endforeach()
-        set_target_properties(${target} PROPERTIES
-          XCODE_ATTRIBUTE_ARCHS "${all_confs_archs}"
-        )
-      else()
-        foreach(config IN LISTS JUCER_PROJECT_CONFIGURATIONS)
-          if(DEFINED JUCER_OSX_ARCHITECTURES_${config})
-            string(TOUPPER "${config}" upper_config)
-            set_target_properties(${target} PROPERTIES
-              OSX_ARCHITECTURES_${upper_config} "${JUCER_OSX_ARCHITECTURES_${config}}"
-            )
-          endif()
-        endforeach()
-      endif()
-    endif()
-
-    if(CMAKE_GENERATOR STREQUAL "Xcode")
-      set(all_confs_osx_deployment_target "")
-      set(all_confs_sdkroot "")
-      foreach(config IN LISTS JUCER_PROJECT_CONFIGURATIONS)
-        set(osx_deployment_target "10.11")
-        if(DEFINED JUCER_OSX_DEPLOYMENT_TARGET_${config})
-          set(osx_deployment_target "${JUCER_OSX_DEPLOYMENT_TARGET_${config}}")
-        endif()
-        if(target MATCHES "_AUv3_AppExtension$"
-            AND osx_deployment_target VERSION_LESS 10.11)
-          set(osx_deployment_target "10.11")
-          message(STATUS "Set OSX Deployment Target to 10.11 for ${target} in ${config}")
-        endif()
-        string(APPEND all_confs_osx_deployment_target
-          "$<$<CONFIG:${config}>:${osx_deployment_target}>"
-        )
-
-        if(DEFINED JUCER_OSX_BASE_SDK_VERSION_${config})
-          string(APPEND all_confs_sdkroot
-            "$<$<CONFIG:${config}>:macosx${JUCER_OSX_BASE_SDK_VERSION_${config}}>"
-          )
-        endif()
-      endforeach()
-      set_target_properties(${target} PROPERTIES
-        XCODE_ATTRIBUTE_MACOSX_DEPLOYMENT_TARGET "${all_confs_osx_deployment_target}"
-        XCODE_ATTRIBUTE_SDKROOT "${all_confs_sdkroot}"
-      )
-    else()
-      set(osx_deployment_target "10.11")
-      if(DEFINED JUCER_OSX_DEPLOYMENT_TARGET_${CMAKE_BUILD_TYPE})
-        set(osx_deployment_target "${JUCER_OSX_DEPLOYMENT_TARGET_${CMAKE_BUILD_TYPE}}")
-      endif()
-      if(target MATCHES "_AUv3_AppExtension$"
-          AND osx_deployment_target VERSION_LESS 10.11)
-        set(osx_deployment_target "10.11")
-        message(STATUS "Set OSX Deployment Target to 10.11 for ${target}")
-      endif()
-      target_compile_options(${target} PRIVATE
-        "-mmacosx-version-min=${osx_deployment_target}"
-      )
-      set_property(TARGET ${target} APPEND_STRING PROPERTY
-        LINK_FLAGS " -mmacosx-version-min=${osx_deployment_target}"
-      )
-
-      set(sysroot "${JUCER_MACOSX_SDK_PATH_${CMAKE_BUILD_TYPE}}")
-      if(IS_DIRECTORY "${sysroot}")
-        target_compile_options(${target} PRIVATE -isysroot "${sysroot}")
-        set_property(TARGET ${target} APPEND_STRING PROPERTY
-          LINK_FLAGS " -isysroot ${sysroot}"
-        )
-      endif()
-    endif()
-
-    unset(all_confs_code_sign_identity)
-    foreach(config IN LISTS JUCER_PROJECT_CONFIGURATIONS)
-      if(NOT JUCER_CODE_SIGNING_IDENTITY_${config} STREQUAL "Mac Developer")
-        string(APPEND all_confs_code_sign_identity
-          $<$<CONFIG:${config}>:${JUCER_CODE_SIGNING_IDENTITY_${config}}>
-        )
-      endif()
-    endforeach()
-    if(DEFINED all_confs_code_sign_identity)
-      set_target_properties(${target} PROPERTIES
-        XCODE_ATTRIBUTE_CODE_SIGN_IDENTITY "${all_confs_code_sign_identity}"
-      )
-    endif()
-
-    if(CMAKE_GENERATOR STREQUAL "Xcode" AND DEFINED JUCER_USE_HEADERMAP)
-      if(JUCER_USE_HEADERMAP)
-        set_target_properties(${target} PROPERTIES XCODE_ATTRIBUTE_USE_HEADERMAP "YES")
-      else()
-        set_target_properties(${target} PROPERTIES XCODE_ATTRIBUTE_USE_HEADERMAP "NO")
-      endif()
-    endif()
-
+    _FRUT_set_compiler_and_linker_settings_APPLE(${target})
   elseif(MSVC)
-    target_compile_definitions(${target} PRIVATE "_CRT_SECURE_NO_WARNINGS")
-
-    foreach(config IN LISTS JUCER_PROJECT_CONFIGURATIONS)
-      if(NOT DEFINED JUCER_MULTI_PROCESSOR_COMPILATION_${config}
-          OR JUCER_MULTI_PROCESSOR_COMPILATION_${config})
-        target_compile_options(${target} PRIVATE "/MP")
-      endif()
-
-      if(JUCER_CONFIGURATION_IS_DEBUG_${config})
-        target_compile_definitions(${target} PRIVATE
-          $<$<CONFIG:${config}>:DEBUG>
-          $<$<CONFIG:${config}>:_DEBUG>
-        )
-
-        if(JUCER_LINK_TIME_OPTIMISATION_${config})
-          target_compile_options(${target} PRIVATE $<$<CONFIG:${config}>:/GL>)
-        endif()
-      else()
-        target_compile_definitions(${target} PRIVATE $<$<CONFIG:${config}>:NDEBUG>)
-
-        if(NOT JUCER_ALWAYS_DISABLE_WPO_${config}
-            AND NOT (DEFINED JUCER_LINK_TIME_OPTIMISATION_${config}
-                     AND NOT JUCER_LINK_TIME_OPTIMISATION_${config}))
-          target_compile_options(${target} PRIVATE $<$<CONFIG:${config}>:/GL>)
-        endif()
-      endif()
-
-      if(NOT DEFINED JUCER_CHARACTER_SET_${config}
-          OR JUCER_CHARACTER_SET_${config} STREQUAL "Default")
-        target_compile_definitions(${target} PRIVATE $<$<CONFIG:${config}>:_SBCS>)
-      elseif(JUCER_CHARACTER_SET_${config} STREQUAL "MultiByte")
-        # Nothing to do, this is CMake's default
-      elseif(JUCER_CHARACTER_SET_${config} STREQUAL "Unicode")
-        target_compile_definitions(${target} PRIVATE
-          $<$<CONFIG:${config}>:_UNICODE>
-          $<$<CONFIG:${config}>:UNICODE>
-        )
-      endif()
-
-      if(DEFINED JUCER_RUNTIME_LIBRARY_FLAG_${config})
-        target_compile_options(${target} PRIVATE
-          $<$<CONFIG:${config}>:${JUCER_RUNTIME_LIBRARY_FLAG_${config}}>
-        )
-      elseif(JUCER_BUILD_VST OR JUCER_BUILD_VST3)
-        if(JUCER_CONFIGURATION_IS_DEBUG_${config})
-          target_compile_options(${target} PRIVATE $<$<CONFIG:${config}>:/MDd>)
-        else()
-          target_compile_options(${target} PRIVATE $<$<CONFIG:${config}>:/MD>)
-        endif()
-      else()
-        if(JUCER_CONFIGURATION_IS_DEBUG_${config})
-          target_compile_options(${target} PRIVATE $<$<CONFIG:${config}>:/MTd>)
-        else()
-          target_compile_options(${target} PRIVATE $<$<CONFIG:${config}>:/MT>)
-        endif()
-      endif()
-
-      if(DEFINED JUCER_DEBUG_INFORMATION_FORMAT_FLAG_${config})
-        target_compile_options(${target} PRIVATE
-          $<$<CONFIG:${config}>:${JUCER_DEBUG_INFORMATION_FORMAT_FLAG_${config}}>
-        )
-      endif()
-
-      if(DEFINED JUCER_WARNING_LEVEL_FLAG_${config})
-        target_compile_options(${target} PRIVATE
-          $<$<CONFIG:${config}>:${JUCER_WARNING_LEVEL_FLAG_${config}}>
-        )
-      else()
-        target_compile_options(${target} PRIVATE $<$<CONFIG:${config}>:/W4>)
-      endif()
-
-      if(JUCER_TREAT_WARNINGS_AS_ERRORS_${config})
-        target_compile_options(${target} PRIVATE $<$<CONFIG:${config}>:/WX>)
-      endif()
-
-      if(JUCER_RELAX_IEEE_COMPLIANCE_${config})
-        target_compile_options(${target} PRIVATE $<$<CONFIG:${config}>:/fp:fast>)
-      endif()
-
-      string(TOUPPER "${config}" upper_config)
-
-      if(DEFINED JUCER_INCREMENTAL_LINKING_${config})
-        if(JUCER_INCREMENTAL_LINKING_${config})
-          set_property(TARGET ${target} APPEND_STRING PROPERTY
-            LINK_FLAGS_${upper_config} " /INCREMENTAL"
-          )
-        endif()
-      endif()
-
-      if(DEFINED JUCER_FORCE_GENERATION_OF_DEBUG_SYMBOLS_${config})
-        if(JUCER_FORCE_GENERATION_OF_DEBUG_SYMBOLS_${config})
-          set_property(TARGET ${target} APPEND_STRING PROPERTY
-            LINK_FLAGS_${upper_config} " /DEBUG"
-          )
-        endif()
-      endif()
-
-      if(DEFINED JUCER_GENERATE_MANIFEST_${config})
-        if(NOT JUCER_GENERATE_MANIFEST_${config})
-          set_property(TARGET ${target} APPEND_STRING PROPERTY
-            LINK_FLAGS_${upper_config} " /MANIFEST:NO"
-          )
-        endif()
-      endif()
-    endforeach()
-
+    _FRUT_set_compiler_and_linker_settings_MSVC(${target})
   elseif(CMAKE_HOST_SYSTEM_NAME STREQUAL "Linux")
-    target_compile_definitions(${target} PRIVATE "LINUX=1")
-
-    foreach(config IN LISTS JUCER_PROJECT_CONFIGURATIONS)
-      if(JUCER_CONFIGURATION_IS_DEBUG_${config})
-        target_compile_definitions(${target} PRIVATE
-          $<$<CONFIG:${config}>:DEBUG=1>
-          $<$<CONFIG:${config}>:_DEBUG=1>
-        )
-      else()
-        target_compile_definitions(${target} PRIVATE $<$<CONFIG:${config}>:NDEBUG=1>)
-      endif()
-
-      string(TOUPPER "${config}" upper_config)
-
-      if(JUCER_LINK_TIME_OPTIMISATION_${config})
-        target_compile_options(${target} PRIVATE $<$<CONFIG:${config}>:-flto>)
-        set_property(TARGET ${target} APPEND_STRING PROPERTY
-          LINK_FLAGS_${upper_config} " -flto"
-        )
-      endif()
-
-      if(CMAKE_EXTRA_GENERATOR STREQUAL "CodeBlocks")
-        if(DEFINED JUCER_ARCHITECTURE_FLAG_${config})
-          target_compile_options(${target} PRIVATE
-            $<$<CONFIG:${config}>:${JUCER_ARCHITECTURE_FLAG_${config}}>
-          )
-          set_property(TARGET ${target} APPEND_STRING PROPERTY
-            LINK_FLAGS_${upper_config} " ${JUCER_ARCHITECTURE_FLAG_${config}}"
-          )
-        endif()
-      else()
-        if(DEFINED JUCER_ARCHITECTURE_FLAG_${config})
-          target_compile_options(${target} PRIVATE
-            $<$<CONFIG:${config}>:${JUCER_ARCHITECTURE_FLAG_${config}}>
-          )
-        else()
-          target_compile_options(${target} PRIVATE $<$<CONFIG:${config}>:-march=native>)
-        endif()
-      endif()
-    endforeach()
-
-    set(linux_packages ${JUCER_PROJECT_LINUX_PACKAGES} ${JUCER_PKGCONFIG_LIBRARIES})
-    if(NOT (DEFINED JUCER_VERSION AND JUCER_VERSION VERSION_LESS 5.0.0)
-        AND "juce_gui_extra" IN_LIST JUCER_PROJECT_MODULES
-        AND (NOT DEFINED JUCER_FLAG_JUCE_WEB_BROWSER OR JUCER_FLAG_JUCE_WEB_BROWSER))
-      list(APPEND linux_packages "webkit2gtk-4.0" "gtk+-x11-3.0")
-    endif()
-    if((NOT DEFINED JUCER_VERSION OR JUCER_VERSION VERSION_GREATER 5.3.2)
-        AND "juce_core" IN_LIST JUCER_PROJECT_MODULES
-        AND (NOT DEFINED JUCER_FLAG_JUCE_USE_CURL OR JUCER_FLAG_JUCE_USE_CURL)
-        AND NOT JUCER_FLAG_JUCE_LOAD_CURL_SYMBOLS_LAZILY)
-      list(APPEND linux_packages "libcurl")
-    endif()
-    if(linux_packages)
-      find_package(PkgConfig REQUIRED)
-      list(SORT linux_packages)
-      list(REMOVE_DUPLICATES linux_packages)
-      unset(missing_packages)
-      foreach(pkg IN LISTS linux_packages)
-        pkg_check_modules(${pkg} "${pkg}")
-        if(NOT ${pkg}_FOUND)
-          string(APPEND missing_packages " ${pkg}")
-        endif()
-        target_compile_options(${target} PRIVATE ${${pkg}_CFLAGS})
-        target_link_libraries(${target} PRIVATE ${${pkg}_LIBRARIES})
-      endforeach()
-      if(DEFINED missing_packages)
-        message(FATAL_ERROR "pkg-config could not find the following packages:"
-          "${missing_packages}"
-        )
-      endif()
-    else()
-      if("juce_graphics" IN_LIST JUCER_PROJECT_MODULES)
-        target_include_directories(${target} PRIVATE "/usr/include/freetype2")
-      endif()
-      if(JUCER_FLAG_JUCE_USE_CURL)
-        target_link_libraries(${target} PRIVATE "-lcurl")
-      endif()
-    endif()
-
-    set(linux_libs ${JUCER_PROJECT_LINUX_LIBS})
-    if(linux_libs)
-      list(SORT linux_libs)
-      list(REMOVE_DUPLICATES linux_libs)
-      foreach(item IN LISTS linux_libs)
-        if(item STREQUAL "pthread")
-          target_compile_options(${target} PRIVATE "-pthread")
-        endif()
-        target_link_libraries(${target} PRIVATE "-l${item}")
-      endforeach()
-    endif()
-
+    _FRUT_set_compiler_and_linker_settings_Linux(${target})
   elseif(WIN32 AND NOT MSVC)
-    target_compile_definitions(${target} PRIVATE "__MINGW__=1" "__MINGW_EXTENSION=")
-
-    if(DEFINED JUCER_TARGET_PLATFORM AND NOT JUCER_TARGET_PLATFORM STREQUAL "Default")
-      set(target_platform_values "Windows NT 4.0" "Windows 2000" "Windows XP"
-        "Windows Server 2003" "Windows Vista" "Windows Server 2008" "Windows 7"
-        "Windows 8" "Windows 8.1" "Windows 10"
-      )
-      set(winver_define_values "0x0400" "0x0500" "0x0501"
-        "0x0502" "0x0600" "0x0600" "0x0601"
-        "0x0602" "0x0603" "0x0A00"
-      )
-      list(FIND target_platform_values "${JUCER_TARGET_PLATFORM}" target_platform_index)
-      if(target_platform_index EQUAL -1)
-        message(FATAL_ERROR
-          "Unsupported value for JUCER_TARGET_PLATFORM: \"${target_platform}\""
-        )
-      endif()
-      list(GET winver_define_values ${target_platform_index} winver_define_value)
-      target_compile_definitions(${target} PRIVATE "WINVER=${winver_define_value}")
-    endif()
-
-    foreach(config IN LISTS JUCER_PROJECT_CONFIGURATIONS)
-      string(TOUPPER "${config}" upper_config)
-
-      if(JUCER_CONFIGURATION_IS_DEBUG_${config})
-        target_compile_definitions(${target} PRIVATE
-          $<$<CONFIG:${config}>:DEBUG=1>
-          $<$<CONFIG:${config}>:_DEBUG=1>
-        )
-
-        target_compile_options(${target} PRIVATE $<$<CONFIG:${config}>:-g>)
-      else()
-        target_compile_definitions(${target} PRIVATE $<$<CONFIG:${config}>:NDEBUG=1>)
-
-        set_property(TARGET ${target} APPEND_STRING PROPERTY
-          LINK_FLAGS_${upper_config} " -s"
-        )
-      endif()
-
-      if(JUCER_LINK_TIME_OPTIMISATION_${config})
-        target_compile_options(${target} PRIVATE $<$<CONFIG:${config}>:-flto>)
-        set_property(TARGET ${target} APPEND_STRING PROPERTY
-          LINK_FLAGS_${upper_config} " -flto"
-        )
-      endif()
-
-      if(DEFINED JUCER_ARCHITECTURE_FLAG_${config})
-        target_compile_options(${target} PRIVATE
-          $<$<CONFIG:${config}>:${JUCER_ARCHITECTURE_FLAG_${config}}>
-        )
-        set_property(TARGET ${target} APPEND_STRING PROPERTY
-          LINK_FLAGS_${upper_config} " ${JUCER_ARCHITECTURE_FLAG_${config}}"
-        )
-      endif()
-    endforeach()
-
-    target_compile_options(${target} PRIVATE "-mstackrealign")
-
-    if(JUCER_PROJECT_MINGW_LIBS)
-      target_link_libraries(${target} PRIVATE ${JUCER_PROJECT_MINGW_LIBS})
-    endif()
-
+    _FRUT_set_compiler_and_linker_settings_MinGW(${target})
   endif()
 
   target_compile_definitions(${target} PRIVATE
@@ -3944,6 +3540,433 @@ function(_FRUT_set_compiler_and_linker_settings target)
   endforeach()
   target_link_libraries(${target} PRIVATE ${JUCER_EXTRA_LINKER_FLAGS})
   target_link_libraries(${target} PRIVATE ${JUCER_EXTERNAL_LIBRARIES_TO_LINK})
+
+endfunction()
+
+
+function(_FRUT_set_compiler_and_linker_settings_APPLE target)
+
+  foreach(config IN LISTS JUCER_PROJECT_CONFIGURATIONS)
+    if(JUCER_CONFIGURATION_IS_DEBUG_${config})
+      target_compile_definitions(${target} PRIVATE
+        $<$<CONFIG:${config}>:_DEBUG=1>
+        $<$<CONFIG:${config}>:DEBUG=1>
+      )
+    else()
+      target_compile_definitions(${target} PRIVATE
+        $<$<CONFIG:${config}>:_NDEBUG=1>
+        $<$<CONFIG:${config}>:NDEBUG=1>
+      )
+    endif()
+
+    if(DEFINED JUCER_CXX_LIBRARY_${config})
+      target_compile_options(${target} PRIVATE
+        $<$<CONFIG:${config}>:-stdlib=${JUCER_CXX_LIBRARY_${config}}>
+      )
+    endif()
+
+    if(JUCER_RELAX_IEEE_COMPLIANCE_${config})
+      target_compile_options(${target} PRIVATE $<$<CONFIG:${config}>:-ffast-math>)
+    endif()
+
+    if(DEFINED JUCER_VERSION AND JUCER_VERSION VERSION_LESS 5.2.0)
+      if(JUCER_LINK_TIME_OPTIMISATION_${config})
+        target_compile_options(${target} PRIVATE $<$<CONFIG:${config}>:-flto>)
+      endif()
+    else()
+      if(JUCER_CONFIGURATION_IS_DEBUG_${config})
+        if(JUCER_LINK_TIME_OPTIMISATION_${config})
+          target_compile_options(${target} PRIVATE $<$<CONFIG:${config}>:-flto>)
+        endif()
+      else()
+        if(NOT (DEFINED JUCER_LINK_TIME_OPTIMISATION_${config}
+                AND NOT JUCER_LINK_TIME_OPTIMISATION_${config}))
+          target_compile_options(${target} PRIVATE $<$<CONFIG:${config}>:-flto>)
+        endif()
+      endif()
+    endif()
+  endforeach()
+
+  if(target MATCHES "_AUv3_AppExtension$")
+    if(CMAKE_GENERATOR STREQUAL "Xcode")
+      set_target_properties(${target} PROPERTIES
+        XCODE_ATTRIBUTE_ARCHS "$(ARCHS_STANDARD_64_BIT)"
+      )
+    else()
+      set_target_properties(${target} PROPERTIES OSX_ARCHITECTURES "x86_64")
+    endif()
+  else()
+    if(CMAKE_GENERATOR STREQUAL "Xcode")
+      set(all_confs_archs "")
+      foreach(config IN LISTS JUCER_PROJECT_CONFIGURATIONS)
+        if(DEFINED JUCER_XCODE_ARCHS_${config})
+          set(xcode_archs "${JUCER_XCODE_ARCHS_${config}}")
+          string(APPEND all_confs_archs "$<$<CONFIG:${config}>:${xcode_archs}>")
+        endif()
+      endforeach()
+      set_target_properties(${target} PROPERTIES
+        XCODE_ATTRIBUTE_ARCHS "${all_confs_archs}"
+      )
+    else()
+      foreach(config IN LISTS JUCER_PROJECT_CONFIGURATIONS)
+        if(DEFINED JUCER_OSX_ARCHITECTURES_${config})
+          string(TOUPPER "${config}" upper_config)
+          set_target_properties(${target} PROPERTIES
+            OSX_ARCHITECTURES_${upper_config} "${JUCER_OSX_ARCHITECTURES_${config}}"
+          )
+        endif()
+      endforeach()
+    endif()
+  endif()
+
+  if(CMAKE_GENERATOR STREQUAL "Xcode")
+    set(all_confs_osx_deployment_target "")
+    set(all_confs_sdkroot "")
+    foreach(config IN LISTS JUCER_PROJECT_CONFIGURATIONS)
+      set(osx_deployment_target "10.11")
+      if(DEFINED JUCER_OSX_DEPLOYMENT_TARGET_${config})
+        set(osx_deployment_target "${JUCER_OSX_DEPLOYMENT_TARGET_${config}}")
+      endif()
+      if(target MATCHES "_AUv3_AppExtension$"
+          AND osx_deployment_target VERSION_LESS 10.11)
+        set(osx_deployment_target "10.11")
+        message(STATUS "Set OSX Deployment Target to 10.11 for ${target} in ${config}")
+      endif()
+      string(APPEND all_confs_osx_deployment_target
+        "$<$<CONFIG:${config}>:${osx_deployment_target}>"
+      )
+
+      if(DEFINED JUCER_OSX_BASE_SDK_VERSION_${config})
+        string(APPEND all_confs_sdkroot
+          "$<$<CONFIG:${config}>:macosx${JUCER_OSX_BASE_SDK_VERSION_${config}}>"
+        )
+      endif()
+    endforeach()
+    set_target_properties(${target} PROPERTIES
+      XCODE_ATTRIBUTE_MACOSX_DEPLOYMENT_TARGET "${all_confs_osx_deployment_target}"
+      XCODE_ATTRIBUTE_SDKROOT "${all_confs_sdkroot}"
+    )
+  else()
+    set(osx_deployment_target "10.11")
+    if(DEFINED JUCER_OSX_DEPLOYMENT_TARGET_${CMAKE_BUILD_TYPE})
+      set(osx_deployment_target "${JUCER_OSX_DEPLOYMENT_TARGET_${CMAKE_BUILD_TYPE}}")
+    endif()
+    if(target MATCHES "_AUv3_AppExtension$" AND osx_deployment_target VERSION_LESS 10.11)
+      set(osx_deployment_target "10.11")
+      message(STATUS "Set OSX Deployment Target to 10.11 for ${target}")
+    endif()
+    target_compile_options(${target} PRIVATE
+      "-mmacosx-version-min=${osx_deployment_target}"
+    )
+    set_property(TARGET ${target} APPEND_STRING PROPERTY
+      LINK_FLAGS " -mmacosx-version-min=${osx_deployment_target}"
+    )
+
+    set(sysroot "${JUCER_MACOSX_SDK_PATH_${CMAKE_BUILD_TYPE}}")
+    if(IS_DIRECTORY "${sysroot}")
+      target_compile_options(${target} PRIVATE -isysroot "${sysroot}")
+      set_property(TARGET ${target} APPEND_STRING PROPERTY
+        LINK_FLAGS " -isysroot ${sysroot}"
+      )
+    endif()
+  endif()
+
+  unset(all_confs_code_sign_identity)
+  foreach(config IN LISTS JUCER_PROJECT_CONFIGURATIONS)
+    if(NOT JUCER_CODE_SIGNING_IDENTITY_${config} STREQUAL "Mac Developer")
+      string(APPEND all_confs_code_sign_identity
+        $<$<CONFIG:${config}>:${JUCER_CODE_SIGNING_IDENTITY_${config}}>
+      )
+    endif()
+  endforeach()
+  if(DEFINED all_confs_code_sign_identity)
+    set_target_properties(${target} PROPERTIES
+      XCODE_ATTRIBUTE_CODE_SIGN_IDENTITY "${all_confs_code_sign_identity}"
+    )
+  endif()
+
+  if(CMAKE_GENERATOR STREQUAL "Xcode" AND DEFINED JUCER_USE_HEADERMAP)
+    if(JUCER_USE_HEADERMAP)
+      set_target_properties(${target} PROPERTIES XCODE_ATTRIBUTE_USE_HEADERMAP "YES")
+    else()
+      set_target_properties(${target} PROPERTIES XCODE_ATTRIBUTE_USE_HEADERMAP "NO")
+    endif()
+  endif()
+
+endfunction()
+
+
+function(_FRUT_set_compiler_and_linker_settings_MSVC target)
+
+  target_compile_definitions(${target} PRIVATE "_CRT_SECURE_NO_WARNINGS")
+
+  foreach(config IN LISTS JUCER_PROJECT_CONFIGURATIONS)
+    if(NOT DEFINED JUCER_MULTI_PROCESSOR_COMPILATION_${config}
+        OR JUCER_MULTI_PROCESSOR_COMPILATION_${config})
+      target_compile_options(${target} PRIVATE "/MP")
+    endif()
+
+    if(JUCER_CONFIGURATION_IS_DEBUG_${config})
+      target_compile_definitions(${target} PRIVATE
+        $<$<CONFIG:${config}>:DEBUG>
+        $<$<CONFIG:${config}>:_DEBUG>
+      )
+
+      if(JUCER_LINK_TIME_OPTIMISATION_${config})
+        target_compile_options(${target} PRIVATE $<$<CONFIG:${config}>:/GL>)
+      endif()
+    else()
+      target_compile_definitions(${target} PRIVATE $<$<CONFIG:${config}>:NDEBUG>)
+
+      if(NOT JUCER_ALWAYS_DISABLE_WPO_${config}
+          AND NOT (DEFINED JUCER_LINK_TIME_OPTIMISATION_${config}
+                   AND NOT JUCER_LINK_TIME_OPTIMISATION_${config}))
+        target_compile_options(${target} PRIVATE $<$<CONFIG:${config}>:/GL>)
+      endif()
+    endif()
+
+    if(NOT DEFINED JUCER_CHARACTER_SET_${config}
+        OR JUCER_CHARACTER_SET_${config} STREQUAL "Default")
+      target_compile_definitions(${target} PRIVATE $<$<CONFIG:${config}>:_SBCS>)
+    elseif(JUCER_CHARACTER_SET_${config} STREQUAL "MultiByte")
+      # Nothing to do, this is CMake's default
+    elseif(JUCER_CHARACTER_SET_${config} STREQUAL "Unicode")
+      target_compile_definitions(${target} PRIVATE
+        $<$<CONFIG:${config}>:_UNICODE>
+        $<$<CONFIG:${config}>:UNICODE>
+      )
+    endif()
+
+    if(DEFINED JUCER_RUNTIME_LIBRARY_FLAG_${config})
+      target_compile_options(${target} PRIVATE
+        $<$<CONFIG:${config}>:${JUCER_RUNTIME_LIBRARY_FLAG_${config}}>
+      )
+    elseif(JUCER_BUILD_VST OR JUCER_BUILD_VST3)
+      if(JUCER_CONFIGURATION_IS_DEBUG_${config})
+        target_compile_options(${target} PRIVATE $<$<CONFIG:${config}>:/MDd>)
+      else()
+        target_compile_options(${target} PRIVATE $<$<CONFIG:${config}>:/MD>)
+      endif()
+    else()
+      if(JUCER_CONFIGURATION_IS_DEBUG_${config})
+        target_compile_options(${target} PRIVATE $<$<CONFIG:${config}>:/MTd>)
+      else()
+        target_compile_options(${target} PRIVATE $<$<CONFIG:${config}>:/MT>)
+      endif()
+    endif()
+
+    if(DEFINED JUCER_DEBUG_INFORMATION_FORMAT_FLAG_${config})
+      target_compile_options(${target} PRIVATE
+        $<$<CONFIG:${config}>:${JUCER_DEBUG_INFORMATION_FORMAT_FLAG_${config}}>
+      )
+    endif()
+
+    if(DEFINED JUCER_WARNING_LEVEL_FLAG_${config})
+      target_compile_options(${target} PRIVATE
+        $<$<CONFIG:${config}>:${JUCER_WARNING_LEVEL_FLAG_${config}}>
+      )
+    else()
+      target_compile_options(${target} PRIVATE $<$<CONFIG:${config}>:/W4>)
+    endif()
+
+    if(JUCER_TREAT_WARNINGS_AS_ERRORS_${config})
+      target_compile_options(${target} PRIVATE $<$<CONFIG:${config}>:/WX>)
+    endif()
+
+    if(JUCER_RELAX_IEEE_COMPLIANCE_${config})
+      target_compile_options(${target} PRIVATE $<$<CONFIG:${config}>:/fp:fast>)
+    endif()
+
+    string(TOUPPER "${config}" upper_config)
+
+    if(DEFINED JUCER_INCREMENTAL_LINKING_${config})
+      if(JUCER_INCREMENTAL_LINKING_${config})
+        set_property(TARGET ${target} APPEND_STRING PROPERTY
+          LINK_FLAGS_${upper_config} " /INCREMENTAL"
+        )
+      endif()
+    endif()
+
+    if(DEFINED JUCER_FORCE_GENERATION_OF_DEBUG_SYMBOLS_${config})
+      if(JUCER_FORCE_GENERATION_OF_DEBUG_SYMBOLS_${config})
+        set_property(TARGET ${target} APPEND_STRING PROPERTY
+          LINK_FLAGS_${upper_config} " /DEBUG"
+        )
+      endif()
+    endif()
+
+    if(DEFINED JUCER_GENERATE_MANIFEST_${config})
+      if(NOT JUCER_GENERATE_MANIFEST_${config})
+        set_property(TARGET ${target} APPEND_STRING PROPERTY
+          LINK_FLAGS_${upper_config} " /MANIFEST:NO"
+        )
+      endif()
+    endif()
+  endforeach()
+
+endfunction()
+
+
+function(_FRUT_set_compiler_and_linker_settings_Linux target)
+
+  target_compile_definitions(${target} PRIVATE "LINUX=1")
+
+  foreach(config IN LISTS JUCER_PROJECT_CONFIGURATIONS)
+    if(JUCER_CONFIGURATION_IS_DEBUG_${config})
+      target_compile_definitions(${target} PRIVATE
+        $<$<CONFIG:${config}>:DEBUG=1>
+        $<$<CONFIG:${config}>:_DEBUG=1>
+      )
+    else()
+      target_compile_definitions(${target} PRIVATE $<$<CONFIG:${config}>:NDEBUG=1>)
+    endif()
+
+    string(TOUPPER "${config}" upper_config)
+
+    if(JUCER_LINK_TIME_OPTIMISATION_${config})
+      target_compile_options(${target} PRIVATE $<$<CONFIG:${config}>:-flto>)
+      set_property(TARGET ${target} APPEND_STRING PROPERTY
+        LINK_FLAGS_${upper_config} " -flto"
+      )
+    endif()
+
+    if(CMAKE_EXTRA_GENERATOR STREQUAL "CodeBlocks")
+      if(DEFINED JUCER_ARCHITECTURE_FLAG_${config})
+        target_compile_options(${target} PRIVATE
+          $<$<CONFIG:${config}>:${JUCER_ARCHITECTURE_FLAG_${config}}>
+        )
+        set_property(TARGET ${target} APPEND_STRING PROPERTY
+          LINK_FLAGS_${upper_config} " ${JUCER_ARCHITECTURE_FLAG_${config}}"
+        )
+      endif()
+    else()
+      if(DEFINED JUCER_ARCHITECTURE_FLAG_${config})
+        target_compile_options(${target} PRIVATE
+          $<$<CONFIG:${config}>:${JUCER_ARCHITECTURE_FLAG_${config}}>
+        )
+      else()
+        target_compile_options(${target} PRIVATE $<$<CONFIG:${config}>:-march=native>)
+      endif()
+    endif()
+  endforeach()
+
+  set(linux_packages ${JUCER_PROJECT_LINUX_PACKAGES} ${JUCER_PKGCONFIG_LIBRARIES})
+  if(NOT (DEFINED JUCER_VERSION AND JUCER_VERSION VERSION_LESS 5.0.0)
+      AND "juce_gui_extra" IN_LIST JUCER_PROJECT_MODULES
+      AND (NOT DEFINED JUCER_FLAG_JUCE_WEB_BROWSER OR JUCER_FLAG_JUCE_WEB_BROWSER))
+    list(APPEND linux_packages "webkit2gtk-4.0" "gtk+-x11-3.0")
+  endif()
+  if((NOT DEFINED JUCER_VERSION OR JUCER_VERSION VERSION_GREATER 5.3.2)
+      AND "juce_core" IN_LIST JUCER_PROJECT_MODULES
+      AND (NOT DEFINED JUCER_FLAG_JUCE_USE_CURL OR JUCER_FLAG_JUCE_USE_CURL)
+      AND NOT JUCER_FLAG_JUCE_LOAD_CURL_SYMBOLS_LAZILY)
+    list(APPEND linux_packages "libcurl")
+  endif()
+  if(linux_packages)
+    find_package(PkgConfig REQUIRED)
+    list(SORT linux_packages)
+    list(REMOVE_DUPLICATES linux_packages)
+    unset(missing_packages)
+    foreach(pkg IN LISTS linux_packages)
+      pkg_check_modules(${pkg} "${pkg}")
+      if(NOT ${pkg}_FOUND)
+        string(APPEND missing_packages " ${pkg}")
+      endif()
+      target_compile_options(${target} PRIVATE ${${pkg}_CFLAGS})
+      target_link_libraries(${target} PRIVATE ${${pkg}_LIBRARIES})
+    endforeach()
+    if(DEFINED missing_packages)
+      message(FATAL_ERROR "pkg-config could not find the following packages:"
+        "${missing_packages}"
+      )
+    endif()
+  else()
+    if("juce_graphics" IN_LIST JUCER_PROJECT_MODULES)
+      target_include_directories(${target} PRIVATE "/usr/include/freetype2")
+    endif()
+    if(JUCER_FLAG_JUCE_USE_CURL)
+      target_link_libraries(${target} PRIVATE "-lcurl")
+    endif()
+  endif()
+
+  set(linux_libs ${JUCER_PROJECT_LINUX_LIBS})
+  if(linux_libs)
+    list(SORT linux_libs)
+    list(REMOVE_DUPLICATES linux_libs)
+    foreach(item IN LISTS linux_libs)
+      if(item STREQUAL "pthread")
+        target_compile_options(${target} PRIVATE "-pthread")
+      endif()
+      target_link_libraries(${target} PRIVATE "-l${item}")
+    endforeach()
+  endif()
+
+endfunction()
+
+
+function(_FRUT_set_compiler_and_linker_settings_MinGW target)
+
+  target_compile_definitions(${target} PRIVATE "__MINGW__=1" "__MINGW_EXTENSION=")
+
+  if(DEFINED JUCER_TARGET_PLATFORM AND NOT JUCER_TARGET_PLATFORM STREQUAL "Default")
+    set(target_platform_values "Windows NT 4.0" "Windows 2000" "Windows XP"
+      "Windows Server 2003" "Windows Vista" "Windows Server 2008" "Windows 7"
+      "Windows 8" "Windows 8.1" "Windows 10"
+    )
+    set(winver_define_values "0x0400" "0x0500" "0x0501"
+      "0x0502" "0x0600" "0x0600" "0x0601"
+      "0x0602" "0x0603" "0x0A00"
+    )
+    list(FIND target_platform_values "${JUCER_TARGET_PLATFORM}" target_platform_index)
+    if(target_platform_index EQUAL -1)
+      message(FATAL_ERROR
+        "Unsupported value for JUCER_TARGET_PLATFORM: \"${target_platform}\""
+      )
+    endif()
+    list(GET winver_define_values ${target_platform_index} winver_define_value)
+    target_compile_definitions(${target} PRIVATE "WINVER=${winver_define_value}")
+  endif()
+
+  foreach(config IN LISTS JUCER_PROJECT_CONFIGURATIONS)
+    string(TOUPPER "${config}" upper_config)
+
+    if(JUCER_CONFIGURATION_IS_DEBUG_${config})
+      target_compile_definitions(${target} PRIVATE
+        $<$<CONFIG:${config}>:DEBUG=1>
+        $<$<CONFIG:${config}>:_DEBUG=1>
+      )
+
+      target_compile_options(${target} PRIVATE $<$<CONFIG:${config}>:-g>)
+    else()
+      target_compile_definitions(${target} PRIVATE $<$<CONFIG:${config}>:NDEBUG=1>)
+
+      set_property(TARGET ${target} APPEND_STRING PROPERTY
+        LINK_FLAGS_${upper_config} " -s"
+      )
+    endif()
+
+    if(JUCER_LINK_TIME_OPTIMISATION_${config})
+      target_compile_options(${target} PRIVATE $<$<CONFIG:${config}>:-flto>)
+      set_property(TARGET ${target} APPEND_STRING PROPERTY
+        LINK_FLAGS_${upper_config} " -flto"
+      )
+    endif()
+
+    if(DEFINED JUCER_ARCHITECTURE_FLAG_${config})
+      target_compile_options(${target} PRIVATE
+        $<$<CONFIG:${config}>:${JUCER_ARCHITECTURE_FLAG_${config}}>
+      )
+      set_property(TARGET ${target} APPEND_STRING PROPERTY
+        LINK_FLAGS_${upper_config} " ${JUCER_ARCHITECTURE_FLAG_${config}}"
+      )
+    endif()
+  endforeach()
+
+  target_compile_options(${target} PRIVATE "-mstackrealign")
+
+  if(JUCER_PROJECT_MINGW_LIBS)
+    target_link_libraries(${target} PRIVATE ${JUCER_PROJECT_MINGW_LIBS})
+  endif()
 
 endfunction()
 
