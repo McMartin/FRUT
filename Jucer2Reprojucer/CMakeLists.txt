@@ -49,12 +49,6 @@ option(USE_CRLF_LINE_ENDINGS
   ${crlf_line_endings_default}
 )
 
-if(USE_CRLF_LINE_ENDINGS)
-  set(use_crlf_line_endings_define 1)
-else()
-  set(use_crlf_line_endings_define 0)
-endif()
-
 
 jucer_project_begin()
 
@@ -67,7 +61,7 @@ jucer_project_settings(
   PREPROCESSOR_DEFINITIONS
     "DONT_SET_USING_JUCE_NAMESPACE=1"
     "JUCE_DISABLE_JUCE_VERSION_PRINTING=1"
-    "USE_CRLF_LINE_ENDINGS=${use_crlf_line_endings_define}"
+    "USE_CRLF_LINE_ENDINGS=$<BOOL:${USE_CRLF_LINE_ENDINGS}>"
   HEADER_SEARCH_PATHS
     "${CMAKE_CURRENT_LIST_DIR}/third-party"
 )
