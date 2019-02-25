@@ -31,45 +31,45 @@ build_script:
   - cd %APPVEYOR_BUILD_FOLDER%\build_Debug
   - >
     cmake .. -G "MinGW Makefiles" -DCMAKE_BUILD_TYPE=Debug
-    -DUSE_CRLF_LINE_ENDINGS=OFF -DJUCE_ROOT="%APPVEYOR_BUILD_FOLDER%/ci/tmp/JUCE-4.2.0"
+    -DJUCE_ROOT="%APPVEYOR_BUILD_FOLDER%/ci/tmp/JUCE-4.2.0"
   - cmake --build . -- -j4
   - cd %APPVEYOR_BUILD_FOLDER%\build_Release
   - >
     cmake .. -G "MinGW Makefiles" -DCMAKE_BUILD_TYPE=Release
-    -DUSE_CRLF_LINE_ENDINGS=OFF -DJUCE_ROOT="%APPVEYOR_BUILD_FOLDER%/ci/tmp/JUCE-4.2.0"
+    -DJUCE_ROOT="%APPVEYOR_BUILD_FOLDER%/ci/tmp/JUCE-4.2.0"
 
   # Configure and build FRUT with JUCE 4.3.1
   - cd %APPVEYOR_BUILD_FOLDER%\build_Debug
   - >
     cmake .. -G "MinGW Makefiles" -DCMAKE_BUILD_TYPE=Debug
-    -DUSE_CRLF_LINE_ENDINGS=OFF -DJUCE_ROOT="%APPVEYOR_BUILD_FOLDER%/ci/tmp/JUCE-4.3.1"
+    -DJUCE_ROOT="%APPVEYOR_BUILD_FOLDER%/ci/tmp/JUCE-4.3.1"
   - cmake --build . -- -j4
   - cd %APPVEYOR_BUILD_FOLDER%\build_Release
   - >
     cmake .. -G "MinGW Makefiles" -DCMAKE_BUILD_TYPE=Release
-    -DUSE_CRLF_LINE_ENDINGS=OFF -DJUCE_ROOT="%APPVEYOR_BUILD_FOLDER%/ci/tmp/JUCE-4.3.1"
+    -DJUCE_ROOT="%APPVEYOR_BUILD_FOLDER%/ci/tmp/JUCE-4.3.1"
 
   # Configure and build FRUT with JUCE 5.2.1
   - cd %APPVEYOR_BUILD_FOLDER%\build_Debug
   - >
     cmake .. -G "MinGW Makefiles" -DCMAKE_BUILD_TYPE=Debug
-    -DUSE_CRLF_LINE_ENDINGS=OFF -DJUCE_ROOT="%APPVEYOR_BUILD_FOLDER%/ci/tmp/JUCE-5.2.1"
+    -DJUCE_ROOT="%APPVEYOR_BUILD_FOLDER%/ci/tmp/JUCE-5.2.1"
   - cmake --build . -- -j4
   - cd %APPVEYOR_BUILD_FOLDER%\build_Release
   - >
     cmake .. -G "MinGW Makefiles" -DCMAKE_BUILD_TYPE=Release
-    -DUSE_CRLF_LINE_ENDINGS=OFF -DJUCE_ROOT="%APPVEYOR_BUILD_FOLDER%/ci/tmp/JUCE-5.2.1"
+    -DJUCE_ROOT="%APPVEYOR_BUILD_FOLDER%/ci/tmp/JUCE-5.2.1"
 
   # Configure and build FRUT with JUCE 5.4.1
   - cd %APPVEYOR_BUILD_FOLDER%\build_Debug
   - >
     cmake .. -G "MinGW Makefiles" -DCMAKE_BUILD_TYPE=Debug
-    -DUSE_CRLF_LINE_ENDINGS=OFF -DJUCE_ROOT="%APPVEYOR_BUILD_FOLDER%/ci/tmp/JUCE-5.4.1"
+    -DJUCE_ROOT="%APPVEYOR_BUILD_FOLDER%/ci/tmp/JUCE-5.4.1"
   - cmake --build . -- -j4
   - cd %APPVEYOR_BUILD_FOLDER%\build_Release
   - >
     cmake .. -G "MinGW Makefiles" -DCMAKE_BUILD_TYPE=Release
-    -DUSE_CRLF_LINE_ENDINGS=OFF -DJUCE_ROOT="%APPVEYOR_BUILD_FOLDER%/ci/tmp/JUCE-5.4.1"
+    -DJUCE_ROOT="%APPVEYOR_BUILD_FOLDER%/ci/tmp/JUCE-5.4.1"
 
   # Build and install FRUT in ./prefix
   - cmake .. -DCMAKE_INSTALL_PREFIX="%APPVEYOR_BUILD_FOLDER%/prefix"

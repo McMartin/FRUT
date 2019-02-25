@@ -38,22 +38,10 @@ if(NOT IS_DIRECTORY "${JUCE_ROOT}")
 endif()
 
 
-if(WIN32)
-  set(crlf_line_endings_default ON)
-else()
-  set(crlf_line_endings_default OFF)
-endif()
-
-option(USE_CRLF_LINE_ENDINGS
-  "Use CR+LF line endings in generated CMakeLists.txt files"
-  ${crlf_line_endings_default}
+option(WRITE_CRLF_LINE_ENDINGS
+  "Write CR+LF line endings in generated CMakeLists.txt files"
+  OFF
 )
-
-if(USE_CRLF_LINE_ENDINGS)
-  set(use_crlf_line_endings_define 1)
-else()
-  set(use_crlf_line_endings_define 0)
-endif()
 
 
 jucer_project_begin()
@@ -67,7 +55,7 @@ jucer_project_settings(
   PREPROCESSOR_DEFINITIONS
     "DONT_SET_USING_JUCE_NAMESPACE=1"
     "JUCE_DISABLE_JUCE_VERSION_PRINTING=1"
-    "USE_CRLF_LINE_ENDINGS=${use_crlf_line_endings_define}"
+    "WRITE_CRLF_LINE_ENDINGS=$<BOOL:${WRITE_CRLF_LINE_ENDINGS}>"
   HEADER_SEARCH_PATHS
     "${CMAKE_CURRENT_LIST_DIR}/third-party"
 )
