@@ -105,4 +105,4 @@ test_script:
     cmake -DJUCE_VERSION="5.4.3"
     -DJucer2Reprojucer_EXE="prefix/FRUT/bin/Jucer2Reprojucer.exe"
     -P ci/apply-Jucer2Reprojucer-to-JUCE-jucers.cmake
-  - git diff --quiet
+  - git diff --exit-code

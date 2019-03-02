@@ -112,7 +112,7 @@ script-anchors:
       cmake -DJUCE_VERSION="5.4.3"
       -DJucer2Reprojucer_EXE="prefix/FRUT/bin/Jucer2Reprojucer"
       -P ci/apply-Jucer2Reprojucer-to-JUCE-jucers.cmake
-    - git diff --quiet
+    - git diff --exit-code
 
     - mkdir ${TRAVIS_BUILD_DIR}/ci/AllJuceProjects/Debug_build
     - mkdir ${TRAVIS_BUILD_DIR}/ci/AllJuceProjects/Release_build
@@ -244,7 +244,7 @@ script-anchors:
       cmake -DJUCE_VERSION="5.4.3"
       -DJucer2Reprojucer_EXE="prefix/FRUT/bin/Jucer2Reprojucer"
       -P ci/apply-Jucer2Reprojucer-to-JUCE-jucers.cmake
-    - git diff --quiet
+    - git diff --exit-code
 
     - mkdir ${TRAVIS_BUILD_DIR}/ci/AllJuceProjects/build
     - cd ${TRAVIS_BUILD_DIR}/ci/AllJuceProjects/build
