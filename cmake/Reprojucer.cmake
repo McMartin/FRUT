@@ -3460,7 +3460,7 @@ function(_FRUT_set_compiler_and_linker_settings_MSVC target)
   foreach(config IN LISTS JUCER_PROJECT_CONFIGURATIONS)
     if(NOT DEFINED JUCER_MULTI_PROCESSOR_COMPILATION_${config}
         OR JUCER_MULTI_PROCESSOR_COMPILATION_${config})
-      target_compile_options(${target} PRIVATE "/MP")
+      target_compile_options(${target} PRIVATE $<$<CONFIG:${config}>:/MP>)
     endif()
 
     if(JUCER_CONFIGURATION_IS_DEBUG_${config})
