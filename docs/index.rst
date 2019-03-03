@@ -20,7 +20,7 @@ It currently contains:
   - ``examples`` and ``extras`` projects from `JUCE 5.0.0`_ (in `generated/JUCE-5.0.0`_)
   - ``examples`` and ``extras`` projects from `JUCE 5.2.1`_ (in `generated/JUCE-5.2.1`_)
   - ``examples`` and ``extras`` projects from `JUCE 5.3.1`_ (in `generated/JUCE-5.3.1`_)
-  - ``examples`` and ``extras`` projects from `JUCE 5.4.1`_ (in `generated/JUCE-5.4.1`_)
+  - ``examples`` and ``extras`` projects from `JUCE 5.4.3`_ (in `generated/JUCE-5.4.3`_)
 
 
 User documentation
@@ -38,7 +38,7 @@ User documentation
 .. _JUCE 5.0.0: https://github.com/WeAreROLI/JUCE/tree/5.0.0
 .. _JUCE 5.2.1: https://github.com/WeAreROLI/JUCE/tree/5.2.1
 .. _JUCE 5.3.1: https://github.com/WeAreROLI/JUCE/tree/5.3.1
-.. _JUCE 5.4.1: https://github.com/WeAreROLI/JUCE/tree/5.4.1
+.. _JUCE 5.4.3: https://github.com/WeAreROLI/JUCE/tree/5.4.3
 .. _JUCE: https://juce.com/
 .. _Projucer: https://www.juce.com/projucer
 .. _generated/JUCE-4.2.0: https://github.com/McMartin/FRUT/tree/master/generated/JUCE-4.2.0
@@ -46,4 +46,4 @@ User documentation
 .. _generated/JUCE-5.0.0: https://github.com/McMartin/FRUT/tree/master/generated/JUCE-5.0.0
 .. _generated/JUCE-5.2.1: https://github.com/McMartin/FRUT/tree/master/generated/JUCE-5.2.1
 .. _generated/JUCE-5.3.1: https://github.com/McMartin/FRUT/tree/master/generated/JUCE-5.3.1
-.. _generated/JUCE-5.4.1: https://github.com/McMartin/FRUT/tree/master/generated/JUCE-5.4.1
+.. _generated/JUCE-5.4.3: https://github.com/McMartin/FRUT/tree/master/generated/JUCE-5.4.3

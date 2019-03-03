@@ -17,8 +17,8 @@ install:
     -- https://github.com/WeAreROLI/JUCE.git "${TRAVIS_BUILD_DIR}/ci/tmp/JUCE-5.2.1"
   - git clone --branch=5.3.1 --depth=1 --single-branch
     -- https://github.com/WeAreROLI/JUCE.git "${TRAVIS_BUILD_DIR}/ci/tmp/JUCE-5.3.1"
-  - git clone --branch=5.4.1 --depth=1 --single-branch
-    -- https://github.com/WeAreROLI/JUCE.git "${TRAVIS_BUILD_DIR}/ci/tmp/JUCE-5.4.1"
+  - git clone --branch=5.4.3 --depth=1 --single-branch
+    -- https://github.com/WeAreROLI/JUCE.git "${TRAVIS_BUILD_DIR}/ci/tmp/JUCE-5.4.3"
 
 script-anchors:
   - &script-Makefiles
@@ -70,14 +70,14 @@ script-anchors:
     - cmake .. -G"${GENERATOR}" -DCMAKE_BUILD_TYPE=Release
       -DJUCE_ROOT="${TRAVIS_BUILD_DIR}/ci/tmp/JUCE-5.3.1"
 
-    # Configure and build FRUT with JUCE 5.4.1
+    # Configure and build FRUT with JUCE 5.4.3
     - cd ${TRAVIS_BUILD_DIR}/Debug_build
     - cmake .. -G"${GENERATOR}" -DCMAKE_BUILD_TYPE=Debug
-      -DJUCE_ROOT="${TRAVIS_BUILD_DIR}/ci/tmp/JUCE-5.4.1"
+      -DJUCE_ROOT="${TRAVIS_BUILD_DIR}/ci/tmp/JUCE-5.4.3"
     - cmake --build . -- -j4
     - cd ${TRAVIS_BUILD_DIR}/Release_build
     - cmake .. -G"${GENERATOR}" -DCMAKE_BUILD_TYPE=Release
-      -DJUCE_ROOT="${TRAVIS_BUILD_DIR}/ci/tmp/JUCE-5.4.1"
+      -DJUCE_ROOT="${TRAVIS_BUILD_DIR}/ci/tmp/JUCE-5.4.3"
 
     # Build and install FRUT in ./prefix
     - cmake .. -G"${GENERATOR}" -DCMAKE_INSTALL_PREFIX="${TRAVIS_BUILD_DIR}/prefix"
@@ -109,10 +109,10 @@ script-anchors:
       -DJucer2Reprojucer_EXE="prefix/FRUT/bin/Jucer2Reprojucer"
       -P ci/apply-Jucer2Reprojucer-to-JUCE-jucers.cmake
     - >
-      cmake -DJUCE_VERSION="5.4.1"
+      cmake -DJUCE_VERSION="5.4.3"
       -DJucer2Reprojucer_EXE="prefix/FRUT/bin/Jucer2Reprojucer"
       -P ci/apply-Jucer2Reprojucer-to-JUCE-jucers.cmake
-    - git diff --quiet
+    - git diff --exit-code
 
     - mkdir ${TRAVIS_BUILD_DIR}/ci/AllJuceProjects/Debug_build
     - mkdir ${TRAVIS_BUILD_DIR}/ci/AllJuceProjects/Release_build
@@ -177,11 +177,11 @@ script-anchors:
       cmake .. -G"${GENERATOR}" -DCMAKE_BUILD_TYPE=Release -DJUCE_VERSION="5.3.1"
       -DJUCER_VST3_SDK_FOLDER="${TRAVIS_BUILD_DIR}/ci/fake-SDKs/VST3"
 
-    # Configure all JUCE 5.4.1 projects
+    # Configure all JUCE 5.4.3 projects
     - cd ${TRAVIS_BUILD_DIR}/ci/AllJuceProjects/Debug_build
-    - cmake .. -G"${GENERATOR}" -DCMAKE_BUILD_TYPE=Debug -DJUCE_VERSION="5.4.1"
+    - cmake .. -G"${GENERATOR}" -DCMAKE_BUILD_TYPE=Debug -DJUCE_VERSION="5.4.3"
     - cd ${TRAVIS_BUILD_DIR}/ci/AllJuceProjects/Release_build
-    - cmake .. -G"${GENERATOR}" -DCMAKE_BUILD_TYPE=Release -DJUCE_VERSION="5.4.1"
+    - cmake .. -G"${GENERATOR}" -DCMAKE_BUILD_TYPE=Release -DJUCE_VERSION="5.4.3"
 
   - &script-Xcode
     - mkdir ${TRAVIS_BUILD_DIR}/build
@@ -207,8 +207,8 @@ script-anchors:
     - cmake .. -G Xcode -DJUCE_ROOT="${TRAVIS_BUILD_DIR}/ci/tmp/JUCE-5.3.1"
     - cmake --build . --config Debug
 
-    # Configure and build FRUT with JUCE 5.4.1
-    - cmake .. -G Xcode -DJUCE_ROOT="${TRAVIS_BUILD_DIR}/ci/tmp/JUCE-5.4.1"
+    # Configure and build FRUT with JUCE 5.4.3
+    - cmake .. -G Xcode -DJUCE_ROOT="${TRAVIS_BUILD_DIR}/ci/tmp/JUCE-5.4.3"
     - cmake --build . --config Debug
 
     # Build and install FRUT in ./prefix
@@ -241,10 +241,10 @@ script-anchors:
       -DJucer2Reprojucer_EXE="prefix/FRUT/bin/Jucer2Reprojucer"
       -P ci/apply-Jucer2Reprojucer-to-JUCE-jucers.cmake
     - >
-      cmake -DJUCE_VERSION="5.4.1"
+      cmake -DJUCE_VERSION="5.4.3"
       -DJucer2Reprojucer_EXE="prefix/FRUT/bin/Jucer2Reprojucer"
       -P ci/apply-Jucer2Reprojucer-to-JUCE-jucers.cmake
-    - git diff --quiet
+    - git diff --exit-code
 
     - mkdir ${TRAVIS_BUILD_DIR}/ci/AllJuceProjects/build
     - cd ${TRAVIS_BUILD_DIR}/ci/AllJuceProjects/build
@@ -279,8 +279,8 @@ script-anchors:
       cmake .. -G Xcode -DJUCE_VERSION="5.3.1"
       -DJUCER_VST3_SDK_FOLDER="${TRAVIS_BUILD_DIR}/ci/fake-SDKs/VST3"
 
-    # Configure all JUCE 5.4.1 projects
-    - cmake .. -G Xcode -DJUCE_VERSION="5.4.1"
+    # Configure all JUCE 5.4.3 projects
+    - cmake .. -G Xcode -DJUCE_VERSION="5.4.3"
 
 matrix:
   include:
