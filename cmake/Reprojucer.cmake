@@ -1457,16 +1457,38 @@ function(jucer_export_target_configuration
     else()
       set(is_x64 FALSE)
     endif()
+    set(error_message "")
     if(wants_x64 AND NOT is_x64)
-      message(FATAL_ERROR "You must call `cmake -G\"${CMAKE_GENERATOR} Win64\"` or "
-        "`cmake -G\"${CMAKE_GENERATOR}\" -A x64` in order to build for 64-bit."
+      set(error_message
+        "Cannot honor \"ARCHITECTURE x64\" while targeting the Win32 architecture. "
       )
+      if(CMAKE_GENERATOR MATCHES "^Visual Studio")
+        string(APPEND error_message "You must call `cmake -G\"${CMAKE_GENERATOR} Win64\"`"
+          " or `cmake -G\"${CMAKE_GENERATOR}\" -A x64` in order to build for x64."
+        )
+      else()
+        string(APPEND error_message "You must use a compiler that targets x64 in order to"
+          " build for x64."
+        )
+      endif()
     elseif(NOT wants_x64 AND is_x64)
+      set(error_message
+        "Cannot honor \"ARCHITECTURE 32-bit\" while targeting the x64 architecture. "
+      )
+      if(CMAKE_GENERATOR MATCHES "^Visual Studio")
       string(FIND "${CMAKE_GENERATOR}" " Win64" length REVERSE)
       string(SUBSTRING "${CMAKE_GENERATOR}" 0 ${length} 32_bit_generator)
-      message(FATAL_ERROR "You must call `cmake -G\"${32_bit_generator}\"` or "
-        "`cmake -G\"${32_bit_generator}\" -A Win32` in order to build for 32-bit."
-      )
+        string(APPEND error_message "You must call `cmake -G\"${32_bit_generator}\"` or"
+        " `cmake -G\"${32_bit_generator}\" -A Win32` in order to build for 32-bit."
+        )
+      else()
+        string(APPEND error_message "You must use a compiler that targets x86 in order to"
+          " build for 32-bit."
+        )
+      endif()
+    endif()
+    if(error_message)
+      message(FATAL_ERROR "${error_message}")
     endif()
   endif()
 
