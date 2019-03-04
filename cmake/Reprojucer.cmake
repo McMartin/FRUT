@@ -1452,7 +1452,7 @@ function(jucer_export_target_configuration
     else()
       message(FATAL_ERROR "Unsupported value for ARCHITECTURE: \"${_ARCHITECTURE}\"")
     endif()
-    if(CMAKE_GENERATOR_PLATFORM STREQUAL "x64" OR CMAKE_GENERATOR MATCHES "Win64")
+    if(CMAKE_SIZEOF_VOID_P EQUAL 8)
       set(is_x64 TRUE)
     else()
       set(is_x64 FALSE)
@@ -1897,7 +1897,7 @@ function(jucer_project_end)
           "$ENV{HOME}/Library/Audio/Plug-Ins/VST"
         )
       elseif(MSVC)
-        if(CMAKE_GENERATOR_PLATFORM STREQUAL "x64" OR CMAKE_GENERATOR MATCHES "Win64")
+        if(CMAKE_SIZEOF_VOID_P EQUAL 8) # 64-bit
           set(env_var "ProgramW6432")
         else()
           set(env_var "programfiles(x86)")
@@ -1936,7 +1936,7 @@ function(jucer_project_end)
         )
       elseif(MSVC)
         set_property(TARGET ${vst3_target} PROPERTY SUFFIX ".vst3")
-        if(CMAKE_GENERATOR_PLATFORM STREQUAL "x64" OR CMAKE_GENERATOR MATCHES "Win64")
+        if(CMAKE_SIZEOF_VOID_P EQUAL 8) # 64-bit
           set(common_files_env_var "CommonProgramW6432")
         else()
           set(common_files_env_var "CommonProgramFiles(x86)")
@@ -2153,7 +2153,7 @@ function(jucer_project_end)
           )
         endforeach()
 
-        if(CMAKE_GENERATOR_PLATFORM STREQUAL "x64" OR CMAKE_GENERATOR MATCHES "Win64")
+        if(CMAKE_SIZEOF_VOID_P EQUAL 8) # 64-bit
           set(common_files_env_var "CommonProgramW6432")
         else()
           set(common_files_env_var "CommonProgramFiles(x86)")
@@ -2223,7 +2223,7 @@ function(jucer_project_end)
         set(all_confs_bundle
           "$<TARGET_FILE_DIR:${aax_target}>/${all_confs_output_name}.aaxplugin"
         )
-        if(CMAKE_GENERATOR_PLATFORM STREQUAL "x64" OR CMAKE_GENERATOR MATCHES "Win64")
+        if(CMAKE_SIZEOF_VOID_P EQUAL 8) # 64-bit
           set(arch_dir "x64")
         else()
           set(arch_dir "Win32")
@@ -2251,7 +2251,7 @@ function(jucer_project_end)
           "${plugin_icon}"
         )
 
-        if(CMAKE_GENERATOR_PLATFORM STREQUAL "x64" OR CMAKE_GENERATOR MATCHES "Win64")
+        if(CMAKE_SIZEOF_VOID_P EQUAL 8) # 64-bit
           set(common_files_env_var "CommonProgramW6432")
         else()
           set(common_files_env_var "CommonProgramFiles(x86)")
