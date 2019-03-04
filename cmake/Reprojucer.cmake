@@ -1452,21 +1452,43 @@ function(jucer_export_target_configuration
     else()
       message(FATAL_ERROR "Unsupported value for ARCHITECTURE: \"${_ARCHITECTURE}\"")
     endif()
-    if(CMAKE_GENERATOR_PLATFORM STREQUAL "x64" OR CMAKE_GENERATOR MATCHES "Win64")
+    if(CMAKE_SIZEOF_VOID_P EQUAL 8)
       set(is_x64 TRUE)
     else()
       set(is_x64 FALSE)
     endif()
+    set(error_message "")
     if(wants_x64 AND NOT is_x64)
-      message(FATAL_ERROR "You must call `cmake -G\"${CMAKE_GENERATOR} Win64\"` or "
-        "`cmake -G\"${CMAKE_GENERATOR}\" -A x64` in order to build for 64-bit."
+      set(error_message
+        "Cannot honor \"ARCHITECTURE x64\" while targeting the Win32 architecture. "
       )
+      if(CMAKE_GENERATOR MATCHES "^Visual Studio")
+        string(APPEND error_message "You must call `cmake -G\"${CMAKE_GENERATOR} Win64\"`"
+          " or `cmake -G\"${CMAKE_GENERATOR}\" -A x64` in order to build for x64."
+        )
+      else()
+        string(APPEND error_message "You must use a compiler that targets x64 in order to"
+          " build for x64."
+        )
+      endif()
     elseif(NOT wants_x64 AND is_x64)
+      set(error_message
+        "Cannot honor \"ARCHITECTURE 32-bit\" while targeting the x64 architecture. "
+      )
+      if(CMAKE_GENERATOR MATCHES "^Visual Studio")
       string(FIND "${CMAKE_GENERATOR}" " Win64" length REVERSE)
       string(SUBSTRING "${CMAKE_GENERATOR}" 0 ${length} 32_bit_generator)
-      message(FATAL_ERROR "You must call `cmake -G\"${32_bit_generator}\"` or "
-        "`cmake -G\"${32_bit_generator}\" -A Win32` in order to build for 32-bit."
-      )
+        string(APPEND error_message "You must call `cmake -G\"${32_bit_generator}\"` or"
+        " `cmake -G\"${32_bit_generator}\" -A Win32` in order to build for 32-bit."
+        )
+      else()
+        string(APPEND error_message "You must use a compiler that targets x86 in order to"
+          " build for 32-bit."
+        )
+      endif()
+    endif()
+    if(error_message)
+      message(FATAL_ERROR "${error_message}")
     endif()
   endif()
 
@@ -1897,7 +1919,7 @@ function(jucer_project_end)
           "$ENV{HOME}/Library/Audio/Plug-Ins/VST"
         )
       elseif(MSVC)
-        if(CMAKE_GENERATOR_PLATFORM STREQUAL "x64" OR CMAKE_GENERATOR MATCHES "Win64")
+        if(CMAKE_SIZEOF_VOID_P EQUAL 8) # 64-bit
           set(env_var "ProgramW6432")
         else()
           set(env_var "programfiles(x86)")
@@ -1936,7 +1958,7 @@ function(jucer_project_end)
         )
       elseif(MSVC)
         set_property(TARGET ${vst3_target} PROPERTY SUFFIX ".vst3")
-        if(CMAKE_GENERATOR_PLATFORM STREQUAL "x64" OR CMAKE_GENERATOR MATCHES "Win64")
+        if(CMAKE_SIZEOF_VOID_P EQUAL 8) # 64-bit
           set(common_files_env_var "CommonProgramW6432")
         else()
           set(common_files_env_var "CommonProgramFiles(x86)")
@@ -2153,7 +2175,7 @@ function(jucer_project_end)
           )
         endforeach()
 
-        if(CMAKE_GENERATOR_PLATFORM STREQUAL "x64" OR CMAKE_GENERATOR MATCHES "Win64")
+        if(CMAKE_SIZEOF_VOID_P EQUAL 8) # 64-bit
           set(common_files_env_var "CommonProgramW6432")
         else()
           set(common_files_env_var "CommonProgramFiles(x86)")
@@ -2223,7 +2245,7 @@ function(jucer_project_end)
         set(all_confs_bundle
           "$<TARGET_FILE_DIR:${aax_target}>/${all_confs_output_name}.aaxplugin"
         )
-        if(CMAKE_GENERATOR_PLATFORM STREQUAL "x64" OR CMAKE_GENERATOR MATCHES "Win64")
+        if(CMAKE_SIZEOF_VOID_P EQUAL 8) # 64-bit
           set(arch_dir "x64")
         else()
           set(arch_dir "Win32")
@@ -2251,7 +2273,7 @@ function(jucer_project_end)
           "${plugin_icon}"
         )
 
-        if(CMAKE_GENERATOR_PLATFORM STREQUAL "x64" OR CMAKE_GENERATOR MATCHES "Win64")
+        if(CMAKE_SIZEOF_VOID_P EQUAL 8) # 64-bit
           set(common_files_env_var "CommonProgramW6432")
         else()
           set(common_files_env_var "CommonProgramFiles(x86)")
