@@ -40,7 +40,7 @@ User documentation
 .. _JUCE 5.3.1: https://github.com/WeAreROLI/JUCE/tree/5.3.1
 .. _JUCE 5.4.3: https://github.com/WeAreROLI/JUCE/tree/5.4.3
 .. _JUCE: https://github.com/WeAreROLI/JUCE
-.. _Projucer: https://www.juce.com/projucer
+.. _Projucer: https://juce.com/discover/projucer
 .. _generated/JUCE-4.2.0: https://github.com/McMartin/FRUT/tree/master/generated/JUCE-4.2.0
 .. _generated/JUCE-4.3.1: https://github.com/McMartin/FRUT/tree/master/generated/JUCE-4.3.1
 .. _generated/JUCE-5.0.0: https://github.com/McMartin/FRUT/tree/master/generated/JUCE-5.0.0
