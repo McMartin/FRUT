@@ -6,8 +6,8 @@ FRUT
   |Code_of_Conduct| |AppVeyor| |Azure_Pipelines| |Travis_CI| |Read_the_Docs|
 
 
-``FRUT`` is a collection of tools dedicated to building `JUCE <https://juce.com/>`__
-projects using `CMake`_ instead of `Projucer`_.
+``FRUT`` is a collection of tools dedicated to building `JUCE`_ projects using `CMake`_
+instead of `Projucer`_.
 
 It currently contains:
 
@@ -59,9 +59,8 @@ You can read the documentation of FRUT on Read the Docs: http://frut.readthedocs
 Getting started
 ---------------
 
-Let's consider that you have a copy of `JUCE <https://github.com/WeAreROLI/JUCE>`__, a
-copy of `FRUT`_ and a JUCE project called ``MyGreatProject`` following this folder
-structure: ::
+Let's consider that you have a copy of `JUCE`_, a copy of `FRUT`_ and a JUCE project
+called ``MyGreatProject`` following this folder structure: ::
 
   <root>
   ├── FRUT/
@@ -253,6 +252,7 @@ even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE
 .. _CMake Generators: https://cmake.org/cmake/help/latest/manual/cmake-generators.7.html
 .. _CMake: https://cmake.org/
 .. _FRUT: https://github.com/McMartin/FRUT
+.. _JUCE: https://github.com/WeAreROLI/JUCE
 .. _JUCE 4.2.0: https://github.com/WeAreROLI/JUCE/tree/4.2.0
 .. _JUCE 4.3.1: https://github.com/WeAreROLI/JUCE/tree/4.3.1
 .. _JUCE 5.0.0: https://github.com/WeAreROLI/JUCE/tree/5.0.0
