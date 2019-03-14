@@ -6,8 +6,8 @@ FRUT
   |Code_of_Conduct| |AppVeyor| |Azure_Pipelines| |Travis_CI| |Read_the_Docs|
 
 
-``FRUT`` is a collection of tools dedicated to building `JUCE <https://juce.com/>`__
-projects using `CMake`_ instead of `Projucer`_.
+``FRUT`` is a collection of tools dedicated to building `JUCE`_ projects using `CMake`_
+instead of `Projucer`_.
 
 It currently contains:
 
@@ -53,15 +53,14 @@ targets:
 Documentation
 -------------
 
-You can read the documentation of FRUT on Read the Docs: http://frut.readthedocs.io/
+You can read the documentation of FRUT on Read the Docs: https://frut.readthedocs.io
 
 
 Getting started
 ---------------
 
-Let's consider that you have a copy of `JUCE <https://github.com/WeAreROLI/JUCE>`__, a
-copy of `FRUT`_ and a JUCE project called ``MyGreatProject`` following this folder
-structure: ::
+Let's consider that you have a copy of `JUCE`_, a copy of `FRUT`_ and a JUCE project
+called ``MyGreatProject`` following this folder structure: ::
 
   <root>
   ├── FRUT/
@@ -234,7 +233,7 @@ even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE
   :alt: Travis CI build status
 
 .. |Read_the_Docs| image:: https://readthedocs.org/projects/frut/badge/?version=latest
-  :target: https://frut.readthedocs.io/en/latest/
+  :target: https://frut.readthedocs.io
   :alt: Documentation status
 
 .. |GPLv3| image:: https://www.gnu.org/graphics/gplv3-127x51.png
@@ -251,13 +250,14 @@ even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE
 .. _generated/JUCE-5.4.3: generated/JUCE-5.4.3
 
 .. _CMake Generators: https://cmake.org/cmake/help/latest/manual/cmake-generators.7.html
-.. _CMake: https://cmake.org/
+.. _CMake: https://cmake.org
 .. _FRUT: https://github.com/McMartin/FRUT
+.. _JUCE: https://github.com/WeAreROLI/JUCE
 .. _JUCE 4.2.0: https://github.com/WeAreROLI/JUCE/tree/4.2.0
 .. _JUCE 4.3.1: https://github.com/WeAreROLI/JUCE/tree/4.3.1
 .. _JUCE 5.0.0: https://github.com/WeAreROLI/JUCE/tree/5.0.0
 .. _JUCE 5.2.1: https://github.com/WeAreROLI/JUCE/tree/5.2.1
 .. _JUCE 5.3.1: https://github.com/WeAreROLI/JUCE/tree/5.3.1
 .. _JUCE 5.4.3: https://github.com/WeAreROLI/JUCE/tree/5.4.3
-.. _Projucer: https://www.juce.com/projucer
-.. _all-contributors: https://github.com/kentcdodds/all-contributors
+.. _Projucer: https://juce.com/discover/projucer
+.. _all-contributors: https://github.com/all-contributors/all-contributors
