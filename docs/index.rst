@@ -32,7 +32,7 @@ User documentation
   /Reprojucer.cmake/index
 
 
-.. _CMake: https://cmake.org/
+.. _CMake: https://cmake.org
 .. _JUCE 4.2.0: https://github.com/WeAreROLI/JUCE/tree/4.2.0
 .. _JUCE 4.3.1: https://github.com/WeAreROLI/JUCE/tree/4.3.1
 .. _JUCE 5.0.0: https://github.com/WeAreROLI/JUCE/tree/5.0.0

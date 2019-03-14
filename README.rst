@@ -53,7 +53,7 @@ targets:
 Documentation
 -------------
 
-You can read the documentation of FRUT on Read the Docs: http://frut.readthedocs.io/
+You can read the documentation of FRUT on Read the Docs: https://frut.readthedocs.io
 
 
 Getting started
@@ -233,7 +233,7 @@ even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE
   :alt: Travis CI build status
 
 .. |Read_the_Docs| image:: https://readthedocs.org/projects/frut/badge/?version=latest
-  :target: https://frut.readthedocs.io/en/latest/
+  :target: https://frut.readthedocs.io
   :alt: Documentation status
 
 .. |GPLv3| image:: https://www.gnu.org/graphics/gplv3-127x51.png
@@ -250,7 +250,7 @@ even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE
 .. _generated/JUCE-5.4.3: generated/JUCE-5.4.3
 
 .. _CMake Generators: https://cmake.org/cmake/help/latest/manual/cmake-generators.7.html
-.. _CMake: https://cmake.org/
+.. _CMake: https://cmake.org
 .. _FRUT: https://github.com/McMartin/FRUT
 .. _JUCE: https://github.com/WeAreROLI/JUCE
 .. _JUCE 4.2.0: https://github.com/WeAreROLI/JUCE/tree/4.2.0
