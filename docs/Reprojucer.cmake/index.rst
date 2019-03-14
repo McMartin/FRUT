@@ -42,12 +42,12 @@ Commands
 .. toctree::
   :maxdepth: 1
 
-  command/jucer_appconfig_header
-  command/jucer_audio_plugin_settings
-  command/jucer_export_target
-  command/jucer_export_target_configuration
   command/jucer_project_begin
-  command/jucer_project_end
+  command/jucer_project_settings
+  command/jucer_audio_plugin_settings
   command/jucer_project_files
   command/jucer_project_module
-  command/jucer_project_settings
+  command/jucer_appconfig_header
+  command/jucer_export_target
+  command/jucer_export_target_configuration
+  command/jucer_project_end
