@@ -196,6 +196,9 @@ contributors:
       <a href="https://github.com/McMartin/FRUT/issues?q=is%3Aissue+author%3Arclement" title="Bug reports">🐛</a>
     </td>
     <td>
+      <a href="https://github.com/stijnfrishert"><img src="https://github.com/stijnfrishert.png" width="100">Stijn Frishert</a>
+      <br />
+      <a href="https://github.com/McMartin/FRUT/issues?q=is%3Aissue+author%3Astijnfrishert" title="Bug reports">🐛</a>
     </td>
   </tr>
   </tbody>
