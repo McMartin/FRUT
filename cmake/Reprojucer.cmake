@@ -3366,6 +3366,18 @@ function(_FRUT_set_compiler_and_linker_settings_APPLE target)
     endif()
   endforeach()
 
+  unset(all_confs_only_active_arch)
+  foreach(config IN LISTS JUCER_PROJECT_CONFIGURATIONS)
+    if(JUCER_CONFIGURATION_IS_DEBUG_${config} AND NOT DEFINED JUCER_XCODE_ARCHS_${config})
+      string(APPEND all_confs_only_active_arch "$<$<CONFIG:${config}>:TRUE>")
+    endif()
+  endforeach()
+  if(DEFINED all_confs_only_active_arch)
+    set_target_properties(${target} PROPERTIES
+      XCODE_ATTRIBUTE_ONLY_ACTIVE_ARCH "${all_confs_only_active_arch}"
+    )
+  endif()
+
   if(target MATCHES "_AUv3_AppExtension$")
     if(CMAKE_GENERATOR STREQUAL "Xcode")
       set_target_properties(${target} PROPERTIES
