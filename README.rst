@@ -7,6 +7,13 @@ FRUT is a collection of tools dedicated to building `JUCE`_ projects using `CMak
 instead of `Projucer`_.
 
 
+**Table of Contents**
+
+.. contents::
+  :local:
+  :backlinks: none
+
+
 Background
 ----------
 
