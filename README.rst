@@ -113,7 +113,7 @@ Contributing
 ------------
 
 Contributions to FRUT are very welcomed and you can contribute even if you don't know
-anything about CMake. See the `CONTRIBUTING`_ file for more details.
+anything about CMake. See the `CONTRIBUTING.md`_ file for more details.
 
 
 Contributors
@@ -237,7 +237,7 @@ even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE
   :target: https://www.gnu.org/licenses/gpl.html
   :alt: GNU General Public License
 
-.. _CONTRIBUTING: CONTRIBUTING.md
+.. _CONTRIBUTING.md: CONTRIBUTING.md
 .. _LICENSE: LICENSE
 .. _generated/JUCE-4.2.0: generated/JUCE-4.2.0
 .. _generated/JUCE-4.3.1: generated/JUCE-4.3.1
