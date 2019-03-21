@@ -128,67 +128,67 @@ contributors:
   <tbody align="center">
   <tr>
     <td>
-      <a href="https://github.com/McMartin"><img src="https://github.com/McMartin.png" width="100">Alain Martin</a>
+      <a href="https://github.com/McMartin"><img src="https://github.com/McMartin.png" width="100"><br />Alain Martin</a>
       <br />
       <a href="https://github.com/McMartin/FRUT/pulls?q=state%3Amerged+author%3AMcMartin" title="Code">💻</a>
       <a href="https://github.com/McMartin/FRUT/pulls?q=state%3Amerged+reviewed-by%3AMcMartin+-author%3AMcMartin+" title="Pull Request reviews">👀</a>
       <a href="https://github.com/McMartin/FRUT/commits/master/docs?author=McMartin" title="Documentation">📖</a>
     </td>
     <td>
-      <a href="https://github.com/MartyLake"><img src="https://github.com/MartyLake.png" width="100">Matthieu Talbot</a>
+      <a href="https://github.com/MartyLake"><img src="https://github.com/MartyLake.png" width="100"><br />Matthieu Talbot</a>
       <br />
       <a href="https://github.com/McMartin/FRUT/pulls?q=state%3Amerged+reviewed-by%3AMartyLake+-author%3AMartyLake+" title="Pull Request reviews">👀</a>
       <a href="https://github.com/McMartin/FRUT/pulls?q=state%3Amerged+author%3AMartyLake" title="Code">💻</a>
       <a href="https://github.com/McMartin/FRUT/issues?q=is%3Aissue+author%3AMartyLake" title="Bug reports">🐛</a>
     </td>
     <td>
-      <a href="https://github.com/gonzaloflirt"><img src="https://github.com/gonzaloflirt.png" width="100">Florian Goltz</a>
+      <a href="https://github.com/gonzaloflirt"><img src="https://github.com/gonzaloflirt.png" width="100"><br />Florian Goltz</a>
       <br />
       <a href="https://github.com/McMartin/FRUT/pulls?q=state%3Amerged+author%3Agonzaloflirt" title="Code">💻</a>
     </td>
     <td>
-      <a href="https://github.com/WGuLL"><img src="https://github.com/WGuLL.png" width="100">Fabien Roussel</a>
+      <a href="https://github.com/WGuLL"><img src="https://github.com/WGuLL.png" width="100"><br />Fabien Roussel</a>
       <br />
       <a href="https://github.com/McMartin/FRUT/issues?q=is%3Aissue+author%3AWGuLL" title="Bug reports">🐛</a>
       <a href="https://github.com/McMartin/FRUT/pulls?q=state%3Amerged+reviewed-by%3AWGuLL+-author%3AWGuLL+" title="Pull Request reviews">👀</a>
     </td>
     <td>
-      <a href="https://github.com/Xav83"><img src="https://github.com/Xav83.png" width="100">Xavier Jouvenot</a>
+      <a href="https://github.com/Xav83"><img src="https://github.com/Xav83.png" width="100"><br />Xavier Jouvenot</a>
       <br />
       <a href="https://github.com/McMartin/FRUT/issues?q=is%3Aissue+author%3AXav83" title="Bug reports">🐛</a>
       <a href="https://github.com/McMartin/FRUT/pulls?q=state%3Amerged+reviewed-by%3AXav83+-author%3AXav83+" title="Pull Request reviews">👀</a>
     </td>
     <td>
-      <a href="https://github.com/lethal-guitar"><img src="https://github.com/lethal-guitar.png" width="100">Nikolai Wuttke</a>
+      <a href="https://github.com/lethal-guitar"><img src="https://github.com/lethal-guitar.png" width="100"><br />Nikolai Wuttke</a>
       <br />
       <a href="https://github.com/McMartin/FRUT/pulls?q=state%3Amerged+reviewed-by%3Alethal-guitar+-author%3Alethal-guitar+" title="Pull Request reviews">👀</a>
     </td>
   </tr>
   <tr>
     <td>
-      <a href="https://github.com/PioBeat"><img src="https://github.com/PioBeat.png" width="100">Dominik Grzelak</a>
+      <a href="https://github.com/PioBeat"><img src="https://github.com/PioBeat.png" width="100"><br />Dominik Grzelak</a>
       <br />
       <a href="https://github.com/McMartin/FRUT/issues?q=is%3Aissue+author%3APioBeat" title="Bug reports">🐛</a>
     </td>
     <td>
-      <a href="https://github.com/dscheffer"><img src="https://github.com/dscheffer.png" width="100">Dennis Scheffer</a>
+      <a href="https://github.com/dscheffer"><img src="https://github.com/dscheffer.png" width="100"><br />Dennis Scheffer</a>
       <br />
       <a href="https://github.com/McMartin/FRUT/issues?q=is%3Aissue+author%3Adscheffer" title="Bug reports">🐛</a>
       <a href="https://github.com/McMartin/FRUT/pulls?q=state%3Amerged+author%3Adscheffer" title="Code">💻</a>
     </td>
     <td>
-      <a href="https://github.com/scotchi"><img src="https://github.com/scotchi.png" width="100">Scott Wheeler</a>
+      <a href="https://github.com/scotchi"><img src="https://github.com/scotchi.png" width="100"><br />Scott Wheeler</a>
       <br />
       <a href="https://github.com/McMartin/FRUT/pulls?q=state%3Amerged+author%3Ascotchi" title="Code">💻</a>
       <a href="https://github.com/McMartin/FRUT/issues?q=is%3Aissue+author%3Ascotchi" title="Bug reports">🐛</a>
     </td>
     <td>
-      <a href="https://github.com/IqraShahzad1"><img src="https://github.com/IqraShahzad1.png" width="100">Iqra Shahzad</a>
+      <a href="https://github.com/IqraShahzad1"><img src="https://github.com/IqraShahzad1.png" width="100"><br />Iqra Shahzad</a>
       <br />
       <a href="https://github.com/McMartin/FRUT/issues?q=is%3Aissue+author%3AIqraShahzad1" title="Bug reports">🐛</a>
     </td>
     <td>
-      <a href="https://github.com/rclement"><img src="https://github.com/rclement.png" width="100">Romain Clement</a>
+      <a href="https://github.com/rclement"><img src="https://github.com/rclement.png" width="100"><br />Romain Clement</a>
       <br />
       <a href="https://github.com/McMartin/FRUT/issues?q=is%3Aissue+author%3Arclement" title="Bug reports">🐛</a>
     </td>
