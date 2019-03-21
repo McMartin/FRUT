@@ -11,8 +11,8 @@ It currently contains:
 - ``Reprojucer.cmake``, a CMake module that provides high-level functions to reproduce
   how a JUCE project is defined in Projucer,
 
-- ``Jucer2Reprojucer``, a console application based on JUCE that converts ``.jucer``
-  project files into ``CMakeLists.txt`` files that include and use ``Reprojucer.cmake``,
+- ``Jucer2Reprojucer``, a console application that converts ``.jucer`` project files into
+  ready-to-use ``CMakeLists.txt`` files that include and use ``Reprojucer.cmake``,
 
 - several ``CMakeLists.txt`` files generated from existing ``.jucer`` project files,
   including:
