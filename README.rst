@@ -3,7 +3,7 @@ FRUT
 
 |Code_of_Conduct| |AppVeyor| |Azure_Pipelines| |Travis_CI| |Read_the_Docs|
 
-``FRUT`` is a collection of tools dedicated to building `JUCE`_ projects using `CMake`_
+FRUT is a collection of tools dedicated to building `JUCE`_ projects using `CMake`_
 instead of `Projucer`_.
 
 It currently contains:
@@ -66,7 +66,7 @@ called ``MyGreatProject`` following this folder structure: ::
       ├── Source/
       └── MyGreatProject.jucer
 
-We first build and install ``FRUT`` with CMake: ::
+We first build and install FRUT with CMake: ::
 
   $ cd <root>/FRUT/
 
