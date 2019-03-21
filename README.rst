@@ -252,12 +252,12 @@ even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE
 .. _CMake Generators: https://cmake.org/cmake/help/latest/manual/cmake-generators.7.html
 .. _CMake: https://cmake.org
 .. _FRUT: https://github.com/McMartin/FRUT
-.. _JUCE: https://github.com/WeAreROLI/JUCE
 .. _JUCE 4.2.0: https://github.com/WeAreROLI/JUCE/tree/4.2.0
 .. _JUCE 4.3.1: https://github.com/WeAreROLI/JUCE/tree/4.3.1
 .. _JUCE 5.0.0: https://github.com/WeAreROLI/JUCE/tree/5.0.0
 .. _JUCE 5.2.1: https://github.com/WeAreROLI/JUCE/tree/5.2.1
 .. _JUCE 5.3.1: https://github.com/WeAreROLI/JUCE/tree/5.3.1
 .. _JUCE 5.4.3: https://github.com/WeAreROLI/JUCE/tree/5.4.3
+.. _JUCE: https://github.com/WeAreROLI/JUCE
 .. _Projucer: https://juce.com/discover/projucer
 .. _all-contributors: https://github.com/all-contributors/all-contributors
