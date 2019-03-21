@@ -7,6 +7,26 @@ FRUT is a collection of tools dedicated to building `JUCE`_ projects using `CMak
 instead of `Projucer`_.
 
 
+**In short**
+
+- *Requirements*
+
+  - CMake (3.4 minimum)
+  - JUCE (4.2.0 minimum)
+
+- *Supported platforms*
+
+  - Linux
+  - macOS
+  - Windows (MSVC and MinGW)
+
+- *Documentation* - https://frut.readthedocs.io
+- *Contributing*
+
+  - Contributions are welcome! See `CONTRIBUTING.md`_ for more details.
+  - `All contributors are recognized <#contributors>`__
+
+
 **Table of Contents**
 
 .. contents::
