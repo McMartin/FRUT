@@ -32,19 +32,35 @@ Requirements
 - JUCE, version 4.2.0 minimum
 
 
-Supported export targets
-------------------------
+Supported Projucer exporters
+----------------------------
 
-``Reprojucer.cmake`` and ``Jucer2Reprojucer`` support the following Projucer export
-targets:
+``Reprojucer.cmake`` and ``Jucer2Reprojucer`` support the following Projucer exporters
+(also known as "export targets"):
 
-- Xcode (MacOSX)
-- Visual Studio 2017
-- Visual Studio 2015
-- Visual Studio 2013
-- Linux Makefile
-- Code::Blocks (Windows)
-- Code::Blocks (Linux)
+.. raw:: html
+
+  <table>
+  <thead>
+    <tr><th>Supported</th><th>Exporter</th><th>Missing features</th></tr>
+  </thead>
+  <tbody>
+    <tr><td align="center">✔️</td><td>Xcode (MacOSX)</td><td rowspan="2">
+      <a href="https://github.com/McMartin/FRUT/labels/exporter%3A%20Xcode">9 unsupported Xcode exporter settings</a>
+    </td></tr>
+    <tr><td align="center">❌</td><td>Xcode (iOS)</td></tr>
+    <tr><td align="center">❌</td><td>Visual Studio 2019</td><td rowspan="4">
+      <a href="https://github.com/McMartin/FRUT/labels/exporter%3A%20Visual%20Studio">2 unsupported Visual Studio exporter settings</a>
+    </td></tr>
+    <tr><td align="center">✔️</td><td>Visual Studio 2017</td></tr>
+    <tr><td align="center">✔️</td><td>Visual Studio 2015</td></tr>
+    <tr><td align="center">✔️</td><td>Visual Studio 2013</td></tr>
+    <tr><td align="center">✔️</td><td>Linux Makefile</td><td></td></tr>
+    <tr><td align="center">❌</td><td>Android</td><td></td></tr>
+    <tr><td align="center">✔️</td><td>Code::Blocks (Windows)</td><td></td></tr>
+    <tr><td align="center">✔️</td><td>Code::Blocks (Linux)</td><td></td></tr>
+  </tbody>
+  </table>
 
 
 Documentation
