@@ -1,10 +1,7 @@
 FRUT
 ====
 
-.. compound::
-
-  |Code_of_Conduct| |AppVeyor| |Azure_Pipelines| |Travis_CI| |Read_the_Docs|
-
+|Code_of_Conduct| |AppVeyor| |Azure_Pipelines| |Travis_CI| |Read_the_Docs|
 
 ``FRUT`` is a collection of tools dedicated to building `JUCE`_ projects using `CMake`_
 instead of `Projucer`_.
