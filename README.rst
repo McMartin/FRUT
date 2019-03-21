@@ -6,7 +6,26 @@ FRUT
 FRUT is a collection of tools dedicated to building `JUCE`_ projects using `CMake`_
 instead of `Projucer`_.
 
-It currently contains:
+
+Background
+----------
+
+`JUCE`_ comes with its own project generation tool, `Projucer`_, which is very useful when
+starting a JUCE project. However, Projucer doesn't scale well when you want to make some
+aspects of your project configurable, when you want to add external libraries, when you
+want to use Continuous Integration, or when you want to manage several projects at once.
+
+FRUT was created to overcome these limitations, while making it very easy to migrate an
+existing JUCE project that uses Projucer. Since FRUT is based on `CMake`_, you also get
+access to many great features of CMake, including `testing
+<https://cmake.org/cmake/help/latest/manual/ctest.1.html>`__ and `packaging
+<https://cmake.org/cmake/help/latest/manual/cpack.1.html>`__ utilities.
+
+
+Contents
+--------
+
+FRUT currently contains:
 
 - ``Reprojucer.cmake``, a CMake module that provides high-level functions to reproduce
   how a JUCE project is defined in Projucer,
