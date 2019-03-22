@@ -1,21 +1,67 @@
-FRUT
-====
+|Code_of_Conduct| |AppVeyor| |Azure_Pipelines| |Travis_CI| |Read_the_Docs|
 
-.. compound::
+.. image:: FRUT.svg
+  :target: https://github.com/McMartin/FRUT
+  :alt: FRUT
 
-  |Code_of_Conduct| |AppVeyor| |Azure_Pipelines| |Travis_CI| |Read_the_Docs|
+FRUT makes it easy to build `JUCE`_ projects using `CMake`_ instead of `Projucer`_. It
+enables more flexibility in project architecture, simplified CI setup, and easier
+integration with other JUCE and non-JUCE projects. Converting an existing JUCE project to
+FRUT is easy, and you don't need to be a CMake expert to use it!
 
 
-``FRUT`` is a collection of tools dedicated to building `JUCE`_ projects using `CMake`_
-instead of `Projucer`_.
+**In short**
 
-It currently contains:
+- *Requirements*
+
+  - CMake (3.4 minimum)
+  - JUCE (4.2.0 minimum)
+
+- *Supported platforms*
+
+  - Linux
+  - macOS
+  - Windows (MSVC and MinGW)
+
+- *Documentation* - https://frut.readthedocs.io
+- *Contributing*
+
+  - Contributions are welcome! See `CONTRIBUTING.md`_ for more details.
+  - `All contributors are recognized <#contributors>`__
+
+
+**Table of Contents**
+
+.. contents::
+  :local:
+  :backlinks: none
+
+
+Background
+----------
+
+`JUCE`_ comes with its own project generation tool, `Projucer`_, which is very useful when
+starting a JUCE project. However, Projucer doesn't scale well when you want to make some
+aspects of your project configurable, when you want to add external libraries, when you
+want to use Continuous Integration, or when you want to manage several projects at once.
+
+FRUT was created to overcome these limitations, while making it very easy to migrate an
+existing JUCE project that uses Projucer. Since FRUT is based on `CMake`_, you also get
+access to many great features of CMake, including `testing
+<https://cmake.org/cmake/help/latest/manual/ctest.1.html>`__ and `packaging
+<https://cmake.org/cmake/help/latest/manual/cpack.1.html>`__ utilities.
+
+
+Contents
+--------
+
+FRUT currently contains:
 
 - ``Reprojucer.cmake``, a CMake module that provides high-level functions to reproduce
   how a JUCE project is defined in Projucer,
 
-- ``Jucer2Reprojucer``, a console application based on JUCE that converts ``.jucer``
-  project files into ``CMakeLists.txt`` files that include and use ``Reprojucer.cmake``,
+- ``Jucer2Reprojucer``, a console application that converts ``.jucer`` project files into
+  ready-to-use ``CMakeLists.txt`` files that include and use ``Reprojucer.cmake``,
 
 - several ``CMakeLists.txt`` files generated from existing ``.jucer`` project files,
   including:
@@ -35,19 +81,35 @@ Requirements
 - JUCE, version 4.2.0 minimum
 
 
-Supported export targets
-------------------------
+Supported Projucer exporters
+----------------------------
 
-``Reprojucer.cmake`` and ``Jucer2Reprojucer`` support the following Projucer export
-targets:
+``Reprojucer.cmake`` and ``Jucer2Reprojucer`` support the following Projucer exporters
+(also known as "export targets"):
 
-- Xcode (MacOSX)
-- Visual Studio 2017
-- Visual Studio 2015
-- Visual Studio 2013
-- Linux Makefile
-- Code::Blocks (Windows)
-- Code::Blocks (Linux)
+.. raw:: html
+
+  <table>
+  <thead>
+    <tr><th>Supported</th><th>Exporter</th><th>Missing features</th></tr>
+  </thead>
+  <tbody>
+    <tr><td align="center">✔️</td><td>Xcode (MacOSX)</td><td rowspan="2">
+      <a href="https://github.com/McMartin/FRUT/labels/exporter%3A%20Xcode">9 unsupported Xcode exporter settings</a>
+    </td></tr>
+    <tr><td align="center">❌</td><td>Xcode (iOS)</td></tr>
+    <tr><td align="center">❌</td><td>Visual Studio 2019</td><td rowspan="4">
+      <a href="https://github.com/McMartin/FRUT/labels/exporter%3A%20Visual%20Studio">2 unsupported Visual Studio exporter settings</a>
+    </td></tr>
+    <tr><td align="center">✔️</td><td>Visual Studio 2017</td></tr>
+    <tr><td align="center">✔️</td><td>Visual Studio 2015</td></tr>
+    <tr><td align="center">✔️</td><td>Visual Studio 2013</td></tr>
+    <tr><td align="center">✔️</td><td>Linux Makefile</td><td></td></tr>
+    <tr><td align="center">❌</td><td>Android</td><td></td></tr>
+    <tr><td align="center">✔️</td><td>Code::Blocks (Windows)</td><td></td></tr>
+    <tr><td align="center">✔️</td><td>Code::Blocks (Linux)</td><td></td></tr>
+  </tbody>
+  </table>
 
 
 Documentation
@@ -69,7 +131,7 @@ called ``MyGreatProject`` following this folder structure: ::
       ├── Source/
       └── MyGreatProject.jucer
 
-We first build and install ``FRUT`` with CMake: ::
+We first build and install FRUT with CMake: ::
 
   $ cd <root>/FRUT/
 
@@ -116,7 +178,7 @@ Contributing
 ------------
 
 Contributions to FRUT are very welcomed and you can contribute even if you don't know
-anything about CMake. See the `CONTRIBUTING`_ file for more details.
+anything about CMake. See the `CONTRIBUTING.md`_ file for more details.
 
 
 Contributors
@@ -131,67 +193,67 @@ contributors:
   <tbody align="center">
   <tr>
     <td>
-      <a href="https://github.com/McMartin"><img src="https://github.com/McMartin.png" width="100">Alain Martin</a>
+      <a href="https://github.com/McMartin"><img src="https://github.com/McMartin.png" width="100"><br />Alain Martin</a>
       <br />
       <a href="https://github.com/McMartin/FRUT/pulls?q=state%3Amerged+author%3AMcMartin" title="Code">💻</a>
       <a href="https://github.com/McMartin/FRUT/pulls?q=state%3Amerged+reviewed-by%3AMcMartin+-author%3AMcMartin+" title="Pull Request reviews">👀</a>
       <a href="https://github.com/McMartin/FRUT/commits/master/docs?author=McMartin" title="Documentation">📖</a>
     </td>
     <td>
-      <a href="https://github.com/MartyLake"><img src="https://github.com/MartyLake.png" width="100">Matthieu Talbot</a>
+      <a href="https://github.com/MartyLake"><img src="https://github.com/MartyLake.png" width="100"><br />Matthieu Talbot</a>
       <br />
       <a href="https://github.com/McMartin/FRUT/pulls?q=state%3Amerged+reviewed-by%3AMartyLake+-author%3AMartyLake+" title="Pull Request reviews">👀</a>
       <a href="https://github.com/McMartin/FRUT/pulls?q=state%3Amerged+author%3AMartyLake" title="Code">💻</a>
       <a href="https://github.com/McMartin/FRUT/issues?q=is%3Aissue+author%3AMartyLake" title="Bug reports">🐛</a>
     </td>
     <td>
-      <a href="https://github.com/gonzaloflirt"><img src="https://github.com/gonzaloflirt.png" width="100">Florian Goltz</a>
+      <a href="https://github.com/gonzaloflirt"><img src="https://github.com/gonzaloflirt.png" width="100"><br />Florian Goltz</a>
       <br />
       <a href="https://github.com/McMartin/FRUT/pulls?q=state%3Amerged+author%3Agonzaloflirt" title="Code">💻</a>
     </td>
     <td>
-      <a href="https://github.com/WGuLL"><img src="https://github.com/WGuLL.png" width="100">Fabien Roussel</a>
+      <a href="https://github.com/WGuLL"><img src="https://github.com/WGuLL.png" width="100"><br />Fabien Roussel</a>
       <br />
       <a href="https://github.com/McMartin/FRUT/issues?q=is%3Aissue+author%3AWGuLL" title="Bug reports">🐛</a>
       <a href="https://github.com/McMartin/FRUT/pulls?q=state%3Amerged+reviewed-by%3AWGuLL+-author%3AWGuLL+" title="Pull Request reviews">👀</a>
     </td>
     <td>
-      <a href="https://github.com/Xav83"><img src="https://github.com/Xav83.png" width="100">Xavier Jouvenot</a>
+      <a href="https://github.com/Xav83"><img src="https://github.com/Xav83.png" width="100"><br />Xavier Jouvenot</a>
       <br />
       <a href="https://github.com/McMartin/FRUT/issues?q=is%3Aissue+author%3AXav83" title="Bug reports">🐛</a>
       <a href="https://github.com/McMartin/FRUT/pulls?q=state%3Amerged+reviewed-by%3AXav83+-author%3AXav83+" title="Pull Request reviews">👀</a>
     </td>
     <td>
-      <a href="https://github.com/lethal-guitar"><img src="https://github.com/lethal-guitar.png" width="100">Nikolai Wuttke</a>
+      <a href="https://github.com/lethal-guitar"><img src="https://github.com/lethal-guitar.png" width="100"><br />Nikolai Wuttke</a>
       <br />
       <a href="https://github.com/McMartin/FRUT/pulls?q=state%3Amerged+reviewed-by%3Alethal-guitar+-author%3Alethal-guitar+" title="Pull Request reviews">👀</a>
     </td>
   </tr>
   <tr>
     <td>
-      <a href="https://github.com/PioBeat"><img src="https://github.com/PioBeat.png" width="100">Dominik Grzelak</a>
+      <a href="https://github.com/PioBeat"><img src="https://github.com/PioBeat.png" width="100"><br />Dominik Grzelak</a>
       <br />
       <a href="https://github.com/McMartin/FRUT/issues?q=is%3Aissue+author%3APioBeat" title="Bug reports">🐛</a>
     </td>
     <td>
-      <a href="https://github.com/dscheffer"><img src="https://github.com/dscheffer.png" width="100">Dennis Scheffer</a>
+      <a href="https://github.com/dscheffer"><img src="https://github.com/dscheffer.png" width="100"><br />Dennis Scheffer</a>
       <br />
       <a href="https://github.com/McMartin/FRUT/issues?q=is%3Aissue+author%3Adscheffer" title="Bug reports">🐛</a>
       <a href="https://github.com/McMartin/FRUT/pulls?q=state%3Amerged+author%3Adscheffer" title="Code">💻</a>
     </td>
     <td>
-      <a href="https://github.com/scotchi"><img src="https://github.com/scotchi.png" width="100">Scott Wheeler</a>
+      <a href="https://github.com/scotchi"><img src="https://github.com/scotchi.png" width="100"><br />Scott Wheeler</a>
       <br />
       <a href="https://github.com/McMartin/FRUT/pulls?q=state%3Amerged+author%3Ascotchi" title="Code">💻</a>
       <a href="https://github.com/McMartin/FRUT/issues?q=is%3Aissue+author%3Ascotchi" title="Bug reports">🐛</a>
     </td>
     <td>
-      <a href="https://github.com/IqraShahzad1"><img src="https://github.com/IqraShahzad1.png" width="100">Iqra Shahzad</a>
+      <a href="https://github.com/IqraShahzad1"><img src="https://github.com/IqraShahzad1.png" width="100"><br />Iqra Shahzad</a>
       <br />
       <a href="https://github.com/McMartin/FRUT/issues?q=is%3Aissue+author%3AIqraShahzad1" title="Bug reports">🐛</a>
     </td>
     <td>
-      <a href="https://github.com/rclement"><img src="https://github.com/rclement.png" width="100">Romain Clement</a>
+      <a href="https://github.com/rclement"><img src="https://github.com/rclement.png" width="100"><br />Romain Clement</a>
       <br />
       <a href="https://github.com/McMartin/FRUT/issues?q=is%3Aissue+author%3Arclement" title="Bug reports">🐛</a>
     </td>
@@ -240,7 +302,7 @@ even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE
   :target: https://www.gnu.org/licenses/gpl.html
   :alt: GNU General Public License
 
-.. _CONTRIBUTING: CONTRIBUTING.md
+.. _CONTRIBUTING.md: CONTRIBUTING.md
 .. _LICENSE: LICENSE
 .. _generated/JUCE-4.2.0: generated/JUCE-4.2.0
 .. _generated/JUCE-4.3.1: generated/JUCE-4.3.1
@@ -252,12 +314,12 @@ even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE
 .. _CMake Generators: https://cmake.org/cmake/help/latest/manual/cmake-generators.7.html
 .. _CMake: https://cmake.org
 .. _FRUT: https://github.com/McMartin/FRUT
-.. _JUCE: https://github.com/WeAreROLI/JUCE
 .. _JUCE 4.2.0: https://github.com/WeAreROLI/JUCE/tree/4.2.0
 .. _JUCE 4.3.1: https://github.com/WeAreROLI/JUCE/tree/4.3.1
 .. _JUCE 5.0.0: https://github.com/WeAreROLI/JUCE/tree/5.0.0
 .. _JUCE 5.2.1: https://github.com/WeAreROLI/JUCE/tree/5.2.1
 .. _JUCE 5.3.1: https://github.com/WeAreROLI/JUCE/tree/5.3.1
 .. _JUCE 5.4.3: https://github.com/WeAreROLI/JUCE/tree/5.4.3
+.. _JUCE: https://github.com/WeAreROLI/JUCE
 .. _Projucer: https://juce.com/discover/projucer
 .. _all-contributors: https://github.com/all-contributors/all-contributors

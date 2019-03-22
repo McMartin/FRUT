@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="898px" height="192px">
+  <style>
+    .title {
+      font-family: -apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif;
+      font-size: 192px;
+      font-weight: 600;
+      text-anchor: middle;
+    }
+
+    .background {
+      font-size: 12px;
+      text-anchor: middle;
+    }
+  </style>
+
+  <defs>
+    <mask id="frutMask">
+      <text x="50%" y="162px" class="title" fill="white">FRUT</text>
+    </mask>
+  </defs>
+
+  <text x="50%" y="0px" class="background" mask="url(#frutMask)">
+    <tspan x="50%" dy="12px">🍍🍎🍐🍑🍒🍓🍇🍈🍉🍊🍋🍌🍍🍎🍐🍑🍒🍓🍇🍈🍉🍊🍋🍌🍍🍎🍐🍑🍒🍓🍇🍈🍉🍊🍋🍌🍍🍎🍐🍑🍒🍓🍇🍈🍉🍊🍋🍌🍍🍎🍐🍑🍒🍓🍇🍈🍉🍊🍋🍌</tspan>
+    <tspan x="50%" dy="16px">🍈🍉🍊🍋🍌🍍🍎🍐🍑🍒🍓🍇🍈🍉🍊🍋🍌🍍🍎🍐🍑🍒🍓🍇🍈🍉🍊🍋🍌🍍🍎🍐🍑🍒🍓🍇🍈🍉🍊🍋🍌🍍🍎🍐🍑🍒🍓🍇🍈🍉🍊🍋🍌🍍🍎🍐🍑🍒🍓🍇</tspan>
+    <tspan x="50%" dy="16px">🍐🍑🍒🍓🍇🍈🍉🍊🍋🍌🍍🍎🍐🍑🍒🍓🍇🍈🍉🍊🍋🍌🍍🍎🍐🍑🍒🍓🍇🍈🍉🍊🍋🍌🍍🍎🍐🍑🍒🍓🍇🍈🍉🍊🍋🍌🍍🍎🍐🍑🍒🍓🍇🍈🍉🍊🍋🍌🍍🍎</tspan>
+    <tspan x="50%" dy="16px">🍊🍋🍌🍍🍎🍐🍑🍒🍓🍇🍈🍉🍊🍋🍌🍍🍎🍐🍑🍒🍓🍇🍈🍉🍊🍋🍌🍍🍎🍐🍑🍒🍓🍇🍈🍉🍊🍋🍌🍍🍎🍐🍑🍒🍓🍇🍈🍉🍊🍋🍌🍍🍎🍐🍑🍒🍓🍇🍈🍉</tspan>
+    <tspan x="50%" dy="16px">🍒🍓🍇🍈🍉🍊🍋🍌🍍🍎🍐🍑🍒🍓🍇🍈🍉🍊🍋🍌🍍🍎🍐🍑🍒🍓🍇🍈🍉🍊🍋🍌🍍🍎🍐🍑🍒🍓🍇🍈🍉🍊🍋🍌🍍🍎🍐🍑🍒🍓🍇🍈🍉🍊🍋🍌🍍🍎🍐🍑</tspan>
+    <tspan x="50%" dy="16px">🍌🍍🍎🍐🍑🍒🍓🍇🍈🍉🍊🍋🍌🍍🍎🍐🍑🍒🍓🍇🍈🍉🍊🍋🍌🍍🍎🍐🍑🍒🍓🍇🍈🍉🍊🍋🍌🍍🍎🍐🍑🍒🍓🍇🍈🍉🍊🍋🍌🍍🍎🍐🍑🍒🍓🍇🍈🍉🍊🍋</tspan>
+    <tspan x="50%" dy="16px">🍇🍈🍉🍊🍋🍌🍍🍎🍐🍑🍒🍓🍇🍈🍉🍊🍋🍌🍍🍎🍐🍑🍒🍓🍇🍈🍉🍊🍋🍌🍍🍎🍐🍑🍒🍓🍇🍈🍉🍊🍋🍌🍍🍎🍐🍑🍒🍓🍇🍈🍉🍊🍋🍌🍍🍎🍐🍑🍒🍓</tspan>
+    <tspan x="50%" dy="16px">🍎🍐🍑🍒🍓🍇🍈🍉🍊🍋🍌🍍🍎🍐🍑🍒🍓🍇🍈🍉🍊🍋🍌🍍🍎🍐🍑🍒🍓🍇🍈🍉🍊🍋🍌🍍🍎🍐🍑🍒🍓🍇🍈🍉🍊🍋🍌🍍🍎🍐🍑🍒🍓🍇🍈🍉🍊🍋🍌🍍</tspan>
+    <tspan x="50%" dy="16px">🍉🍊🍋🍌🍍🍎🍐🍑🍒🍓🍇🍈🍉🍊🍋🍌🍍🍎🍐🍑🍒🍓🍇🍈🍉🍊🍋🍌🍍🍎🍐🍑🍒🍓🍇🍈🍉🍊🍋🍌🍍🍎🍐🍑🍒🍓🍇🍈🍉🍊🍋🍌🍍🍎🍐🍑🍒🍓🍇🍈</tspan>
+    <tspan x="50%" dy="16px">🍑🍒🍓🍇🍈🍉🍊🍋🍌🍍🍎🍐🍑🍒🍓🍇🍈🍉🍊🍋🍌🍍🍎🍐🍑🍒🍓🍇🍈🍉🍊🍋🍌🍍🍎🍐🍑🍒🍓🍇🍈🍉🍊🍋🍌🍍🍎🍐🍑🍒🍓🍇🍈🍉🍊🍋🍌🍍🍎🍐</tspan>
+    <tspan x="50%" dy="16px">🍋🍌🍍🍎🍐🍑🍒🍓🍇🍈🍉🍊🍋🍌🍍🍎🍐🍑🍒🍓🍇🍈🍉🍊🍋🍌🍍🍎🍐🍑🍒🍓🍇🍈🍉🍊🍋🍌🍍🍎🍐🍑🍒🍓🍇🍈🍉🍊🍋🍌🍍🍎🍐🍑🍒🍓🍇🍈🍉🍊</tspan>
+    <tspan x="50%" dy="16px">🍒🍓🍇🍈🍉🍊🍋🍌🍍🍎🍐🍑🍒🍓🍇🍈🍉🍊🍋🍌🍍🍎🍐🍑🍒🍓🍇🍈🍉🍊🍋🍌🍍🍎🍐🍑🍒🍓🍇🍈🍉🍊🍋🍌🍍🍎🍐🍑🍒🍓🍇🍈🍉🍊🍋🍌🍍🍎🍐🍑</tspan>
+  </text>
+
+  <text x="50%" y="162px" class="title" fill="none" stroke="#88bd54" stroke-width="2">FRUT</text>
+</svg>
