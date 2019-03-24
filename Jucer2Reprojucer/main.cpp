@@ -765,11 +765,12 @@ int main(int argc, char* argv[])
       convertSetting(jucerProject, "pluginChannelConfigs",
                      "PLUGIN_CHANNEL_CONFIGURATIONS", {});
 
+      const auto pluginCharacteristics = juce::StringArray::fromTokens(
+        jucerProject.getProperty("pluginCharacteristicsValue").toString(), ",", {});
+
       const auto isSynthAudioPlugin =
         jucerVersionAsTuple >= Version{5, 3, 1}
-          ? juce::StringArray::fromTokens(
-              jucerProject.getProperty("pluginCharacteristicsValue").toString(), ",", {})
-              .contains("pluginIsSynth")
+          ? pluginCharacteristics.contains("pluginIsSynth")
           : jucerProject.hasProperty("pluginIsSynth")
               && bool{jucerProject.getProperty("pluginIsSynth")};
 
