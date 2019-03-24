@@ -768,7 +768,7 @@ int main(int argc, char* argv[])
       const auto isSynthAudioPlugin =
         jucerVersionAsTuple >= Version{5, 3, 1}
           ? juce::StringArray::fromTokens(
-              jucerProject.getProperty("pluginCharacteristics").toString(), ",", {})
+              jucerProject.getProperty("pluginCharacteristicsValue").toString(), ",", {})
               .contains("pluginIsSynth")
           : jucerProject.hasProperty("pluginIsSynth")
               && bool{jucerProject.getProperty("pluginIsSynth")};
