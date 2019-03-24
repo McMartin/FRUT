@@ -2833,7 +2833,7 @@ function(_FRUT_generate_AppConfig_header)
     endif()
     set(Vst3Category_value "\"${vst3_category}\"")
 
-    if(NOT DEFINED JUCER_PLUGIN_AU_MAIN_TYPE)
+    if(NOT DEFINED JUCER_PLUGIN_AU_MAIN_TYPE OR JUCER_PLUGIN_AU_MAIN_TYPE STREQUAL "")
       if(JUCER_MIDI_EFFECT_PLUGIN)
         set(AUMainType_value "'aumi'")
       elseif(JUCER_PLUGIN_IS_A_SYNTH)
@@ -4550,7 +4550,7 @@ endfunction()
 
 function(_FRUT_get_au_main_type_code out_value)
 
-  if(NOT DEFINED JUCER_PLUGIN_AU_MAIN_TYPE)
+  if(NOT DEFINED JUCER_PLUGIN_AU_MAIN_TYPE OR JUCER_PLUGIN_AU_MAIN_TYPE STREQUAL "")
     if(JUCER_MIDI_EFFECT_PLUGIN)
       set(code "aumi")
     elseif(JUCER_PLUGIN_IS_A_SYNTH)
