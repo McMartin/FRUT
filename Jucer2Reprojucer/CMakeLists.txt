@@ -43,6 +43,18 @@ option(WRITE_CRLF_LINE_ENDINGS
   OFF
 )
 
+set(JUCE5_LICENSE "Personal" CACHE STRING
+  "JUCE 5 License. Changes the default value for settings that depend on the license."
+)
+set_property(CACHE JUCE5_LICENSE PROPERTY STRINGS
+  "Education" "GPL" "Indie" "Personal" "Pro"
+)
+string(CONCAT is_paid_or_gpl "$<OR:"
+  "$<STREQUAL:${JUCE5_LICENSE},GPL>,"
+  "$<STREQUAL:${JUCE5_LICENSE},Indie>,"
+  "$<STREQUAL:${JUCE5_LICENSE},Pro>>"
+)
+
 
 jucer_project_begin()
 
@@ -56,6 +68,7 @@ jucer_project_settings(
     "DONT_SET_USING_JUCE_NAMESPACE=1"
     "JUCE_DISABLE_JUCE_VERSION_PRINTING=1"
     "WRITE_CRLF_LINE_ENDINGS=$<BOOL:${WRITE_CRLF_LINE_ENDINGS}>"
+    "IS_PAID_OR_GPL=${is_paid_or_gpl}"
   HEADER_SEARCH_PATHS
     "${CMAKE_CURRENT_LIST_DIR}/third-party"
 )

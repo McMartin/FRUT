@@ -83,6 +83,15 @@ static const auto kNewLine = "\r\n";
 static const auto kNewLine = '\n';
 #endif
 
+#if !defined(IS_PAID_OR_GPL)
+#error IS_PAID_OR_GPL must be defined
+#endif
+#if IS_PAID_OR_GPL
+static const auto kDefaultLicenseBasedValue = "OFF";
+#else
+static const auto kDefaultLicenseBasedValue = "ON";
+#endif
+
 
 namespace
 {
@@ -615,7 +624,8 @@ int main(int argc, char* argv[])
     if (jucerVersionAsTuple >= Version{5, 0, 0})
     {
       const auto booleanWithLicenseRequiredTagline = [](const juce::var& v) {
-        const auto value = v.isVoid() ? "ON" : (bool{v} ? "ON" : "OFF");
+        const auto value =
+          v.isVoid() ? kDefaultLicenseBasedValue : (bool{v} ? "ON" : "OFF");
         return juce::String{value}
                + " # Required for closed source applications without an Indie or Pro "
                  "JUCE license";
