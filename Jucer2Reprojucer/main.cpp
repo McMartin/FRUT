@@ -613,7 +613,8 @@ int main(int argc, char* argv[])
     convertSettingIfDefined(jucerProject, "companyEmail", "COMPANY_EMAIL", {});
 
     const auto booleanWithLicenseRequiredTagline = [](const juce::var& v) {
-      return juce::String{bool{v} ? "ON" : "OFF"}
+      const auto value = bool{v} ? "ON" : "OFF";
+      return juce::String{value}
              + " # Required for closed source applications without an Indie or Pro JUCE "
                "license";
     };
