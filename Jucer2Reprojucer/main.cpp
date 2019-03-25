@@ -129,6 +129,26 @@ void printError(const juce::String& error)
 }
 
 
+juce::String makeValidIdentifier(juce::String s)
+{
+  if (s.isEmpty())
+  {
+    return "unknown";
+  }
+
+  s = s.replaceCharacters(".,;:/@", "______")
+        .retainCharacters(
+          "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_0123456789");
+
+  if (juce::CharacterFunctions::isDigit(s[0]))
+  {
+    s = "_" + s;
+  }
+
+  return s;
+}
+
+
 juce::String cmakeAbsolutePath(const juce::String& path)
 {
   const auto file = juce::File::getCurrentWorkingDirectory().getChildFile(path);
@@ -625,8 +645,19 @@ int main(int argc, char* argv[])
     }();
     wLn("  PROJECT_TYPE \"", projectTypeDescription, "\"");
 
+    const auto defaultCompanyName = [&jucerProject]() {
+      const auto companyNameString = jucerProject.getProperty("companyName").toString();
+      return companyNameString.isEmpty() ? "yourcompany" : companyNameString;
+    }();
+
+    const auto defaultBundleIdentifier =
+      jucerVersionAsTuple >= Version{5, 4, 0}
+        ? "com." + makeValidIdentifier(defaultCompanyName) + "."
+            + makeValidIdentifier(jucerProjectName)
+        : "com.yourcompany." + makeValidIdentifier(jucerProjectName);
+
     convertSettingWithDefault(jucerProject, "bundleIdentifier", "BUNDLE_IDENTIFIER",
-                              "com.yourcompany." + jucerProjectName);
+                              defaultBundleIdentifier);
 
     convertSettingIfDefined(jucerProject, "maxBinaryFileSize", "BINARYDATACPP_SIZE_LIMIT",
                             [](const juce::var& v) -> juce::String {
