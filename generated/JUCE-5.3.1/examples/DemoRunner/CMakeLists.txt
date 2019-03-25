@@ -32,6 +32,8 @@ jucer_project_settings(
   COMPANY_COPYRIGHT "Copyright (c) 2018 - ROLI Ltd."
   COMPANY_WEBSITE "https://www.juce.com/"
   COMPANY_EMAIL "info@juce.com"
+  REPORT_JUCE_APP_USAGE ON # Required for closed source applications without an Indie or Pro JUCE license
+  DISPLAY_THE_JUCE_SPLASH_SCREEN ON # Required for closed source applications without an Indie or Pro JUCE license
   PROJECT_TYPE "GUI Application"
   BUNDLE_IDENTIFIER "com.roli.juce.demorunner"
   CXX_LANGUAGE_STANDARD "C++14"
