@@ -765,11 +765,12 @@ int main(int argc, char* argv[])
       convertSetting(jucerProject, "pluginChannelConfigs",
                      "PLUGIN_CHANNEL_CONFIGURATIONS", {});
 
+      const auto pluginCharacteristics = juce::StringArray::fromTokens(
+        jucerProject.getProperty("pluginCharacteristicsValue").toString(), ",", {});
+
       const auto isSynthAudioPlugin =
         jucerVersionAsTuple >= Version{5, 3, 1}
-          ? juce::StringArray::fromTokens(
-              jucerProject.getProperty("pluginCharacteristics").toString(), ",", {})
-              .contains("pluginIsSynth")
+          ? pluginCharacteristics.contains("pluginIsSynth")
           : jucerProject.hasProperty("pluginIsSynth")
               && bool{jucerProject.getProperty("pluginIsSynth")};
 
@@ -791,7 +792,44 @@ int main(int argc, char* argv[])
         convertSetting(jucerProject, "aaxIdentifier", "PLUGIN_AAX_IDENTIFIER", {});
       }
       convertSetting(jucerProject, "pluginAUExportPrefix", "PLUGIN_AU_EXPORT_PREFIX", {});
-      convertSetting(jucerProject, "pluginAUMainType", "PLUGIN_AU_MAIN_TYPE", {});
+      if (jucerVersionAsTuple >= Version{5, 3, 1})
+      {
+        convertSetting(jucerProject, "pluginAUMainType", "PLUGIN_AU_MAIN_TYPE",
+                       [&pluginCharacteristics](const juce::var& v) -> juce::String {
+                         if (v.isVoid())
+                         {
+                           if (pluginCharacteristics.contains("pluginIsMidiEffectPlugin"))
+                             return "kAudioUnitType_MIDIProcessor"; // 'aumi'
+
+                           if (pluginCharacteristics.contains("pluginIsSynth"))
+                             return "kAudioUnitType_MusicDevice"; // 'aumu'
+
+                           if (pluginCharacteristics.contains("pluginWantsMidiIn"))
+                             return "kAudioUnitType_MusicEffect"; // 'aumf'
+
+                           return "kAudioUnitType_Effect"; // 'aufx'
+                         }
+
+                         const auto value = v.toString();
+                         // clang-format off
+                         if (value == "'aufx'") return "kAudioUnitType_Effect";
+                         if (value == "'aufc'") return "kAudioUnitType_FormatConverter";
+                         if (value == "'augn'") return "kAudioUnitType_Generator";
+                         if (value == "'aumi'") return "kAudioUnitType_MIDIProcessor";
+                         if (value == "'aumx'") return "kAudioUnitType_Mixer";
+                         if (value == "'aumu'") return "kAudioUnitType_MusicDevice";
+                         if (value == "'aumf'") return "kAudioUnitType_MusicEffect";
+                         if (value == "'auol'") return "kAudioUnitType_OfflineEffect";
+                         if (value == "'auou'") return "kAudioUnitType_Output";
+                         if (value == "'aupn'") return "kAudioUnitType_Panner";
+                         // clang-format on
+                         return value;
+                       });
+      }
+      else
+      {
+        convertSetting(jucerProject, "pluginAUMainType", "PLUGIN_AU_MAIN_TYPE", {});
+      }
       convertOnOffSettingIfDefined(jucerProject, "pluginAUIsSandboxSafe",
                                    "PLUGIN_AU_IS_SANDBOX_SAFE", {});
 
