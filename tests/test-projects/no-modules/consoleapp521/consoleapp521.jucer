@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<JUCERPROJECT id="A9Ca2m" name="consoleapp521" projectType="consoleapp" jucerVersion="5.2.1">
+<JUCERPROJECT id="A9Ca2m" name="consoleapp521" projectType="consoleapp" jucerVersion="5.2.1"
+              reportAppUsage="0" displaySplashScreen="0">
   <MAINGROUP id="A00GBC" name="consoleapp521">
     <GROUP id="{CB40CC0E-6674-C058-73E0-E70AF1CD4D8A}" name="Source">
       <FILE id="R7XoZ7" name="foo.cpp" compile="1" resource="0" file="Source/foo.cpp"/>
