@@ -832,7 +832,9 @@ int main(int argc, char* argv[])
       {
         convertSetting(jucerProject, "aaxIdentifier", "PLUGIN_AAX_IDENTIFIER", {});
       }
-      convertSetting(jucerProject, "pluginAUExportPrefix", "PLUGIN_AU_EXPORT_PREFIX", {});
+      convertSettingWithDefault(jucerProject, "pluginAUExportPrefix",
+                                "PLUGIN_AU_EXPORT_PREFIX",
+                                makeValidIdentifier(jucerProjectName) + "AU");
       if (jucerVersionAsTuple >= Version{5, 3, 1})
       {
         convertSetting(jucerProject, "pluginAUMainType", "PLUGIN_AU_MAIN_TYPE",
