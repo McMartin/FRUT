@@ -790,9 +790,10 @@ int main(int argc, char* argv[])
       convertSettingWithDefault(jucerProject, "pluginDesc", "PLUGIN_DESCRIPTION",
                                 jucerProjectName);
 
-      convertSetting(jucerProject, "pluginManufacturer", "PLUGIN_MANUFACTURER", {});
-      convertSetting(jucerProject, "pluginManufacturerCode", "PLUGIN_MANUFACTURER_CODE",
-                     {});
+      convertSettingWithDefault(jucerProject, "pluginManufacturer", "PLUGIN_MANUFACTURER",
+                                defaultCompanyName);
+      convertSettingWithDefault(jucerProject, "pluginManufacturerCode",
+                                "PLUGIN_MANUFACTURER_CODE", "Manu");
       convertSetting(jucerProject, "pluginCode", "PLUGIN_CODE", {});
 
       convertSetting(jucerProject, "pluginChannelConfigs",
