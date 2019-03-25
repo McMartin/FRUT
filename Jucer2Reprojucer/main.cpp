@@ -830,7 +830,8 @@ int main(int argc, char* argv[])
 
       if (jucerVersionAsTuple >= Version{5, 3, 1})
       {
-        convertSetting(jucerProject, "aaxIdentifier", "PLUGIN_AAX_IDENTIFIER", {});
+        convertSettingWithDefault(jucerProject, "aaxIdentifier", "PLUGIN_AAX_IDENTIFIER",
+                                  defaultBundleIdentifier);
       }
       convertSettingWithDefault(jucerProject, "pluginAUExportPrefix",
                                 "PLUGIN_AU_EXPORT_PREFIX",
