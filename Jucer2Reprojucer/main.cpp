@@ -129,6 +129,26 @@ void printError(const juce::String& error)
 }
 
 
+juce::String makeValidIdentifier(juce::String s)
+{
+  if (s.isEmpty())
+  {
+    return "unknown";
+  }
+
+  s = s.replaceCharacters(".,;:/@", "______")
+        .retainCharacters(
+          "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_0123456789");
+
+  if (juce::CharacterFunctions::isDigit(s[0]))
+  {
+    s = "_" + s;
+  }
+
+  return s;
+}
+
+
 juce::String cmakeAbsolutePath(const juce::String& path)
 {
   const auto file = juce::File::getCurrentWorkingDirectory().getChildFile(path);
@@ -625,8 +645,19 @@ int main(int argc, char* argv[])
     }();
     wLn("  PROJECT_TYPE \"", projectTypeDescription, "\"");
 
+    const auto defaultCompanyName = [&jucerProject]() {
+      const auto companyNameString = jucerProject.getProperty("companyName").toString();
+      return companyNameString.isEmpty() ? "yourcompany" : companyNameString;
+    }();
+
+    const auto defaultBundleIdentifier =
+      jucerVersionAsTuple >= Version{5, 4, 0}
+        ? "com." + makeValidIdentifier(defaultCompanyName) + "."
+            + makeValidIdentifier(jucerProjectName)
+        : "com.yourcompany." + makeValidIdentifier(jucerProjectName);
+
     convertSettingWithDefault(jucerProject, "bundleIdentifier", "BUNDLE_IDENTIFIER",
-                              "com.yourcompany." + jucerProjectName);
+                              defaultBundleIdentifier);
 
     convertSettingIfDefined(jucerProject, "maxBinaryFileSize", "BINARYDATACPP_SIZE_LIMIT",
                             [](const juce::var& v) -> juce::String {
@@ -754,13 +785,23 @@ int main(int argc, char* argv[])
         }
       }
 
-      convertSetting(jucerProject, "pluginName", "PLUGIN_NAME", {});
-      convertSetting(jucerProject, "pluginDesc", "PLUGIN_DESCRIPTION", {});
+      convertSettingWithDefault(jucerProject, "pluginName", "PLUGIN_NAME",
+                                jucerProjectName);
+      convertSettingWithDefault(jucerProject, "pluginDesc", "PLUGIN_DESCRIPTION",
+                                jucerProjectName);
 
-      convertSetting(jucerProject, "pluginManufacturer", "PLUGIN_MANUFACTURER", {});
-      convertSetting(jucerProject, "pluginManufacturerCode", "PLUGIN_MANUFACTURER_CODE",
-                     {});
-      convertSetting(jucerProject, "pluginCode", "PLUGIN_CODE", {});
+      convertSettingWithDefault(jucerProject, "pluginManufacturer", "PLUGIN_MANUFACTURER",
+                                defaultCompanyName);
+      convertSettingWithDefault(jucerProject, "pluginManufacturerCode",
+                                "PLUGIN_MANUFACTURER_CODE", "Manu");
+
+      const auto defaultPluginCode = [&jucerProject]() {
+        const auto projectId = jucerProject.getProperty("id").toString();
+        const auto s = makeValidIdentifier(projectId + projectId) + "xxxx";
+        return s.substring(0, 1).toUpperCase() + s.substring(1, 4).toLowerCase();
+      }();
+      convertSettingWithDefault(jucerProject, "pluginCode", "PLUGIN_CODE",
+                                defaultPluginCode);
 
       convertSetting(jucerProject, "pluginChannelConfigs",
                      "PLUGIN_CHANNEL_CONFIGURATIONS", {});
@@ -789,9 +830,12 @@ int main(int argc, char* argv[])
 
       if (jucerVersionAsTuple >= Version{5, 3, 1})
       {
-        convertSetting(jucerProject, "aaxIdentifier", "PLUGIN_AAX_IDENTIFIER", {});
+        convertSettingWithDefault(jucerProject, "aaxIdentifier", "PLUGIN_AAX_IDENTIFIER",
+                                  defaultBundleIdentifier);
       }
-      convertSetting(jucerProject, "pluginAUExportPrefix", "PLUGIN_AU_EXPORT_PREFIX", {});
+      convertSettingWithDefault(jucerProject, "pluginAUExportPrefix",
+                                "PLUGIN_AU_EXPORT_PREFIX",
+                                makeValidIdentifier(jucerProjectName) + "AU");
       if (jucerVersionAsTuple >= Version{5, 3, 1})
       {
         convertSetting(jucerProject, "pluginAUMainType", "PLUGIN_AU_MAIN_TYPE",
