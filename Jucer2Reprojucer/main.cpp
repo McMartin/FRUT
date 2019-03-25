@@ -794,7 +794,14 @@ int main(int argc, char* argv[])
                                 defaultCompanyName);
       convertSettingWithDefault(jucerProject, "pluginManufacturerCode",
                                 "PLUGIN_MANUFACTURER_CODE", "Manu");
-      convertSetting(jucerProject, "pluginCode", "PLUGIN_CODE", {});
+
+      const auto defaultPluginCode = [&jucerProject]() {
+        const auto projectId = jucerProject.getProperty("id").toString();
+        const auto s = makeValidIdentifier(projectId + projectId) + "xxxx";
+        return s.substring(0, 1).toUpperCase() + s.substring(1, 4).toLowerCase();
+      }();
+      convertSettingWithDefault(jucerProject, "pluginCode", "PLUGIN_CODE",
+                                defaultPluginCode);
 
       convertSetting(jucerProject, "pluginChannelConfigs",
                      "PLUGIN_CHANNEL_CONFIGURATIONS", {});
