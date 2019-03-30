@@ -891,6 +891,21 @@ int main(int argc, char* argv[])
       convertOnOffSettingIfDefined(jucerProject, "pluginAUIsSandboxSafe",
                                    "PLUGIN_AU_IS_SANDBOX_SAFE", {});
 
+      if (jucerProject.hasProperty("pluginVSTNumMidiInputs")
+          || (jucerVersionAsTuple >= Version{5, 4, 2}
+              && pluginCharacteristics.contains("pluginWantsMidiIn")))
+      {
+        convertSettingWithDefault(jucerProject, "pluginVSTNumMidiInputs",
+                                  "PLUGIN_VST_NUM_MIDI_INPUTS", "16");
+      }
+      if (jucerProject.hasProperty("pluginVSTNumMidiOutputs")
+          || (jucerVersionAsTuple >= Version{5, 4, 2}
+              && pluginCharacteristics.contains("pluginProducesMidiOut")))
+      {
+        convertSettingWithDefault(jucerProject, "pluginVSTNumMidiOutputs",
+                                  "PLUGIN_VST_NUM_MIDI_OUTPUTS", "16");
+      }
+
       if (!vstIsLegacy)
       {
         convertSettingWithDefault(
