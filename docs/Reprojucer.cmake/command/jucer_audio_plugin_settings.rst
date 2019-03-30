@@ -37,6 +37,9 @@ Define the settings specific to an *Audio Plug-in* project.
     [PLUGIN_AU_MAIN_TYPE <plugin_au_main_type>]
     [PLUGIN_AU_IS_SANDBOX_SAFE <ON|OFF>]
 
+    [PLUGIN_VST_NUM_MIDI_INPUTS <1..16>]
+    [PLUGIN_VST_NUM_MIDI_OUTPUTS <1..16>]
+
     [PLUGIN_VST_CATEGORY <plugin_vst_category>]
     [PLUGIN_VST3_CATEGORY <plugin_vst3_category>]
     [PLUGIN_RTAS_CATEGORY <plugin_rtas_category>]

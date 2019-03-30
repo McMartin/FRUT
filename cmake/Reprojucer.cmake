@@ -198,6 +198,8 @@ function(jucer_audio_plugin_settings)
     "PLUGIN_AU_EXPORT_PREFIX"
     "PLUGIN_AU_MAIN_TYPE"
     "PLUGIN_AU_IS_SANDBOX_SAFE"
+    "PLUGIN_VST_NUM_MIDI_INPUTS"
+    "PLUGIN_VST_NUM_MIDI_OUTPUTS"
     "PLUGIN_VST_LEGACY_CATEGORY"
     "PLUGIN_VST_CATEGORY"
     "VST_CATEGORY"
@@ -2770,6 +2772,12 @@ function(_FRUT_generate_AppConfig_header)
         "IAAType" "IAASubType" "IAAName"
       )
     endif()
+    if(DEFINED JUCER_PLUGIN_VST_NUM_MIDI_INPUTS
+        OR DEFINED JUCER_PLUGIN_VST_NUM_MIDI_OUTPUTS
+        OR NOT DEFINED JUCER_VERSION
+        OR JUCER_VERSION VERSION_GREATER 5.4.1)
+      list(APPEND audio_plugin_setting_names "VSTNumMidiInputs" "VSTNumMidiOutputs")
+    endif()
 
     _FRUT_bool_to_int("${JUCER_BUILD_VST}" Build_VST_value)
     _FRUT_bool_to_int("${JUCER_BUILD_VST3}" Build_VST3_value)
@@ -2939,6 +2947,17 @@ function(_FRUT_generate_AppConfig_header)
     _FRUT_char_literal("${iaa_type_code}" IAAType_value)
     set(IAASubType_value "JucePlugin_PluginCode")
     set(IAAName_value "\"${JUCER_PLUGIN_MANUFACTURER}: ${JUCER_PLUGIN_NAME}\"")
+
+    if(DEFINED JUCER_PLUGIN_VST_NUM_MIDI_INPUTS)
+      set(VSTNumMidiInputs_value "${JUCER_PLUGIN_VST_NUM_MIDI_INPUTS}")
+    else()
+      set(VSTNumMidiInputs_value "16")
+    endif()
+    if(DEFINED JUCER_PLUGIN_VST_NUM_MIDI_OUTPUTS)
+      set(VSTNumMidiOutputs_value "${JUCER_PLUGIN_VST_NUM_MIDI_OUTPUTS}")
+    else()
+      set(VSTNumMidiOutputs_value "16")
+    endif()
 
     string(LENGTH "${JUCER_PLUGIN_CHANNEL_CONFIGURATIONS}" plugin_channel_config_length)
     if(plugin_channel_config_length GREATER 0)
