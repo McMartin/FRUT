@@ -83,6 +83,15 @@ static const auto kNewLine = "\r\n";
 static const auto kNewLine = '\n';
 #endif
 
+#if !defined(IS_PAID_OR_GPL)
+#error IS_PAID_OR_GPL must be defined
+#endif
+#if IS_PAID_OR_GPL
+static const auto kDefaultLicenseBasedValue = "OFF";
+#else
+static const auto kDefaultLicenseBasedValue = "ON";
+#endif
+
 
 namespace
 {
@@ -612,18 +621,23 @@ int main(int argc, char* argv[])
     convertSettingIfDefined(jucerProject, "companyWebsite", "COMPANY_WEBSITE", {});
     convertSettingIfDefined(jucerProject, "companyEmail", "COMPANY_EMAIL", {});
 
-    const auto booleanWithLicenseRequiredTagline = [](const juce::var& v) {
-      return juce::String{bool{v} ? "ON" : "OFF"}
-             + " # Required for closed source applications without an Indie or Pro JUCE "
-               "license";
-    };
-    convertOnOffSettingIfDefined(jucerProject, "reportAppUsage", "REPORT_JUCE_APP_USAGE",
-                                 booleanWithLicenseRequiredTagline);
-    convertOnOffSettingIfDefined(jucerProject, "displaySplashScreen",
-                                 "DISPLAY_THE_JUCE_SPLASH_SCREEN",
-                                 booleanWithLicenseRequiredTagline);
-    convertSettingIfDefined(jucerProject, "splashScreenColour", "SPLASH_SCREEN_COLOUR",
-                            {});
+    if (jucerVersionAsTuple >= Version{5, 0, 0})
+    {
+      const auto booleanWithLicenseRequiredTagline = [](const juce::var& v) {
+        const auto value =
+          v.isVoid() ? kDefaultLicenseBasedValue : (bool{v} ? "ON" : "OFF");
+        return juce::String{value}
+               + " # Required for closed source applications without an Indie or Pro "
+                 "JUCE license";
+      };
+      convertOnOffSetting(jucerProject, "reportAppUsage", "REPORT_JUCE_APP_USAGE",
+                          booleanWithLicenseRequiredTagline);
+      convertOnOffSetting(jucerProject, "displaySplashScreen",
+                          "DISPLAY_THE_JUCE_SPLASH_SCREEN",
+                          booleanWithLicenseRequiredTagline);
+      convertSettingIfDefined(jucerProject, "splashScreenColour", "SPLASH_SCREEN_COLOUR",
+                              {});
+    }
 
     const auto projectTypeDescription = [&projectType]() -> juce::String {
       if (projectType == "guiapp")

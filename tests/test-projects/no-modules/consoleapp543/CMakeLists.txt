@@ -23,6 +23,8 @@ jucer_project_begin(
 jucer_project_settings(
   PROJECT_NAME "consoleapp543"
   PROJECT_VERSION "1.0.0"
+  REPORT_JUCE_APP_USAGE OFF # Required for closed source applications without an Indie or Pro JUCE license
+  DISPLAY_THE_JUCE_SPLASH_SCREEN OFF # Required for closed source applications without an Indie or Pro JUCE license
   PROJECT_TYPE "Console Application"
   BUNDLE_IDENTIFIER "com.yourcompany.consoleapp543"
   CXX_LANGUAGE_STANDARD "C++14"
