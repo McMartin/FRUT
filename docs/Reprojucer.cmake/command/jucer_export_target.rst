@@ -33,6 +33,7 @@ Define the settings specific to an export target.
     [CUSTOM_PLIST <plist_content>]
     [EXTRA_SYSTEM_FRAMEWORKS <osx_framework> [<osx_framework> ...]]
     [EXTRA_FRAMEWORKS <osx_framework> [<osx_framework> ...]]
+    [EXTRA_CUSTOM_FRAMEWORKS <osx_framework> [<osx_framework> ...]]
     [PREBUILD_SHELL_SCRIPT <shell_script_content>]
     [POSTBUILD_SHELL_SCRIPT <shell_script_content>]
     [USE_HEADERMAP <ON|OFF>]

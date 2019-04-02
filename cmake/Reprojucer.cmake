@@ -863,9 +863,7 @@ function(jucer_export_target exporter)
   endif()
 
   if(DEFINED _EXTRA_CUSTOM_FRAMEWORKS)
-    _FRUT_warn_about_unsupported_setting(
-      "EXTRA_CUSTOM_FRAMEWORKS" "Extra Custom Frameworks" 442
-    )
+    set(JUCER_EXTRA_CUSTOM_FRAMEWORKS "${_EXTRA_CUSTOM_FRAMEWORKS}" PARENT_SCOPE)
   endif()
 
   if(DEFINED _EMBEDDED_FRAMEWORKS)
@@ -4372,6 +4370,15 @@ function(_FRUT_link_osx_frameworks target)
           "$<$<CONFIG:${config}>:${${framework_name}_framework_${sdk_version}}>"
         )
       endforeach()
+    endforeach()
+  endif()
+
+  if(JUCER_EXTRA_CUSTOM_FRAMEWORKS)
+    set(CMAKE_FIND_FRAMEWORK ONLY)
+    foreach(framework_name IN LISTS JUCER_EXTRA_CUSTOM_FRAMEWORKS)
+      string(REGEX REPLACE "\\.framework$" "" framework_name "${framework_name}")
+      find_library(${framework_name}_framework ${framework_name})
+      target_link_libraries(${target} PRIVATE ${${framework_name}_framework})
     endforeach()
   endif()
 
