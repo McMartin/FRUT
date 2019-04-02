@@ -857,9 +857,7 @@ function(jucer_export_target exporter)
   endif()
 
   if(DEFINED _FRAMEWORK_SEARCH_PATHS)
-    _FRUT_warn_about_unsupported_setting(
-      "FRAMEWORK_SEARCH_PATHS" "Framework Search Paths" 444
-    )
+    set(JUCER_FRAMEWORK_SEARCH_PATHS "${_FRAMEWORK_SEARCH_PATHS}" PARENT_SCOPE)
   endif()
 
   if(DEFINED _EXTRA_CUSTOM_FRAMEWORKS)
@@ -4375,6 +4373,7 @@ function(_FRUT_link_osx_frameworks target)
 
   if(JUCER_EXTRA_CUSTOM_FRAMEWORKS)
     set(CMAKE_FIND_FRAMEWORK ONLY)
+    set(CMAKE_FRAMEWORK_PATH "${JUCER_FRAMEWORK_SEARCH_PATHS}")
     foreach(framework_name IN LISTS JUCER_EXTRA_CUSTOM_FRAMEWORKS)
       string(REGEX REPLACE "\\.framework$" "" framework_name "${framework_name}")
       find_library(${framework_name}_framework ${framework_name})
