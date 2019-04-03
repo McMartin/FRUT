@@ -857,15 +857,11 @@ function(jucer_export_target exporter)
   endif()
 
   if(DEFINED _FRAMEWORK_SEARCH_PATHS)
-    _FRUT_warn_about_unsupported_setting(
-      "FRAMEWORK_SEARCH_PATHS" "Framework Search Paths" 444
-    )
+    set(JUCER_FRAMEWORK_SEARCH_PATHS "${_FRAMEWORK_SEARCH_PATHS}" PARENT_SCOPE)
   endif()
 
   if(DEFINED _EXTRA_CUSTOM_FRAMEWORKS)
-    _FRUT_warn_about_unsupported_setting(
-      "EXTRA_CUSTOM_FRAMEWORKS" "Extra Custom Frameworks" 442
-    )
+    set(JUCER_EXTRA_CUSTOM_FRAMEWORKS "${_EXTRA_CUSTOM_FRAMEWORKS}" PARENT_SCOPE)
   endif()
 
   if(DEFINED _EMBEDDED_FRAMEWORKS)
@@ -4337,6 +4333,10 @@ endfunction()
 
 function(_FRUT_link_osx_frameworks target)
 
+  if(NOT APPLE)
+    return()
+  endif()
+
   set(osx_frameworks
     ${JUCER_PROJECT_OSX_FRAMEWORKS}
     ${JUCER_EXTRA_SYSTEM_FRAMEWORKS}
@@ -4347,31 +4347,39 @@ function(_FRUT_link_osx_frameworks target)
     list(APPEND osx_frameworks "AudioUnit" "CoreAudioKit")
   endif()
 
-  if(NOT (APPLE AND osx_frameworks))
-    return()
-  endif()
-
-  list(SORT osx_frameworks)
-  list(REMOVE_DUPLICATES osx_frameworks)
-  if(NOT JUCER_FLAG_JUCE_QUICKTIME)
-    list(REMOVE_ITEM osx_frameworks "QuickTime")
-  endif()
-
-  foreach(config IN LISTS JUCER_PROJECT_CONFIGURATIONS)
-    set(CMAKE_FRAMEWORK_PATH "")
-    set(sdk_version "${JUCER_OSX_BASE_SDK_VERSION_${config}}")
-    set(sdk_path "${JUCER_MACOSX_SDK_PATH_${config}}")
-    if(IS_DIRECTORY "${sdk_path}")
-      set(CMAKE_FRAMEWORK_PATH "${sdk_path}/System/Library/Frameworks")
+  if(osx_frameworks)
+    list(SORT osx_frameworks)
+    list(REMOVE_DUPLICATES osx_frameworks)
+    if(NOT JUCER_FLAG_JUCE_QUICKTIME)
+      list(REMOVE_ITEM osx_frameworks "QuickTime")
     endif()
 
-    foreach(framework_name IN LISTS osx_frameworks)
-      find_library(${framework_name}_framework_${sdk_version} ${framework_name})
-      target_link_libraries(${target} PRIVATE
-        "$<$<CONFIG:${config}>:${${framework_name}_framework_${sdk_version}}>"
-      )
+    foreach(config IN LISTS JUCER_PROJECT_CONFIGURATIONS)
+      set(CMAKE_FRAMEWORK_PATH "")
+      set(sdk_version "${JUCER_OSX_BASE_SDK_VERSION_${config}}")
+      set(sdk_path "${JUCER_MACOSX_SDK_PATH_${config}}")
+      if(IS_DIRECTORY "${sdk_path}")
+        set(CMAKE_FRAMEWORK_PATH "${sdk_path}/System/Library/Frameworks")
+      endif()
+
+      foreach(framework_name IN LISTS osx_frameworks)
+        find_library(${framework_name}_framework_${sdk_version} ${framework_name})
+        target_link_libraries(${target} PRIVATE
+          "$<$<CONFIG:${config}>:${${framework_name}_framework_${sdk_version}}>"
+        )
+      endforeach()
     endforeach()
-  endforeach()
+  endif()
+
+  if(JUCER_EXTRA_CUSTOM_FRAMEWORKS)
+    set(CMAKE_FIND_FRAMEWORK ONLY)
+    set(CMAKE_FRAMEWORK_PATH "${JUCER_FRAMEWORK_SEARCH_PATHS}")
+    foreach(framework_name IN LISTS JUCER_EXTRA_CUSTOM_FRAMEWORKS)
+      string(REGEX REPLACE "\\.framework$" "" framework_name "${framework_name}")
+      find_library(${framework_name}_framework ${framework_name})
+      target_link_libraries(${target} PRIVATE ${${framework_name}_framework})
+    endforeach()
+  endif()
 
 endfunction()
 

@@ -109,6 +109,8 @@ set_target_properties(IconBuilder PROPERTIES
 )
 
 if(APPLE)
+  target_compile_options(IconBuilder PRIVATE "-Wno-deprecated-declarations")
+
   find_library(Cocoa_framework "Cocoa")
   find_library(IOKit_framework "IOKit")
   find_library(QuartzCore_framework "QuartzCore")

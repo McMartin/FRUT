@@ -95,7 +95,7 @@ Supported Projucer exporters
   </thead>
   <tbody>
     <tr><td align="center">✔️</td><td>Xcode (MacOSX)</td><td rowspan="2">
-      <a href="https://github.com/McMartin/FRUT/labels/exporter%3A%20Xcode">9 unsupported Xcode exporter settings</a>
+      <a href="https://github.com/McMartin/FRUT/labels/exporter%3A%20Xcode">7 unsupported Xcode exporter settings</a>
     </td></tr>
     <tr><td align="center">❌</td><td>Xcode (iOS)</td></tr>
     <tr><td align="center">❌</td><td>Visual Studio 2019</td><td rowspan="4">
