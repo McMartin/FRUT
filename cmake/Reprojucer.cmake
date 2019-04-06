@@ -1624,8 +1624,8 @@ function(jucer_project_end)
   endif()
 
   if(WIN32 AND NOT JUCER_PROJECT_TYPE STREQUAL "Static Library")
-    set(rc_keys "CompanyName" "LegalCopyright" "FileDescription" "FileVersion"
-      "ProductName" "ProductVersion"
+    set(rc_keys "CompanyName" "LegalCopyright" "FileDescription"
+      "FileVersion" "ProductName" "ProductVersion"
     )
     set(rc_values "JUCER_COMPANY_NAME" "JUCER_COMPANY_COPYRIGHT" "JUCER_PROJECT_NAME"
       "JUCER_PROJECT_VERSION" "JUCER_PROJECT_NAME" "JUCER_PROJECT_VERSION"
