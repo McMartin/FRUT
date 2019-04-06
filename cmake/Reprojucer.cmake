@@ -1674,7 +1674,34 @@ function(jucer_project_end)
     set(ns_human_readable_copyright "${JUCER_COMPANY_NAME}")
   endif()
 
-  set(main_plist_entries "
+  set(main_plist_entries "")
+  if(JUCER_MICROPHONE_ACCESS)
+    if(DEFINED JUCER_MICROPHONE_ACCESS_TEXT)
+      set(microphone_usage_description "${JUCER_MICROPHONE_ACCESS_TEXT}")
+    else()
+      string(CONCAT microphone_usage_description "This app requires audio input. If you "
+        "do not have an audio interface connected it will use the built-in microphone."
+      )
+    endif()
+    string(APPEND main_plist_entries "
+    <key>NSMicrophoneUsageDescription</key>
+    <string>${microphone_usage_description}</string>"
+    )
+  endif()
+  if(JUCER_CAMERA_ACCESS)
+    if(DEFINED JUCER_CAMERA_ACCESS_TEXT)
+      set(camera_usage_description "${JUCER_CAMERA_ACCESS_TEXT}")
+    else()
+      string(CONCAT camera_usage_description "This app requires access to the camera to "
+        "function correctly."
+      )
+    endif()
+    string(APPEND main_plist_entries "
+    <key>NSCameraUsageDescription</key>
+    <string>${camera_usage_description}</string>"
+    )
+  endif()
+  string(APPEND main_plist_entries "
     <key>CFBundleExecutable</key>
     <string>@bundle_executable@</string>
     <key>CFBundleIconFile</key>
@@ -1698,36 +1725,6 @@ function(jucer_project_end)
     <key>NSHighResolutionCapable</key>
     <true/>"
   )
-
-  if(JUCER_CAMERA_ACCESS)
-    if(DEFINED JUCER_CAMERA_ACCESS_TEXT)
-      set(camera_usage_description "${JUCER_CAMERA_ACCESS_TEXT}")
-    else()
-      string(CONCAT camera_usage_description "This app requires access to the camera to "
-        "function correctly."
-      )
-    endif()
-    string(CONCAT main_plist_entries "
-    <key>NSCameraUsageDescription</key>
-    <string>${camera_usage_description}</string>"
-      "${main_plist_entries}"
-    )
-  endif()
-
-  if(JUCER_MICROPHONE_ACCESS)
-    if(DEFINED JUCER_MICROPHONE_ACCESS_TEXT)
-      set(microphone_usage_description "${JUCER_MICROPHONE_ACCESS_TEXT}")
-    else()
-      string(CONCAT microphone_usage_description "This app requires audio input. If you "
-        "do not have an audio interface connected it will use the built-in microphone."
-      )
-    endif()
-    string(CONCAT main_plist_entries "
-    <key>NSMicrophoneUsageDescription</key>
-    <string>${microphone_usage_description}</string>"
-      "${main_plist_entries}"
-    )
-  endif()
 
   if(JUCER_CUSTOM_PLIST)
     set(PListMerger_file_name "PListMerger-0.1.0")
