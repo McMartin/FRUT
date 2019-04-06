@@ -1610,6 +1610,7 @@ function(jucer_project_end)
   _FRUT_generate_JuceHeader_header()
 
   if(DEFINED JUCER_SMALL_ICON OR DEFINED JUCER_LARGE_ICON)
+    unset(icon_filename)
     if(APPLE)
       _FRUT_generate_icon_file("icns" "${CMAKE_CURRENT_BINARY_DIR}" icon_filename)
     elseif(WIN32)
