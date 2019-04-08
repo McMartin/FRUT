@@ -116,15 +116,15 @@ endif()
 # "Xcode (MacOSX)", "Visual Studio 2017" and "Visual Studio 2015" exporters
 
 if(APPLE OR MSVC_VERSION GREATER 1909 OR MSVC_VERSION EQUAL 1900)
-  set(DSP_module_plugin_demo_jucer_FILE
-    "${JUCE_ROOT}/examples/DSP module plugin demo/DSP module plugin demo.jucer"
-  )
-  add_subdirectory("examples/DSP module plugin demo")
-
   set(ComponentTutorialExample_jucer_FILE
     "${JUCE_ROOT}/examples/ComponentTutorialExample/ComponentTutorialExample.jucer"
   )
   add_subdirectory("examples/ComponentTutorialExample")
+
+  set(DSP_module_plugin_demo_jucer_FILE
+    "${JUCE_ROOT}/examples/DSP module plugin demo/DSP module plugin demo.jucer"
+  )
+  add_subdirectory("examples/DSP module plugin demo")
 
   set(Arpeggiator_jucer_FILE
     "${JUCE_ROOT}/examples/PlugInSamples/Arpeggiator/Arpeggiator.jucer"

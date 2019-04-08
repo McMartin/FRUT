@@ -49,12 +49,6 @@ endif()
 
 # All exporters
 
-set(JuceDemo_jucer_FILE "${JUCE_ROOT}/examples/Demo/JuceDemo.jucer")
-add_subdirectory("examples/Demo")
-
-set(Plugin_Host_jucer_FILE "${JUCE_ROOT}/examples/audio plugin host/Plugin Host.jucer")
-add_subdirectory("examples/audio plugin host")
-
 set(BlocksDrawing_jucer_FILE
   "${JUCE_ROOT}/examples/BLOCKS/BlocksDrawing/BlocksDrawing.jucer"
 )
@@ -67,6 +61,12 @@ add_subdirectory("examples/BLOCKS/BlocksMonitor")
 
 set(BlocksSynth_jucer_FILE "${JUCE_ROOT}/examples/BLOCKS/BlocksSynth/BlocksSynth.jucer")
 add_subdirectory("examples/BLOCKS/BlocksSynth")
+
+set(JuceDemo_jucer_FILE "${JUCE_ROOT}/examples/Demo/JuceDemo.jucer")
+add_subdirectory("examples/Demo")
+
+set(Plugin_Host_jucer_FILE "${JUCE_ROOT}/examples/audio plugin host/Plugin Host.jucer")
+add_subdirectory("examples/audio plugin host")
 
 set(Projucer_jucer_FILE "${JUCE_ROOT}/extras/Projucer/Projucer.jucer")
 add_subdirectory("extras/Projucer")
