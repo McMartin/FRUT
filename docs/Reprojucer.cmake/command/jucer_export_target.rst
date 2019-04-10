@@ -12,65 +12,54 @@ Define the settings specific to an export target.
 
     [VST_LEGACY_SDK_FOLDER <vst_legacy_sdk_folder>]
     [VST_SDK_FOLDER <vst_sdk_folder>]
-    [VST3_SDK_FOLDER <vst3_sdk_folder>]
+    [VST3_SDK_FOLDER <vst3_sdk_folder>]  # [1]
 
     [EXTRA_PREPROCESSOR_DEFINITIONS <preprocessor_definition> [<preprocessor_definition> ...]]
     [EXTRA_COMPILER_FLAGS <compiler_flag> [<compiler_flag> ...]]
     [EXTRA_LINKER_FLAGS <linker_flag> [<linker_flag> ...]]
     [EXTERNAL_LIBRARIES_TO_LINK <library> [<library> ...]]
 
-    [GNU_COMPILER_EXTENSIONS <ON|OFF>]
+    [GNU_COMPILER_EXTENSIONS <ON|OFF>]  # [2]
 
     [ICON_SMALL <icon_file>]
     [ICON_LARGE <icon_file>]
 
-    [CUSTOM_XCODE_RESOURCE_FOLDERS <xcode_resource_folder> [<xcode_resource_folder> ...]]
-    [DOCUMENT_FILE_EXTENSIONS <file_extension> [<file_extension> ...]]
-    [MICROPHONE_ACCESS <ON|OFF>]
-    [MICROPHONE_ACCESS_TEXT <microphone_access_text>]
-    [CAMERA_ACCESS <ON|OFF>]
-    [CAMERA_ACCESS_TEXT <camera_access_text>]
-    [CUSTOM_PLIST <plist_content>]
-    [EXTRA_SYSTEM_FRAMEWORKS <osx_framework> [<osx_framework> ...]]
-    [EXTRA_FRAMEWORKS <osx_framework> [<osx_framework> ...]]
-    [FRAMEWORK_SEARCH_PATHS <framework_search_path> [<framework_search_path> ...]]
-    [EXTRA_CUSTOM_FRAMEWORKS <osx_framework> [<osx_framework> ...]]
-    [PREBUILD_SHELL_SCRIPT <shell_script_content>]
-    [POSTBUILD_SHELL_SCRIPT <shell_script_content>]
-    [USE_HEADERMAP <ON|OFF>]
+    [CUSTOM_XCODE_RESOURCE_FOLDERS <xcode_resource_folder> [<xcode_resource_folder> ...]]  # [3]
+    [DOCUMENT_FILE_EXTENSIONS <file_extension> [<file_extension> ...]]  # [4]
+    [MICROPHONE_ACCESS <ON|OFF>]  # [3]
+    [MICROPHONE_ACCESS_TEXT <microphone_access_text>]  # [3]
+    [CAMERA_ACCESS <ON|OFF>]  # [3]
+    [CAMERA_ACCESS_TEXT <camera_access_text>]  # [3]
+    [CUSTOM_PLIST <plist_content>]  # [3]
+    [EXTRA_SYSTEM_FRAMEWORKS <osx_framework> [<osx_framework> ...]]  # [3]
+    [EXTRA_FRAMEWORKS <osx_framework> [<osx_framework> ...]]  # [3]
+    [FRAMEWORK_SEARCH_PATHS <framework_search_path> [<framework_search_path> ...]]  # [3]
+    [EXTRA_CUSTOM_FRAMEWORKS <osx_framework> [<osx_framework> ...]]  # [3]
+    [PREBUILD_SHELL_SCRIPT <shell_script_content>]  # [3]
+    [POSTBUILD_SHELL_SCRIPT <shell_script_content>]  # [3]
+    [USE_HEADERMAP <ON|OFF>]  # [3]
 
-    [PLATFORM_TOOLSET <platform_toolset>]
-    [WINDOWS_TARGET_PLATFORM <windows_target_platform>]
+    [PLATFORM_TOOLSET <platform_toolset>]  # [5]
+    [WINDOWS_TARGET_PLATFORM <windows_target_platform>]  # [5]
 
-    [CXX_STANDARD_TO_USE <cxx_standard>]
-    [PKGCONFIG_LIBRARIES <library> [<library> ...]]
+    [CXX_STANDARD_TO_USE <cxx_standard>]  # [6]
+    [PKGCONFIG_LIBRARIES <library> [<library> ...]]  # [6]
 
-    [TARGET_PLATFORM <target_platform>]
+    [TARGET_PLATFORM <target_platform>]  # [7]
   )
 
 ``<exporter>`` must be one of the :ref:`supported exporters <supported-export-targets>`.
 
-``VST3_SDK_FOLDER`` is only supported by the following exporters: ``"Xcode (MacOSX)"``,
-``"Visual Studio 2017"``, ``"Visual Studio 2015"`` and ``"Visual Studio 2013"``.
+Optional keywords support:
 
-``GNU_COMPILER_EXTENSIONS`` is only supported by the following exporters:
-``"Xcode (MacOSX)"``, ``"Linux Makefile"``, ``"Code::Blocks (Windows)"`` and
-``"Code::Blocks (Linux)"``.
-
-``CAMERA_ACCESS``, ``CAMERA_ACCESS_TEXT``, ``CUSTOM_PLIST``,
-``CUSTOM_XCODE_RESOURCE_FOLDERS``,  ``EXTRA_FRAMEWORKS``, ``EXTRA_SYSTEM_FRAMEWORKS``,
-``FRAMEWORK_SEARCH_PATHS``, ``EXTRA_CUSTOM_FRAMEWORKS``, ``MICROPHONE_ACCESS``,
-``MICROPHONE_ACCESS_TEXT``, ``POSTBUILD_SHELL_SCRIPT``, ``PREBUILD_SHELL_SCRIPT`` and
-``USE_HEADERMAP`` are only supported by the ``"Xcode (MacOSX)"`` exporter.
-
-``DOCUMENT_FILE_EXTENSIONS`` is only supported by the ``"Xcode (MacOSX)"`` exporter on
-``"GUI Application"`` projects.
-
-``PLATFORM_TOOLSET`` and ``WINDOWS_TARGET_PLATFORM`` are only supported by the following
-exporters: ``"Visual Studio 2017"``, ``"Visual Studio 2015"`` and
-``"Visual Studio 2013"``.
-
-``CXX_STANDARD_TO_USE`` and ``PKGCONFIG_LIBRARIES`` are only supported by the
-``"Linux Makefile"`` exporter.
-
-``TARGET_PLATFORM`` is only supported by the ``"Code::Blocks (Windows)"`` exporter.
+- ``[1]``: only supported by the ``"Xcode (MacOSX)"``, ``"Visual Studio 2017"``,
+  ``"Visual Studio 2015"``, and ``"Visual Studio 2013"`` exporters.
+- ``[2]``: only supported by the ``"Xcode (MacOSX)"``, ``"Linux Makefile"``,
+  ``"Code::Blocks (Windows)"``, and ``"Code::Blocks (Linux)"`` exporters.
+- ``[3]``: only supported by the ``"Xcode (MacOSX)"`` exporter.
+- ``[4]``: only supported by the ``"Xcode (MacOSX)"`` exporter, on ``"GUI Application"``
+  projects.
+- ``[5]``: only supported by the ``"Visual Studio 2017"``, ``"Visual Studio 2015"``, and
+  ``"Visual Studio 2013"`` exporters.
+- ``[6]``: only supported by the ``"Linux Makefile"`` exporter.
+- ``[7]``: only supported by the ``"Code::Blocks (Windows)"`` exporter.

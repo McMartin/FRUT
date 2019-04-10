@@ -20,69 +20,53 @@ Define the settings specific to a configuration associated with an export target
     [LINK_TIME_OPTIMISATION <ON|OFF>]
     [OPTIMISATION <optimisation>]
 
-    [ENABLE_PLUGIN_COPY_STEP <ON|OFF>]
-    [VST_BINARY_LOCATION <binary_location>]
-    [VST3_BINARY_LOCATION <binary_location>]
-    [AU_BINARY_LOCATION <binary_location>]
-    [RTAS_BINARY_LOCATION <binary_location>]
-    [AAX_BINARY_LOCATION <binary_location>]
-    [UNITY_BINARY_LOCATION <binary_location>]
-    [VST_LEGACY_BINARY_LOCATION <binary_location>]
+    [ENABLE_PLUGIN_COPY_STEP <ON|OFF>]  # [1]
+    [VST_BINARY_LOCATION <binary_location>]  # [1]
+    [VST3_BINARY_LOCATION <binary_location>]  # [1]
+    [AU_BINARY_LOCATION <binary_location>]  # [2]
+    [RTAS_BINARY_LOCATION <binary_location>]  # [1]
+    [AAX_BINARY_LOCATION <binary_location>]  # [1]
+    [UNITY_BINARY_LOCATION <binary_location>]  # [1]
+    [VST_LEGACY_BINARY_LOCATION <binary_location>]  # [1]
 
-    [OSX_BASE_SDK_VERSION <osx_sdk>]
-    [OSX_DEPLOYMENT_TARGET <osx_deployment_target>]
-    [OSX_ARCHITECTURE <osx_architecture>]
-    [CUSTOM_XCODE_FLAGS <xcode_flag> [<xcode_flag> ...]]
-    [CXX_LANGUAGE_STANDARD <cxx_standard>]
-    [CXX_LIBRARY <cxx_library>]
-    [CODE_SIGNING_IDENTITY <code_signing_identity>]
-    [STRIP_LOCAL_SYMBOLS <ON|OFF>]
+    [OSX_BASE_SDK_VERSION <osx_sdk>]  # [2]
+    [OSX_DEPLOYMENT_TARGET <osx_deployment_target>]  # [2]
+    [OSX_ARCHITECTURE <osx_architecture>]  # [2]
+    [CUSTOM_XCODE_FLAGS <xcode_flag> [<xcode_flag> ...]]  # [2]
+    [CXX_LANGUAGE_STANDARD <cxx_standard>]  # [2]
+    [CXX_LIBRARY <cxx_library>]  # [2]
+    [CODE_SIGNING_IDENTITY <code_signing_identity>]  # [2]
+    [STRIP_LOCAL_SYMBOLS <ON|OFF>]  # [2]
 
-    [DEBUG_INFORMATION_FORMAT <debug_information_format>]
-    [WARNING_LEVEL <warning_level>]
-    [TREAT_WARNINGS_AS_ERRORS <ON|OFF>]
-    [RUNTIME_LIBRARY <runtime_library>]
-    [WHOLE_PROGRAM_OPTIMISATION <whole_program_optimisation>]
-    [MULTI_PROCESSOR_COMPILATION <ON|OFF>]
-    [INCREMENTAL_LINKING <ON|OFF>]
-    [FORCE_GENERATION_OF_DEBUG_SYMBOLS <ON|OFF>]
-    [PREBUILD_COMMAND <command_content>]
-    [POSTBUILD_COMMAND <command_content>]
-    [GENERATE_MANIFEST <ON|OFF>]
-    [CHARACTER_SET <character_set>]
+    [DEBUG_INFORMATION_FORMAT <debug_information_format>]  # [3]
+    [WARNING_LEVEL <warning_level>]  # [3]
+    [TREAT_WARNINGS_AS_ERRORS <ON|OFF>]  # [3]
+    [RUNTIME_LIBRARY <runtime_library>]  # [3]
+    [WHOLE_PROGRAM_OPTIMISATION <whole_program_optimisation>]  # [3]
+    [MULTI_PROCESSOR_COMPILATION <ON|OFF>]  # [3]
+    [INCREMENTAL_LINKING <ON|OFF>]  # [3]
+    [FORCE_GENERATION_OF_DEBUG_SYMBOLS <ON|OFF>]  # [4]
+    [PREBUILD_COMMAND <command_content>]  # [3]
+    [POSTBUILD_COMMAND <command_content>]  # [3]
+    [GENERATE_MANIFEST <ON|OFF>]  # [3]
+    [CHARACTER_SET <character_set>]  # [3]
 
-    [RELAX_IEEE_COMPLIANCE <ON|OFF>]
+    [RELAX_IEEE_COMPLIANCE <ON|OFF>]  # [1]
 
-    [ARCHITECTURE <architecture>]
+    [ARCHITECTURE <architecture>]  # [5]
   )
 
 ``<exporter>`` must be one of the :ref:`supported exporters <supported-export-targets>`.
 
-``AU_BINARY_LOCATION``, ``CODE_SIGNING_IDENTITY``, ``CUSTOM_XCODE_FLAGS``,
-``CXX_LANGUAGE_STANDARD``, ``CXX_LIBRARY``, ``OSX_ARCHITECTURE``,
-``OSX_BASE_SDK_VERSION``, ``OSX_DEPLOYMENT_TARGET`` and ``STRIP_LOCAL_SYMBOLS`` are only
-supported by the ``"Xcode (MacOSX)"`` exporter.
+Optional keywords support:
 
-``AAX_BINARY_LOCATION``, ``ENABLE_PLUGIN_COPY_STEP``, ``RTAS_BINARY_LOCATION``,
-``UNITY_BINARY_LOCATION``, ``VST3_BINARY_LOCATION``, ``VST_BINARY_LOCATION`` and
-``VST_LEGACY_BINARY_LOCATION`` are only supported by the following exporters:
-``"Xcode (MacOSX)"``, ``"Visual Studio 2017"``, ``"Visual Studio 2015"`` and
-``"Visual Studio 2013"``.
-
-``CHARACTER_SET``, ``DEBUG_INFORMATION_FORMAT``, ``GENERATE_MANIFEST``,
-``INCREMENTAL_LINKING``, ``MULTI_PROCESSOR_COMPILATION``, ``POSTBUILD_COMMAND``,
-``PREBUILD_COMMAND``, ``RUNTIME_LIBRARY``, ``TREAT_WARNINGS_AS_ERRORS``, ``WARNING_LEVEL``
-and ``WHOLE_PROGRAM_OPTIMISATION`` are only supported by the following exporters:
-``"Visual Studio 2017"``, ``"Visual Studio 2015"`` and ``"Visual Studio 2013"``.
-
-``FORCE_GENERATION_OF_DEBUG_SYMBOLS`` is only supported when ``DEBUG_MODE`` is ``OFF`` and
-only by the following exporters: ``"Visual Studio 2017"``, ``"Visual Studio 2015"`` and
-``"Visual Studio 2013"``.
-
-``RELAX_IEEE_COMPLIANCE`` is only supported by the following exporters:
-``"Xcode (MacOSX)"``, ``"Visual Studio 2017"``, ``"Visual Studio 2015"`` and
-``"Visual Studio 2013"``.
-
-``ARCHITECTURE`` is only supported by the following exporters: ``"Visual Studio 2017"``,
-``"Visual Studio 2015"``, ``"Visual Studio 2013"``, ``"Linux Makefile"``,
-``"Code::Blocks (Windows)"`` and ``"Code::Blocks (Linux)"``.
+- ``[1]``: only supported by the ``"Xcode (MacOSX)"``, ``"Visual Studio 2017"``,
+  ``"Visual Studio 2015"``, and ``"Visual Studio 2013"`` exporters.
+- ``[2]``: only supported by the ``"Xcode (MacOSX)"`` exporter.
+- ``[3]``: only supported by the ``"Visual Studio 2017"``, ``"Visual Studio 2015"``, and
+  ``"Visual Studio 2013"`` exporters.
+- ``[4]``: only supported by the ``"Visual Studio 2017"``, ``"Visual Studio 2015"``, and
+  ``"Visual Studio 2013"`` exporters, when ``DEBUG_MODE`` is ``OFF``.
+- ``[5]``: only supported by the ``"Visual Studio 2017"``, ``"Visual Studio 2015"``,
+  ``"Visual Studio 2013"``, ``"Linux Makefile"``, ``"Code::Blocks (Windows)"``, and
+  ``"Code::Blocks (Linux)"`` exporters.
