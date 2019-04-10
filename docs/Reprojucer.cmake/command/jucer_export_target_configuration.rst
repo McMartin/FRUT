@@ -70,3 +70,50 @@ Optional keywords support:
 - ``[5]``: only supported by the ``"Visual Studio 2017"``, ``"Visual Studio 2015"``,
   ``"Visual Studio 2013"``, ``"Linux Makefile"``, ``"Code::Blocks (Windows)"``, and
   ``"Code::Blocks (Linux)"`` exporters.
+
+
+Examples
+--------
+
+From `the NetworkGraphicsDemo extra of JUCE 5.4.3 <https://github.com/McMartin/FRUT/blob/
+master/generated/JUCE-5.4.3/extras/NetworkGraphicsDemo/CMakeLists.txt#L176-L182>`_:
+
+.. code:: cmake
+
+  jucer_export_target_configuration(
+    "Xcode (MacOSX)"
+    NAME "Debug"
+    DEBUG_MODE ON
+    BINARY_NAME "JUCE Network Graphics Demo"
+    OSX_DEPLOYMENT_TARGET "10.9"
+  )
+
+
+From `the UnitTestRunner extra of JUCE 5.4.3 <https://github.com/McMartin/FRUT/blob/
+master/generated/JUCE-5.4.3/extras/UnitTestRunner/CMakeLists.txt#L277-L284>`_:
+
+.. code:: cmake
+
+  jucer_export_target_configuration(
+    "Visual Studio 2017"
+    NAME "Release"
+    DEBUG_MODE OFF
+    BINARY_NAME "UnitTestRunner"
+    TREAT_WARNINGS_AS_ERRORS ON
+    DEBUG_INFORMATION_FORMAT "None"
+  )
+
+
+From `the Projucer extra of JUCE 5.4.3 <https://github.com/McMartin/FRUT/blob/master/
+generated/JUCE-5.4.3/extras/Projucer/CMakeLists.txt#L726-L733>`_:
+
+.. code:: cmake
+
+  jucer_export_target_configuration(
+    "Linux Makefile"
+    NAME "Debug"
+    DEBUG_MODE ON
+    BINARY_NAME "Projucer"
+    # HEADER_SEARCH_PATHS
+    # EXTRA_LIBRARY_SEARCH_PATHS
+  )

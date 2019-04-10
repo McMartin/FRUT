@@ -63,3 +63,57 @@ Optional keywords support:
   ``"Visual Studio 2013"`` exporters.
 - ``[6]``: only supported by the ``"Linux Makefile"`` exporter.
 - ``[7]``: only supported by the ``"Code::Blocks (Windows)"`` exporter.
+
+
+Examples
+--------
+
+From `the AudioPluginHost extra of JUCE 5.4.3 <https://github.com/McMartin/FRUT/blob/
+master/generated/JUCE-5.4.3/extras/AudioPluginHost/CMakeLists.txt#L194-L208>`_:
+
+.. code:: cmake
+
+  jucer_export_target(
+    "Xcode (MacOSX)"
+    # VST3_SDK_FOLDER
+    EXTRA_COMPILER_FLAGS
+      "-Wall"
+      "-Wshadow"
+      "-Wstrict-aliasing"
+      "-Wconversion"
+      "-Wsign-compare"
+      "-Woverloaded-virtual"
+      "-Wextra-semi"
+    ICON_SMALL "Source/JUCEAppIcon.png"
+    ICON_LARGE "Source/JUCEAppIcon.png"
+    MICROPHONE_ACCESS ON
+  )
+
+
+From `the DemoRunner example of JUCE 5.4.3 <https://github.com/McMartin/FRUT/blob/master/
+generated/JUCE-5.4.3/examples/DemoRunner/CMakeLists.txt#L325-L333>`_:
+
+.. code:: cmake
+
+  jucer_export_target(
+    "Visual Studio 2017"
+    EXTRA_COMPILER_FLAGS
+      "/w44265"
+      "/w45038"
+      "/w44062"
+    ICON_SMALL "Source/JUCEAppIcon.png"
+    ICON_LARGE "Source/JUCEAppIcon.png"
+  )
+
+
+From `the Projucer extra of JUCE 5.4.3 <https://github.com/McMartin/FRUT/blob/
+master/generated/JUCE-5.4.3/extras/Projucer/CMakeLists.txt#L719-L724>`_:
+
+.. code:: cmake
+
+  jucer_export_target(
+    "Linux Makefile"
+    # EXTRA_COMPILER_FLAGS
+    # EXTRA_LINKER_FLAGS
+    ICON_LARGE "Source/BinaryData/Icons/juce_icon.png"
+  )
