@@ -59,9 +59,9 @@ Define the settings specific to an export target.
 
 ``CAMERA_ACCESS``, ``CAMERA_ACCESS_TEXT``, ``CUSTOM_PLIST``,
 ``CUSTOM_XCODE_RESOURCE_FOLDERS``,  ``EXTRA_FRAMEWORKS``, ``EXTRA_SYSTEM_FRAMEWORKS``,
-``MICROPHONE_ACCESS``, ``MICROPHONE_ACCESS_TEXT``, ``POSTBUILD_SHELL_SCRIPT``,
-``PREBUILD_SHELL_SCRIPT`` and ``USE_HEADERMAP`` are only supported by the
-``"Xcode (MacOSX)"`` exporter.
+``FRAMEWORK_SEARCH_PATHS``, ``EXTRA_CUSTOM_FRAMEWORKS``, ``MICROPHONE_ACCESS``,
+``MICROPHONE_ACCESS_TEXT``, ``POSTBUILD_SHELL_SCRIPT``, ``PREBUILD_SHELL_SCRIPT`` and
+``USE_HEADERMAP`` are only supported by the ``"Xcode (MacOSX)"`` exporter.
 
 ``DOCUMENT_FILE_EXTENSIONS`` is only supported by the ``"Xcode (MacOSX)"`` exporter on
 ``"GUI Application"`` projects.
