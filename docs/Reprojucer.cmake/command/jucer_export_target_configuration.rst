@@ -17,6 +17,9 @@ Define the settings specific to a configuration associated with an export target
     [EXTRA_LIBRARY_SEARCH_PATHS <search_path> [<search_path> ...]]
     [PREPROCESSOR_DEFINITIONS <preprocessor_definition> [<preprocessor_definition> ...]]
 
+    [LINK_TIME_OPTIMISATION <ON|OFF>]
+    [OPTIMISATION <optimisation>]
+
     [ENABLE_PLUGIN_COPY_STEP <ON|OFF>]
     [VST_BINARY_LOCATION <binary_location>]
     [VST3_BINARY_LOCATION <binary_location>]
@@ -25,9 +28,6 @@ Define the settings specific to a configuration associated with an export target
     [AAX_BINARY_LOCATION <binary_location>]
     [UNITY_BINARY_LOCATION <binary_location>]
     [VST_LEGACY_BINARY_LOCATION <binary_location>]
-
-    [LINK_TIME_OPTIMISATION <ON|OFF>]
-    [OPTIMISATION <optimisation>]
 
     [OSX_BASE_SDK_VERSION <osx_sdk>]
     [OSX_DEPLOYMENT_TARGET <osx_deployment_target>]
