@@ -20,6 +20,9 @@ sub-group of ``A/B``.
 Example
 -------
 
+From `the AUv3Synth example of JUCE 5.2.1 <https://github.com/McMartin/FRUT/blob/master/
+generated/JUCE-5.2.1/examples/AUv3Synth/CMakeLists.txt#L68-L82>`_:
+
 .. code:: cmake
 
   jucer_project_files("AUv3Synth/Source/BinaryData"
@@ -37,6 +40,3 @@ Example
     .         .         .         "Source/AUv3SynthEditor.h"
     x         .         .         "Source/AUv3SynthProcessor.cpp"
   )
-
-Taken from `the AUv3Synth example of JUCE 5.2.1 <https://github.com/McMartin/FRUT/blob/
-master/generated/JUCE-5.2.1/examples/AUv3Synth/CMakeLists.txt#L68-L82>`_.
