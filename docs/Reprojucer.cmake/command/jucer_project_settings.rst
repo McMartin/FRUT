@@ -33,3 +33,29 @@ Define the settings specific to a JUCE project.
     [PREPROCESSOR_DEFINITIONS <preprocessor_definition> [<preprocessor_definition> ...]]
     [HEADER_SEARCH_PATHS <header_search_path> [<header_search_path> ...]]
   )
+
+
+Example
+-------
+
+From `the DemoRunner example of JUCE 5.4.3 <https://github.com/McMartin/FRUT/blob/master/
+generated/JUCE-5.4.3/examples/DemoRunner/CMakeLists.txt#L28-L43>`_:
+
+.. code:: cmake
+
+  jucer_project_settings(
+    PROJECT_NAME "DemoRunner"
+    PROJECT_VERSION "5.4.3"
+    COMPANY_NAME "ROLI Ltd."
+    COMPANY_COPYRIGHT "Copyright (c) 2018 - ROLI Ltd."
+    COMPANY_WEBSITE "https://www.juce.com/"
+    COMPANY_EMAIL "info@juce.com"
+    REPORT_JUCE_APP_USAGE ON # Required for closed source applications without an Indie or Pro JUCE license
+    DISPLAY_THE_JUCE_SPLASH_SCREEN ON # Required for closed source applications without an Indie or Pro JUCE license
+    PROJECT_TYPE "GUI Application"
+    BUNDLE_IDENTIFIER "com.juce.demorunner"
+    CXX_LANGUAGE_STANDARD "C++14"
+    PREPROCESSOR_DEFINITIONS
+      "JUCE_DEMO_RUNNER=1"
+      "JUCE_UNIT_TESTS=1"
+  )

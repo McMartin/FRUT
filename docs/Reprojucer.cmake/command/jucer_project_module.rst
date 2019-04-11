@@ -21,6 +21,9 @@ its header is located at ``~/dev/JUCE/modules/juce_core/juce_core.h``, then
 Example
 -------
 
+From `the Plugin Host example of JUCE 5.2.1 <https://github.com/McMartin/FRUT/blob/
+master/generated/JUCE-5.2.1/examples/audio%20plugin%20host/CMakeLists.txt#L86-L99>`_:
+
 .. code:: cmake
 
   jucer_project_module(
@@ -37,6 +40,3 @@ Example
     JUCE_USE_CDREADER OFF
     JUCE_USE_CDBURNER OFF
   )
-
-Taken from `the Plugin Host example of JUCE 5.2.1 <https://github.com/McMartin/FRUT/blob/
-master/generated/JUCE-5.2.1/examples/audio%20plugin%20host/CMakeLists.txt#L86-L99>`_.
