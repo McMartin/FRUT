@@ -119,6 +119,25 @@ jucer_export_target_configuration(
 )
 
 jucer_export_target(
+  "Visual Studio 2019"
+  EXTRA_COMPILER_FLAGS
+    "/WX"
+    "/W4"
+)
+
+jucer_export_target_configuration(
+  "Visual Studio 2019"
+  NAME "Debug"
+  DEBUG_MODE ON
+)
+
+jucer_export_target_configuration(
+  "Visual Studio 2019"
+  NAME "Release"
+  DEBUG_MODE OFF
+)
+
+jucer_export_target(
   "Visual Studio 2017"
   EXTRA_COMPILER_FLAGS
     "/WX"

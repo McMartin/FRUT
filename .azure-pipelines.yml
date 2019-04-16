@@ -29,3 +29,13 @@ jobs:
       - template: ci/azure-pipelines-steps.yml
         parameters:
           cmakeOptions: -DCMAKE_SYSTEM_VERSION=10.0.15063.0
+
+  - job: VS2019
+    pool:
+      vmImage: windows-2019
+    variables:
+      cmakeGenerator: "Visual Studio 16 2019"
+    steps:
+      - script: cmake -P ci/fail-if-CMake-version-3.14-or-more.cmake
+        displayName: Fail if CMake >=3.14 is available
+      # - template: ci/azure-pipelines-steps.yml

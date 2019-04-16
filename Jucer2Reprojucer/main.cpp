@@ -1214,10 +1214,11 @@ int main(int argc, char* argv[])
   // jucer_export_target() and jucer_export_target_configuration()
   {
     const auto supportedExporters = juce::StringArray{
-      "XCODE_MAC",          "VS2017",          "VS2015", "VS2013", "LINUX_MAKE",
+      "XCODE_MAC",          "VS2019",          "VS2017", "VS2015", "VS2013", "LINUX_MAKE",
       "CODEBLOCKS_WINDOWS", "CODEBLOCKS_LINUX"};
     const auto exporterNames = std::map<juce::String, const char*>{
       {"XCODE_MAC", "Xcode (MacOSX)"},
+      {"VS2019", "Visual Studio 2019"},
       {"VS2017", "Visual Studio 2017"},
       {"VS2015", "Visual Studio 2015"},
       {"VS2013", "Visual Studio 2013"},
@@ -1251,8 +1252,8 @@ int main(int argc, char* argv[])
             "\"  # only used by PREBUILD_SHELL_SCRIPT and POSTBUILD_SHELL_SCRIPT");
       }
 
-      const auto isVSExporter =
-        exporterType == "VS2017" || exporterType == "VS2015" || exporterType == "VS2013";
+      const auto isVSExporter = exporterType == "VS2019" || exporterType == "VS2017"
+                                || exporterType == "VS2015" || exporterType == "VS2013";
 
       if (isVSExporter)
       {

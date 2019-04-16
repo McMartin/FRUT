@@ -25,6 +25,7 @@ Supported export targets
 ``Reprojucer.cmake`` supports the following Projucer export targets (AKA exporters):
 
 - Xcode (MacOSX)
+- Visual Studio 2019
 - Visual Studio 2017
 - Visual Studio 2015
 - Visual Studio 2013

@@ -52,15 +52,16 @@ Define the settings specific to an export target.
 
 Optional keywords support:
 
-- ``[1]``: only supported by the ``"Xcode (MacOSX)"``, ``"Visual Studio 2017"``,
-  ``"Visual Studio 2015"``, and ``"Visual Studio 2013"`` exporters.
+- ``[1]``: only supported by the ``"Xcode (MacOSX)"``, ``"Visual Studio 2019"``,
+  ``"Visual Studio 2017"``, ``"Visual Studio 2015"``, and ``"Visual Studio 2013"``
+  exporters.
 - ``[2]``: only supported by the ``"Xcode (MacOSX)"``, ``"Linux Makefile"``,
   ``"Code::Blocks (Windows)"``, and ``"Code::Blocks (Linux)"`` exporters.
 - ``[3]``: only supported by the ``"Xcode (MacOSX)"`` exporter.
 - ``[4]``: only supported by the ``"Xcode (MacOSX)"`` exporter, on ``"GUI Application"``
   projects.
-- ``[5]``: only supported by the ``"Visual Studio 2017"``, ``"Visual Studio 2015"``, and
-  ``"Visual Studio 2013"`` exporters.
+- ``[5]``: only supported by the ``"Visual Studio 2019"``, ``"Visual Studio 2017"``,
+  ``"Visual Studio 2015"``, and ``"Visual Studio 2013"`` exporters.
 - ``[6]``: only supported by the ``"Linux Makefile"`` exporter.
 - ``[7]``: only supported by the ``"Code::Blocks (Windows)"`` exporter.
 
