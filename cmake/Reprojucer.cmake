@@ -25,6 +25,7 @@ set(Reprojucer_templates_DIR "${Reprojucer.cmake_DIR}/templates")
 
 set(Reprojucer_supported_exporters
   "Xcode (MacOSX)"
+  "Visual Studio 2019"
   "Visual Studio 2017"
   "Visual Studio 2015"
   "Visual Studio 2013"
@@ -34,7 +35,8 @@ set(Reprojucer_supported_exporters
 )
 set(Reprojucer_supported_exporters_conditions
   "APPLE"
-  "MSVC_VERSION\;GREATER\;1909"
+  "MSVC_VERSION\;GREATER\;1919"
+  "MSVC_VERSION\;GREATER\;1909\;AND\;MSVC_VERSION\;LESS\;1920"
   "MSVC_VERSION\;EQUAL\;1900"
   "MSVC_VERSION\;EQUAL\;1800"
   "CMAKE_HOST_SYSTEM_NAME\;STREQUAL\;Linux\;AND\;NOT\;CMAKE_EXTRA_GENERATOR\;STREQUAL\;CodeBlocks"
@@ -681,7 +683,7 @@ function(jucer_export_target exporter)
     endif()
   endif()
 
-  if(exporter MATCHES "^Visual Studio 201(7|5|3)$")
+  if(exporter MATCHES "^Visual Studio 201(9|7|5|3)$")
     list(APPEND single_value_keywords
       "VST3_SDK_FOLDER"
       "AAX_SDK_FOLDER"
@@ -915,7 +917,11 @@ function(jucer_export_target exporter)
 
   if(DEFINED _PLATFORM_TOOLSET)
     set(toolset "${_PLATFORM_TOOLSET}")
-    if((exporter STREQUAL "Visual Studio 2017"
+    if((exporter STREQUAL "Visual Studio 2019"
+          AND (toolset STREQUAL "v140" OR toolset STREQUAL "v140_xp"
+            OR toolset STREQUAL "v141" OR toolset STREQUAL "v141_xp"
+            OR toolset STREQUAL "v142"))
+        OR (exporter STREQUAL "Visual Studio 2017"
           AND (toolset STREQUAL "v140" OR toolset STREQUAL "v140_xp"
             OR toolset STREQUAL "v141" OR toolset STREQUAL "v141_xp"))
         OR (exporter STREQUAL "Visual Studio 2015"
@@ -1071,7 +1077,7 @@ function(jucer_export_target_configuration
     )
   endif()
 
-  if(exporter MATCHES "^Visual Studio 201(7|5|3)$")
+  if(exporter MATCHES "^Visual Studio 201(9|7|5|3)$")
     list(APPEND single_value_keywords
       "ENABLE_PLUGIN_COPY_STEP"
       "VST_BINARY_LOCATION"
@@ -1151,7 +1157,7 @@ function(jucer_export_target_configuration
 
   if(DEFINED _OPTIMISATION)
     set(optimisation "${_OPTIMISATION}")
-    if(exporter MATCHES "^Visual Studio 201(7|5|3)$")
+    if(exporter MATCHES "^Visual Studio 201(9|7|5|3)$")
       if(optimisation STREQUAL "No optimisation")
         set(optimisation_flag "/Od")
       elseif(optimisation STREQUAL "Minimise size")
@@ -1442,7 +1448,7 @@ function(jucer_export_target_configuration
     endif()
   endif()
 
-  if(DEFINED _ARCHITECTURE AND exporter MATCHES "^Visual Studio 201(7|5|3)$")
+  if(DEFINED _ARCHITECTURE AND exporter MATCHES "^Visual Studio 201(9|7|5|3)$")
     if(_ARCHITECTURE STREQUAL "32-bit")
       set(wants_x64 FALSE)
     elseif(_ARCHITECTURE STREQUAL "x64")
@@ -1532,7 +1538,7 @@ endfunction()
 function(jucer_project_end)
 
   unset(current_exporter)
-  foreach(exporter_index RANGE 6)
+  foreach(exporter_index RANGE 7)
     list(GET Reprojucer_supported_exporters_conditions ${exporter_index} condition)
     if(${condition})
       if(DEFINED current_exporter)

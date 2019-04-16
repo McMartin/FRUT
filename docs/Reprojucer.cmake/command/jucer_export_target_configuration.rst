@@ -60,16 +60,18 @@ Define the settings specific to a configuration associated with an export target
 
 Optional keywords support:
 
-- ``[1]``: only supported by the ``"Xcode (MacOSX)"``, ``"Visual Studio 2017"``,
-  ``"Visual Studio 2015"``, and ``"Visual Studio 2013"`` exporters.
+- ``[1]``: only supported by the ``"Xcode (MacOSX)"``, ``"Visual Studio 2019"``,
+  ``"Visual Studio 2017"``, ``"Visual Studio 2015"``, and ``"Visual Studio 2013"``
+  exporters.
 - ``[2]``: only supported by the ``"Xcode (MacOSX)"`` exporter.
-- ``[3]``: only supported by the ``"Visual Studio 2017"``, ``"Visual Studio 2015"``, and
-  ``"Visual Studio 2013"`` exporters.
-- ``[4]``: only supported by the ``"Visual Studio 2017"``, ``"Visual Studio 2015"``, and
-  ``"Visual Studio 2013"`` exporters, when ``DEBUG_MODE`` is ``OFF``.
-- ``[5]``: only supported by the ``"Visual Studio 2017"``, ``"Visual Studio 2015"``,
-  ``"Visual Studio 2013"``, ``"Linux Makefile"``, ``"Code::Blocks (Windows)"``, and
-  ``"Code::Blocks (Linux)"`` exporters.
+- ``[3]``: only supported by the ``"Visual Studio 2019"``, ``"Visual Studio 2017"``,
+  ``"Visual Studio 2015"``, and ``"Visual Studio 2013"`` exporters.
+- ``[4]``: only supported by the ``"Visual Studio 2019"``, ``"Visual Studio 2017"``,
+  ``"Visual Studio 2015"``, and ``"Visual Studio 2013"`` exporters, when ``DEBUG_MODE`` is
+  ``OFF``.
+- ``[5]``: only supported by the ``"Visual Studio 2019"``, ``"Visual Studio 2017"``,
+  ``"Visual Studio 2015"``, ``"Visual Studio 2013"``, ``"Linux Makefile"``,
+  ``"Code::Blocks (Windows)"``, and ``"Code::Blocks (Linux)"`` exporters.
 
 
 Examples
