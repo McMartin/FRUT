@@ -1,3 +1,0 @@
-if(NOT CMAKE_VERSION VERSION_LESS 3.14)
-  message(FATAL_ERROR "${CMAKE_VERSION} >= 3.14")
-endif()

@@ -28,7 +28,12 @@ get_filename_component(JUCE_ROOT "${JUCE_ROOT}" ABSOLUTE BASE_DIR "${CMAKE_BINAR
 project(JUCE-5.0.0)
 
 
-if(WIN32 AND NOT MSVC)
+if(MSVC_VERSION GREATER 1919)
+  message(WARNING "Skipping JUCE-5.0.0 because none of its sub-projects supports the "
+    "\"Visual Studio 2019\" exporter"
+  )
+  return()
+elseif(WIN32 AND NOT MSVC)
   message(WARNING "Skipping JUCE-5.0.0 because none of its sub-projects supports the "
     "\"Code::Blocks (Windows)\" exporter"
   )
