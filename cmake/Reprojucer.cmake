@@ -3569,6 +3569,8 @@ function(_FRUT_set_compiler_and_linker_settings_MSVC target)
       target_compile_options(${target} PRIVATE
         $<$<CONFIG:${config}>:${JUCER_RUNTIME_LIBRARY_FLAG_${config}}>
       )
+    elseif(NOT (DEFINED JUCER_VERSION AND JUCER_VERSION VERSION_LESS 5.2.1))
+      target_compile_options(${target} PRIVATE $<$<CONFIG:${config}>:/MD${d_or_empty}>)
     elseif(DEFINED JUCER_VERSION AND JUCER_VERSION VERSION_LESS 5.0.0
         AND (JUCER_BUILD_VST OR JUCER_BUILD_VST3 OR JUCER_BUILD_RTAS OR JUCER_BUILD_AAX))
       target_compile_options(${target} PRIVATE $<$<CONFIG:${config}>:/MD${d_or_empty}>)
