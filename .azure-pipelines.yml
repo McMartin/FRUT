@@ -36,6 +36,4 @@ jobs:
     variables:
       cmakeGenerator: "Visual Studio 16 2019"
     steps:
-      - script: cmake -P ci/fail-if-CMake-version-3.14-or-more.cmake
-        displayName: Fail if CMake >=3.14 is available
-      # - template: ci/azure-pipelines-steps.yml
+      - template: ci/azure-pipelines-steps.yml
