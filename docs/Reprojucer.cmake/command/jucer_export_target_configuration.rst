@@ -56,7 +56,7 @@ Define the settings specific to a configuration associated with an export target
     [ARCHITECTURE <architecture>]  # [5]
   )
 
-``<exporter>`` must be one of the :ref:`supported exporters <supported-export-targets>`.
+``<exporter>`` must be one of the :ref:`supported exporters <supported-exporters>`.
 
 Optional keywords support:
 

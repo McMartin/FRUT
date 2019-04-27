@@ -48,7 +48,7 @@ Define the settings specific to an export target.
     [TARGET_PLATFORM <target_platform>]  # [7]
   )
 
-``<exporter>`` must be one of the :ref:`supported exporters <supported-export-targets>`.
+``<exporter>`` must be one of the :ref:`supported exporters <supported-exporters>`.
 
 Optional keywords support:
 

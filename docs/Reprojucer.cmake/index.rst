@@ -23,21 +23,41 @@ Requirements
 ``Reprojucer.cmake`` requires CMake version 3.4 minimum.
 
 
-.. _supported-export-targets:
+.. _supported-exporters:
 
-Supported export targets
-------------------------
+Supported Projucer exporters
+----------------------------
 
-``Reprojucer.cmake`` supports the following Projucer export targets (AKA exporters):
+``Reprojucer.cmake`` supports the following Projucer exporters (also known as "export
+targets"):
 
-- Xcode (MacOSX)
-- Visual Studio 2019
-- Visual Studio 2017
-- Visual Studio 2015
-- Visual Studio 2013
-- Linux Makefile
-- Code::Blocks (Windows)
-- Code::Blocks (Linux)
+.. table::
+  :align: left
+  :widths: auto
+
+  +-----------+------------------------+
+  | Supported | Exporter               |
+  +===========+========================+
+  | ✔️        | Xcode (MacOSX)         |
+  +-----------+------------------------+
+  | ❌        | Xcode (iOS)            |
+  +-----------+------------------------+
+  | ✔️        | Visual Studio 2019     |
+  +-----------+------------------------+
+  | ✔️        | Visual Studio 2017     |
+  +-----------+------------------------+
+  | ✔️        | Visual Studio 2015     |
+  +-----------+------------------------+
+  | ✔️        | Visual Studio 2013     |
+  +-----------+------------------------+
+  | ✔️        | Linux Makefile         |
+  +-----------+------------------------+
+  | ❌        | Android                |
+  +-----------+------------------------+
+  | ✔️        | Code::Blocks (Windows) |
+  +-----------+------------------------+
+  | ✔️        | Code::Blocks (Linux)   |
+  +-----------+------------------------+
 
 
 .. _Reprojucer-commands:
