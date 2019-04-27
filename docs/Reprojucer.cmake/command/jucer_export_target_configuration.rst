@@ -80,7 +80,8 @@ Examples
 From `the NetworkGraphicsDemo extra of JUCE 5.4.3 <https://github.com/McMartin/FRUT/blob/
 master/generated/JUCE-5.4.3/extras/NetworkGraphicsDemo/CMakeLists.txt#L176-L182>`_:
 
-.. code:: cmake
+.. code-block:: cmake
+  :lineno-start: 176
 
   jucer_export_target_configuration(
     "Xcode (MacOSX)"
@@ -94,7 +95,8 @@ master/generated/JUCE-5.4.3/extras/NetworkGraphicsDemo/CMakeLists.txt#L176-L182>
 From `the UnitTestRunner extra of JUCE 5.4.3 <https://github.com/McMartin/FRUT/blob/
 master/generated/JUCE-5.4.3/extras/UnitTestRunner/CMakeLists.txt#L277-L284>`_:
 
-.. code:: cmake
+.. code-block:: cmake
+  :lineno-start: 277
 
   jucer_export_target_configuration(
     "Visual Studio 2017"
@@ -109,7 +111,8 @@ master/generated/JUCE-5.4.3/extras/UnitTestRunner/CMakeLists.txt#L277-L284>`_:
 From `the Projucer extra of JUCE 5.4.3 <https://github.com/McMartin/FRUT/blob/master/
 generated/JUCE-5.4.3/extras/Projucer/CMakeLists.txt#L726-L733>`_:
 
-.. code:: cmake
+.. code-block:: cmake
+  :lineno-start: 726
 
   jucer_export_target_configuration(
     "Linux Makefile"

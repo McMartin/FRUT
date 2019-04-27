@@ -25,7 +25,8 @@ Example
 From `the Plugin Host example of JUCE 5.2.1 <https://github.com/McMartin/FRUT/blob/
 master/generated/JUCE-5.2.1/examples/audio%20plugin%20host/CMakeLists.txt#L86-L99>`_:
 
-.. code:: cmake
+.. code-block:: cmake
+  :lineno-start: 86
 
   jucer_project_module(
     juce_audio_processors

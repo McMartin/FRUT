@@ -72,7 +72,8 @@ Examples
 From `the AudioPluginHost extra of JUCE 5.4.3 <https://github.com/McMartin/FRUT/blob/
 master/generated/JUCE-5.4.3/extras/AudioPluginHost/CMakeLists.txt#L194-L208>`_:
 
-.. code:: cmake
+.. code-block:: cmake
+  :lineno-start: 194
 
   jucer_export_target(
     "Xcode (MacOSX)"
@@ -94,7 +95,8 @@ master/generated/JUCE-5.4.3/extras/AudioPluginHost/CMakeLists.txt#L194-L208>`_:
 From `the DemoRunner example of JUCE 5.4.3 <https://github.com/McMartin/FRUT/blob/master/
 generated/JUCE-5.4.3/examples/DemoRunner/CMakeLists.txt#L325-L333>`_:
 
-.. code:: cmake
+.. code-block:: cmake
+  :lineno-start: 325
 
   jucer_export_target(
     "Visual Studio 2017"
@@ -110,7 +112,8 @@ generated/JUCE-5.4.3/examples/DemoRunner/CMakeLists.txt#L325-L333>`_:
 From `the Projucer extra of JUCE 5.4.3 <https://github.com/McMartin/FRUT/blob/
 master/generated/JUCE-5.4.3/extras/Projucer/CMakeLists.txt#L719-L724>`_:
 
-.. code:: cmake
+.. code-block:: cmake
+  :lineno-start: 719
 
   jucer_export_target(
     "Linux Makefile"

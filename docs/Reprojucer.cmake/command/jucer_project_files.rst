@@ -23,7 +23,8 @@ Example
 From `the AUv3Synth example of JUCE 5.2.1 <https://github.com/McMartin/FRUT/blob/master/
 generated/JUCE-5.2.1/examples/AUv3Synth/CMakeLists.txt#L68-L82>`_:
 
-.. code:: cmake
+.. code-block:: cmake
+  :lineno-start: 68
 
   jucer_project_files("AUv3Synth/Source/BinaryData"
   # Compile   Xcode     Binary
