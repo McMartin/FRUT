@@ -18,6 +18,7 @@ the module folder itself. For instance, if you want to add the module ``juce_cor
 its header is located at ``~/dev/JUCE/modules/juce_core/juce_core.h``, then
 ``<modules_folder>`` must be ``~/dev/JUCE/modules``.
 
+
 Example
 -------
 
