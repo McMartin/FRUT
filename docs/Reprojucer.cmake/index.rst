@@ -17,6 +17,12 @@ Add the following lines at the top of your CMakeLists.txt file to use
   include(Reprojucer)
 
 
+Requirements
+------------
+
+``Reprojucer.cmake`` requires CMake version 3.4 minimum.
+
+
 .. _supported-export-targets:
 
 Supported export targets
