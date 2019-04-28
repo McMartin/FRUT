@@ -58,7 +58,8 @@ From `the MultiOutSynth example of JUCE 5.2.1 <https://github.com/McMartin/FRUT/
 master/generated/JUCE-5.2.1/examples/PlugInSamples/MultiOutSynth/CMakeLists.txt
 #L42-L68>`_:
 
-.. code:: cmake
+.. code-block:: cmake
+  :lineno-start: 42
 
   jucer_audio_plugin_settings(
     BUILD_VST ON

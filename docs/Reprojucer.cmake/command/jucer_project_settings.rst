@@ -41,7 +41,8 @@ Example
 From `the DemoRunner example of JUCE 5.4.3 <https://github.com/McMartin/FRUT/blob/master/
 generated/JUCE-5.4.3/examples/DemoRunner/CMakeLists.txt#L28-L43>`_:
 
-.. code:: cmake
+.. code-block:: cmake
+  :lineno-start: 28
 
   jucer_project_settings(
     PROJECT_NAME "DemoRunner"

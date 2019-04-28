@@ -16,7 +16,8 @@ Example
 From `the AudioPluginHost extra of JUCE 5.4.3 <https://github.com/McMartin/FRUT/blob/
 master/generated/JUCE-5.4.3/extras/AudioPluginHost/CMakeLists.txt#L185-L192>`_:
 
-.. code:: cmake
+.. code-block:: cmake
+  :lineno-start: 185
 
   jucer_appconfig_header(
     USER_CODE_SECTION

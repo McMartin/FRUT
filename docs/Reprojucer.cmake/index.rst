@@ -17,21 +17,48 @@ Add the following lines at the top of your CMakeLists.txt file to use
   include(Reprojucer)
 
 
-.. _supported-export-targets:
+Requirements
+------------
 
-Supported export targets
-------------------------
+``Reprojucer.cmake`` requires CMake version 3.4 minimum.
 
-``Reprojucer.cmake`` supports the following Projucer export targets (AKA exporters):
 
-- Xcode (MacOSX)
-- Visual Studio 2019
-- Visual Studio 2017
-- Visual Studio 2015
-- Visual Studio 2013
-- Linux Makefile
-- Code::Blocks (Windows)
-- Code::Blocks (Linux)
+.. _supported-exporters:
+
+Supported Projucer exporters
+----------------------------
+
+``Reprojucer.cmake`` supports the following Projucer exporters (also known as "export
+targets"):
+
+.. table::
+  :align: left
+  :widths: auto
+
+  +-----------+------------------------+
+  | Supported | Exporter               |
+  +===========+========================+
+  | ✔️        | Xcode (MacOSX)         |
+  +-----------+------------------------+
+  | ❌        | Xcode (iOS)            |
+  +-----------+------------------------+
+  | ✔️        | Visual Studio 2019     |
+  +-----------+------------------------+
+  | ✔️        | Visual Studio 2017     |
+  +-----------+------------------------+
+  | ✔️        | Visual Studio 2015     |
+  +-----------+------------------------+
+  | ✔️        | Visual Studio 2013     |
+  +-----------+------------------------+
+  | ✔️        | Linux Makefile         |
+  +-----------+------------------------+
+  | ❌        | Android                |
+  +-----------+------------------------+
+  | ✔️        | Code::Blocks (Windows) |
+  +-----------+------------------------+
+  | ✔️        | Code::Blocks (Linux)   |
+  +-----------+------------------------+
+
 
 .. _Reprojucer-commands:
 
