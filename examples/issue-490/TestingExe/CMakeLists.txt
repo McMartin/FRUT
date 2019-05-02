@@ -28,6 +28,8 @@ jucer_project_settings(
   PROJECT_TYPE "Console Application"
   BUNDLE_IDENTIFIER "com.yourcompany.TestingExe"
   CXX_LANGUAGE_STANDARD "C++14"
+  HEADER_SEARCH_PATHS
+    "${CMAKE_CURRENT_LIST_DIR}/../third-party"
 )
 
 jucer_project_files("TestingExe/Source"
