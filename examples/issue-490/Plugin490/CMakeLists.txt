@@ -9,14 +9,8 @@ list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/../../../cmake")
 include(Reprojucer)
 
 
-set(Plugin490_jucer_FILE
-  "${CMAKE_CURRENT_LIST_DIR}/Plugin490.jucer"
-)
-
-
 jucer_project_begin(
   JUCER_VERSION "5.4.3"
-  PROJECT_FILE "${Plugin490_jucer_FILE}"
   PROJECT_ID "SfLjZl"
 )
 
