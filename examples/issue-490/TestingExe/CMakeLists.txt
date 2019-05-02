@@ -185,3 +185,6 @@ jucer_export_target_configuration(
 )
 
 jucer_project_end()
+
+
+target_link_libraries(TestingExe PRIVATE Plugin490_Shared_Code)
