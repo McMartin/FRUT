@@ -317,6 +317,11 @@ function(jucer_project_files source_group_name)
       _FRUT_jucer_project_files_assert_x_or_dot("${argument}" ${row} "Binary Resource")
       set(binary_resource "${argument}")
     else()
+      if(argument STREQUAL "x" OR argument STREQUAL ".")
+        message(FATAL_ERROR
+          "Expected path for \"File\", got \"${argument}\" instead (row ${row})"
+        )
+      endif()
       set(path "${argument}")
 
       _FRUT_abs_path_based_on_jucer_project_dir(path "${path}")
