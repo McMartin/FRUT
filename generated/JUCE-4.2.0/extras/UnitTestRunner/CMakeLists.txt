@@ -36,7 +36,7 @@ jucer_project_settings(
 )
 
 jucer_project_files("UnitTestRunner/Source"
-# Compile   Xcode     Binary
+# Compile   Xcode     Binary    File
 #           Resource  Resource
   x         .         .         "Source/Main.cpp"
 )

@@ -68,14 +68,14 @@ jucer_audio_plugin_settings(
 )
 
 jucer_project_files("DSPModulePluginDemo/Resources"
-# Compile   Xcode     Binary
+# Compile   Xcode     Binary    File
 #           Resource  Resource
   .         .         x         "Resources/Impulse1.wav"
   .         .         x         "Resources/Impulse2.wav"
 )
 
 jucer_project_files("DSPModulePluginDemo/Source"
-# Compile   Xcode     Binary
+# Compile   Xcode     Binary    File
 #           Resource  Resource
   x         .         .         "Source/PluginProcessor.cpp"
   .         .         .         "Source/PluginProcessor.h"

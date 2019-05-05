@@ -34,7 +34,7 @@ jucer_project_settings(
 )
 
 jucer_project_files("JUCE Network Graphics Demo/Source"
-# Compile   Xcode     Binary
+# Compile   Xcode     Binary    File
 #           Resource  Resource
   .         .         .         "Source/Demos.h"
   x         .         .         "Source/Main.cpp"
@@ -44,7 +44,7 @@ jucer_project_files("JUCE Network Graphics Demo/Source"
 )
 
 jucer_project_files("JUCE Network Graphics Demo"
-# Compile   Xcode     Binary
+# Compile   Xcode     Binary    File
 #           Resource  Resource
   .         .         x         "Source/juce_icon.png"
 )

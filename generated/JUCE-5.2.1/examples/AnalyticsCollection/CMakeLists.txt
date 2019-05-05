@@ -38,7 +38,7 @@ jucer_project_settings(
 )
 
 jucer_project_files("AnalyticsCollection/Source"
-# Compile   Xcode     Binary
+# Compile   Xcode     Binary    File
 #           Resource  Resource
   .         .         .         "Source/DemoAnalyticsEventTypes.h"
   .         .         .         "Source/GoogleAnalyticsDestination.h"

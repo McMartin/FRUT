@@ -40,7 +40,7 @@ jucer_project_settings(
 )
 
 jucer_project_files("DSPDemo/Source/Resources"
-# Compile   Xcode     Binary
+# Compile   Xcode     Binary    File
 #           Resource  Resource
   .         .         x         "Resources/cassette_recorder.wav"
   .         .         x         "Source/EditorColourScheme.xml"
@@ -48,7 +48,7 @@ jucer_project_files("DSPDemo/Source/Resources"
 )
 
 jucer_project_files("DSPDemo/Source/Demos"
-# Compile   Xcode     Binary
+# Compile   Xcode     Binary    File
 #           Resource  Resource
   x         .         x         "Source/Demos/ConvolutionDemo.cpp"
   x         .         x         "Source/Demos/FIRFilterDemo.cpp"
@@ -62,7 +62,7 @@ jucer_project_files("DSPDemo/Source/Demos"
 )
 
 jucer_project_files("DSPDemo/Source"
-# Compile   Xcode     Binary
+# Compile   Xcode     Binary    File
 #           Resource  Resource
   .         .         .         "Source/DSPDemo.h"
   x         .         .         "Source/Main.cpp"

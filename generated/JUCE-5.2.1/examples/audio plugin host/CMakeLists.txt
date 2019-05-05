@@ -38,7 +38,7 @@ jucer_project_settings(
 )
 
 jucer_project_files("Plugin Host"
-# Compile   Xcode     Binary
+# Compile   Xcode     Binary    File
 #           Resource  Resource
   x         .         .         "Source/FilterGraph.cpp"
   .         .         .         "Source/FilterGraph.h"

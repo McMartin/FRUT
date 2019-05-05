@@ -27,7 +27,7 @@ generated/JUCE-5.2.1/examples/AUv3Synth/CMakeLists.txt#L68-L82>`_:
   :lineno-start: 68
 
   jucer_project_files("AUv3Synth/Source/BinaryData"
-  # Compile   Xcode     Binary
+  # Compile   Xcode     Binary    File
   #           Resource  Resource
     .         x         .         "Source/BinaryData/power.png"
     .         .         x         "Source/BinaryData/proaudio.path"
@@ -35,7 +35,7 @@ generated/JUCE-5.2.1/examples/AUv3Synth/CMakeLists.txt#L68-L82>`_:
   )
 
   jucer_project_files("AUv3Synth/Source"
-  # Compile   Xcode     Binary
+  # Compile   Xcode     Binary    File
   #           Resource  Resource
     .         .         .         "Source/MaterialLookAndFeel.h"
     .         .         .         "Source/AUv3SynthEditor.h"

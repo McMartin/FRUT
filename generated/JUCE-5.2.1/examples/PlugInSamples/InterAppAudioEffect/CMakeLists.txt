@@ -66,7 +66,7 @@ jucer_audio_plugin_settings(
 )
 
 jucer_project_files("InterAppAudioEffect/Source"
-# Compile   Xcode     Binary
+# Compile   Xcode     Binary    File
 #           Resource  Resource
   .         .         .         "Source/IAAEffectProcessor.h"
   x         .         .         "Source/IAAEffectProcessor.cpp"

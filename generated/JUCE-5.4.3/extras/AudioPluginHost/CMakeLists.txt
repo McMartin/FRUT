@@ -38,7 +38,7 @@ jucer_project_settings(
 )
 
 jucer_project_files("AudioPluginHost/Source/Filters"
-# Compile   Xcode     Binary
+# Compile   Xcode     Binary    File
 #           Resource  Resource
   x         .         .         "Source/Filters/FilterGraph.cpp"
   .         .         .         "Source/Filters/FilterGraph.h"
@@ -49,7 +49,7 @@ jucer_project_files("AudioPluginHost/Source/Filters"
 )
 
 jucer_project_files("AudioPluginHost/Source/UI"
-# Compile   Xcode     Binary
+# Compile   Xcode     Binary    File
 #           Resource  Resource
   x         .         .         "Source/UI/GraphEditorPanel.cpp"
   .         .         .         "Source/UI/GraphEditorPanel.h"
@@ -59,7 +59,7 @@ jucer_project_files("AudioPluginHost/Source/UI"
 )
 
 jucer_project_files("AudioPluginHost/Source"
-# Compile   Xcode     Binary
+# Compile   Xcode     Binary    File
 #           Resource  Resource
   x         .         .         "Source/HostStartup.cpp"
   .         .         x         "Source/JUCEAppIcon.png"

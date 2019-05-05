@@ -68,7 +68,7 @@ jucer_audio_plugin_settings(
 )
 
 jucer_project_files("Surround/Source"
-# Compile   Xcode     Binary
+# Compile   Xcode     Binary    File
 #           Resource  Resource
   x         .         .         "Source/SurroundProcessor.cpp"
   .         .         .         "Source/SurroundEditor.h"

@@ -35,7 +35,7 @@ jucer_project_settings(
 )
 
 jucer_project_files("Projucer/Application"
-# Compile   Xcode     Binary
+# Compile   Xcode     Binary    File
 #           Resource  Resource
   x         .         .         "Source/Application/jucer_AppearanceSettings.cpp"
   .         .         .         "Source/Application/jucer_AppearanceSettings.h"
@@ -66,7 +66,7 @@ jucer_project_files("Projucer/Application"
 )
 
 jucer_project_files("Projucer/LiveBuildEngine"
-# Compile   Xcode     Binary
+# Compile   Xcode     Binary    File
 #           Resource  Resource
   .         .         .         "Source/LiveBuildEngine/projucer_ActivityList.h"
   .         .         .         "Source/LiveBuildEngine/projucer_ActivityListComponent.h"
@@ -90,7 +90,7 @@ jucer_project_files("Projucer/LiveBuildEngine"
 )
 
 jucer_project_files("Projucer/Code Editor"
-# Compile   Xcode     Binary
+# Compile   Xcode     Binary    File
 #           Resource  Resource
   .         .         .         "Source/Code Editor/jucer_LiveBuildCodeEditor.h"
   x         .         .         "Source/Code Editor/jucer_SourceCodeEditor.cpp"
@@ -98,7 +98,7 @@ jucer_project_files("Projucer/Code Editor"
 )
 
 jucer_project_files("Projucer/ComponentEditor/components"
-# Compile   Xcode     Binary
+# Compile   Xcode     Binary    File
 #           Resource  Resource
   .         .         .         "Source/ComponentEditor/components/jucer_ButtonHandler.h"
   .         .         .         "Source/ComponentEditor/components/jucer_ComboBoxHandler.h"
@@ -122,7 +122,7 @@ jucer_project_files("Projucer/ComponentEditor/components"
 )
 
 jucer_project_files("Projucer/ComponentEditor/documents"
-# Compile   Xcode     Binary
+# Compile   Xcode     Binary    File
 #           Resource  Resource
   x         .         .         "Source/ComponentEditor/documents/jucer_ButtonDocument.cpp"
   .         .         .         "Source/ComponentEditor/documents/jucer_ButtonDocument.h"
@@ -131,7 +131,7 @@ jucer_project_files("Projucer/ComponentEditor/documents"
 )
 
 jucer_project_files("Projucer/ComponentEditor/paintelements"
-# Compile   Xcode     Binary
+# Compile   Xcode     Binary    File
 #           Resource  Resource
   x         .         .         "Source/ComponentEditor/paintelements/jucer_ColouredElement.cpp"
   .         .         .         "Source/ComponentEditor/paintelements/jucer_ColouredElement.h"
@@ -155,7 +155,7 @@ jucer_project_files("Projucer/ComponentEditor/paintelements"
 )
 
 jucer_project_files("Projucer/ComponentEditor/properties"
-# Compile   Xcode     Binary
+# Compile   Xcode     Binary    File
 #           Resource  Resource
   .         .         .         "Source/ComponentEditor/properties/jucer_ColourPropertyComponent.h"
   .         .         .         "Source/ComponentEditor/properties/jucer_ComponentBooleanProperty.h"
@@ -169,7 +169,7 @@ jucer_project_files("Projucer/ComponentEditor/properties"
 )
 
 jucer_project_files("Projucer/ComponentEditor/ui"
-# Compile   Xcode     Binary
+# Compile   Xcode     Binary    File
 #           Resource  Resource
   x         .         .         "Source/ComponentEditor/ui/jucer_ComponentLayoutEditor.cpp"
   .         .         .         "Source/ComponentEditor/ui/jucer_ComponentLayoutEditor.h"
@@ -194,7 +194,7 @@ jucer_project_files("Projucer/ComponentEditor/ui"
 )
 
 jucer_project_files("Projucer/ComponentEditor"
-# Compile   Xcode     Binary
+# Compile   Xcode     Binary    File
 #           Resource  Resource
   x         .         .         "Source/ComponentEditor/jucer_BinaryResources.cpp"
   .         .         .         "Source/ComponentEditor/jucer_BinaryResources.h"
@@ -212,7 +212,7 @@ jucer_project_files("Projucer/ComponentEditor"
 )
 
 jucer_project_files("Projucer/Project"
-# Compile   Xcode     Binary
+# Compile   Xcode     Binary    File
 #           Resource  Resource
   .         .         .         "Source/Project/jucer_ConfigTree_Base.h"
   .         .         .         "Source/Project/jucer_ConfigTree_Exporter.h"
@@ -235,7 +235,7 @@ jucer_project_files("Projucer/Project"
 )
 
 jucer_project_files("Projucer/Project Saving"
-# Compile   Xcode     Binary
+# Compile   Xcode     Binary    File
 #           Resource  Resource
   .         .         .         "Source/Project Saving/jucer_ProjectExport_AndroidAnt.h"
   .         .         .         "Source/Project Saving/jucer_ProjectExport_AndroidBase.h"
@@ -253,7 +253,7 @@ jucer_project_files("Projucer/Project Saving"
 )
 
 jucer_project_files("Projucer/Utility"
-# Compile   Xcode     Binary
+# Compile   Xcode     Binary    File
 #           Resource  Resource
   x         .         .         "Source/Utility/jucer_CodeHelpers.cpp"
   .         .         .         "Source/Utility/jucer_CodeHelpers.h"
@@ -285,7 +285,7 @@ jucer_project_files("Projucer/Utility"
 )
 
 jucer_project_files("Projucer/Wizards"
-# Compile   Xcode     Binary
+# Compile   Xcode     Binary    File
 #           Resource  Resource
   x         .         .         "Source/Wizards/jucer_NewFileWizard.cpp"
   .         .         .         "Source/Wizards/jucer_NewFileWizard.h"
@@ -307,7 +307,7 @@ jucer_project_files("Projucer/Wizards"
 )
 
 jucer_project_files("Projucer/BinaryData/gradle"
-# Compile   Xcode     Binary
+# Compile   Xcode     Binary    File
 #           Resource  Resource
   .         .         x         "Source/BinaryData/gradle/gradle-wrapper.jar"
   .         .         x         "Source/BinaryData/gradle/gradlew"
@@ -316,7 +316,7 @@ jucer_project_files("Projucer/BinaryData/gradle"
 )
 
 jucer_project_files("Projucer/BinaryData/templates"
-# Compile   Xcode     Binary
+# Compile   Xcode     Binary    File
 #           Resource  Resource
   .         .         x         "Source/BinaryData/jucer_AnimatedComponentTemplate.cpp"
   .         .         x         "Source/BinaryData/jucer_AudioComponentTemplate.cpp"
@@ -342,7 +342,7 @@ jucer_project_files("Projucer/BinaryData/templates"
 )
 
 jucer_project_files("Projucer/BinaryData"
-# Compile   Xcode     Binary
+# Compile   Xcode     Binary    File
 #           Resource  Resource
   .         .         x         "Source/BinaryData/background_logo.svg"
   .         .         x         "Source/BinaryData/background_tile.png"
