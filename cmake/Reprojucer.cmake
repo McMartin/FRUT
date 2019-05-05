@@ -3523,7 +3523,15 @@ function(_FRUT_set_compiler_and_linker_settings_MSVC target)
 
   target_compile_definitions(${target} PRIVATE "_CRT_SECURE_NO_WARNINGS")
 
+  if(MSVC_VERSION EQUAL 1800) # Visual Studio 2013
+    set(ltcg_flag "/LTCG")
+  else()
+    set(ltcg_flag "/LTCG:incremental")
+  endif()
+
   foreach(config IN LISTS JUCER_PROJECT_CONFIGURATIONS)
+    string(TOUPPER "${config}" upper_config)
+
     if(NOT DEFINED JUCER_MULTI_PROCESSOR_COMPILATION_${config}
         OR JUCER_MULTI_PROCESSOR_COMPILATION_${config})
       target_compile_options(${target} PRIVATE $<$<CONFIG:${config}>:/MP>)
@@ -3537,6 +3545,9 @@ function(_FRUT_set_compiler_and_linker_settings_MSVC target)
 
       if(JUCER_LINK_TIME_OPTIMISATION_${config})
         target_compile_options(${target} PRIVATE $<$<CONFIG:${config}>:/GL>)
+        set_property(TARGET ${target} APPEND_STRING PROPERTY
+          LINK_FLAGS_${upper_config} " ${ltcg_flag}"
+        )
       endif()
     else()
       target_compile_definitions(${target} PRIVATE $<$<CONFIG:${config}>:NDEBUG>)
@@ -3545,6 +3556,9 @@ function(_FRUT_set_compiler_and_linker_settings_MSVC target)
           AND NOT (DEFINED JUCER_LINK_TIME_OPTIMISATION_${config}
                    AND NOT JUCER_LINK_TIME_OPTIMISATION_${config}))
         target_compile_options(${target} PRIVATE $<$<CONFIG:${config}>:/GL>)
+        set_property(TARGET ${target} APPEND_STRING PROPERTY
+          LINK_FLAGS_${upper_config} " ${ltcg_flag}"
+        )
       endif()
     endif()
 
@@ -3601,8 +3615,6 @@ function(_FRUT_set_compiler_and_linker_settings_MSVC target)
     if(JUCER_RELAX_IEEE_COMPLIANCE_${config})
       target_compile_options(${target} PRIVATE $<$<CONFIG:${config}>:/fp:fast>)
     endif()
-
-    string(TOUPPER "${config}" upper_config)
 
     if(DEFINED JUCER_INCREMENTAL_LINKING_${config})
       if(JUCER_INCREMENTAL_LINKING_${config})
