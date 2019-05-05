@@ -34,7 +34,7 @@ jucer_project_settings(
 )
 
 jucer_project_files("BlocksDrawing/Source"
-# Compile   Xcode     Binary
+# Compile   Xcode     Binary    File
 #           Resource  Resource
   .         .         .         "Source/LightpadComponent.h"
   .         .         .         "Source/MainComponent.h"

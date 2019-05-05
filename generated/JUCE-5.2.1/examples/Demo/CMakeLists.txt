@@ -40,7 +40,7 @@ jucer_project_settings(
 )
 
 jucer_project_files("JuceDemo/Source"
-# Compile   Xcode     Binary
+# Compile   Xcode     Binary    File
 #           Resource  Resource
   x         .         .         "Source/Main.cpp"
   x         .         .         "Source/MainWindow.cpp"
@@ -51,7 +51,7 @@ jucer_project_files("JuceDemo/Source"
 )
 
 jucer_project_files("JuceDemo/Source/Demos"
-# Compile   Xcode     Binary
+# Compile   Xcode     Binary    File
 #           Resource  Resource
   x         .         .         "Source/Demos/AnimationDemo.cpp"
   x         .         .         "Source/Demos/AudioLatencyDemo.cpp"
@@ -97,7 +97,7 @@ jucer_project_files("JuceDemo/Source/Demos"
 )
 
 jucer_project_files("JuceDemo/Source/Resources"
-# Compile   Xcode     Binary
+# Compile   Xcode     Binary    File
 #           Resource  Resource
   .         .         x         "Resources/tile_background.png"
   .         .         x         "Resources/cello.wav"

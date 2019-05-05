@@ -293,9 +293,11 @@ endfunction()
 
 function(jucer_project_files source_group_name)
 
-  function(__check_input input)
+  function(_FRUT_jucer_project_files_assert_x_or_dot input row_number property)
     if(NOT input STREQUAL "x" AND NOT input STREQUAL ".")
-      message(FATAL_ERROR "Expected x or . token, got ${input} instead")
+      message(FATAL_ERROR "Expected \"x\" or \".\" token for \"${property}\", got "
+        "\"${input}\" instead (row ${row_number})"
+      )
     endif()
   endfunction()
 
@@ -303,17 +305,23 @@ function(jucer_project_files source_group_name)
   unset(compile)
   unset(xcode_resource)
   unset(binary_resource)
+  set(row 1)
   foreach(argument IN LISTS ARGN)
     if(NOT DEFINED compile)
+      _FRUT_jucer_project_files_assert_x_or_dot("${argument}" ${row} "Compile")
       set(compile "${argument}")
-      __check_input("${compile}")
     elseif(NOT DEFINED xcode_resource)
+      _FRUT_jucer_project_files_assert_x_or_dot("${argument}" ${row} "Xcode Resource")
       set(xcode_resource "${argument}")
-      __check_input("${xcode_resource}")
     elseif(NOT DEFINED binary_resource)
+      _FRUT_jucer_project_files_assert_x_or_dot("${argument}" ${row} "Binary Resource")
       set(binary_resource "${argument}")
-      __check_input("${binary_resource}")
     else()
+      if(argument STREQUAL "x" OR argument STREQUAL ".")
+        message(FATAL_ERROR
+          "Expected path for \"File\", got \"${argument}\" instead (row ${row})"
+        )
+      endif()
       set(path "${argument}")
 
       _FRUT_abs_path_based_on_jucer_project_dir(path "${path}")
@@ -335,6 +343,7 @@ function(jucer_project_files source_group_name)
       unset(compile)
       unset(xcode_resource)
       unset(binary_resource)
+      math(EXPR row "${row} + 1")
     endif()
   endforeach()
 

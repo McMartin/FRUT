@@ -40,7 +40,7 @@ jucer_project_settings(
 )
 
 jucer_project_files("InAppPurchase/BinaryData"
-# Compile   Xcode     Binary
+# Compile   Xcode     Binary    File
 #           Resource  Resource
   .         .         x         "BinaryData/Ed.png"
   .         .         x         "BinaryData/Ed0.ogg"
@@ -70,7 +70,7 @@ jucer_project_files("InAppPurchase/BinaryData"
 )
 
 jucer_project_files("InAppPurchase/Source"
-# Compile   Xcode     Binary
+# Compile   Xcode     Binary    File
 #           Resource  Resource
   x         .         .         "Source/Main.cpp"
   .         .         .         "Source/VoicePurchases.h"

@@ -37,7 +37,7 @@ jucer_project_settings(
 )
 
 jucer_project_files("PushNotificationsDemo/BinaryResources/images"
-# Compile   Xcode     Binary
+# Compile   Xcode     Binary    File
 #           Resource  Resource
   .         .         x         "BinaryResources/images/ic_stat_name.png"
   .         .         x         "BinaryResources/images/ic_stat_name2.png"
@@ -52,7 +52,7 @@ jucer_project_files("PushNotificationsDemo/BinaryResources/images"
 )
 
 jucer_project_files("PushNotificationsDemo/BinaryResources/sounds"
-# Compile   Xcode     Binary
+# Compile   Xcode     Binary    File
 #           Resource  Resource
   .         .         x         "BinaryResources/sounds/demonstrative.caf"
   .         x         x         "BinaryResources/sounds/demonstrative.mp3"
@@ -67,7 +67,7 @@ jucer_project_files("PushNotificationsDemo/BinaryResources/sounds"
 )
 
 jucer_project_files("PushNotificationsDemo/Source"
-# Compile   Xcode     Binary
+# Compile   Xcode     Binary    File
 #           Resource  Resource
   x         .         .         "Source/MainComponent.cpp"
   .         .         .         "Source/MainComponent.h"

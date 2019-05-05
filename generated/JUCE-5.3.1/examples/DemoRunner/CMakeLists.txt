@@ -43,7 +43,7 @@ jucer_project_settings(
 )
 
 jucer_project_files("DemoRunner/Source/Demos"
-# Compile   Xcode     Binary
+# Compile   Xcode     Binary    File
 #           Resource  Resource
   x         .         .         "Source/Demos/DemoPIPs1.cpp"
   x         .         .         "Source/Demos/DemoPIPs2.cpp"
@@ -53,7 +53,7 @@ jucer_project_files("DemoRunner/Source/Demos"
 )
 
 jucer_project_files("DemoRunner/Source/UI"
-# Compile   Xcode     Binary
+# Compile   Xcode     Binary    File
 #           Resource  Resource
   x         .         .         "Source/UI/DemoContentComponent.cpp"
   .         .         .         "Source/UI/DemoContentComponent.h"
@@ -63,7 +63,7 @@ jucer_project_files("DemoRunner/Source/UI"
 )
 
 jucer_project_files("DemoRunner/Source"
-# Compile   Xcode     Binary
+# Compile   Xcode     Binary    File
 #           Resource  Resource
   x         .         .         "Source/Main.cpp"
   .         .         .         "Source/JUCEAppIcon.png"

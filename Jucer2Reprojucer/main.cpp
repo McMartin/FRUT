@@ -1018,32 +1018,35 @@ int main(int argc, char* argv[])
 
   // jucer_project_files()
   {
-    const auto writeFiles =
-      [&wLn](const juce::String& fullGroupName,
-             const std::vector<std::tuple<bool, bool, bool, juce::String>>& files) {
-        if (!files.empty())
+    struct File
+    {
+      bool compile;
+      bool xcodeResource;
+      bool binaryResource;
+      juce::String path;
+    };
+
+    const auto writeFiles = [&wLn](const juce::String& fullGroupName,
+                                   const std::vector<File>& files) {
+      if (!files.empty())
+      {
+        const auto nineSpaces = "         ";
+
+        wLn("jucer_project_files(\"", fullGroupName, "\"");
+        wLn("# Compile   Xcode     Binary    File");
+        wLn("#           Resource  Resource");
+
+        for (const auto& file : files)
         {
-          const auto nineSpaces = "         ";
-
-          wLn("jucer_project_files(\"", fullGroupName, "\"");
-          wLn("# Compile   Xcode     Binary");
-          wLn("#           Resource  Resource");
-
-          for (const auto& file : files)
-          {
-            const auto compile = std::get<0>(file);
-            const auto xcodeResource = std::get<1>(file);
-            const auto binaryResource = std::get<2>(file);
-            const auto path = std::get<3>(file);
-
-            wLn("  ", (compile ? "x" : "."), nineSpaces, (xcodeResource ? "x" : "."),
-                nineSpaces, (binaryResource ? "x" : "."), nineSpaces, "\"", path, "\"");
-          }
-
-          wLn(")");
-          wLn();
+          wLn("  ", (file.compile ? "x" : "."), nineSpaces,
+              (file.xcodeResource ? "x" : "."), nineSpaces,
+              (file.binaryResource ? "x" : "."), nineSpaces, "\"", file.path, "\"");
         }
-      };
+
+        wLn(")");
+        wLn();
+      }
+    };
 
     juce::StringArray groupNames;
 
@@ -1053,7 +1056,7 @@ int main(int argc, char* argv[])
 
         const auto fullGroupName = groupNames.joinIntoString("/");
 
-        std::vector<std::tuple<bool, bool, bool, juce::String>> files;
+        std::vector<File> files;
 
         for (auto i = 0; i < group.getNumChildren(); ++i)
         {
@@ -1063,10 +1066,10 @@ int main(int argc, char* argv[])
           {
             const auto& file = fileOrGroup;
 
-            files.emplace_back(int{file.getProperty("compile")} == 1,
-                               int{file.getProperty("xcodeResource")} == 1,
-                               int{file.getProperty("resource")} == 1,
-                               file.getProperty("file").toString());
+            files.push_back({int{file.getProperty("compile")} == 1,
+                             int{file.getProperty("xcodeResource")} == 1,
+                             int{file.getProperty("resource")} == 1,
+                             file.getProperty("file").toString()});
           }
           else
           {

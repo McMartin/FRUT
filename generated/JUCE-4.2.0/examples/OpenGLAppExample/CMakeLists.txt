@@ -34,13 +34,13 @@ jucer_project_settings(
 )
 
 jucer_project_files("OpenGLAppExample/Source/Resources"
-# Compile   Xcode     Binary
+# Compile   Xcode     Binary    File
 #           Resource  Resource
   .         .         x         "Source/Resources/teapot.obj"
 )
 
 jucer_project_files("OpenGLAppExample/Source"
-# Compile   Xcode     Binary
+# Compile   Xcode     Binary    File
 #           Resource  Resource
   x         .         .         "Source/MainComponent.cpp"
   x         .         .         "Source/Main.cpp"

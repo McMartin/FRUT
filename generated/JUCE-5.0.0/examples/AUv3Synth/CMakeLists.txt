@@ -65,7 +65,7 @@ jucer_audio_plugin_settings(
 )
 
 jucer_project_files("AUv3Synth/Source/BinaryData"
-# Compile   Xcode     Binary
+# Compile   Xcode     Binary    File
 #           Resource  Resource
   .         x         .         "Source/BinaryData/power.png"
   .         .         x         "Source/BinaryData/proaudio.path"
@@ -73,7 +73,7 @@ jucer_project_files("AUv3Synth/Source/BinaryData"
 )
 
 jucer_project_files("AUv3Synth/Source"
-# Compile   Xcode     Binary
+# Compile   Xcode     Binary    File
 #           Resource  Resource
   .         .         .         "Source/MaterialLookAndFeel.h"
   .         .         .         "Source/AUv3SynthEditor.h"

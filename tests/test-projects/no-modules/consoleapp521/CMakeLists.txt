@@ -31,7 +31,7 @@ jucer_project_settings(
 )
 
 jucer_project_files("consoleapp521/Source"
-# Compile   Xcode     Binary
+# Compile   Xcode     Binary    File
 #           Resource  Resource
   x         .         .         "Source/foo.cpp"
 )

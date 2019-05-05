@@ -34,7 +34,7 @@ jucer_project_settings(
 )
 
 jucer_project_files("OSCSender/Source"
-# Compile   Xcode     Binary
+# Compile   Xcode     Binary    File
 #           Resource  Resource
   .         .         .         "Source/MainComponent.h"
   x         .         .         "Source/Main.cpp"
