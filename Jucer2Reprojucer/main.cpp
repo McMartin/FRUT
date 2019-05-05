@@ -1033,7 +1033,7 @@ int main(int argc, char* argv[])
         const auto nineSpaces = "         ";
 
         wLn("jucer_project_files(\"", fullGroupName, "\"");
-        wLn("# Compile   Xcode     Binary");
+        wLn("# Compile   Xcode     Binary    File");
         wLn("#           Resource  Resource");
 
         for (const auto& file : files)
