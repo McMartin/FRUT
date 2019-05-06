@@ -3533,9 +3533,9 @@ function(_FRUT_set_compiler_and_linker_settings_MSVC target)
   target_compile_definitions(${target} PRIVATE "_CRT_SECURE_NO_WARNINGS")
 
   if(MSVC_VERSION EQUAL 1800) # Visual Studio 2013
-    set(ltcg_flag "/LTCG")
+    set(ltcg_link_flag "/LTCG")
   else()
-    set(ltcg_flag "/LTCG:incremental")
+    set(ltcg_link_flag "/LTCG:incremental")
   endif()
 
   foreach(config IN LISTS JUCER_PROJECT_CONFIGURATIONS)
@@ -3555,7 +3555,7 @@ function(_FRUT_set_compiler_and_linker_settings_MSVC target)
       if(JUCER_LINK_TIME_OPTIMISATION_${config})
         target_compile_options(${target} PRIVATE $<$<CONFIG:${config}>:/GL>)
         set_property(TARGET ${target} APPEND_STRING PROPERTY
-          LINK_FLAGS_${upper_config} " ${ltcg_flag}"
+          LINK_FLAGS_${upper_config} " ${ltcg_link_flag}"
         )
       endif()
     else()
@@ -3566,7 +3566,7 @@ function(_FRUT_set_compiler_and_linker_settings_MSVC target)
                    AND NOT JUCER_LINK_TIME_OPTIMISATION_${config}))
         target_compile_options(${target} PRIVATE $<$<CONFIG:${config}>:/GL>)
         set_property(TARGET ${target} APPEND_STRING PROPERTY
-          LINK_FLAGS_${upper_config} " ${ltcg_flag}"
+          LINK_FLAGS_${upper_config} " ${ltcg_link_flag}"
         )
       endif()
     endif()
