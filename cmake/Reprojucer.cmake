@@ -302,9 +302,11 @@ function(jucer_project_files source_group_name)
   endfunction()
 
   set(files "")
+  set(compiler_flag_schemes "")
   unset(compile)
   unset(xcode_resource)
   unset(binary_resource)
+  unset(path)
   set(row 1)
   foreach(argument IN LISTS ARGN)
     if(NOT DEFINED compile)
@@ -316,7 +318,7 @@ function(jucer_project_files source_group_name)
     elseif(NOT DEFINED binary_resource)
       _FRUT_jucer_project_files_assert_x_or_dot("${argument}" ${row} "Binary Resource")
       set(binary_resource "${argument}")
-    else()
+    elseif(NOT DEFINED path)
       if(argument STREQUAL "x" OR argument STREQUAL ".")
         message(FATAL_ERROR
           "Expected path for \"File\", got \"${argument}\" instead (row ${row})"
@@ -339,10 +341,20 @@ function(jucer_project_files source_group_name)
           OR (file_extension STREQUAL ".mm" AND NOT APPLE))
         set_source_files_properties("${path}" PROPERTIES HEADER_FILE_ONLY TRUE)
       endif()
+    else()
+      if(argument STREQUAL "x" OR argument STREQUAL ".")
+        set(compile "${argument}")
+      else()
+        set(scheme "${argument}")
+        list(APPEND compiler_flag_schemes "${scheme}")
+        list(APPEND JUCER_COMPILER_FLAG_SCHEME_${scheme}_FILES "${path}")
 
-      unset(compile)
+        unset(compile)
+      endif()
+
       unset(xcode_resource)
       unset(binary_resource)
+      unset(path)
       math(EXPR row "${row} + 1")
     endif()
   endforeach()
@@ -354,6 +366,15 @@ function(jucer_project_files source_group_name)
   set(JUCER_PROJECT_FILES "${JUCER_PROJECT_FILES}" PARENT_SCOPE)
   set(JUCER_PROJECT_RESOURCES "${JUCER_PROJECT_RESOURCES}" PARENT_SCOPE)
   set(JUCER_PROJECT_XCODE_RESOURCES "${JUCER_PROJECT_XCODE_RESOURCES}" PARENT_SCOPE)
+
+  list(APPEND JUCER_COMPILER_FLAG_SCHEMES "${compiler_flag_schemes}")
+  list(REMOVE_DUPLICATES JUCER_COMPILER_FLAG_SCHEMES)
+  set(JUCER_COMPILER_FLAG_SCHEMES "${JUCER_COMPILER_FLAG_SCHEMES}" PARENT_SCOPE)
+  foreach(scheme IN LISTS compiler_flag_schemes)
+    set(JUCER_COMPILER_FLAG_SCHEME_${scheme}_FILES
+      "${JUCER_COMPILER_FLAG_SCHEME_${scheme}_FILES}" PARENT_SCOPE
+    )
+  endforeach()
 
 endfunction()
 
@@ -719,6 +740,14 @@ function(jucer_export_target exporter)
     list(APPEND single_value_keywords "TARGET_PLATFORM")
   endif()
 
+  set(compiler_flags_for__prefixed_keywords "")
+  foreach(argument IN LISTS ARGN)
+    if(argument MATCHES "^COMPILER_FLAGS_FOR_([A-Za-z0-9_]+)$")
+      list(APPEND compiler_flags_for__prefixed_keywords "${argument}")
+      list(APPEND single_value_keywords "${argument}")
+    endif()
+  endforeach()
+
   _FRUT_parse_arguments("${single_value_keywords}" "${multi_value_keywords}" "${ARGN}")
 
   if(DEFINED _TARGET_PROJECT_FOLDER)
@@ -766,6 +795,12 @@ function(jucer_export_target exporter)
   if(DEFINED _EXTRA_COMPILER_FLAGS)
     set(JUCER_EXTRA_COMPILER_FLAGS "${_EXTRA_COMPILER_FLAGS}" PARENT_SCOPE)
   endif()
+
+  foreach(keyword IN LISTS compiler_flags_for__prefixed_keywords)
+    if(DEFINED _${keyword})
+      set(JUCER_${keyword} "${_${keyword}}" PARENT_SCOPE)
+    endif()
+  endforeach()
 
   if(DEFINED _EXTRA_LINKER_FLAGS)
     set(JUCER_EXTRA_LINKER_FLAGS "${_EXTRA_LINKER_FLAGS}" PARENT_SCOPE)
@@ -3360,6 +3395,14 @@ function(_FRUT_set_compiler_and_linker_settings target)
   endforeach()
 
   target_compile_options(${target} PRIVATE ${JUCER_EXTRA_COMPILER_FLAGS})
+
+  foreach(scheme IN LISTS JUCER_COMPILER_FLAG_SCHEMES)
+    if(DEFINED JUCER_COMPILER_FLAGS_FOR_${scheme})
+      set_source_files_properties(${JUCER_COMPILER_FLAG_SCHEME_${scheme}_FILES}
+        PROPERTIES COMPILE_FLAGS "${JUCER_COMPILER_FLAGS_FOR_${scheme}}"
+      )
+    endif()
+  endforeach()
 
   foreach(config IN LISTS JUCER_PROJECT_CONFIGURATIONS)
     foreach(path IN LISTS JUCER_EXTRA_LIBRARY_SEARCH_PATHS_${config})

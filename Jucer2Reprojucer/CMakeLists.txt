@@ -180,6 +180,7 @@ jucer_export_target(
   EXTRA_COMPILER_FLAGS
     "/WX"
     "/W4"
+    "/wd4512"
 )
 
 jucer_export_target_configuration(

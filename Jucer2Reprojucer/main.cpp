@@ -1018,29 +1018,57 @@ int main(int argc, char* argv[])
 
   // jucer_project_files()
   {
+    const auto projectHasCompilerFlagSchemes =
+      jucerProject.getProperty("compilerFlagSchemes").toString().isNotEmpty();
+
     struct File
     {
       bool compile;
       bool xcodeResource;
       bool binaryResource;
       juce::String path;
+      juce::String compilerFlagScheme;
     };
 
-    const auto writeFiles = [&wLn](const juce::String& fullGroupName,
+    const auto writeFiles = [&projectHasCompilerFlagSchemes,
+                             &wLn](const juce::String& fullGroupName,
                                    const std::vector<File>& files) {
       if (!files.empty())
       {
+        const auto longestPathLength =
+          std::max_element(files.begin(), files.end(),
+                           [](const File& lhs, const File& rhs) {
+                             return lhs.path.length() < rhs.path.length();
+                           })
+            ->path.length();
         const auto nineSpaces = "         ";
 
         wLn("jucer_project_files(\"", fullGroupName, "\"");
-        wLn("# Compile   Xcode     Binary    File");
-        wLn("#           Resource  Resource");
+        if (projectHasCompilerFlagSchemes)
+        {
+          wLn("# Compile   Xcode     Binary    File",
+              juce::String::repeatedString(" ", longestPathLength) + "Compiler Flag");
+          wLn("#           Resource  Resource",
+              juce::String::repeatedString(" ", longestPathLength + 6) + "Scheme");
+        }
+        else
+        {
+          wLn("# Compile   Xcode     Binary    File");
+          wLn("#           Resource  Resource");
+        }
 
         for (const auto& file : files)
         {
+          const auto compilerFlagScheme =
+            file.compilerFlagScheme.isEmpty()
+              ? ""
+              : juce::String::repeatedString(" ",
+                                             longestPathLength - file.path.length() + 2)
+                  + "\"" + file.compilerFlagScheme + "\"";
           wLn("  ", (file.compile ? "x" : "."), nineSpaces,
               (file.xcodeResource ? "x" : "."), nineSpaces,
-              (file.binaryResource ? "x" : "."), nineSpaces, "\"", file.path, "\"");
+              (file.binaryResource ? "x" : "."), nineSpaces, "\"", file.path, "\"",
+              compilerFlagScheme);
         }
 
         wLn(")");
@@ -1069,7 +1097,8 @@ int main(int argc, char* argv[])
             files.push_back({int{file.getProperty("compile")} == 1,
                              int{file.getProperty("xcodeResource")} == 1,
                              int{file.getProperty("resource")} == 1,
-                             file.getProperty("file").toString()});
+                             file.getProperty("file").toString(),
+                             file.getProperty("compilerFlagScheme").toString()});
           }
           else
           {
@@ -1347,6 +1376,22 @@ int main(int argc, char* argv[])
         exporter, "extraCompilerFlags", "EXTRA_COMPILER_FLAGS", [](const juce::var& v) {
           return juce::StringArray::fromTokens(v.toString(), false);
         });
+
+      const auto compilerFlagSchemesArray = juce::StringArray::fromTokens(
+        jucerProject.getProperty("compilerFlagSchemes").toString(), ",", {});
+      // Use a juce::HashMap like Projucer does, in order to get the same ordering.
+      juce::HashMap<juce::String, std::tuple<>> compilerFlagSchemesMap;
+      for (const auto& scheme : compilerFlagSchemesArray)
+      {
+        compilerFlagSchemesMap.set(scheme, {});
+      }
+      for (juce::HashMap<juce::String, std::tuple<>>::Iterator i(compilerFlagSchemesMap);
+           i.next();)
+      {
+        convertSettingIfDefined(exporter, i.getKey(), "COMPILER_FLAGS_FOR_" + i.getKey(),
+                                {});
+      }
+
       convertSettingAsListIfDefined(
         exporter, "extraLinkerFlags", "EXTRA_LINKER_FLAGS", [](const juce::var& v) {
           return juce::StringArray::fromTokens(v.toString(), false);
