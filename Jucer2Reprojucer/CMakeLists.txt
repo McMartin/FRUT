@@ -74,7 +74,9 @@ jucer_project_settings(
 )
 
 jucer_project_files("Jucer2Reprojucer"
-  x . . "main.cpp"
+# Compile   Xcode     Binary    File        Compiler Flag
+#           Resource  Resource              Scheme
+  x         .         .         "main.cpp"  maximum_warnings
 )
 
 jucer_project_module(
@@ -98,12 +100,7 @@ jucer_project_module(
 
 jucer_export_target(
   "Xcode (MacOSX)"
-  EXTRA_COMPILER_FLAGS
-    "-Werror"
-    "-Weverything"
-    "-Wno-c++98-compat"
-    "-Wno-c++98-compat-pedantic"
-    "-Wno-padded"
+  COMPILER_FLAGS_FOR_maximum_warnings "-Werror -Weverything -Wno-c++98-compat -Wno-c++98-compat-pedantic -Wno-padded"
 )
 
 jucer_export_target_configuration(
@@ -120,9 +117,7 @@ jucer_export_target_configuration(
 
 jucer_export_target(
   "Visual Studio 2019"
-  EXTRA_COMPILER_FLAGS
-    "/WX"
-    "/W4"
+  COMPILER_FLAGS_FOR_maximum_warnings "/WX /W4"
 )
 
 jucer_export_target_configuration(
@@ -139,9 +134,7 @@ jucer_export_target_configuration(
 
 jucer_export_target(
   "Visual Studio 2017"
-  EXTRA_COMPILER_FLAGS
-    "/WX"
-    "/W4"
+  COMPILER_FLAGS_FOR_maximum_warnings "/WX /W4"
 )
 
 jucer_export_target_configuration(
@@ -158,9 +151,7 @@ jucer_export_target_configuration(
 
 jucer_export_target(
   "Visual Studio 2015"
-  EXTRA_COMPILER_FLAGS
-    "/WX"
-    "/W4"
+  COMPILER_FLAGS_FOR_maximum_warnings "/WX /W4"
 )
 
 jucer_export_target_configuration(
@@ -177,10 +168,7 @@ jucer_export_target_configuration(
 
 jucer_export_target(
   "Visual Studio 2013"
-  EXTRA_COMPILER_FLAGS
-    "/WX"
-    "/W4"
-    "/wd4512"
+  COMPILER_FLAGS_FOR_maximum_warnings "/WX /W4 /wd4512"
 )
 
 jucer_export_target_configuration(
@@ -197,10 +185,7 @@ jucer_export_target_configuration(
 
 jucer_export_target(
   "Linux Makefile"
-  EXTRA_COMPILER_FLAGS
-    "-Werror"
-    "-Wall"
-    "-Wextra"
+  COMPILER_FLAGS_FOR_maximum_warnings "-Werror -Wall -Wextra"
 )
 
 jucer_export_target_configuration(
@@ -217,10 +202,7 @@ jucer_export_target_configuration(
 
 jucer_export_target(
   "Code::Blocks (Windows)"
-  EXTRA_COMPILER_FLAGS
-    "-Werror"
-    "-Wall"
-    "-Wextra"
+  COMPILER_FLAGS_FOR_maximum_warnings "-Werror -Wall -Wextra"
 )
 
 jucer_export_target_configuration(
@@ -237,10 +219,7 @@ jucer_export_target_configuration(
 
 jucer_export_target(
   "Code::Blocks (Linux)"
-  EXTRA_COMPILER_FLAGS
-    "-Werror"
-    "-Wall"
-    "-Wextra"
+  COMPILER_FLAGS_FOR_maximum_warnings "-Werror -Wall -Wextra"
 )
 
 jucer_export_target_configuration(
@@ -256,19 +235,6 @@ jucer_export_target_configuration(
 )
 
 jucer_project_end()
-
-
-# Disable all warnings when compiling JUCE modules
-set(JUCE_modules_sources
-  ${JUCER_PROJECT_MODULE_juce_core_SOURCES}
-  ${JUCER_PROJECT_MODULE_juce_data_structures_SOURCES}
-  ${JUCER_PROJECT_MODULE_juce_events_SOURCES}
-)
-if(MSVC)
-  set_source_files_properties(${JUCE_modules_sources} PROPERTIES COMPILE_FLAGS "/W0")
-else()
-  set_source_files_properties(${JUCE_modules_sources} PROPERTIES COMPILE_FLAGS "-w")
-endif()
 
 
 install(TARGETS Jucer2Reprojucer DESTINATION "FRUT/bin")
