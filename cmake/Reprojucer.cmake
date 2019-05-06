@@ -3557,6 +3557,9 @@ function(_FRUT_set_compiler_and_linker_settings_MSVC target)
         set_property(TARGET ${target} APPEND_STRING PROPERTY
           LINK_FLAGS_${upper_config} " ${ltcg_link_flag}"
         )
+        set_property(TARGET ${target} APPEND_STRING PROPERTY
+          STATIC_LIBRARY_FLAGS_${upper_config} " /LTCG"
+        )
       endif()
     else()
       target_compile_definitions(${target} PRIVATE $<$<CONFIG:${config}>:NDEBUG>)
@@ -3567,6 +3570,9 @@ function(_FRUT_set_compiler_and_linker_settings_MSVC target)
         target_compile_options(${target} PRIVATE $<$<CONFIG:${config}>:/GL>)
         set_property(TARGET ${target} APPEND_STRING PROPERTY
           LINK_FLAGS_${upper_config} " ${ltcg_link_flag}"
+        )
+        set_property(TARGET ${target} APPEND_STRING PROPERTY
+          STATIC_LIBRARY_FLAGS_${upper_config} " /LTCG"
         )
       endif()
     endif()
