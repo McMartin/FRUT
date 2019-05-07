@@ -679,6 +679,8 @@ function(jucer_export_target exporter)
       "VST3_SDK_FOLDER"
       "AAX_SDK_FOLDER"
       "RTAS_SDK_FOLDER"
+      "USE_APP_SANDBOX"
+      "APP_SANDBOX_OPTIONS"
       "USE_HARDENED_RUNTIME"
       "HARDENED_RUNTIME_OPTIONS"
       "MICROPHONE_ACCESS"
@@ -854,6 +856,14 @@ function(jucer_export_target exporter)
 
   if(DEFINED _DOCUMENT_FILE_EXTENSIONS)
     set(JUCER_DOCUMENT_FILE_EXTENSIONS "${_DOCUMENT_FILE_EXTENSIONS}" PARENT_SCOPE)
+  endif()
+
+  if(DEFINED _USE_APP_SANDBOX AND _USE_APP_SANDBOX)
+    _FRUT_warn_about_unsupported_setting("USE_APP_SANDBOX" "Use App Sandbox" 497)
+  endif()
+
+  if(DEFINED _APP_SANDBOX_OPTIONS)
+    # TODO with USE_APP_SANDBOX
   endif()
 
   if(DEFINED _USE_HARDENED_RUNTIME AND _USE_HARDENED_RUNTIME)

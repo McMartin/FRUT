@@ -1443,6 +1443,48 @@ int main(int argc, char* argv[])
             });
         }
 
+        convertOnOffSettingIfDefined(exporter, "appSandbox", "USE_APP_SANDBOX", {});
+        convertSettingAsListIfDefined(
+          exporter, "appSandboxOptions", "APP_SANDBOX_OPTIONS",
+          [&convertIdsToStrings](const juce::var& v) {
+            return convertIdsToStrings(
+              v,
+              {{"com.apple.security.network.server",
+                "Network: Incoming Connections (Server)"},
+               {"com.apple.security.network.client",
+                "Network: Outgoing Connections (Client)"},
+               {"com.apple.security.device.camera", "Hardware: Camera"},
+               {"com.apple.security.device.microphone", "Hardware: Microphone"},
+               {"com.apple.security.device.usb", "Hardware: USB"},
+               {"com.apple.security.print", "Hardware: Printing"},
+               {"com.apple.security.device.bluetooth", "Hardware: Bluetooth"},
+               {"com.apple.security.personal-information.addressbook",
+                "App Data: Contacts"},
+               {"com.apple.security.personal-information.location", "App Data: Location"},
+               {"com.apple.security.personal-information.calendars",
+                "App Data: Calendar"},
+               {"com.apple.security.files.user-selected.read-only",
+                "File Access: User Selected File (Read Only)"},
+               {"com.apple.security.files.user-selected.read-write",
+                "File Access: User Selected File (Read/Write)"},
+               {"com.apple.security.files.downloads.read-only",
+                "File Access: Downloads Folder (Read Only)"},
+               {"com.apple.security.files.downloads.read-write",
+                "File Access: Downloads Folder (Read/Write)"},
+               {"com.apple.security.files.pictures.read-only",
+                "File Access: Pictures Folder (Read Only)"},
+               {"com.apple.security.files.pictures.read-write",
+                "File Access: Pictures Folder (Read/Write)"},
+               {"com.apple.security.assets.music.read-only",
+                "File Access: Music Folder (Read Only)"},
+               {"com.apple.security.assets.music.read-write",
+                "File Access: Music Folder (Read/Write)"},
+               {"com.apple.security.assets.movies.read-only",
+                "File Access: Movies Folder (Read Only)"},
+               {"com.apple.security.assets.movies.read-write",
+                "File Access: Movies Folder (Read/Write)"}});
+          });
+
         convertOnOffSettingIfDefined(exporter, "hardenedRuntime", "USE_HARDENED_RUNTIME",
                                      {});
         convertSettingAsListIfDefined(
