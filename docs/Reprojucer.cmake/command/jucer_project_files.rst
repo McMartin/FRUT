@@ -7,7 +7,7 @@ group.
 ::
 
   jucer_project_files(<group_name>
-    [<compile> <xcode_resource> <binary_resource> <file_path>]...
+    [<compile> <xcode_resource> <binary_resource> <file_path> [<compiler_flag_scheme>]]...
   )
 
 Use ``/`` in ``<group_name>`` to define group hierarchies. For instance, ``A/B/C`` is a
