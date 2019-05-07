@@ -258,9 +258,10 @@ contributors:
       <a href="https://github.com/McMartin/FRUT/issues?q=is%3Aissue+author%3Arclement" title="Bug reports">🐛</a>
     </td>
     <td>
-      <a href="https://github.com/czyjerry"><img src="https://github.com/czyjerry.png" width="100"><br />Jerry Chan 29</a>
+      <a href="https://github.com/czyjerry"><img src="https://github.com/czyjerry.png" width="100"><br />Jerry Chan</a>
       <br />
       <a href="https://github.com/McMartin/FRUT/issues?q=is%3Aissue+author%3Aczyjerry" title="Bug reports">🐛</a>
+      <a href="https://github.com/McMartin/FRUT/pulls?q=state%3Amerged+reviewed-by%3Aczyjerry+-author%3Aczyjerry+" title="Pull Request reviews">👀</a>
     </td>
   </tr>
   </tbody>
