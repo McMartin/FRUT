@@ -795,7 +795,7 @@ int main(int argc, char* argv[])
           convertOnOffSettingWithDefault(jucerProject, "buildStandalone",
                                          "BUILD_STANDALONE_PLUGIN", false);
           convertOnOffSettingWithDefault(jucerProject, "enableIAA",
-                                         "ENABLE_INTERAPP_AUDIO", false);
+                                         "ENABLE_INTER_APP_AUDIO", false);
         }
       }
 

@@ -178,7 +178,7 @@ function(jucer_audio_plugin_settings)
     "BUILD_AAX"
     "BUILD_STANDALONE_PLUGIN"
     "BUILD_UNITY_PLUGIN"
-    "ENABLE_INTERAPP_AUDIO"
+    "ENABLE_INTER_APP_AUDIO"
   )
   set(plugin_characteristics_keywords
     "PLUGIN_IS_A_SYNTH"
@@ -220,8 +220,8 @@ function(jucer_audio_plugin_settings)
     if(DEFINED _BUILD_STANDALONE_PLUGIN)
       message(WARNING "BUILD_STANDALONE_PLUGIN is a JUCE 5 feature only")
     endif()
-    if(DEFINED _ENABLE_INTERAPP_AUDIO)
-      message(WARNING "ENABLE_INTERAPP_AUDIO is a JUCE 5 feature only")
+    if(DEFINED _ENABLE_INTER_APP_AUDIO)
+      message(WARNING "ENABLE_INTER_APP_AUDIO is a JUCE 5 feature only")
     endif()
   endif()
 
@@ -2838,7 +2838,7 @@ function(_FRUT_generate_AppConfig_header)
       _FRUT_bool_to_int("${JUCER_BUILD_STANDALONE_PLUGIN}" Build_Standalone_value)
     endif()
     _FRUT_bool_to_int("${JUCER_BUILD_UNITY_PLUGIN}" Build_Unity_value)
-    _FRUT_bool_to_int("${JUCER_ENABLE_INTERAPP_AUDIO}" Enable_IAA_value)
+    _FRUT_bool_to_int("${JUCER_ENABLE_INTER_APP_AUDIO}" Enable_IAA_value)
 
     set(Name_value "\"${JUCER_PLUGIN_NAME}\"")
     set(Desc_value "\"${JUCER_PLUGIN_DESCRIPTION}\"")
