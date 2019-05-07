@@ -694,6 +694,7 @@ function(jucer_export_target exporter)
       "PLIST_PREFIX_HEADER"
       "PREBUILD_SHELL_SCRIPT"
       "POSTBUILD_SHELL_SCRIPT"
+      "EXPORTER_BUNDLE_IDENTIFIER"
       "DEVELOPMENT_TEAM_ID"
       "KEEP_CUSTOM_XCODE_SCHEMES"
       "USE_HEADERMAP"
@@ -953,6 +954,12 @@ function(jucer_export_target exporter)
     configure_file("${Reprojucer_templates_DIR}/script.in" "postbuild.sh" @ONLY)
     set(JUCER_POSTBUILD_SHELL_SCRIPT "${CMAKE_CURRENT_BINARY_DIR}/postbuild.sh"
       PARENT_SCOPE
+    )
+  endif()
+
+  if(DEFINED _EXPORTER_BUNDLE_IDENTIFIER)
+    _FRUT_warn_about_unsupported_setting(
+      "EXPORTER_BUNDLE_IDENTIFIER" "Exporter Bundle Identifier" 498
     )
   endif()
 

@@ -1548,6 +1548,8 @@ int main(int argc, char* argv[])
         convertSettingIfDefined(exporter, "prebuildCommand", "PREBUILD_SHELL_SCRIPT", {});
         convertSettingIfDefined(exporter, "postbuildCommand", "POSTBUILD_SHELL_SCRIPT",
                                 {});
+        convertSettingIfDefined(exporter, "bundleIdentifier",
+                                "EXPORTER_BUNDLE_IDENTIFIER", {});
         convertSettingIfDefined(exporter, "iosDevelopmentTeamID", "DEVELOPMENT_TEAM_ID",
                                 {});
         convertOnOffSettingIfDefined(exporter, "keepCustomXcodeSchemes",
