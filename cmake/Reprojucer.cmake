@@ -679,6 +679,8 @@ function(jucer_export_target exporter)
       "VST3_SDK_FOLDER"
       "AAX_SDK_FOLDER"
       "RTAS_SDK_FOLDER"
+      "USE_HARDENED_RUNTIME"
+      "HARDENED_RUNTIME_OPTIONS"
       "MICROPHONE_ACCESS"
       "MICROPHONE_ACCESS_TEXT"
       "CAMERA_ACCESS"
@@ -852,6 +854,16 @@ function(jucer_export_target exporter)
 
   if(DEFINED _DOCUMENT_FILE_EXTENSIONS)
     set(JUCER_DOCUMENT_FILE_EXTENSIONS "${_DOCUMENT_FILE_EXTENSIONS}" PARENT_SCOPE)
+  endif()
+
+  if(DEFINED _USE_HARDENED_RUNTIME AND _USE_HARDENED_RUNTIME)
+    _FRUT_warn_about_unsupported_setting(
+      "USE_HARDENED_RUNTIME" "Use Hardened Runtime" 496
+    )
+  endif()
+
+  if(DEFINED _HARDENED_RUNTIME_OPTIONS)
+    # TODO with USE_HARDENED_RUNTIME
   endif()
 
   if(DEFINED _MICROPHONE_ACCESS)

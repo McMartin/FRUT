@@ -1443,6 +1443,33 @@ int main(int argc, char* argv[])
             });
         }
 
+        convertOnOffSettingIfDefined(exporter, "hardenedRuntime", "USE_HARDENED_RUNTIME",
+                                     {});
+        convertSettingAsListIfDefined(
+          exporter, "hardenedRuntimeOptions", "HARDENED_RUNTIME_OPTIONS",
+          [&convertIdsToStrings](const juce::var& v) {
+            return convertIdsToStrings(
+              v, {{"com.apple.security.cs.allow-jit",
+                   "Allow Execution of JIT-compiled Code"},
+                  {"com.apple.security.cs.allow-unsigned-executable-memory",
+                   "Allow Unsigned Executable Memory"},
+                  {"com.apple.security.cs.allow-dyld-environment-variables",
+                   "Allow DYLD Environment Variables"},
+                  {"com.apple.security.cs.disable-library-validation",
+                   "Disable Library Validation"},
+                  {"com.apple.security.cs.disable-executable-page-protection",
+                   "Disable Executable Memory Protection"},
+                  {"com.apple.security.cs.debugger", "Debugging Tool"},
+                  {"com.apple.security.device.audio-input", "Audio Input"},
+                  {"com.apple.security.device.camera", "Camera"},
+                  {"com.apple.security.personal-information.location", "Location"},
+                  {"com.apple.security.personal-information.addressbook", "Address Book"},
+                  {"com.apple.security.personal-information.calendars", "Calendar"},
+                  {"com.apple.security.personal-information.photos-library",
+                   "Photos Library"},
+                  {"com.apple.security.automation.apple-events", "Apple Events"}});
+          });
+
         convertOnOffSettingIfDefined(exporter, "microphonePermissionNeeded",
                                      "MICROPHONE_ACCESS", {});
         convertSettingIfDefined(exporter, "microphonePermissionsText",
