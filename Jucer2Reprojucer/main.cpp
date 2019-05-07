@@ -1453,7 +1453,7 @@ int main(int argc, char* argv[])
                                 {});
 
         convertOnOffSettingIfDefined(exporter, "iosInAppPurchasesValue",
-                                     "INAPP_PURCHASES_CAPABILITY", {});
+                                     "IN_APP_PURCHASES_CAPABILITY", {});
         convertOnOffSettingIfDefined(exporter, "iosPushNotifications",
                                      "PUSH_NOTIFICATIONS_CAPABILITY", {});
         convertSettingIfDefined(exporter, "customPList", "CUSTOM_PLIST", {});

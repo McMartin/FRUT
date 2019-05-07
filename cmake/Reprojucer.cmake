@@ -683,7 +683,7 @@ function(jucer_export_target exporter)
       "MICROPHONE_ACCESS_TEXT"
       "CAMERA_ACCESS"
       "CAMERA_ACCESS_TEXT"
-      "INAPP_PURCHASES_CAPABILITY"
+      "IN_APP_PURCHASES_CAPABILITY"
       "PUSH_NOTIFICATIONS_CAPABILITY"
       "CUSTOM_PLIST"
       "PLIST_PREPROCESS"
@@ -870,9 +870,9 @@ function(jucer_export_target exporter)
     set(JUCER_CAMERA_ACCESS_TEXT "${_CAMERA_ACCESS_TEXT}" PARENT_SCOPE)
   endif()
 
-  if(DEFINED _INAPP_PURCHASES_CAPABILITY AND _INAPP_PURCHASES_CAPABILITY)
+  if(DEFINED _IN_APP_PURCHASES_CAPABILITY AND _IN_APP_PURCHASES_CAPABILITY)
     _FRUT_warn_about_unsupported_setting(
-      "INAPP_PURCHASES_CAPABILITY" "In-App Purchases Capability" 395
+      "IN_APP_PURCHASES_CAPABILITY" "In-App Purchases Capability" 395
     )
   endif()
 
