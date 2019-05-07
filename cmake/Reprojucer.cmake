@@ -88,6 +88,8 @@ function(jucer_project_settings)
     "INCLUDE_BINARYDATA"
     "BINARYDATA_NAMESPACE"
     "CXX_LANGUAGE_STANDARD"
+    "POST_EXPORT_SHELL_COMMAND_MACOS_LINUX"
+    "POST_EXPORT_SHELL_COMMAND_WINDOWS"
   )
   set(multi_value_keywords "PREPROCESSOR_DEFINITIONS" "HEADER_SEARCH_PATHS")
 
@@ -156,6 +158,18 @@ function(jucer_project_settings)
       list(APPEND header_search_paths "${path}")
     endforeach()
     set(_HEADER_SEARCH_PATHS "${header_search_paths}")
+  endif()
+
+  if(DEFINED _POST_EXPORT_SHELL_COMMAND_MACOS_LINUX)
+    _FRUT_warn_about_unsupported_setting("POST_EXPORT_SHELL_COMMAND_MACOS_LINUX"
+      "Post-Export Shell Command (macOS, Linux)" 499
+    )
+  endif()
+
+  if(DEFINED _POST_EXPORT_SHELL_COMMAND_WINDOWS)
+    _FRUT_warn_about_unsupported_setting("POST_EXPORT_SHELL_COMMAND_WINDOWS"
+      "Post-Export Shell Command (Windows)" 500
+    )
   endif()
 
   foreach(keyword IN LISTS single_value_keywords multi_value_keywords)

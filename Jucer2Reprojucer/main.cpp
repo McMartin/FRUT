@@ -727,6 +727,11 @@ int main(int argc, char* argv[])
         return juce::StringArray::fromTokens(v.toString(), ";\r\n", {});
       });
 
+    convertSettingIfDefined(jucerProject, "postExportShellCommandPosix",
+                            "POST_EXPORT_SHELL_COMMAND_MACOS_LINUX", {});
+    convertSettingIfDefined(jucerProject, "postExportShellCommandWin",
+                            "POST_EXPORT_SHELL_COMMAND_WINDOWS", {});
+
     writeUserNotes(wLn, jucerProject);
 
     wLn(")");
