@@ -88,6 +88,8 @@ function(jucer_project_settings)
     "INCLUDE_BINARYDATA"
     "BINARYDATA_NAMESPACE"
     "CXX_LANGUAGE_STANDARD"
+    "POST_EXPORT_SHELL_COMMAND_MACOS_LINUX"
+    "POST_EXPORT_SHELL_COMMAND_WINDOWS"
   )
   set(multi_value_keywords "PREPROCESSOR_DEFINITIONS" "HEADER_SEARCH_PATHS")
 
@@ -158,6 +160,18 @@ function(jucer_project_settings)
     set(_HEADER_SEARCH_PATHS "${header_search_paths}")
   endif()
 
+  if(DEFINED _POST_EXPORT_SHELL_COMMAND_MACOS_LINUX)
+    _FRUT_warn_about_unsupported_setting("POST_EXPORT_SHELL_COMMAND_MACOS_LINUX"
+      "Post-Export Shell Command (macOS, Linux)" 499
+    )
+  endif()
+
+  if(DEFINED _POST_EXPORT_SHELL_COMMAND_WINDOWS)
+    _FRUT_warn_about_unsupported_setting("POST_EXPORT_SHELL_COMMAND_WINDOWS"
+      "Post-Export Shell Command (Windows)" 500
+    )
+  endif()
+
   foreach(keyword IN LISTS single_value_keywords multi_value_keywords)
     if(DEFINED _${keyword})
       set(JUCER_${keyword} "${_${keyword}}" PARENT_SCOPE)
@@ -178,7 +192,7 @@ function(jucer_audio_plugin_settings)
     "BUILD_AAX"
     "BUILD_STANDALONE_PLUGIN"
     "BUILD_UNITY_PLUGIN"
-    "ENABLE_INTERAPP_AUDIO"
+    "ENABLE_INTER_APP_AUDIO"
   )
   set(plugin_characteristics_keywords
     "PLUGIN_IS_A_SYNTH"
@@ -220,8 +234,8 @@ function(jucer_audio_plugin_settings)
     if(DEFINED _BUILD_STANDALONE_PLUGIN)
       message(WARNING "BUILD_STANDALONE_PLUGIN is a JUCE 5 feature only")
     endif()
-    if(DEFINED _ENABLE_INTERAPP_AUDIO)
-      message(WARNING "ENABLE_INTERAPP_AUDIO is a JUCE 5 feature only")
+    if(DEFINED _ENABLE_INTER_APP_AUDIO)
+      message(WARNING "ENABLE_INTER_APP_AUDIO is a JUCE 5 feature only")
     endif()
   endif()
 
@@ -679,17 +693,22 @@ function(jucer_export_target exporter)
       "VST3_SDK_FOLDER"
       "AAX_SDK_FOLDER"
       "RTAS_SDK_FOLDER"
+      "USE_APP_SANDBOX"
+      "APP_SANDBOX_OPTIONS"
+      "USE_HARDENED_RUNTIME"
+      "HARDENED_RUNTIME_OPTIONS"
       "MICROPHONE_ACCESS"
       "MICROPHONE_ACCESS_TEXT"
       "CAMERA_ACCESS"
       "CAMERA_ACCESS_TEXT"
-      "INAPP_PURCHASES_CAPABILITY"
+      "IN_APP_PURCHASES_CAPABILITY"
       "PUSH_NOTIFICATIONS_CAPABILITY"
       "CUSTOM_PLIST"
       "PLIST_PREPROCESS"
       "PLIST_PREFIX_HEADER"
       "PREBUILD_SHELL_SCRIPT"
       "POSTBUILD_SHELL_SCRIPT"
+      "EXPORTER_BUNDLE_IDENTIFIER"
       "DEVELOPMENT_TEAM_ID"
       "KEEP_CUSTOM_XCODE_SCHEMES"
       "USE_HEADERMAP"
@@ -854,6 +873,24 @@ function(jucer_export_target exporter)
     set(JUCER_DOCUMENT_FILE_EXTENSIONS "${_DOCUMENT_FILE_EXTENSIONS}" PARENT_SCOPE)
   endif()
 
+  if(DEFINED _USE_APP_SANDBOX AND _USE_APP_SANDBOX)
+    _FRUT_warn_about_unsupported_setting("USE_APP_SANDBOX" "Use App Sandbox" 497)
+  endif()
+
+  if(DEFINED _APP_SANDBOX_OPTIONS)
+    # TODO with USE_APP_SANDBOX
+  endif()
+
+  if(DEFINED _USE_HARDENED_RUNTIME AND _USE_HARDENED_RUNTIME)
+    _FRUT_warn_about_unsupported_setting(
+      "USE_HARDENED_RUNTIME" "Use Hardened Runtime" 496
+    )
+  endif()
+
+  if(DEFINED _HARDENED_RUNTIME_OPTIONS)
+    # TODO with USE_HARDENED_RUNTIME
+  endif()
+
   if(DEFINED _MICROPHONE_ACCESS)
     set(JUCER_MICROPHONE_ACCESS "${_MICROPHONE_ACCESS}" PARENT_SCOPE)
   endif()
@@ -870,9 +907,9 @@ function(jucer_export_target exporter)
     set(JUCER_CAMERA_ACCESS_TEXT "${_CAMERA_ACCESS_TEXT}" PARENT_SCOPE)
   endif()
 
-  if(DEFINED _INAPP_PURCHASES_CAPABILITY AND _INAPP_PURCHASES_CAPABILITY)
+  if(DEFINED _IN_APP_PURCHASES_CAPABILITY AND _IN_APP_PURCHASES_CAPABILITY)
     _FRUT_warn_about_unsupported_setting(
-      "INAPP_PURCHASES_CAPABILITY" "In-App Purchases Capability" 395
+      "IN_APP_PURCHASES_CAPABILITY" "In-App Purchases Capability" 395
     )
   endif()
 
@@ -931,6 +968,12 @@ function(jucer_export_target exporter)
     configure_file("${Reprojucer_templates_DIR}/script.in" "postbuild.sh" @ONLY)
     set(JUCER_POSTBUILD_SHELL_SCRIPT "${CMAKE_CURRENT_BINARY_DIR}/postbuild.sh"
       PARENT_SCOPE
+    )
+  endif()
+
+  if(DEFINED _EXPORTER_BUNDLE_IDENTIFIER)
+    _FRUT_warn_about_unsupported_setting(
+      "EXPORTER_BUNDLE_IDENTIFIER" "Exporter Bundle Identifier" 498
     )
   endif()
 
@@ -2838,7 +2881,7 @@ function(_FRUT_generate_AppConfig_header)
       _FRUT_bool_to_int("${JUCER_BUILD_STANDALONE_PLUGIN}" Build_Standalone_value)
     endif()
     _FRUT_bool_to_int("${JUCER_BUILD_UNITY_PLUGIN}" Build_Unity_value)
-    _FRUT_bool_to_int("${JUCER_ENABLE_INTERAPP_AUDIO}" Enable_IAA_value)
+    _FRUT_bool_to_int("${JUCER_ENABLE_INTER_APP_AUDIO}" Enable_IAA_value)
 
     set(Name_value "\"${JUCER_PLUGIN_NAME}\"")
     set(Desc_value "\"${JUCER_PLUGIN_DESCRIPTION}\"")

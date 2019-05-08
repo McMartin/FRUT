@@ -727,6 +727,11 @@ int main(int argc, char* argv[])
         return juce::StringArray::fromTokens(v.toString(), ";\r\n", {});
       });
 
+    convertSettingIfDefined(jucerProject, "postExportShellCommandPosix",
+                            "POST_EXPORT_SHELL_COMMAND_MACOS_LINUX", {});
+    convertSettingIfDefined(jucerProject, "postExportShellCommandWin",
+                            "POST_EXPORT_SHELL_COMMAND_WINDOWS", {});
+
     writeUserNotes(wLn, jucerProject);
 
     wLn(")");
@@ -795,7 +800,7 @@ int main(int argc, char* argv[])
           convertOnOffSettingWithDefault(jucerProject, "buildStandalone",
                                          "BUILD_STANDALONE_PLUGIN", false);
           convertOnOffSettingWithDefault(jucerProject, "enableIAA",
-                                         "ENABLE_INTERAPP_AUDIO", false);
+                                         "ENABLE_INTER_APP_AUDIO", false);
         }
       }
 
@@ -1443,6 +1448,75 @@ int main(int argc, char* argv[])
             });
         }
 
+        convertOnOffSettingIfDefined(exporter, "appSandbox", "USE_APP_SANDBOX", {});
+        convertSettingAsListIfDefined(
+          exporter, "appSandboxOptions", "APP_SANDBOX_OPTIONS",
+          [&convertIdsToStrings](const juce::var& v) {
+            return convertIdsToStrings(
+              v,
+              {{"com.apple.security.network.server",
+                "Network: Incoming Connections (Server)"},
+               {"com.apple.security.network.client",
+                "Network: Outgoing Connections (Client)"},
+               {"com.apple.security.device.camera", "Hardware: Camera"},
+               {"com.apple.security.device.microphone", "Hardware: Microphone"},
+               {"com.apple.security.device.usb", "Hardware: USB"},
+               {"com.apple.security.print", "Hardware: Printing"},
+               {"com.apple.security.device.bluetooth", "Hardware: Bluetooth"},
+               {"com.apple.security.personal-information.addressbook",
+                "App Data: Contacts"},
+               {"com.apple.security.personal-information.location", "App Data: Location"},
+               {"com.apple.security.personal-information.calendars",
+                "App Data: Calendar"},
+               {"com.apple.security.files.user-selected.read-only",
+                "File Access: User Selected File (Read Only)"},
+               {"com.apple.security.files.user-selected.read-write",
+                "File Access: User Selected File (Read/Write)"},
+               {"com.apple.security.files.downloads.read-only",
+                "File Access: Downloads Folder (Read Only)"},
+               {"com.apple.security.files.downloads.read-write",
+                "File Access: Downloads Folder (Read/Write)"},
+               {"com.apple.security.files.pictures.read-only",
+                "File Access: Pictures Folder (Read Only)"},
+               {"com.apple.security.files.pictures.read-write",
+                "File Access: Pictures Folder (Read/Write)"},
+               {"com.apple.security.assets.music.read-only",
+                "File Access: Music Folder (Read Only)"},
+               {"com.apple.security.assets.music.read-write",
+                "File Access: Music Folder (Read/Write)"},
+               {"com.apple.security.assets.movies.read-only",
+                "File Access: Movies Folder (Read Only)"},
+               {"com.apple.security.assets.movies.read-write",
+                "File Access: Movies Folder (Read/Write)"}});
+          });
+
+        convertOnOffSettingIfDefined(exporter, "hardenedRuntime", "USE_HARDENED_RUNTIME",
+                                     {});
+        convertSettingAsListIfDefined(
+          exporter, "hardenedRuntimeOptions", "HARDENED_RUNTIME_OPTIONS",
+          [&convertIdsToStrings](const juce::var& v) {
+            return convertIdsToStrings(
+              v, {{"com.apple.security.cs.allow-jit",
+                   "Allow Execution of JIT-compiled Code"},
+                  {"com.apple.security.cs.allow-unsigned-executable-memory",
+                   "Allow Unsigned Executable Memory"},
+                  {"com.apple.security.cs.allow-dyld-environment-variables",
+                   "Allow DYLD Environment Variables"},
+                  {"com.apple.security.cs.disable-library-validation",
+                   "Disable Library Validation"},
+                  {"com.apple.security.cs.disable-executable-page-protection",
+                   "Disable Executable Memory Protection"},
+                  {"com.apple.security.cs.debugger", "Debugging Tool"},
+                  {"com.apple.security.device.audio-input", "Audio Input"},
+                  {"com.apple.security.device.camera", "Camera"},
+                  {"com.apple.security.personal-information.location", "Location"},
+                  {"com.apple.security.personal-information.addressbook", "Address Book"},
+                  {"com.apple.security.personal-information.calendars", "Calendar"},
+                  {"com.apple.security.personal-information.photos-library",
+                   "Photos Library"},
+                  {"com.apple.security.automation.apple-events", "Apple Events"}});
+          });
+
         convertOnOffSettingIfDefined(exporter, "microphonePermissionNeeded",
                                      "MICROPHONE_ACCESS", {});
         convertSettingIfDefined(exporter, "microphonePermissionsText",
@@ -1453,7 +1527,7 @@ int main(int argc, char* argv[])
                                 {});
 
         convertOnOffSettingIfDefined(exporter, "iosInAppPurchasesValue",
-                                     "INAPP_PURCHASES_CAPABILITY", {});
+                                     "IN_APP_PURCHASES_CAPABILITY", {});
         convertOnOffSettingIfDefined(exporter, "iosPushNotifications",
                                      "PUSH_NOTIFICATIONS_CAPABILITY", {});
         convertSettingIfDefined(exporter, "customPList", "CUSTOM_PLIST", {});
@@ -1479,6 +1553,8 @@ int main(int argc, char* argv[])
         convertSettingIfDefined(exporter, "prebuildCommand", "PREBUILD_SHELL_SCRIPT", {});
         convertSettingIfDefined(exporter, "postbuildCommand", "POSTBUILD_SHELL_SCRIPT",
                                 {});
+        convertSettingIfDefined(exporter, "bundleIdentifier",
+                                "EXPORTER_BUNDLE_IDENTIFIER", {});
         convertSettingIfDefined(exporter, "iosDevelopmentTeamID", "DEVELOPMENT_TEAM_ID",
                                 {});
         convertOnOffSettingIfDefined(exporter, "keepCustomXcodeSchemes",

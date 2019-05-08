@@ -69,7 +69,7 @@ master/generated/JUCE-5.2.1/examples/PlugInSamples/MultiOutSynth/CMakeLists.txt
     BUILD_RTAS OFF
     BUILD_AAX ON
     BUILD_STANDALONE_PLUGIN OFF
-    ENABLE_INTERAPP_AUDIO OFF
+    ENABLE_INTER_APP_AUDIO OFF
     PLUGIN_NAME "MultiOutSynth"
     PLUGIN_DESCRIPTION "MultiOutSynth"
     PLUGIN_MANUFACTURER "ROLI Ltd."
