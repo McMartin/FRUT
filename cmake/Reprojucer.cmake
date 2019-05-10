@@ -4019,6 +4019,24 @@ function(_FRUT_generate_plist_file
   target plist_suffix bundle_package_type bundle_signature
 )
 
+  set(plist_filename "Info-${plist_suffix}.plist")
+  if(CMAKE_GENERATOR STREQUAL "Xcode")
+    set(bundle_executable "\${EXECUTABLE_NAME}")
+    set(bundle_identifier "\$(PRODUCT_BUNDLE_IDENTIFIER)")
+    set_target_properties(${target} PROPERTIES
+      XCODE_ATTRIBUTE_INFOPLIST_FILE "${CMAKE_CURRENT_BINARY_DIR}/${plist_filename}"
+      XCODE_ATTRIBUTE_PRODUCT_BUNDLE_IDENTIFIER "${JUCER_BUNDLE_IDENTIFIER}"
+    )
+  else()
+    set(bundle_executable "\${MACOSX_BUNDLE_BUNDLE_NAME}")
+    set(bundle_identifier "\${MACOSX_BUNDLE_GUI_IDENTIFIER}")
+    set_target_properties(${target} PROPERTIES
+      MACOSX_BUNDLE_BUNDLE_NAME "${JUCER_PROJECT_NAME}"
+      MACOSX_BUNDLE_GUI_IDENTIFIER "${JUCER_BUNDLE_IDENTIFIER}"
+      MACOSX_BUNDLE_INFO_PLIST "${CMAKE_CURRENT_BINARY_DIR}/${plist_filename}"
+    )
+  endif()
+
   set(plist_entries "")
 
   if(JUCER_MICROPHONE_ACCESS)
@@ -4058,19 +4076,19 @@ function(_FRUT_generate_plist_file
 
   string(APPEND plist_entries "
     <key>CFBundleExecutable</key>
-    <string>@bundle_executable@</string>
+    <string>${bundle_executable}</string>
     <key>CFBundleIconFile</key>
     <string>@JUCER_BUNDLE_ICON_FILE@</string>
     <key>CFBundleIdentifier</key>
-    <string>@bundle_identifier@</string>
+    <string>${bundle_identifier}</string>
     <key>CFBundleName</key>
     <string>@JUCER_PROJECT_NAME@</string>
     <key>CFBundleDisplayName</key>
     <string>@JUCER_PROJECT_NAME@</string>
     <key>CFBundlePackageType</key>
-    <string>@bundle_package_type@</string>
+    <string>${bundle_package_type}</string>
     <key>CFBundleSignature</key>
-    <string>@bundle_signature@</string>
+    <string>${bundle_signature}</string>
     <key>CFBundleShortVersionString</key>
     <string>@JUCER_PROJECT_VERSION@</string>
     <key>CFBundleVersion</key>
@@ -4264,24 +4282,6 @@ function(_FRUT_generate_plist_file
     string(REPLACE "<plist>\n  <dict>" "" PListMerger_output "${PListMerger_output}")
     string(REPLACE "\n  </dict>\n</plist>" "" PListMerger_output "${PListMerger_output}")
     set(plist_entries "${PListMerger_output}")
-  endif()
-
-  set(plist_filename "Info-${plist_suffix}.plist")
-  if(CMAKE_GENERATOR STREQUAL "Xcode")
-    set(bundle_executable "\${EXECUTABLE_NAME}")
-    set(bundle_identifier "\$(PRODUCT_BUNDLE_IDENTIFIER)")
-    set_target_properties(${target} PROPERTIES
-      XCODE_ATTRIBUTE_INFOPLIST_FILE "${CMAKE_CURRENT_BINARY_DIR}/${plist_filename}"
-      XCODE_ATTRIBUTE_PRODUCT_BUNDLE_IDENTIFIER "${JUCER_BUNDLE_IDENTIFIER}"
-    )
-  else()
-    set(bundle_executable "\${MACOSX_BUNDLE_BUNDLE_NAME}")
-    set(bundle_identifier "\${MACOSX_BUNDLE_GUI_IDENTIFIER}")
-    set_target_properties(${target} PROPERTIES
-      MACOSX_BUNDLE_BUNDLE_NAME "${JUCER_PROJECT_NAME}"
-      MACOSX_BUNDLE_GUI_IDENTIFIER "${JUCER_BUNDLE_IDENTIFIER}"
-      MACOSX_BUNDLE_INFO_PLIST "${CMAKE_CURRENT_BINARY_DIR}/${plist_filename}"
-    )
   endif()
 
   string(CONFIGURE "${plist_entries}" plist_entries @ONLY)
