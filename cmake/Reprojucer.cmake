@@ -1967,7 +1967,7 @@ function(jucer_project_end)
         _FRUT_add_Rez_command_to_AU_plugin(${au_target} ${rez_inputs})
       endif()
 
-      _FRUT_generate_plist_file_AU(${au_target})
+      _FRUT_generate_plist_file(${au_target} "AU" "BNDL" "????" "")
       _FRUT_set_bundle_properties(${au_target} "component")
       _FRUT_set_output_directory_properties(${au_target} "AU")
       _FRUT_set_output_name_properties(${au_target})
@@ -4017,60 +4017,6 @@ function(_FRUT_add_extra_commands_MSVC target exporter)
 endfunction()
 
 
-function(_FRUT_generate_plist_file_AU au_target)
-
-  _FRUT_get_au_main_type_code(au_main_type_code)
-  _FRUT_version_to_dec("${JUCER_PROJECT_VERSION}" dec_version)
-
-  set(audio_components_entries "
-    <key>AudioComponents</key>
-    <array>
-      <dict>
-        <key>name</key>
-        <string>@JUCER_PLUGIN_MANUFACTURER@: @JUCER_PLUGIN_NAME@</string>
-        <key>description</key>
-        <string>@JUCER_PLUGIN_DESCRIPTION@</string>
-        <key>factoryFunction</key>
-        <string>@JUCER_PLUGIN_AU_EXPORT_PREFIX@Factory</string>
-        <key>manufacturer</key>
-        <string>@JUCER_PLUGIN_MANUFACTURER_CODE@</string>
-        <key>type</key>
-        <string>${au_main_type_code}</string>
-        <key>subtype</key>
-        <string>@JUCER_PLUGIN_CODE@</string>
-        <key>version</key>
-        <integer>${dec_version}</integer>"
-  )
-
-  if(JUCER_PLUGIN_AU_IS_SANDBOX_SAFE)
-    string(APPEND audio_components_entries "
-        <key>sandboxSafe</key>
-        <true/>"
-    )
-  elseif(NOT (DEFINED JUCER_VERSION AND JUCER_VERSION VERSION_LESS 5.4.0))
-    string(APPEND audio_components_entries "
-        <key>resourceUsage</key>
-        <dict>
-          <key>network.client</key>
-          <true/>
-          <key>temporary-exception.files.all.read-write</key>
-          <true/>
-        </dict>"
-    )
-  endif()
-
-  string(APPEND audio_components_entries "
-      </dict>
-    </array>"
-  )
-
-  _FRUT_generate_plist_file(${au_target} "AU" "BNDL" "????"
-    "${audio_components_entries}"
-  )
-
-endfunction()
-
-
 function(_FRUT_generate_plist_file_AUv3 auv3_target)
 
   _FRUT_get_au_main_type_code(au_main_type_code)
@@ -4226,6 +4172,53 @@ function(_FRUT_generate_plist_file
         <string>Icon</string>
         <key>NSPersistentStoreTypeKey</key>
         <string>XML</string>
+      </dict>
+    </array>"
+    )
+  endif()
+
+  if(target MATCHES "_AU$")
+    _FRUT_get_au_main_type_code(au_main_type_code)
+    _FRUT_version_to_dec("${JUCER_PROJECT_VERSION}" dec_version)
+
+    string(APPEND main_plist_entries "
+    <key>AudioComponents</key>
+    <array>
+      <dict>
+        <key>name</key>
+        <string>@JUCER_PLUGIN_MANUFACTURER@: @JUCER_PLUGIN_NAME@</string>
+        <key>description</key>
+        <string>@JUCER_PLUGIN_DESCRIPTION@</string>
+        <key>factoryFunction</key>
+        <string>@JUCER_PLUGIN_AU_EXPORT_PREFIX@Factory</string>
+        <key>manufacturer</key>
+        <string>@JUCER_PLUGIN_MANUFACTURER_CODE@</string>
+        <key>type</key>
+        <string>${au_main_type_code}</string>
+        <key>subtype</key>
+        <string>@JUCER_PLUGIN_CODE@</string>
+        <key>version</key>
+        <integer>${dec_version}</integer>"
+    )
+
+    if(JUCER_PLUGIN_AU_IS_SANDBOX_SAFE)
+      string(APPEND main_plist_entries "
+        <key>sandboxSafe</key>
+        <true/>"
+      )
+    elseif(NOT (DEFINED JUCER_VERSION AND JUCER_VERSION VERSION_LESS 5.4.0))
+      string(APPEND main_plist_entries "
+        <key>resourceUsage</key>
+        <dict>
+          <key>network.client</key>
+          <true/>
+          <key>temporary-exception.files.all.read-write</key>
+          <true/>
+        </dict>"
+      )
+    endif()
+
+    string(APPEND main_plist_entries "
       </dict>
     </array>"
     )
