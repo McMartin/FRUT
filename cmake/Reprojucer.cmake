@@ -1799,7 +1799,7 @@ function(jucer_project_end)
 
   elseif(JUCER_PROJECT_TYPE STREQUAL "GUI Application")
     add_executable(${target} WIN32 MACOSX_BUNDLE ${all_sources})
-    _FRUT_generate_plist_file_App(${target})
+    _FRUT_generate_plist_file(${target} "App" "APPL" "????" "")
     _FRUT_set_output_directory_properties(${target} "App")
     _FRUT_set_output_name_properties(${target})
     _FRUT_set_compiler_and_linker_settings(${target})
@@ -4017,51 +4017,6 @@ function(_FRUT_add_extra_commands_MSVC target exporter)
 endfunction()
 
 
-function(_FRUT_generate_plist_file_App target)
-
-  list(LENGTH JUCER_DOCUMENT_FILE_EXTENSIONS file_extensions_length)
-  if(file_extensions_length GREATER 0)
-    set(bundle_type_extensions "")
-    foreach(type_extension IN LISTS JUCER_DOCUMENT_FILE_EXTENSIONS)
-      if(type_extension MATCHES "^\\.")
-        string(SUBSTRING "${type_extension}" 1 -1 type_extension)
-      endif()
-      string(APPEND bundle_type_extensions
-        "\n          <string>${type_extension}</string>"
-      )
-    endforeach()
-    list(GET JUCER_DOCUMENT_FILE_EXTENSIONS 0 first_type_extension)
-    if(first_type_extension MATCHES "^\\.")
-      string(SUBSTRING "${first_type_extension}" 1 -1 first_type_extension)
-    endif()
-
-    set(bundle_document_types_entries "
-    <key>CFBundleDocumentTypes</key>
-    <array>
-      <dict>
-        <key>CFBundleTypeExtensions</key>
-        <array>${bundle_type_extensions}
-        </array>
-        <key>CFBundleTypeName</key>
-        <string>${first_type_extension}</string>
-        <key>CFBundleTypeRole</key>
-        <string>Editor</string>
-        <key>CFBundleTypeIconFile</key>
-        <string>Icon</string>
-        <key>NSPersistentStoreTypeKey</key>
-        <string>XML</string>
-      </dict>
-    </array>"
-    )
-  endif()
-
-  _FRUT_generate_plist_file(${target} "App" "APPL" "????"
-    "${bundle_document_types_entries}"
-  )
-
-endfunction()
-
-
 function(_FRUT_generate_plist_file_AU au_target)
 
   _FRUT_get_au_main_type_code(au_main_type_code)
@@ -4239,6 +4194,42 @@ function(_FRUT_generate_plist_file
     <key>NSHighResolutionCapable</key>
     <true/>"
   )
+
+  list(LENGTH JUCER_DOCUMENT_FILE_EXTENSIONS file_extensions_length)
+  if(file_extensions_length GREATER 0 AND NOT target MATCHES "_AUv3_AppExtension$")
+    set(bundle_type_extensions "")
+    foreach(type_extension IN LISTS JUCER_DOCUMENT_FILE_EXTENSIONS)
+      if(type_extension MATCHES "^\\.")
+        string(SUBSTRING "${type_extension}" 1 -1 type_extension)
+      endif()
+      string(APPEND bundle_type_extensions
+        "\n          <string>${type_extension}</string>"
+      )
+    endforeach()
+    list(GET JUCER_DOCUMENT_FILE_EXTENSIONS 0 first_type_extension)
+    if(first_type_extension MATCHES "^\\.")
+      string(SUBSTRING "${first_type_extension}" 1 -1 first_type_extension)
+    endif()
+
+    string(APPEND main_plist_entries "
+    <key>CFBundleDocumentTypes</key>
+    <array>
+      <dict>
+        <key>CFBundleTypeExtensions</key>
+        <array>${bundle_type_extensions}
+        </array>
+        <key>CFBundleTypeName</key>
+        <string>${first_type_extension}</string>
+        <key>CFBundleTypeRole</key>
+        <string>Editor</string>
+        <key>CFBundleTypeIconFile</key>
+        <string>Icon</string>
+        <key>NSPersistentStoreTypeKey</key>
+        <string>XML</string>
+      </dict>
+    </array>"
+    )
+  endif()
 
   if(JUCER_CUSTOM_PLIST)
     set(PListMerger_file_name "PListMerger-0.1.0")
