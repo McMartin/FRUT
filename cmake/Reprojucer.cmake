@@ -4178,14 +4178,8 @@ function(_FRUT_generate_plist_file
   extra_plist_entries
 )
 
-  if(DEFINED JUCER_COMPANY_COPYRIGHT
-      OR NOT (DEFINED JUCER_VERSION AND JUCER_VERSION VERSION_LESS 5.2.0))
-    set(ns_human_readable_copyright "@JUCER_COMPANY_COPYRIGHT@")
-  else()
-    set(ns_human_readable_copyright "@JUCER_COMPANY_NAME@")
-  endif()
-
   set(main_plist_entries "")
+
   if(JUCER_MICROPHONE_ACCESS)
     if(DEFINED JUCER_MICROPHONE_ACCESS_TEXT)
       set(microphone_usage_description "${JUCER_MICROPHONE_ACCESS_TEXT}")
@@ -4199,6 +4193,7 @@ function(_FRUT_generate_plist_file
     <string>${microphone_usage_description}</string>"
     )
   endif()
+
   if(JUCER_CAMERA_ACCESS)
     if(DEFINED JUCER_CAMERA_ACCESS_TEXT)
       set(camera_usage_description "${JUCER_CAMERA_ACCESS_TEXT}")
@@ -4212,6 +4207,14 @@ function(_FRUT_generate_plist_file
     <string>${camera_usage_description}</string>"
     )
   endif()
+
+  if(DEFINED JUCER_COMPANY_COPYRIGHT
+      OR NOT (DEFINED JUCER_VERSION AND JUCER_VERSION VERSION_LESS 5.2.0))
+    set(ns_human_readable_copyright "@JUCER_COMPANY_COPYRIGHT@")
+  else()
+    set(ns_human_readable_copyright "@JUCER_COMPANY_NAME@")
+  endif()
+
   string(APPEND main_plist_entries "
     <key>CFBundleExecutable</key>
     <string>@bundle_executable@</string>
