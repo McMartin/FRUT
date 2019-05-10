@@ -4159,22 +4159,22 @@ function(_FRUT_generate_plist_file_App target)
     endif()
 
     set(bundle_document_types_entries "
-  <key>CFBundleDocumentTypes</key>
-  <array>
-    <dict>
-      <key>CFBundleTypeExtensions</key>
-      <array>${bundle_type_extensions}
-      </array>
-      <key>CFBundleTypeName</key>
-      <string>${first_type_extension}</string>
-      <key>CFBundleTypeRole</key>
-      <string>Editor</string>
-      <key>CFBundleTypeIconFile</key>
-      <string>Icon</string>
-      <key>NSPersistentStoreTypeKey</key>
-      <string>XML</string>
-    </dict>
-  </array>"
+    <key>CFBundleDocumentTypes</key>
+    <array>
+      <dict>
+        <key>CFBundleTypeExtensions</key>
+        <array>${bundle_type_extensions}
+        </array>
+        <key>CFBundleTypeName</key>
+        <string>${first_type_extension}</string>
+        <key>CFBundleTypeRole</key>
+        <string>Editor</string>
+        <key>CFBundleTypeIconFile</key>
+        <string>Icon</string>
+        <key>NSPersistentStoreTypeKey</key>
+        <string>XML</string>
+      </dict>
+    </array>"
     )
   endif()
 
