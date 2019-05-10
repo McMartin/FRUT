@@ -4019,7 +4019,7 @@ function(_FRUT_generate_plist_file
   target plist_suffix bundle_package_type bundle_signature
 )
 
-  set(main_plist_entries "")
+  set(plist_entries "")
 
   if(JUCER_MICROPHONE_ACCESS)
     if(DEFINED JUCER_MICROPHONE_ACCESS_TEXT)
@@ -4029,7 +4029,7 @@ function(_FRUT_generate_plist_file
         "do not have an audio interface connected it will use the built-in microphone."
       )
     endif()
-    string(APPEND main_plist_entries "
+    string(APPEND plist_entries "
     <key>NSMicrophoneUsageDescription</key>
     <string>${microphone_usage_description}</string>"
     )
@@ -4043,7 +4043,7 @@ function(_FRUT_generate_plist_file
         "function correctly."
       )
     endif()
-    string(APPEND main_plist_entries "
+    string(APPEND plist_entries "
     <key>NSCameraUsageDescription</key>
     <string>${camera_usage_description}</string>"
     )
@@ -4056,7 +4056,7 @@ function(_FRUT_generate_plist_file
     set(ns_human_readable_copyright "@JUCER_COMPANY_NAME@")
   endif()
 
-  string(APPEND main_plist_entries "
+  string(APPEND plist_entries "
     <key>CFBundleExecutable</key>
     <string>@bundle_executable@</string>
     <key>CFBundleIconFile</key>
@@ -4097,7 +4097,7 @@ function(_FRUT_generate_plist_file
       string(SUBSTRING "${first_type_extension}" 1 -1 first_type_extension)
     endif()
 
-    string(APPEND main_plist_entries "
+    string(APPEND plist_entries "
     <key>CFBundleDocumentTypes</key>
     <array>
       <dict>
@@ -4121,7 +4121,7 @@ function(_FRUT_generate_plist_file
     _FRUT_get_au_main_type_code(au_main_type_code)
     _FRUT_version_to_dec("${JUCER_PROJECT_VERSION}" dec_version)
 
-    string(APPEND main_plist_entries "
+    string(APPEND plist_entries "
     <key>AudioComponents</key>
     <array>
       <dict>
@@ -4142,12 +4142,12 @@ function(_FRUT_generate_plist_file
     )
 
     if(JUCER_PLUGIN_AU_IS_SANDBOX_SAFE)
-      string(APPEND main_plist_entries "
+      string(APPEND plist_entries "
         <key>sandboxSafe</key>
         <true/>"
       )
     elseif(NOT (DEFINED JUCER_VERSION AND JUCER_VERSION VERSION_LESS 5.4.0))
-      string(APPEND main_plist_entries "
+      string(APPEND plist_entries "
         <key>resourceUsage</key>
         <dict>
           <key>network.client</key>
@@ -4158,7 +4158,7 @@ function(_FRUT_generate_plist_file
       )
     endif()
 
-    string(APPEND main_plist_entries "
+    string(APPEND plist_entries "
       </dict>
     </array>"
     )
@@ -4174,7 +4174,7 @@ function(_FRUT_generate_plist_file
       set(tag "Effects")
     endif()
 
-    string(APPEND main_plist_entries "
+    string(APPEND plist_entries "
     <key>NSExtension</key>
     <dict>
       <key>NSExtensionPrincipalClass</key>
@@ -4249,7 +4249,7 @@ function(_FRUT_generate_plist_file
       COMMAND
       "${PListMerger_exe}"
       "${JUCER_CUSTOM_PLIST}"
-      "<plist><dict>${main_plist_entries}</dict></plist>"
+      "<plist><dict>${plist_entries}</dict></plist>"
       OUTPUT_VARIABLE PListMerger_output
       OUTPUT_STRIP_TRAILING_WHITESPACE
       RESULT_VARIABLE PListMerger_return_code
@@ -4263,7 +4263,7 @@ function(_FRUT_generate_plist_file
     endif()
     string(REPLACE "<plist>\n  <dict>" "" PListMerger_output "${PListMerger_output}")
     string(REPLACE "\n  </dict>\n</plist>" "" PListMerger_output "${PListMerger_output}")
-    set(main_plist_entries "${PListMerger_output}")
+    set(plist_entries "${PListMerger_output}")
   endif()
 
   set(plist_filename "Info-${plist_suffix}.plist")
@@ -4284,7 +4284,7 @@ function(_FRUT_generate_plist_file
     )
   endif()
 
-  string(CONFIGURE "${main_plist_entries}" main_plist_entries @ONLY)
+  string(CONFIGURE "${plist_entries}" plist_entries @ONLY)
   configure_file("${Reprojucer_templates_DIR}/Info.plist" "${plist_filename}" @ONLY)
 
 endfunction()
