@@ -1991,7 +1991,7 @@ function(jucer_project_end)
         ${icon_file}
       )
       target_link_libraries(${auv3_target} PRIVATE ${shared_code_target})
-      _FRUT_generate_plist_file_AUv3(${auv3_target})
+      _FRUT_generate_plist_file(${auv3_target} "AUv3_AppExtension" "XPC!" "????" "")
 
       if(CMAKE_GENERATOR STREQUAL "Xcode")
         configure_file("${Reprojucer_templates_DIR}/AUv3.entitlements"
@@ -4017,62 +4017,6 @@ function(_FRUT_add_extra_commands_MSVC target exporter)
 endfunction()
 
 
-function(_FRUT_generate_plist_file_AUv3 auv3_target)
-
-  _FRUT_get_au_main_type_code(au_main_type_code)
-  _FRUT_version_to_dec("${JUCER_PROJECT_VERSION}" dec_version)
-
-  if(JUCER_PLUGIN_IS_A_SYNTH)
-    set(tag "Synth")
-  else()
-    set(tag "Effects")
-  endif()
-
-  set(ns_extension_entries "
-    <key>NSExtension</key>
-    <dict>
-      <key>NSExtensionPrincipalClass</key>
-      <string>@JUCER_PLUGIN_AU_EXPORT_PREFIX@FactoryAUv3</string>
-      <key>NSExtensionPointIdentifier</key>
-      <string>com.apple.AudioUnit-UI</string>
-      <key>NSExtensionAttributes</key>
-      <dict>
-        <key>AudioComponents</key>
-        <array>
-          <dict>
-            <key>name</key>
-            <string>@JUCER_PLUGIN_MANUFACTURER@: @JUCER_PLUGIN_NAME@</string>
-            <key>description</key>
-            <string>@JUCER_PLUGIN_DESCRIPTION@</string>
-            <key>factoryFunction</key>
-            <string>@JUCER_PLUGIN_AU_EXPORT_PREFIX@FactoryAUv3</string>
-            <key>manufacturer</key>
-            <string>@JUCER_PLUGIN_MANUFACTURER_CODE@</string>
-            <key>type</key>
-            <string>${au_main_type_code}</string>
-            <key>subtype</key>
-            <string>@JUCER_PLUGIN_CODE@</string>
-            <key>version</key>
-            <integer>${dec_version}</integer>
-            <key>sandboxSafe</key>
-            <true/>
-            <key>tags</key>
-            <array>
-              <string>${tag}</string>
-            </array>
-          </dict>
-        </array>
-      </dict>
-    </dict>"
-  )
-
-  _FRUT_generate_plist_file(${auv3_target} "AUv3_AppExtension" "XPC!" "????"
-    "${ns_extension_entries}"
-  )
-
-endfunction()
-
-
 function(_FRUT_generate_plist_file
   target plist_suffix
   bundle_package_type bundle_signature
@@ -4221,6 +4165,55 @@ function(_FRUT_generate_plist_file
     string(APPEND main_plist_entries "
       </dict>
     </array>"
+    )
+  endif()
+
+  if(target MATCHES "_AUv3_AppExtension$")
+    _FRUT_get_au_main_type_code(au_main_type_code)
+    _FRUT_version_to_dec("${JUCER_PROJECT_VERSION}" dec_version)
+
+    if(JUCER_PLUGIN_IS_A_SYNTH)
+      set(tag "Synth")
+    else()
+      set(tag "Effects")
+    endif()
+
+    string(APPEND main_plist_entries "
+    <key>NSExtension</key>
+    <dict>
+      <key>NSExtensionPrincipalClass</key>
+      <string>@JUCER_PLUGIN_AU_EXPORT_PREFIX@FactoryAUv3</string>
+      <key>NSExtensionPointIdentifier</key>
+      <string>com.apple.AudioUnit-UI</string>
+      <key>NSExtensionAttributes</key>
+      <dict>
+        <key>AudioComponents</key>
+        <array>
+          <dict>
+            <key>name</key>
+            <string>@JUCER_PLUGIN_MANUFACTURER@: @JUCER_PLUGIN_NAME@</string>
+            <key>description</key>
+            <string>@JUCER_PLUGIN_DESCRIPTION@</string>
+            <key>factoryFunction</key>
+            <string>@JUCER_PLUGIN_AU_EXPORT_PREFIX@FactoryAUv3</string>
+            <key>manufacturer</key>
+            <string>@JUCER_PLUGIN_MANUFACTURER_CODE@</string>
+            <key>type</key>
+            <string>${au_main_type_code}</string>
+            <key>subtype</key>
+            <string>@JUCER_PLUGIN_CODE@</string>
+            <key>version</key>
+            <integer>${dec_version}</integer>
+            <key>sandboxSafe</key>
+            <true/>
+            <key>tags</key>
+            <array>
+              <string>${tag}</string>
+            </array>
+          </dict>
+        </array>
+      </dict>
+    </dict>"
     )
   endif()
 
