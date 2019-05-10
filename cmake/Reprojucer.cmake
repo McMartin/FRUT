@@ -1762,9 +1762,9 @@ function(jucer_project_end)
 
   if(DEFINED JUCER_COMPANY_COPYRIGHT
       OR NOT (DEFINED JUCER_VERSION AND JUCER_VERSION VERSION_LESS 5.2.0))
-    set(ns_human_readable_copyright "${JUCER_COMPANY_COPYRIGHT}")
+    set(ns_human_readable_copyright "@JUCER_COMPANY_COPYRIGHT@")
   else()
-    set(ns_human_readable_copyright "${JUCER_COMPANY_NAME}")
+    set(ns_human_readable_copyright "@JUCER_COMPANY_NAME@")
   endif()
 
   set(main_plist_entries "")
@@ -1814,7 +1814,7 @@ function(jucer_project_end)
     <key>CFBundleVersion</key>
     <string>@JUCER_PROJECT_VERSION@</string>
     <key>NSHumanReadableCopyright</key>
-    <string>@ns_human_readable_copyright@</string>
+    <string>${ns_human_readable_copyright}</string>
     <key>NSHighResolutionCapable</key>
     <true/>"
   )
