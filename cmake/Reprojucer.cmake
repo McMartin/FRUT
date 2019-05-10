@@ -4143,7 +4143,8 @@ endfunction()
 
 function(_FRUT_generate_plist_file_App target)
 
-  if(JUCER_DOCUMENT_FILE_EXTENSIONS)
+  list(LENGTH JUCER_DOCUMENT_FILE_EXTENSIONS file_extensions_length)
+  if(file_extensions_length GREATER 0)
     set(bundle_type_extensions "")
     foreach(type_extension IN LISTS JUCER_DOCUMENT_FILE_EXTENSIONS)
       if(type_extension MATCHES "^\\.")
