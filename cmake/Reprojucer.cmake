@@ -1799,7 +1799,7 @@ function(jucer_project_end)
 
   elseif(JUCER_PROJECT_TYPE STREQUAL "GUI Application")
     add_executable(${target} WIN32 MACOSX_BUNDLE ${all_sources})
-    _FRUT_generate_plist_file(${target} "App" "APPL" "????" "")
+    _FRUT_generate_plist_file(${target} "App" "APPL" "????")
     _FRUT_set_output_directory_properties(${target} "App")
     _FRUT_set_output_name_properties(${target})
     _FRUT_set_compiler_and_linker_settings(${target})
@@ -1883,7 +1883,7 @@ function(jucer_project_end)
         ${resources_rc_file}
       )
       target_link_libraries(${vst_target} PRIVATE ${shared_code_target})
-      _FRUT_generate_plist_file(${vst_target} "VST" "BNDL" "????" "")
+      _FRUT_generate_plist_file(${vst_target} "VST" "BNDL" "????")
       _FRUT_set_bundle_properties(${vst_target} "vst")
       _FRUT_set_output_directory_properties(${vst_target} "VST")
       _FRUT_set_output_name_properties(${vst_target})
@@ -1919,7 +1919,7 @@ function(jucer_project_end)
         ${resources_rc_file}
       )
       target_link_libraries(${vst3_target} PRIVATE ${shared_code_target})
-      _FRUT_generate_plist_file(${vst3_target} "VST3" "BNDL" "????" "")
+      _FRUT_generate_plist_file(${vst3_target} "VST3" "BNDL" "????")
       _FRUT_set_bundle_properties(${vst3_target} "vst3")
       _FRUT_set_output_directory_properties(${vst3_target} "VST3")
       _FRUT_set_output_name_properties(${vst3_target})
@@ -1967,7 +1967,7 @@ function(jucer_project_end)
         _FRUT_add_Rez_command_to_AU_plugin(${au_target} ${rez_inputs})
       endif()
 
-      _FRUT_generate_plist_file(${au_target} "AU" "BNDL" "????" "")
+      _FRUT_generate_plist_file(${au_target} "AU" "BNDL" "????")
       _FRUT_set_bundle_properties(${au_target} "component")
       _FRUT_set_output_directory_properties(${au_target} "AU")
       _FRUT_set_output_name_properties(${au_target})
@@ -1991,7 +1991,7 @@ function(jucer_project_end)
         ${icon_file}
       )
       target_link_libraries(${auv3_target} PRIVATE ${shared_code_target})
-      _FRUT_generate_plist_file(${auv3_target} "AUv3_AppExtension" "XPC!" "????" "")
+      _FRUT_generate_plist_file(${auv3_target} "AUv3_AppExtension" "XPC!" "????")
 
       if(CMAKE_GENERATOR STREQUAL "Xcode")
         configure_file("${Reprojucer_templates_DIR}/AUv3.entitlements"
@@ -2026,7 +2026,7 @@ function(jucer_project_end)
         ${resources_rc_file}
       )
       target_link_libraries(${rtas_target} PRIVATE ${shared_code_target})
-      _FRUT_generate_plist_file(${rtas_target} "RTAS" "TDMw" "PTul" "")
+      _FRUT_generate_plist_file(${rtas_target} "RTAS" "TDMw" "PTul")
       _FRUT_set_bundle_properties(${rtas_target} "dpm")
       _FRUT_set_output_directory_properties(${rtas_target} "RTAS")
       _FRUT_set_output_name_properties(${rtas_target})
@@ -2171,7 +2171,7 @@ function(jucer_project_end)
         ${resources_rc_file}
       )
       target_link_libraries(${aax_target} PRIVATE ${shared_code_target})
-      _FRUT_generate_plist_file(${aax_target} "AAX" "TDMw" "PTul" "")
+      _FRUT_generate_plist_file(${aax_target} "AAX" "TDMw" "PTul")
       _FRUT_set_bundle_properties(${aax_target} "aaxplugin")
       _FRUT_set_output_directory_properties(${aax_target} "AAX")
       _FRUT_set_output_name_properties(${aax_target})
@@ -2298,11 +2298,9 @@ function(jucer_project_end)
       )
       target_link_libraries(${standalone_target} PRIVATE ${shared_code_target})
       if(juce4_standalone)
-        _FRUT_generate_plist_file(${standalone_target} "AUv3_Standalone" "APPL" "????" "")
+        _FRUT_generate_plist_file(${standalone_target} "AUv3_Standalone" "APPL" "????")
       else()
-        _FRUT_generate_plist_file(${standalone_target} "Standalone_Plugin" "APPL" "????"
-          ""
-        )
+        _FRUT_generate_plist_file(${standalone_target} "Standalone_Plugin" "APPL" "????")
       endif()
       _FRUT_set_output_directory_properties(${standalone_target} "Standalone Plugin")
       _FRUT_set_output_name_properties(${standalone_target})
@@ -2338,7 +2336,7 @@ function(jucer_project_end)
         ${resources_rc_file}
       )
       target_link_libraries(${unity_target} PRIVATE ${shared_code_target})
-      _FRUT_generate_plist_file(${unity_target} "Unity_Plugin" "BNDL" "????" "")
+      _FRUT_generate_plist_file(${unity_target} "Unity_Plugin" "BNDL" "????")
       _FRUT_set_bundle_properties(${unity_target} "bundle")
       _FRUT_set_output_directory_properties(${unity_target} "Unity Plugin")
       _FRUT_set_output_name_properties_Unity(${unity_target})
@@ -4018,9 +4016,7 @@ endfunction()
 
 
 function(_FRUT_generate_plist_file
-  target plist_suffix
-  bundle_package_type bundle_signature
-  extra_plist_entries
+  target plist_suffix bundle_package_type bundle_signature
 )
 
   set(main_plist_entries "")
@@ -4289,7 +4285,6 @@ function(_FRUT_generate_plist_file
   endif()
 
   string(CONFIGURE "${main_plist_entries}" main_plist_entries @ONLY)
-  string(CONFIGURE "${extra_plist_entries}" extra_plist_entries @ONLY)
   configure_file("${Reprojucer_templates_DIR}/Info.plist" "${plist_filename}" @ONLY)
 
 endfunction()
