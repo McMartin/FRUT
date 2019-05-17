@@ -1760,118 +1760,6 @@ function(jucer_project_end)
     REGULAR_EXPRESSION "${CMAKE_CURRENT_BINARY_DIR}/JuceLibraryCode/*"
   )
 
-  if(DEFINED JUCER_COMPANY_COPYRIGHT
-      OR NOT (DEFINED JUCER_VERSION AND JUCER_VERSION VERSION_LESS 5.2.0))
-    set(ns_human_readable_copyright "${JUCER_COMPANY_COPYRIGHT}")
-  else()
-    set(ns_human_readable_copyright "${JUCER_COMPANY_NAME}")
-  endif()
-
-  set(main_plist_entries "")
-  if(JUCER_MICROPHONE_ACCESS)
-    if(DEFINED JUCER_MICROPHONE_ACCESS_TEXT)
-      set(microphone_usage_description "${JUCER_MICROPHONE_ACCESS_TEXT}")
-    else()
-      string(CONCAT microphone_usage_description "This app requires audio input. If you "
-        "do not have an audio interface connected it will use the built-in microphone."
-      )
-    endif()
-    string(APPEND main_plist_entries "
-    <key>NSMicrophoneUsageDescription</key>
-    <string>${microphone_usage_description}</string>"
-    )
-  endif()
-  if(JUCER_CAMERA_ACCESS)
-    if(DEFINED JUCER_CAMERA_ACCESS_TEXT)
-      set(camera_usage_description "${JUCER_CAMERA_ACCESS_TEXT}")
-    else()
-      string(CONCAT camera_usage_description "This app requires access to the camera to "
-        "function correctly."
-      )
-    endif()
-    string(APPEND main_plist_entries "
-    <key>NSCameraUsageDescription</key>
-    <string>${camera_usage_description}</string>"
-    )
-  endif()
-  string(APPEND main_plist_entries "
-    <key>CFBundleExecutable</key>
-    <string>@bundle_executable@</string>
-    <key>CFBundleIconFile</key>
-    <string>@JUCER_BUNDLE_ICON_FILE@</string>
-    <key>CFBundleIdentifier</key>
-    <string>@bundle_identifier@</string>
-    <key>CFBundleName</key>
-    <string>@JUCER_PROJECT_NAME@</string>
-    <key>CFBundleDisplayName</key>
-    <string>@JUCER_PROJECT_NAME@</string>
-    <key>CFBundlePackageType</key>
-    <string>@bundle_package_type@</string>
-    <key>CFBundleSignature</key>
-    <string>@bundle_signature@</string>
-    <key>CFBundleShortVersionString</key>
-    <string>@JUCER_PROJECT_VERSION@</string>
-    <key>CFBundleVersion</key>
-    <string>@JUCER_PROJECT_VERSION@</string>
-    <key>NSHumanReadableCopyright</key>
-    <string>@ns_human_readable_copyright@</string>
-    <key>NSHighResolutionCapable</key>
-    <true/>"
-  )
-
-  if(JUCER_CUSTOM_PLIST)
-    set(PListMerger_file_name "PListMerger-0.1.0")
-    if(NOT PListMerger_exe MATCHES "${PListMerger_file_name}")
-      unset(PListMerger_exe CACHE)
-    endif()
-    find_program(PListMerger_exe "${PListMerger_file_name}"
-      PATHS "${Reprojucer.cmake_DIR}/bin"
-      NO_DEFAULT_PATH
-    )
-    if(NOT PListMerger_exe)
-      message(STATUS "Building PListMerger")
-      try_compile(PListMerger
-        "${Reprojucer.cmake_DIR}/PListMerger/_build/${CMAKE_GENERATOR}"
-        "${Reprojucer.cmake_DIR}/PListMerger"
-        PListMerger install
-        CMAKE_FLAGS
-        "-DJUCE_modules_DIRS=${JUCER_PROJECT_MODULES_FOLDERS}"
-        "-DCMAKE_INSTALL_PREFIX=${Reprojucer.cmake_DIR}/bin"
-      )
-      if(NOT PListMerger)
-        message(FATAL_ERROR "Failed to build PListMerger")
-      endif()
-      message(STATUS "PListMerger has been successfully built")
-      find_program(PListMerger_exe "${PListMerger_file_name}"
-        PATHS "${Reprojucer.cmake_DIR}/bin"
-        NO_DEFAULT_PATH
-      )
-      if(NOT PListMerger_exe)
-        message(FATAL_ERROR "Could not find ${PListMerger_file_name}")
-      endif()
-    endif()
-
-    execute_process(
-      COMMAND
-      "${PListMerger_exe}"
-      "${JUCER_CUSTOM_PLIST}"
-      "<plist><dict>${main_plist_entries}</dict></plist>"
-      OUTPUT_VARIABLE PListMerger_output
-      OUTPUT_STRIP_TRAILING_WHITESPACE
-      RESULT_VARIABLE PListMerger_return_code
-    )
-    if(NOT PListMerger_return_code EQUAL 0)
-      message(FATAL_ERROR "Error when executing PListMerger")
-    endif()
-
-    if(WIN32)
-      string(REPLACE "\r\n" "\n" PListMerger_output "${PListMerger_output}")
-    endif()
-    string(REPLACE "<plist>\n  <dict>" "" PListMerger_output "${PListMerger_output}")
-    string(REPLACE "\n  </dict>\n</plist>" "" PListMerger_output "${PListMerger_output}")
-    set(main_plist_entries "${PListMerger_output}")
-  endif()
-
   string(REGEX REPLACE "[^A-Za-z0-9_.+-]" "_" target "${JUCER_PROJECT_NAME}")
 
   if(APPLE)
@@ -1911,7 +1799,7 @@ function(jucer_project_end)
 
   elseif(JUCER_PROJECT_TYPE STREQUAL "GUI Application")
     add_executable(${target} WIN32 MACOSX_BUNDLE ${all_sources})
-    _FRUT_generate_plist_file_App(${target})
+    _FRUT_generate_plist_file(${target} "App" "APPL" "????")
     _FRUT_set_output_directory_properties(${target} "App")
     _FRUT_set_output_name_properties(${target})
     _FRUT_set_compiler_and_linker_settings(${target})
@@ -1995,9 +1883,7 @@ function(jucer_project_end)
         ${resources_rc_file}
       )
       target_link_libraries(${vst_target} PRIVATE ${shared_code_target})
-      _FRUT_generate_plist_file(${vst_target} "VST" "BNDL" "????"
-        "${main_plist_entries}" ""
-      )
+      _FRUT_generate_plist_file(${vst_target} "VST" "BNDL" "????")
       _FRUT_set_bundle_properties(${vst_target} "vst")
       _FRUT_set_output_directory_properties(${vst_target} "VST")
       _FRUT_set_output_name_properties(${vst_target})
@@ -2033,9 +1919,7 @@ function(jucer_project_end)
         ${resources_rc_file}
       )
       target_link_libraries(${vst3_target} PRIVATE ${shared_code_target})
-      _FRUT_generate_plist_file(${vst3_target} "VST3" "BNDL" "????"
-        "${main_plist_entries}" ""
-      )
+      _FRUT_generate_plist_file(${vst3_target} "VST3" "BNDL" "????")
       _FRUT_set_bundle_properties(${vst3_target} "vst3")
       _FRUT_set_output_directory_properties(${vst3_target} "VST3")
       _FRUT_set_output_name_properties(${vst3_target})
@@ -2083,7 +1967,7 @@ function(jucer_project_end)
         _FRUT_add_Rez_command_to_AU_plugin(${au_target} ${rez_inputs})
       endif()
 
-      _FRUT_generate_plist_file_AU(${au_target})
+      _FRUT_generate_plist_file(${au_target} "AU" "BNDL" "????")
       _FRUT_set_bundle_properties(${au_target} "component")
       _FRUT_set_output_directory_properties(${au_target} "AU")
       _FRUT_set_output_name_properties(${au_target})
@@ -2107,7 +1991,7 @@ function(jucer_project_end)
         ${icon_file}
       )
       target_link_libraries(${auv3_target} PRIVATE ${shared_code_target})
-      _FRUT_generate_plist_file_AUv3(${auv3_target})
+      _FRUT_generate_plist_file(${auv3_target} "AUv3_AppExtension" "XPC!" "????")
 
       if(CMAKE_GENERATOR STREQUAL "Xcode")
         configure_file("${Reprojucer_templates_DIR}/AUv3.entitlements"
@@ -2142,9 +2026,7 @@ function(jucer_project_end)
         ${resources_rc_file}
       )
       target_link_libraries(${rtas_target} PRIVATE ${shared_code_target})
-      _FRUT_generate_plist_file(${rtas_target} "RTAS" "TDMw" "PTul"
-        "${main_plist_entries}" ""
-      )
+      _FRUT_generate_plist_file(${rtas_target} "RTAS" "TDMw" "PTul")
       _FRUT_set_bundle_properties(${rtas_target} "dpm")
       _FRUT_set_output_directory_properties(${rtas_target} "RTAS")
       _FRUT_set_output_name_properties(${rtas_target})
@@ -2289,9 +2171,7 @@ function(jucer_project_end)
         ${resources_rc_file}
       )
       target_link_libraries(${aax_target} PRIVATE ${shared_code_target})
-      _FRUT_generate_plist_file(${aax_target} "AAX" "TDMw" "PTul"
-        "${main_plist_entries}" ""
-      )
+      _FRUT_generate_plist_file(${aax_target} "AAX" "TDMw" "PTul")
       _FRUT_set_bundle_properties(${aax_target} "aaxplugin")
       _FRUT_set_output_directory_properties(${aax_target} "AAX")
       _FRUT_set_output_name_properties(${aax_target})
@@ -2418,13 +2298,9 @@ function(jucer_project_end)
       )
       target_link_libraries(${standalone_target} PRIVATE ${shared_code_target})
       if(juce4_standalone)
-        _FRUT_generate_plist_file(${standalone_target} "AUv3_Standalone" "APPL" "????"
-          "${main_plist_entries}" ""
-        )
+        _FRUT_generate_plist_file(${standalone_target} "AUv3_Standalone" "APPL" "????")
       else()
-        _FRUT_generate_plist_file(${standalone_target} "Standalone_Plugin" "APPL" "????"
-          "${main_plist_entries}" ""
-        )
+        _FRUT_generate_plist_file(${standalone_target} "Standalone_Plugin" "APPL" "????")
       endif()
       _FRUT_set_output_directory_properties(${standalone_target} "Standalone Plugin")
       _FRUT_set_output_name_properties(${standalone_target})
@@ -2460,9 +2336,7 @@ function(jucer_project_end)
         ${resources_rc_file}
       )
       target_link_libraries(${unity_target} PRIVATE ${shared_code_target})
-      _FRUT_generate_plist_file(${unity_target} "Unity_Plugin" "BNDL" "????"
-        "${main_plist_entries}" ""
-      )
+      _FRUT_generate_plist_file(${unity_target} "Unity_Plugin" "BNDL" "????")
       _FRUT_set_bundle_properties(${unity_target} "bundle")
       _FRUT_set_output_directory_properties(${unity_target} "Unity Plugin")
       _FRUT_set_output_name_properties_Unity(${unity_target})
@@ -4141,9 +4015,92 @@ function(_FRUT_add_extra_commands_MSVC target exporter)
 endfunction()
 
 
-function(_FRUT_generate_plist_file_App target)
+function(_FRUT_generate_plist_file
+  target plist_suffix bundle_package_type bundle_signature
+)
 
-  if(JUCER_DOCUMENT_FILE_EXTENSIONS)
+  set(plist_filename "Info-${plist_suffix}.plist")
+  if(CMAKE_GENERATOR STREQUAL "Xcode")
+    set(bundle_executable "\${EXECUTABLE_NAME}")
+    set(bundle_identifier "\$(PRODUCT_BUNDLE_IDENTIFIER)")
+    set_target_properties(${target} PROPERTIES
+      XCODE_ATTRIBUTE_INFOPLIST_FILE "${CMAKE_CURRENT_BINARY_DIR}/${plist_filename}"
+      XCODE_ATTRIBUTE_PRODUCT_BUNDLE_IDENTIFIER "${JUCER_BUNDLE_IDENTIFIER}"
+    )
+  else()
+    set(bundle_executable "\${MACOSX_BUNDLE_BUNDLE_NAME}")
+    set(bundle_identifier "\${MACOSX_BUNDLE_GUI_IDENTIFIER}")
+    set_target_properties(${target} PROPERTIES
+      MACOSX_BUNDLE_BUNDLE_NAME "${JUCER_PROJECT_NAME}"
+      MACOSX_BUNDLE_GUI_IDENTIFIER "${JUCER_BUNDLE_IDENTIFIER}"
+      MACOSX_BUNDLE_INFO_PLIST "${CMAKE_CURRENT_BINARY_DIR}/${plist_filename}"
+    )
+  endif()
+
+  set(plist_entries "")
+
+  if(JUCER_MICROPHONE_ACCESS)
+    if(DEFINED JUCER_MICROPHONE_ACCESS_TEXT)
+      set(microphone_usage_description "${JUCER_MICROPHONE_ACCESS_TEXT}")
+    else()
+      string(CONCAT microphone_usage_description "This app requires audio input. If you "
+        "do not have an audio interface connected it will use the built-in microphone."
+      )
+    endif()
+    string(APPEND plist_entries "
+    <key>NSMicrophoneUsageDescription</key>
+    <string>${microphone_usage_description}</string>"
+    )
+  endif()
+
+  if(JUCER_CAMERA_ACCESS)
+    if(DEFINED JUCER_CAMERA_ACCESS_TEXT)
+      set(camera_usage_description "${JUCER_CAMERA_ACCESS_TEXT}")
+    else()
+      string(CONCAT camera_usage_description "This app requires access to the camera to "
+        "function correctly."
+      )
+    endif()
+    string(APPEND plist_entries "
+    <key>NSCameraUsageDescription</key>
+    <string>${camera_usage_description}</string>"
+    )
+  endif()
+
+  if(DEFINED JUCER_COMPANY_COPYRIGHT
+      OR NOT (DEFINED JUCER_VERSION AND JUCER_VERSION VERSION_LESS 5.2.0))
+    set(ns_human_readable_copyright "@JUCER_COMPANY_COPYRIGHT@")
+  else()
+    set(ns_human_readable_copyright "@JUCER_COMPANY_NAME@")
+  endif()
+
+  string(APPEND plist_entries "
+    <key>CFBundleExecutable</key>
+    <string>${bundle_executable}</string>
+    <key>CFBundleIconFile</key>
+    <string>@JUCER_BUNDLE_ICON_FILE@</string>
+    <key>CFBundleIdentifier</key>
+    <string>${bundle_identifier}</string>
+    <key>CFBundleName</key>
+    <string>@JUCER_PROJECT_NAME@</string>
+    <key>CFBundleDisplayName</key>
+    <string>@JUCER_PROJECT_NAME@</string>
+    <key>CFBundlePackageType</key>
+    <string>${bundle_package_type}</string>
+    <key>CFBundleSignature</key>
+    <string>${bundle_signature}</string>
+    <key>CFBundleShortVersionString</key>
+    <string>@JUCER_PROJECT_VERSION@</string>
+    <key>CFBundleVersion</key>
+    <string>@JUCER_PROJECT_VERSION@</string>
+    <key>NSHumanReadableCopyright</key>
+    <string>${ns_human_readable_copyright}</string>
+    <key>NSHighResolutionCapable</key>
+    <true/>"
+  )
+
+  list(LENGTH JUCER_DOCUMENT_FILE_EXTENSIONS file_extensions_length)
+  if(file_extensions_length GREATER 0 AND NOT target MATCHES "_AUv3_AppExtension$")
     set(bundle_type_extensions "")
     foreach(type_extension IN LISTS JUCER_DOCUMENT_FILE_EXTENSIONS)
       if(type_extension MATCHES "^\\.")
@@ -4158,39 +4115,31 @@ function(_FRUT_generate_plist_file_App target)
       string(SUBSTRING "${first_type_extension}" 1 -1 first_type_extension)
     endif()
 
-    set(bundle_document_types_entries "
-  <key>CFBundleDocumentTypes</key>
-  <array>
-    <dict>
-      <key>CFBundleTypeExtensions</key>
-      <array>${bundle_type_extensions}
-      </array>
-      <key>CFBundleTypeName</key>
-      <string>${first_type_extension}</string>
-      <key>CFBundleTypeRole</key>
-      <string>Editor</string>
-      <key>CFBundleTypeIconFile</key>
-      <string>Icon</string>
-      <key>NSPersistentStoreTypeKey</key>
-      <string>XML</string>
-    </dict>
-  </array>"
+    string(APPEND plist_entries "
+    <key>CFBundleDocumentTypes</key>
+    <array>
+      <dict>
+        <key>CFBundleTypeExtensions</key>
+        <array>${bundle_type_extensions}
+        </array>
+        <key>CFBundleTypeName</key>
+        <string>${first_type_extension}</string>
+        <key>CFBundleTypeRole</key>
+        <string>Editor</string>
+        <key>CFBundleTypeIconFile</key>
+        <string>Icon</string>
+        <key>NSPersistentStoreTypeKey</key>
+        <string>XML</string>
+      </dict>
+    </array>"
     )
   endif()
 
-  _FRUT_generate_plist_file(${target} "App" "APPL" "????"
-    "${main_plist_entries}" "${bundle_document_types_entries}"
-  )
+  if(target MATCHES "_AU$")
+    _FRUT_get_au_main_type_code(au_main_type_code)
+    _FRUT_version_to_dec("${JUCER_PROJECT_VERSION}" dec_version)
 
-endfunction()
-
-
-function(_FRUT_generate_plist_file_AU au_target)
-
-  _FRUT_get_au_main_type_code(au_main_type_code)
-  _FRUT_version_to_dec("${JUCER_PROJECT_VERSION}" dec_version)
-
-  set(audio_components_entries "
+    string(APPEND plist_entries "
     <key>AudioComponents</key>
     <array>
       <dict>
@@ -4208,15 +4157,15 @@ function(_FRUT_generate_plist_file_AU au_target)
         <string>@JUCER_PLUGIN_CODE@</string>
         <key>version</key>
         <integer>${dec_version}</integer>"
-  )
+    )
 
-  if(JUCER_PLUGIN_AU_IS_SANDBOX_SAFE)
-    string(APPEND audio_components_entries "
+    if(JUCER_PLUGIN_AU_IS_SANDBOX_SAFE)
+      string(APPEND plist_entries "
         <key>sandboxSafe</key>
         <true/>"
-    )
-  elseif(NOT (DEFINED JUCER_VERSION AND JUCER_VERSION VERSION_LESS 5.4.0))
-    string(APPEND audio_components_entries "
+      )
+    elseif(NOT (DEFINED JUCER_VERSION AND JUCER_VERSION VERSION_LESS 5.4.0))
+      string(APPEND plist_entries "
         <key>resourceUsage</key>
         <dict>
           <key>network.client</key>
@@ -4224,33 +4173,26 @@ function(_FRUT_generate_plist_file_AU au_target)
           <key>temporary-exception.files.all.read-write</key>
           <true/>
         </dict>"
+      )
+    endif()
+
+    string(APPEND plist_entries "
+      </dict>
+    </array>"
     )
   endif()
 
-  string(APPEND audio_components_entries "
-      </dict>
-    </array>"
-  )
+  if(target MATCHES "_AUv3_AppExtension$")
+    _FRUT_get_au_main_type_code(au_main_type_code)
+    _FRUT_version_to_dec("${JUCER_PROJECT_VERSION}" dec_version)
 
-  _FRUT_generate_plist_file(${au_target} "AU" "BNDL" "????"
-    "${main_plist_entries}" "${audio_components_entries}"
-  )
+    if(JUCER_PLUGIN_IS_A_SYNTH)
+      set(tag "Synth")
+    else()
+      set(tag "Effects")
+    endif()
 
-endfunction()
-
-
-function(_FRUT_generate_plist_file_AUv3 auv3_target)
-
-  _FRUT_get_au_main_type_code(au_main_type_code)
-  _FRUT_version_to_dec("${JUCER_PROJECT_VERSION}" dec_version)
-
-  if(JUCER_PLUGIN_IS_A_SYNTH)
-    set(tag "Synth")
-  else()
-    set(tag "Effects")
-  endif()
-
-  set(ns_extension_entries "
+    string(APPEND plist_entries "
     <key>NSExtension</key>
     <dict>
       <key>NSExtensionPrincipalClass</key>
@@ -4286,41 +4228,63 @@ function(_FRUT_generate_plist_file_AUv3 auv3_target)
         </array>
       </dict>
     </dict>"
-  )
-
-  _FRUT_generate_plist_file(${auv3_target} "AUv3_AppExtension" "XPC!" "????"
-    "${main_plist_entries}" "${ns_extension_entries}"
-  )
-
-endfunction()
-
-
-function(_FRUT_generate_plist_file
-  target plist_suffix
-  bundle_package_type bundle_signature
-  main_plist_entries extra_plist_entries
-)
-
-  set(plist_filename "Info-${plist_suffix}.plist")
-  if(CMAKE_GENERATOR STREQUAL "Xcode")
-    set(bundle_executable "\${EXECUTABLE_NAME}")
-    set(bundle_identifier "\$(PRODUCT_BUNDLE_IDENTIFIER)")
-    set_target_properties(${target} PROPERTIES
-      XCODE_ATTRIBUTE_INFOPLIST_FILE "${CMAKE_CURRENT_BINARY_DIR}/${plist_filename}"
-      XCODE_ATTRIBUTE_PRODUCT_BUNDLE_IDENTIFIER "${JUCER_BUNDLE_IDENTIFIER}"
-    )
-  else()
-    set(bundle_executable "\${MACOSX_BUNDLE_BUNDLE_NAME}")
-    set(bundle_identifier "\${MACOSX_BUNDLE_GUI_IDENTIFIER}")
-    set_target_properties(${target} PROPERTIES
-      MACOSX_BUNDLE_BUNDLE_NAME "${JUCER_PROJECT_NAME}"
-      MACOSX_BUNDLE_GUI_IDENTIFIER "${JUCER_BUNDLE_IDENTIFIER}"
-      MACOSX_BUNDLE_INFO_PLIST "${CMAKE_CURRENT_BINARY_DIR}/${plist_filename}"
     )
   endif()
 
-  string(CONFIGURE "${main_plist_entries}" main_plist_entries @ONLY)
-  string(CONFIGURE "${extra_plist_entries}" extra_plist_entries @ONLY)
+  if(JUCER_CUSTOM_PLIST)
+    set(PListMerger_file_name "PListMerger-0.1.0")
+    if(NOT PListMerger_exe MATCHES "${PListMerger_file_name}")
+      unset(PListMerger_exe CACHE)
+    endif()
+    find_program(PListMerger_exe "${PListMerger_file_name}"
+      PATHS "${Reprojucer.cmake_DIR}/bin"
+      NO_DEFAULT_PATH
+    )
+    if(NOT PListMerger_exe)
+      message(STATUS "Building PListMerger")
+      try_compile(PListMerger
+        "${Reprojucer.cmake_DIR}/PListMerger/_build/${CMAKE_GENERATOR}"
+        "${Reprojucer.cmake_DIR}/PListMerger"
+        PListMerger install
+        CMAKE_FLAGS
+        "-DJUCE_modules_DIRS=${JUCER_PROJECT_MODULES_FOLDERS}"
+        "-DCMAKE_INSTALL_PREFIX=${Reprojucer.cmake_DIR}/bin"
+      )
+      if(NOT PListMerger)
+        message(FATAL_ERROR "Failed to build PListMerger")
+      endif()
+      message(STATUS "PListMerger has been successfully built")
+      find_program(PListMerger_exe "${PListMerger_file_name}"
+        PATHS "${Reprojucer.cmake_DIR}/bin"
+        NO_DEFAULT_PATH
+      )
+      if(NOT PListMerger_exe)
+        message(FATAL_ERROR "Could not find ${PListMerger_file_name}")
+      endif()
+    endif()
+
+    execute_process(
+      COMMAND
+      "${PListMerger_exe}"
+      "${JUCER_CUSTOM_PLIST}"
+      "<plist><dict>${plist_entries}</dict></plist>"
+      OUTPUT_VARIABLE PListMerger_output
+      OUTPUT_STRIP_TRAILING_WHITESPACE
+      RESULT_VARIABLE PListMerger_return_code
+    )
+    if(NOT PListMerger_return_code EQUAL 0)
+      message(FATAL_ERROR "Error when executing PListMerger")
+    endif()
+
+    if(WIN32)
+      string(REPLACE "\r\n" "\n" PListMerger_output "${PListMerger_output}")
+    endif()
+    string(REPLACE "<plist>\n  <dict>" "" PListMerger_output "${PListMerger_output}")
+    string(REPLACE "\n  </dict>\n</plist>" "" PListMerger_output "${PListMerger_output}")
+    set(plist_entries "${PListMerger_output}")
+  endif()
+
+  string(CONFIGURE "${plist_entries}" plist_entries @ONLY)
   configure_file("${Reprojucer_templates_DIR}/Info.plist" "${plist_filename}" @ONLY)
 
 endfunction()
