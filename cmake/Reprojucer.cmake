@@ -1991,7 +1991,7 @@ function(jucer_project_end)
         ${icon_file}
       )
       target_link_libraries(${auv3_target} PRIVATE ${shared_code_target})
-      _FRUT_generate_plist_file(${auv3_target} "AUv3_AppExtension" "XPC!" "????")
+      _FRUT_generate_plist_file_AUv3(${auv3_target} "AUv3_AppExtension")
 
       if(CMAKE_GENERATOR STREQUAL "Xcode")
         configure_file("${Reprojucer_templates_DIR}/AUv3.entitlements"
@@ -2003,7 +2003,13 @@ function(jucer_project_end)
         )
       endif()
 
-      _FRUT_set_AUv3_bundle_properties(${auv3_target})
+      # Cannot use _FRUT_set_bundle_properties() since Projucer sets xcodeIsBundle=false
+      # for this target, though it is a bundle...
+      set_target_properties(${auv3_target} PROPERTIES
+        BUNDLE TRUE
+        BUNDLE_EXTENSION "appex"
+        XCODE_ATTRIBUTE_WRAPPER_EXTENSION "appex"
+      )
       _FRUT_set_output_directory_properties(${auv3_target} "AUv3 AppExtension")
       _FRUT_set_output_name_properties(${auv3_target})
       _FRUT_set_compiler_and_linker_settings(${auv3_target})
@@ -4022,19 +4028,27 @@ function(_FRUT_generate_plist_file
   set(plist_filename "Info-${plist_suffix}.plist")
   if(CMAKE_GENERATOR STREQUAL "Xcode")
     set(bundle_executable "\${EXECUTABLE_NAME}")
-    set(bundle_identifier "\$(PRODUCT_BUNDLE_IDENTIFIER)")
     set_target_properties(${target} PROPERTIES
       XCODE_ATTRIBUTE_INFOPLIST_FILE "${CMAKE_CURRENT_BINARY_DIR}/${plist_filename}"
       XCODE_ATTRIBUTE_PRODUCT_BUNDLE_IDENTIFIER "${JUCER_BUNDLE_IDENTIFIER}"
     )
   else()
     set(bundle_executable "\${MACOSX_BUNDLE_BUNDLE_NAME}")
-    set(bundle_identifier "\${MACOSX_BUNDLE_GUI_IDENTIFIER}")
     set_target_properties(${target} PROPERTIES
       MACOSX_BUNDLE_BUNDLE_NAME "${JUCER_PROJECT_NAME}"
       MACOSX_BUNDLE_GUI_IDENTIFIER "${JUCER_BUNDLE_IDENTIFIER}"
       MACOSX_BUNDLE_INFO_PLIST "${CMAKE_CURRENT_BINARY_DIR}/${plist_filename}"
     )
+  endif()
+
+  if(DEFINED JUCER_VERSION AND JUCER_VERSION VERSION_LESS 5.2.0)
+    if(CMAKE_GENERATOR STREQUAL "Xcode")
+      set(bundle_identifier "\$(PRODUCT_BUNDLE_IDENTIFIER)")
+    else()
+      set(bundle_identifier "\${MACOSX_BUNDLE_GUI_IDENTIFIER}")
+    endif()
+  else()
+    set(bundle_identifier "@JUCER_BUNDLE_IDENTIFIER@")
   endif()
 
   set(plist_entries "")
@@ -4290,6 +4304,21 @@ function(_FRUT_generate_plist_file
 endfunction()
 
 
+function(_FRUT_generate_plist_file_AUv3 target plist_suffix)
+
+  # com.yourcompany.NewProject -> com.yourcompany.NewProject.NewProjectAUv3
+  string(REPLACE "." ";" bundle_id_parts "${JUCER_BUNDLE_IDENTIFIER}")
+  list(LENGTH bundle_id_parts bundle_id_parts_length)
+  math(EXPR bundle_id_parts_last_index "${bundle_id_parts_length} - 1")
+  list(GET bundle_id_parts ${bundle_id_parts_last_index} bundle_id_last_part)
+  list(APPEND bundle_id_parts "${bundle_id_last_part}AUv3")
+  string(REPLACE ";" "." JUCER_BUNDLE_IDENTIFIER "${bundle_id_parts}")
+
+  _FRUT_generate_plist_file(${target} "${plist_suffix}" "XPC!" "????")
+
+endfunction()
+
+
 function(_FRUT_set_bundle_properties target extension)
 
   if(NOT APPLE)
@@ -4305,36 +4334,6 @@ function(_FRUT_set_bundle_properties target extension)
   target_sources(${target} PRIVATE "${Reprojucer_templates_DIR}/PkgInfo")
   set_source_files_properties("${Reprojucer_templates_DIR}/PkgInfo"
     PROPERTIES MACOSX_PACKAGE_LOCATION "."
-  )
-
-endfunction()
-
-
-function(_FRUT_set_AUv3_bundle_properties auv3_target)
-
-  # com.yourcompany.NewProject -> com.yourcompany.NewProject.NewProjectAUv3
-  string(REPLACE "." ";" bundle_id_parts "${JUCER_BUNDLE_IDENTIFIER}")
-  list(LENGTH bundle_id_parts bundle_id_parts_length)
-  math(EXPR bundle_id_parts_last_index "${bundle_id_parts_length} - 1")
-  list(GET bundle_id_parts ${bundle_id_parts_last_index} bundle_id_last_part)
-  list(APPEND bundle_id_parts "${bundle_id_last_part}AUv3")
-  string(REPLACE ";" "." bundle_id "${bundle_id_parts}")
-  if(CMAKE_GENERATOR STREQUAL "Xcode")
-    set_target_properties(${auv3_target} PROPERTIES
-      XCODE_ATTRIBUTE_PRODUCT_BUNDLE_IDENTIFIER "${bundle_id}"
-    )
-  else()
-    set_target_properties(${auv3_target} PROPERTIES
-      MACOSX_BUNDLE_GUI_IDENTIFIER "${bundle_id}"
-    )
-  endif()
-
-  # Cannot use _FRUT_set_bundle_properties() since Projucer sets xcodeIsBundle=false
-  # for this target, though it is a bundle...
-  set_target_properties(${auv3_target} PROPERTIES
-    BUNDLE TRUE
-    BUNDLE_EXTENSION "appex"
-    XCODE_ATTRIBUTE_WRAPPER_EXTENSION "appex"
   )
 
 endfunction()
