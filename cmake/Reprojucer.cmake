@@ -1713,7 +1713,6 @@ function(jucer_project_end)
     if(DEFINED icon_filename)
       set(JUCER_ICON_FILE "${CMAKE_CURRENT_BINARY_DIR}/${icon_filename}")
       source_group("Juce Library Code" FILES "${JUCER_ICON_FILE}")
-      set(JUCER_BUNDLE_ICON_FILE "${icon_filename}")
     endif()
   endif()
 
@@ -1735,7 +1734,8 @@ function(jucer_project_end)
       endif()
     endforeach()
 
-    if(icon_filename)
+    if(JUCER_ICON_FILE)
+      get_filename_component(icon_filename "${JUCER_ICON_FILE}" NAME)
       string(CONCAT resources_rc_icon_settings
         "\n"
         "\nIDI_ICON1 ICON DISCARDABLE \"${icon_filename}\""
@@ -4081,6 +4081,8 @@ function(_FRUT_generate_plist_file
     )
   endif()
 
+  get_filename_component(bundle_icon_file "${JUCER_ICON_FILE}" NAME)
+
   if(DEFINED JUCER_COMPANY_COPYRIGHT
       OR NOT (DEFINED JUCER_VERSION AND JUCER_VERSION VERSION_LESS 5.2.0))
     set(ns_human_readable_copyright "@JUCER_COMPANY_COPYRIGHT@")
@@ -4092,7 +4094,7 @@ function(_FRUT_generate_plist_file
     <key>CFBundleExecutable</key>
     <string>${bundle_executable}</string>
     <key>CFBundleIconFile</key>
-    <string>@JUCER_BUNDLE_ICON_FILE@</string>
+    <string>${bundle_icon_file}</string>
     <key>CFBundleIdentifier</key>
     <string>${bundle_identifier}</string>
     <key>CFBundleName</key>
