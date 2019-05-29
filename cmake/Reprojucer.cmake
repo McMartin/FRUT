@@ -1717,43 +1717,9 @@ function(jucer_project_end)
   endif()
 
   if(WIN32 AND NOT JUCER_PROJECT_TYPE STREQUAL "Static Library")
-    set(rc_keys "CompanyName" "LegalCopyright" "FileDescription"
-      "FileVersion" "ProductName" "ProductVersion"
-    )
-    set(rc_values "JUCER_COMPANY_NAME" "JUCER_COMPANY_COPYRIGHT" "JUCER_PROJECT_NAME"
-      "JUCER_PROJECT_VERSION" "JUCER_PROJECT_NAME" "JUCER_PROJECT_VERSION"
-    )
-    set(rc_string_file_info_values "")
-    foreach(index RANGE 5)
-      list(GET rc_keys ${index} rc_key)
-      list(GET rc_values ${index} rc_value)
-      if(DEFINED ${rc_value} AND NOT ${rc_value} STREQUAL "")
-        string(APPEND rc_string_file_info_values
-          "      VALUE \"${rc_key}\",  \"${${rc_value}}\\0\"\n"
-        )
-      endif()
-    endforeach()
-
-    if(JUCER_ICON_FILE)
-      get_filename_component(icon_filename "${JUCER_ICON_FILE}" NAME)
-      string(CONCAT resources_rc_icon_settings
-        "\n"
-        "\nIDI_ICON1 ICON DISCARDABLE \"${icon_filename}\""
-        "\nIDI_ICON2 ICON DISCARDABLE \"${icon_filename}\""
-      )
-    endif()
-
-    string(REPLACE "." ";" version_parts "${JUCER_PROJECT_VERSION}")
-    list(LENGTH version_parts version_parts_length)
-    while(version_parts_length LESS 4)
-      list(APPEND version_parts 0)
-      list(LENGTH version_parts version_parts_length)
-    endwhile()
-    string(REPLACE ";" "," comma_separated_version_number "${version_parts}")
-
-    configure_file("${Reprojucer_templates_DIR}/resources.rc" "resources.rc" @ONLY)
     set(JUCER_RESOURCES_RC_FILE "${CMAKE_CURRENT_BINARY_DIR}/resources.rc")
-    source_group("Juce Library Code" FILES "${CMAKE_CURRENT_BINARY_DIR}/resources.rc")
+    _FRUT_generate_resources_rc_file("${JUCER_RESOURCES_RC_FILE}")
+    source_group("Juce Library Code" FILES "${JUCER_RESOURCES_RC_FILE}")
   endif()
 
   source_group("Juce Library Code"
@@ -3174,6 +3140,47 @@ function(_FRUT_generate_icon_file icon_format icon_file_output_dir out_icon_file
   if(NOT "${icon_filename}" STREQUAL "")
     set(${out_icon_filename} "${icon_filename}" PARENT_SCOPE)
   endif()
+
+endfunction()
+
+
+function(_FRUT_generate_resources_rc_file output_path)
+
+  set(rc_keys "CompanyName" "LegalCopyright" "FileDescription"
+    "FileVersion" "ProductName" "ProductVersion"
+  )
+  set(rc_values "JUCER_COMPANY_NAME" "JUCER_COMPANY_COPYRIGHT" "JUCER_PROJECT_NAME"
+    "JUCER_PROJECT_VERSION" "JUCER_PROJECT_NAME" "JUCER_PROJECT_VERSION"
+  )
+  set(rc_string_file_info_values "")
+  foreach(index RANGE 5)
+    list(GET rc_keys ${index} rc_key)
+    list(GET rc_values ${index} rc_value)
+    if(DEFINED ${rc_value} AND NOT ${rc_value} STREQUAL "")
+      string(APPEND rc_string_file_info_values
+        "      VALUE \"${rc_key}\",  \"${${rc_value}}\\0\"\n"
+      )
+    endif()
+  endforeach()
+
+  if(JUCER_ICON_FILE)
+    get_filename_component(icon_filename "${JUCER_ICON_FILE}" NAME)
+    string(CONCAT resources_rc_icon_settings
+      "\n"
+      "\nIDI_ICON1 ICON DISCARDABLE \"${icon_filename}\""
+      "\nIDI_ICON2 ICON DISCARDABLE \"${icon_filename}\""
+    )
+  endif()
+
+  string(REPLACE "." ";" version_parts "${JUCER_PROJECT_VERSION}")
+  list(LENGTH version_parts version_parts_length)
+  while(version_parts_length LESS 4)
+    list(APPEND version_parts 0)
+    list(LENGTH version_parts version_parts_length)
+  endwhile()
+  string(REPLACE ";" "," comma_separated_version_number "${version_parts}")
+
+  configure_file("${Reprojucer_templates_DIR}/resources.rc" "${output_path}" @ONLY)
 
 endfunction()
 
