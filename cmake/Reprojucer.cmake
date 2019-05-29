@@ -1752,7 +1752,7 @@ function(jucer_project_end)
     string(REPLACE ";" "," comma_separated_version_number "${version_parts}")
 
     configure_file("${Reprojucer_templates_DIR}/resources.rc" "resources.rc" @ONLY)
-    set(resources_rc_file "${CMAKE_CURRENT_BINARY_DIR}/resources.rc")
+    set(JUCER_RESOURCES_RC_FILE "${CMAKE_CURRENT_BINARY_DIR}/resources.rc")
     source_group("Juce Library Code" FILES "${CMAKE_CURRENT_BINARY_DIR}/resources.rc")
   endif()
 
@@ -1785,7 +1785,7 @@ function(jucer_project_end)
     ${modules_sources}
     ${JUCER_PROJECT_MODULES_BROWSABLE_FILES}
     ${JUCER_ICON_FILE}
-    ${resources_rc_file}
+    ${JUCER_RESOURCES_RC_FILE}
   )
 
   if(JUCER_PROJECT_TYPE STREQUAL "Console Application")
@@ -1864,7 +1864,7 @@ function(jucer_project_end)
       ${SharedCode_sources}
       ${JUCER_PROJECT_MODULES_BROWSABLE_FILES}
       ${JUCER_ICON_FILE}
-      ${resources_rc_file}
+      ${JUCER_RESOURCES_RC_FILE}
     )
     _FRUT_set_output_directory_properties(${shared_code_target} "Shared Code")
     _FRUT_set_output_name_properties(${shared_code_target})
@@ -1880,7 +1880,7 @@ function(jucer_project_end)
         ${VST_sources}
         ${JUCER_PROJECT_XCODE_RESOURCES}
         ${JUCER_ICON_FILE}
-        ${resources_rc_file}
+        ${JUCER_RESOURCES_RC_FILE}
       )
       target_link_libraries(${vst_target} PRIVATE ${shared_code_target})
       _FRUT_generate_plist_file(${vst_target} "VST" "BNDL" "????")
@@ -1916,7 +1916,7 @@ function(jucer_project_end)
         ${VST3_sources}
         ${JUCER_PROJECT_XCODE_RESOURCES}
         ${JUCER_ICON_FILE}
-        ${resources_rc_file}
+        ${JUCER_RESOURCES_RC_FILE}
       )
       target_link_libraries(${vst3_target} PRIVATE ${shared_code_target})
       _FRUT_generate_plist_file(${vst3_target} "VST3" "BNDL" "????")
@@ -2029,7 +2029,7 @@ function(jucer_project_end)
         ${RTAS_sources}
         ${JUCER_PROJECT_XCODE_RESOURCES}
         ${JUCER_ICON_FILE}
-        ${resources_rc_file}
+        ${JUCER_RESOURCES_RC_FILE}
       )
       target_link_libraries(${rtas_target} PRIVATE ${shared_code_target})
       _FRUT_generate_plist_file(${rtas_target} "RTAS" "TDMw" "PTul")
@@ -2174,7 +2174,7 @@ function(jucer_project_end)
         ${AAX_sources}
         ${JUCER_PROJECT_XCODE_RESOURCES}
         ${JUCER_ICON_FILE}
-        ${resources_rc_file}
+        ${JUCER_RESOURCES_RC_FILE}
       )
       target_link_libraries(${aax_target} PRIVATE ${shared_code_target})
       _FRUT_generate_plist_file(${aax_target} "AAX" "TDMw" "PTul")
@@ -2300,7 +2300,7 @@ function(jucer_project_end)
         ${Standalone_sources}
         ${JUCER_PROJECT_XCODE_RESOURCES}
         ${JUCER_ICON_FILE}
-        ${resources_rc_file}
+        ${JUCER_RESOURCES_RC_FILE}
       )
       target_link_libraries(${standalone_target} PRIVATE ${shared_code_target})
       if(juce4_standalone)
@@ -2339,7 +2339,7 @@ function(jucer_project_end)
         ${Unity_sources}
         ${JUCER_PROJECT_XCODE_RESOURCES}
         ${JUCER_ICON_FILE}
-        ${resources_rc_file}
+        ${JUCER_RESOURCES_RC_FILE}
       )
       target_link_libraries(${unity_target} PRIVATE ${shared_code_target})
       _FRUT_generate_plist_file(${unity_target} "Unity_Plugin" "BNDL" "????")
