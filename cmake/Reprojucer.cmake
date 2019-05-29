@@ -1711,8 +1711,8 @@ function(jucer_project_end)
     endif()
 
     if(DEFINED icon_filename)
-      set(icon_file "${CMAKE_CURRENT_BINARY_DIR}/${icon_filename}")
-      source_group("Juce Library Code" FILES "${icon_file}")
+      set(JUCER_ICON_FILE "${CMAKE_CURRENT_BINARY_DIR}/${icon_filename}")
+      source_group("Juce Library Code" FILES "${JUCER_ICON_FILE}")
       set(JUCER_BUNDLE_ICON_FILE "${icon_filename}")
     endif()
   endif()
@@ -1763,7 +1763,7 @@ function(jucer_project_end)
   string(REGEX REPLACE "[^A-Za-z0-9_.+-]" "_" target "${JUCER_PROJECT_NAME}")
 
   if(APPLE)
-    set_source_files_properties(${JUCER_PROJECT_XCODE_RESOURCES} ${icon_file}
+    set_source_files_properties(${JUCER_PROJECT_XCODE_RESOURCES} ${JUCER_ICON_FILE}
       PROPERTIES MACOSX_PACKAGE_LOCATION "Resources"
     )
   else()
@@ -1784,7 +1784,7 @@ function(jucer_project_end)
     ${JUCER_PROJECT_FILES}
     ${modules_sources}
     ${JUCER_PROJECT_MODULES_BROWSABLE_FILES}
-    ${icon_file}
+    ${JUCER_ICON_FILE}
     ${resources_rc_file}
   )
 
@@ -1863,7 +1863,7 @@ function(jucer_project_end)
     add_library(${shared_code_target} STATIC
       ${SharedCode_sources}
       ${JUCER_PROJECT_MODULES_BROWSABLE_FILES}
-      ${icon_file}
+      ${JUCER_ICON_FILE}
       ${resources_rc_file}
     )
     _FRUT_set_output_directory_properties(${shared_code_target} "Shared Code")
@@ -1879,7 +1879,7 @@ function(jucer_project_end)
       add_library(${vst_target} MODULE
         ${VST_sources}
         ${JUCER_PROJECT_XCODE_RESOURCES}
-        ${icon_file}
+        ${JUCER_ICON_FILE}
         ${resources_rc_file}
       )
       target_link_libraries(${vst_target} PRIVATE ${shared_code_target})
@@ -1915,7 +1915,7 @@ function(jucer_project_end)
       add_library(${vst3_target} MODULE
         ${VST3_sources}
         ${JUCER_PROJECT_XCODE_RESOURCES}
-        ${icon_file}
+        ${JUCER_ICON_FILE}
         ${resources_rc_file}
       )
       target_link_libraries(${vst3_target} PRIVATE ${shared_code_target})
@@ -1952,7 +1952,7 @@ function(jucer_project_end)
       add_library(${au_target} MODULE
         ${AudioUnit_sources}
         ${JUCER_PROJECT_XCODE_RESOURCES}
-        ${icon_file}
+        ${JUCER_ICON_FILE}
       )
       target_link_libraries(${au_target} PRIVATE ${shared_code_target})
 
@@ -1988,7 +1988,7 @@ function(jucer_project_end)
       add_library(${auv3_target} MODULE
         ${AudioUnitv3_sources}
         ${JUCER_PROJECT_XCODE_RESOURCES}
-        ${icon_file}
+        ${JUCER_ICON_FILE}
       )
       target_link_libraries(${auv3_target} PRIVATE ${shared_code_target})
       _FRUT_generate_plist_file_AUv3(${auv3_target} "AUv3_AppExtension")
@@ -2028,7 +2028,7 @@ function(jucer_project_end)
       add_library(${rtas_target} MODULE
         ${RTAS_sources}
         ${JUCER_PROJECT_XCODE_RESOURCES}
-        ${icon_file}
+        ${JUCER_ICON_FILE}
         ${resources_rc_file}
       )
       target_link_libraries(${rtas_target} PRIVATE ${shared_code_target})
@@ -2173,7 +2173,7 @@ function(jucer_project_end)
       add_library(${aax_target} MODULE
         ${AAX_sources}
         ${JUCER_PROJECT_XCODE_RESOURCES}
-        ${icon_file}
+        ${JUCER_ICON_FILE}
         ${resources_rc_file}
       )
       target_link_libraries(${aax_target} PRIVATE ${shared_code_target})
@@ -2236,8 +2236,8 @@ function(jucer_project_end)
           "$<TARGET_FILE:${aax_target}>"
           "${all_confs_bundle}/Contents/${arch_dir}/${all_confs_output_name}.aaxplugin"
         )
-        if(DEFINED icon_file)
-          set(plugin_icon "${icon_file}")
+        if(DEFINED JUCER_ICON_FILE)
+          set(plugin_icon "${JUCER_ICON_FILE}")
         else()
           set(plugin_icon "${JUCER_AAX_SDK_FOLDER}/Utilities/PlugIn.ico")
         endif()
@@ -2299,7 +2299,7 @@ function(jucer_project_end)
       add_executable(${standalone_target} WIN32 MACOSX_BUNDLE
         ${Standalone_sources}
         ${JUCER_PROJECT_XCODE_RESOURCES}
-        ${icon_file}
+        ${JUCER_ICON_FILE}
         ${resources_rc_file}
       )
       target_link_libraries(${standalone_target} PRIVATE ${shared_code_target})
@@ -2338,7 +2338,7 @@ function(jucer_project_end)
       add_library(${unity_target} MODULE
         ${Unity_sources}
         ${JUCER_PROJECT_XCODE_RESOURCES}
-        ${icon_file}
+        ${JUCER_ICON_FILE}
         ${resources_rc_file}
       )
       target_link_libraries(${unity_target} PRIVATE ${shared_code_target})
