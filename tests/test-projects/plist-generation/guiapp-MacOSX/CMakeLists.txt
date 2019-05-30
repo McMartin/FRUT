@@ -63,7 +63,7 @@ function(test_app_plist_bundle_identifier)
 endfunction()
 
 function(test_app_plist_icon_file)
-  set(JUCER_BUNDLE_ICON_FILE "Icon.icns")
+  set(JUCER_ICON_FILE "${CMAKE_CURRENT_BINARY_DIR}/Icon.icns")
   _FRUT_generate_plist_file(target "App-IconFile" "APPL" "????")
 endfunction()
 

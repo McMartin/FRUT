@@ -1711,49 +1711,15 @@ function(jucer_project_end)
     endif()
 
     if(DEFINED icon_filename)
-      set(icon_file "${CMAKE_CURRENT_BINARY_DIR}/${icon_filename}")
-      source_group("Juce Library Code" FILES "${icon_file}")
-      set(JUCER_BUNDLE_ICON_FILE "${icon_filename}")
+      set(JUCER_ICON_FILE "${CMAKE_CURRENT_BINARY_DIR}/${icon_filename}")
+      source_group("Juce Library Code" FILES "${JUCER_ICON_FILE}")
     endif()
   endif()
 
   if(WIN32 AND NOT JUCER_PROJECT_TYPE STREQUAL "Static Library")
-    set(rc_keys "CompanyName" "LegalCopyright" "FileDescription"
-      "FileVersion" "ProductName" "ProductVersion"
-    )
-    set(rc_values "JUCER_COMPANY_NAME" "JUCER_COMPANY_COPYRIGHT" "JUCER_PROJECT_NAME"
-      "JUCER_PROJECT_VERSION" "JUCER_PROJECT_NAME" "JUCER_PROJECT_VERSION"
-    )
-    set(rc_string_file_info_values "")
-    foreach(index RANGE 5)
-      list(GET rc_keys ${index} rc_key)
-      list(GET rc_values ${index} rc_value)
-      if(DEFINED ${rc_value} AND NOT ${rc_value} STREQUAL "")
-        string(APPEND rc_string_file_info_values
-          "      VALUE \"${rc_key}\",  \"${${rc_value}}\\0\"\n"
-        )
-      endif()
-    endforeach()
-
-    if(icon_filename)
-      string(CONCAT resources_rc_icon_settings
-        "\n"
-        "\nIDI_ICON1 ICON DISCARDABLE \"${icon_filename}\""
-        "\nIDI_ICON2 ICON DISCARDABLE \"${icon_filename}\""
-      )
-    endif()
-
-    string(REPLACE "." ";" version_parts "${JUCER_PROJECT_VERSION}")
-    list(LENGTH version_parts version_parts_length)
-    while(version_parts_length LESS 4)
-      list(APPEND version_parts 0)
-      list(LENGTH version_parts version_parts_length)
-    endwhile()
-    string(REPLACE ";" "," comma_separated_version_number "${version_parts}")
-
-    configure_file("${Reprojucer_templates_DIR}/resources.rc" "resources.rc" @ONLY)
-    set(resources_rc_file "${CMAKE_CURRENT_BINARY_DIR}/resources.rc")
-    source_group("Juce Library Code" FILES "${CMAKE_CURRENT_BINARY_DIR}/resources.rc")
+    set(JUCER_RESOURCES_RC_FILE "${CMAKE_CURRENT_BINARY_DIR}/resources.rc")
+    _FRUT_generate_resources_rc_file("${JUCER_RESOURCES_RC_FILE}")
+    source_group("Juce Library Code" FILES "${JUCER_RESOURCES_RC_FILE}")
   endif()
 
   source_group("Juce Library Code"
@@ -1763,7 +1729,7 @@ function(jucer_project_end)
   string(REGEX REPLACE "[^A-Za-z0-9_.+-]" "_" target "${JUCER_PROJECT_NAME}")
 
   if(APPLE)
-    set_source_files_properties(${JUCER_PROJECT_XCODE_RESOURCES} ${icon_file}
+    set_source_files_properties(${JUCER_PROJECT_XCODE_RESOURCES} ${JUCER_ICON_FILE}
       PROPERTIES MACOSX_PACKAGE_LOCATION "Resources"
     )
   else()
@@ -1784,8 +1750,8 @@ function(jucer_project_end)
     ${JUCER_PROJECT_FILES}
     ${modules_sources}
     ${JUCER_PROJECT_MODULES_BROWSABLE_FILES}
-    ${icon_file}
-    ${resources_rc_file}
+    ${JUCER_ICON_FILE}
+    ${JUCER_RESOURCES_RC_FILE}
   )
 
   if(JUCER_PROJECT_TYPE STREQUAL "Console Application")
@@ -1863,8 +1829,8 @@ function(jucer_project_end)
     add_library(${shared_code_target} STATIC
       ${SharedCode_sources}
       ${JUCER_PROJECT_MODULES_BROWSABLE_FILES}
-      ${icon_file}
-      ${resources_rc_file}
+      ${JUCER_ICON_FILE}
+      ${JUCER_RESOURCES_RC_FILE}
     )
     _FRUT_set_output_directory_properties(${shared_code_target} "Shared Code")
     _FRUT_set_output_name_properties(${shared_code_target})
@@ -1879,8 +1845,8 @@ function(jucer_project_end)
       add_library(${vst_target} MODULE
         ${VST_sources}
         ${JUCER_PROJECT_XCODE_RESOURCES}
-        ${icon_file}
-        ${resources_rc_file}
+        ${JUCER_ICON_FILE}
+        ${JUCER_RESOURCES_RC_FILE}
       )
       target_link_libraries(${vst_target} PRIVATE ${shared_code_target})
       _FRUT_generate_plist_file(${vst_target} "VST" "BNDL" "????")
@@ -1915,8 +1881,8 @@ function(jucer_project_end)
       add_library(${vst3_target} MODULE
         ${VST3_sources}
         ${JUCER_PROJECT_XCODE_RESOURCES}
-        ${icon_file}
-        ${resources_rc_file}
+        ${JUCER_ICON_FILE}
+        ${JUCER_RESOURCES_RC_FILE}
       )
       target_link_libraries(${vst3_target} PRIVATE ${shared_code_target})
       _FRUT_generate_plist_file(${vst3_target} "VST3" "BNDL" "????")
@@ -1952,7 +1918,7 @@ function(jucer_project_end)
       add_library(${au_target} MODULE
         ${AudioUnit_sources}
         ${JUCER_PROJECT_XCODE_RESOURCES}
-        ${icon_file}
+        ${JUCER_ICON_FILE}
       )
       target_link_libraries(${au_target} PRIVATE ${shared_code_target})
 
@@ -1988,7 +1954,7 @@ function(jucer_project_end)
       add_library(${auv3_target} MODULE
         ${AudioUnitv3_sources}
         ${JUCER_PROJECT_XCODE_RESOURCES}
-        ${icon_file}
+        ${JUCER_ICON_FILE}
       )
       target_link_libraries(${auv3_target} PRIVATE ${shared_code_target})
       _FRUT_generate_plist_file_AUv3(${auv3_target} "AUv3_AppExtension")
@@ -2028,8 +1994,8 @@ function(jucer_project_end)
       add_library(${rtas_target} MODULE
         ${RTAS_sources}
         ${JUCER_PROJECT_XCODE_RESOURCES}
-        ${icon_file}
-        ${resources_rc_file}
+        ${JUCER_ICON_FILE}
+        ${JUCER_RESOURCES_RC_FILE}
       )
       target_link_libraries(${rtas_target} PRIVATE ${shared_code_target})
       _FRUT_generate_plist_file(${rtas_target} "RTAS" "TDMw" "PTul")
@@ -2173,8 +2139,8 @@ function(jucer_project_end)
       add_library(${aax_target} MODULE
         ${AAX_sources}
         ${JUCER_PROJECT_XCODE_RESOURCES}
-        ${icon_file}
-        ${resources_rc_file}
+        ${JUCER_ICON_FILE}
+        ${JUCER_RESOURCES_RC_FILE}
       )
       target_link_libraries(${aax_target} PRIVATE ${shared_code_target})
       _FRUT_generate_plist_file(${aax_target} "AAX" "TDMw" "PTul")
@@ -2236,8 +2202,8 @@ function(jucer_project_end)
           "$<TARGET_FILE:${aax_target}>"
           "${all_confs_bundle}/Contents/${arch_dir}/${all_confs_output_name}.aaxplugin"
         )
-        if(DEFINED icon_file)
-          set(plugin_icon "${icon_file}")
+        if(DEFINED JUCER_ICON_FILE)
+          set(plugin_icon "${JUCER_ICON_FILE}")
         else()
           set(plugin_icon "${JUCER_AAX_SDK_FOLDER}/Utilities/PlugIn.ico")
         endif()
@@ -2299,8 +2265,8 @@ function(jucer_project_end)
       add_executable(${standalone_target} WIN32 MACOSX_BUNDLE
         ${Standalone_sources}
         ${JUCER_PROJECT_XCODE_RESOURCES}
-        ${icon_file}
-        ${resources_rc_file}
+        ${JUCER_ICON_FILE}
+        ${JUCER_RESOURCES_RC_FILE}
       )
       target_link_libraries(${standalone_target} PRIVATE ${shared_code_target})
       if(juce4_standalone)
@@ -2338,8 +2304,8 @@ function(jucer_project_end)
       add_library(${unity_target} MODULE
         ${Unity_sources}
         ${JUCER_PROJECT_XCODE_RESOURCES}
-        ${icon_file}
-        ${resources_rc_file}
+        ${JUCER_ICON_FILE}
+        ${JUCER_RESOURCES_RC_FILE}
       )
       target_link_libraries(${unity_target} PRIVATE ${shared_code_target})
       _FRUT_generate_plist_file(${unity_target} "Unity_Plugin" "BNDL" "????")
@@ -3174,6 +3140,47 @@ function(_FRUT_generate_icon_file icon_format icon_file_output_dir out_icon_file
   if(NOT "${icon_filename}" STREQUAL "")
     set(${out_icon_filename} "${icon_filename}" PARENT_SCOPE)
   endif()
+
+endfunction()
+
+
+function(_FRUT_generate_resources_rc_file output_path)
+
+  set(rc_keys "CompanyName" "LegalCopyright" "FileDescription"
+    "FileVersion" "ProductName" "ProductVersion"
+  )
+  set(rc_values "JUCER_COMPANY_NAME" "JUCER_COMPANY_COPYRIGHT" "JUCER_PROJECT_NAME"
+    "JUCER_PROJECT_VERSION" "JUCER_PROJECT_NAME" "JUCER_PROJECT_VERSION"
+  )
+  set(rc_string_file_info_values "")
+  foreach(index RANGE 5)
+    list(GET rc_keys ${index} rc_key)
+    list(GET rc_values ${index} rc_value)
+    if(DEFINED ${rc_value} AND NOT ${rc_value} STREQUAL "")
+      string(APPEND rc_string_file_info_values
+        "      VALUE \"${rc_key}\",  \"${${rc_value}}\\0\"\n"
+      )
+    endif()
+  endforeach()
+
+  if(JUCER_ICON_FILE)
+    get_filename_component(icon_filename "${JUCER_ICON_FILE}" NAME)
+    string(CONCAT resources_rc_icon_settings
+      "\n"
+      "\nIDI_ICON1 ICON DISCARDABLE \"${icon_filename}\""
+      "\nIDI_ICON2 ICON DISCARDABLE \"${icon_filename}\""
+    )
+  endif()
+
+  string(REPLACE "." ";" version_parts "${JUCER_PROJECT_VERSION}")
+  list(LENGTH version_parts version_parts_length)
+  while(version_parts_length LESS 4)
+    list(APPEND version_parts 0)
+    list(LENGTH version_parts version_parts_length)
+  endwhile()
+  string(REPLACE ";" "," comma_separated_version_number "${version_parts}")
+
+  configure_file("${Reprojucer_templates_DIR}/resources.rc" "${output_path}" @ONLY)
 
 endfunction()
 
@@ -4081,6 +4088,8 @@ function(_FRUT_generate_plist_file
     )
   endif()
 
+  get_filename_component(bundle_icon_file "${JUCER_ICON_FILE}" NAME)
+
   if(DEFINED JUCER_COMPANY_COPYRIGHT
       OR NOT (DEFINED JUCER_VERSION AND JUCER_VERSION VERSION_LESS 5.2.0))
     set(ns_human_readable_copyright "@JUCER_COMPANY_COPYRIGHT@")
@@ -4092,7 +4101,7 @@ function(_FRUT_generate_plist_file
     <key>CFBundleExecutable</key>
     <string>${bundle_executable}</string>
     <key>CFBundleIconFile</key>
-    <string>@JUCER_BUNDLE_ICON_FILE@</string>
+    <string>${bundle_icon_file}</string>
     <key>CFBundleIdentifier</key>
     <string>${bundle_identifier}</string>
     <key>CFBundleName</key>
