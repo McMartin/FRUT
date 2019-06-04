@@ -40,6 +40,7 @@ Define the settings specific to an export target.
     [USE_HEADERMAP <ON|OFF>]  # [3]
 
     [PLATFORM_TOOLSET <platform_toolset>]  # [5]
+    [USE_IPP_LIBRARY <ipp_library_linking_method>]  # [5]
     [WINDOWS_TARGET_PLATFORM <windows_target_platform>]  # [5]
 
     [CXX_STANDARD_TO_USE <cxx_standard>]  # [6]

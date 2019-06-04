@@ -1038,7 +1038,7 @@ function(jucer_export_target exporter)
       "Single-Threaded DLL"
     )
     if(ipp_library IN_LIST ipp_library_values)
-      _FRUT_warn_about_unsupported_setting("USE_IPP_LIBRARY" "Use IPP Library" 252)
+      set(JUCER_USE_IPP_LIBRARY "${ipp_library}" PARENT_SCOPE)
     elseif(NOT ipp_library STREQUAL "No")
       message(FATAL_ERROR "Unsupported value for USE_IPP_LIBRARY: \"${ipp_library}\"")
     endif()
@@ -3309,6 +3309,9 @@ function(_FRUT_set_compiler_and_linker_settings target)
   if(APPLE)
     _FRUT_set_compiler_and_linker_settings_APPLE(${target})
   elseif(MSVC)
+    if(DEFINED JUCER_USE_IPP_LIBRARY AND NOT JUCER_USE_IPP_LIBRARY STREQUAL "No")
+      _FRUT_set_IPP_windows_compiler_and_linker_settings(${target})
+    endif()
     _FRUT_set_compiler_and_linker_settings_MSVC(${target})
   elseif(CMAKE_HOST_SYSTEM_NAME STREQUAL "Linux")
     _FRUT_set_compiler_and_linker_settings_Linux(${target})
@@ -3498,6 +3501,73 @@ function(_FRUT_set_compiler_and_linker_settings_APPLE target)
       set_target_properties(${target} PROPERTIES XCODE_ATTRIBUTE_USE_HEADERMAP "NO")
     endif()
   endif()
+
+endfunction()
+
+
+function(_FRUT_set_IPP_windows_compiler_and_linker_settings target)
+
+  set(ipp_registry_base_path "HKEY_LOCAL_MACHINE\\SOFTWARE\\WOW6432Node\\Intel\\Suites")
+
+  if(CMAKE_SIZEOF_VOID_P EQUAL 8) # 64-bit
+    set(ipp_registry_key "EMT64")
+    set(ipp_arch "intel64_win")
+  else()
+    set(ipp_registry_key "IA32")
+    set(ipp_arch "ia32_win")
+  endif()
+
+  get_filename_component(JUCER_IPP_SUB_KEY
+    "[${ipp_registry_base_path}\\Defaults\\${ipp_registry_key};IPPSubKey]"
+    ABSOLUTE BASE_DIR "" CACHE
+  )
+  file(TO_NATIVE_PATH "${JUCER_IPP_SUB_KEY}" ipp_sub_key)
+
+  set(env_var "programfiles(x86)") # needed because $ENV{} can't deal with parentheses
+  find_path(JUCER_IPP_INSTALL_DIR
+    NAMES "compiler/lib" "ipp/include" "ipp/lib"
+    HINTS
+      "[${ipp_registry_base_path}\\${ipp_sub_key}\\IPP;ProductDir]"
+      "$ENV{${env_var}}/IntelSWTools/compilers_and_libraries/windows"
+  )
+  if(NOT JUCER_IPP_INSTALL_DIR OR NOT IS_DIRECTORY "${JUCER_IPP_INSTALL_DIR}")
+    message(FATAL_ERROR "Could not find Intel IPP. Please set JUCER_IPP_INSTALL_DIR to"
+      " the Intel IPP <install_dir>, as documented on"
+      " https://software.intel.com/ipp-dev-guide-finding-intel-ipp-on-your-system."
+    )
+  endif()
+
+  set(use_ipp_library_values
+    "Yes (Default Mode)"
+    "Yes (Default Linking)"
+    "Multi-Threaded Static Library"
+    "Single-Threaded Static Library"
+    "Multi-Threaded DLL"
+    "Single-Threaded DLL"
+  )
+  list(FIND use_ipp_library_values "${JUCER_USE_IPP_LIBRARY}" ipp_linking_method_index)
+  if(ipp_linking_method_index EQUAL -1)
+    message(FATAL_ERROR
+      "Unsupported value for JUCER_USE_IPP_LIBRARY: \"${JUCER_USE_IPP_LIBRARY}\""
+    )
+  endif()
+  set(ipp_compile_definitions
+    "_IPP_SEQUENTIAL_DYNAMIC"
+    "_IPP_SEQUENTIAL_DYNAMIC"
+    "_IPP_PARALLEL_STATIC"
+    "_IPP_SEQUENTIAL_STATIC"
+    "_IPP_PARALLEL_DYNAMIC"
+    "_IPP_SEQUENTIAL_DYNAMIC"
+  )
+  list(GET ipp_compile_definitions ${ipp_linking_method_index} ipp_compile_definition)
+  target_compile_definitions(${target} PRIVATE "${ipp_compile_definition}")
+
+  target_include_directories(${target} PRIVATE "${JUCER_IPP_INSTALL_DIR}/ipp/include")
+
+  target_link_libraries(${target} PRIVATE
+    "-LIBPATH:${JUCER_IPP_INSTALL_DIR}/ipp/lib/${ipp_arch}"
+    "-LIBPATH:${JUCER_IPP_INSTALL_DIR}/compiler/lib/${ipp_arch}"
+  )
 
 endfunction()
 
