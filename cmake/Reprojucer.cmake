@@ -1031,6 +1031,7 @@ function(jucer_export_target exporter)
     set(ipp_library "${_USE_IPP_LIBRARY}")
     set(ipp_library_values
       "Yes (Default Mode)"
+      "Yes (Default Linking)"
       "Multi-Threaded Static Library"
       "Single-Threaded Static Library"
       "Multi-Threaded DLL"

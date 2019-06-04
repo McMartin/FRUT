@@ -1579,30 +1579,32 @@ int main(int argc, char* argv[])
           }
         }
 
-        convertSettingIfDefined(exporter, "IPPLibrary", "USE_IPP_LIBRARY",
-                                [](const juce::var& v) -> juce::String {
-                                  const auto value = v.toString();
+        convertSettingIfDefined(
+          exporter, "IPPLibrary", "USE_IPP_LIBRARY",
+          [&jucerVersionAsTuple](const juce::var& v) -> juce::String {
+            const auto value = v.toString();
 
-                                  if (value.isEmpty())
-                                    return "No";
+            if (value.isEmpty())
+              return "No";
 
-                                  if (value == "true")
-                                    return "Yes (Default Mode)";
+            if (value == "true")
+              return jucerVersionAsTuple >= Version{5, 2, 1} ? "Yes (Default Mode)"
+                                                             : "Yes (Default Linking)";
 
-                                  if (value == "Parallel_Static")
-                                    return "Multi-Threaded Static Library";
+            if (value == "Parallel_Static")
+              return "Multi-Threaded Static Library";
 
-                                  if (value == "Sequential")
-                                    return "Single-Threaded Static Library";
+            if (value == "Sequential")
+              return "Single-Threaded Static Library";
 
-                                  if (value == "Parallel_Dynamic")
-                                    return "Multi-Threaded DLL";
+            if (value == "Parallel_Dynamic")
+              return "Multi-Threaded DLL";
 
-                                  if (value == "Sequential_Dynamic")
-                                    return "Single-Threaded DLL";
+            if (value == "Sequential_Dynamic")
+              return "Single-Threaded DLL";
 
-                                  return {};
-                                });
+            return {};
+          });
 
         convertSettingIfDefined(exporter, "windowsTargetPlatformVersion",
                                 "WINDOWS_TARGET_PLATFORM", {});
