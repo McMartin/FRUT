@@ -1966,6 +1966,11 @@ function(jucer_project_end)
           XCODE_ATTRIBUTE_CODE_SIGN_ENTITLEMENTS
           "${CMAKE_CURRENT_BINARY_DIR}/${target}.entitlements"
         )
+      else()
+        message(WARNING "Reprojucer.cmake only supports entitlements when using the "
+          "Xcode generator. You should call `cmake -G Xcode` if you want to use "
+          "entitlements."
+        )
       endif()
 
       # Cannot use _FRUT_set_bundle_properties() since Projucer sets xcodeIsBundle=false
