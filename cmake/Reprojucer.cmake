@@ -990,7 +990,7 @@ function(jucer_export_target exporter)
   endif()
 
   if(DEFINED _USE_HEADERMAP)
-    if(_USE_HEADERMAP)
+    if(_USE_HEADERMAP AND NOT CMAKE_GENERATOR STREQUAL "Xcode")
       message(WARNING "USE_HEADERMAP is only supported when using the Xcode generator. "
         "You should call `cmake -G Xcode`."
       )
