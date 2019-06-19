@@ -982,15 +982,13 @@ function(jucer_export_target exporter)
   endif()
 
   if(DEFINED _KEEP_CUSTOM_XCODE_SCHEMES)
-    if(_KEEP_CUSTOM_XCODE_SCHEMES AND CMAKE_GENERATOR STREQUAL "Xcode")
-      message(WARNING "KEEP_CUSTOM_XCODE_SCHEMES is ignored. Reprojucer.cmake won't "
-        "create any Xcode schemes, so it won't delete any either."
-      )
-    endif()
+    message(WARNING "KEEP_CUSTOM_XCODE_SCHEMES is ignored. Reprojucer.cmake won't "
+      "create any Xcode schemes, so it won't delete any either."
+    )
   endif()
 
   if(DEFINED _USE_HEADERMAP)
-    if(_USE_HEADERMAP)
+    if(_USE_HEADERMAP AND NOT CMAKE_GENERATOR STREQUAL "Xcode")
       message(WARNING "USE_HEADERMAP is only supported when using the Xcode generator. "
         "You should call `cmake -G Xcode`."
       )
@@ -1967,6 +1965,11 @@ function(jucer_project_end)
         set_property(TARGET ${auv3_target} PROPERTY
           XCODE_ATTRIBUTE_CODE_SIGN_ENTITLEMENTS
           "${CMAKE_CURRENT_BINARY_DIR}/${target}.entitlements"
+        )
+      else()
+        message(WARNING "Reprojucer.cmake only supports entitlements when using the "
+          "Xcode generator. You should call `cmake -G Xcode` if you want to use "
+          "entitlements."
         )
       endif()
 
