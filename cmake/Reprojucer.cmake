@@ -2173,7 +2173,7 @@ function(jucer_project_end)
         endforeach()
 
         _FRUT_install_to_plugin_binary_location(${aax_target} "AAX"
-          "/Library/Application Support/Avid/Audio/Plug-Ins"
+          "$ENV{HOME}/Library/Application Support/Avid/Audio/Plug-Ins"
         )
       elseif(MSVC)
         set_property(TARGET ${aax_target} PROPERTY SUFFIX ".aaxdll")
