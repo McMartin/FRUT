@@ -21,6 +21,7 @@
 #include "Source/Utility/jucer_FileHelpers.h"
 
 #include <iostream>
+#include <memory>
 #include <string>
 #include <vector>
 
@@ -52,13 +53,13 @@ int main(int argc, char* argv[])
   {
     OwnedArray<Drawable> images;
 
-    ScopedPointer<Drawable> bigIcon{projectExporter.getBigIcon()};
+    std::unique_ptr<Drawable> bigIcon{projectExporter.getBigIcon()};
     if (bigIcon)
     {
       images.add(bigIcon.release());
     }
 
-    ScopedPointer<Drawable> smallIcon{projectExporter.getSmallIcon()};
+    std::unique_ptr<Drawable> smallIcon{projectExporter.getSmallIcon()};
     if (smallIcon)
     {
       images.add(smallIcon.release());

@@ -19,6 +19,7 @@
 
 #include "../jucer_Headers.h"
 
+#include <memory>
 
 class ProjectExporter
 {
@@ -30,12 +31,12 @@ public:
   {
   }
 
-  Drawable* getBigIcon() const
+  std::unique_ptr<Drawable> getBigIcon() const
   {
     return Drawable::createFromImageFile(mBigIcon);
   }
 
-  Drawable* getSmallIcon() const
+  std::unique_ptr<Drawable> getSmallIcon() const
   {
     return Drawable::createFromImageFile(mSmallIcon);
   }

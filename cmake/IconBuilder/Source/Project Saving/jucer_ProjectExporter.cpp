@@ -48,26 +48,28 @@
 #include "../jucer_Headers.h"
 #include "jucer_ProjectExporter.h"
 
+#include <memory>
+
 
 Image ProjectExporter::getBestIconForSize (int size, bool returnNullIfNothingBigEnough) const
 {
     Drawable* im = nullptr;
 
-    ScopedPointer<Drawable> im1 (getSmallIcon());
-    ScopedPointer<Drawable> im2 (getBigIcon());
+    std::unique_ptr<Drawable> im1 (getSmallIcon());
+    std::unique_ptr<Drawable> im2 (getBigIcon());
 
     if (im1 != nullptr && im2 != nullptr)
     {
         if (im1->getWidth() >= size && im2->getWidth() >= size)
-            im = im1->getWidth() < im2->getWidth() ? im1 : im2;
+            im = im1->getWidth() < im2->getWidth() ? im1.get() : im2.get();
         else if (im1->getWidth() >= size)
-            im = im1;
+            im = im1.get();
         else if (im2->getWidth() >= size)
-            im = im2;
+            im = im2.get();
     }
     else
     {
-        im = im1 != nullptr ? im1 : im2;
+        im = im1 != nullptr ? im1.get() : im2.get();
     }
 
     if (im == nullptr)
