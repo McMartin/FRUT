@@ -2969,12 +2969,13 @@ function(_FRUT_generate_JuceHeader_header)
   list(LENGTH JUCER_PROJECT_RESOURCES resources_count)
   if(resources_count GREATER 0)
     set(BinaryDataBuilder_file_name "BinaryDataBuilder-0.3.0")
+    set(install_prefix "${Reprojucer.cmake_DIR}/bin")
     if(NOT EXISTS "${BinaryDataBuilder_exe}"
         OR NOT BinaryDataBuilder_exe MATCHES "${BinaryDataBuilder_file_name}")
       unset(BinaryDataBuilder_exe CACHE)
     endif()
     find_program(BinaryDataBuilder_exe "${BinaryDataBuilder_file_name}"
-      PATHS "${Reprojucer.cmake_DIR}/bin"
+      PATHS "${install_prefix}"
       NO_DEFAULT_PATH
     )
     if(NOT BinaryDataBuilder_exe)
@@ -2985,14 +2986,14 @@ function(_FRUT_generate_JuceHeader_header)
         BinaryDataBuilder install
         CMAKE_FLAGS
         "-DJUCE_modules_DIRS=${JUCER_PROJECT_MODULES_FOLDERS}"
-        "-DCMAKE_INSTALL_PREFIX=${Reprojucer.cmake_DIR}/bin"
+        "-DCMAKE_INSTALL_PREFIX=${install_prefix}"
       )
       if(NOT BinaryDataBuilder)
         message(FATAL_ERROR "Failed to build BinaryDataBuilder")
       endif()
       message(STATUS "BinaryDataBuilder has been successfully built")
       find_program(BinaryDataBuilder_exe "${BinaryDataBuilder_file_name}"
-        PATHS "${Reprojucer.cmake_DIR}/bin"
+        PATHS "${install_prefix}"
         NO_DEFAULT_PATH
       )
       if(NOT BinaryDataBuilder_exe)
@@ -3091,12 +3092,13 @@ endfunction()
 function(_FRUT_generate_icon_file icon_format icon_file_output_dir out_icon_filename)
 
   set(IconBuilder_file_name "IconBuilder-0.1.0")
+  set(install_prefix "${Reprojucer.cmake_DIR}/bin")
   if(NOT EXISTS "${IconBuilder_exe}"
       OR NOT IconBuilder_exe MATCHES "${IconBuilder_file_name}")
     unset(IconBuilder_exe CACHE)
   endif()
   find_program(IconBuilder_exe "${IconBuilder_file_name}"
-    PATHS "${Reprojucer.cmake_DIR}/bin"
+    PATHS "${install_prefix}"
     NO_DEFAULT_PATH
   )
   if(NOT IconBuilder_exe)
@@ -3107,14 +3109,14 @@ function(_FRUT_generate_icon_file icon_format icon_file_output_dir out_icon_file
       IconBuilder install
       CMAKE_FLAGS
       "-DJUCE_modules_DIRS=${JUCER_PROJECT_MODULES_FOLDERS}"
-      "-DCMAKE_INSTALL_PREFIX=${Reprojucer.cmake_DIR}/bin"
+      "-DCMAKE_INSTALL_PREFIX=${install_prefix}"
     )
     if(NOT IconBuilder)
       message(FATAL_ERROR "Failed to build IconBuilder")
     endif()
     message(STATUS "IconBuilder has been successfully built")
     find_program(IconBuilder_exe "${IconBuilder_file_name}"
-      PATHS "${Reprojucer.cmake_DIR}/bin"
+      PATHS "${install_prefix}"
       NO_DEFAULT_PATH
     )
     if(NOT IconBuilder_exe)
@@ -4335,12 +4337,13 @@ function(_FRUT_generate_plist_file
 
   if(JUCER_CUSTOM_PLIST)
     set(PListMerger_file_name "PListMerger-0.1.0")
+    set(install_prefix "${Reprojucer.cmake_DIR}/bin")
     if(NOT EXISTS "${PListMerger_exe}"
         OR NOT PListMerger_exe MATCHES "${PListMerger_file_name}")
       unset(PListMerger_exe CACHE)
     endif()
     find_program(PListMerger_exe "${PListMerger_file_name}"
-      PATHS "${Reprojucer.cmake_DIR}/bin"
+      PATHS "${install_prefix}"
       NO_DEFAULT_PATH
     )
     if(NOT PListMerger_exe)
@@ -4351,14 +4354,14 @@ function(_FRUT_generate_plist_file
         PListMerger install
         CMAKE_FLAGS
         "-DJUCE_modules_DIRS=${JUCER_PROJECT_MODULES_FOLDERS}"
-        "-DCMAKE_INSTALL_PREFIX=${Reprojucer.cmake_DIR}/bin"
+        "-DCMAKE_INSTALL_PREFIX=${install_prefix}"
       )
       if(NOT PListMerger)
         message(FATAL_ERROR "Failed to build PListMerger")
       endif()
       message(STATUS "PListMerger has been successfully built")
       find_program(PListMerger_exe "${PListMerger_file_name}"
-        PATHS "${Reprojucer.cmake_DIR}/bin"
+        PATHS "${install_prefix}"
         NO_DEFAULT_PATH
       )
       if(NOT PListMerger_exe)
