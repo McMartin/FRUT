@@ -52,13 +52,13 @@ int main(int argc, char* argv[])
   {
     OwnedArray<Drawable> images;
 
-    ScopedPointer<Drawable> bigIcon{projectExporter.getBigIcon()};
+    auto bigIcon = projectExporter.getBigIcon();
     if (bigIcon)
     {
       images.add(bigIcon.release());
     }
 
-    ScopedPointer<Drawable> smallIcon{projectExporter.getSmallIcon()};
+    auto smallIcon = projectExporter.getSmallIcon();
     if (smallIcon)
     {
       images.add(smallIcon.release());

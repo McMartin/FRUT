@@ -19,6 +19,7 @@
 
 #include <algorithm>
 #include <iostream>
+#include <memory>
 #include <string>
 #include <vector>
 
@@ -35,8 +36,8 @@ int main(int argc, char* argv[])
 
   const std::vector<std::string> args{argv, argv + argc};
 
-  const juce::ScopedPointer<juce::XmlElement> firstPlistElement =
-    juce::XmlDocument::parse(args.at(1));
+  const auto firstPlistElement =
+    std::unique_ptr<juce::XmlElement>{juce::XmlDocument::parse(args.at(1))};
   if (!firstPlistElement || !firstPlistElement->hasTagName("plist"))
   {
     std::cerr << "Invalid first plist content, expected <plist> element" << std::endl;
@@ -85,8 +86,8 @@ int main(int argc, char* argv[])
     }
   }
 
-  const juce::ScopedPointer<juce::XmlElement> secondPlistElement =
-    juce::XmlDocument::parse(args.at(2));
+  const auto secondPlistElement =
+    std::unique_ptr<juce::XmlElement>{juce::XmlDocument::parse(args.at(2))};
   if (!secondPlistElement || !secondPlistElement->hasTagName("plist"))
   {
     std::cerr << "Invalid second plist content, expected <plist> element" << std::endl;
