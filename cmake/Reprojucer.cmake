@@ -2979,7 +2979,7 @@ function(_FRUT_generate_JuceHeader_header)
       NO_DEFAULT_PATH
     )
     if(NOT BinaryDataBuilder_exe)
-      message(STATUS "Building BinaryDataBuilder")
+      message(STATUS "Building and installing BinaryDataBuilder")
       try_compile(BinaryDataBuilder
         "${Reprojucer.cmake_DIR}/BinaryDataBuilder/_build/${CMAKE_GENERATOR}"
         "${Reprojucer.cmake_DIR}/BinaryDataBuilder"
@@ -2991,7 +2991,7 @@ function(_FRUT_generate_JuceHeader_header)
       if(NOT BinaryDataBuilder)
         message(FATAL_ERROR "Failed to build BinaryDataBuilder")
       endif()
-      message(STATUS "BinaryDataBuilder has been successfully built")
+      message(STATUS "Installed BinaryDataBuilder in ${install_prefix}")
       find_program(BinaryDataBuilder_exe "${BinaryDataBuilder_file_name}"
         PATHS "${install_prefix}"
         NO_DEFAULT_PATH
@@ -3102,7 +3102,7 @@ function(_FRUT_generate_icon_file icon_format icon_file_output_dir out_icon_file
     NO_DEFAULT_PATH
   )
   if(NOT IconBuilder_exe)
-    message(STATUS "Building IconBuilder")
+    message(STATUS "Building and installing IconBuilder")
     try_compile(IconBuilder
       "${Reprojucer.cmake_DIR}/IconBuilder/_build/${CMAKE_GENERATOR}"
       "${Reprojucer.cmake_DIR}/IconBuilder"
@@ -3114,7 +3114,7 @@ function(_FRUT_generate_icon_file icon_format icon_file_output_dir out_icon_file
     if(NOT IconBuilder)
       message(FATAL_ERROR "Failed to build IconBuilder")
     endif()
-    message(STATUS "IconBuilder has been successfully built")
+    message(STATUS "Installed IconBuilder in ${install_prefix}")
     find_program(IconBuilder_exe "${IconBuilder_file_name}"
       PATHS "${install_prefix}"
       NO_DEFAULT_PATH
@@ -4347,7 +4347,7 @@ function(_FRUT_generate_plist_file
       NO_DEFAULT_PATH
     )
     if(NOT PListMerger_exe)
-      message(STATUS "Building PListMerger")
+      message(STATUS "Building and installing PListMerger")
       try_compile(PListMerger
         "${Reprojucer.cmake_DIR}/PListMerger/_build/${CMAKE_GENERATOR}"
         "${Reprojucer.cmake_DIR}/PListMerger"
@@ -4359,7 +4359,7 @@ function(_FRUT_generate_plist_file
       if(NOT PListMerger)
         message(FATAL_ERROR "Failed to build PListMerger")
       endif()
-      message(STATUS "PListMerger has been successfully built")
+      message(STATUS "Installed PListMerger in ${install_prefix}")
       find_program(PListMerger_exe "${PListMerger_file_name}"
         PATHS "${install_prefix}"
         NO_DEFAULT_PATH
