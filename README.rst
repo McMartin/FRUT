@@ -268,6 +268,23 @@ contributors:
       <a href="https://github.com/McMartin/FRUT/pulls?q=state%3Amerged+reviewed-by%3Aczyjerry+-author%3Aczyjerry+" title="Pull Request reviews">👀</a>
     </td>
   </tr>
+  <tr>
+    <td>
+      <a href="https://github.com/franklange"><img src="https://github.com/franklange.png" width="100"><br />Frank Lange</a>
+      <br />
+      <a href="https://github.com/McMartin/FRUT/issues?q=is%3Aissue+author%3Afranklange" title="Bug reports">🐛</a>
+    </td>
+    <td>
+    </td>
+    <td>
+    </td>
+    <td>
+    </td>
+    <td>
+    </td>
+    <td>
+    </td>
+  </tr>
   </tbody>
   </table>
 
