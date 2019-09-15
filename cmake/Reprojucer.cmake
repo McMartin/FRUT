@@ -2989,7 +2989,10 @@ function(_FRUT_generate_JuceHeader_header)
         "-DCMAKE_INSTALL_PREFIX=${install_prefix}"
       )
       if(NOT BinaryDataBuilder)
-        message(FATAL_ERROR "Failed to build BinaryDataBuilder")
+        message(FATAL_ERROR "Failed to build and install BinaryDataBuilder. Please report"
+          " this problem by writing a new comment on the following GitHub issue:"
+          " https://github.com/McMartin/FRUT/issues/513"
+        )
       endif()
       message(STATUS "Installed BinaryDataBuilder in ${install_prefix}")
       find_program(BinaryDataBuilder_exe "${BinaryDataBuilder_file_name}"
@@ -3112,7 +3115,10 @@ function(_FRUT_generate_icon_file icon_format icon_file_output_dir out_icon_file
       "-DCMAKE_INSTALL_PREFIX=${install_prefix}"
     )
     if(NOT IconBuilder)
-      message(FATAL_ERROR "Failed to build IconBuilder")
+      message(FATAL_ERROR "Failed to build and install IconBuilder. Please report this"
+        " problem by writing a new comment on the following GitHub issue:"
+        " https://github.com/McMartin/FRUT/issues/514"
+      )
     endif()
     message(STATUS "Installed IconBuilder in ${install_prefix}")
     find_program(IconBuilder_exe "${IconBuilder_file_name}"
@@ -4357,7 +4363,10 @@ function(_FRUT_generate_plist_file
         "-DCMAKE_INSTALL_PREFIX=${install_prefix}"
       )
       if(NOT PListMerger)
-        message(FATAL_ERROR "Failed to build PListMerger")
+        message(FATAL_ERROR "Failed to build and install PListMerger. Please report this"
+          " problem by writing a new comment on the following GitHub issue:"
+          " https://github.com/McMartin/FRUT/issues/515"
+        )
       endif()
       message(STATUS "Installed PListMerger in ${install_prefix}")
       find_program(PListMerger_exe "${PListMerger_file_name}"
