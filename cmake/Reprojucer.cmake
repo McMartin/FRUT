@@ -2969,7 +2969,8 @@ function(_FRUT_generate_JuceHeader_header)
   list(LENGTH JUCER_PROJECT_RESOURCES resources_count)
   if(resources_count GREATER 0)
     set(BinaryDataBuilder_file_name "BinaryDataBuilder-0.3.0")
-    if(NOT BinaryDataBuilder_exe MATCHES "${BinaryDataBuilder_file_name}")
+    if(NOT EXISTS "${BinaryDataBuilder_exe}"
+        OR NOT BinaryDataBuilder_exe MATCHES "${BinaryDataBuilder_file_name}")
       unset(BinaryDataBuilder_exe CACHE)
     endif()
     find_program(BinaryDataBuilder_exe "${BinaryDataBuilder_file_name}"
@@ -3090,7 +3091,8 @@ endfunction()
 function(_FRUT_generate_icon_file icon_format icon_file_output_dir out_icon_filename)
 
   set(IconBuilder_file_name "IconBuilder-0.1.0")
-  if(NOT IconBuilder_exe MATCHES "${IconBuilder_file_name}")
+  if(NOT EXISTS "${IconBuilder_exe}"
+      OR NOT IconBuilder_exe MATCHES "${IconBuilder_file_name}")
     unset(IconBuilder_exe CACHE)
   endif()
   find_program(IconBuilder_exe "${IconBuilder_file_name}"
@@ -3995,6 +3997,9 @@ function(_FRUT_add_extra_commands_APPLE target exporter)
 
   get_target_property(target_type ${target} TYPE)
   if(target_type STREQUAL "EXECUTABLE" OR target_type STREQUAL "MODULE_LIBRARY")
+    if(NOT EXISTS "${strip_exe}")
+      unset(strip_exe CACHE)
+    endif()
     find_program(strip_exe "strip")
     if(NOT strip_exe)
       message(FATAL_ERROR "Could not find strip program")
@@ -4330,7 +4335,8 @@ function(_FRUT_generate_plist_file
 
   if(JUCER_CUSTOM_PLIST)
     set(PListMerger_file_name "PListMerger-0.1.0")
-    if(NOT PListMerger_exe MATCHES "${PListMerger_file_name}")
+    if(NOT EXISTS "${PListMerger_exe}"
+        OR NOT PListMerger_exe MATCHES "${PListMerger_file_name}")
       unset(PListMerger_exe CACHE)
     endif()
     find_program(PListMerger_exe "${PListMerger_file_name}"
@@ -4702,6 +4708,9 @@ endfunction()
 
 function(_FRUT_add_Rez_command_to_AU_plugin au_target)
 
+  if(NOT EXISTS "${Rez_exe}")
+    unset(Rez_exe CACHE)
+  endif()
   find_program(Rez_exe "Rez")
   if(NOT Rez_exe)
     message(WARNING "Could not find Rez tool. Discovery of AU plugins might not work.")
