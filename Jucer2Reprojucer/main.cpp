@@ -704,6 +704,9 @@ int main(int argc, char* argv[])
                        if (value == "14")
                          return "C++14";
 
+                       if (value == "17")
+                         return "C++17";
+
                        if (value == "latest")
                          return "Use Latest";
 
