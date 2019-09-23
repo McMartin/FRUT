@@ -278,6 +278,10 @@ contributors:
       <a href="https://github.com/McMartin/FRUT/issues?q=is%3Aissue+author%3Afranklange" title="Bug reports">🐛</a>
     </td>
     <td>
+      <a href="https://github.com/TheSlowGrowth"><img src="https://github.com/TheSlowGrowth.png" width="100"><br />Johannes Elliesen</a>
+      <br />
+      <a href="https://github.com/McMartin/FRUT/issues?q=is%3Aissue+author%3ATheSlowGrowth" title="Bug reports">🐛</a>
+      <a href="https://github.com/McMartin/FRUT/pulls?q=state%3Amerged+author%3ATheSlowGrowth" title="Code">💻</a>
     </td>
     <td>
     </td>
