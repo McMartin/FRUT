@@ -1,0 +1,13 @@
+task:
+  name: clang-format
+
+  only_if: $CIRRUS_BASE_BRANCH == "master" || $CIRRUS_BRANCH == "master"
+
+  container:
+    image: kunitoki/clang-8
+
+  test_script:
+    - clang-format -version
+    - 'git ls-files {Jucer2Reprojucer,cmake}/"*."{cpp,h}
+      | xargs -d\\n clang-format -i -style=file -verbose'
+    - git diff --exit-code
