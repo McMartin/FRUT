@@ -1,10 +1,7 @@
 # Using clang-format 8.0.0
 
-AlignAfterOpenBracket: Align
 AllowShortFunctionsOnASingleLine: false
 AlwaysBreakTemplateDeclarations: true
-BinPackArguments: true
-BinPackParameters: false
 BreakBeforeBinaryOperators: NonAssignment
 BreakBeforeBraces: Allman
 BreakConstructorInitializersBeforeComma: true
