@@ -1,4 +1,4 @@
-# Using clang-format 7.0.0
+# Using clang-format 8.0.0
 
 AlignAfterOpenBracket: Align
 AllowShortFunctionsOnASingleLine: false
