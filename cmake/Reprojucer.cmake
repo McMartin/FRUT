@@ -1672,8 +1672,8 @@ function(jucer_project_end)
       set(CMAKE_BUILD_TYPE "${first_configuration}")
       set(CMAKE_BUILD_TYPE "${first_configuration}" PARENT_SCOPE)
     elseif(NOT CMAKE_BUILD_TYPE IN_LIST JUCER_PROJECT_CONFIGURATIONS)
-      message(FATAL_ERROR "Undefined build configuration: ${CMAKE_BUILD_TYPE}\n"
-        "Defined build configurations: ${JUCER_PROJECT_CONFIGURATIONS}"
+      message(FATAL_ERROR "CMAKE_BUILD_TYPE is set to \"${CMAKE_BUILD_TYPE}\", which is"
+        " not in the defined build configurations: ${JUCER_PROJECT_CONFIGURATIONS}."
       )
     endif()
   endif()
