@@ -544,12 +544,13 @@ int main(int argc, char* argv[])
   }
 
   auto escapedJucerFileName = jucerFileName.toStdString();
-  std::replace_if(escapedJucerFileName.begin(), escapedJucerFileName.end(),
-                  [](const std::string::value_type& c) {
-                    return !(std::isalpha(c, std::locale::classic())
-                             || std::isdigit(c, std::locale::classic()));
-                  },
-                  '_');
+  std::replace_if(
+    escapedJucerFileName.begin(), escapedJucerFileName.end(),
+    [](const std::string::value_type& c) {
+      return !(std::isalpha(c, std::locale::classic())
+               || std::isdigit(c, std::locale::classic()));
+    },
+    '_');
   const auto jucerFileCMakeVar = escapedJucerFileName + "_FILE";
 
   // get_filename_component() or set(*_FILE)

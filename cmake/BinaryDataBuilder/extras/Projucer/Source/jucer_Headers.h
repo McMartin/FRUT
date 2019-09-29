@@ -17,8 +17,8 @@
 
 #pragma once
 
-#include <juce_core/juce_core.h>
 #include "../../../modules/juce_gui_extra/juce_gui_extra.h"
+#include <juce_core/juce_core.h>
 using namespace juce;
 
 #include "Utility/jucer_CodeHelpers.h"
