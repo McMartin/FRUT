@@ -1678,6 +1678,46 @@ function(jucer_project_end)
     endif()
   endif()
 
+  foreach(config IN LISTS JUCER_PROJECT_CONFIGURATIONS)
+    string(TOUPPER "${config}" upper_config)
+
+    foreach(lang ITEMS C CXX)
+      set(variable_name "CMAKE_${lang}_FLAGS_${upper_config}")
+      if(NOT DEFINED ${variable_name})
+        if(JUCER_CONFIGURATION_IS_DEBUG_${config})
+          set(${variable_name} ${CMAKE_${lang}_FLAGS_DEBUG} CACHE STRING
+            "Flags used by the compiler during \"${config}\" builds."
+          )
+        else()
+          set(${variable_name} ${CMAKE_${lang}_FLAGS_RELEASE} CACHE STRING
+            "Flags used by the compiler during \"${config}\" builds."
+          )
+        endif()
+        set(${variable_name}-ADVANCED 1 CACHE INTERNAL
+          "ADVANCED property for variable: ${variable_name}"
+        )
+      endif()
+    endforeach()
+
+    foreach(type ITEMS EXE MODULE SHARED STATIC)
+      set(variable_name "CMAKE_${type}_LINKER_FLAGS_${upper_config}")
+      if(NOT DEFINED ${variable_name})
+        if(JUCER_CONFIGURATION_IS_DEBUG_${config})
+          set(${variable_name} ${CMAKE_${type}_LINKER_FLAGS_DEBUG} CACHE STRING
+            "Flags used by the linker during \"${config}\" builds."
+          )
+        else()
+          set(${variable_name} ${CMAKE_${type}_LINKER_FLAGS_RELEASE} CACHE STRING
+            "Flags used by the linker during \"${config}\" builds."
+          )
+        endif()
+        set(${variable_name}-ADVANCED 1 CACHE INTERNAL
+          "ADVANCED property for variable: ${variable_name}"
+        )
+      endif()
+    endforeach()
+  endforeach()
+
   if(APPLE)
     foreach(config IN LISTS JUCER_PROJECT_CONFIGURATIONS)
       set(sdk_version "${JUCER_OSX_BASE_SDK_VERSION_${config}}")
