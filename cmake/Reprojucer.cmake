@@ -1672,11 +1672,51 @@ function(jucer_project_end)
       set(CMAKE_BUILD_TYPE "${first_configuration}")
       set(CMAKE_BUILD_TYPE "${first_configuration}" PARENT_SCOPE)
     elseif(NOT CMAKE_BUILD_TYPE IN_LIST JUCER_PROJECT_CONFIGURATIONS)
-      message(FATAL_ERROR "Undefined build configuration: ${CMAKE_BUILD_TYPE}\n"
-        "Defined build configurations: ${JUCER_PROJECT_CONFIGURATIONS}"
+      message(FATAL_ERROR "CMAKE_BUILD_TYPE is set to \"${CMAKE_BUILD_TYPE}\", which is"
+        " not in the defined build configurations: ${JUCER_PROJECT_CONFIGURATIONS}."
       )
     endif()
   endif()
+
+  foreach(config IN LISTS JUCER_PROJECT_CONFIGURATIONS)
+    string(TOUPPER "${config}" upper_config)
+
+    foreach(lang ITEMS C CXX)
+      set(variable_name "CMAKE_${lang}_FLAGS_${upper_config}")
+      if(NOT DEFINED ${variable_name})
+        if(JUCER_CONFIGURATION_IS_DEBUG_${config})
+          set(${variable_name} ${CMAKE_${lang}_FLAGS_DEBUG} CACHE STRING
+            "Flags used by the compiler during \"${config}\" builds."
+          )
+        else()
+          set(${variable_name} ${CMAKE_${lang}_FLAGS_RELEASE} CACHE STRING
+            "Flags used by the compiler during \"${config}\" builds."
+          )
+        endif()
+        set(${variable_name}-ADVANCED 1 CACHE INTERNAL
+          "ADVANCED property for variable: ${variable_name}"
+        )
+      endif()
+    endforeach()
+
+    foreach(type ITEMS EXE MODULE SHARED STATIC)
+      set(variable_name "CMAKE_${type}_LINKER_FLAGS_${upper_config}")
+      if(NOT DEFINED ${variable_name})
+        if(JUCER_CONFIGURATION_IS_DEBUG_${config})
+          set(${variable_name} ${CMAKE_${type}_LINKER_FLAGS_DEBUG} CACHE STRING
+            "Flags used by the linker during \"${config}\" builds."
+          )
+        else()
+          set(${variable_name} ${CMAKE_${type}_LINKER_FLAGS_RELEASE} CACHE STRING
+            "Flags used by the linker during \"${config}\" builds."
+          )
+        endif()
+        set(${variable_name}-ADVANCED 1 CACHE INTERNAL
+          "ADVANCED property for variable: ${variable_name}"
+        )
+      endif()
+    endforeach()
+  endforeach()
 
   if(APPLE)
     foreach(config IN LISTS JUCER_PROJECT_CONFIGURATIONS)
