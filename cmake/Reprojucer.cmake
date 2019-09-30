@@ -923,6 +923,21 @@ function(jucer_export_target exporter)
 
   if(DEFINED _HARDENED_RUNTIME_OPTIONS)
     set(projucer_strings
+      "Runtime Exceptions: Allow Execution of JIT-compiled Code"
+      "Runtime Exceptions: Allow Unsigned Executable Memory"
+      "Runtime Exceptions: Allow DYLD Environment Variables"
+      "Runtime Exceptions: Disable Library Validation"
+      "Runtime Exceptions: Disable Executable Memory Protection"
+      "Runtime Exceptions: Debugging Tool"
+      "Resource Access: Audio Input"
+      "Resource Access: Camera"
+      "Resource Access: Location"
+      "Resource Access: Address Book"
+      "Resource Access: Calendar"
+      "Resource Access: Photos Library"
+      "Resource Access: Apple Events"
+    )
+    set(projucer_5_4_3_strings
       "Allow Execution of JIT-compiled Code"
       "Allow Unsigned Executable Memory"
       "Allow DYLD Environment Variables"
@@ -956,9 +971,12 @@ function(jucer_export_target exporter)
     foreach(option_string IN LISTS _HARDENED_RUNTIME_OPTIONS)
       list(FIND projucer_strings "${option_string}" option_index)
       if(option_index EQUAL -1)
-        message(FATAL_ERROR
-          "Unsupported value for HARDENED_RUNTIME_OPTIONS: \"${option_string}\""
-        )
+        list(FIND projucer_5_4_3_strings "${option_string}" option_index)
+        if(option_index EQUAL -1)
+          message(FATAL_ERROR
+            "Unsupported value for HARDENED_RUNTIME_OPTIONS: \"${option_string}\""
+          )
+        endif()
       endif()
       list(GET entitlement_keys ${option_index} entitlement_key)
       list(APPEND hardened_runtime_options "${entitlement_key}")
