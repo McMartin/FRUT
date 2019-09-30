@@ -545,6 +545,8 @@ function(jucer_project_module module_name PATH_KEYWORD modules_folder)
   set(module_info_linuxPackages "")
   set(module_info_linuxLibs "")
   set(module_info_mingwLibs "")
+  set(module_info_OSXLibs "")
+  set(module_info_windowsLibs "")
   unset(module_info_minimumCppStandard)
 
   file(STRINGS "${module_header_file}" all_lines)
@@ -596,6 +598,14 @@ function(jucer_project_module module_name PATH_KEYWORD modules_folder)
   string(REGEX REPLACE "[ ,]+" ";" mingw_libs "${module_info_mingwLibs}")
   list(APPEND JUCER_PROJECT_MINGW_LIBS ${mingw_libs})
   set(JUCER_PROJECT_MINGW_LIBS "${JUCER_PROJECT_MINGW_LIBS}" PARENT_SCOPE)
+
+  string(REGEX REPLACE "[ ,]+" ";" osx_libs "${module_info_OSXLibs}")
+  list(APPEND JUCER_PROJECT_OSX_LIBS ${osx_libs})
+  set(JUCER_PROJECT_OSX_LIBS "${JUCER_PROJECT_OSX_LIBS}" PARENT_SCOPE)
+
+  string(REGEX REPLACE "[ ,]+" ";" windows_libs "${module_info_windowsLibs}")
+  list(APPEND JUCER_PROJECT_WINDOWS_LIBS ${windows_libs})
+  set(JUCER_PROJECT_WINDOWS_LIBS "${JUCER_PROJECT_WINDOWS_LIBS}" PARENT_SCOPE)
 
   if(DEFINED module_info_minimumCppStandard)
     unset(project_cxx_standard)
@@ -3564,6 +3574,10 @@ function(_FRUT_set_compiler_and_linker_settings_APPLE target)
     endif()
   endif()
 
+  foreach(osx_lib IN LISTS JUCER_PROJECT_OSX_LIBS)
+    target_link_libraries(${target} PRIVATE "-l${osx_lib}")
+  endforeach()
+
 endfunction()
 
 
@@ -3760,6 +3774,10 @@ function(_FRUT_set_compiler_and_linker_settings_MSVC target)
         )
       endif()
     endif()
+  endforeach()
+
+  foreach(windows_lib IN LISTS JUCER_PROJECT_WINDOWS_LIBS)
+    target_link_libraries(${target} PRIVATE "${windows_lib}.lib")
   endforeach()
 
 endfunction()
