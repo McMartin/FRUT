@@ -1796,6 +1796,13 @@ function(jucer_project_end)
     source_group("Juce Library Code" FILES "${JUCER_RESOURCES_RC_FILE}")
   endif()
 
+  if(CMAKE_GENERATOR STREQUAL "Xcode")
+    string(REGEX REPLACE "[\"#@,;:<>*^|?\\/]" "" project_filename "${JUCER_PROJECT_NAME}")
+    _FRUT_generate_entitlements_file("${project_filename}.entitlements"
+      JUCER_ENTITLEMENTS_FILE
+    )
+  endif()
+
   source_group("Juce Library Code"
     REGULAR_EXPRESSION "${CMAKE_CURRENT_BINARY_DIR}/JuceLibraryCode/*"
   )
@@ -1826,6 +1833,7 @@ function(jucer_project_end)
     ${JUCER_PROJECT_MODULES_BROWSABLE_FILES}
     ${JUCER_ICON_FILE}
     ${JUCER_RESOURCES_RC_FILE}
+    ${JUCER_ENTITLEMENTS_FILE}
   )
 
   if(JUCER_PROJECT_TYPE STREQUAL "Console Application")
@@ -2032,21 +2040,6 @@ function(jucer_project_end)
       )
       target_link_libraries(${auv3_target} PRIVATE ${shared_code_target})
       _FRUT_generate_plist_file_AUv3(${auv3_target} "AUv3_AppExtension")
-
-      if(CMAKE_GENERATOR STREQUAL "Xcode")
-        configure_file("${Reprojucer_templates_DIR}/AUv3.entitlements"
-          "${target}.entitlements" COPYONLY
-        )
-        set_property(TARGET ${auv3_target} PROPERTY
-          XCODE_ATTRIBUTE_CODE_SIGN_ENTITLEMENTS
-          "${CMAKE_CURRENT_BINARY_DIR}/${target}.entitlements"
-        )
-      else()
-        message(WARNING "Reprojucer.cmake only supports entitlements when using the "
-          "Xcode generator. You should call `cmake -G Xcode` if you want to use "
-          "entitlements."
-        )
-      endif()
 
       # Cannot use _FRUT_set_bundle_properties() since Projucer sets xcodeIsBundle=false
       # for this target, though it is a bundle...
@@ -3284,6 +3277,17 @@ function(_FRUT_generate_resources_rc_file output_path)
 endfunction()
 
 
+function(_FRUT_generate_entitlements_file output_filename out_var)
+
+  configure_file("${Reprojucer_templates_DIR}/project.entitlements"
+    "${output_filename}" COPYONLY
+  )
+
+  set(${out_var} "${CMAKE_CURRENT_BINARY_DIR}/${output_filename}" PARENT_SCOPE)
+
+endfunction()
+
+
 function(_FRUT_set_output_directory_properties target subfolder)
 
   foreach(config IN LISTS JUCER_PROJECT_CONFIGURATIONS)
@@ -3654,6 +3658,18 @@ function(_FRUT_set_compiler_and_linker_settings_APPLE target)
     set_target_properties(${target} PROPERTIES
       XCODE_ATTRIBUTE_CODE_SIGN_IDENTITY "${all_confs_code_sign_identity}"
     )
+  endif()
+
+  if(target MATCHES "_AUv3_AppExtension$")
+    if(CMAKE_GENERATOR STREQUAL "Xcode")
+      set_property(TARGET ${target} PROPERTY
+        XCODE_ATTRIBUTE_CODE_SIGN_ENTITLEMENTS "${JUCER_ENTITLEMENTS_FILE}"
+      )
+    else()
+      message(WARNING "Reprojucer.cmake only supports entitlements when using the Xcode "
+        "generator. You should call `cmake -G Xcode` if you want to use entitlements."
+      )
+    endif()
   endif()
 
   if(CMAKE_GENERATOR STREQUAL "Xcode" AND DEFINED JUCER_USE_HEADERMAP)
