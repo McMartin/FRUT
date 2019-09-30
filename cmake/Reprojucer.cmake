@@ -944,9 +944,14 @@ function(jucer_export_target exporter)
     )
   endif()
 
-  if(DEFINED _PUSH_NOTIFICATIONS_CAPABILITY AND _PUSH_NOTIFICATIONS_CAPABILITY)
-    _FRUT_warn_about_unsupported_setting(
-      "PUSH_NOTIFICATIONS_CAPABILITY" "Push Notifications Capability" 396
+  if(DEFINED _PUSH_NOTIFICATIONS_CAPABILITY)
+    if(_PUSH_NOTIFICATIONS_CAPABILITY AND NOT CMAKE_GENERATOR STREQUAL "Xcode")
+      message(WARNING "PUSH_NOTIFICATIONS_CAPABILITY is only supported when using the "
+        "Xcode generator. You should call `cmake -G Xcode`."
+      )
+    endif()
+    set(JUCER_PUSH_NOTIFICATIONS_CAPABILITY "${_PUSH_NOTIFICATIONS_CAPABILITY}"
+      PARENT_SCOPE
     )
   endif()
 
@@ -3285,6 +3290,13 @@ function(_FRUT_generate_entitlements_file output_filename out_var)
     string(APPEND entitlements_content
       "\t<key>com.apple.security.app-sandbox</key>\n" "\t<true/>\n"
     )
+  else()
+    if(JUCER_PUSH_NOTIFICATIONS_CAPABILITY)
+      string(APPEND entitlements_content
+        "\t<key>com.apple.developer.aps-environment</key>\n"
+        "\t<string>development</string>\n"
+      )
+    endif()
   endif()
 
   if(NOT entitlements_content STREQUAL "")
@@ -3572,6 +3584,10 @@ function(_FRUT_set_compiler_and_linker_settings_APPLE target)
     endif()
   endforeach()
 
+  if(JUCER_PUSH_NOTIFICATIONS_CAPABILITY)
+    target_compile_definitions(${target} PRIVATE "JUCE_PUSH_NOTIFICATIONS=1")
+  endif()
+
   if(target MATCHES "_AUv3_AppExtension$")
     if(CMAKE_GENERATOR STREQUAL "Xcode")
       set_target_properties(${target} PROPERTIES
@@ -3670,7 +3686,7 @@ function(_FRUT_set_compiler_and_linker_settings_APPLE target)
     )
   endif()
 
-  if(target MATCHES "_AUv3_AppExtension$")
+  if(JUCER_PUSH_NOTIFICATIONS_CAPABILITY OR target MATCHES "_AUv3_AppExtension$")
     if(CMAKE_GENERATOR STREQUAL "Xcode")
       set_property(TARGET ${target} PROPERTY
         XCODE_ATTRIBUTE_CODE_SIGN_ENTITLEMENTS "${JUCER_ENTITLEMENTS_FILE}"
