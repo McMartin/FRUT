@@ -3279,11 +3279,21 @@ endfunction()
 
 function(_FRUT_generate_entitlements_file output_filename out_var)
 
-  configure_file("${Reprojucer_templates_DIR}/project.entitlements"
-    "${output_filename}" COPYONLY
-  )
+  set(entitlements_content "")
 
-  set(${out_var} "${CMAKE_CURRENT_BINARY_DIR}/${output_filename}" PARENT_SCOPE)
+  if(JUCER_PROJECT_TYPE STREQUAL "Audio Plug-in")
+    string(APPEND entitlements_content
+      "\t<key>com.apple.security.app-sandbox</key>\n" "\t<true/>\n"
+    )
+  endif()
+
+  if(NOT entitlements_content STREQUAL "")
+    configure_file("${Reprojucer_templates_DIR}/project.entitlements"
+      "${output_filename}" @ONLY
+    )
+
+    set(${out_var} "${CMAKE_CURRENT_BINARY_DIR}/${output_filename}" PARENT_SCOPE)
+  endif()
 
 endfunction()
 
