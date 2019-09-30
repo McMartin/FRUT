@@ -912,14 +912,59 @@ function(jucer_export_target exporter)
     # TODO with USE_APP_SANDBOX
   endif()
 
-  if(DEFINED _USE_HARDENED_RUNTIME AND _USE_HARDENED_RUNTIME)
-    _FRUT_warn_about_unsupported_setting(
-      "USE_HARDENED_RUNTIME" "Use Hardened Runtime" 496
-    )
+  if(DEFINED _USE_HARDENED_RUNTIME)
+    if(_USE_HARDENED_RUNTIME AND NOT CMAKE_GENERATOR STREQUAL "Xcode")
+      message(WARNING "USE_HARDENED_RUNTIME is only supported when using the Xcode "
+        "generator. You should call `cmake -G Xcode`."
+      )
+    endif()
+    set(JUCER_USE_HARDENED_RUNTIME "${_USE_HARDENED_RUNTIME}" PARENT_SCOPE)
   endif()
 
   if(DEFINED _HARDENED_RUNTIME_OPTIONS)
-    # TODO with USE_HARDENED_RUNTIME
+    set(projucer_strings
+      "Allow Execution of JIT-compiled Code"
+      "Allow Unsigned Executable Memory"
+      "Allow DYLD Environment Variables"
+      "Disable Library Validation"
+      "Disable Executable Memory Protection"
+      "Debugging Tool"
+      "Audio Input"
+      "Camera"
+      "Location"
+      "Address Book"
+      "Calendar"
+      "Photos Library"
+      "Apple Events"
+    )
+    set(entitlement_keys
+      "com.apple.security.cs.allow-jit"
+      "com.apple.security.cs.allow-unsigned-executable-memory"
+      "com.apple.security.cs.allow-dyld-environment-variables"
+      "com.apple.security.cs.disable-library-validation"
+      "com.apple.security.cs.disable-executable-page-protection"
+      "com.apple.security.cs.debugger"
+      "com.apple.security.device.audio-input"
+      "com.apple.security.device.camera"
+      "com.apple.security.personal-information.location"
+      "com.apple.security.personal-information.addressbook"
+      "com.apple.security.personal-information.calendars"
+      "com.apple.security.personal-information.photos-library"
+      "com.apple.security.automation.apple-events"
+    )
+    set(hardened_runtime_options "")
+    foreach(option_string IN LISTS _HARDENED_RUNTIME_OPTIONS)
+      list(FIND projucer_strings "${option_string}" option_index)
+      if(option_index EQUAL -1)
+        message(FATAL_ERROR
+          "Unsupported value for HARDENED_RUNTIME_OPTIONS: \"${option_string}\""
+        )
+      endif()
+      list(GET entitlement_keys ${option_index} entitlement_key)
+      list(APPEND hardened_runtime_options "${entitlement_key}")
+    endforeach()
+    list(SORT hardened_runtime_options)
+    set(JUCER_HARDENED_RUNTIME_OPTIONS "${hardened_runtime_options}" PARENT_SCOPE)
   endif()
 
   if(DEFINED _MICROPHONE_ACCESS)
@@ -3298,6 +3343,11 @@ function(_FRUT_generate_entitlements_file output_filename out_var)
       )
     endif()
   endif()
+  if(JUCER_USE_HARDENED_RUNTIME)
+    foreach(option IN LISTS JUCER_HARDENED_RUNTIME_OPTIONS)
+      string(APPEND entitlements_content "\t<key>${option}</key>\n" "\t<true/>\n")
+    endforeach()
+  endif()
 
   if(NOT entitlements_content STREQUAL "")
     configure_file("${Reprojucer_templates_DIR}/project.entitlements"
@@ -3686,7 +3736,9 @@ function(_FRUT_set_compiler_and_linker_settings_APPLE target)
     )
   endif()
 
-  if(JUCER_PUSH_NOTIFICATIONS_CAPABILITY OR target MATCHES "_AUv3_AppExtension$")
+  if(JUCER_PUSH_NOTIFICATIONS_CAPABILITY
+      OR JUCER_USE_HARDENED_RUNTIME
+      OR target MATCHES "_AUv3_AppExtension$")
     if(CMAKE_GENERATOR STREQUAL "Xcode")
       set_property(TARGET ${target} PROPERTY
         XCODE_ATTRIBUTE_CODE_SIGN_ENTITLEMENTS "${JUCER_ENTITLEMENTS_FILE}"
@@ -3696,6 +3748,12 @@ function(_FRUT_set_compiler_and_linker_settings_APPLE target)
         "generator. You should call `cmake -G Xcode` if you want to use entitlements."
       )
     endif()
+  endif()
+
+  if(JUCER_USE_HARDENED_RUNTIME)
+    set_target_properties(${target} PROPERTIES
+      XCODE_ATTRIBUTE_ENABLE_HARDENED_RUNTIME "YES"
+    )
   endif()
 
   if(CMAKE_GENERATOR STREQUAL "Xcode" AND DEFINED JUCER_USE_HEADERMAP)

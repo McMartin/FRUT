@@ -35,6 +35,33 @@ function(test_entitlements_default)
 endfunction()
 
 
+function(test_entitlements_use_hardened_runtime_no_options)
+  set(JUCER_USE_HARDENED_RUNTIME ON)
+  _FRUT_generate_entitlements_file("UseHardenedRuntime_NoOptions.entitlements" _)
+  if(NOT EXISTS "${CMAKE_CURRENT_BINARY_DIR}/UseHardenedRuntime_NoOptions.entitlements")
+    message(FATAL_ERROR "Expected .entitlements file")
+  endif()
+endfunction()
+
+
+function(test_entitlements_use_hardened_runtime_one_option)
+  set(JUCER_USE_HARDENED_RUNTIME ON)
+  set(JUCER_HARDENED_RUNTIME_OPTIONS "com.apple.security.cs.allow-jit")
+  _FRUT_generate_entitlements_file("UseHardenedRuntime_OneOption.entitlements" _)
+endfunction()
+
+
+function(test_entitlements_use_hardened_runtime_several_options)
+  set(JUCER_USE_HARDENED_RUNTIME ON)
+  set(JUCER_HARDENED_RUNTIME_OPTIONS
+    "com.apple.security.cs.allow-jit"
+    "com.apple.security.cs.disable-library-validation"
+    "com.apple.security.device.audio-input"
+  )
+  _FRUT_generate_entitlements_file("UseHardenedRuntime_SeveralOptions.entitlements" _)
+endfunction()
+
+
 function(test_entitlements_push_notifications_capability)
   set(JUCER_PUSH_NOTIFICATIONS_CAPABILITY ON)
   _FRUT_generate_entitlements_file("PushNotificationsCapability.entitlements" _)
@@ -43,3 +70,6 @@ endfunction()
 
 test_entitlements_default()
 test_entitlements_push_notifications_capability()
+test_entitlements_use_hardened_runtime_no_options()
+test_entitlements_use_hardened_runtime_one_option()
+test_entitlements_use_hardened_runtime_several_options()
