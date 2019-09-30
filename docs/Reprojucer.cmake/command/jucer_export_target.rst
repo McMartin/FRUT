@@ -26,6 +26,8 @@ Define the settings specific to an export target.
 
     [CUSTOM_XCODE_RESOURCE_FOLDERS <xcode_resource_folder> [<xcode_resource_folder> ...]]  # [3]
     [DOCUMENT_FILE_EXTENSIONS <file_extension> [<file_extension> ...]]  # [4]
+    [USE_APP_SANDBOX <ON|OFF>]  # [3]
+    [APP_SANDBOX_OPTIONS <app_sandbox_option> [<app_sandbox_option> ...]]  # [3]
     [USE_HARDENED_RUNTIME <ON|OFF>]  # [3]
     [HARDENED_RUNTIME_OPTIONS <hardened_runtime_option> [<hardened_runtime_option> ...]]  # [3]
     [MICROPHONE_ACCESS <ON|OFF>]  # [3]

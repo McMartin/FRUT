@@ -32,6 +32,33 @@ function(test_entitlements_default)
 endfunction()
 
 
+function(test_entitlements_use_app_sandbox_no_options)
+  set(JUCER_USE_APP_SANDBOX ON)
+  _FRUT_generate_entitlements_file("UseAppSandbox_NoOptions.entitlements" _)
+  if(EXISTS "${CMAKE_CURRENT_BINARY_DIR}/UseAppSandbox_NoOptions.entitlements")
+    message(FATAL_ERROR "Unexpected .entitlements file")
+  endif()
+endfunction()
+
+
+function(test_entitlements_use_app_sandbox_one_option)
+  set(JUCER_USE_APP_SANDBOX ON)
+  set(JUCER_APP_SANDBOX_OPTIONS "com.apple.security.device.microphone")
+  _FRUT_generate_entitlements_file("UseAppSandbox_OneOption.entitlements" _)
+endfunction()
+
+
+function(test_entitlements_use_app_sandbox_several_options)
+  set(JUCER_USE_APP_SANDBOX ON)
+  set(JUCER_APP_SANDBOX_OPTIONS
+    "com.apple.security.assets.music.read-write"
+    "com.apple.security.device.microphone"
+    "com.apple.security.device.usb"
+  )
+  _FRUT_generate_entitlements_file("UseAppSandbox_SeveralOptions.entitlements" _)
+endfunction()
+
+
 function(test_entitlements_use_hardened_runtime_no_options)
   set(JUCER_USE_HARDENED_RUNTIME ON)
   _FRUT_generate_entitlements_file("UseHardenedRuntime_NoOptions.entitlements" _)
@@ -67,6 +94,9 @@ endfunction()
 
 test_entitlements_default()
 test_entitlements_push_notifications_capability()
+test_entitlements_use_app_sandbox_no_options()
+test_entitlements_use_app_sandbox_one_option()
+test_entitlements_use_app_sandbox_several_options()
 test_entitlements_use_hardened_runtime_no_options()
 test_entitlements_use_hardened_runtime_one_option()
 test_entitlements_use_hardened_runtime_several_options()

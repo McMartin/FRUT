@@ -904,12 +904,73 @@ function(jucer_export_target exporter)
     set(JUCER_DOCUMENT_FILE_EXTENSIONS "${_DOCUMENT_FILE_EXTENSIONS}" PARENT_SCOPE)
   endif()
 
-  if(DEFINED _USE_APP_SANDBOX AND _USE_APP_SANDBOX)
-    _FRUT_warn_about_unsupported_setting("USE_APP_SANDBOX" "Use App Sandbox" 497)
+  if(DEFINED _USE_APP_SANDBOX)
+    if(_USE_APP_SANDBOX AND NOT CMAKE_GENERATOR STREQUAL "Xcode")
+      message(WARNING "USE_APP_SANDBOX is only supported when using the Xcode generator. "
+        "You should call `cmake -G Xcode`."
+      )
+    endif()
+    set(JUCER_USE_APP_SANDBOX "${_USE_APP_SANDBOX}" PARENT_SCOPE)
   endif()
 
   if(DEFINED _APP_SANDBOX_OPTIONS)
-    # TODO with USE_APP_SANDBOX
+    set(projucer_strings
+      "Network: Incoming Connections (Server)"
+      "Network: Outgoing Connections (Client)"
+      "Hardware: Camera"
+      "Hardware: Microphone"
+      "Hardware: USB"
+      "Hardware: Printing"
+      "Hardware: Bluetooth"
+      "App Data: Contacts"
+      "App Data: Location"
+      "App Data: Calendar"
+      "File Access: User Selected File (Read Only)"
+      "File Access: User Selected File (Read/Write)"
+      "File Access: Downloads Folder (Read Only)"
+      "File Access: Downloads Folder (Read/Write)"
+      "File Access: Pictures Folder (Read Only)"
+      "File Access: Pictures Folder (Read/Write)"
+      "File Access: Music Folder (Read Only)"
+      "File Access: Music Folder (Read/Write)"
+      "File Access: Movies Folder (Read Only)"
+      "File Access: Movies Folder (Read/Write)"
+    )
+    set(entitlement_keys
+      "com.apple.security.network.server"
+      "com.apple.security.network.client"
+      "com.apple.security.device.camera"
+      "com.apple.security.device.microphone"
+      "com.apple.security.device.usb"
+      "com.apple.security.print"
+      "com.apple.security.device.bluetooth"
+      "com.apple.security.personal-information.addressbook"
+      "com.apple.security.personal-information.location"
+      "com.apple.security.personal-information.calendars"
+      "com.apple.security.files.user-selected.read-only"
+      "com.apple.security.files.user-selected.read-write"
+      "com.apple.security.files.downloads.read-only"
+      "com.apple.security.files.downloads.read-write"
+      "com.apple.security.files.pictures.read-only"
+      "com.apple.security.files.pictures.read-write"
+      "com.apple.security.assets.music.read-only"
+      "com.apple.security.assets.music.read-write"
+      "com.apple.security.assets.movies.read-only"
+      "com.apple.security.assets.movies.read-write"
+    )
+    set(app_sandbox_options "")
+    foreach(option_string IN LISTS _APP_SANDBOX_OPTIONS)
+      list(FIND projucer_strings "${option_string}" option_index)
+      if(option_index EQUAL -1)
+        message(FATAL_ERROR
+          "Unsupported value for APP_SANDBOX_OPTIONS: \"${option_string}\""
+        )
+      endif()
+      list(GET entitlement_keys ${option_index} entitlement_key)
+      list(APPEND app_sandbox_options "${entitlement_key}")
+    endforeach()
+    list(SORT app_sandbox_options)
+    set(JUCER_APP_SANDBOX_OPTIONS "${app_sandbox_options}" PARENT_SCOPE)
   endif()
 
   if(DEFINED _USE_HARDENED_RUNTIME)
@@ -3366,6 +3427,11 @@ function(_FRUT_generate_entitlements_file output_filename out_var)
       string(APPEND entitlements_content "\t<key>${option}</key>\n" "\t<true/>\n")
     endforeach()
   endif()
+  if(JUCER_USE_APP_SANDBOX)
+    foreach(option IN LISTS JUCER_APP_SANDBOX_OPTIONS)
+      string(APPEND entitlements_content "\t<key>${option}</key>\n" "\t<true/>\n")
+    endforeach()
+  endif()
 
   if(NOT entitlements_content STREQUAL "")
     configure_file("${Reprojucer_templates_DIR}/project.entitlements"
@@ -3755,6 +3821,7 @@ function(_FRUT_set_compiler_and_linker_settings_APPLE target)
   endif()
 
   if(JUCER_PUSH_NOTIFICATIONS_CAPABILITY
+      OR JUCER_USE_APP_SANDBOX
       OR JUCER_USE_HARDENED_RUNTIME
       OR target MATCHES "_AUv3_AppExtension$")
     if(CMAKE_GENERATOR STREQUAL "Xcode")
