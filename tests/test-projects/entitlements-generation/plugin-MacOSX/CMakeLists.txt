@@ -95,6 +95,17 @@ function(test_entitlements_push_notifications_capability)
 endfunction()
 
 
+function(test_entitlements_all_settings)
+  set(JUCER_USE_APP_SANDBOX ON)
+  set(JUCER_APP_SANDBOX_OPTIONS "com.apple.security.device.microphone")
+  set(JUCER_USE_HARDENED_RUNTIME ON)
+  set(JUCER_HARDENED_RUNTIME_OPTIONS "com.apple.security.device.audio-input")
+  set(JUCER_PUSH_NOTIFICATIONS_CAPABILITY ON)
+  _FRUT_generate_entitlements_file("AllSettings.entitlements" _)
+endfunction()
+
+
+test_entitlements_all_settings()
 test_entitlements_default()
 test_entitlements_push_notifications_capability()
 test_entitlements_use_app_sandbox_no_options()
