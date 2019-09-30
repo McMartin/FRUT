@@ -1113,6 +1113,12 @@ function(jucer_export_target_configuration
     )
   endif()
 
+  if(NOT config MATCHES "^[A-Za-z0-9_]+$")
+    message(FATAL_ERROR "\"${config}\" is not a valid CMake build configuration name."
+      " Configuration names must match \"^[A-Za-z0-9_]+$\"."
+    )
+  endif()
+
   if(NOT DEBUG_MODE_KEYWORD STREQUAL "DEBUG_MODE")
     message(FATAL_ERROR "Invalid fourth argument. Expected \"DEBUG_MODE\" keyword, "
       "but got \"${DEBUG_MODE_KEYWORD}\" instead."
