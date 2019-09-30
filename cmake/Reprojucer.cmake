@@ -3053,13 +3053,13 @@ function(_FRUT_generate_JuceHeader_header)
 
   list(LENGTH JUCER_PROJECT_RESOURCES resources_count)
   if(resources_count GREATER 0)
-    set(BinaryDataBuilder_file_name "BinaryDataBuilder-0.3.0")
+    set(BinaryDataBuilder_filename "BinaryDataBuilder-0.3.0")
     set(install_prefix "${Reprojucer.cmake_DIR}/bin")
     if(NOT EXISTS "${BinaryDataBuilder_exe}"
-        OR NOT BinaryDataBuilder_exe MATCHES "${BinaryDataBuilder_file_name}")
+        OR NOT BinaryDataBuilder_exe MATCHES "${BinaryDataBuilder_filename}")
       unset(BinaryDataBuilder_exe CACHE)
     endif()
-    find_program(BinaryDataBuilder_exe "${BinaryDataBuilder_file_name}"
+    find_program(BinaryDataBuilder_exe "${BinaryDataBuilder_filename}"
       PATHS "${install_prefix}"
       NO_DEFAULT_PATH
     )
@@ -3080,12 +3080,12 @@ function(_FRUT_generate_JuceHeader_header)
         )
       endif()
       message(STATUS "Installed BinaryDataBuilder in ${install_prefix}")
-      find_program(BinaryDataBuilder_exe "${BinaryDataBuilder_file_name}"
+      find_program(BinaryDataBuilder_exe "${BinaryDataBuilder_filename}"
         PATHS "${install_prefix}"
         NO_DEFAULT_PATH
       )
       if(NOT BinaryDataBuilder_exe)
-        message(FATAL_ERROR "Could not find ${BinaryDataBuilder_file_name}")
+        message(FATAL_ERROR "Could not find ${BinaryDataBuilder_filename}")
       endif()
     endif()
 
@@ -3179,13 +3179,13 @@ endfunction()
 
 function(_FRUT_generate_icon_file icon_format icon_file_output_dir out_icon_filename)
 
-  set(IconBuilder_file_name "IconBuilder-0.1.0")
+  set(IconBuilder_filename "IconBuilder-0.1.0")
   set(install_prefix "${Reprojucer.cmake_DIR}/bin")
   if(NOT EXISTS "${IconBuilder_exe}"
-      OR NOT IconBuilder_exe MATCHES "${IconBuilder_file_name}")
+      OR NOT IconBuilder_exe MATCHES "${IconBuilder_filename}")
     unset(IconBuilder_exe CACHE)
   endif()
-  find_program(IconBuilder_exe "${IconBuilder_file_name}"
+  find_program(IconBuilder_exe "${IconBuilder_filename}"
     PATHS "${install_prefix}"
     NO_DEFAULT_PATH
   )
@@ -3206,12 +3206,12 @@ function(_FRUT_generate_icon_file icon_format icon_file_output_dir out_icon_file
       )
     endif()
     message(STATUS "Installed IconBuilder in ${install_prefix}")
-    find_program(IconBuilder_exe "${IconBuilder_file_name}"
+    find_program(IconBuilder_exe "${IconBuilder_filename}"
       PATHS "${install_prefix}"
       NO_DEFAULT_PATH
     )
     if(NOT IconBuilder_exe)
-      message(FATAL_ERROR "Could not find ${IconBuilder_file_name}")
+      message(FATAL_ERROR "Could not find ${IconBuilder_filename}")
     endif()
   endif()
 
@@ -4493,13 +4493,13 @@ function(_FRUT_generate_plist_file
   endif()
 
   if(JUCER_CUSTOM_PLIST)
-    set(PListMerger_file_name "PListMerger-0.1.0")
+    set(PListMerger_filename "PListMerger-0.1.0")
     set(install_prefix "${Reprojucer.cmake_DIR}/bin")
     if(NOT EXISTS "${PListMerger_exe}"
-        OR NOT PListMerger_exe MATCHES "${PListMerger_file_name}")
+        OR NOT PListMerger_exe MATCHES "${PListMerger_filename}")
       unset(PListMerger_exe CACHE)
     endif()
-    find_program(PListMerger_exe "${PListMerger_file_name}"
+    find_program(PListMerger_exe "${PListMerger_filename}"
       PATHS "${install_prefix}"
       NO_DEFAULT_PATH
     )
@@ -4520,12 +4520,12 @@ function(_FRUT_generate_plist_file
         )
       endif()
       message(STATUS "Installed PListMerger in ${install_prefix}")
-      find_program(PListMerger_exe "${PListMerger_file_name}"
+      find_program(PListMerger_exe "${PListMerger_filename}"
         PATHS "${install_prefix}"
         NO_DEFAULT_PATH
       )
       if(NOT PListMerger_exe)
-        message(FATAL_ERROR "Could not find ${PListMerger_file_name}")
+        message(FATAL_ERROR "Could not find ${PListMerger_filename}")
       endif()
     endif()
 
