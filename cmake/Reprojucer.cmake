@@ -406,14 +406,16 @@ function(jucer_project_module module_name PATH_KEYWORD modules_folder)
     message(FATAL_ERROR "No such directory: \"${modules_folder}\"")
   endif()
 
+  set(module_dir "${modules_folder}/${module_name}")
+
   foreach(extension IN ITEMS ".h" ".hpp" ".hxx")
-    set(module_header_file "${modules_folder}/${module_name}/${module_name}${extension}")
+    set(module_header_file "${module_dir}/${module_name}${extension}")
     if(EXISTS "${module_header_file}")
       break()
     endif()
   endforeach()
   if(NOT EXISTS "${module_header_file}")
-    message(FATAL_ERROR "${modules_folder}/${module_name}/ is not a valid JUCE module")
+    message(FATAL_ERROR "${module_dir}/ is not a valid JUCE module")
   endif()
 
   set(make_juce_code_browsable ON)
@@ -454,9 +456,9 @@ function(jucer_project_module module_name PATH_KEYWORD modules_folder)
 
   file(GLOB module_src_files
     LIST_DIRECTORIES FALSE
-    "${modules_folder}/${module_name}/${module_name}*.cpp"
-    "${modules_folder}/${module_name}/${module_name}*.mm"
-    "${modules_folder}/${module_name}/${module_name}*.r"
+    "${module_dir}/${module_name}*.cpp"
+    "${module_dir}/${module_name}*.mm"
+    "${module_dir}/${module_name}*.r"
   )
 
   if(DEFINED JUCER_VERSION AND JUCER_VERSION VERSION_LESS 5.0.0)
@@ -576,7 +578,7 @@ function(jucer_project_module module_name PATH_KEYWORD modules_folder)
   string(REGEX REPLACE "[ ,]+" ";" search_paths "${module_info_searchpaths}")
   foreach(search_path IN LISTS search_paths)
     list(APPEND JUCER_PROJECT_MODULES_INTERNAL_SEARCH_PATHS
-      "${modules_folder}/${module_name}/${search_path}"
+      "${module_dir}/${search_path}"
     )
   endforeach()
   set(JUCER_PROJECT_MODULES_INTERNAL_SEARCH_PATHS
@@ -634,7 +636,7 @@ function(jucer_project_module module_name PATH_KEYWORD modules_folder)
   endif()
 
   if(make_juce_code_browsable)
-    file(GLOB_RECURSE browsable_files "${modules_folder}/${module_name}/*")
+    file(GLOB_RECURSE browsable_files "${module_dir}/*")
     foreach(file_path IN LISTS browsable_files)
       get_filename_component(file_dir "${file_path}" DIRECTORY)
       string(REPLACE "${modules_folder}" "" rel_file_dir "${file_dir}")
