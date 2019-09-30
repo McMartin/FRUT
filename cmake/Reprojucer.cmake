@@ -542,8 +542,8 @@ function(jucer_project_module module_name PATH_KEYWORD modules_folder)
 
   set(module_info_searchpaths "")
   set(module_info_OSXFrameworks "")
-  set(module_info_linuxLibs "")
   set(module_info_linuxPackages "")
+  set(module_info_linuxLibs "")
   set(module_info_mingwLibs "")
   unset(module_info_minimumCppStandard)
 
@@ -587,15 +587,15 @@ function(jucer_project_module module_name PATH_KEYWORD modules_folder)
   list(APPEND JUCER_PROJECT_OSX_FRAMEWORKS ${osx_frameworks})
   set(JUCER_PROJECT_OSX_FRAMEWORKS "${JUCER_PROJECT_OSX_FRAMEWORKS}" PARENT_SCOPE)
 
-  string(REPLACE " " ";" linux_libs "${module_info_linuxLibs}")
-  string(REPLACE "," ";" linux_libs "${linux_libs}")
-  list(APPEND JUCER_PROJECT_LINUX_LIBS ${linux_libs})
-  set(JUCER_PROJECT_LINUX_LIBS "${JUCER_PROJECT_LINUX_LIBS}" PARENT_SCOPE)
-
   string(REPLACE " " ";" linux_packages "${module_info_linuxPackages}")
   string(REPLACE "," ";" linux_packages "${linux_packages}")
   list(APPEND JUCER_PROJECT_LINUX_PACKAGES ${linux_packages})
   set(JUCER_PROJECT_LINUX_PACKAGES "${JUCER_PROJECT_LINUX_PACKAGES}" PARENT_SCOPE)
+
+  string(REPLACE " " ";" linux_libs "${module_info_linuxLibs}")
+  string(REPLACE "," ";" linux_libs "${linux_libs}")
+  list(APPEND JUCER_PROJECT_LINUX_LIBS ${linux_libs})
+  set(JUCER_PROJECT_LINUX_LIBS "${JUCER_PROJECT_LINUX_LIBS}" PARENT_SCOPE)
 
   string(REPLACE " " ";" mingw_libs "${module_info_mingwLibs}")
   string(REPLACE "," ";" mingw_libs "${mingw_libs}")
