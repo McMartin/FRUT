@@ -571,8 +571,7 @@ function(jucer_project_module module_name PATH_KEYWORD modules_folder)
     endif()
   endforeach()
 
-  string(REPLACE " " ";" search_paths "${module_info_searchpaths}")
-  string(REPLACE "," ";" search_paths "${search_paths}")
+  string(REGEX REPLACE "[ ,]+" ";" search_paths "${module_info_searchpaths}")
   foreach(search_path IN LISTS search_paths)
     list(APPEND JUCER_PROJECT_MODULES_INTERNAL_SEARCH_PATHS
       "${modules_folder}/${module_name}/${search_path}"
@@ -582,23 +581,19 @@ function(jucer_project_module module_name PATH_KEYWORD modules_folder)
     "${JUCER_PROJECT_MODULES_INTERNAL_SEARCH_PATHS}" PARENT_SCOPE
   )
 
-  string(REPLACE " " ";" osx_frameworks "${module_info_OSXFrameworks}")
-  string(REPLACE "," ";" osx_frameworks "${osx_frameworks}")
+  string(REGEX REPLACE "[ ,]+" ";" osx_frameworks "${module_info_OSXFrameworks}")
   list(APPEND JUCER_PROJECT_OSX_FRAMEWORKS ${osx_frameworks})
   set(JUCER_PROJECT_OSX_FRAMEWORKS "${JUCER_PROJECT_OSX_FRAMEWORKS}" PARENT_SCOPE)
 
-  string(REPLACE " " ";" linux_packages "${module_info_linuxPackages}")
-  string(REPLACE "," ";" linux_packages "${linux_packages}")
+  string(REGEX REPLACE "[ ,]+" ";" linux_packages "${module_info_linuxPackages}")
   list(APPEND JUCER_PROJECT_LINUX_PACKAGES ${linux_packages})
   set(JUCER_PROJECT_LINUX_PACKAGES "${JUCER_PROJECT_LINUX_PACKAGES}" PARENT_SCOPE)
 
-  string(REPLACE " " ";" linux_libs "${module_info_linuxLibs}")
-  string(REPLACE "," ";" linux_libs "${linux_libs}")
+  string(REGEX REPLACE "[ ,]+" ";" linux_libs "${module_info_linuxLibs}")
   list(APPEND JUCER_PROJECT_LINUX_LIBS ${linux_libs})
   set(JUCER_PROJECT_LINUX_LIBS "${JUCER_PROJECT_LINUX_LIBS}" PARENT_SCOPE)
 
-  string(REPLACE " " ";" mingw_libs "${module_info_mingwLibs}")
-  string(REPLACE "," ";" mingw_libs "${mingw_libs}")
+  string(REGEX REPLACE "[ ,]+" ";" mingw_libs "${module_info_mingwLibs}")
   list(APPEND JUCER_PROJECT_MINGW_LIBS ${mingw_libs})
   set(JUCER_PROJECT_MINGW_LIBS "${JUCER_PROJECT_MINGW_LIBS}" PARENT_SCOPE)
 
