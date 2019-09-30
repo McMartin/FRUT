@@ -1800,8 +1800,6 @@ function(jucer_project_end)
     REGULAR_EXPRESSION "${CMAKE_CURRENT_BINARY_DIR}/JuceLibraryCode/*"
   )
 
-  string(REGEX REPLACE "[^A-Za-z0-9_.+-]" "_" target "${JUCER_PROJECT_NAME}")
-
   if(APPLE)
     set_source_files_properties(${JUCER_PROJECT_XCODE_RESOURCES} ${JUCER_ICON_FILE}
       PROPERTIES MACOSX_PACKAGE_LOCATION "Resources"
@@ -1813,6 +1811,8 @@ function(jucer_project_end)
   set_source_files_properties(${JUCER_PROJECT_MODULES_BROWSABLE_FILES}
     PROPERTIES HEADER_FILE_ONLY TRUE
   )
+
+  string(REGEX REPLACE "[^A-Za-z0-9_.+-]" "_" target "${JUCER_PROJECT_NAME}")
 
   set(modules_sources "")
   foreach(module_name IN LISTS JUCER_PROJECT_MODULES)
