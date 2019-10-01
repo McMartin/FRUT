@@ -1693,9 +1693,7 @@ function(jucer_project_end)
             "Flags used by the compiler during \"${config}\" builds."
           )
         endif()
-        set(${variable_name}-ADVANCED 1 CACHE INTERNAL
-          "ADVANCED property for variable: ${variable_name}"
-        )
+        mark_as_advanced(${variable_name})
       endif()
     endforeach()
 
@@ -1711,9 +1709,7 @@ function(jucer_project_end)
             "Flags used by the linker during \"${config}\" builds."
           )
         endif()
-        set(${variable_name}-ADVANCED 1 CACHE INTERNAL
-          "ADVANCED property for variable: ${variable_name}"
-        )
+        mark_as_advanced(${variable_name})
       endif()
     endforeach()
   endforeach()
