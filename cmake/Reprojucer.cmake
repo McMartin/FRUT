@@ -1113,6 +1113,14 @@ function(jucer_export_target_configuration
     )
   endif()
 
+  if(NOT config MATCHES "^[A-Za-z0-9_]+$")
+    _FRUT_make_valid_configuration_name("${config}" valid_config)
+    message(FATAL_ERROR "\"${config}\" is not a valid CMake build configuration name."
+      " Configuration names must match \"^[A-Za-z0-9_]+$\". You can use"
+      " \"${valid_config}\" instead."
+    )
+  endif()
+
   if(NOT DEBUG_MODE_KEYWORD STREQUAL "DEBUG_MODE")
     message(FATAL_ERROR "Invalid fourth argument. Expected \"DEBUG_MODE\" keyword, "
       "but got \"${DEBUG_MODE_KEYWORD}\" instead."
@@ -2499,6 +2507,16 @@ function(_FRUT_abs_path_based_on_jucer_project_dir out_path in_path)
 
   get_filename_component(in_path "${in_path}" ABSOLUTE BASE_DIR "${JUCER_PROJECT_DIR}")
   set(${out_path} "${in_path}" PARENT_SCOPE)
+
+endfunction()
+
+
+function(_FRUT_make_valid_configuration_name config out_var)
+
+  string(REGEX REPLACE "[^A-Za-z0-9_]" " " config "${config}")
+  string(STRIP "${config}" config)
+  string(REGEX REPLACE "[ ]+" "_" config "${config}")
+  set(${out_var} "${config}" PARENT_SCOPE)
 
 endfunction()
 
