@@ -580,13 +580,13 @@ int main(int argc, char* argv[])
   {
     auto shouldAddEmptyLines = false;
 
-    if (!juceModulesPath.isEmpty())
+    if (juceModulesPath.isNotEmpty())
     {
       wLn("set(JUCE_MODULES_GLOBAL_PATH \"", cmakeAbsolutePath(juceModulesPath), "\")");
       shouldAddEmptyLines = true;
     }
 
-    if (!userModulesPath.isEmpty())
+    if (userModulesPath.isNotEmpty())
     {
       wLn("set(USER_MODULES_GLOBAL_PATH \"", cmakeAbsolutePath(userModulesPath), "\")");
       shouldAddEmptyLines = true;
@@ -1414,7 +1414,7 @@ int main(int argc, char* argv[])
       const auto convertIcon = [&jucerProject](const juce::var& v) -> juce::String {
         const auto fileId = v.toString();
 
-        if (!fileId.isEmpty())
+        if (fileId.isNotEmpty())
         {
           const auto file = getChildWithPropertyRecursively(
             jucerProject.getChildWithName("MAINGROUP"), "id", fileId);
