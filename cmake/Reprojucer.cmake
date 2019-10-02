@@ -1681,7 +1681,7 @@ function(jucer_project_end)
   foreach(config IN LISTS JUCER_PROJECT_CONFIGURATIONS)
     string(TOUPPER "${config}" upper_config)
 
-    foreach(lang ITEMS C CXX)
+    foreach(lang IN ITEMS C CXX)
       set(variable_name "CMAKE_${lang}_FLAGS_${upper_config}")
       if(NOT DEFINED ${variable_name})
         if(JUCER_CONFIGURATION_IS_DEBUG_${config})
@@ -1693,13 +1693,11 @@ function(jucer_project_end)
             "Flags used by the compiler during \"${config}\" builds."
           )
         endif()
-        set(${variable_name}-ADVANCED 1 CACHE INTERNAL
-          "ADVANCED property for variable: ${variable_name}"
-        )
+        mark_as_advanced(${variable_name})
       endif()
     endforeach()
 
-    foreach(type ITEMS EXE MODULE SHARED STATIC)
+    foreach(type IN ITEMS EXE MODULE SHARED STATIC)
       set(variable_name "CMAKE_${type}_LINKER_FLAGS_${upper_config}")
       if(NOT DEFINED ${variable_name})
         if(JUCER_CONFIGURATION_IS_DEBUG_${config})
@@ -1711,9 +1709,7 @@ function(jucer_project_end)
             "Flags used by the linker during \"${config}\" builds."
           )
         endif()
-        set(${variable_name}-ADVANCED 1 CACHE INTERNAL
-          "ADVANCED property for variable: ${variable_name}"
-        )
+        mark_as_advanced(${variable_name})
       endif()
     endforeach()
   endforeach()
