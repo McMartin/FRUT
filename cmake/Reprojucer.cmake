@@ -406,14 +406,16 @@ function(jucer_project_module module_name PATH_KEYWORD modules_folder)
     message(FATAL_ERROR "No such directory: \"${modules_folder}\"")
   endif()
 
+  set(module_dir "${modules_folder}/${module_name}")
+
   foreach(extension IN ITEMS ".h" ".hpp" ".hxx")
-    set(module_header_file "${modules_folder}/${module_name}/${module_name}${extension}")
+    set(module_header_file "${module_dir}/${module_name}${extension}")
     if(EXISTS "${module_header_file}")
       break()
     endif()
   endforeach()
   if(NOT EXISTS "${module_header_file}")
-    message(FATAL_ERROR "${modules_folder}/${module_name}/ is not a valid JUCE module")
+    message(FATAL_ERROR "${module_dir}/ is not a valid JUCE module")
   endif()
 
   set(make_juce_code_browsable ON)
@@ -454,9 +456,9 @@ function(jucer_project_module module_name PATH_KEYWORD modules_folder)
 
   file(GLOB module_src_files
     LIST_DIRECTORIES FALSE
-    "${modules_folder}/${module_name}/${module_name}*.cpp"
-    "${modules_folder}/${module_name}/${module_name}*.mm"
-    "${modules_folder}/${module_name}/${module_name}*.r"
+    "${module_dir}/${module_name}*.cpp"
+    "${module_dir}/${module_name}*.mm"
+    "${module_dir}/${module_name}*.r"
   )
 
   if(DEFINED JUCER_VERSION AND JUCER_VERSION VERSION_LESS 5.0.0)
@@ -542,9 +544,11 @@ function(jucer_project_module module_name PATH_KEYWORD modules_folder)
 
   set(module_info_searchpaths "")
   set(module_info_OSXFrameworks "")
-  set(module_info_linuxLibs "")
   set(module_info_linuxPackages "")
+  set(module_info_linuxLibs "")
   set(module_info_mingwLibs "")
+  set(module_info_OSXLibs "")
+  set(module_info_windowsLibs "")
   unset(module_info_minimumCppStandard)
 
   file(STRINGS "${module_header_file}" all_lines)
@@ -571,36 +575,39 @@ function(jucer_project_module module_name PATH_KEYWORD modules_folder)
     endif()
   endforeach()
 
-  string(REPLACE " " ";" search_paths "${module_info_searchpaths}")
-  string(REPLACE "," ";" search_paths "${search_paths}")
+  string(REGEX REPLACE "[ ,]+" ";" search_paths "${module_info_searchpaths}")
   foreach(search_path IN LISTS search_paths)
     list(APPEND JUCER_PROJECT_MODULES_INTERNAL_SEARCH_PATHS
-      "${modules_folder}/${module_name}/${search_path}"
+      "${module_dir}/${search_path}"
     )
   endforeach()
   set(JUCER_PROJECT_MODULES_INTERNAL_SEARCH_PATHS
     "${JUCER_PROJECT_MODULES_INTERNAL_SEARCH_PATHS}" PARENT_SCOPE
   )
 
-  string(REPLACE " " ";" osx_frameworks "${module_info_OSXFrameworks}")
-  string(REPLACE "," ";" osx_frameworks "${osx_frameworks}")
+  string(REGEX REPLACE "[ ,]+" ";" osx_frameworks "${module_info_OSXFrameworks}")
   list(APPEND JUCER_PROJECT_OSX_FRAMEWORKS ${osx_frameworks})
   set(JUCER_PROJECT_OSX_FRAMEWORKS "${JUCER_PROJECT_OSX_FRAMEWORKS}" PARENT_SCOPE)
 
-  string(REPLACE " " ";" linux_libs "${module_info_linuxLibs}")
-  string(REPLACE "," ";" linux_libs "${linux_libs}")
-  list(APPEND JUCER_PROJECT_LINUX_LIBS ${linux_libs})
-  set(JUCER_PROJECT_LINUX_LIBS "${JUCER_PROJECT_LINUX_LIBS}" PARENT_SCOPE)
-
-  string(REPLACE " " ";" linux_packages "${module_info_linuxPackages}")
-  string(REPLACE "," ";" linux_packages "${linux_packages}")
+  string(REGEX REPLACE "[ ,]+" ";" linux_packages "${module_info_linuxPackages}")
   list(APPEND JUCER_PROJECT_LINUX_PACKAGES ${linux_packages})
   set(JUCER_PROJECT_LINUX_PACKAGES "${JUCER_PROJECT_LINUX_PACKAGES}" PARENT_SCOPE)
 
-  string(REPLACE " " ";" mingw_libs "${module_info_mingwLibs}")
-  string(REPLACE "," ";" mingw_libs "${mingw_libs}")
+  string(REGEX REPLACE "[ ,]+" ";" linux_libs "${module_info_linuxLibs}")
+  list(APPEND JUCER_PROJECT_LINUX_LIBS ${linux_libs})
+  set(JUCER_PROJECT_LINUX_LIBS "${JUCER_PROJECT_LINUX_LIBS}" PARENT_SCOPE)
+
+  string(REGEX REPLACE "[ ,]+" ";" mingw_libs "${module_info_mingwLibs}")
   list(APPEND JUCER_PROJECT_MINGW_LIBS ${mingw_libs})
   set(JUCER_PROJECT_MINGW_LIBS "${JUCER_PROJECT_MINGW_LIBS}" PARENT_SCOPE)
+
+  string(REGEX REPLACE "[ ,]+" ";" osx_libs "${module_info_OSXLibs}")
+  list(APPEND JUCER_PROJECT_OSX_LIBS ${osx_libs})
+  set(JUCER_PROJECT_OSX_LIBS "${JUCER_PROJECT_OSX_LIBS}" PARENT_SCOPE)
+
+  string(REGEX REPLACE "[ ,]+" ";" windows_libs "${module_info_windowsLibs}")
+  list(APPEND JUCER_PROJECT_WINDOWS_LIBS ${windows_libs})
+  set(JUCER_PROJECT_WINDOWS_LIBS "${JUCER_PROJECT_WINDOWS_LIBS}" PARENT_SCOPE)
 
   if(DEFINED module_info_minimumCppStandard)
     unset(project_cxx_standard)
@@ -629,7 +636,7 @@ function(jucer_project_module module_name PATH_KEYWORD modules_folder)
   endif()
 
   if(make_juce_code_browsable)
-    file(GLOB_RECURSE browsable_files "${modules_folder}/${module_name}/*")
+    file(GLOB_RECURSE browsable_files "${module_dir}/*")
     foreach(file_path IN LISTS browsable_files)
       get_filename_component(file_dir "${file_path}" DIRECTORY)
       string(REPLACE "${modules_folder}" "" rel_file_dir "${file_dir}")
@@ -639,6 +646,30 @@ function(jucer_project_module module_name PATH_KEYWORD modules_folder)
     list(APPEND JUCER_PROJECT_MODULES_BROWSABLE_FILES ${browsable_files})
     set(JUCER_PROJECT_MODULES_BROWSABLE_FILES "${JUCER_PROJECT_MODULES_BROWSABLE_FILES}"
       PARENT_SCOPE
+    )
+  endif()
+
+  if(CMAKE_HOST_SYSTEM_NAME STREQUAL "Linux")
+    set(module_lib_dir "${module_dir}/libs/Linux")
+  elseif(WIN32 AND NOT MSVC)
+    set(module_lib_dir "${module_dir}/libs/MinGW")
+  elseif(APPLE)
+    set(module_lib_dir "${module_dir}/libs/MacOSX")
+  elseif(MSVC)
+    if(MSVC_VERSION GREATER 1919)
+      set(module_lib_dir "${module_dir}/libs/VisualStudio2019")
+    elseif(MSVC_VERSION GREATER 1909 AND MSVC_VERSION LESS 1920)
+      set(module_lib_dir "${module_dir}/libs/VisualStudio2017")
+    elseif(MSVC_VERSION EQUAL 1900)
+      set(module_lib_dir "${module_dir}/libs/VisualStudio2015")
+    elseif(MSVC_VERSION EQUAL 1800)
+      set(module_lib_dir "${module_dir}/libs/VisualStudio2013")
+    endif()
+  endif()
+  if(IS_DIRECTORY "${module_lib_dir}")
+    list(APPEND JUCER_PROJECT_MODULES_LIBRARY_SEARCH_PATHS "${module_lib_dir}")
+    set(JUCER_PROJECT_MODULES_LIBRARY_SEARCH_PATHS
+      "${JUCER_PROJECT_MODULES_LIBRARY_SEARCH_PATHS}" PARENT_SCOPE
     )
   endif()
 
@@ -3413,7 +3444,71 @@ function(_FRUT_set_compiler_and_linker_settings target)
         target_link_libraries(${target} PRIVATE $<$<CONFIG:${config}>:-L${path}>)
       endif()
     endforeach()
+
+    foreach(path IN LISTS JUCER_PROJECT_MODULES_LIBRARY_SEARCH_PATHS)
+      if(MSVC)
+        if(CMAKE_SIZEOF_VOID_P EQUAL 8)
+          set(arch "x64")
+        else()
+          set(arch "Win32")
+        endif()
+        if(JUCER_CONFIGURATION_IS_DEBUG_${config})
+          set(d_or_empty "d")
+        else()
+          set(d_or_empty "")
+        endif()
+        if(DEFINED JUCER_RUNTIME_LIBRARY_FLAG_${config})
+          string(SUBSTRING "${JUCER_RUNTIME_LIBRARY_FLAG_${config}}" 1 -1 runtime)
+        elseif(NOT (DEFINED JUCER_VERSION AND JUCER_VERSION VERSION_LESS 5.2.1))
+          set(runtime "MD${d_or_empty}")
+        elseif(DEFINED JUCER_VERSION AND JUCER_VERSION VERSION_LESS 5.0.0
+            AND (JUCER_BUILD_VST OR JUCER_BUILD_VST3 OR JUCER_BUILD_RTAS
+                OR JUCER_BUILD_AAX))
+          set(runtime "MD${d_or_empty}")
+        elseif(JUCER_BUILD_RTAS OR JUCER_BUILD_AAX)
+          set(runtime "MD${d_or_empty}")
+        else()
+          set(runtime "MT${d_or_empty}")
+        endif()
+
+        target_link_libraries(${target} PRIVATE
+          $<$<CONFIG:${config}>:-LIBPATH:${path}/${arch}/${runtime}>
+        )
+      else()
+        unset(arch)
+        if(APPLE)
+          if(CMAKE_GENERATOR STREQUAL "Xcode")
+            set(arch "\${CURRENT_ARCH}")
+          elseif(DEFINED JUCER_OSX_ARCHITECTURES_${config})
+            list(LENGTH JUCER_OSX_ARCHITECTURES_${config} osx_architectures_length)
+            if(osx_architectures_length EQUAL 1)
+              set(arch "${JUCER_OSX_ARCHITECTURES_${config}}")
+            endif()
+          endif()
+        elseif(CMAKE_HOST_SYSTEM_NAME STREQUAL "Linux" OR (WIN32 AND NOT MSVC))
+          if(DEFINED JUCER_ARCHITECTURE_FLAG_${config})
+            if(JUCER_ARCHITECTURE_FLAG_${config} MATCHES "^-march=")
+              string(SUBSTRING "JUCER_ARCHITECTURE_FLAG_${config}" 7 -1 arch)
+            elseif(JUCER_ARCHITECTURE_FLAG_${config} STREQUAL "-m64")
+              set(arch "x86_64")
+            elseif(JUCER_ARCHITECTURE_FLAG_${config} STREQUAL "-m32")
+              set(arch "i386")
+            endif()
+          endif()
+        endif()
+        if(NOT DEFINED arch)
+          if(CMAKE_SIZEOF_VOID_P EQUAL 8)
+            set(arch "x86_64")
+          else()
+            set(arch "i386")
+          endif()
+        endif()
+
+        target_link_libraries(${target} PRIVATE $<$<CONFIG:${config}>:-L${path}/${arch}>)
+      endif()
+    endforeach()
   endforeach()
+
   target_link_libraries(${target} PRIVATE ${JUCER_EXTRA_LINKER_FLAGS})
   target_link_libraries(${target} PRIVATE ${JUCER_EXTERNAL_LIBRARIES_TO_LINK})
 
@@ -3568,6 +3663,10 @@ function(_FRUT_set_compiler_and_linker_settings_APPLE target)
       set_target_properties(${target} PROPERTIES XCODE_ATTRIBUTE_USE_HEADERMAP "NO")
     endif()
   endif()
+
+  foreach(osx_lib IN LISTS JUCER_PROJECT_OSX_LIBS)
+    target_link_libraries(${target} PRIVATE "-l${osx_lib}")
+  endforeach()
 
 endfunction()
 
@@ -3767,6 +3866,10 @@ function(_FRUT_set_compiler_and_linker_settings_MSVC target)
     endif()
   endforeach()
 
+  foreach(windows_lib IN LISTS JUCER_PROJECT_WINDOWS_LIBS)
+    target_link_libraries(${target} PRIVATE "${windows_lib}.lib")
+  endforeach()
+
 endfunction()
 
 
@@ -3827,7 +3930,6 @@ function(_FRUT_set_compiler_and_linker_settings_Linux target)
   endif()
   if(linux_packages)
     find_package(PkgConfig REQUIRED)
-    list(SORT linux_packages)
     list(REMOVE_DUPLICATES linux_packages)
     unset(missing_packages)
     foreach(pkg IN LISTS linux_packages)
@@ -3852,17 +3954,12 @@ function(_FRUT_set_compiler_and_linker_settings_Linux target)
     endif()
   endif()
 
-  set(linux_libs ${JUCER_PROJECT_LINUX_LIBS})
-  if(linux_libs)
-    list(SORT linux_libs)
-    list(REMOVE_DUPLICATES linux_libs)
-    foreach(item IN LISTS linux_libs)
-      if(item STREQUAL "pthread")
-        target_compile_options(${target} PRIVATE "-pthread")
-      endif()
-      target_link_libraries(${target} PRIVATE "-l${item}")
-    endforeach()
-  endif()
+  foreach(linux_lib IN LISTS JUCER_PROJECT_LINUX_LIBS)
+    if(linux_lib STREQUAL "pthread")
+      target_compile_options(${target} PRIVATE "-pthread")
+    endif()
+    target_link_libraries(${target} PRIVATE "-l${linux_lib}")
+  endforeach()
 
 endfunction()
 
@@ -4654,8 +4751,6 @@ function(_FRUT_set_custom_xcode_flags target)
   endforeach()
 
   if(DEFINED all_flags)
-    list(SORT all_flags)
-    list(REMOVE_DUPLICATES all_flags)
     foreach(flag IN LISTS all_flags)
       set_target_properties(${target} PROPERTIES
         XCODE_ATTRIBUTE_${flag} "${all_confs_${flag}}"
