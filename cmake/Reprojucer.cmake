@@ -904,22 +904,146 @@ function(jucer_export_target exporter)
     set(JUCER_DOCUMENT_FILE_EXTENSIONS "${_DOCUMENT_FILE_EXTENSIONS}" PARENT_SCOPE)
   endif()
 
-  if(DEFINED _USE_APP_SANDBOX AND _USE_APP_SANDBOX)
-    _FRUT_warn_about_unsupported_setting("USE_APP_SANDBOX" "Use App Sandbox" 497)
+  if(DEFINED _USE_APP_SANDBOX)
+    if(_USE_APP_SANDBOX AND NOT CMAKE_GENERATOR STREQUAL "Xcode")
+      message(WARNING "USE_APP_SANDBOX is only supported when using the Xcode generator. "
+        "You should call `cmake -G Xcode`."
+      )
+    endif()
+    set(JUCER_USE_APP_SANDBOX "${_USE_APP_SANDBOX}" PARENT_SCOPE)
   endif()
 
   if(DEFINED _APP_SANDBOX_OPTIONS)
-    # TODO with USE_APP_SANDBOX
+    set(projucer_strings
+      "Network: Incoming Connections (Server)"
+      "Network: Outgoing Connections (Client)"
+      "Hardware: Camera"
+      "Hardware: Microphone"
+      "Hardware: USB"
+      "Hardware: Printing"
+      "Hardware: Bluetooth"
+      "App Data: Contacts"
+      "App Data: Location"
+      "App Data: Calendar"
+      "File Access: User Selected File (Read Only)"
+      "File Access: User Selected File (Read/Write)"
+      "File Access: Downloads Folder (Read Only)"
+      "File Access: Downloads Folder (Read/Write)"
+      "File Access: Pictures Folder (Read Only)"
+      "File Access: Pictures Folder (Read/Write)"
+      "File Access: Music Folder (Read Only)"
+      "File Access: Music Folder (Read/Write)"
+      "File Access: Movies Folder (Read Only)"
+      "File Access: Movies Folder (Read/Write)"
+    )
+    set(entitlement_keys
+      "com.apple.security.network.server"
+      "com.apple.security.network.client"
+      "com.apple.security.device.camera"
+      "com.apple.security.device.microphone"
+      "com.apple.security.device.usb"
+      "com.apple.security.print"
+      "com.apple.security.device.bluetooth"
+      "com.apple.security.personal-information.addressbook"
+      "com.apple.security.personal-information.location"
+      "com.apple.security.personal-information.calendars"
+      "com.apple.security.files.user-selected.read-only"
+      "com.apple.security.files.user-selected.read-write"
+      "com.apple.security.files.downloads.read-only"
+      "com.apple.security.files.downloads.read-write"
+      "com.apple.security.files.pictures.read-only"
+      "com.apple.security.files.pictures.read-write"
+      "com.apple.security.assets.music.read-only"
+      "com.apple.security.assets.music.read-write"
+      "com.apple.security.assets.movies.read-only"
+      "com.apple.security.assets.movies.read-write"
+    )
+    set(app_sandbox_options "")
+    foreach(option_string IN LISTS _APP_SANDBOX_OPTIONS)
+      list(FIND projucer_strings "${option_string}" option_index)
+      if(option_index EQUAL -1)
+        message(FATAL_ERROR
+          "Unsupported value for APP_SANDBOX_OPTIONS: \"${option_string}\""
+        )
+      endif()
+      list(GET entitlement_keys ${option_index} entitlement_key)
+      list(APPEND app_sandbox_options "${entitlement_key}")
+    endforeach()
+    list(SORT app_sandbox_options)
+    set(JUCER_APP_SANDBOX_OPTIONS "${app_sandbox_options}" PARENT_SCOPE)
   endif()
 
-  if(DEFINED _USE_HARDENED_RUNTIME AND _USE_HARDENED_RUNTIME)
-    _FRUT_warn_about_unsupported_setting(
-      "USE_HARDENED_RUNTIME" "Use Hardened Runtime" 496
-    )
+  if(DEFINED _USE_HARDENED_RUNTIME)
+    if(_USE_HARDENED_RUNTIME AND NOT CMAKE_GENERATOR STREQUAL "Xcode")
+      message(WARNING "USE_HARDENED_RUNTIME is only supported when using the Xcode "
+        "generator. You should call `cmake -G Xcode`."
+      )
+    endif()
+    set(JUCER_USE_HARDENED_RUNTIME "${_USE_HARDENED_RUNTIME}" PARENT_SCOPE)
   endif()
 
   if(DEFINED _HARDENED_RUNTIME_OPTIONS)
-    # TODO with USE_HARDENED_RUNTIME
+    set(projucer_strings
+      "Runtime Exceptions: Allow Execution of JIT-compiled Code"
+      "Runtime Exceptions: Allow Unsigned Executable Memory"
+      "Runtime Exceptions: Allow DYLD Environment Variables"
+      "Runtime Exceptions: Disable Library Validation"
+      "Runtime Exceptions: Disable Executable Memory Protection"
+      "Runtime Exceptions: Debugging Tool"
+      "Resource Access: Audio Input"
+      "Resource Access: Camera"
+      "Resource Access: Location"
+      "Resource Access: Address Book"
+      "Resource Access: Calendar"
+      "Resource Access: Photos Library"
+      "Resource Access: Apple Events"
+    )
+    set(projucer_5_4_3_strings
+      "Allow Execution of JIT-compiled Code"
+      "Allow Unsigned Executable Memory"
+      "Allow DYLD Environment Variables"
+      "Disable Library Validation"
+      "Disable Executable Memory Protection"
+      "Debugging Tool"
+      "Audio Input"
+      "Camera"
+      "Location"
+      "Address Book"
+      "Calendar"
+      "Photos Library"
+      "Apple Events"
+    )
+    set(entitlement_keys
+      "com.apple.security.cs.allow-jit"
+      "com.apple.security.cs.allow-unsigned-executable-memory"
+      "com.apple.security.cs.allow-dyld-environment-variables"
+      "com.apple.security.cs.disable-library-validation"
+      "com.apple.security.cs.disable-executable-page-protection"
+      "com.apple.security.cs.debugger"
+      "com.apple.security.device.audio-input"
+      "com.apple.security.device.camera"
+      "com.apple.security.personal-information.location"
+      "com.apple.security.personal-information.addressbook"
+      "com.apple.security.personal-information.calendars"
+      "com.apple.security.personal-information.photos-library"
+      "com.apple.security.automation.apple-events"
+    )
+    set(hardened_runtime_options "")
+    foreach(option_string IN LISTS _HARDENED_RUNTIME_OPTIONS)
+      list(FIND projucer_strings "${option_string}" option_index)
+      if(option_index EQUAL -1)
+        list(FIND projucer_5_4_3_strings "${option_string}" option_index)
+        if(option_index EQUAL -1)
+          message(FATAL_ERROR
+            "Unsupported value for HARDENED_RUNTIME_OPTIONS: \"${option_string}\""
+          )
+        endif()
+      endif()
+      list(GET entitlement_keys ${option_index} entitlement_key)
+      list(APPEND hardened_runtime_options "${entitlement_key}")
+    endforeach()
+    list(SORT hardened_runtime_options)
+    set(JUCER_HARDENED_RUNTIME_OPTIONS "${hardened_runtime_options}" PARENT_SCOPE)
   endif()
 
   if(DEFINED _MICROPHONE_ACCESS)
@@ -944,9 +1068,14 @@ function(jucer_export_target exporter)
     )
   endif()
 
-  if(DEFINED _PUSH_NOTIFICATIONS_CAPABILITY AND _PUSH_NOTIFICATIONS_CAPABILITY)
-    _FRUT_warn_about_unsupported_setting(
-      "PUSH_NOTIFICATIONS_CAPABILITY" "Push Notifications Capability" 396
+  if(DEFINED _PUSH_NOTIFICATIONS_CAPABILITY)
+    if(_PUSH_NOTIFICATIONS_CAPABILITY AND NOT CMAKE_GENERATOR STREQUAL "Xcode")
+      message(WARNING "PUSH_NOTIFICATIONS_CAPABILITY is only supported when using the "
+        "Xcode generator. You should call `cmake -G Xcode`."
+      )
+    endif()
+    set(JUCER_PUSH_NOTIFICATIONS_CAPABILITY "${_PUSH_NOTIFICATIONS_CAPABILITY}"
+      PARENT_SCOPE
     )
   endif()
 
@@ -1796,11 +1925,16 @@ function(jucer_project_end)
     source_group("Juce Library Code" FILES "${JUCER_RESOURCES_RC_FILE}")
   endif()
 
+  if(CMAKE_GENERATOR STREQUAL "Xcode")
+    string(REGEX REPLACE "[\"#@,;:<>*^|?\\/]" "" project_filename "${JUCER_PROJECT_NAME}")
+    _FRUT_generate_entitlements_file("${project_filename}.entitlements"
+      JUCER_ENTITLEMENTS_FILE
+    )
+  endif()
+
   source_group("Juce Library Code"
     REGULAR_EXPRESSION "${CMAKE_CURRENT_BINARY_DIR}/JuceLibraryCode/*"
   )
-
-  string(REGEX REPLACE "[^A-Za-z0-9_.+-]" "_" target "${JUCER_PROJECT_NAME}")
 
   if(APPLE)
     set_source_files_properties(${JUCER_PROJECT_XCODE_RESOURCES} ${JUCER_ICON_FILE}
@@ -1814,6 +1948,8 @@ function(jucer_project_end)
     PROPERTIES HEADER_FILE_ONLY TRUE
   )
 
+  string(REGEX REPLACE "[^A-Za-z0-9_.+-]" "_" target "${JUCER_PROJECT_NAME}")
+
   set(modules_sources "")
   foreach(module_name IN LISTS JUCER_PROJECT_MODULES)
     set(module_sources "${JUCER_PROJECT_MODULE_${module_name}_SOURCES}")
@@ -1826,6 +1962,7 @@ function(jucer_project_end)
     ${JUCER_PROJECT_MODULES_BROWSABLE_FILES}
     ${JUCER_ICON_FILE}
     ${JUCER_RESOURCES_RC_FILE}
+    ${JUCER_ENTITLEMENTS_FILE}
   )
 
   if(JUCER_PROJECT_TYPE STREQUAL "Console Application")
@@ -2032,21 +2169,6 @@ function(jucer_project_end)
       )
       target_link_libraries(${auv3_target} PRIVATE ${shared_code_target})
       _FRUT_generate_plist_file_AUv3(${auv3_target} "AUv3_AppExtension")
-
-      if(CMAKE_GENERATOR STREQUAL "Xcode")
-        configure_file("${Reprojucer_templates_DIR}/AUv3.entitlements"
-          "${target}.entitlements" COPYONLY
-        )
-        set_property(TARGET ${auv3_target} PROPERTY
-          XCODE_ATTRIBUTE_CODE_SIGN_ENTITLEMENTS
-          "${CMAKE_CURRENT_BINARY_DIR}/${target}.entitlements"
-        )
-      else()
-        message(WARNING "Reprojucer.cmake only supports entitlements when using the "
-          "Xcode generator. You should call `cmake -G Xcode` if you want to use "
-          "entitlements."
-        )
-      endif()
 
       # Cannot use _FRUT_set_bundle_properties() since Projucer sets xcodeIsBundle=false
       # for this target, though it is a bundle...
@@ -3053,13 +3175,13 @@ function(_FRUT_generate_JuceHeader_header)
 
   list(LENGTH JUCER_PROJECT_RESOURCES resources_count)
   if(resources_count GREATER 0)
-    set(BinaryDataBuilder_file_name "BinaryDataBuilder-0.3.0")
+    set(BinaryDataBuilder_filename "BinaryDataBuilder-0.3.0")
     set(install_prefix "${Reprojucer.cmake_DIR}/bin")
     if(NOT EXISTS "${BinaryDataBuilder_exe}"
-        OR NOT BinaryDataBuilder_exe MATCHES "${BinaryDataBuilder_file_name}")
+        OR NOT BinaryDataBuilder_exe MATCHES "${BinaryDataBuilder_filename}")
       unset(BinaryDataBuilder_exe CACHE)
     endif()
-    find_program(BinaryDataBuilder_exe "${BinaryDataBuilder_file_name}"
+    find_program(BinaryDataBuilder_exe "${BinaryDataBuilder_filename}"
       PATHS "${install_prefix}"
       NO_DEFAULT_PATH
     )
@@ -3080,12 +3202,12 @@ function(_FRUT_generate_JuceHeader_header)
         )
       endif()
       message(STATUS "Installed BinaryDataBuilder in ${install_prefix}")
-      find_program(BinaryDataBuilder_exe "${BinaryDataBuilder_file_name}"
+      find_program(BinaryDataBuilder_exe "${BinaryDataBuilder_filename}"
         PATHS "${install_prefix}"
         NO_DEFAULT_PATH
       )
       if(NOT BinaryDataBuilder_exe)
-        message(FATAL_ERROR "Could not find ${BinaryDataBuilder_file_name}")
+        message(FATAL_ERROR "Could not find ${BinaryDataBuilder_filename}")
       endif()
     endif()
 
@@ -3179,13 +3301,13 @@ endfunction()
 
 function(_FRUT_generate_icon_file icon_format icon_file_output_dir out_icon_filename)
 
-  set(IconBuilder_file_name "IconBuilder-0.1.0")
+  set(IconBuilder_filename "IconBuilder-0.1.0")
   set(install_prefix "${Reprojucer.cmake_DIR}/bin")
   if(NOT EXISTS "${IconBuilder_exe}"
-      OR NOT IconBuilder_exe MATCHES "${IconBuilder_file_name}")
+      OR NOT IconBuilder_exe MATCHES "${IconBuilder_filename}")
     unset(IconBuilder_exe CACHE)
   endif()
-  find_program(IconBuilder_exe "${IconBuilder_file_name}"
+  find_program(IconBuilder_exe "${IconBuilder_filename}"
     PATHS "${install_prefix}"
     NO_DEFAULT_PATH
   )
@@ -3206,12 +3328,12 @@ function(_FRUT_generate_icon_file icon_format icon_file_output_dir out_icon_file
       )
     endif()
     message(STATUS "Installed IconBuilder in ${install_prefix}")
-    find_program(IconBuilder_exe "${IconBuilder_file_name}"
+    find_program(IconBuilder_exe "${IconBuilder_filename}"
       PATHS "${install_prefix}"
       NO_DEFAULT_PATH
     )
     if(NOT IconBuilder_exe)
-      message(FATAL_ERROR "Could not find ${IconBuilder_file_name}")
+      message(FATAL_ERROR "Could not find ${IconBuilder_filename}")
     endif()
   endif()
 
@@ -3280,6 +3402,44 @@ function(_FRUT_generate_resources_rc_file output_path)
   string(REPLACE ";" "," comma_separated_version_number "${version_parts}")
 
   configure_file("${Reprojucer_templates_DIR}/resources.rc" "${output_path}" @ONLY)
+
+endfunction()
+
+
+function(_FRUT_generate_entitlements_file output_filename out_var)
+
+  set(entitlements_content "")
+
+  if(JUCER_PROJECT_TYPE STREQUAL "Audio Plug-in")
+    string(APPEND entitlements_content
+      "\t<key>com.apple.security.app-sandbox</key>\n" "\t<true/>\n"
+    )
+  else()
+    if(JUCER_PUSH_NOTIFICATIONS_CAPABILITY)
+      string(APPEND entitlements_content
+        "\t<key>com.apple.developer.aps-environment</key>\n"
+        "\t<string>development</string>\n"
+      )
+    endif()
+  endif()
+  if(JUCER_USE_HARDENED_RUNTIME)
+    foreach(option IN LISTS JUCER_HARDENED_RUNTIME_OPTIONS)
+      string(APPEND entitlements_content "\t<key>${option}</key>\n" "\t<true/>\n")
+    endforeach()
+  endif()
+  if(JUCER_USE_APP_SANDBOX)
+    foreach(option IN LISTS JUCER_APP_SANDBOX_OPTIONS)
+      string(APPEND entitlements_content "\t<key>${option}</key>\n" "\t<true/>\n")
+    endforeach()
+  endif()
+
+  if(NOT entitlements_content STREQUAL "")
+    configure_file("${Reprojucer_templates_DIR}/project.entitlements"
+      "${output_filename}" @ONLY
+    )
+
+    set(${out_var} "${CMAKE_CURRENT_BINARY_DIR}/${output_filename}" PARENT_SCOPE)
+  endif()
 
 endfunction()
 
@@ -3558,6 +3718,10 @@ function(_FRUT_set_compiler_and_linker_settings_APPLE target)
     endif()
   endforeach()
 
+  if(JUCER_PUSH_NOTIFICATIONS_CAPABILITY)
+    target_compile_definitions(${target} PRIVATE "JUCE_PUSH_NOTIFICATIONS=1")
+  endif()
+
   if(target MATCHES "_AUv3_AppExtension$")
     if(CMAKE_GENERATOR STREQUAL "Xcode")
       set_target_properties(${target} PROPERTIES
@@ -3653,6 +3817,27 @@ function(_FRUT_set_compiler_and_linker_settings_APPLE target)
   if(DEFINED all_confs_code_sign_identity)
     set_target_properties(${target} PROPERTIES
       XCODE_ATTRIBUTE_CODE_SIGN_IDENTITY "${all_confs_code_sign_identity}"
+    )
+  endif()
+
+  if(JUCER_PUSH_NOTIFICATIONS_CAPABILITY
+      OR JUCER_USE_APP_SANDBOX
+      OR JUCER_USE_HARDENED_RUNTIME
+      OR target MATCHES "_AUv3_AppExtension$")
+    if(CMAKE_GENERATOR STREQUAL "Xcode")
+      set_property(TARGET ${target} PROPERTY
+        XCODE_ATTRIBUTE_CODE_SIGN_ENTITLEMENTS "${JUCER_ENTITLEMENTS_FILE}"
+      )
+    else()
+      message(WARNING "Reprojucer.cmake only supports entitlements when using the Xcode "
+        "generator. You should call `cmake -G Xcode` if you want to use entitlements."
+      )
+    endif()
+  endif()
+
+  if(JUCER_USE_HARDENED_RUNTIME)
+    set_target_properties(${target} PROPERTIES
+      XCODE_ATTRIBUTE_ENABLE_HARDENED_RUNTIME "YES"
     )
   endif()
 
@@ -4493,13 +4678,13 @@ function(_FRUT_generate_plist_file
   endif()
 
   if(JUCER_CUSTOM_PLIST)
-    set(PListMerger_file_name "PListMerger-0.1.0")
+    set(PListMerger_filename "PListMerger-0.1.0")
     set(install_prefix "${Reprojucer.cmake_DIR}/bin")
     if(NOT EXISTS "${PListMerger_exe}"
-        OR NOT PListMerger_exe MATCHES "${PListMerger_file_name}")
+        OR NOT PListMerger_exe MATCHES "${PListMerger_filename}")
       unset(PListMerger_exe CACHE)
     endif()
-    find_program(PListMerger_exe "${PListMerger_file_name}"
+    find_program(PListMerger_exe "${PListMerger_filename}"
       PATHS "${install_prefix}"
       NO_DEFAULT_PATH
     )
@@ -4520,12 +4705,12 @@ function(_FRUT_generate_plist_file
         )
       endif()
       message(STATUS "Installed PListMerger in ${install_prefix}")
-      find_program(PListMerger_exe "${PListMerger_file_name}"
+      find_program(PListMerger_exe "${PListMerger_filename}"
         PATHS "${install_prefix}"
         NO_DEFAULT_PATH
       )
       if(NOT PListMerger_exe)
-        message(FATAL_ERROR "Could not find ${PListMerger_file_name}")
+        message(FATAL_ERROR "Could not find ${PListMerger_filename}")
       endif()
     endif()
 

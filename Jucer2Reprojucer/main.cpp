@@ -1496,30 +1496,67 @@ int main(int argc, char* argv[])
 
         convertOnOffSettingIfDefined(exporter, "hardenedRuntime", "USE_HARDENED_RUNTIME",
                                      {});
-        convertSettingAsListIfDefined(
-          exporter, "hardenedRuntimeOptions", "HARDENED_RUNTIME_OPTIONS",
-          [&convertIdsToStrings](const juce::var& v) {
-            return convertIdsToStrings(
-              v, {{"com.apple.security.cs.allow-jit",
-                   "Allow Execution of JIT-compiled Code"},
-                  {"com.apple.security.cs.allow-unsigned-executable-memory",
-                   "Allow Unsigned Executable Memory"},
-                  {"com.apple.security.cs.allow-dyld-environment-variables",
-                   "Allow DYLD Environment Variables"},
-                  {"com.apple.security.cs.disable-library-validation",
-                   "Disable Library Validation"},
-                  {"com.apple.security.cs.disable-executable-page-protection",
-                   "Disable Executable Memory Protection"},
-                  {"com.apple.security.cs.debugger", "Debugging Tool"},
-                  {"com.apple.security.device.audio-input", "Audio Input"},
-                  {"com.apple.security.device.camera", "Camera"},
-                  {"com.apple.security.personal-information.location", "Location"},
-                  {"com.apple.security.personal-information.addressbook", "Address Book"},
-                  {"com.apple.security.personal-information.calendars", "Calendar"},
-                  {"com.apple.security.personal-information.photos-library",
-                   "Photos Library"},
-                  {"com.apple.security.automation.apple-events", "Apple Events"}});
-          });
+        if (jucerVersionAsTuple >= Version{5, 4, 4})
+        {
+          convertSettingAsListIfDefined(
+            exporter, "hardenedRuntimeOptions", "HARDENED_RUNTIME_OPTIONS",
+            [&convertIdsToStrings](const juce::var& v) {
+              return convertIdsToStrings(
+                v,
+                {{"com.apple.security.cs.allow-jit",
+                  "Runtime Exceptions: Allow Execution of JIT-compiled Code"},
+                 {"com.apple.security.cs.allow-unsigned-executable-memory",
+                  "Runtime Exceptions: Allow Unsigned Executable Memory"},
+                 {"com.apple.security.cs.allow-dyld-environment-variables",
+                  "Runtime Exceptions: Allow DYLD Environment Variables"},
+                 {"com.apple.security.cs.disable-library-validation",
+                  "Runtime Exceptions: Disable Library Validation"},
+                 {"com.apple.security.cs.disable-executable-page-protection",
+                  "Runtime Exceptions: Disable Executable Memory Protection"},
+                 {"com.apple.security.cs.debugger", "Runtime Exceptions: Debugging Tool"},
+                 {"com.apple.security.device.audio-input",
+                  "Resource Access: Audio Input"},
+                 {"com.apple.security.device.camera", "Resource Access: Camera"},
+                 {"com.apple.security.personal-information.location",
+                  "Resource Access: Location"},
+                 {"com.apple.security.personal-information.addressbook",
+                  "Resource Access: Address Book"},
+                 {"com.apple.security.personal-information.calendars",
+                  "Resource Access: Calendar"},
+                 {"com.apple.security.personal-information.photos-library",
+                  "Resource Access: Photos Library"},
+                 {"com.apple.security.automation.apple-events",
+                  "Resource Access: Apple Events"}});
+            });
+        }
+        else
+        {
+          convertSettingAsListIfDefined(
+            exporter, "hardenedRuntimeOptions", "HARDENED_RUNTIME_OPTIONS",
+            [&convertIdsToStrings](const juce::var& v) {
+              return convertIdsToStrings(
+                v,
+                {{"com.apple.security.cs.allow-jit",
+                  "Allow Execution of JIT-compiled Code"},
+                 {"com.apple.security.cs.allow-unsigned-executable-memory",
+                  "Allow Unsigned Executable Memory"},
+                 {"com.apple.security.cs.allow-dyld-environment-variables",
+                  "Allow DYLD Environment Variables"},
+                 {"com.apple.security.cs.disable-library-validation",
+                  "Disable Library Validation"},
+                 {"com.apple.security.cs.disable-executable-page-protection",
+                  "Disable Executable Memory Protection"},
+                 {"com.apple.security.cs.debugger", "Debugging Tool"},
+                 {"com.apple.security.device.audio-input", "Audio Input"},
+                 {"com.apple.security.device.camera", "Camera"},
+                 {"com.apple.security.personal-information.location", "Location"},
+                 {"com.apple.security.personal-information.addressbook", "Address Book"},
+                 {"com.apple.security.personal-information.calendars", "Calendar"},
+                 {"com.apple.security.personal-information.photos-library",
+                  "Photos Library"},
+                 {"com.apple.security.automation.apple-events", "Apple Events"}});
+            });
+        }
 
         convertOnOffSettingIfDefined(exporter, "microphonePermissionNeeded",
                                      "MICROPHONE_ACCESS", {});
