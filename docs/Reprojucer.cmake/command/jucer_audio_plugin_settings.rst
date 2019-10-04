@@ -16,6 +16,7 @@ Define the settings specific to an *Audio Plug-in* project.
     [BUILD_RTAS <ON|OFF>]
     [BUILD_AAX <ON|OFF>]
     [BUILD_STANDALONE_PLUGIN <ON|OFF>]
+    [BUILD_UNITY_PLUGIN <ON|OFF>]
 
     [PLUGIN_NAME <plugin_name>]
     [PLUGIN_DESCRIPTION <plugin_description>]
