@@ -3194,8 +3194,10 @@ function(_FRUT_generate_JuceHeader_header)
         CMAKE_FLAGS
         "-DJUCE_modules_DIRS=${JUCER_PROJECT_MODULES_FOLDERS}"
         "-DCMAKE_INSTALL_PREFIX=${install_prefix}"
+        OUTPUT_VARIABLE BinaryDataBuilder_output
       )
       if(NOT BinaryDataBuilder)
+        message("${BinaryDataBuilder_output}")
         message(FATAL_ERROR "Failed to build and install BinaryDataBuilder. Please report"
           " this problem by writing a new comment on the following GitHub issue:"
           " https://github.com/McMartin/FRUT/issues/513"
@@ -3320,8 +3322,10 @@ function(_FRUT_generate_icon_file icon_format icon_file_output_dir out_icon_file
       CMAKE_FLAGS
       "-DJUCE_modules_DIRS=${JUCER_PROJECT_MODULES_FOLDERS}"
       "-DCMAKE_INSTALL_PREFIX=${install_prefix}"
+      OUTPUT_VARIABLE IconBuilder_output
     )
     if(NOT IconBuilder)
+      message("${IconBuilder_output}")
       message(FATAL_ERROR "Failed to build and install IconBuilder. Please report this"
         " problem by writing a new comment on the following GitHub issue:"
         " https://github.com/McMartin/FRUT/issues/514"
@@ -4697,8 +4701,10 @@ function(_FRUT_generate_plist_file
         CMAKE_FLAGS
         "-DJUCE_modules_DIRS=${JUCER_PROJECT_MODULES_FOLDERS}"
         "-DCMAKE_INSTALL_PREFIX=${install_prefix}"
+        OUTPUT_VARIABLE PListMerger_output
       )
       if(NOT PListMerger)
+        message("${PListMerger_output}")
         message(FATAL_ERROR "Failed to build and install PListMerger. Please report this"
           " problem by writing a new comment on the following GitHub issue:"
           " https://github.com/McMartin/FRUT/issues/515"
