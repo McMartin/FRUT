@@ -17,37 +17,37 @@
 
 
 #if defined(__clang__)
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wcast-align"
-#pragma clang diagnostic ignored "-Wcast-qual"
-#pragma clang diagnostic ignored "-Wdocumentation"
-#pragma clang diagnostic ignored "-Wdocumentation-deprecated-sync"
-#pragma clang diagnostic ignored "-Wdocumentation-unknown-command"
-#pragma clang diagnostic ignored "-Wexit-time-destructors"
-#pragma clang diagnostic ignored "-Wextra-semi"
-#pragma clang diagnostic ignored "-Wglobal-constructors"
-#pragma clang diagnostic ignored "-Wimplicit-fallthrough"
-#if __has_warning("-Winconsistent-missing-destructor-override")
-#pragma clang diagnostic ignored "-Winconsistent-missing-destructor-override"
-#endif
-#pragma clang diagnostic ignored "-Wold-style-cast"
-#pragma clang diagnostic ignored "-Wsign-conversion"
-#pragma clang diagnostic ignored "-Wundef"
-#if __has_warning("-Wundefined-func-template")
-#pragma clang diagnostic ignored "-Wundefined-func-template"
-#endif
-#if __has_warning("-Wunused-template")
-#pragma clang diagnostic ignored "-Wunused-template"
-#endif
-#pragma clang diagnostic ignored "-Wweak-vtables"
-#if __has_warning("-Wzero-as-null-pointer-constant")
-#pragma clang diagnostic ignored "-Wzero-as-null-pointer-constant"
-#endif
+  #pragma clang diagnostic push
+  #pragma clang diagnostic ignored "-Wcast-align"
+  #pragma clang diagnostic ignored "-Wcast-qual"
+  #pragma clang diagnostic ignored "-Wdocumentation"
+  #pragma clang diagnostic ignored "-Wdocumentation-deprecated-sync"
+  #pragma clang diagnostic ignored "-Wdocumentation-unknown-command"
+  #pragma clang diagnostic ignored "-Wexit-time-destructors"
+  #pragma clang diagnostic ignored "-Wextra-semi"
+  #pragma clang diagnostic ignored "-Wglobal-constructors"
+  #pragma clang diagnostic ignored "-Wimplicit-fallthrough"
+  #if __has_warning("-Winconsistent-missing-destructor-override")
+    #pragma clang diagnostic ignored "-Winconsistent-missing-destructor-override"
+  #endif
+  #pragma clang diagnostic ignored "-Wold-style-cast"
+  #pragma clang diagnostic ignored "-Wsign-conversion"
+  #pragma clang diagnostic ignored "-Wundef"
+  #if __has_warning("-Wundefined-func-template")
+    #pragma clang diagnostic ignored "-Wundefined-func-template"
+  #endif
+  #if __has_warning("-Wunused-template")
+    #pragma clang diagnostic ignored "-Wunused-template"
+  #endif
+  #pragma clang diagnostic ignored "-Wweak-vtables"
+  #if __has_warning("-Wzero-as-null-pointer-constant")
+    #pragma clang diagnostic ignored "-Wzero-as-null-pointer-constant"
+  #endif
 #endif
 
 #if defined(_MSC_VER)
-#pragma warning(push)
-#pragma warning(disable : 4800)
+  #pragma warning(push)
+  #pragma warning(disable : 4800)
 #endif
 
 #include "JuceHeader.h"
@@ -55,11 +55,11 @@
 #include <argh/argh.h>
 
 #if defined(_MSC_VER)
-#pragma warning(pop)
+  #pragma warning(pop)
 #endif
 
 #if defined(__clang__)
-#pragma clang diagnostic pop
+  #pragma clang diagnostic pop
 #endif
 
 #include <algorithm>
@@ -75,7 +75,7 @@
 
 
 #if !defined(WRITE_CRLF_LINE_ENDINGS)
-#error WRITE_CRLF_LINE_ENDINGS must be defined
+  #error WRITE_CRLF_LINE_ENDINGS must be defined
 #endif
 #if WRITE_CRLF_LINE_ENDINGS
 static const auto kNewLine = "\r\n";
@@ -84,7 +84,7 @@ static const auto kNewLine = '\n';
 #endif
 
 #if !defined(IS_PAID_OR_GPL)
-#error IS_PAID_OR_GPL must be defined
+  #error IS_PAID_OR_GPL must be defined
 #endif
 #if IS_PAID_OR_GPL
 static const auto kDefaultLicenseBasedValue = "OFF";
