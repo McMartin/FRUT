@@ -4,7 +4,7 @@ task:
   only_if: $CIRRUS_BASE_BRANCH == "master" || $CIRRUS_BRANCH == "master"
 
   container:
-    image: kunitoki/clang-8
+    image: rsmmr/clang:9.0
 
   test_script:
     - clang-format -version
