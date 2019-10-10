@@ -143,6 +143,7 @@ if(CMAKE_HOST_SYSTEM_NAME STREQUAL "Linux")
 endif()
 
 if(WIN32 AND NOT MSVC)
+  target_compile_options(IconBuilder PRIVATE "-Wa,-mbig-obj")
   target_link_libraries(IconBuilder PRIVATE
     -limm32
     -lshlwapi
