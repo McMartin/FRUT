@@ -17,7 +17,7 @@
 
 // clang-format off
 
-// Lines 24-107 of this file were copied from
+// Lines 24-108 of this file were copied from
 // https://github.com/WeAreROLI/JUCE/blob/4.2.0/extras/Projucer/Source/Utility/jucer_FileHelpers.cpp
 
 
@@ -48,6 +48,7 @@
 #include "../jucer_Headers.h"
 
 
+//==============================================================================
 namespace FileHelpers
 {
     static int64 calculateMemoryHashCode (const void* data, const size_t numBytes)
