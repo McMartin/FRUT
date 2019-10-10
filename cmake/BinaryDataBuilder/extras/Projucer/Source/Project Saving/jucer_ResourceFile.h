@@ -17,7 +17,7 @@
 
 // clang-format off
 
-// Lines 24-51, 62-72, 75-82, 85, and 87-89 of this file were copied from
+// Lines 24-51, 62-72, 75-82, 85, and 87-91 of this file were copied from
 // https://github.com/WeAreROLI/JUCE/blob/4.2.0/extras/Projucer/Source/Project%20Saving/jucer_ResourceFile.h
 
 
