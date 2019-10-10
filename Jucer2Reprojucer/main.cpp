@@ -43,23 +43,32 @@
   #if __has_warning("-Wzero-as-null-pointer-constant")
     #pragma clang diagnostic ignored "-Wzero-as-null-pointer-constant"
   #endif
-#endif
 
-#if defined(_MSC_VER)
+#elif defined(__GNUC__)
+  #pragma GCC diagnostic push
+  #if __GNUC__ >= 6
+    #pragma GCC diagnostic ignored "-Wmisleading-indentation"
+  #endif
+  #if __GNUC__ >= 8
+    #pragma GCC diagnostic ignored "-Wclass-memaccess"
+  #endif
+
+#elif defined(_MSC_VER)
   #pragma warning(push)
   #pragma warning(disable : 4800)
+
 #endif
 
 #include "JuceHeader.h"
 
 #include <argh/argh.h>
 
-#if defined(_MSC_VER)
-  #pragma warning(pop)
-#endif
-
 #if defined(__clang__)
   #pragma clang diagnostic pop
+#elif defined(__GNUC__)
+  #pragma GCC diagnostic pop
+#elif defined(_MSC_VER)
+  #pragma warning(pop)
 #endif
 
 #include <algorithm>

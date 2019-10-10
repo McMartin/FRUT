@@ -344,7 +344,7 @@ matrix:
       script: *script-Makefiles
 
     - os: linux
-      dist: xenial
+      dist: bionic
       addons:
         apt:
           packages:
