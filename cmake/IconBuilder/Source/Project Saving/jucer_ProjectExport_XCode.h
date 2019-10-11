@@ -17,8 +17,8 @@
 
 // clang-format off
 
-// From line 24 onward, the content of this file was copied from
-// https://github.com/WeAreROLI/JUCE/blob/4.3.1/extras/Projucer/Source/Project%20Saving/jucer_ProjectExport_XCode.h
+// Lines 24-158 of this file were copied from
+// https://github.com/WeAreROLI/JUCE/blob/4.2.0/extras/Projucer/Source/Project%20Saving/jucer_ProjectExport_XCode.h
 
 
 /*
@@ -54,16 +54,16 @@
 
         int bestSize = 16;
 
-        for (int size : validSizes)
+        for (int i = 0; i < numElementsInArray (validSizes); ++i)
         {
-            if (w == h && w == size)
+            if (w == h && w == validSizes[i])
             {
                 bestSize = w;
                 break;
             }
 
-            if (jmax (w, h) > size)
-                bestSize = size;
+            if (jmax (w, h) > validSizes[i])
+                bestSize = validSizes[i];
         }
 
         return rescaleImageForIcon (image, bestSize);

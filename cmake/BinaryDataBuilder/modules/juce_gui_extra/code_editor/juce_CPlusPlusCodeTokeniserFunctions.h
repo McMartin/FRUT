@@ -17,7 +17,7 @@
 
 // clang-format off
 
-// Lines 24-214 of this file were copied from
+// Lines 24-218 of this file were copied from
 // https://github.com/WeAreROLI/JUCE/blob/5.2.1/modules/juce_gui_extra/code_editor/juce_CPlusPlusCodeTokeniserFunctions.h
 
 

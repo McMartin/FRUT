@@ -17,8 +17,8 @@
 
 // clang-format off
 
-// From line 24 onward, the content of this file was copied from
-// https://github.com/WeAreROLI/JUCE/blob/4.3.1/extras/Projucer/Source/Utility/jucer_FileHelpers.cpp
+// Lines 24-87 and 89-108 of this file were copied from
+// https://github.com/WeAreROLI/JUCE/blob/4.2.0/extras/Projucer/Source/Utility/jucer_FileHelpers.cpp
 
 
 /*
@@ -48,6 +48,7 @@
 #include "../jucer_Headers.h"
 
 
+//==============================================================================
 namespace FileHelpers
 {
     static int64 calculateMemoryHashCode (const void* data, const size_t numBytes)
@@ -84,7 +85,7 @@ namespace FileHelpers
 
     int64 calculateFileHashCode (const File& file)
     {
-        ScopedPointer<FileInputStream> stream (file.createInputStream());
+        std::unique_ptr<FileInputStream> stream (file.createInputStream());
         return stream != nullptr ? calculateStreamHashCode (*stream) : 0;
     }
 

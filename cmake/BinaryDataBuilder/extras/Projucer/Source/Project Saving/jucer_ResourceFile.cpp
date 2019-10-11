@@ -17,8 +17,14 @@
 
 // clang-format off
 
-// Lines 24-91, 94-104, 108-122, 126-145, 148-155, 159-167, 171-238, 241-246, 249-265, and 269-283 of this file were copied from
+// Lines 30-97, 100-110, 114-128, 132-151, 154-161, 165-173, 177-244, 247-252, 255-271, and 275-289 of this file were copied from
 // https://github.com/WeAreROLI/JUCE/blob/4.2.0/extras/Projucer/Source/Project%20Saving/jucer_ResourceFile.cpp
+
+// Lines 292-316, 320-326, 330-344, and 348-365 of this file were copied from
+// https://github.com/WeAreROLI/JUCE/blob/5.0.0/extras/Projucer/Source/Project%20Saving/jucer_ResourceFile.cpp
+
+// Lines 368-392, 396-402, 406-420, 424-448, 452-458, 462-470, and 474-559 of this file were copied from
+// https://github.com/WeAreROLI/JUCE/blob/5.3.2/extras/Projucer/Source/ProjectSaving/jucer_ResourceFile.cpp
 
 
 /*
@@ -283,10 +289,6 @@ Result ResourceFile::write (Array<File>& filesCreated, const int maxFileSize)
 }
 
 
-// Lines 290-314, 318-324, 328-342, and 346-363 of this file were copied from
-// https://github.com/WeAreROLI/JUCE/blob/5.0.0/extras/Projucer/Source/Project%20Saving/jucer_ResourceFile.cpp
-
-
 /*
   ==============================================================================
 
@@ -361,10 +363,6 @@ Result ResourceFile::writeHeader<ProjucerVersion::v5_0_0> (MemoryOutputStream& h
 
     return Result::ok();
 }
-
-
-// Lines 370-394, 398-404, 408-422, 426-450, 454-460, 464-472, and 476-561 of this file were copied from
-// https://github.com/WeAreROLI/JUCE/blob/5.3.2/extras/Projucer/Source/ProjectSaving/jucer_ResourceFile.cpp
 
 
 /*

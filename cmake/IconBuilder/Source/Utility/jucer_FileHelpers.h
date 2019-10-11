@@ -17,8 +17,8 @@
 
 // clang-format off
 
-// From line 24 onward, the content of this file was copied from
-// https://github.com/WeAreROLI/JUCE/blob/4.3.1/extras/Projucer/Source/Utility/jucer_FileHelpers.h
+// Lines 24-63 of this file were copied from
+// https://github.com/WeAreROLI/JUCE/blob/4.2.0/extras/Projucer/Source/Utility/jucer_FileHelpers.h
 
 
 /*
@@ -49,6 +49,7 @@
 #define JUCER_FILEHELPERS_H_INCLUDED
 
 
+//==============================================================================
 namespace FileHelpers
 {
     int64 calculateStreamHashCode (InputStream& stream);
