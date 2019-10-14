@@ -2817,6 +2817,47 @@ function(_FRUT_bool_to_int bool_value out_int_value)
 endfunction()
 
 
+function(_FRUT_build_and_install_helper_exe helper_name helper_version)
+
+  set(helper_filename "${helper_name}-${helper_version}")
+  set(install_prefix "${Reprojucer.cmake_DIR}/bin")
+  if(NOT EXISTS "${${helper_name}_exe}"
+      OR NOT ${helper_name}_exe MATCHES "${helper_filename}")
+    unset(${helper_name}_exe CACHE)
+  endif()
+  find_program(${helper_name}_exe "${helper_filename}"
+    PATHS "${install_prefix}"
+    NO_DEFAULT_PATH
+  )
+  if(NOT ${helper_name}_exe)
+    message(STATUS "Building and installing ${helper_name}")
+    try_compile(${helper_name}
+      "${Reprojucer.cmake_DIR}/${helper_name}/_build/${CMAKE_GENERATOR}"
+      "${Reprojucer.cmake_DIR}/${helper_name}"
+      ${helper_name} install
+      CMAKE_FLAGS
+      "-DJUCE_modules_DIRS=${JUCER_PROJECT_MODULES_FOLDERS}"
+      "-DCMAKE_INSTALL_PREFIX=${install_prefix}"
+    )
+    if(NOT ${helper_name})
+      message(FATAL_ERROR "Failed to build and install ${helper_name}. Please report this"
+        " problem by creating a new issue on GitHub:"
+        " https://github.com/McMartin/FRUT/issues/new"
+      )
+    endif()
+    message(STATUS "Installed ${helper_name} in ${install_prefix}")
+    find_program(${helper_name}_exe "${helper_filename}"
+      PATHS "${install_prefix}"
+      NO_DEFAULT_PATH
+    )
+    if(NOT ${helper_name}_exe)
+      message(FATAL_ERROR "Could not find ${helper_filename}")
+    endif()
+  endif()
+
+endfunction()
+
+
 function(_FRUT_char_literal value out_char_literal)
 
   set(all_ascii_codes "")
@@ -3488,41 +3529,7 @@ endfunction()
 
 function(_FRUT_generate_icon_file icon_format icon_file_output_dir out_icon_filename)
 
-  set(IconBuilder_filename "IconBuilder-0.1.0")
-  set(install_prefix "${Reprojucer.cmake_DIR}/bin")
-  if(NOT EXISTS "${IconBuilder_exe}"
-      OR NOT IconBuilder_exe MATCHES "${IconBuilder_filename}")
-    unset(IconBuilder_exe CACHE)
-  endif()
-  find_program(IconBuilder_exe "${IconBuilder_filename}"
-    PATHS "${install_prefix}"
-    NO_DEFAULT_PATH
-  )
-  if(NOT IconBuilder_exe)
-    message(STATUS "Building and installing IconBuilder")
-    try_compile(IconBuilder
-      "${Reprojucer.cmake_DIR}/IconBuilder/_build/${CMAKE_GENERATOR}"
-      "${Reprojucer.cmake_DIR}/IconBuilder"
-      IconBuilder install
-      CMAKE_FLAGS
-      "-DJUCE_modules_DIRS=${JUCER_PROJECT_MODULES_FOLDERS}"
-      "-DCMAKE_INSTALL_PREFIX=${install_prefix}"
-    )
-    if(NOT IconBuilder)
-      message(FATAL_ERROR "Failed to build and install IconBuilder. Please report this"
-        " problem by creating a new issue on GitHub:"
-        " https://github.com/McMartin/FRUT/issues/new"
-      )
-    endif()
-    message(STATUS "Installed IconBuilder in ${install_prefix}")
-    find_program(IconBuilder_exe "${IconBuilder_filename}"
-      PATHS "${install_prefix}"
-      NO_DEFAULT_PATH
-    )
-    if(NOT IconBuilder_exe)
-      message(FATAL_ERROR "Could not find ${IconBuilder_filename}")
-    endif()
-  endif()
+  _FRUT_build_and_install_helper_exe("IconBuilder" "0.1.0")
 
   set(IconBuilder_args "${icon_format}" "${icon_file_output_dir}")
   if(DEFINED JUCER_SMALL_ICON)
@@ -3556,41 +3563,7 @@ function(_FRUT_generate_JuceHeader_header)
 
   list(LENGTH JUCER_PROJECT_RESOURCES resources_count)
   if(resources_count GREATER 0)
-    set(BinaryDataBuilder_filename "BinaryDataBuilder-0.3.0")
-    set(install_prefix "${Reprojucer.cmake_DIR}/bin")
-    if(NOT EXISTS "${BinaryDataBuilder_exe}"
-        OR NOT BinaryDataBuilder_exe MATCHES "${BinaryDataBuilder_filename}")
-      unset(BinaryDataBuilder_exe CACHE)
-    endif()
-    find_program(BinaryDataBuilder_exe "${BinaryDataBuilder_filename}"
-      PATHS "${install_prefix}"
-      NO_DEFAULT_PATH
-    )
-    if(NOT BinaryDataBuilder_exe)
-      message(STATUS "Building and installing BinaryDataBuilder")
-      try_compile(BinaryDataBuilder
-        "${Reprojucer.cmake_DIR}/BinaryDataBuilder/_build/${CMAKE_GENERATOR}"
-        "${Reprojucer.cmake_DIR}/BinaryDataBuilder"
-        BinaryDataBuilder install
-        CMAKE_FLAGS
-        "-DJUCE_modules_DIRS=${JUCER_PROJECT_MODULES_FOLDERS}"
-        "-DCMAKE_INSTALL_PREFIX=${install_prefix}"
-      )
-      if(NOT BinaryDataBuilder)
-        message(FATAL_ERROR "Failed to build and install BinaryDataBuilder. Please report"
-          " this problem by creating a new issue on GitHub:"
-          " https://github.com/McMartin/FRUT/issues/new"
-        )
-      endif()
-      message(STATUS "Installed BinaryDataBuilder in ${install_prefix}")
-      find_program(BinaryDataBuilder_exe "${BinaryDataBuilder_filename}"
-        PATHS "${install_prefix}"
-        NO_DEFAULT_PATH
-      )
-      if(NOT BinaryDataBuilder_exe)
-        message(FATAL_ERROR "Could not find ${BinaryDataBuilder_filename}")
-      endif()
-    endif()
+    _FRUT_build_and_install_helper_exe("BinaryDataBuilder" "0.3.0")
 
     if(DEFINED JUCER_VERSION)
       set(projucer_version "${JUCER_VERSION}")
@@ -3907,41 +3880,7 @@ function(_FRUT_generate_plist_file
   endif()
 
   if(JUCER_CUSTOM_PLIST)
-    set(PListMerger_filename "PListMerger-0.1.0")
-    set(install_prefix "${Reprojucer.cmake_DIR}/bin")
-    if(NOT EXISTS "${PListMerger_exe}"
-        OR NOT PListMerger_exe MATCHES "${PListMerger_filename}")
-      unset(PListMerger_exe CACHE)
-    endif()
-    find_program(PListMerger_exe "${PListMerger_filename}"
-      PATHS "${install_prefix}"
-      NO_DEFAULT_PATH
-    )
-    if(NOT PListMerger_exe)
-      message(STATUS "Building and installing PListMerger")
-      try_compile(PListMerger
-        "${Reprojucer.cmake_DIR}/PListMerger/_build/${CMAKE_GENERATOR}"
-        "${Reprojucer.cmake_DIR}/PListMerger"
-        PListMerger install
-        CMAKE_FLAGS
-        "-DJUCE_modules_DIRS=${JUCER_PROJECT_MODULES_FOLDERS}"
-        "-DCMAKE_INSTALL_PREFIX=${install_prefix}"
-      )
-      if(NOT PListMerger)
-        message(FATAL_ERROR "Failed to build and install PListMerger. Please report this"
-          " problem by creating a new issue on GitHub:"
-          " https://github.com/McMartin/FRUT/issues/new"
-        )
-      endif()
-      message(STATUS "Installed PListMerger in ${install_prefix}")
-      find_program(PListMerger_exe "${PListMerger_filename}"
-        PATHS "${install_prefix}"
-        NO_DEFAULT_PATH
-      )
-      if(NOT PListMerger_exe)
-        message(FATAL_ERROR "Could not find ${PListMerger_filename}")
-      endif()
-    endif()
+    _FRUT_build_and_install_helper_exe("PListMerger" "0.1.0")
 
     execute_process(
       COMMAND
