@@ -542,6 +542,7 @@ function(jucer_project_module module_name PATH_KEYWORD modules_folder)
     set(JUCER_FLAG_${config_flag} "${extra_values_${config_flag}}" PARENT_SCOPE)
   endforeach()
 
+  unset(module_info_version)
   set(module_info_searchpaths "")
   set(module_info_OSXFrameworks "")
   set(module_info_linuxPackages "")
@@ -574,6 +575,8 @@ function(jucer_project_module module_name PATH_KEYWORD modules_folder)
       endif()
     endif()
   endforeach()
+
+  set(JUCER_PROJECT_MODULE_${module_name}_VERSION "${module_info_version}" PARENT_SCOPE)
 
   string(REGEX REPLACE "[ ,]+" ";" search_paths "${module_info_searchpaths}")
   foreach(search_path IN LISTS search_paths)
@@ -2838,11 +2841,48 @@ function(_FRUT_build_and_install_helper_exe helper_name helper_version)
       CMAKE_FLAGS
       "-DJUCE_modules_DIRS=${JUCER_PROJECT_MODULES_FOLDERS}"
       "-DCMAKE_INSTALL_PREFIX=${install_prefix}"
+      OUTPUT_VARIABLE try_compile_output
     )
     if(NOT ${helper_name})
+      execute_process(
+        COMMAND "git" "rev-parse" "HEAD"
+        WORKING_DIRECTORY "${Reprojucer.cmake_DIR}"
+        OUTPUT_VARIABLE git_rev_parse_output
+        RESULT_VARIABLE git_rev_parse_return_code
+      )
+      if(git_rev_parse_return_code EQUAL 0)
+        string(STRIP "${git_rev_parse_output}" git_rev_parse_output)
+        set(frut_version "commit ${git_rev_parse_output}")
+      else()
+        set(frut_version "unknown (`git rev-parse HEAD` failed)")
+      endif()
+
+      if(DEFINED JUCER_PROJECT_MODULE_juce_core_PATH)
+        execute_process(
+          COMMAND "git" "describe" "--tags" "--always"
+          WORKING_DIRECTORY "${JUCER_PROJECT_MODULE_juce_core_PATH}"
+          OUTPUT_VARIABLE git_describe_output
+          RESULT_VARIABLE git_describe_return_code
+        )
+        if(git_describe_return_code EQUAL 0)
+          string(STRIP "${git_describe_output}" git_describe_output)
+          set(juce_version "`${git_describe_output}`")
+        else()
+          set(juce_version "`${JUCER_PROJECT_MODULE_juce_core_VERSION}`")
+        endif()
+      else()
+        set(juce_version "unknown (no juce_core module)")
+      endif()
+
+      string(REPLACE "\r\n" "\n" try_compile_output "${try_compile_output}")
+      configure_file("${Reprojucer_templates_DIR}/failed-to-build-and-install.md"
+        "failed-to-build-and-install-${helper_name}.md" @ONLY
+      )
       message(FATAL_ERROR "Failed to build and install ${helper_name}. Please report this"
         " problem by creating a new issue on GitHub:"
-        " https://github.com/McMartin/FRUT/issues/new"
+        " https://github.com/McMartin/FRUT/issues/new.\nPlease copy-paste the contents of"
+        " ${CMAKE_CURRENT_BINARY_DIR}/failed-to-build-and-install-${helper_name}.md in"
+        " the commment."
       )
     endif()
     message(STATUS "Installed ${helper_name} in ${install_prefix}")
