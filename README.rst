@@ -149,8 +149,8 @@ We first build and install FRUT with CMake: ::
   $ cmake --build . --target install
   ...
 
-If it fails to build and install, please report the problem by writing a new comment on
-the following GitHub issue: https://github.com/McMartin/FRUT/issues/512.
+If it fails to build and install, please report the problem by creating a new issue on
+GitHub: https://github.com/McMartin/FRUT/issues/new.
 
 Then we convert ``MyGreatProject.jucer`` to a new ``CMakeLists.txt`` file: ::
 

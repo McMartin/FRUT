@@ -3197,8 +3197,8 @@ function(_FRUT_generate_JuceHeader_header)
       )
       if(NOT BinaryDataBuilder)
         message(FATAL_ERROR "Failed to build and install BinaryDataBuilder. Please report"
-          " this problem by writing a new comment on the following GitHub issue:"
-          " https://github.com/McMartin/FRUT/issues/513"
+          " this problem by creating a new issue on GitHub:"
+          " https://github.com/McMartin/FRUT/issues/new"
         )
       endif()
       message(STATUS "Installed BinaryDataBuilder in ${install_prefix}")
@@ -3323,8 +3323,8 @@ function(_FRUT_generate_icon_file icon_format icon_file_output_dir out_icon_file
     )
     if(NOT IconBuilder)
       message(FATAL_ERROR "Failed to build and install IconBuilder. Please report this"
-        " problem by writing a new comment on the following GitHub issue:"
-        " https://github.com/McMartin/FRUT/issues/514"
+        " problem by creating a new issue on GitHub:"
+        " https://github.com/McMartin/FRUT/issues/new"
       )
     endif()
     message(STATUS "Installed IconBuilder in ${install_prefix}")
@@ -4700,8 +4700,8 @@ function(_FRUT_generate_plist_file
       )
       if(NOT PListMerger)
         message(FATAL_ERROR "Failed to build and install PListMerger. Please report this"
-          " problem by writing a new comment on the following GitHub issue:"
-          " https://github.com/McMartin/FRUT/issues/515"
+          " problem by creating a new issue on GitHub:"
+          " https://github.com/McMartin/FRUT/issues/new"
         )
       endif()
       message(STATUS "Installed PListMerger in ${install_prefix}")
