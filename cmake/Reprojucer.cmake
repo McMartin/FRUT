@@ -2578,72 +2578,6 @@ function(jucer_project_end)
 endfunction()
 
 
-function(_FRUT_parse_arguments single_value_keywords multi_value_keywords arguments)
-
-  foreach(keyword IN LISTS single_value_keywords multi_value_keywords)
-    unset(_${keyword})
-  endforeach()
-
-  unset(keyword)
-
-  foreach(argument IN LISTS arguments)
-    list(FIND single_value_keywords "${argument}" single_value_index)
-    list(FIND multi_value_keywords "${argument}" multi_value_index)
-
-    if(NOT DEFINED keyword)
-      if(NOT single_value_index EQUAL -1)
-        set(keyword "${argument}")
-        set(keyword_type "single")
-      elseif(NOT multi_value_index EQUAL -1)
-        set(keyword "${argument}")
-        set(keyword_type "multi")
-      else()
-        message(FATAL_ERROR "Unknown keyword: \"${argument}\"")
-      endif()
-    elseif(keyword_type STREQUAL "single")
-      set(_${keyword} "${argument}")
-      unset(keyword)
-    elseif(keyword_type STREQUAL "multi")
-      if(DEFINED _${keyword})
-        if(NOT single_value_index EQUAL -1)
-          set(keyword "${argument}")
-          set(keyword_type "single")
-        elseif(NOT multi_value_index EQUAL -1)
-          set(keyword "${argument}")
-          set(keyword_type "multi")
-        else()
-          list(APPEND _${keyword} ${argument})
-        endif()
-      else()
-        list(APPEND _${keyword} ${argument})
-      endif()
-    else()
-      message(FATAL_ERROR "There is a bug!")
-    endif()
-  endforeach()
-
-  foreach(keyword IN LISTS single_value_keywords multi_value_keywords)
-    unset(_${keyword} PARENT_SCOPE)
-    if(DEFINED _${keyword})
-      set(_${keyword} "${_${keyword}}" PARENT_SCOPE)
-    endif()
-  endforeach()
-
-endfunction()
-
-
-function(_FRUT_warn_about_unsupported_setting setting projucer_setting issue_number)
-
-  message(WARNING "Reprojucer.cmake doesn't support the setting ${setting} "
-    "(\"${projucer_setting}\" in Projucer). If you would like Reprojucer.cmake to "
-    "support this setting, please leave a comment on the issue \"Reprojucer.cmake "
-    "doesn't support the setting ${setting}\" on GitHub: "
-    "https://github.com/McMartin/FRUT/issues/${issue_number}"
-  )
-
-endfunction()
-
-
 function(_FRUT_abs_path_based_on_jucer_project_dir out_path in_path)
 
   if(NOT IS_ABSOLUTE "${in_path}" AND NOT DEFINED JUCER_PROJECT_DIR)
@@ -2664,27 +2598,257 @@ function(_FRUT_abs_path_based_on_jucer_project_dir out_path in_path)
 endfunction()
 
 
-function(_FRUT_make_valid_configuration_name config out_var)
+function(_FRUT_add_extra_commands target exporter)
 
-  string(REGEX REPLACE "[^A-Za-z0-9_]" " " config "${config}")
-  string(STRIP "${config}" config)
-  string(REGEX REPLACE "[ ]+" "_" config "${config}")
-  set(${out_var} "${config}" PARENT_SCOPE)
+  if(APPLE)
+    _FRUT_add_extra_commands_APPLE(${target} "${exporter}")
+  elseif(MSVC)
+    _FRUT_add_extra_commands_MSVC(${target} "${exporter}")
+  endif()
 
 endfunction()
 
 
-function(_FRUT_sanitize_path_in_user_folder out_path in_path)
+function(_FRUT_add_extra_commands_APPLE target exporter)
 
-  file(TO_CMAKE_PATH "$ENV{HOME}" user_folder)
-  if(NOT user_folder MATCHES "/$")
-    string(APPEND user_folder "/")
+  get_target_property(target_type ${target} TYPE)
+  if(target_type STREQUAL "EXECUTABLE" OR target_type STREQUAL "MODULE_LIBRARY")
+    if(NOT EXISTS "${strip_exe}")
+      unset(strip_exe CACHE)
+    endif()
+    find_program(strip_exe "strip")
+    if(NOT strip_exe)
+      message(FATAL_ERROR "Could not find strip program")
+    endif()
+    unset(all_confs_strip_exe)
+    unset(all_confs_strip_opt)
+    unset(all_confs_strip_arg)
+    foreach(config IN LISTS JUCER_PROJECT_CONFIGURATIONS)
+      if(JUCER_STRIP_LOCAL_SYMBOLS_${config})
+        string(APPEND all_confs_strip_exe $<$<CONFIG:${config}>:${strip_exe}>)
+        string(APPEND all_confs_strip_opt $<$<CONFIG:${config}>:-x>)
+        string(APPEND all_confs_strip_arg $<$<CONFIG:${config}>:$<TARGET_FILE:${target}>>)
+      endif()
+    endforeach()
+    if(DEFINED all_confs_strip_exe)
+      add_custom_command(TARGET ${target} POST_BUILD
+        COMMAND ${all_confs_strip_exe} ${all_confs_strip_opt} ${all_confs_strip_arg}
+      )
+    endif()
   endif()
 
-  string(REGEX REPLACE "^~/" "${user_folder}" in_path "${in_path}")
-  string(REGEX REPLACE "^\\$\\(HOME\\)/" "${user_folder}" in_path "${in_path}")
+  if(DEFINED JUCER_PREBUILD_SHELL_SCRIPT)
+    if(NOT DEFINED JUCER_TARGET_PROJECT_FOLDER)
+      message(FATAL_ERROR "JUCER_TARGET_PROJECT_FOLDER must be defined. Give "
+        "TARGET_PROJECT_FOLDER when calling jucer_export_target(\"${exporter}\")."
+      )
+    endif()
+    if(NOT IS_DIRECTORY "${JUCER_TARGET_PROJECT_FOLDER}")
+      file(MAKE_DIRECTORY "${JUCER_TARGET_PROJECT_FOLDER}")
+    endif()
+    add_custom_command(TARGET ${target} PRE_BUILD
+      COMMAND "/bin/sh" "${JUCER_PREBUILD_SHELL_SCRIPT}"
+      WORKING_DIRECTORY "${JUCER_TARGET_PROJECT_FOLDER}"
+    )
+  endif()
 
-  set(${out_path} "${in_path}" PARENT_SCOPE)
+  if(DEFINED JUCER_POSTBUILD_SHELL_SCRIPT)
+    if(NOT DEFINED JUCER_TARGET_PROJECT_FOLDER)
+      message(FATAL_ERROR "JUCER_TARGET_PROJECT_FOLDER must be defined. Give "
+        "TARGET_PROJECT_FOLDER when calling jucer_export_target(\"${exporter}\")."
+      )
+    endif()
+    if(NOT IS_DIRECTORY "${JUCER_TARGET_PROJECT_FOLDER}")
+      file(MAKE_DIRECTORY "${JUCER_TARGET_PROJECT_FOLDER}")
+    endif()
+    add_custom_command(TARGET ${target} POST_BUILD
+      COMMAND "/bin/sh" "${JUCER_POSTBUILD_SHELL_SCRIPT}"
+      WORKING_DIRECTORY "${JUCER_TARGET_PROJECT_FOLDER}"
+    )
+  endif()
+
+endfunction()
+
+
+function(_FRUT_add_extra_commands_MSVC target exporter)
+
+  unset(all_confs_prebuild_command)
+  foreach(config IN LISTS JUCER_PROJECT_CONFIGURATIONS)
+    if(DEFINED JUCER_PREBUILD_COMMAND_${config})
+      set(prebuild_command "${JUCER_PREBUILD_COMMAND_${config}}")
+      string(APPEND all_confs_prebuild_command
+        $<$<CONFIG:${config}>:${prebuild_command}>
+      )
+    endif()
+  endforeach()
+  if(DEFINED all_confs_prebuild_command)
+    if(NOT DEFINED JUCER_TARGET_PROJECT_FOLDER)
+      message(FATAL_ERROR "JUCER_TARGET_PROJECT_FOLDER must be defined. Give "
+        "TARGET_PROJECT_FOLDER when calling jucer_export_target(\"${exporter}\")."
+      )
+    endif()
+    if(NOT IS_DIRECTORY "${JUCER_TARGET_PROJECT_FOLDER}")
+      file(MAKE_DIRECTORY "${JUCER_TARGET_PROJECT_FOLDER}")
+    endif()
+    add_custom_command(TARGET ${target} PRE_BUILD
+      COMMAND ${all_confs_prebuild_command}
+      WORKING_DIRECTORY "${JUCER_TARGET_PROJECT_FOLDER}"
+    )
+  endif()
+
+  unset(all_confs_postbuild_command)
+  foreach(config IN LISTS JUCER_PROJECT_CONFIGURATIONS)
+    if(DEFINED JUCER_POSTBUILD_COMMAND_${config})
+      set(postbuild_command "${JUCER_POSTBUILD_COMMAND_${config}}")
+      string(APPEND all_confs_postbuild_command
+        $<$<CONFIG:${config}>:${postbuild_command}>
+      )
+    endif()
+  endforeach()
+  if(DEFINED all_confs_postbuild_command)
+    if(NOT DEFINED JUCER_TARGET_PROJECT_FOLDER)
+      message(FATAL_ERROR "JUCER_TARGET_PROJECT_FOLDER must be defined. Give "
+        "TARGET_PROJECT_FOLDER when calling jucer_export_target(\"${exporter}\")."
+      )
+    endif()
+    if(NOT IS_DIRECTORY "${JUCER_TARGET_PROJECT_FOLDER}")
+      file(MAKE_DIRECTORY "${JUCER_TARGET_PROJECT_FOLDER}")
+    endif()
+    add_custom_command(TARGET ${target} POST_BUILD
+      COMMAND ${all_confs_postbuild_command}
+      WORKING_DIRECTORY "${JUCER_TARGET_PROJECT_FOLDER}"
+    )
+  endif()
+
+endfunction()
+
+
+function(_FRUT_add_Rez_command_to_AU_plugin au_target)
+
+  if(NOT EXISTS "${Rez_exe}")
+    unset(Rez_exe CACHE)
+  endif()
+  find_program(Rez_exe "Rez")
+  if(NOT Rez_exe)
+    message(WARNING "Could not find Rez tool. Discovery of AU plugins might not work.")
+    return()
+  endif()
+
+  set(rez_output "${CMAKE_CURRENT_BINARY_DIR}/${JUCER_PROJECT_NAME}.rsrc")
+
+  set(rez_defines "")
+  set(rez_archs "")
+  set(all_confs_sysroot "")
+  foreach(config IN LISTS JUCER_PROJECT_CONFIGURATIONS)
+    foreach(osx_architecture IN LISTS JUCER_OSX_ARCHITECTURES_${config})
+      list(APPEND rez_defines
+        "$<$<CONFIG:${config}>:-d>"
+        "$<$<CONFIG:${config}>:${osx_architecture}_YES>"
+      )
+      list(APPEND rez_archs
+        "$<$<CONFIG:${config}>:-arch>"
+        "$<$<CONFIG:${config}>:${osx_architecture}>"
+      )
+    endforeach()
+
+    set(sysroot "${JUCER_MACOSX_SDK_PATH_${config}}")
+    if(IS_DIRECTORY "${sysroot}")
+      list(APPEND all_confs_sysroot
+        "$<$<CONFIG:${config}>:-isysroot>" "$<$<CONFIG:${config}>:${sysroot}>"
+      )
+    endif()
+  endforeach()
+
+  string(CONCAT carbon_include_dir
+    "/System/Library/Frameworks/CoreServices.framework/Frameworks/"
+    "CarbonCore.framework/Versions/A/Headers"
+  )
+  string(CONCAT juce_audio_plugin_client_include_dir
+    "${JUCER_PROJECT_MODULE_juce_audio_plugin_client_PATH}/"
+    "juce_audio_plugin_client"
+  )
+
+  add_custom_command(OUTPUT ${rez_output}
+    COMMAND
+    "${Rez_exe}"
+    "-o" "${rez_output}"
+    "-d" "SystemSevenOrLater=1"
+    "-useDF"
+    ${rez_defines}
+    ${rez_archs}
+    "-i" "${carbon_include_dir}"
+    "-i" "${CMAKE_CURRENT_BINARY_DIR}/JuceLibraryCode"
+    "-i" "${juce_audio_plugin_client_include_dir}"
+    ${all_confs_sysroot}
+    ${ARGN}
+  )
+  set_source_files_properties("${rez_output}" PROPERTIES
+    GENERATED TRUE
+    MACOSX_PACKAGE_LOCATION "Resources"
+  )
+  target_sources(${au_target} PRIVATE "${rez_output}")
+
+endfunction()
+
+
+function(_FRUT_add_xcode_resource_folders target)
+
+  if(NOT APPLE)
+    return()
+  endif()
+
+  foreach(folder IN LISTS JUCER_CUSTOM_XCODE_RESOURCE_FOLDERS)
+    add_custom_command(TARGET ${target} PRE_BUILD
+      COMMAND rsync -r "${folder}" "$<TARGET_FILE_DIR:${target}>/../Resources"
+    )
+  endforeach()
+
+endfunction()
+
+
+function(_FRUT_bool_to_int bool_value out_int_value)
+
+  if(bool_value)
+    set(${out_int_value} 1 PARENT_SCOPE)
+  else()
+    set(${out_int_value} 0 PARENT_SCOPE)
+  endif()
+
+endfunction()
+
+
+function(_FRUT_char_literal value out_char_literal)
+
+  set(all_ascii_codes "")
+  foreach(ascii_code RANGE 1 127)
+    list(APPEND all_ascii_codes ${ascii_code})
+  endforeach()
+  string(ASCII ${all_ascii_codes} all_ascii_chars)
+
+  set(four_chars "${value}")
+  if(DEFINED JUCER_VERSION AND NOT JUCER_VERSION VERSION_GREATER 5.2.0)
+    string(STRIP "${four_chars}" four_chars)
+  endif()
+  string(SUBSTRING "${four_chars}" 0 4 four_chars)
+  string(LENGTH "${four_chars}" four_chars_length)
+  set(dec_value 0)
+  foreach(index IN ITEMS 0 1 2 3)
+    if(index LESS four_chars_length)
+      string(SUBSTRING "${four_chars}" ${index} 1 ascii_char)
+      string(FIND "${all_ascii_chars}" "${ascii_char}" ascii_code)
+      if(ascii_code EQUAL -1)
+        message(FATAL_ERROR "${value} cannot contain non-ASCII characters")
+      endif()
+      math(EXPR ascii_code "${ascii_code} + 1")
+    else()
+      set(ascii_code 0)
+    endif()
+    math(EXPR dec_value "(${dec_value} << 8) | (${ascii_code} & 255)")
+  endforeach()
+
+  _FRUT_dec_to_hex("${dec_value}" hex_value)
+
+  set(${out_char_literal} "${hex_value} // '${four_chars}'" PARENT_SCOPE)
 
 endfunction()
 
@@ -2785,6 +2949,119 @@ function(_FRUT_check_SDK_folders exporter)
       )
     endif()
   endif()
+
+endfunction()
+
+
+function(_FRUT_compute_rtas_aax_category RTAS_or_AAX category_prefix out_var)
+
+  set(category_suffixes
+    "None"
+    "EQ"
+    "Dynamics"
+    "PitchShift"
+    "Reverb"
+    "Delay"
+    "Modulation"
+    "Harmonic"
+    "NoiseReduction"
+    "Dither"
+    "SoundField"
+    "HWGenerators"
+    "SWGenerators"
+    "WrappedPlugin"
+    "Effect"
+  )
+
+  set(categories_as_int 0)
+
+  foreach(category IN LISTS JUCER_PLUGIN_${RTAS_or_AAX}_CATEGORY)
+    if(NOT category MATCHES "^${category_prefix}_(.+)$"
+        OR NOT CMAKE_MATCH_1 IN_LIST category_suffixes)
+      message(WARNING "Ignoring unknown ${RTAS_or_AAX} category: ${category}")
+      continue()
+    endif()
+    list(FIND category_suffixes "${CMAKE_MATCH_1}" suffix_index)
+    if(suffix_index EQUAL 0)
+      set(category_as_int 0)
+    else()
+      math(EXPR category_as_int "1 << (${suffix_index} - 1)")
+    endif()
+    math(EXPR categories_as_int "${categories_as_int} | ${category_as_int}")
+  endforeach()
+
+  set(${out_var} "${categories_as_int}" PARENT_SCOPE)
+
+endfunction()
+
+
+function(_FRUT_compute_vst3_category out_var)
+
+  set(categories "${JUCER_PLUGIN_VST3_CATEGORY}")
+
+  # See getVST3CategoryStringFromSelection()
+  # in JUCE/extras/Projucer/Source/Project/jucer_Project.cpp
+  if(NOT "Fx" IN_LIST categories AND NOT "Instrument" IN_LIST categories)
+    if(JUCER_PLUGIN_IS_A_SYNTH)
+      list(INSERT categories 0 "Instrument")
+    else()
+      list(INSERT categories 0 "Fx")
+    endif()
+  else()
+    if("Instrument" IN_LIST categories)
+      list(FIND categories "Instrument" Instrument_index)
+      list(REMOVE_AT categories ${Instrument_index})
+      list(INSERT categories 0 "Instrument")
+    endif()
+    if("Fx" IN_LIST categories)
+      list(FIND categories "Fx" Fx_index)
+      list(REMOVE_AT categories ${Fx_index})
+      list(INSERT categories 0 "Fx")
+    endif()
+  endif()
+
+  list(LENGTH categories categories_count)
+  if(categories_count EQUAL 1)
+    set(vst3_category "${categories}")
+  else()
+    list(GET categories 0 first_category)
+    set(vst3_category "${first_category}")
+    math(EXPR categories_max "${categories_count} - 1")
+    foreach(index RANGE 1 ${categories_max})
+      list(GET categories ${index} category)
+      string(APPEND vst3_category "|${category}")
+    endforeach()
+  endif()
+
+  set(${out_var} "${vst3_category}" PARENT_SCOPE)
+
+endfunction()
+
+
+function(_FRUT_dec_to_hex dec_value out_hex_value)
+
+  if(dec_value EQUAL 0)
+    set(${out_hex_value} "0x0" PARENT_SCOPE)
+    return()
+  endif()
+
+  if(dec_value LESS 0)
+    math(EXPR dec_value "2147483647 ${dec_value} + 1")
+  endif()
+
+  while(dec_value GREATER 0)
+    math(EXPR hex_unit "${dec_value} & 15")
+    if(hex_unit LESS 10)
+      set(hex_char "${hex_unit}")
+    else()
+      math(EXPR hex_unit "${hex_unit} + 87")
+      string(ASCII ${hex_unit} hex_char)
+    endif()
+    set(hex_value "${hex_char}${hex_value}")
+    math(EXPR dec_value "${dec_value} >> 4")
+  endwhile()
+
+  set(${out_hex_value} "0x${hex_value}" PARENT_SCOPE)
 
 endfunction()
 
@@ -3171,6 +3448,110 @@ function(_FRUT_generate_AppConfig_header)
 endfunction()
 
 
+function(_FRUT_generate_entitlements_file output_filename out_var)
+
+  set(entitlements_content "")
+
+  if(JUCER_PROJECT_TYPE STREQUAL "Audio Plug-in")
+    string(APPEND entitlements_content
+      "\t<key>com.apple.security.app-sandbox</key>\n" "\t<true/>\n"
+    )
+  else()
+    if(JUCER_PUSH_NOTIFICATIONS_CAPABILITY)
+      string(APPEND entitlements_content
+        "\t<key>com.apple.developer.aps-environment</key>\n"
+        "\t<string>development</string>\n"
+      )
+    endif()
+  endif()
+  if(JUCER_USE_HARDENED_RUNTIME)
+    foreach(option IN LISTS JUCER_HARDENED_RUNTIME_OPTIONS)
+      string(APPEND entitlements_content "\t<key>${option}</key>\n" "\t<true/>\n")
+    endforeach()
+  endif()
+  if(JUCER_USE_APP_SANDBOX)
+    foreach(option IN LISTS JUCER_APP_SANDBOX_OPTIONS)
+      string(APPEND entitlements_content "\t<key>${option}</key>\n" "\t<true/>\n")
+    endforeach()
+  endif()
+
+  if(NOT entitlements_content STREQUAL "")
+    configure_file("${Reprojucer_templates_DIR}/project.entitlements"
+      "${output_filename}" @ONLY
+    )
+
+    set(${out_var} "${CMAKE_CURRENT_BINARY_DIR}/${output_filename}" PARENT_SCOPE)
+  endif()
+
+endfunction()
+
+
+function(_FRUT_generate_icon_file icon_format icon_file_output_dir out_icon_filename)
+
+  set(IconBuilder_filename "IconBuilder-0.1.0")
+  set(install_prefix "${Reprojucer.cmake_DIR}/bin")
+  if(NOT EXISTS "${IconBuilder_exe}"
+      OR NOT IconBuilder_exe MATCHES "${IconBuilder_filename}")
+    unset(IconBuilder_exe CACHE)
+  endif()
+  find_program(IconBuilder_exe "${IconBuilder_filename}"
+    PATHS "${install_prefix}"
+    NO_DEFAULT_PATH
+  )
+  if(NOT IconBuilder_exe)
+    message(STATUS "Building and installing IconBuilder")
+    try_compile(IconBuilder
+      "${Reprojucer.cmake_DIR}/IconBuilder/_build/${CMAKE_GENERATOR}"
+      "${Reprojucer.cmake_DIR}/IconBuilder"
+      IconBuilder install
+      CMAKE_FLAGS
+      "-DJUCE_modules_DIRS=${JUCER_PROJECT_MODULES_FOLDERS}"
+      "-DCMAKE_INSTALL_PREFIX=${install_prefix}"
+    )
+    if(NOT IconBuilder)
+      message(FATAL_ERROR "Failed to build and install IconBuilder. Please report this"
+        " problem by creating a new issue on GitHub:"
+        " https://github.com/McMartin/FRUT/issues/new"
+      )
+    endif()
+    message(STATUS "Installed IconBuilder in ${install_prefix}")
+    find_program(IconBuilder_exe "${IconBuilder_filename}"
+      PATHS "${install_prefix}"
+      NO_DEFAULT_PATH
+    )
+    if(NOT IconBuilder_exe)
+      message(FATAL_ERROR "Could not find ${IconBuilder_filename}")
+    endif()
+  endif()
+
+  set(IconBuilder_args "${icon_format}" "${icon_file_output_dir}")
+  if(DEFINED JUCER_SMALL_ICON)
+    list(APPEND IconBuilder_args "${JUCER_SMALL_ICON}")
+  else()
+    list(APPEND IconBuilder_args "<None>")
+  endif()
+  if(DEFINED JUCER_LARGE_ICON)
+    list(APPEND IconBuilder_args "${JUCER_LARGE_ICON}")
+  else()
+    list(APPEND IconBuilder_args "<None>")
+  endif()
+
+  execute_process(
+    COMMAND "${IconBuilder_exe}" ${IconBuilder_args}
+    OUTPUT_VARIABLE icon_filename
+    RESULT_VARIABLE IconBuilder_return_code
+  )
+  if(NOT IconBuilder_return_code EQUAL 0)
+    message(FATAL_ERROR "Error when executing IconBuilder")
+  endif()
+
+  if(NOT "${icon_filename}" STREQUAL "")
+    set(${out_icon_filename} "${icon_filename}" PARENT_SCOPE)
+  endif()
+
+endfunction()
+
+
 function(_FRUT_generate_JuceHeader_header)
 
   list(LENGTH JUCER_PROJECT_RESOURCES resources_count)
@@ -3299,68 +3680,307 @@ function(_FRUT_generate_JuceHeader_header)
 endfunction()
 
 
-function(_FRUT_generate_icon_file icon_format icon_file_output_dir out_icon_filename)
+function(_FRUT_generate_plist_file
+  target plist_suffix bundle_package_type bundle_signature
+)
 
-  set(IconBuilder_filename "IconBuilder-0.1.0")
-  set(install_prefix "${Reprojucer.cmake_DIR}/bin")
-  if(NOT EXISTS "${IconBuilder_exe}"
-      OR NOT IconBuilder_exe MATCHES "${IconBuilder_filename}")
-    unset(IconBuilder_exe CACHE)
-  endif()
-  find_program(IconBuilder_exe "${IconBuilder_filename}"
-    PATHS "${install_prefix}"
-    NO_DEFAULT_PATH
-  )
-  if(NOT IconBuilder_exe)
-    message(STATUS "Building and installing IconBuilder")
-    try_compile(IconBuilder
-      "${Reprojucer.cmake_DIR}/IconBuilder/_build/${CMAKE_GENERATOR}"
-      "${Reprojucer.cmake_DIR}/IconBuilder"
-      IconBuilder install
-      CMAKE_FLAGS
-      "-DJUCE_modules_DIRS=${JUCER_PROJECT_MODULES_FOLDERS}"
-      "-DCMAKE_INSTALL_PREFIX=${install_prefix}"
+  set(plist_filename "Info-${plist_suffix}.plist")
+  if(CMAKE_GENERATOR STREQUAL "Xcode")
+    set(bundle_executable "\${EXECUTABLE_NAME}")
+    set_target_properties(${target} PROPERTIES
+      XCODE_ATTRIBUTE_INFOPLIST_FILE "${CMAKE_CURRENT_BINARY_DIR}/${plist_filename}"
+      XCODE_ATTRIBUTE_PRODUCT_BUNDLE_IDENTIFIER "${JUCER_BUNDLE_IDENTIFIER}"
     )
-    if(NOT IconBuilder)
-      message(FATAL_ERROR "Failed to build and install IconBuilder. Please report this"
-        " problem by creating a new issue on GitHub:"
-        " https://github.com/McMartin/FRUT/issues/new"
+  else()
+    set(bundle_executable "\${MACOSX_BUNDLE_BUNDLE_NAME}")
+    set_target_properties(${target} PROPERTIES
+      MACOSX_BUNDLE_BUNDLE_NAME "${JUCER_PROJECT_NAME}"
+      MACOSX_BUNDLE_GUI_IDENTIFIER "${JUCER_BUNDLE_IDENTIFIER}"
+      MACOSX_BUNDLE_INFO_PLIST "${CMAKE_CURRENT_BINARY_DIR}/${plist_filename}"
+    )
+  endif()
+
+  if(DEFINED JUCER_VERSION AND JUCER_VERSION VERSION_LESS 5.2.0)
+    if(CMAKE_GENERATOR STREQUAL "Xcode")
+      set(bundle_identifier "\$(PRODUCT_BUNDLE_IDENTIFIER)")
+    else()
+      set(bundle_identifier "\${MACOSX_BUNDLE_GUI_IDENTIFIER}")
+    endif()
+  else()
+    set(bundle_identifier "@JUCER_BUNDLE_IDENTIFIER@")
+  endif()
+
+  set(plist_entries "")
+
+  if(JUCER_MICROPHONE_ACCESS)
+    if(DEFINED JUCER_MICROPHONE_ACCESS_TEXT)
+      set(microphone_usage_description "${JUCER_MICROPHONE_ACCESS_TEXT}")
+    else()
+      string(CONCAT microphone_usage_description "This app requires audio input. If you "
+        "do not have an audio interface connected it will use the built-in microphone."
       )
     endif()
-    message(STATUS "Installed IconBuilder in ${install_prefix}")
-    find_program(IconBuilder_exe "${IconBuilder_filename}"
+    string(APPEND plist_entries "
+    <key>NSMicrophoneUsageDescription</key>
+    <string>${microphone_usage_description}</string>"
+    )
+  endif()
+
+  if(JUCER_CAMERA_ACCESS)
+    if(DEFINED JUCER_CAMERA_ACCESS_TEXT)
+      set(camera_usage_description "${JUCER_CAMERA_ACCESS_TEXT}")
+    else()
+      string(CONCAT camera_usage_description "This app requires access to the camera to "
+        "function correctly."
+      )
+    endif()
+    string(APPEND plist_entries "
+    <key>NSCameraUsageDescription</key>
+    <string>${camera_usage_description}</string>"
+    )
+  endif()
+
+  get_filename_component(bundle_icon_file "${JUCER_ICON_FILE}" NAME)
+
+  if(DEFINED JUCER_COMPANY_COPYRIGHT
+      OR NOT (DEFINED JUCER_VERSION AND JUCER_VERSION VERSION_LESS 5.2.0))
+    set(ns_human_readable_copyright "@JUCER_COMPANY_COPYRIGHT@")
+  else()
+    set(ns_human_readable_copyright "@JUCER_COMPANY_NAME@")
+  endif()
+
+  string(APPEND plist_entries "
+    <key>CFBundleExecutable</key>
+    <string>${bundle_executable}</string>
+    <key>CFBundleIconFile</key>
+    <string>${bundle_icon_file}</string>
+    <key>CFBundleIdentifier</key>
+    <string>${bundle_identifier}</string>
+    <key>CFBundleName</key>
+    <string>@JUCER_PROJECT_NAME@</string>
+    <key>CFBundleDisplayName</key>
+    <string>@JUCER_PROJECT_NAME@</string>
+    <key>CFBundlePackageType</key>
+    <string>${bundle_package_type}</string>
+    <key>CFBundleSignature</key>
+    <string>${bundle_signature}</string>
+    <key>CFBundleShortVersionString</key>
+    <string>@JUCER_PROJECT_VERSION@</string>
+    <key>CFBundleVersion</key>
+    <string>@JUCER_PROJECT_VERSION@</string>
+    <key>NSHumanReadableCopyright</key>
+    <string>${ns_human_readable_copyright}</string>
+    <key>NSHighResolutionCapable</key>
+    <true/>"
+  )
+
+  list(LENGTH JUCER_DOCUMENT_FILE_EXTENSIONS file_extensions_length)
+  if(file_extensions_length GREATER 0 AND NOT target MATCHES "_AUv3_AppExtension$")
+    set(bundle_type_extensions "")
+    foreach(type_extension IN LISTS JUCER_DOCUMENT_FILE_EXTENSIONS)
+      if(type_extension MATCHES "^\\.")
+        string(SUBSTRING "${type_extension}" 1 -1 type_extension)
+      endif()
+      string(APPEND bundle_type_extensions
+        "\n          <string>${type_extension}</string>"
+      )
+    endforeach()
+    list(GET JUCER_DOCUMENT_FILE_EXTENSIONS 0 first_type_extension)
+    if(first_type_extension MATCHES "^\\.")
+      string(SUBSTRING "${first_type_extension}" 1 -1 first_type_extension)
+    endif()
+
+    string(APPEND plist_entries "
+    <key>CFBundleDocumentTypes</key>
+    <array>
+      <dict>
+        <key>CFBundleTypeExtensions</key>
+        <array>${bundle_type_extensions}
+        </array>
+        <key>CFBundleTypeName</key>
+        <string>${first_type_extension}</string>
+        <key>CFBundleTypeRole</key>
+        <string>Editor</string>
+        <key>CFBundleTypeIconFile</key>
+        <string>Icon</string>
+        <key>NSPersistentStoreTypeKey</key>
+        <string>XML</string>
+      </dict>
+    </array>"
+    )
+  endif()
+
+  if(target MATCHES "_AU$")
+    _FRUT_get_au_main_type_code(au_main_type_code)
+    _FRUT_version_to_dec("${JUCER_PROJECT_VERSION}" dec_version)
+
+    string(APPEND plist_entries "
+    <key>AudioComponents</key>
+    <array>
+      <dict>
+        <key>name</key>
+        <string>@JUCER_PLUGIN_MANUFACTURER@: @JUCER_PLUGIN_NAME@</string>
+        <key>description</key>
+        <string>@JUCER_PLUGIN_DESCRIPTION@</string>
+        <key>factoryFunction</key>
+        <string>@JUCER_PLUGIN_AU_EXPORT_PREFIX@Factory</string>
+        <key>manufacturer</key>
+        <string>@JUCER_PLUGIN_MANUFACTURER_CODE@</string>
+        <key>type</key>
+        <string>${au_main_type_code}</string>
+        <key>subtype</key>
+        <string>@JUCER_PLUGIN_CODE@</string>
+        <key>version</key>
+        <integer>${dec_version}</integer>"
+    )
+
+    if(JUCER_PLUGIN_AU_IS_SANDBOX_SAFE)
+      string(APPEND plist_entries "
+        <key>sandboxSafe</key>
+        <true/>"
+      )
+    elseif(NOT (DEFINED JUCER_VERSION AND JUCER_VERSION VERSION_LESS 5.4.0))
+      string(APPEND plist_entries "
+        <key>resourceUsage</key>
+        <dict>
+          <key>network.client</key>
+          <true/>
+          <key>temporary-exception.files.all.read-write</key>
+          <true/>
+        </dict>"
+      )
+    endif()
+
+    string(APPEND plist_entries "
+      </dict>
+    </array>"
+    )
+  endif()
+
+  if(target MATCHES "_AUv3_AppExtension$")
+    _FRUT_get_au_main_type_code(au_main_type_code)
+    _FRUT_version_to_dec("${JUCER_PROJECT_VERSION}" dec_version)
+
+    if(JUCER_PLUGIN_IS_A_SYNTH)
+      set(tag "Synth")
+    else()
+      set(tag "Effects")
+    endif()
+
+    string(APPEND plist_entries "
+    <key>NSExtension</key>
+    <dict>
+      <key>NSExtensionPrincipalClass</key>
+      <string>@JUCER_PLUGIN_AU_EXPORT_PREFIX@FactoryAUv3</string>
+      <key>NSExtensionPointIdentifier</key>
+      <string>com.apple.AudioUnit-UI</string>
+      <key>NSExtensionAttributes</key>
+      <dict>
+        <key>AudioComponents</key>
+        <array>
+          <dict>
+            <key>name</key>
+            <string>@JUCER_PLUGIN_MANUFACTURER@: @JUCER_PLUGIN_NAME@</string>
+            <key>description</key>
+            <string>@JUCER_PLUGIN_DESCRIPTION@</string>
+            <key>factoryFunction</key>
+            <string>@JUCER_PLUGIN_AU_EXPORT_PREFIX@FactoryAUv3</string>
+            <key>manufacturer</key>
+            <string>@JUCER_PLUGIN_MANUFACTURER_CODE@</string>
+            <key>type</key>
+            <string>${au_main_type_code}</string>
+            <key>subtype</key>
+            <string>@JUCER_PLUGIN_CODE@</string>
+            <key>version</key>
+            <integer>${dec_version}</integer>
+            <key>sandboxSafe</key>
+            <true/>
+            <key>tags</key>
+            <array>
+              <string>${tag}</string>
+            </array>
+          </dict>
+        </array>
+      </dict>
+    </dict>"
+    )
+  endif()
+
+  if(JUCER_CUSTOM_PLIST)
+    set(PListMerger_filename "PListMerger-0.1.0")
+    set(install_prefix "${Reprojucer.cmake_DIR}/bin")
+    if(NOT EXISTS "${PListMerger_exe}"
+        OR NOT PListMerger_exe MATCHES "${PListMerger_filename}")
+      unset(PListMerger_exe CACHE)
+    endif()
+    find_program(PListMerger_exe "${PListMerger_filename}"
       PATHS "${install_prefix}"
       NO_DEFAULT_PATH
     )
-    if(NOT IconBuilder_exe)
-      message(FATAL_ERROR "Could not find ${IconBuilder_filename}")
+    if(NOT PListMerger_exe)
+      message(STATUS "Building and installing PListMerger")
+      try_compile(PListMerger
+        "${Reprojucer.cmake_DIR}/PListMerger/_build/${CMAKE_GENERATOR}"
+        "${Reprojucer.cmake_DIR}/PListMerger"
+        PListMerger install
+        CMAKE_FLAGS
+        "-DJUCE_modules_DIRS=${JUCER_PROJECT_MODULES_FOLDERS}"
+        "-DCMAKE_INSTALL_PREFIX=${install_prefix}"
+      )
+      if(NOT PListMerger)
+        message(FATAL_ERROR "Failed to build and install PListMerger. Please report this"
+          " problem by creating a new issue on GitHub:"
+          " https://github.com/McMartin/FRUT/issues/new"
+        )
+      endif()
+      message(STATUS "Installed PListMerger in ${install_prefix}")
+      find_program(PListMerger_exe "${PListMerger_filename}"
+        PATHS "${install_prefix}"
+        NO_DEFAULT_PATH
+      )
+      if(NOT PListMerger_exe)
+        message(FATAL_ERROR "Could not find ${PListMerger_filename}")
+      endif()
     endif()
+
+    execute_process(
+      COMMAND
+      "${PListMerger_exe}"
+      "${JUCER_CUSTOM_PLIST}"
+      "<plist><dict>${plist_entries}</dict></plist>"
+      OUTPUT_VARIABLE PListMerger_output
+      OUTPUT_STRIP_TRAILING_WHITESPACE
+      RESULT_VARIABLE PListMerger_return_code
+    )
+    if(NOT PListMerger_return_code EQUAL 0)
+      message(FATAL_ERROR "Error when executing PListMerger")
+    endif()
+
+    if(WIN32)
+      string(REPLACE "\r\n" "\n" PListMerger_output "${PListMerger_output}")
+    endif()
+    string(REPLACE "<plist>\n  <dict>" "" PListMerger_output "${PListMerger_output}")
+    string(REPLACE "\n  </dict>\n</plist>" "" PListMerger_output "${PListMerger_output}")
+    set(plist_entries "${PListMerger_output}")
   endif()
 
-  set(IconBuilder_args "${icon_format}" "${icon_file_output_dir}")
-  if(DEFINED JUCER_SMALL_ICON)
-    list(APPEND IconBuilder_args "${JUCER_SMALL_ICON}")
-  else()
-    list(APPEND IconBuilder_args "<None>")
-  endif()
-  if(DEFINED JUCER_LARGE_ICON)
-    list(APPEND IconBuilder_args "${JUCER_LARGE_ICON}")
-  else()
-    list(APPEND IconBuilder_args "<None>")
-  endif()
+  string(CONFIGURE "${plist_entries}" plist_entries @ONLY)
+  configure_file("${Reprojucer_templates_DIR}/Info.plist" "${plist_filename}" @ONLY)
 
-  execute_process(
-    COMMAND "${IconBuilder_exe}" ${IconBuilder_args}
-    OUTPUT_VARIABLE icon_filename
-    RESULT_VARIABLE IconBuilder_return_code
-  )
-  if(NOT IconBuilder_return_code EQUAL 0)
-    message(FATAL_ERROR "Error when executing IconBuilder")
-  endif()
+endfunction()
 
-  if(NOT "${icon_filename}" STREQUAL "")
-    set(${out_icon_filename} "${icon_filename}" PARENT_SCOPE)
-  endif()
+
+function(_FRUT_generate_plist_file_AUv3 target plist_suffix)
+
+  # com.yourcompany.NewProject -> com.yourcompany.NewProject.NewProjectAUv3
+  string(REPLACE "." ";" bundle_id_parts "${JUCER_BUNDLE_IDENTIFIER}")
+  list(LENGTH bundle_id_parts bundle_id_parts_length)
+  math(EXPR bundle_id_parts_last_index "${bundle_id_parts_length} - 1")
+  list(GET bundle_id_parts ${bundle_id_parts_last_index} bundle_id_last_part)
+  list(APPEND bundle_id_parts "${bundle_id_last_part}AUv3")
+  string(REPLACE ";" "." JUCER_BUNDLE_IDENTIFIER "${bundle_id_parts}")
+
+  _FRUT_generate_plist_file(${target} "${plist_suffix}" "XPC!" "????")
 
 endfunction()
 
@@ -3406,108 +4026,253 @@ function(_FRUT_generate_resources_rc_file output_path)
 endfunction()
 
 
-function(_FRUT_generate_entitlements_file output_filename out_var)
+function(_FRUT_get_au_main_type_code out_value)
 
-  set(entitlements_content "")
-
-  if(JUCER_PROJECT_TYPE STREQUAL "Audio Plug-in")
-    string(APPEND entitlements_content
-      "\t<key>com.apple.security.app-sandbox</key>\n" "\t<true/>\n"
-    )
+  if(NOT DEFINED JUCER_PLUGIN_AU_MAIN_TYPE OR JUCER_PLUGIN_AU_MAIN_TYPE STREQUAL "")
+    if(JUCER_MIDI_EFFECT_PLUGIN)
+      set(code "aumi")
+    elseif(JUCER_PLUGIN_IS_A_SYNTH)
+      set(code "aumu")
+    elseif(JUCER_PLUGIN_MIDI_INPUT)
+      set(code "aumf")
+    else()
+      set(code "aufx")
+    endif()
   else()
-    if(JUCER_PUSH_NOTIFICATIONS_CAPABILITY)
-      string(APPEND entitlements_content
-        "\t<key>com.apple.developer.aps-environment</key>\n"
-        "\t<string>development</string>\n"
-      )
+    if(DEFINED JUCER_VERSION AND JUCER_VERSION VERSION_LESS 5.3.1)
+      set(code "${JUCER_PLUGIN_AU_MAIN_TYPE}")
+    else()
+      _FRUT_get_au_quoted_four_chars("${JUCER_PLUGIN_AU_MAIN_TYPE}" quoted_four_chars)
+      string(REPLACE "'" "" code "${quoted_four_chars}")
     endif()
   endif()
-  if(JUCER_USE_HARDENED_RUNTIME)
-    foreach(option IN LISTS JUCER_HARDENED_RUNTIME_OPTIONS)
-      string(APPEND entitlements_content "\t<key>${option}</key>\n" "\t<true/>\n")
-    endforeach()
-  endif()
-  if(JUCER_USE_APP_SANDBOX)
-    foreach(option IN LISTS JUCER_APP_SANDBOX_OPTIONS)
-      string(APPEND entitlements_content "\t<key>${option}</key>\n" "\t<true/>\n")
-    endforeach()
-  endif()
 
-  if(NOT entitlements_content STREQUAL "")
-    configure_file("${Reprojucer_templates_DIR}/project.entitlements"
-      "${output_filename}" @ONLY
-    )
-
-    set(${out_var} "${CMAKE_CURRENT_BINARY_DIR}/${output_filename}" PARENT_SCOPE)
-  endif()
+  set(${out_value} "${code}" PARENT_SCOPE)
 
 endfunction()
 
 
-function(_FRUT_set_output_directory_properties target subfolder)
+function(_FRUT_get_au_quoted_four_chars au_enum_case out_var)
 
+  if(au_enum_case STREQUAL "kAudioUnitType_Effect")
+    set(quoted_four_chars "'aufx'")
+  elseif(au_enum_case STREQUAL "kAudioUnitType_FormatConverter")
+    set(quoted_four_chars "'aufc'")
+  elseif(au_enum_case STREQUAL "kAudioUnitType_Generator")
+    set(quoted_four_chars "'augn'")
+  elseif(au_enum_case STREQUAL "kAudioUnitType_MIDIProcessor")
+    set(quoted_four_chars "'aumi'")
+  elseif(au_enum_case STREQUAL "kAudioUnitType_Mixer")
+    set(quoted_four_chars "'aumx'")
+  elseif(au_enum_case STREQUAL "kAudioUnitType_MusicDevice")
+    set(quoted_four_chars "'aumu'")
+  elseif(au_enum_case STREQUAL "kAudioUnitType_MusicEffect")
+    set(quoted_four_chars "'aumf'")
+  elseif(au_enum_case STREQUAL "kAudioUnitType_OfflineEffect")
+    set(quoted_four_chars "'auol'")
+  elseif(au_enum_case STREQUAL "kAudioUnitType_Output")
+    set(quoted_four_chars "'auou'")
+  elseif(au_enum_case STREQUAL "kAudioUnitType_Panner")
+    set(quoted_four_chars "'aupn'")
+  else()
+    message(WARNING "Unknown Audio Unit type \"${au_enum_case}\", not converting it to "
+      "four chars literal."
+    )
+    set(quoted_four_chars "${au_enum_case}")
+  endif()
+
+  set(${out_var} "${quoted_four_chars}" PARENT_SCOPE)
+
+endfunction()
+
+
+function(_FRUT_install_to_plugin_binary_location target plugin_type default_destination)
+
+  unset(all_confs_destination)
   foreach(config IN LISTS JUCER_PROJECT_CONFIGURATIONS)
-    unset(output_directory)
-    string(TOUPPER "${config}" upper_config)
-
-    if(MSVC AND NOT (DEFINED JUCER_VERSION AND JUCER_VERSION VERSION_LESS 5.0.0))
-      if(DEFINED JUCER_BINARY_LOCATION_${config})
-        set(output_directory "${JUCER_BINARY_LOCATION_${config}}/${subfolder}")
-      else()
-        set(output_directory "${CMAKE_CURRENT_BINARY_DIR}/$<CONFIG>/${subfolder}")
+    if(DEFINED JUCER_${plugin_type}_BINARY_LOCATION_${config})
+      set(destination "${JUCER_${plugin_type}_BINARY_LOCATION_${config}}")
+    else()
+      set(destination "${default_destination}")
+    endif()
+    if(NOT destination STREQUAL "")
+      if(DEFINED JUCER_ENABLE_PLUGIN_COPY_STEP_${config})
+        if(JUCER_ENABLE_PLUGIN_COPY_STEP_${config})
+          string(APPEND all_confs_destination $<$<CONFIG:${config}>:${destination}>)
+        endif()
+      elseif(APPLE)
+        string(APPEND all_confs_destination $<$<CONFIG:${config}>:${destination}>)
       endif()
-    elseif(DEFINED JUCER_BINARY_LOCATION_${config})
-      set(output_directory "${JUCER_BINARY_LOCATION_${config}}")
     endif()
-    if(DEFINED output_directory)
-      set_target_properties(${target} PROPERTIES
-        ARCHIVE_OUTPUT_DIRECTORY_${upper_config} "${output_directory}"
-        LIBRARY_OUTPUT_DIRECTORY_${upper_config} "${output_directory}"
-        RUNTIME_OUTPUT_DIRECTORY_${upper_config} "${output_directory}"
-      )
+  endforeach()
+
+  if(NOT DEFINED all_confs_destination)
+    return()
+  endif()
+
+  set(component "_install_${target}_to_${plugin_type}_binary_location")
+
+  install(TARGETS ${target} COMPONENT ${component} DESTINATION ${all_confs_destination})
+
+  add_custom_command(TARGET ${target} POST_BUILD
+    COMMAND
+    "${CMAKE_COMMAND}"
+    "-DCMAKE_INSTALL_CONFIG_NAME=$<CONFIG>"
+    "-DCMAKE_INSTALL_COMPONENT=${component}"
+    "-P" "${CMAKE_CURRENT_BINARY_DIR}/cmake_install.cmake"
+  )
+
+endfunction()
+
+
+function(_FRUT_link_osx_frameworks target)
+
+  if(NOT APPLE)
+    return()
+  endif()
+
+  set(osx_frameworks
+    ${JUCER_PROJECT_OSX_FRAMEWORKS}
+    ${JUCER_EXTRA_SYSTEM_FRAMEWORKS}
+    ${JUCER_EXTRA_FRAMEWORKS}
+    ${ARGN}
+  )
+  if(JUCER_FLAG_JUCE_PLUGINHOST_AU)
+    list(APPEND osx_frameworks "AudioUnit" "CoreAudioKit")
+  endif()
+
+  if(osx_frameworks)
+    list(SORT osx_frameworks)
+    list(REMOVE_DUPLICATES osx_frameworks)
+    if(NOT JUCER_FLAG_JUCE_QUICKTIME)
+      list(REMOVE_ITEM osx_frameworks "QuickTime")
+    endif()
+
+    foreach(config IN LISTS JUCER_PROJECT_CONFIGURATIONS)
+      set(CMAKE_FRAMEWORK_PATH "")
+      set(sdk_version "${JUCER_OSX_BASE_SDK_VERSION_${config}}")
+      set(sdk_path "${JUCER_MACOSX_SDK_PATH_${config}}")
+      if(IS_DIRECTORY "${sdk_path}")
+        set(CMAKE_FRAMEWORK_PATH "${sdk_path}/System/Library/Frameworks")
+      endif()
+
+      foreach(framework_name IN LISTS osx_frameworks)
+        find_library(${framework_name}_framework_${sdk_version} ${framework_name})
+        target_link_libraries(${target} PRIVATE
+          "$<$<CONFIG:${config}>:${${framework_name}_framework_${sdk_version}}>"
+        )
+      endforeach()
+    endforeach()
+  endif()
+
+  if(JUCER_EXTRA_CUSTOM_FRAMEWORKS)
+    set(CMAKE_FIND_FRAMEWORK ONLY)
+    set(CMAKE_FRAMEWORK_PATH "${JUCER_FRAMEWORK_SEARCH_PATHS}")
+    foreach(framework_name IN LISTS JUCER_EXTRA_CUSTOM_FRAMEWORKS)
+      string(REGEX REPLACE "\\.framework$" "" framework_name "${framework_name}")
+      find_library(${framework_name}_framework ${framework_name})
+      target_link_libraries(${target} PRIVATE ${${framework_name}_framework})
+    endforeach()
+  endif()
+
+endfunction()
+
+
+function(_FRUT_make_valid_configuration_name config out_var)
+
+  string(REGEX REPLACE "[^A-Za-z0-9_]" " " config "${config}")
+  string(STRIP "${config}" config)
+  string(REGEX REPLACE "[ ]+" "_" config "${config}")
+  set(${out_var} "${config}" PARENT_SCOPE)
+
+endfunction()
+
+
+function(_FRUT_parse_arguments single_value_keywords multi_value_keywords arguments)
+
+  foreach(keyword IN LISTS single_value_keywords multi_value_keywords)
+    unset(_${keyword})
+  endforeach()
+
+  unset(keyword)
+
+  foreach(argument IN LISTS arguments)
+    list(FIND single_value_keywords "${argument}" single_value_index)
+    list(FIND multi_value_keywords "${argument}" multi_value_index)
+
+    if(NOT DEFINED keyword)
+      if(NOT single_value_index EQUAL -1)
+        set(keyword "${argument}")
+        set(keyword_type "single")
+      elseif(NOT multi_value_index EQUAL -1)
+        set(keyword "${argument}")
+        set(keyword_type "multi")
+      else()
+        message(FATAL_ERROR "Unknown keyword: \"${argument}\"")
+      endif()
+    elseif(keyword_type STREQUAL "single")
+      set(_${keyword} "${argument}")
+      unset(keyword)
+    elseif(keyword_type STREQUAL "multi")
+      if(DEFINED _${keyword})
+        if(NOT single_value_index EQUAL -1)
+          set(keyword "${argument}")
+          set(keyword_type "single")
+        elseif(NOT multi_value_index EQUAL -1)
+          set(keyword "${argument}")
+          set(keyword_type "multi")
+        else()
+          list(APPEND _${keyword} ${argument})
+        endif()
+      else()
+        list(APPEND _${keyword} ${argument})
+      endif()
+    else()
+      message(FATAL_ERROR "There is a bug!")
+    endif()
+  endforeach()
+
+  foreach(keyword IN LISTS single_value_keywords multi_value_keywords)
+    unset(_${keyword} PARENT_SCOPE)
+    if(DEFINED _${keyword})
+      set(_${keyword} "${_${keyword}}" PARENT_SCOPE)
     endif()
   endforeach()
 
 endfunction()
 
 
-function(_FRUT_set_output_name_properties target)
+function(_FRUT_sanitize_path_in_user_folder out_path in_path)
 
-  foreach(config IN LISTS JUCER_PROJECT_CONFIGURATIONS)
-    string(TOUPPER "${config}" upper_config)
+  file(TO_CMAKE_PATH "$ENV{HOME}" user_folder)
+  if(NOT user_folder MATCHES "/$")
+    string(APPEND user_folder "/")
+  endif()
 
-    if(JUCER_BINARY_NAME_${config})
-      set(output_name "${JUCER_BINARY_NAME_${config}}")
-    else()
-      set(output_name "${JUCER_PROJECT_NAME}")
-    endif()
-    set_target_properties(${target} PROPERTIES
-      OUTPUT_NAME_${upper_config} "${output_name}"
-    )
-  endforeach()
+  string(REGEX REPLACE "^~/" "${user_folder}" in_path "${in_path}")
+  string(REGEX REPLACE "^\\$\\(HOME\\)/" "${user_folder}" in_path "${in_path}")
+
+  set(${out_path} "${in_path}" PARENT_SCOPE)
 
 endfunction()
 
 
-function(_FRUT_set_output_name_properties_Unity unity_target)
+function(_FRUT_set_bundle_properties target extension)
 
-  # Like _FRUT_set_output_name_properties(${unity_target}), but handles the
-  # "audioplugin" prefix as well
-  foreach(config IN LISTS JUCER_PROJECT_CONFIGURATIONS)
-    string(TOUPPER "${config}" upper_config)
+  if(NOT APPLE)
+    return()
+  endif()
 
-    if(JUCER_BINARY_NAME_${config})
-      set(output_name "${JUCER_BINARY_NAME_${config}}")
-    else()
-      set(output_name "${JUCER_PROJECT_NAME}")
-    endif()
-    if(NOT output_name MATCHES "^[Aa][Uu][Dd][Ii][Oo][Pp][Ll][Uu][Gg][Ii][Nn]")
-      string(CONCAT output_name "audioplugin_" "${output_name}")
-    endif()
-    set_target_properties(${unity_target} PROPERTIES
-      OUTPUT_NAME_${upper_config} "${output_name}"
-    )
-  endforeach()
+  set_target_properties(${target} PROPERTIES
+    BUNDLE TRUE
+    BUNDLE_EXTENSION "${extension}"
+    XCODE_ATTRIBUTE_WRAPPER_EXTENSION "${extension}"
+  )
+
+  target_sources(${target} PRIVATE "${Reprojucer_templates_DIR}/PkgInfo")
+  set_source_files_properties("${Reprojucer_templates_DIR}/PkgInfo"
+    PROPERTIES MACOSX_PACKAGE_LOCATION "."
+  )
 
 endfunction()
 
@@ -3856,208 +4621,6 @@ function(_FRUT_set_compiler_and_linker_settings_APPLE target)
 endfunction()
 
 
-function(_FRUT_set_IPP_windows_compiler_and_linker_settings target)
-
-  set(ipp_registry_base_path "HKEY_LOCAL_MACHINE\\SOFTWARE\\WOW6432Node\\Intel\\Suites")
-
-  if(CMAKE_SIZEOF_VOID_P EQUAL 8) # 64-bit
-    set(ipp_registry_key "EMT64")
-    set(ipp_arch "intel64_win")
-  else()
-    set(ipp_registry_key "IA32")
-    set(ipp_arch "ia32_win")
-  endif()
-
-  get_filename_component(JUCER_IPP_SUB_KEY
-    "[${ipp_registry_base_path}\\Defaults\\${ipp_registry_key};IPPSubKey]"
-    ABSOLUTE BASE_DIR "" CACHE
-  )
-  file(TO_NATIVE_PATH "${JUCER_IPP_SUB_KEY}" ipp_sub_key)
-
-  set(env_var "programfiles(x86)") # needed because $ENV{} can't deal with parentheses
-  find_path(JUCER_IPP_INSTALL_DIR
-    NAMES "compiler/lib" "ipp/include" "ipp/lib"
-    HINTS
-      "[${ipp_registry_base_path}\\${ipp_sub_key}\\IPP;ProductDir]"
-      "$ENV{${env_var}}/IntelSWTools/compilers_and_libraries/windows"
-  )
-  if(NOT JUCER_IPP_INSTALL_DIR OR NOT IS_DIRECTORY "${JUCER_IPP_INSTALL_DIR}")
-    message(FATAL_ERROR "Could not find Intel IPP. Please set JUCER_IPP_INSTALL_DIR to"
-      " the Intel IPP <install_dir>, as documented on"
-      " https://software.intel.com/ipp-dev-guide-finding-intel-ipp-on-your-system."
-    )
-  endif()
-
-  set(use_ipp_library_values
-    "Yes (Default Mode)"
-    "Yes (Default Linking)"
-    "Multi-Threaded Static Library"
-    "Single-Threaded Static Library"
-    "Multi-Threaded DLL"
-    "Single-Threaded DLL"
-  )
-  list(FIND use_ipp_library_values "${JUCER_USE_IPP_LIBRARY}" ipp_linking_method_index)
-  if(ipp_linking_method_index EQUAL -1)
-    message(FATAL_ERROR
-      "Unsupported value for JUCER_USE_IPP_LIBRARY: \"${JUCER_USE_IPP_LIBRARY}\""
-    )
-  endif()
-  set(ipp_compile_definitions
-    "_IPP_SEQUENTIAL_DYNAMIC"
-    "_IPP_SEQUENTIAL_DYNAMIC"
-    "_IPP_PARALLEL_STATIC"
-    "_IPP_SEQUENTIAL_STATIC"
-    "_IPP_PARALLEL_DYNAMIC"
-    "_IPP_SEQUENTIAL_DYNAMIC"
-  )
-  list(GET ipp_compile_definitions ${ipp_linking_method_index} ipp_compile_definition)
-  target_compile_definitions(${target} PRIVATE "${ipp_compile_definition}")
-
-  target_include_directories(${target} PRIVATE "${JUCER_IPP_INSTALL_DIR}/ipp/include")
-
-  target_link_libraries(${target} PRIVATE
-    "-LIBPATH:${JUCER_IPP_INSTALL_DIR}/ipp/lib/${ipp_arch}"
-    "-LIBPATH:${JUCER_IPP_INSTALL_DIR}/compiler/lib/${ipp_arch}"
-  )
-
-endfunction()
-
-
-function(_FRUT_set_compiler_and_linker_settings_MSVC target)
-
-  target_compile_definitions(${target} PRIVATE "_CRT_SECURE_NO_WARNINGS")
-
-  if(MSVC_VERSION EQUAL 1800) # Visual Studio 2013
-    set(ltcg_link_flag "/LTCG")
-  else()
-    set(ltcg_link_flag "/LTCG:incremental")
-  endif()
-
-  foreach(config IN LISTS JUCER_PROJECT_CONFIGURATIONS)
-    string(TOUPPER "${config}" upper_config)
-
-    if(NOT DEFINED JUCER_MULTI_PROCESSOR_COMPILATION_${config}
-        OR JUCER_MULTI_PROCESSOR_COMPILATION_${config})
-      target_compile_options(${target} PRIVATE $<$<CONFIG:${config}>:/MP>)
-    endif()
-
-    if(JUCER_CONFIGURATION_IS_DEBUG_${config})
-      target_compile_definitions(${target} PRIVATE
-        $<$<CONFIG:${config}>:DEBUG>
-        $<$<CONFIG:${config}>:_DEBUG>
-      )
-
-      if(JUCER_LINK_TIME_OPTIMISATION_${config})
-        target_compile_options(${target} PRIVATE $<$<CONFIG:${config}>:/GL>)
-        set_property(TARGET ${target} APPEND_STRING PROPERTY
-          LINK_FLAGS_${upper_config} " ${ltcg_link_flag}"
-        )
-        set_property(TARGET ${target} APPEND_STRING PROPERTY
-          STATIC_LIBRARY_FLAGS_${upper_config} " /LTCG"
-        )
-      endif()
-    else()
-      target_compile_definitions(${target} PRIVATE $<$<CONFIG:${config}>:NDEBUG>)
-
-      if(NOT JUCER_ALWAYS_DISABLE_WPO_${config}
-          AND NOT (DEFINED JUCER_LINK_TIME_OPTIMISATION_${config}
-                   AND NOT JUCER_LINK_TIME_OPTIMISATION_${config}))
-        target_compile_options(${target} PRIVATE $<$<CONFIG:${config}>:/GL>)
-        set_property(TARGET ${target} APPEND_STRING PROPERTY
-          LINK_FLAGS_${upper_config} " ${ltcg_link_flag}"
-        )
-        set_property(TARGET ${target} APPEND_STRING PROPERTY
-          STATIC_LIBRARY_FLAGS_${upper_config} " /LTCG"
-        )
-      endif()
-    endif()
-
-    if(NOT DEFINED JUCER_CHARACTER_SET_${config}
-        OR JUCER_CHARACTER_SET_${config} STREQUAL "Default")
-      target_compile_definitions(${target} PRIVATE $<$<CONFIG:${config}>:_SBCS>)
-    elseif(JUCER_CHARACTER_SET_${config} STREQUAL "MultiByte")
-      # Nothing to do, this is CMake's default
-    elseif(JUCER_CHARACTER_SET_${config} STREQUAL "Unicode")
-      target_compile_definitions(${target} PRIVATE
-        $<$<CONFIG:${config}>:_UNICODE>
-        $<$<CONFIG:${config}>:UNICODE>
-      )
-    endif()
-
-    if(JUCER_CONFIGURATION_IS_DEBUG_${config})
-      set(d_or_empty "d")
-    else()
-      set(d_or_empty "")
-    endif()
-    if(DEFINED JUCER_RUNTIME_LIBRARY_FLAG_${config})
-      target_compile_options(${target} PRIVATE
-        $<$<CONFIG:${config}>:${JUCER_RUNTIME_LIBRARY_FLAG_${config}}>
-      )
-    elseif(NOT (DEFINED JUCER_VERSION AND JUCER_VERSION VERSION_LESS 5.2.1))
-      target_compile_options(${target} PRIVATE $<$<CONFIG:${config}>:/MD${d_or_empty}>)
-    elseif(DEFINED JUCER_VERSION AND JUCER_VERSION VERSION_LESS 5.0.0
-        AND (JUCER_BUILD_VST OR JUCER_BUILD_VST3 OR JUCER_BUILD_RTAS OR JUCER_BUILD_AAX))
-      target_compile_options(${target} PRIVATE $<$<CONFIG:${config}>:/MD${d_or_empty}>)
-    elseif(JUCER_BUILD_RTAS OR JUCER_BUILD_AAX)
-      target_compile_options(${target} PRIVATE $<$<CONFIG:${config}>:/MD${d_or_empty}>)
-    else()
-      target_compile_options(${target} PRIVATE $<$<CONFIG:${config}>:/MT${d_or_empty}>)
-    endif()
-
-    if(DEFINED JUCER_DEBUG_INFORMATION_FORMAT_FLAG_${config})
-      target_compile_options(${target} PRIVATE
-        $<$<CONFIG:${config}>:${JUCER_DEBUG_INFORMATION_FORMAT_FLAG_${config}}>
-      )
-    endif()
-
-    if(DEFINED JUCER_WARNING_LEVEL_FLAG_${config})
-      target_compile_options(${target} PRIVATE
-        $<$<CONFIG:${config}>:${JUCER_WARNING_LEVEL_FLAG_${config}}>
-      )
-    else()
-      target_compile_options(${target} PRIVATE $<$<CONFIG:${config}>:/W4>)
-    endif()
-
-    if(JUCER_TREAT_WARNINGS_AS_ERRORS_${config})
-      target_compile_options(${target} PRIVATE $<$<CONFIG:${config}>:/WX>)
-    endif()
-
-    if(JUCER_RELAX_IEEE_COMPLIANCE_${config})
-      target_compile_options(${target} PRIVATE $<$<CONFIG:${config}>:/fp:fast>)
-    endif()
-
-    if(DEFINED JUCER_INCREMENTAL_LINKING_${config})
-      if(JUCER_INCREMENTAL_LINKING_${config})
-        set_property(TARGET ${target} APPEND_STRING PROPERTY
-          LINK_FLAGS_${upper_config} " /INCREMENTAL"
-        )
-      endif()
-    endif()
-
-    if(DEFINED JUCER_FORCE_GENERATION_OF_DEBUG_SYMBOLS_${config})
-      if(JUCER_FORCE_GENERATION_OF_DEBUG_SYMBOLS_${config})
-        set_property(TARGET ${target} APPEND_STRING PROPERTY
-          LINK_FLAGS_${upper_config} " /DEBUG"
-        )
-      endif()
-    endif()
-
-    if(DEFINED JUCER_GENERATE_MANIFEST_${config})
-      if(NOT JUCER_GENERATE_MANIFEST_${config})
-        set_property(TARGET ${target} APPEND_STRING PROPERTY
-          LINK_FLAGS_${upper_config} " /MANIFEST:NO"
-        )
-      endif()
-    endif()
-  endforeach()
-
-  foreach(windows_lib IN LISTS JUCER_PROJECT_WINDOWS_LIBS)
-    target_link_libraries(${target} PRIVATE "${windows_lib}.lib")
-  endforeach()
-
-endfunction()
-
-
 function(_FRUT_set_compiler_and_linker_settings_Linux target)
 
   target_compile_definitions(${target} PRIVATE "LINUX=1")
@@ -4216,6 +4779,169 @@ function(_FRUT_set_compiler_and_linker_settings_MinGW target)
 endfunction()
 
 
+function(_FRUT_set_compiler_and_linker_settings_MSVC target)
+
+  target_compile_definitions(${target} PRIVATE "_CRT_SECURE_NO_WARNINGS")
+
+  if(MSVC_VERSION EQUAL 1800) # Visual Studio 2013
+    set(ltcg_link_flag "/LTCG")
+  else()
+    set(ltcg_link_flag "/LTCG:incremental")
+  endif()
+
+  foreach(config IN LISTS JUCER_PROJECT_CONFIGURATIONS)
+    string(TOUPPER "${config}" upper_config)
+
+    if(NOT DEFINED JUCER_MULTI_PROCESSOR_COMPILATION_${config}
+        OR JUCER_MULTI_PROCESSOR_COMPILATION_${config})
+      target_compile_options(${target} PRIVATE $<$<CONFIG:${config}>:/MP>)
+    endif()
+
+    if(JUCER_CONFIGURATION_IS_DEBUG_${config})
+      target_compile_definitions(${target} PRIVATE
+        $<$<CONFIG:${config}>:DEBUG>
+        $<$<CONFIG:${config}>:_DEBUG>
+      )
+
+      if(JUCER_LINK_TIME_OPTIMISATION_${config})
+        target_compile_options(${target} PRIVATE $<$<CONFIG:${config}>:/GL>)
+        set_property(TARGET ${target} APPEND_STRING PROPERTY
+          LINK_FLAGS_${upper_config} " ${ltcg_link_flag}"
+        )
+        set_property(TARGET ${target} APPEND_STRING PROPERTY
+          STATIC_LIBRARY_FLAGS_${upper_config} " /LTCG"
+        )
+      endif()
+    else()
+      target_compile_definitions(${target} PRIVATE $<$<CONFIG:${config}>:NDEBUG>)
+
+      if(NOT JUCER_ALWAYS_DISABLE_WPO_${config}
+          AND NOT (DEFINED JUCER_LINK_TIME_OPTIMISATION_${config}
+                   AND NOT JUCER_LINK_TIME_OPTIMISATION_${config}))
+        target_compile_options(${target} PRIVATE $<$<CONFIG:${config}>:/GL>)
+        set_property(TARGET ${target} APPEND_STRING PROPERTY
+          LINK_FLAGS_${upper_config} " ${ltcg_link_flag}"
+        )
+        set_property(TARGET ${target} APPEND_STRING PROPERTY
+          STATIC_LIBRARY_FLAGS_${upper_config} " /LTCG"
+        )
+      endif()
+    endif()
+
+    if(NOT DEFINED JUCER_CHARACTER_SET_${config}
+        OR JUCER_CHARACTER_SET_${config} STREQUAL "Default")
+      target_compile_definitions(${target} PRIVATE $<$<CONFIG:${config}>:_SBCS>)
+    elseif(JUCER_CHARACTER_SET_${config} STREQUAL "MultiByte")
+      # Nothing to do, this is CMake's default
+    elseif(JUCER_CHARACTER_SET_${config} STREQUAL "Unicode")
+      target_compile_definitions(${target} PRIVATE
+        $<$<CONFIG:${config}>:_UNICODE>
+        $<$<CONFIG:${config}>:UNICODE>
+      )
+    endif()
+
+    if(JUCER_CONFIGURATION_IS_DEBUG_${config})
+      set(d_or_empty "d")
+    else()
+      set(d_or_empty "")
+    endif()
+    if(DEFINED JUCER_RUNTIME_LIBRARY_FLAG_${config})
+      target_compile_options(${target} PRIVATE
+        $<$<CONFIG:${config}>:${JUCER_RUNTIME_LIBRARY_FLAG_${config}}>
+      )
+    elseif(NOT (DEFINED JUCER_VERSION AND JUCER_VERSION VERSION_LESS 5.2.1))
+      target_compile_options(${target} PRIVATE $<$<CONFIG:${config}>:/MD${d_or_empty}>)
+    elseif(DEFINED JUCER_VERSION AND JUCER_VERSION VERSION_LESS 5.0.0
+        AND (JUCER_BUILD_VST OR JUCER_BUILD_VST3 OR JUCER_BUILD_RTAS OR JUCER_BUILD_AAX))
+      target_compile_options(${target} PRIVATE $<$<CONFIG:${config}>:/MD${d_or_empty}>)
+    elseif(JUCER_BUILD_RTAS OR JUCER_BUILD_AAX)
+      target_compile_options(${target} PRIVATE $<$<CONFIG:${config}>:/MD${d_or_empty}>)
+    else()
+      target_compile_options(${target} PRIVATE $<$<CONFIG:${config}>:/MT${d_or_empty}>)
+    endif()
+
+    if(DEFINED JUCER_DEBUG_INFORMATION_FORMAT_FLAG_${config})
+      target_compile_options(${target} PRIVATE
+        $<$<CONFIG:${config}>:${JUCER_DEBUG_INFORMATION_FORMAT_FLAG_${config}}>
+      )
+    endif()
+
+    if(DEFINED JUCER_WARNING_LEVEL_FLAG_${config})
+      target_compile_options(${target} PRIVATE
+        $<$<CONFIG:${config}>:${JUCER_WARNING_LEVEL_FLAG_${config}}>
+      )
+    else()
+      target_compile_options(${target} PRIVATE $<$<CONFIG:${config}>:/W4>)
+    endif()
+
+    if(JUCER_TREAT_WARNINGS_AS_ERRORS_${config})
+      target_compile_options(${target} PRIVATE $<$<CONFIG:${config}>:/WX>)
+    endif()
+
+    if(JUCER_RELAX_IEEE_COMPLIANCE_${config})
+      target_compile_options(${target} PRIVATE $<$<CONFIG:${config}>:/fp:fast>)
+    endif()
+
+    if(DEFINED JUCER_INCREMENTAL_LINKING_${config})
+      if(JUCER_INCREMENTAL_LINKING_${config})
+        set_property(TARGET ${target} APPEND_STRING PROPERTY
+          LINK_FLAGS_${upper_config} " /INCREMENTAL"
+        )
+      endif()
+    endif()
+
+    if(DEFINED JUCER_FORCE_GENERATION_OF_DEBUG_SYMBOLS_${config})
+      if(JUCER_FORCE_GENERATION_OF_DEBUG_SYMBOLS_${config})
+        set_property(TARGET ${target} APPEND_STRING PROPERTY
+          LINK_FLAGS_${upper_config} " /DEBUG"
+        )
+      endif()
+    endif()
+
+    if(DEFINED JUCER_GENERATE_MANIFEST_${config})
+      if(NOT JUCER_GENERATE_MANIFEST_${config})
+        set_property(TARGET ${target} APPEND_STRING PROPERTY
+          LINK_FLAGS_${upper_config} " /MANIFEST:NO"
+        )
+      endif()
+    endif()
+  endforeach()
+
+  foreach(windows_lib IN LISTS JUCER_PROJECT_WINDOWS_LIBS)
+    target_link_libraries(${target} PRIVATE "${windows_lib}.lib")
+  endforeach()
+
+endfunction()
+
+
+function(_FRUT_set_custom_xcode_flags target)
+
+  unset(all_flags)
+  foreach(config IN LISTS JUCER_PROJECT_CONFIGURATIONS)
+    if(DEFINED JUCER_CUSTOM_XCODE_FLAGS_${config})
+      foreach(xcode_flag IN LISTS JUCER_CUSTOM_XCODE_FLAGS_${config})
+        string(REGEX MATCH "^([^= ]+) *= *(.+)" m "${xcode_flag}")
+        if(NOT CMAKE_MATCH_0)
+          message(FATAL_ERROR "Invalid Xcode flag: \"${xcode_flag}\"")
+        endif()
+        list(APPEND all_flags "${CMAKE_MATCH_1}")
+        set(value "${CMAKE_MATCH_2}")
+        string(APPEND all_confs_${CMAKE_MATCH_1} "$<$<CONFIG:${config}>:${value}>")
+      endforeach()
+    endif()
+  endforeach()
+
+  if(DEFINED all_flags)
+    foreach(flag IN LISTS all_flags)
+      set_target_properties(${target} PROPERTIES
+        XCODE_ATTRIBUTE_${flag} "${all_confs_${flag}}"
+      )
+    endforeach()
+  endif()
+
+endfunction()
+
+
 function(_FRUT_set_cxx_language_standard_properties target)
 
   if(DEFINED JUCER_CXX_LANGUAGE_STANDARD)
@@ -4326,490 +5052,68 @@ function(_FRUT_set_cxx_language_standard_properties target)
 endfunction()
 
 
-function(_FRUT_add_extra_commands target exporter)
+function(_FRUT_set_IPP_windows_compiler_and_linker_settings target)
 
-  if(APPLE)
-    _FRUT_add_extra_commands_APPLE(${target} "${exporter}")
-  elseif(MSVC)
-    _FRUT_add_extra_commands_MSVC(${target} "${exporter}")
-  endif()
+  set(ipp_registry_base_path "HKEY_LOCAL_MACHINE\\SOFTWARE\\WOW6432Node\\Intel\\Suites")
 
-endfunction()
-
-
-function(_FRUT_add_extra_commands_APPLE target exporter)
-
-  get_target_property(target_type ${target} TYPE)
-  if(target_type STREQUAL "EXECUTABLE" OR target_type STREQUAL "MODULE_LIBRARY")
-    if(NOT EXISTS "${strip_exe}")
-      unset(strip_exe CACHE)
-    endif()
-    find_program(strip_exe "strip")
-    if(NOT strip_exe)
-      message(FATAL_ERROR "Could not find strip program")
-    endif()
-    unset(all_confs_strip_exe)
-    unset(all_confs_strip_opt)
-    unset(all_confs_strip_arg)
-    foreach(config IN LISTS JUCER_PROJECT_CONFIGURATIONS)
-      if(JUCER_STRIP_LOCAL_SYMBOLS_${config})
-        string(APPEND all_confs_strip_exe $<$<CONFIG:${config}>:${strip_exe}>)
-        string(APPEND all_confs_strip_opt $<$<CONFIG:${config}>:-x>)
-        string(APPEND all_confs_strip_arg $<$<CONFIG:${config}>:$<TARGET_FILE:${target}>>)
-      endif()
-    endforeach()
-    if(DEFINED all_confs_strip_exe)
-      add_custom_command(TARGET ${target} POST_BUILD
-        COMMAND ${all_confs_strip_exe} ${all_confs_strip_opt} ${all_confs_strip_arg}
-      )
-    endif()
-  endif()
-
-  if(DEFINED JUCER_PREBUILD_SHELL_SCRIPT)
-    if(NOT DEFINED JUCER_TARGET_PROJECT_FOLDER)
-      message(FATAL_ERROR "JUCER_TARGET_PROJECT_FOLDER must be defined. Give "
-        "TARGET_PROJECT_FOLDER when calling jucer_export_target(\"${exporter}\")."
-      )
-    endif()
-    if(NOT IS_DIRECTORY "${JUCER_TARGET_PROJECT_FOLDER}")
-      file(MAKE_DIRECTORY "${JUCER_TARGET_PROJECT_FOLDER}")
-    endif()
-    add_custom_command(TARGET ${target} PRE_BUILD
-      COMMAND "/bin/sh" "${JUCER_PREBUILD_SHELL_SCRIPT}"
-      WORKING_DIRECTORY "${JUCER_TARGET_PROJECT_FOLDER}"
-    )
-  endif()
-
-  if(DEFINED JUCER_POSTBUILD_SHELL_SCRIPT)
-    if(NOT DEFINED JUCER_TARGET_PROJECT_FOLDER)
-      message(FATAL_ERROR "JUCER_TARGET_PROJECT_FOLDER must be defined. Give "
-        "TARGET_PROJECT_FOLDER when calling jucer_export_target(\"${exporter}\")."
-      )
-    endif()
-    if(NOT IS_DIRECTORY "${JUCER_TARGET_PROJECT_FOLDER}")
-      file(MAKE_DIRECTORY "${JUCER_TARGET_PROJECT_FOLDER}")
-    endif()
-    add_custom_command(TARGET ${target} POST_BUILD
-      COMMAND "/bin/sh" "${JUCER_POSTBUILD_SHELL_SCRIPT}"
-      WORKING_DIRECTORY "${JUCER_TARGET_PROJECT_FOLDER}"
-    )
-  endif()
-
-endfunction()
-
-
-function(_FRUT_add_extra_commands_MSVC target exporter)
-
-  unset(all_confs_prebuild_command)
-  foreach(config IN LISTS JUCER_PROJECT_CONFIGURATIONS)
-    if(DEFINED JUCER_PREBUILD_COMMAND_${config})
-      set(prebuild_command "${JUCER_PREBUILD_COMMAND_${config}}")
-      string(APPEND all_confs_prebuild_command
-        $<$<CONFIG:${config}>:${prebuild_command}>
-      )
-    endif()
-  endforeach()
-  if(DEFINED all_confs_prebuild_command)
-    if(NOT DEFINED JUCER_TARGET_PROJECT_FOLDER)
-      message(FATAL_ERROR "JUCER_TARGET_PROJECT_FOLDER must be defined. Give "
-        "TARGET_PROJECT_FOLDER when calling jucer_export_target(\"${exporter}\")."
-      )
-    endif()
-    if(NOT IS_DIRECTORY "${JUCER_TARGET_PROJECT_FOLDER}")
-      file(MAKE_DIRECTORY "${JUCER_TARGET_PROJECT_FOLDER}")
-    endif()
-    add_custom_command(TARGET ${target} PRE_BUILD
-      COMMAND ${all_confs_prebuild_command}
-      WORKING_DIRECTORY "${JUCER_TARGET_PROJECT_FOLDER}"
-    )
-  endif()
-
-  unset(all_confs_postbuild_command)
-  foreach(config IN LISTS JUCER_PROJECT_CONFIGURATIONS)
-    if(DEFINED JUCER_POSTBUILD_COMMAND_${config})
-      set(postbuild_command "${JUCER_POSTBUILD_COMMAND_${config}}")
-      string(APPEND all_confs_postbuild_command
-        $<$<CONFIG:${config}>:${postbuild_command}>
-      )
-    endif()
-  endforeach()
-  if(DEFINED all_confs_postbuild_command)
-    if(NOT DEFINED JUCER_TARGET_PROJECT_FOLDER)
-      message(FATAL_ERROR "JUCER_TARGET_PROJECT_FOLDER must be defined. Give "
-        "TARGET_PROJECT_FOLDER when calling jucer_export_target(\"${exporter}\")."
-      )
-    endif()
-    if(NOT IS_DIRECTORY "${JUCER_TARGET_PROJECT_FOLDER}")
-      file(MAKE_DIRECTORY "${JUCER_TARGET_PROJECT_FOLDER}")
-    endif()
-    add_custom_command(TARGET ${target} POST_BUILD
-      COMMAND ${all_confs_postbuild_command}
-      WORKING_DIRECTORY "${JUCER_TARGET_PROJECT_FOLDER}"
-    )
-  endif()
-
-endfunction()
-
-
-function(_FRUT_generate_plist_file
-  target plist_suffix bundle_package_type bundle_signature
-)
-
-  set(plist_filename "Info-${plist_suffix}.plist")
-  if(CMAKE_GENERATOR STREQUAL "Xcode")
-    set(bundle_executable "\${EXECUTABLE_NAME}")
-    set_target_properties(${target} PROPERTIES
-      XCODE_ATTRIBUTE_INFOPLIST_FILE "${CMAKE_CURRENT_BINARY_DIR}/${plist_filename}"
-      XCODE_ATTRIBUTE_PRODUCT_BUNDLE_IDENTIFIER "${JUCER_BUNDLE_IDENTIFIER}"
-    )
+  if(CMAKE_SIZEOF_VOID_P EQUAL 8) # 64-bit
+    set(ipp_registry_key "EMT64")
+    set(ipp_arch "intel64_win")
   else()
-    set(bundle_executable "\${MACOSX_BUNDLE_BUNDLE_NAME}")
-    set_target_properties(${target} PROPERTIES
-      MACOSX_BUNDLE_BUNDLE_NAME "${JUCER_PROJECT_NAME}"
-      MACOSX_BUNDLE_GUI_IDENTIFIER "${JUCER_BUNDLE_IDENTIFIER}"
-      MACOSX_BUNDLE_INFO_PLIST "${CMAKE_CURRENT_BINARY_DIR}/${plist_filename}"
-    )
+    set(ipp_registry_key "IA32")
+    set(ipp_arch "ia32_win")
   endif()
 
-  if(DEFINED JUCER_VERSION AND JUCER_VERSION VERSION_LESS 5.2.0)
-    if(CMAKE_GENERATOR STREQUAL "Xcode")
-      set(bundle_identifier "\$(PRODUCT_BUNDLE_IDENTIFIER)")
-    else()
-      set(bundle_identifier "\${MACOSX_BUNDLE_GUI_IDENTIFIER}")
-    endif()
-  else()
-    set(bundle_identifier "@JUCER_BUNDLE_IDENTIFIER@")
-  endif()
-
-  set(plist_entries "")
-
-  if(JUCER_MICROPHONE_ACCESS)
-    if(DEFINED JUCER_MICROPHONE_ACCESS_TEXT)
-      set(microphone_usage_description "${JUCER_MICROPHONE_ACCESS_TEXT}")
-    else()
-      string(CONCAT microphone_usage_description "This app requires audio input. If you "
-        "do not have an audio interface connected it will use the built-in microphone."
-      )
-    endif()
-    string(APPEND plist_entries "
-    <key>NSMicrophoneUsageDescription</key>
-    <string>${microphone_usage_description}</string>"
-    )
-  endif()
-
-  if(JUCER_CAMERA_ACCESS)
-    if(DEFINED JUCER_CAMERA_ACCESS_TEXT)
-      set(camera_usage_description "${JUCER_CAMERA_ACCESS_TEXT}")
-    else()
-      string(CONCAT camera_usage_description "This app requires access to the camera to "
-        "function correctly."
-      )
-    endif()
-    string(APPEND plist_entries "
-    <key>NSCameraUsageDescription</key>
-    <string>${camera_usage_description}</string>"
-    )
-  endif()
-
-  get_filename_component(bundle_icon_file "${JUCER_ICON_FILE}" NAME)
-
-  if(DEFINED JUCER_COMPANY_COPYRIGHT
-      OR NOT (DEFINED JUCER_VERSION AND JUCER_VERSION VERSION_LESS 5.2.0))
-    set(ns_human_readable_copyright "@JUCER_COMPANY_COPYRIGHT@")
-  else()
-    set(ns_human_readable_copyright "@JUCER_COMPANY_NAME@")
-  endif()
-
-  string(APPEND plist_entries "
-    <key>CFBundleExecutable</key>
-    <string>${bundle_executable}</string>
-    <key>CFBundleIconFile</key>
-    <string>${bundle_icon_file}</string>
-    <key>CFBundleIdentifier</key>
-    <string>${bundle_identifier}</string>
-    <key>CFBundleName</key>
-    <string>@JUCER_PROJECT_NAME@</string>
-    <key>CFBundleDisplayName</key>
-    <string>@JUCER_PROJECT_NAME@</string>
-    <key>CFBundlePackageType</key>
-    <string>${bundle_package_type}</string>
-    <key>CFBundleSignature</key>
-    <string>${bundle_signature}</string>
-    <key>CFBundleShortVersionString</key>
-    <string>@JUCER_PROJECT_VERSION@</string>
-    <key>CFBundleVersion</key>
-    <string>@JUCER_PROJECT_VERSION@</string>
-    <key>NSHumanReadableCopyright</key>
-    <string>${ns_human_readable_copyright}</string>
-    <key>NSHighResolutionCapable</key>
-    <true/>"
+  get_filename_component(JUCER_IPP_SUB_KEY
+    "[${ipp_registry_base_path}\\Defaults\\${ipp_registry_key};IPPSubKey]"
+    ABSOLUTE BASE_DIR "" CACHE
   )
+  file(TO_NATIVE_PATH "${JUCER_IPP_SUB_KEY}" ipp_sub_key)
 
-  list(LENGTH JUCER_DOCUMENT_FILE_EXTENSIONS file_extensions_length)
-  if(file_extensions_length GREATER 0 AND NOT target MATCHES "_AUv3_AppExtension$")
-    set(bundle_type_extensions "")
-    foreach(type_extension IN LISTS JUCER_DOCUMENT_FILE_EXTENSIONS)
-      if(type_extension MATCHES "^\\.")
-        string(SUBSTRING "${type_extension}" 1 -1 type_extension)
-      endif()
-      string(APPEND bundle_type_extensions
-        "\n          <string>${type_extension}</string>"
-      )
-    endforeach()
-    list(GET JUCER_DOCUMENT_FILE_EXTENSIONS 0 first_type_extension)
-    if(first_type_extension MATCHES "^\\.")
-      string(SUBSTRING "${first_type_extension}" 1 -1 first_type_extension)
-    endif()
-
-    string(APPEND plist_entries "
-    <key>CFBundleDocumentTypes</key>
-    <array>
-      <dict>
-        <key>CFBundleTypeExtensions</key>
-        <array>${bundle_type_extensions}
-        </array>
-        <key>CFBundleTypeName</key>
-        <string>${first_type_extension}</string>
-        <key>CFBundleTypeRole</key>
-        <string>Editor</string>
-        <key>CFBundleTypeIconFile</key>
-        <string>Icon</string>
-        <key>NSPersistentStoreTypeKey</key>
-        <string>XML</string>
-      </dict>
-    </array>"
-    )
-  endif()
-
-  if(target MATCHES "_AU$")
-    _FRUT_get_au_main_type_code(au_main_type_code)
-    _FRUT_version_to_dec("${JUCER_PROJECT_VERSION}" dec_version)
-
-    string(APPEND plist_entries "
-    <key>AudioComponents</key>
-    <array>
-      <dict>
-        <key>name</key>
-        <string>@JUCER_PLUGIN_MANUFACTURER@: @JUCER_PLUGIN_NAME@</string>
-        <key>description</key>
-        <string>@JUCER_PLUGIN_DESCRIPTION@</string>
-        <key>factoryFunction</key>
-        <string>@JUCER_PLUGIN_AU_EXPORT_PREFIX@Factory</string>
-        <key>manufacturer</key>
-        <string>@JUCER_PLUGIN_MANUFACTURER_CODE@</string>
-        <key>type</key>
-        <string>${au_main_type_code}</string>
-        <key>subtype</key>
-        <string>@JUCER_PLUGIN_CODE@</string>
-        <key>version</key>
-        <integer>${dec_version}</integer>"
-    )
-
-    if(JUCER_PLUGIN_AU_IS_SANDBOX_SAFE)
-      string(APPEND plist_entries "
-        <key>sandboxSafe</key>
-        <true/>"
-      )
-    elseif(NOT (DEFINED JUCER_VERSION AND JUCER_VERSION VERSION_LESS 5.4.0))
-      string(APPEND plist_entries "
-        <key>resourceUsage</key>
-        <dict>
-          <key>network.client</key>
-          <true/>
-          <key>temporary-exception.files.all.read-write</key>
-          <true/>
-        </dict>"
-      )
-    endif()
-
-    string(APPEND plist_entries "
-      </dict>
-    </array>"
-    )
-  endif()
-
-  if(target MATCHES "_AUv3_AppExtension$")
-    _FRUT_get_au_main_type_code(au_main_type_code)
-    _FRUT_version_to_dec("${JUCER_PROJECT_VERSION}" dec_version)
-
-    if(JUCER_PLUGIN_IS_A_SYNTH)
-      set(tag "Synth")
-    else()
-      set(tag "Effects")
-    endif()
-
-    string(APPEND plist_entries "
-    <key>NSExtension</key>
-    <dict>
-      <key>NSExtensionPrincipalClass</key>
-      <string>@JUCER_PLUGIN_AU_EXPORT_PREFIX@FactoryAUv3</string>
-      <key>NSExtensionPointIdentifier</key>
-      <string>com.apple.AudioUnit-UI</string>
-      <key>NSExtensionAttributes</key>
-      <dict>
-        <key>AudioComponents</key>
-        <array>
-          <dict>
-            <key>name</key>
-            <string>@JUCER_PLUGIN_MANUFACTURER@: @JUCER_PLUGIN_NAME@</string>
-            <key>description</key>
-            <string>@JUCER_PLUGIN_DESCRIPTION@</string>
-            <key>factoryFunction</key>
-            <string>@JUCER_PLUGIN_AU_EXPORT_PREFIX@FactoryAUv3</string>
-            <key>manufacturer</key>
-            <string>@JUCER_PLUGIN_MANUFACTURER_CODE@</string>
-            <key>type</key>
-            <string>${au_main_type_code}</string>
-            <key>subtype</key>
-            <string>@JUCER_PLUGIN_CODE@</string>
-            <key>version</key>
-            <integer>${dec_version}</integer>
-            <key>sandboxSafe</key>
-            <true/>
-            <key>tags</key>
-            <array>
-              <string>${tag}</string>
-            </array>
-          </dict>
-        </array>
-      </dict>
-    </dict>"
-    )
-  endif()
-
-  if(JUCER_CUSTOM_PLIST)
-    set(PListMerger_filename "PListMerger-0.1.0")
-    set(install_prefix "${Reprojucer.cmake_DIR}/bin")
-    if(NOT EXISTS "${PListMerger_exe}"
-        OR NOT PListMerger_exe MATCHES "${PListMerger_filename}")
-      unset(PListMerger_exe CACHE)
-    endif()
-    find_program(PListMerger_exe "${PListMerger_filename}"
-      PATHS "${install_prefix}"
-      NO_DEFAULT_PATH
-    )
-    if(NOT PListMerger_exe)
-      message(STATUS "Building and installing PListMerger")
-      try_compile(PListMerger
-        "${Reprojucer.cmake_DIR}/PListMerger/_build/${CMAKE_GENERATOR}"
-        "${Reprojucer.cmake_DIR}/PListMerger"
-        PListMerger install
-        CMAKE_FLAGS
-        "-DJUCE_modules_DIRS=${JUCER_PROJECT_MODULES_FOLDERS}"
-        "-DCMAKE_INSTALL_PREFIX=${install_prefix}"
-      )
-      if(NOT PListMerger)
-        message(FATAL_ERROR "Failed to build and install PListMerger. Please report this"
-          " problem by creating a new issue on GitHub:"
-          " https://github.com/McMartin/FRUT/issues/new"
-        )
-      endif()
-      message(STATUS "Installed PListMerger in ${install_prefix}")
-      find_program(PListMerger_exe "${PListMerger_filename}"
-        PATHS "${install_prefix}"
-        NO_DEFAULT_PATH
-      )
-      if(NOT PListMerger_exe)
-        message(FATAL_ERROR "Could not find ${PListMerger_filename}")
-      endif()
-    endif()
-
-    execute_process(
-      COMMAND
-      "${PListMerger_exe}"
-      "${JUCER_CUSTOM_PLIST}"
-      "<plist><dict>${plist_entries}</dict></plist>"
-      OUTPUT_VARIABLE PListMerger_output
-      OUTPUT_STRIP_TRAILING_WHITESPACE
-      RESULT_VARIABLE PListMerger_return_code
-    )
-    if(NOT PListMerger_return_code EQUAL 0)
-      message(FATAL_ERROR "Error when executing PListMerger")
-    endif()
-
-    if(WIN32)
-      string(REPLACE "\r\n" "\n" PListMerger_output "${PListMerger_output}")
-    endif()
-    string(REPLACE "<plist>\n  <dict>" "" PListMerger_output "${PListMerger_output}")
-    string(REPLACE "\n  </dict>\n</plist>" "" PListMerger_output "${PListMerger_output}")
-    set(plist_entries "${PListMerger_output}")
-  endif()
-
-  string(CONFIGURE "${plist_entries}" plist_entries @ONLY)
-  configure_file("${Reprojucer_templates_DIR}/Info.plist" "${plist_filename}" @ONLY)
-
-endfunction()
-
-
-function(_FRUT_generate_plist_file_AUv3 target plist_suffix)
-
-  # com.yourcompany.NewProject -> com.yourcompany.NewProject.NewProjectAUv3
-  string(REPLACE "." ";" bundle_id_parts "${JUCER_BUNDLE_IDENTIFIER}")
-  list(LENGTH bundle_id_parts bundle_id_parts_length)
-  math(EXPR bundle_id_parts_last_index "${bundle_id_parts_length} - 1")
-  list(GET bundle_id_parts ${bundle_id_parts_last_index} bundle_id_last_part)
-  list(APPEND bundle_id_parts "${bundle_id_last_part}AUv3")
-  string(REPLACE ";" "." JUCER_BUNDLE_IDENTIFIER "${bundle_id_parts}")
-
-  _FRUT_generate_plist_file(${target} "${plist_suffix}" "XPC!" "????")
-
-endfunction()
-
-
-function(_FRUT_set_bundle_properties target extension)
-
-  if(NOT APPLE)
-    return()
-  endif()
-
-  set_target_properties(${target} PROPERTIES
-    BUNDLE TRUE
-    BUNDLE_EXTENSION "${extension}"
-    XCODE_ATTRIBUTE_WRAPPER_EXTENSION "${extension}"
+  set(env_var "programfiles(x86)") # needed because $ENV{} can't deal with parentheses
+  find_path(JUCER_IPP_INSTALL_DIR
+    NAMES "compiler/lib" "ipp/include" "ipp/lib"
+    HINTS
+      "[${ipp_registry_base_path}\\${ipp_sub_key}\\IPP;ProductDir]"
+      "$ENV{${env_var}}/IntelSWTools/compilers_and_libraries/windows"
   )
-
-  target_sources(${target} PRIVATE "${Reprojucer_templates_DIR}/PkgInfo")
-  set_source_files_properties("${Reprojucer_templates_DIR}/PkgInfo"
-    PROPERTIES MACOSX_PACKAGE_LOCATION "."
-  )
-
-endfunction()
-
-
-function(_FRUT_install_to_plugin_binary_location target plugin_type default_destination)
-
-  unset(all_confs_destination)
-  foreach(config IN LISTS JUCER_PROJECT_CONFIGURATIONS)
-    if(DEFINED JUCER_${plugin_type}_BINARY_LOCATION_${config})
-      set(destination "${JUCER_${plugin_type}_BINARY_LOCATION_${config}}")
-    else()
-      set(destination "${default_destination}")
-    endif()
-    if(NOT destination STREQUAL "")
-      if(DEFINED JUCER_ENABLE_PLUGIN_COPY_STEP_${config})
-        if(JUCER_ENABLE_PLUGIN_COPY_STEP_${config})
-          string(APPEND all_confs_destination $<$<CONFIG:${config}>:${destination}>)
-        endif()
-      elseif(APPLE)
-        string(APPEND all_confs_destination $<$<CONFIG:${config}>:${destination}>)
-      endif()
-    endif()
-  endforeach()
-
-  if(NOT DEFINED all_confs_destination)
-    return()
+  if(NOT JUCER_IPP_INSTALL_DIR OR NOT IS_DIRECTORY "${JUCER_IPP_INSTALL_DIR}")
+    message(FATAL_ERROR "Could not find Intel IPP. Please set JUCER_IPP_INSTALL_DIR to"
+      " the Intel IPP <install_dir>, as documented on"
+      " https://software.intel.com/ipp-dev-guide-finding-intel-ipp-on-your-system."
+    )
   endif()
 
-  set(component "_install_${target}_to_${plugin_type}_binary_location")
+  set(use_ipp_library_values
+    "Yes (Default Mode)"
+    "Yes (Default Linking)"
+    "Multi-Threaded Static Library"
+    "Single-Threaded Static Library"
+    "Multi-Threaded DLL"
+    "Single-Threaded DLL"
+  )
+  list(FIND use_ipp_library_values "${JUCER_USE_IPP_LIBRARY}" ipp_linking_method_index)
+  if(ipp_linking_method_index EQUAL -1)
+    message(FATAL_ERROR
+      "Unsupported value for JUCER_USE_IPP_LIBRARY: \"${JUCER_USE_IPP_LIBRARY}\""
+    )
+  endif()
+  set(ipp_compile_definitions
+    "_IPP_SEQUENTIAL_DYNAMIC"
+    "_IPP_SEQUENTIAL_DYNAMIC"
+    "_IPP_PARALLEL_STATIC"
+    "_IPP_SEQUENTIAL_STATIC"
+    "_IPP_PARALLEL_DYNAMIC"
+    "_IPP_SEQUENTIAL_DYNAMIC"
+  )
+  list(GET ipp_compile_definitions ${ipp_linking_method_index} ipp_compile_definition)
+  target_compile_definitions(${target} PRIVATE "${ipp_compile_definition}")
 
-  install(TARGETS ${target} COMPONENT ${component} DESTINATION ${all_confs_destination})
+  target_include_directories(${target} PRIVATE "${JUCER_IPP_INSTALL_DIR}/ipp/include")
 
-  add_custom_command(TARGET ${target} POST_BUILD
-    COMMAND
-    "${CMAKE_COMMAND}"
-    "-DCMAKE_INSTALL_CONFIG_NAME=$<CONFIG>"
-    "-DCMAKE_INSTALL_COMPONENT=${component}"
-    "-P" "${CMAKE_CURRENT_BINARY_DIR}/cmake_install.cmake"
+  target_link_libraries(${target} PRIVATE
+    "-LIBPATH:${JUCER_IPP_INSTALL_DIR}/ipp/lib/${ipp_arch}"
+    "-LIBPATH:${JUCER_IPP_INSTALL_DIR}/compiler/lib/${ipp_arch}"
   )
 
 endfunction()
@@ -4850,137 +5154,70 @@ function(_FRUT_set_JucePlugin_Build_defines target target_type)
 endfunction()
 
 
-function(_FRUT_link_osx_frameworks target)
+function(_FRUT_set_output_directory_properties target subfolder)
 
-  if(NOT APPLE)
-    return()
-  endif()
+  foreach(config IN LISTS JUCER_PROJECT_CONFIGURATIONS)
+    unset(output_directory)
+    string(TOUPPER "${config}" upper_config)
 
-  set(osx_frameworks
-    ${JUCER_PROJECT_OSX_FRAMEWORKS}
-    ${JUCER_EXTRA_SYSTEM_FRAMEWORKS}
-    ${JUCER_EXTRA_FRAMEWORKS}
-    ${ARGN}
-  )
-  if(JUCER_FLAG_JUCE_PLUGINHOST_AU)
-    list(APPEND osx_frameworks "AudioUnit" "CoreAudioKit")
-  endif()
-
-  if(osx_frameworks)
-    list(SORT osx_frameworks)
-    list(REMOVE_DUPLICATES osx_frameworks)
-    if(NOT JUCER_FLAG_JUCE_QUICKTIME)
-      list(REMOVE_ITEM osx_frameworks "QuickTime")
-    endif()
-
-    foreach(config IN LISTS JUCER_PROJECT_CONFIGURATIONS)
-      set(CMAKE_FRAMEWORK_PATH "")
-      set(sdk_version "${JUCER_OSX_BASE_SDK_VERSION_${config}}")
-      set(sdk_path "${JUCER_MACOSX_SDK_PATH_${config}}")
-      if(IS_DIRECTORY "${sdk_path}")
-        set(CMAKE_FRAMEWORK_PATH "${sdk_path}/System/Library/Frameworks")
+    if(MSVC AND NOT (DEFINED JUCER_VERSION AND JUCER_VERSION VERSION_LESS 5.0.0))
+      if(DEFINED JUCER_BINARY_LOCATION_${config})
+        set(output_directory "${JUCER_BINARY_LOCATION_${config}}/${subfolder}")
+      else()
+        set(output_directory "${CMAKE_CURRENT_BINARY_DIR}/$<CONFIG>/${subfolder}")
       endif()
-
-      foreach(framework_name IN LISTS osx_frameworks)
-        find_library(${framework_name}_framework_${sdk_version} ${framework_name})
-        target_link_libraries(${target} PRIVATE
-          "$<$<CONFIG:${config}>:${${framework_name}_framework_${sdk_version}}>"
-        )
-      endforeach()
-    endforeach()
-  endif()
-
-  if(JUCER_EXTRA_CUSTOM_FRAMEWORKS)
-    set(CMAKE_FIND_FRAMEWORK ONLY)
-    set(CMAKE_FRAMEWORK_PATH "${JUCER_FRAMEWORK_SEARCH_PATHS}")
-    foreach(framework_name IN LISTS JUCER_EXTRA_CUSTOM_FRAMEWORKS)
-      string(REGEX REPLACE "\\.framework$" "" framework_name "${framework_name}")
-      find_library(${framework_name}_framework ${framework_name})
-      target_link_libraries(${target} PRIVATE ${${framework_name}_framework})
-    endforeach()
-  endif()
+    elseif(DEFINED JUCER_BINARY_LOCATION_${config})
+      set(output_directory "${JUCER_BINARY_LOCATION_${config}}")
+    endif()
+    if(DEFINED output_directory)
+      set_target_properties(${target} PROPERTIES
+        ARCHIVE_OUTPUT_DIRECTORY_${upper_config} "${output_directory}"
+        LIBRARY_OUTPUT_DIRECTORY_${upper_config} "${output_directory}"
+        RUNTIME_OUTPUT_DIRECTORY_${upper_config} "${output_directory}"
+      )
+    endif()
+  endforeach()
 
 endfunction()
 
 
-function(_FRUT_add_xcode_resource_folders target)
+function(_FRUT_set_output_name_properties target)
 
-  if(NOT APPLE)
-    return()
-  endif()
+  foreach(config IN LISTS JUCER_PROJECT_CONFIGURATIONS)
+    string(TOUPPER "${config}" upper_config)
 
-  foreach(folder IN LISTS JUCER_CUSTOM_XCODE_RESOURCE_FOLDERS)
-    add_custom_command(TARGET ${target} PRE_BUILD
-      COMMAND rsync -r "${folder}" "$<TARGET_FILE_DIR:${target}>/../Resources"
+    if(JUCER_BINARY_NAME_${config})
+      set(output_name "${JUCER_BINARY_NAME_${config}}")
+    else()
+      set(output_name "${JUCER_PROJECT_NAME}")
+    endif()
+    set_target_properties(${target} PROPERTIES
+      OUTPUT_NAME_${upper_config} "${output_name}"
     )
   endforeach()
 
 endfunction()
 
 
-function(_FRUT_set_custom_xcode_flags target)
+function(_FRUT_set_output_name_properties_Unity unity_target)
 
-  unset(all_flags)
+  # Like _FRUT_set_output_name_properties(${unity_target}), but handles the
+  # "audioplugin" prefix as well
   foreach(config IN LISTS JUCER_PROJECT_CONFIGURATIONS)
-    if(DEFINED JUCER_CUSTOM_XCODE_FLAGS_${config})
-      foreach(xcode_flag IN LISTS JUCER_CUSTOM_XCODE_FLAGS_${config})
-        string(REGEX MATCH "^([^= ]+) *= *(.+)" m "${xcode_flag}")
-        if(NOT CMAKE_MATCH_0)
-          message(FATAL_ERROR "Invalid Xcode flag: \"${xcode_flag}\"")
-        endif()
-        list(APPEND all_flags "${CMAKE_MATCH_1}")
-        set(value "${CMAKE_MATCH_2}")
-        string(APPEND all_confs_${CMAKE_MATCH_1} "$<$<CONFIG:${config}>:${value}>")
-      endforeach()
-    endif()
-  endforeach()
+    string(TOUPPER "${config}" upper_config)
 
-  if(DEFINED all_flags)
-    foreach(flag IN LISTS all_flags)
-      set_target_properties(${target} PROPERTIES
-        XCODE_ATTRIBUTE_${flag} "${all_confs_${flag}}"
-      )
-    endforeach()
-  endif()
-
-endfunction()
-
-
-function(_FRUT_bool_to_int bool_value out_int_value)
-
-  if(bool_value)
-    set(${out_int_value} 1 PARENT_SCOPE)
-  else()
-    set(${out_int_value} 0 PARENT_SCOPE)
-  endif()
-
-endfunction()
-
-
-function(_FRUT_dec_to_hex dec_value out_hex_value)
-
-  if(dec_value EQUAL 0)
-    set(${out_hex_value} "0x0" PARENT_SCOPE)
-    return()
-  endif()
-
-  if(dec_value LESS 0)
-    math(EXPR dec_value "2147483647 ${dec_value} + 1")
-  endif()
-
-  while(dec_value GREATER 0)
-    math(EXPR hex_unit "${dec_value} & 15")
-    if(hex_unit LESS 10)
-      set(hex_char "${hex_unit}")
+    if(JUCER_BINARY_NAME_${config})
+      set(output_name "${JUCER_BINARY_NAME_${config}}")
     else()
-      math(EXPR hex_unit "${hex_unit} + 87")
-      string(ASCII ${hex_unit} hex_char)
+      set(output_name "${JUCER_PROJECT_NAME}")
     endif()
-    set(hex_value "${hex_char}${hex_value}")
-    math(EXPR dec_value "${dec_value} >> 4")
-  endwhile()
-
-  set(${out_hex_value} "0x${hex_value}" PARENT_SCOPE)
+    if(NOT output_name MATCHES "^[Aa][Uu][Dd][Ii][Oo][Pp][Ll][Uu][Gg][Ii][Nn]")
+      string(CONCAT output_name "audioplugin_" "${output_name}")
+    endif()
+    set_target_properties(${unity_target} PROPERTIES
+      OUTPUT_NAME_${upper_config} "${output_name}"
+    )
+  endforeach()
 
 endfunction()
 
@@ -5016,250 +5253,13 @@ function(_FRUT_version_to_hex version out_hex_value)
 endfunction()
 
 
-function(_FRUT_char_literal value out_char_literal)
+function(_FRUT_warn_about_unsupported_setting setting projucer_setting issue_number)
 
-  set(all_ascii_codes "")
-  foreach(ascii_code RANGE 1 127)
-    list(APPEND all_ascii_codes ${ascii_code})
-  endforeach()
-  string(ASCII ${all_ascii_codes} all_ascii_chars)
-
-  set(four_chars "${value}")
-  if(DEFINED JUCER_VERSION AND NOT JUCER_VERSION VERSION_GREATER 5.2.0)
-    string(STRIP "${four_chars}" four_chars)
-  endif()
-  string(SUBSTRING "${four_chars}" 0 4 four_chars)
-  string(LENGTH "${four_chars}" four_chars_length)
-  set(dec_value 0)
-  foreach(index IN ITEMS 0 1 2 3)
-    if(index LESS four_chars_length)
-      string(SUBSTRING "${four_chars}" ${index} 1 ascii_char)
-      string(FIND "${all_ascii_chars}" "${ascii_char}" ascii_code)
-      if(ascii_code EQUAL -1)
-        message(FATAL_ERROR "${value} cannot contain non-ASCII characters")
-      endif()
-      math(EXPR ascii_code "${ascii_code} + 1")
-    else()
-      set(ascii_code 0)
-    endif()
-    math(EXPR dec_value "(${dec_value} << 8) | (${ascii_code} & 255)")
-  endforeach()
-
-  _FRUT_dec_to_hex("${dec_value}" hex_value)
-
-  set(${out_char_literal} "${hex_value} // '${four_chars}'" PARENT_SCOPE)
-
-endfunction()
-
-
-function(_FRUT_add_Rez_command_to_AU_plugin au_target)
-
-  if(NOT EXISTS "${Rez_exe}")
-    unset(Rez_exe CACHE)
-  endif()
-  find_program(Rez_exe "Rez")
-  if(NOT Rez_exe)
-    message(WARNING "Could not find Rez tool. Discovery of AU plugins might not work.")
-    return()
-  endif()
-
-  set(rez_output "${CMAKE_CURRENT_BINARY_DIR}/${JUCER_PROJECT_NAME}.rsrc")
-
-  set(rez_defines "")
-  set(rez_archs "")
-  set(all_confs_sysroot "")
-  foreach(config IN LISTS JUCER_PROJECT_CONFIGURATIONS)
-    foreach(osx_architecture IN LISTS JUCER_OSX_ARCHITECTURES_${config})
-      list(APPEND rez_defines
-        "$<$<CONFIG:${config}>:-d>"
-        "$<$<CONFIG:${config}>:${osx_architecture}_YES>"
-      )
-      list(APPEND rez_archs
-        "$<$<CONFIG:${config}>:-arch>"
-        "$<$<CONFIG:${config}>:${osx_architecture}>"
-      )
-    endforeach()
-
-    set(sysroot "${JUCER_MACOSX_SDK_PATH_${config}}")
-    if(IS_DIRECTORY "${sysroot}")
-      list(APPEND all_confs_sysroot
-        "$<$<CONFIG:${config}>:-isysroot>" "$<$<CONFIG:${config}>:${sysroot}>"
-      )
-    endif()
-  endforeach()
-
-  string(CONCAT carbon_include_dir
-    "/System/Library/Frameworks/CoreServices.framework/Frameworks/"
-    "CarbonCore.framework/Versions/A/Headers"
+  message(WARNING "Reprojucer.cmake doesn't support the setting ${setting} "
+    "(\"${projucer_setting}\" in Projucer). If you would like Reprojucer.cmake to "
+    "support this setting, please leave a comment on the issue \"Reprojucer.cmake "
+    "doesn't support the setting ${setting}\" on GitHub: "
+    "https://github.com/McMartin/FRUT/issues/${issue_number}"
   )
-  string(CONCAT juce_audio_plugin_client_include_dir
-    "${JUCER_PROJECT_MODULE_juce_audio_plugin_client_PATH}/"
-    "juce_audio_plugin_client"
-  )
-
-  add_custom_command(OUTPUT ${rez_output}
-    COMMAND
-    "${Rez_exe}"
-    "-o" "${rez_output}"
-    "-d" "SystemSevenOrLater=1"
-    "-useDF"
-    ${rez_defines}
-    ${rez_archs}
-    "-i" "${carbon_include_dir}"
-    "-i" "${CMAKE_CURRENT_BINARY_DIR}/JuceLibraryCode"
-    "-i" "${juce_audio_plugin_client_include_dir}"
-    ${all_confs_sysroot}
-    ${ARGN}
-  )
-  set_source_files_properties("${rez_output}" PROPERTIES
-    GENERATED TRUE
-    MACOSX_PACKAGE_LOCATION "Resources"
-  )
-  target_sources(${au_target} PRIVATE "${rez_output}")
-
-endfunction()
-
-
-function(_FRUT_get_au_quoted_four_chars au_enum_case out_var)
-
-  if(au_enum_case STREQUAL "kAudioUnitType_Effect")
-    set(quoted_four_chars "'aufx'")
-  elseif(au_enum_case STREQUAL "kAudioUnitType_FormatConverter")
-    set(quoted_four_chars "'aufc'")
-  elseif(au_enum_case STREQUAL "kAudioUnitType_Generator")
-    set(quoted_four_chars "'augn'")
-  elseif(au_enum_case STREQUAL "kAudioUnitType_MIDIProcessor")
-    set(quoted_four_chars "'aumi'")
-  elseif(au_enum_case STREQUAL "kAudioUnitType_Mixer")
-    set(quoted_four_chars "'aumx'")
-  elseif(au_enum_case STREQUAL "kAudioUnitType_MusicDevice")
-    set(quoted_four_chars "'aumu'")
-  elseif(au_enum_case STREQUAL "kAudioUnitType_MusicEffect")
-    set(quoted_four_chars "'aumf'")
-  elseif(au_enum_case STREQUAL "kAudioUnitType_OfflineEffect")
-    set(quoted_four_chars "'auol'")
-  elseif(au_enum_case STREQUAL "kAudioUnitType_Output")
-    set(quoted_four_chars "'auou'")
-  elseif(au_enum_case STREQUAL "kAudioUnitType_Panner")
-    set(quoted_four_chars "'aupn'")
-  else()
-    message(WARNING "Unknown Audio Unit type \"${au_enum_case}\", not converting it to "
-      "four chars literal."
-    )
-    set(quoted_four_chars "${au_enum_case}")
-  endif()
-
-  set(${out_var} "${quoted_four_chars}" PARENT_SCOPE)
-
-endfunction()
-
-
-function(_FRUT_get_au_main_type_code out_value)
-
-  if(NOT DEFINED JUCER_PLUGIN_AU_MAIN_TYPE OR JUCER_PLUGIN_AU_MAIN_TYPE STREQUAL "")
-    if(JUCER_MIDI_EFFECT_PLUGIN)
-      set(code "aumi")
-    elseif(JUCER_PLUGIN_IS_A_SYNTH)
-      set(code "aumu")
-    elseif(JUCER_PLUGIN_MIDI_INPUT)
-      set(code "aumf")
-    else()
-      set(code "aufx")
-    endif()
-  else()
-    if(DEFINED JUCER_VERSION AND JUCER_VERSION VERSION_LESS 5.3.1)
-      set(code "${JUCER_PLUGIN_AU_MAIN_TYPE}")
-    else()
-      _FRUT_get_au_quoted_four_chars("${JUCER_PLUGIN_AU_MAIN_TYPE}" quoted_four_chars)
-      string(REPLACE "'" "" code "${quoted_four_chars}")
-    endif()
-  endif()
-
-  set(${out_value} "${code}" PARENT_SCOPE)
-
-endfunction()
-
-
-function(_FRUT_compute_vst3_category out_var)
-
-  set(categories "${JUCER_PLUGIN_VST3_CATEGORY}")
-
-  # See getVST3CategoryStringFromSelection()
-  # in JUCE/extras/Projucer/Source/Project/jucer_Project.cpp
-  if(NOT "Fx" IN_LIST categories AND NOT "Instrument" IN_LIST categories)
-    if(JUCER_PLUGIN_IS_A_SYNTH)
-      list(INSERT categories 0 "Instrument")
-    else()
-      list(INSERT categories 0 "Fx")
-    endif()
-  else()
-    if("Instrument" IN_LIST categories)
-      list(FIND categories "Instrument" Instrument_index)
-      list(REMOVE_AT categories ${Instrument_index})
-      list(INSERT categories 0 "Instrument")
-    endif()
-    if("Fx" IN_LIST categories)
-      list(FIND categories "Fx" Fx_index)
-      list(REMOVE_AT categories ${Fx_index})
-      list(INSERT categories 0 "Fx")
-    endif()
-  endif()
-
-  list(LENGTH categories categories_count)
-  if(categories_count EQUAL 1)
-    set(vst3_category "${categories}")
-  else()
-    list(GET categories 0 first_category)
-    set(vst3_category "${first_category}")
-    math(EXPR categories_max "${categories_count} - 1")
-    foreach(index RANGE 1 ${categories_max})
-      list(GET categories ${index} category)
-      string(APPEND vst3_category "|${category}")
-    endforeach()
-  endif()
-
-  set(${out_var} "${vst3_category}" PARENT_SCOPE)
-
-endfunction()
-
-
-function(_FRUT_compute_rtas_aax_category RTAS_or_AAX category_prefix out_var)
-
-  set(category_suffixes
-    "None"
-    "EQ"
-    "Dynamics"
-    "PitchShift"
-    "Reverb"
-    "Delay"
-    "Modulation"
-    "Harmonic"
-    "NoiseReduction"
-    "Dither"
-    "SoundField"
-    "HWGenerators"
-    "SWGenerators"
-    "WrappedPlugin"
-    "Effect"
-  )
-
-  set(categories_as_int 0)
-
-  foreach(category IN LISTS JUCER_PLUGIN_${RTAS_or_AAX}_CATEGORY)
-    if(NOT category MATCHES "^${category_prefix}_(.+)$"
-        OR NOT CMAKE_MATCH_1 IN_LIST category_suffixes)
-      message(WARNING "Ignoring unknown ${RTAS_or_AAX} category: ${category}")
-      continue()
-    endif()
-    list(FIND category_suffixes "${CMAKE_MATCH_1}" suffix_index)
-    if(suffix_index EQUAL 0)
-      set(category_as_int 0)
-    else()
-      math(EXPR category_as_int "1 << (${suffix_index} - 1)")
-    endif()
-    math(EXPR categories_as_int "${categories_as_int} | ${category_as_int}")
-  endforeach()
-
-  set(${out_var} "${categories_as_int}" PARENT_SCOPE)
 
 endfunction()
