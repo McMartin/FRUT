@@ -40,7 +40,7 @@ int main(int argc, char* argv[])
   const std::vector<std::string> args{argv, argv + argc};
 
   const auto& iconFormat = args.at(1);
-
+  const auto outputDir = File{args.at(2)};
   const auto smallIconImageFile = args.at(3) == "<None>" ? File{} : File{args.at(3)};
   const auto largeIconImageFile = args.at(4) == "<None>" ? File{} : File{args.at(4)};
 
@@ -66,7 +66,7 @@ int main(int argc, char* argv[])
 
     if (images.size() > 0)
     {
-      const auto iconFile = File{args.at(2)}.getChildFile("Icon.icns");
+      const auto iconFile = outputDir.getChildFile("Icon.icns");
 
       MemoryOutputStream outStream;
       projectExporter.writeIcnsFile(images, outStream);
@@ -95,7 +95,7 @@ int main(int argc, char* argv[])
 
     if (images.size() > 0)
     {
-      const auto iconFile = File{args.at(2)}.getChildFile("icon.ico");
+      const auto iconFile = outputDir.getChildFile("icon.ico");
 
       MemoryOutputStream outStream;
       projectExporter.writeIconFile(images, outStream);
