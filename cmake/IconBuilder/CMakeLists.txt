@@ -56,7 +56,7 @@ if(NOT DEFINED CMAKE_CONFIGURATION_TYPES)
 endif()
 
 
-project(IconBuilder VERSION 0.1.0)
+project(IconBuilder VERSION 0.2.0)
 
 add_executable(IconBuilder
   "${CMAKE_CURRENT_LIST_DIR}/main.cpp"

@@ -3569,9 +3569,14 @@ endfunction()
 
 function(_FRUT_generate_icon_file icon_format icon_file_output_dir out_icon_filename)
 
-  _FRUT_build_and_install_helper_exe("IconBuilder" "0.1.0")
+  _FRUT_build_and_install_helper_exe("IconBuilder" "0.2.0")
 
-  set(IconBuilder_args "${icon_format}" "${icon_file_output_dir}")
+  if(DEFINED JUCER_VERSION)
+    set(projucer_version "${JUCER_VERSION}")
+  else()
+    set(projucer_version "latest")
+  endif()
+  set(IconBuilder_args "${projucer_version}" "${icon_format}" "${icon_file_output_dir}")
   if(DEFINED JUCER_SMALL_ICON)
     list(APPEND IconBuilder_args "${JUCER_SMALL_ICON}")
   else()
