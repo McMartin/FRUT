@@ -20,16 +20,20 @@
 #include "Source/Project Saving/jucer_ProjectExporter.h"
 #include "Source/Utility/jucer_FileHelpers.h"
 
+#include <cstdlib>
 #include <iostream>
+#include <stdexcept>
 #include <string>
+#include <tuple>
 #include <vector>
 
 
 int main(int argc, char* argv[])
 {
-  if (argc < 5)
+  if (argc < 6)
   {
     std::cerr << "usage: IconBuilder"
+              << " <Projucer-version>"
               << " <icon-format:icns,ico>"
               << " <icon-file-output-dir>"
               << " <small-icon-image-file>"
@@ -39,10 +43,38 @@ int main(int argc, char* argv[])
 
   const std::vector<std::string> args{argv, argv + argc};
 
-  const auto& iconFormat = args.at(1);
+  using Version = std::tuple<int, int, int>;
 
-  const auto smallIconImageFile = args.at(3) == "<None>" ? File{} : File{args.at(3)};
-  const auto largeIconImageFile = args.at(4) == "<None>" ? File{} : File{args.at(4)};
+  const auto jucerVersion = [&args]() {
+    if (args.at(1) == "latest")
+    {
+      return Version{5, 4, 0};
+    }
+
+    const auto versionTokens = StringArray::fromTokens(String{args.at(1)}, ".", {});
+    if (versionTokens.size() != 3)
+    {
+      std::cerr << "Invalid Projucer version" << std::endl;
+      std::exit(1);
+    }
+
+    try
+    {
+      return Version{std::stoi(versionTokens[0].toStdString()),
+                     std::stoi(versionTokens[1].toStdString()),
+                     std::stoi(versionTokens[2].toStdString())};
+    }
+    catch (const std::invalid_argument&)
+    {
+      std::cerr << "Invalid Projucer version" << std::endl;
+      std::exit(1);
+    }
+  }();
+
+  const auto& iconFormat = args.at(2);
+  const auto outputDir = File{args.at(3)};
+  const auto smallIconImageFile = args.at(4) == "<None>" ? File{} : File{args.at(4)};
+  const auto largeIconImageFile = args.at(5) == "<None>" ? File{} : File{args.at(5)};
 
   const ProjectExporter projectExporter{smallIconImageFile, largeIconImageFile};
 
@@ -66,10 +98,17 @@ int main(int argc, char* argv[])
 
     if (images.size() > 0)
     {
-      const auto iconFile = File{args.at(2)}.getChildFile("Icon.icns");
+      const auto iconFile = outputDir.getChildFile("Icon.icns");
 
       MemoryOutputStream outStream;
-      projectExporter.writeIcnsFile(images, outStream);
+      if (jucerVersion < Version{5, 4, 0})
+      {
+        projectExporter.writeIcnsFile_v4_2_0(images, outStream);
+      }
+      else
+      {
+        projectExporter.writeIcnsFile_v5_4_0(images, outStream);
+      }
 
       if (!FileHelpers::overwriteFileWithNewDataIfDifferent(iconFile, outStream))
       {
@@ -95,7 +134,7 @@ int main(int argc, char* argv[])
 
     if (images.size() > 0)
     {
-      const auto iconFile = File{args.at(2)}.getChildFile("icon.ico");
+      const auto iconFile = outputDir.getChildFile("icon.ico");
 
       MemoryOutputStream outStream;
       projectExporter.writeIconFile(images, outStream);

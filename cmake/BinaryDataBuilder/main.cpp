@@ -19,8 +19,11 @@
 
 #include "extras/Projucer/Source/Project Saving/jucer_ResourceFile.h"
 
+#include <cstdlib>
 #include <iostream>
+#include <stdexcept>
 #include <string>
+#include <tuple>
 #include <vector>
 
 
