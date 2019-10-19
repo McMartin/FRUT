@@ -17,7 +17,7 @@
 
 // clang-format off
 
-// Lines 24-158 of this file were copied from
+// Lines 24-46, 49-116, 119-125, and 127-158 of this file were copied from
 // https://github.com/WeAreROLI/JUCE/blob/4.2.0/extras/Projucer/Source/Project%20Saving/jucer_ProjectExport_XCode.h
 
 
@@ -45,7 +45,7 @@
   ==============================================================================
 */
 
-    static Image fixMacIconImageSize (Drawable& image)
+    static Image fixMacIconImageSize_v4_2_0 (Drawable& image)
     {
         const int validSizes[] = { 16, 32, 48, 128, 256, 512, 1024 };
 
@@ -115,7 +115,7 @@
         out << pngData;
     }
 
-    void writeIcnsFile (const OwnedArray<Drawable>& images, OutputStream& out) const
+    void writeIcnsFile_v4_2_0 (const OwnedArray<Drawable>& images, OutputStream& out) const
     {
         MemoryOutputStream data;
         int smallest = 0x7fffffff;
@@ -123,7 +123,7 @@
 
         for (int i = 0; i < images.size(); ++i)
         {
-            const Image image (fixMacIconImageSize (*images.getUnchecked(i)));
+            const Image image (fixMacIconImageSize_v4_2_0 (*images.getUnchecked(i)));
             jassert (image.getWidth() == image.getHeight());
 
             if (image.getWidth() < smallest)

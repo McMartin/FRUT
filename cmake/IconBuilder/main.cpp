@@ -69,7 +69,7 @@ int main(int argc, char* argv[])
       const auto iconFile = outputDir.getChildFile("Icon.icns");
 
       MemoryOutputStream outStream;
-      projectExporter.writeIcnsFile(images, outStream);
+      projectExporter.writeIcnsFile_v4_2_0(images, outStream);
 
       if (!FileHelpers::overwriteFileWithNewDataIfDifferent(iconFile, outStream))
       {
