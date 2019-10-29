@@ -4488,9 +4488,11 @@ function(_FRUT_set_compiler_and_linker_settings_APPLE target)
           string(APPEND all_confs_archs "$<$<CONFIG:${config}>:${xcode_archs}>")
         endif()
       endforeach()
-      set_target_properties(${target} PROPERTIES
-        XCODE_ATTRIBUTE_ARCHS "${all_confs_archs}"
-      )
+      if(NOT all_confs_archs STREQUAL "")
+        set_target_properties(${target} PROPERTIES
+          XCODE_ATTRIBUTE_ARCHS "${all_confs_archs}"
+        )
+      endif()
     else()
       foreach(config IN LISTS JUCER_PROJECT_CONFIGURATIONS)
         if(DEFINED JUCER_OSX_ARCHITECTURES_${config})
