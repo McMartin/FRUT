@@ -264,13 +264,18 @@ contributors:
       <a href="https://github.com/McMartin/FRUT/issues?q=is%3Aissue+author%3Arclement" title="Bug reports">🐛</a>
     </td>
     <td>
+      <a href="https://github.com/stijnfrishert"><img src="https://github.com/stijnfrishert.png" width="100"><br />Stijn Frishert</a>
+      <br />
+      <a href="https://github.com/McMartin/FRUT/issues?q=is%3Aissue+author%3Astijnfrishert" title="Bug reports">🐛</a>
+    </td>
+  </tr>
+  <tr>
+    <td>
       <a href="https://github.com/czyjerry"><img src="https://github.com/czyjerry.png" width="100"><br />Jerry Chan</a>
       <br />
       <a href="https://github.com/McMartin/FRUT/issues?q=is%3Aissue+author%3Aczyjerry" title="Bug reports">🐛</a>
       <a href="https://github.com/McMartin/FRUT/pulls?q=state%3Amerged+reviewed-by%3Aczyjerry+-author%3Aczyjerry+" title="Pull Request reviews">👀</a>
     </td>
-  </tr>
-  <tr>
     <td>
       <a href="https://github.com/franklange"><img src="https://github.com/franklange.png" width="100"><br />Frank Lange</a>
       <br />
@@ -286,8 +291,6 @@ contributors:
       <a href="https://github.com/DustVoice"><img src="https://github.com/DustVoice.png" width="100"><br />David Holland</a>
       <br />
       <a href="https://github.com/McMartin/FRUT/pulls?q=state%3Amerged+author%3ADustVoice" title="Code">💻</a>
-    </td>
-    <td>
     </td>
     <td>
     </td>
