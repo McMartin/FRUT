@@ -892,6 +892,11 @@ function(jucer_export_target exporter)
     set(resource_folders "")
     foreach(folder IN LISTS _CUSTOM_XCODE_RESOURCE_FOLDERS)
       _FRUT_abs_path_based_on_jucer_project_dir(abs_folder "${folder}")
+      if(NOT IS_DIRECTORY "${abs_folder}")
+        message(FATAL_ERROR "No such folder (CUSTOM_XCODE_RESOURCE_FOLDERS):"
+          " \"${folder}\" (\"${abs_folder}\")"
+        )
+      endif()
       list(APPEND resource_folders "${abs_folder}")
     endforeach()
     set(JUCER_CUSTOM_XCODE_RESOURCE_FOLDERS "${resource_folders}" PARENT_SCOPE)
