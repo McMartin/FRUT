@@ -341,9 +341,10 @@ function(jucer_project_files source_group_name)
       set(path "${argument}")
 
       _FRUT_abs_path_based_on_jucer_project_dir(path "${path}")
-      list(APPEND files "${path}")
 
-      if(xcode_resource STREQUAL "x")
+      if(compile STREQUAL "x" OR xcode_resource STREQUAL ".")
+        list(APPEND files "${path}")
+      elseif(xcode_resource STREQUAL "x")
         list(APPEND JUCER_PROJECT_XCODE_RESOURCES "${path}")
       endif()
       if(binary_resource STREQUAL "x")
@@ -1961,6 +1962,7 @@ function(jucer_project_end)
 
   set(all_sources
     ${JUCER_PROJECT_FILES}
+    ${JUCER_PROJECT_XCODE_RESOURCES}
     ${modules_sources}
     ${JUCER_PROJECT_MODULES_BROWSABLE_FILES}
     ${JUCER_ICON_FILE}
