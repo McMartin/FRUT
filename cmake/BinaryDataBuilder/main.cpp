@@ -108,9 +108,14 @@ int main(int argc, char* argv[])
     return 1;
   }
 
-  for (const auto& file : binaryDataFiles)
+  for (auto i = 0; i < binaryDataFiles.size(); ++i)
   {
-    std::cout << file.getFileName() << ";";
+    if (i != 0)
+    {
+      std::cout << ";";
+    }
+
+    std::cout << binaryDataFiles.getUnchecked(i).getFileName();
   }
   std::cout << std::flush;
 

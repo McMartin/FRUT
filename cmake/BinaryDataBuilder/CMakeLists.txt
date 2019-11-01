@@ -50,7 +50,7 @@ if(NOT DEFINED CMAKE_CONFIGURATION_TYPES)
 endif()
 
 
-project(BinaryDataBuilder VERSION 0.3.0)
+project(BinaryDataBuilder VERSION 0.3.1)
 
 add_executable(BinaryDataBuilder
   "${CMAKE_CURRENT_LIST_DIR}/main.cpp"

@@ -3608,7 +3608,7 @@ function(_FRUT_generate_JuceHeader_header)
 
   list(LENGTH JUCER_PROJECT_RESOURCES resources_count)
   if(resources_count GREATER 0)
-    _FRUT_build_and_install_helper_exe("BinaryDataBuilder" "0.3.0")
+    _FRUT_build_and_install_helper_exe("BinaryDataBuilder" "0.3.1")
 
     if(DEFINED JUCER_VERSION)
       set(projucer_version "${JUCER_VERSION}")
