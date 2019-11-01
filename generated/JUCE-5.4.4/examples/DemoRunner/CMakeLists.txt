@@ -226,10 +226,10 @@ jucer_export_target(
   ICON_SMALL "Source/JUCEAppIcon.png"
   ICON_LARGE "Source/JUCEAppIcon.png"
   CUSTOM_XCODE_RESOURCE_FOLDERS
-    "../Audio "
-    "../BLOCKS "
-    "../DSP "
-    "../GUI "
+    "../Audio"
+    "../BLOCKS"
+    "../DSP"
+    "../GUI"
     "../Utilities"
   MICROPHONE_ACCESS ON
   CAMERA_ACCESS ON

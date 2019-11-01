@@ -1442,8 +1442,14 @@ int main(int argc, char* argv[])
 
       if (exporterType == "XCODE_MAC")
       {
-        convertSettingAsListIfDefined(exporter, "customXcodeResourceFolders",
-                                      "CUSTOM_XCODE_RESOURCE_FOLDERS", {});
+        convertSettingAsListIfDefined(
+          exporter, "customXcodeResourceFolders", "CUSTOM_XCODE_RESOURCE_FOLDERS",
+          [](const juce::var& v) {
+            auto folders = juce::StringArray::fromLines(v.toString());
+            folders.trim();
+            folders.removeEmptyStrings();
+            return folders;
+          });
 
         if (isAudioPlugin)
         {
