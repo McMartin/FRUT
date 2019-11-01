@@ -1924,7 +1924,9 @@ function(jucer_project_end)
 
     if(DEFINED icon_filename)
       set(JUCER_ICON_FILE "${CMAKE_CURRENT_BINARY_DIR}/${icon_filename}")
-      source_group("Juce Library Code" FILES "${JUCER_ICON_FILE}")
+      if(NOT APPLE)  # handled in _FRUT_add_bundle_resources()
+        source_group("Juce Library Code" FILES "${JUCER_ICON_FILE}")
+      endif()
     endif()
   endif()
 
@@ -1945,14 +1947,6 @@ function(jucer_project_end)
     REGULAR_EXPRESSION "${CMAKE_CURRENT_BINARY_DIR}/JuceLibraryCode/*"
   )
 
-  if(APPLE)
-    set_source_files_properties(${JUCER_PROJECT_XCODE_RESOURCES} ${JUCER_ICON_FILE}
-      PROPERTIES MACOSX_PACKAGE_LOCATION "Resources"
-    )
-  else()
-    unset(JUCER_PROJECT_XCODE_RESOURCES)
-  endif()
-
   set_source_files_properties(${JUCER_PROJECT_MODULES_BROWSABLE_FILES}
     PROPERTIES HEADER_FILE_ONLY TRUE
   )
@@ -1967,7 +1961,6 @@ function(jucer_project_end)
 
   set(all_sources
     ${JUCER_PROJECT_FILES}
-    ${JUCER_PROJECT_XCODE_RESOURCES}
     ${modules_sources}
     ${JUCER_PROJECT_MODULES_BROWSABLE_FILES}
     ${JUCER_ICON_FILE}
@@ -1986,13 +1979,13 @@ function(jucer_project_end)
 
   elseif(JUCER_PROJECT_TYPE STREQUAL "GUI Application")
     add_executable(${target} WIN32 MACOSX_BUNDLE ${all_sources})
+    _FRUT_add_bundle_resources(${target})
     _FRUT_generate_plist_file(${target} "App" "APPL" "????")
     _FRUT_set_output_directory_properties(${target} "App")
     _FRUT_set_output_name_properties(${target})
     _FRUT_set_compiler_and_linker_settings(${target})
     _FRUT_add_extra_commands(${target} "${current_exporter}")
     _FRUT_link_osx_frameworks(${target})
-    _FRUT_add_xcode_resource_folders(${target})
     _FRUT_set_custom_xcode_flags(${target})
 
   elseif(JUCER_PROJECT_TYPE STREQUAL "Static Library")
@@ -2065,10 +2058,10 @@ function(jucer_project_end)
       set(vst_target "${target}_VST")
       add_library(${vst_target} MODULE
         ${VST_sources}
-        ${JUCER_PROJECT_XCODE_RESOURCES}
         ${JUCER_ICON_FILE}
         ${JUCER_RESOURCES_RC_FILE}
       )
+      _FRUT_add_bundle_resources(${vst_target})
       target_link_libraries(${vst_target} PRIVATE ${shared_code_target})
       _FRUT_generate_plist_file(${vst_target} "VST" "BNDL" "????")
       _FRUT_set_bundle_properties(${vst_target} "vst")
@@ -2092,7 +2085,6 @@ function(jucer_project_end)
       endif()
       _FRUT_set_JucePlugin_Build_defines(${vst_target} "VSTPlugIn")
       _FRUT_link_osx_frameworks(${vst_target})
-      _FRUT_add_xcode_resource_folders(${vst_target})
       _FRUT_set_custom_xcode_flags(${vst_target})
       unset(vst_target)
     endif()
@@ -2101,10 +2093,10 @@ function(jucer_project_end)
       set(vst3_target "${target}_VST3")
       add_library(${vst3_target} MODULE
         ${VST3_sources}
-        ${JUCER_PROJECT_XCODE_RESOURCES}
         ${JUCER_ICON_FILE}
         ${JUCER_RESOURCES_RC_FILE}
       )
+      _FRUT_add_bundle_resources(${vst3_target})
       target_link_libraries(${vst3_target} PRIVATE ${shared_code_target})
       _FRUT_generate_plist_file(${vst3_target} "VST3" "BNDL" "????")
       _FRUT_set_bundle_properties(${vst3_target} "vst3")
@@ -2129,18 +2121,14 @@ function(jucer_project_end)
       endif()
       _FRUT_set_JucePlugin_Build_defines(${vst3_target} "VST3PlugIn")
       _FRUT_link_osx_frameworks(${vst3_target})
-      _FRUT_add_xcode_resource_folders(${vst3_target})
       _FRUT_set_custom_xcode_flags(${vst3_target})
       unset(vst3_target)
     endif()
 
     if(JUCER_BUILD_AUDIOUNIT AND APPLE)
       set(au_target "${target}_AU")
-      add_library(${au_target} MODULE
-        ${AudioUnit_sources}
-        ${JUCER_PROJECT_XCODE_RESOURCES}
-        ${JUCER_ICON_FILE}
-      )
+      add_library(${au_target} MODULE ${AudioUnit_sources})
+      _FRUT_add_bundle_resources(${au_target})
       target_link_libraries(${au_target} PRIVATE ${shared_code_target})
 
       unset(rez_inputs)
@@ -2165,18 +2153,14 @@ function(jucer_project_end)
       )
       _FRUT_set_JucePlugin_Build_defines(${au_target} "AudioUnitPlugIn")
       _FRUT_link_osx_frameworks(${au_target} "AudioUnit" "CoreAudioKit")
-      _FRUT_add_xcode_resource_folders(${au_target})
       _FRUT_set_custom_xcode_flags(${au_target})
       unset(au_target)
     endif()
 
     if(JUCER_BUILD_AUDIOUNIT_V3 AND APPLE)
       set(auv3_target "${target}_AUv3_AppExtension")
-      add_library(${auv3_target} MODULE
-        ${AudioUnitv3_sources}
-        ${JUCER_PROJECT_XCODE_RESOURCES}
-        ${JUCER_ICON_FILE}
-      )
+      add_library(${auv3_target} MODULE ${AudioUnitv3_sources})
+      _FRUT_add_bundle_resources(${auv3_target})
       target_link_libraries(${auv3_target} PRIVATE ${shared_code_target})
       _FRUT_generate_plist_file_AUv3(${auv3_target} "AUv3_AppExtension")
 
@@ -2195,7 +2179,6 @@ function(jucer_project_end)
       _FRUT_link_osx_frameworks(
         ${auv3_target} "AudioUnit" "CoreAudioKit" "AVFoundation"
       )
-      _FRUT_add_xcode_resource_folders(${auv3_target})
       _FRUT_set_custom_xcode_flags(${auv3_target})
       unset(auv3_target)
     endif()
@@ -2204,10 +2187,10 @@ function(jucer_project_end)
       set(rtas_target "${target}_RTAS")
       add_library(${rtas_target} MODULE
         ${RTAS_sources}
-        ${JUCER_PROJECT_XCODE_RESOURCES}
         ${JUCER_ICON_FILE}
         ${JUCER_RESOURCES_RC_FILE}
       )
+      _FRUT_add_bundle_resources(${rtas_target})
       target_link_libraries(${rtas_target} PRIVATE ${shared_code_target})
       _FRUT_generate_plist_file(${rtas_target} "RTAS" "TDMw" "PTul")
       _FRUT_set_bundle_properties(${rtas_target} "dpm")
@@ -2340,7 +2323,6 @@ function(jucer_project_end)
       endif()
       _FRUT_set_JucePlugin_Build_defines(${rtas_target} "RTASPlugIn")
       _FRUT_link_osx_frameworks(${rtas_target})
-      _FRUT_add_xcode_resource_folders(${rtas_target})
       _FRUT_set_custom_xcode_flags(${rtas_target})
       unset(rtas_target)
     endif()
@@ -2349,10 +2331,10 @@ function(jucer_project_end)
       set(aax_target "${target}_AAX")
       add_library(${aax_target} MODULE
         ${AAX_sources}
-        ${JUCER_PROJECT_XCODE_RESOURCES}
         ${JUCER_ICON_FILE}
         ${JUCER_RESOURCES_RC_FILE}
       )
+      _FRUT_add_bundle_resources(${aax_target})
       target_link_libraries(${aax_target} PRIVATE ${shared_code_target})
       _FRUT_generate_plist_file(${aax_target} "AAX" "TDMw" "PTul")
       _FRUT_set_bundle_properties(${aax_target} "aaxplugin")
@@ -2455,7 +2437,6 @@ function(jucer_project_end)
       endif()
       _FRUT_set_JucePlugin_Build_defines(${aax_target} "AAXPlugIn")
       _FRUT_link_osx_frameworks(${aax_target})
-      _FRUT_add_xcode_resource_folders(${aax_target})
       _FRUT_set_custom_xcode_flags(${aax_target})
       unset(aax_target)
     endif()
@@ -2475,10 +2456,10 @@ function(jucer_project_end)
       endif()
       add_executable(${standalone_target} WIN32 MACOSX_BUNDLE
         ${Standalone_sources}
-        ${JUCER_PROJECT_XCODE_RESOURCES}
         ${JUCER_ICON_FILE}
         ${JUCER_RESOURCES_RC_FILE}
       )
+      _FRUT_add_bundle_resources(${standalone_target})
       target_link_libraries(${standalone_target} PRIVATE ${shared_code_target})
       if(juce4_standalone)
         _FRUT_generate_plist_file(${standalone_target} "AUv3_Standalone" "APPL" "????")
@@ -2491,7 +2472,6 @@ function(jucer_project_end)
       _FRUT_add_extra_commands(${standalone_target} "${current_exporter}")
       _FRUT_set_JucePlugin_Build_defines(${standalone_target} "StandalonePlugIn")
       _FRUT_link_osx_frameworks(${standalone_target})
-      _FRUT_add_xcode_resource_folders(${standalone_target})
       if(TARGET ${target}_AUv3_AppExtension)
         add_dependencies(${standalone_target} ${target}_AUv3_AppExtension)
         install(TARGETS ${target}_AUv3_AppExtension
@@ -2514,10 +2494,10 @@ function(jucer_project_end)
       set(unity_target "${target}_Unity_Plugin")
       add_library(${unity_target} MODULE
         ${Unity_sources}
-        ${JUCER_PROJECT_XCODE_RESOURCES}
         ${JUCER_ICON_FILE}
         ${JUCER_RESOURCES_RC_FILE}
       )
+      _FRUT_add_bundle_resources(${unity_target})
       target_link_libraries(${unity_target} PRIVATE ${shared_code_target})
       _FRUT_generate_plist_file(${unity_target} "Unity_Plugin" "BNDL" "????")
       _FRUT_set_bundle_properties(${unity_target} "bundle")
@@ -2575,7 +2555,6 @@ function(jucer_project_end)
       endif()
       _FRUT_set_JucePlugin_Build_defines(${unity_target} "UnityPlugIn")
       _FRUT_link_osx_frameworks(${unity_target})
-      _FRUT_add_xcode_resource_folders(${unity_target})
       _FRUT_set_custom_xcode_flags(${unity_target})
       unset(unity_target)
     endif()
@@ -2604,6 +2583,25 @@ function(_FRUT_abs_path_based_on_jucer_project_dir out_path in_path)
 
   get_filename_component(in_path "${in_path}" ABSOLUTE BASE_DIR "${JUCER_PROJECT_DIR}")
   set(${out_path} "${in_path}" PARENT_SCOPE)
+
+endfunction()
+
+
+function(_FRUT_add_bundle_resources target)
+
+  if(NOT APPLE)
+    return()
+  endif()
+
+  set(bundle_resources
+    ${JUCER_PROJECT_XCODE_RESOURCES}
+    ${JUCER_ICON_FILE}
+    ${JUCER_CUSTOM_XCODE_RESOURCE_FOLDERS}
+  )
+
+  target_sources(${target} PRIVATE ${bundle_resources})
+  set_property(TARGET ${target} APPEND PROPERTY RESOURCE ${bundle_resources})
+  source_group("Resources" FILES ${bundle_resources})
 
 endfunction()
 
@@ -2797,21 +2795,6 @@ function(_FRUT_add_Rez_command_to_AU_plugin au_target)
     MACOSX_PACKAGE_LOCATION "Resources"
   )
   target_sources(${au_target} PRIVATE "${rez_output}")
-
-endfunction()
-
-
-function(_FRUT_add_xcode_resource_folders target)
-
-  if(NOT APPLE)
-    return()
-  endif()
-
-  foreach(folder IN LISTS JUCER_CUSTOM_XCODE_RESOURCE_FOLDERS)
-    add_custom_command(TARGET ${target} PRE_BUILD
-      COMMAND rsync -r "${folder}" "$<TARGET_FILE_DIR:${target}>/../Resources"
-    )
-  endforeach()
 
 endfunction()
 
