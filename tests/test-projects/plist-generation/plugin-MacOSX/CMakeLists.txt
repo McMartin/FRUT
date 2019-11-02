@@ -73,22 +73,22 @@ endfunction()
 add_custom_target(target_AUv3_AppExtension)
 
 function(test_AUv3_AppExtension_plist_default)
-  _FRUT_generate_plist_file_AUv3(target_AUv3_AppExtension "AUv3_AppExtension-default")
+  _FRUT_generate_plist_file(target_AUv3_AppExtension "AUv3_AppExtension-default" "XPC!" "????")
 endfunction()
 
 function(test_AUv3_AppExtension_plist_Synth)
   set(JUCER_PLUGIN_IS_A_SYNTH ON)
-  _FRUT_generate_plist_file_AUv3(target_AUv3_AppExtension "AUv3_AppExtension-Synth")
+  _FRUT_generate_plist_file(target_AUv3_AppExtension "AUv3_AppExtension-Synth" "XPC!" "????")
 endfunction()
 
 function(test_AUv3_AppExtension_plist_factoryFunction)
   set(JUCER_PLUGIN_AU_EXPORT_PREFIX "CustomPluginAUExportPrefix")
-  _FRUT_generate_plist_file_AUv3(target_AUv3_AppExtension "AUv3_AppExtension-factoryFunction")
+  _FRUT_generate_plist_file(target_AUv3_AppExtension "AUv3_AppExtension-factoryFunction" "XPC!" "????")
 endfunction()
 
 function(test_AUv3_AppExtension_plist_pre_5_0_0)
   set(JUCER_VERSION "4.2.4")
-  _FRUT_generate_plist_file_AUv3(target_AUv3_AppExtension "AUv3_AppExtension-pre-5.0.0")
+  _FRUT_generate_plist_file(target_AUv3_AppExtension "AUv3_AppExtension-pre-5.0.0" "XPC!" "????")
 endfunction()
 
 

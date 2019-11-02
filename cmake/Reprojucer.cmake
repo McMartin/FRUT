@@ -2162,7 +2162,7 @@ function(jucer_project_end)
       add_library(${auv3_target} MODULE ${AudioUnitv3_sources})
       _FRUT_add_bundle_resources(${auv3_target})
       target_link_libraries(${auv3_target} PRIVATE ${shared_code_target})
-      _FRUT_generate_plist_file_AUv3(${auv3_target} "AUv3_AppExtension")
+      _FRUT_generate_plist_file(${auv3_target} "AUv3_AppExtension" "XPC!" "????")
 
       # Cannot use _FRUT_set_bundle_properties() since Projucer sets xcodeIsBundle=false
       # for this target, though it is a bundle...
@@ -3692,6 +3692,16 @@ function(_FRUT_generate_plist_file
   target plist_suffix bundle_package_type bundle_signature
 )
 
+  if(target MATCHES "_AUv3_AppExtension$")
+    # com.yourcompany.NewProject -> com.yourcompany.NewProject.NewProjectAUv3
+    string(REPLACE "." ";" bundle_id_parts "${JUCER_BUNDLE_IDENTIFIER}")
+    list(LENGTH bundle_id_parts bundle_id_parts_length)
+    math(EXPR bundle_id_parts_last_index "${bundle_id_parts_length} - 1")
+    list(GET bundle_id_parts ${bundle_id_parts_last_index} bundle_id_last_part)
+    list(APPEND bundle_id_parts "${bundle_id_last_part}AUv3")
+    string(REPLACE ";" "." JUCER_BUNDLE_IDENTIFIER "${bundle_id_parts}")
+  endif()
+
   set(plist_filename "Info-${plist_suffix}.plist")
   if(CMAKE_GENERATOR STREQUAL "Xcode")
     set(bundle_executable "\${EXECUTABLE_NAME}")
@@ -3940,21 +3950,6 @@ function(_FRUT_generate_plist_file
 
   string(CONFIGURE "${plist_entries}" plist_entries @ONLY)
   configure_file("${Reprojucer_templates_DIR}/Info.plist" "${plist_filename}" @ONLY)
-
-endfunction()
-
-
-function(_FRUT_generate_plist_file_AUv3 target plist_suffix)
-
-  # com.yourcompany.NewProject -> com.yourcompany.NewProject.NewProjectAUv3
-  string(REPLACE "." ";" bundle_id_parts "${JUCER_BUNDLE_IDENTIFIER}")
-  list(LENGTH bundle_id_parts bundle_id_parts_length)
-  math(EXPR bundle_id_parts_last_index "${bundle_id_parts_length} - 1")
-  list(GET bundle_id_parts ${bundle_id_parts_last_index} bundle_id_last_part)
-  list(APPEND bundle_id_parts "${bundle_id_last_part}AUv3")
-  string(REPLACE ";" "." JUCER_BUNDLE_IDENTIFIER "${bundle_id_parts}")
-
-  _FRUT_generate_plist_file(${target} "${plist_suffix}" "XPC!" "????")
 
 endfunction()
 
