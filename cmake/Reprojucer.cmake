@@ -3720,12 +3720,12 @@ function(_FRUT_generate_plist_file
 
   if(DEFINED JUCER_VERSION AND JUCER_VERSION VERSION_LESS 5.2.0)
     if(CMAKE_GENERATOR STREQUAL "Xcode")
-      set(bundle_identifier "\$(PRODUCT_BUNDLE_IDENTIFIER)")
+      set(bundle_identifier_in_plist "\$(PRODUCT_BUNDLE_IDENTIFIER)")
     else()
-      set(bundle_identifier "\${MACOSX_BUNDLE_GUI_IDENTIFIER}")
+      set(bundle_identifier_in_plist "\${MACOSX_BUNDLE_GUI_IDENTIFIER}")
     endif()
   else()
-    set(bundle_identifier "@JUCER_BUNDLE_IDENTIFIER@")
+    set(bundle_identifier_in_plist "@JUCER_BUNDLE_IDENTIFIER@")
   endif()
 
   set(plist_entries "")
@@ -3773,7 +3773,7 @@ function(_FRUT_generate_plist_file
     <key>CFBundleIconFile</key>
     <string>${bundle_icon_file}</string>
     <key>CFBundleIdentifier</key>
-    <string>${bundle_identifier}</string>
+    <string>${bundle_identifier_in_plist}</string>
     <key>CFBundleName</key>
     <string>@JUCER_PROJECT_NAME@</string>
     <key>CFBundleDisplayName</key>
