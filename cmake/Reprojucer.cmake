@@ -1141,9 +1141,7 @@ function(jucer_export_target exporter)
   endif()
 
   if(DEFINED _EXPORTER_BUNDLE_IDENTIFIER)
-    _FRUT_warn_about_unsupported_setting(
-      "EXPORTER_BUNDLE_IDENTIFIER" "Exporter Bundle Identifier" 498
-    )
+    set(JUCER_EXPORTER_BUNDLE_IDENTIFIER "${_EXPORTER_BUNDLE_IDENTIFIER}" PARENT_SCOPE)
   endif()
 
   if(DEFINED _DEVELOPMENT_TEAM_ID)
@@ -3692,14 +3690,21 @@ function(_FRUT_generate_plist_file
   target plist_suffix bundle_package_type bundle_signature
 )
 
+  if(DEFINED JUCER_EXPORTER_BUNDLE_IDENTIFIER
+      AND NOT JUCER_EXPORTER_BUNDLE_IDENTIFIER STREQUAL "")
+    set(bundle_identifier "${JUCER_EXPORTER_BUNDLE_IDENTIFIER}")
+  else()
+    set(bundle_identifier "${JUCER_BUNDLE_IDENTIFIER}")
+  endif()
+
   if(target MATCHES "_AUv3_AppExtension$")
     # com.yourcompany.NewProject -> com.yourcompany.NewProject.NewProjectAUv3
-    string(REPLACE "." ";" bundle_id_parts "${JUCER_BUNDLE_IDENTIFIER}")
+    string(REPLACE "." ";" bundle_id_parts "${bundle_identifier}")
     list(LENGTH bundle_id_parts bundle_id_parts_length)
     math(EXPR bundle_id_parts_last_index "${bundle_id_parts_length} - 1")
     list(GET bundle_id_parts ${bundle_id_parts_last_index} bundle_id_last_part)
     list(APPEND bundle_id_parts "${bundle_id_last_part}AUv3")
-    string(REPLACE ";" "." JUCER_BUNDLE_IDENTIFIER "${bundle_id_parts}")
+    string(REPLACE ";" "." bundle_identifier "${bundle_id_parts}")
   endif()
 
   set(plist_filename "Info-${plist_suffix}.plist")
@@ -3707,13 +3712,13 @@ function(_FRUT_generate_plist_file
     set(bundle_executable "\${EXECUTABLE_NAME}")
     set_target_properties(${target} PROPERTIES
       XCODE_ATTRIBUTE_INFOPLIST_FILE "${CMAKE_CURRENT_BINARY_DIR}/${plist_filename}"
-      XCODE_ATTRIBUTE_PRODUCT_BUNDLE_IDENTIFIER "${JUCER_BUNDLE_IDENTIFIER}"
+      XCODE_ATTRIBUTE_PRODUCT_BUNDLE_IDENTIFIER "${bundle_identifier}"
     )
   else()
     set(bundle_executable "\${MACOSX_BUNDLE_BUNDLE_NAME}")
     set_target_properties(${target} PROPERTIES
       MACOSX_BUNDLE_BUNDLE_NAME "${JUCER_PROJECT_NAME}"
-      MACOSX_BUNDLE_GUI_IDENTIFIER "${JUCER_BUNDLE_IDENTIFIER}"
+      MACOSX_BUNDLE_GUI_IDENTIFIER "${bundle_identifier}"
       MACOSX_BUNDLE_INFO_PLIST "${CMAKE_CURRENT_BINARY_DIR}/${plist_filename}"
     )
   endif()
@@ -3725,7 +3730,7 @@ function(_FRUT_generate_plist_file
       set(bundle_identifier_in_plist "\${MACOSX_BUNDLE_GUI_IDENTIFIER}")
     endif()
   else()
-    set(bundle_identifier_in_plist "@JUCER_BUNDLE_IDENTIFIER@")
+    set(bundle_identifier_in_plist "${bundle_identifier}")
   endif()
 
   set(plist_entries "")

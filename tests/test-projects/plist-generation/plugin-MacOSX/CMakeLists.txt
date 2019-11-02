@@ -86,6 +86,12 @@ function(test_AUv3_AppExtension_plist_factoryFunction)
   _FRUT_generate_plist_file(target_AUv3_AppExtension "AUv3_AppExtension-factoryFunction" "XPC!" "????")
 endfunction()
 
+function(test_AUv3_AppExtension_plist_exporter_bundle_identifier)
+  set(JUCER_BUNDLE_IDENTIFIER "com.custom.bundleIdentifier")
+  set(JUCER_EXPORTER_BUNDLE_IDENTIFIER "com.custom.exporterBundleIdentifier")
+  _FRUT_generate_plist_file(target_AUv3_AppExtension "AUv3_AppExtension-ExporterBundleIdentifier" "XPC!" "????")
+endfunction()
+
 function(test_AUv3_AppExtension_plist_pre_5_0_0)
   set(JUCER_VERSION "4.2.4")
   _FRUT_generate_plist_file(target_AUv3_AppExtension "AUv3_AppExtension-pre-5.0.0" "XPC!" "????")
