@@ -1145,7 +1145,7 @@ function(jucer_export_target exporter)
   endif()
 
   if(DEFINED _DEVELOPMENT_TEAM_ID)
-    _FRUT_warn_about_unsupported_setting("DEVELOPMENT_TEAM_ID" "Development Team ID" 251)
+    set(JUCER_DEVELOPMENT_TEAM_ID "${_DEVELOPMENT_TEAM_ID}" PARENT_SCOPE)
   endif()
 
   if(DEFINED _KEEP_CUSTOM_XCODE_SCHEMES)
@@ -4550,7 +4550,13 @@ function(_FRUT_set_compiler_and_linker_settings_APPLE target)
   unset(all_confs_code_sign_identity)
   foreach(config IN LISTS JUCER_PROJECT_CONFIGURATIONS)
     unset(identity)
-    if(DEFINED JUCER_CODE_SIGNING_IDENTITY_${config}
+    if(DEFINED JUCER_DEVELOPMENT_TEAM_ID AND NOT JUCER_DEVELOPMENT_TEAM_ID STREQUAL "")
+      if(DEFINED JUCER_CODE_SIGNING_IDENTITY_${config})
+        set(identity "${JUCER_CODE_SIGNING_IDENTITY_${config}}")
+      else()
+        set(identity "Mac Developer")
+      endif()
+    elseif(DEFINED JUCER_CODE_SIGNING_IDENTITY_${config}
         AND NOT JUCER_CODE_SIGNING_IDENTITY_${config} STREQUAL "Mac Developer")
       set(identity "${JUCER_CODE_SIGNING_IDENTITY_${config}}")
     endif()
@@ -4561,6 +4567,12 @@ function(_FRUT_set_compiler_and_linker_settings_APPLE target)
   if(DEFINED all_confs_code_sign_identity)
     set_target_properties(${target} PROPERTIES
       XCODE_ATTRIBUTE_CODE_SIGN_IDENTITY "${all_confs_code_sign_identity}"
+    )
+  endif()
+
+  if(DEFINED JUCER_DEVELOPMENT_TEAM_ID AND NOT JUCER_DEVELOPMENT_TEAM_ID STREQUAL "")
+    set_target_properties(${target} PROPERTIES
+      XCODE_ATTRIBUTE_DEVELOPMENT_TEAM "${JUCER_DEVELOPMENT_TEAM_ID}"
     )
   endif()
 

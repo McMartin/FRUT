@@ -43,6 +43,7 @@ Define the settings specific to an export target.
     [PREBUILD_SHELL_SCRIPT <shell_script_content>]  # [3]
     [POSTBUILD_SHELL_SCRIPT <shell_script_content>]  # [3]
     [EXPORTER_BUNDLE_IDENTIFIER <bundle_identifier>]  # [3]
+    [DEVELOPMENT_TEAM_ID <development_team_id>]  # [3]
     [USE_HEADERMAP <ON|OFF>]  # [3]
 
     [PLATFORM_TOOLSET <platform_toolset>]  # [5]
