@@ -1072,9 +1072,7 @@ function(jucer_export_target exporter)
   endif()
 
   if(DEFINED _IN_APP_PURCHASES_CAPABILITY AND _IN_APP_PURCHASES_CAPABILITY)
-    _FRUT_warn_about_unsupported_setting(
-      "IN_APP_PURCHASES_CAPABILITY" "In-App Purchases Capability" 395
-    )
+    set(JUCER_IN_APP_PURCHASES_CAPABILITY "${_IN_APP_PURCHASES_CAPABILITY}" PARENT_SCOPE)
   endif()
 
   if(DEFINED _PUSH_NOTIFICATIONS_CAPABILITY)
@@ -4114,6 +4112,9 @@ function(_FRUT_link_osx_frameworks target)
   if(JUCER_FLAG_JUCE_PLUGINHOST_AU)
     list(APPEND osx_frameworks "AudioUnit" "CoreAudioKit")
   endif()
+  if(JUCER_IN_APP_PURCHASES_CAPABILITY)
+    list(APPEND osx_frameworks "StoreKit")
+  endif()
 
   if(osx_frameworks)
     list(SORT osx_frameworks)
@@ -4456,6 +4457,10 @@ function(_FRUT_set_compiler_and_linker_settings_APPLE target)
       endif()
     endif()
   endforeach()
+
+  if(JUCER_IN_APP_PURCHASES_CAPABILITY)
+    target_compile_definitions(${target} PRIVATE "JUCE_IN_APP_PURCHASES=1")
+  endif()
 
   if(JUCER_PUSH_NOTIFICATIONS_CAPABILITY)
     target_compile_definitions(${target} PRIVATE "JUCE_PUSH_NOTIFICATIONS=1")
