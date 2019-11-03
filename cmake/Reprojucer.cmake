@@ -903,9 +903,8 @@ function(jucer_export_target exporter)
   endif()
 
   if(DEFINED _ADD_DUPLICATE_RESOURCES_FOLDER_TO_APP_EXTENSION)
-    _FRUT_warn_about_unsupported_setting(
-      "ADD_DUPLICATE_RESOURCES_FOLDER_TO_APP_EXTENSION"
-      "Add Duplicate Resources Folder to App Extension" 441
+    set(JUCER_ADD_DUPLICATE_RESOURCES_FOLDER_TO_APP_EXTENSION
+      "${_ADD_DUPLICATE_RESOURCES_FOLDER_TO_APP_EXTENSION}" PARENT_SCOPE
     )
   endif()
 
@@ -2156,7 +2155,10 @@ function(jucer_project_end)
     if(JUCER_BUILD_AUDIOUNIT_V3 AND APPLE)
       set(auv3_target "${target}_AUv3_AppExtension")
       add_library(${auv3_target} MODULE ${AudioUnitv3_sources})
-      _FRUT_add_bundle_resources(${auv3_target})
+      if(NOT (DEFINED JUCER_ADD_DUPLICATE_RESOURCES_FOLDER_TO_APP_EXTENSION
+          AND NOT JUCER_ADD_DUPLICATE_RESOURCES_FOLDER_TO_APP_EXTENSION))
+        _FRUT_add_bundle_resources(${auv3_target})
+      endif()
       target_link_libraries(${auv3_target} PRIVATE ${shared_code_target})
       _FRUT_generate_plist_file(${auv3_target} "AUv3_AppExtension" "XPC!" "????")
 

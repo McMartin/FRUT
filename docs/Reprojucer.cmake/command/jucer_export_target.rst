@@ -25,6 +25,7 @@ Define the settings specific to an export target.
     [ICON_LARGE <icon_file>]
 
     [CUSTOM_XCODE_RESOURCE_FOLDERS <xcode_resource_folder> [<xcode_resource_folder> ...]]  # [3]
+    [ADD_DUPLICATE_RESOURCES_FOLDER_TO_APP_EXTENSION <ON|OFF>]  # [5]
     [DOCUMENT_FILE_EXTENSIONS <file_extension> [<file_extension> ...]]  # [4]
     [USE_APP_SANDBOX <ON|OFF>]  # [3]
     [APP_SANDBOX_OPTIONS <app_sandbox_option> [<app_sandbox_option> ...]]  # [3]
