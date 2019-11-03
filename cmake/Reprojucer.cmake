@@ -4549,11 +4549,13 @@ function(_FRUT_set_compiler_and_linker_settings_APPLE target)
 
   unset(all_confs_code_sign_identity)
   foreach(config IN LISTS JUCER_PROJECT_CONFIGURATIONS)
+    unset(identity)
     if(DEFINED JUCER_CODE_SIGNING_IDENTITY_${config}
         AND NOT JUCER_CODE_SIGNING_IDENTITY_${config} STREQUAL "Mac Developer")
-      string(APPEND all_confs_code_sign_identity
-        $<$<CONFIG:${config}>:${JUCER_CODE_SIGNING_IDENTITY_${config}}>
-      )
+      set(identity "${JUCER_CODE_SIGNING_IDENTITY_${config}}")
+    endif()
+    if(DEFINED identity)
+      string(APPEND all_confs_code_sign_identity $<$<CONFIG:${config}>:${identity}>)
     endif()
   endforeach()
   if(DEFINED all_confs_code_sign_identity)
