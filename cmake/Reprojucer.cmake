@@ -2107,7 +2107,7 @@ function(jucer_project_end)
           "$ENV{HOME}/Library/Audio/Plug-Ins/VST3"
         )
       elseif(MSVC)
-        set_property(TARGET ${vst3_target} PROPERTY SUFFIX ".vst3")
+        set_target_properties(${vst3_target} PROPERTIES SUFFIX ".vst3")
         if(CMAKE_SIZEOF_VOID_P EQUAL 8) # 64-bit
           set(common_files_env_var "CommonProgramW6432")
         else()
@@ -2247,7 +2247,7 @@ function(jucer_project_end)
           "/Library/Application Support/Digidesign/Plug-Ins/"
         )
       elseif(MSVC)
-        set_property(TARGET ${rtas_target} PROPERTY SUFFIX ".dpm")
+        set_target_properties(${rtas_target} PROPERTIES SUFFIX ".dpm")
         target_compile_definitions(${rtas_target} PRIVATE
           "JucePlugin_WinBag_path=\"${JUCER_RTAS_SDK_FOLDER}/WinBag\""
         )
@@ -2363,7 +2363,7 @@ function(jucer_project_end)
           "/Library/Application Support/Avid/Audio/Plug-Ins"
         )
       elseif(MSVC)
-        set_property(TARGET ${aax_target} PROPERTY SUFFIX ".aaxdll")
+        set_target_properties(${aax_target} PROPERTIES SUFFIX ".aaxdll")
         target_compile_definitions(${aax_target} PRIVATE
           "JucePlugin_AAXLibs_path=\"${JUCER_AAX_SDK_FOLDER}/Libs\""
         )
@@ -4566,7 +4566,7 @@ function(_FRUT_set_compiler_and_linker_settings_APPLE target)
       OR JUCER_USE_HARDENED_RUNTIME
       OR target MATCHES "_AUv3_AppExtension$")
     if(CMAKE_GENERATOR STREQUAL "Xcode")
-      set_property(TARGET ${target} PROPERTY
+      set_target_properties(${target} PROPERTIES
         XCODE_ATTRIBUTE_CODE_SIGN_ENTITLEMENTS "${JUCER_ENTITLEMENTS_FILE}"
       )
     else()
