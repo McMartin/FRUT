@@ -1,16 +1,22 @@
 FRUT
 ====
 
-``FRUT`` is a collection of tools dedicated to building `JUCE`_ projects using `CMake`_
-instead of `Projucer`_.
+FRUT makes it easy to build `JUCE`_ projects using `CMake`_ instead of `Projucer`_. It
+enables more flexibility in project architecture, simplified CI setup, and easier
+integration with other JUCE and non-JUCE projects. Converting an existing JUCE project to
+FRUT is easy, and you don't need to be a CMake expert to use it!
 
-It currently contains:
+
+Contents
+--------
+
+FRUT currently contains:
 
 - ``Reprojucer.cmake``, a CMake module that provides high-level functions to reproduce
   how a JUCE project is defined in Projucer,
 
-- ``Jucer2Reprojucer``, a console application based on JUCE that converts ``.jucer``
-  project files into ``CMakeLists.txt`` files that include and use ``Reprojucer.cmake``,
+- ``Jucer2Reprojucer``, a console application that converts ``.jucer`` project files into
+  ready-to-use ``CMakeLists.txt`` files that include and use ``Reprojucer.cmake``,
 
 - several ``CMakeLists.txt`` files generated from existing ``.jucer`` project files,
   including:
