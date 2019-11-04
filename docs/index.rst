@@ -1,5 +1,6 @@
-FRUT
-====
+.. image:: ../FRUT.svg
+  :target: https://github.com/McMartin/FRUT
+  :alt: FRUT
 
 FRUT makes it easy to build `JUCE`_ projects using `CMake`_ instead of `Projucer`_. It
 enables more flexibility in project architecture, simplified CI setup, and easier
