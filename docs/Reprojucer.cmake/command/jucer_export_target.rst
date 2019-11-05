@@ -25,6 +25,7 @@ Define the settings specific to an export target.
     [ICON_LARGE <icon_file>]
 
     [CUSTOM_XCODE_RESOURCE_FOLDERS <xcode_resource_folder> [<xcode_resource_folder> ...]]  # [3]
+    [ADD_DUPLICATE_RESOURCES_FOLDER_TO_APP_EXTENSION <ON|OFF>]  # [5]
     [DOCUMENT_FILE_EXTENSIONS <file_extension> [<file_extension> ...]]  # [4]
     [USE_APP_SANDBOX <ON|OFF>]  # [3]
     [APP_SANDBOX_OPTIONS <app_sandbox_option> [<app_sandbox_option> ...]]  # [3]
@@ -47,14 +48,14 @@ Define the settings specific to an export target.
     [DEVELOPMENT_TEAM_ID <development_team_id>]  # [3]
     [USE_HEADERMAP <ON|OFF>]  # [3]
 
-    [PLATFORM_TOOLSET <platform_toolset>]  # [5]
-    [USE_IPP_LIBRARY <ipp_library_linking_method>]  # [5]
-    [WINDOWS_TARGET_PLATFORM <windows_target_platform>]  # [5]
+    [PLATFORM_TOOLSET <platform_toolset>]  # [6]
+    [USE_IPP_LIBRARY <ipp_library_linking_method>]  # [6]
+    [WINDOWS_TARGET_PLATFORM <windows_target_platform>]  # [6]
 
-    [CXX_STANDARD_TO_USE <cxx_standard>]  # [6]
-    [PKGCONFIG_LIBRARIES <library> [<library> ...]]  # [6]
+    [CXX_STANDARD_TO_USE <cxx_standard>]  # [7]
+    [PKGCONFIG_LIBRARIES <library> [<library> ...]]  # [7]
 
-    [TARGET_PLATFORM <target_platform>]  # [7]
+    [TARGET_PLATFORM <target_platform>]  # [8]
   )
 
 ``<exporter>`` must be one of the :ref:`supported exporters <supported-exporters>`.
@@ -69,10 +70,12 @@ Optional keywords support:
 - ``[3]``: only supported by the ``"Xcode (MacOSX)"`` exporter.
 - ``[4]``: only supported by the ``"Xcode (MacOSX)"`` exporter, on ``"GUI Application"``
   projects.
-- ``[5]``: only supported by the ``"Visual Studio 2019"``, ``"Visual Studio 2017"``,
+- ``[5]``: only supported by the ``"Xcode (MacOSX)"`` exporter, on ``"Audio Plug-in"``
+  projects.
+- ``[6]``: only supported by the ``"Visual Studio 2019"``, ``"Visual Studio 2017"``,
   ``"Visual Studio 2015"``, and ``"Visual Studio 2013"`` exporters.
-- ``[6]``: only supported by the ``"Linux Makefile"`` exporter.
-- ``[7]``: only supported by the ``"Code::Blocks (Windows)"`` exporter.
+- ``[7]``: only supported by the ``"Linux Makefile"`` exporter.
+- ``[8]``: only supported by the ``"Code::Blocks (Windows)"`` exporter.
 
 
 Examples
