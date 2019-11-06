@@ -16,7 +16,7 @@
 # along with FRUT.  If not, see <http://www.gnu.org/licenses/>.
 
 project = 'FRUT'
-copyright = '2018, Alain Martin'
+copyright = '2019, Alain Martin'
 
 master_doc = 'index'
 
