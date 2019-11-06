@@ -2598,7 +2598,9 @@ function(_FRUT_add_bundle_resources target)
   )
 
   target_sources(${target} PRIVATE ${bundle_resources})
-  set_property(TARGET ${target} APPEND PROPERTY RESOURCE ${bundle_resources})
+  set_source_files_properties(${bundle_resources} PROPERTIES
+    MACOSX_PACKAGE_LOCATION "Resources"
+  )
   source_group("Resources" FILES ${bundle_resources})
 
 endfunction()
