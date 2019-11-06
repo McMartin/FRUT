@@ -72,9 +72,16 @@ int main(int argc, char* argv[])
   }();
 
   const auto& iconFormat = args.at(2);
-  const auto outputDir = File{args.at(3)};
-  const auto smallIconImageFile = args.at(4) == "<None>" ? File{} : File{args.at(4)};
-  const auto largeIconImageFile = args.at(5) == "<None>" ? File{} : File{args.at(5)};
+  const auto outputDir =
+    File::getCurrentWorkingDirectory().getChildFile(juce::String{args.at(3)});
+  const auto smallIconImageFile =
+    args.at(4) == "<None>"
+      ? File{}
+      : File::getCurrentWorkingDirectory().getChildFile(juce::String{args.at(4)});
+  const auto largeIconImageFile =
+    args.at(5) == "<None>"
+      ? File{}
+      : File::getCurrentWorkingDirectory().getChildFile(juce::String{args.at(5)});
 
   const ProjectExporter projectExporter{smallIconImageFile, largeIconImageFile};
 

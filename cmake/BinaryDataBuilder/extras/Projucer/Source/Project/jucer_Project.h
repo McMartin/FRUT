@@ -23,7 +23,7 @@ class Project
 
 public:
   Project(const String& outputDir, const String& uid)
-    : binaryDataFilesOuputDir{outputDir}
+    : binaryDataFilesOuputDir{File::getCurrentWorkingDirectory().getChildFile(outputDir)}
     , projectUID{uid}
   {
   }

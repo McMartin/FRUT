@@ -102,8 +102,8 @@ function(jucer_project_settings)
   if(DEFINED _PROJECT_VERSION)
     string(REGEX MATCH ".+\\..+\\..+(\\..+)?" version_match "${_PROJECT_VERSION}")
     if(NOT _PROJECT_VERSION STREQUAL version_match)
-      message(WARNING "The PROJECT_VERSION doesn't seem to be in the format "
-        "major.minor.point[.point]"
+      message(WARNING "The PROJECT_VERSION doesn't seem to be in the format"
+        " major.minor.point[.point]"
       )
     endif()
     _FRUT_version_to_hex("${_PROJECT_VERSION}" hex_value)
@@ -130,8 +130,8 @@ function(jucer_project_settings)
 
     list(FIND size_limit_descs "${_BINARYDATACPP_SIZE_LIMIT}" size_limit_index)
     if(size_limit_index EQUAL -1)
-      message(FATAL_ERROR "Unsupported value for BINARYDATACPP_SIZE_LIMIT: "
-        "\"${_BINARYDATACPP_SIZE_LIMIT}\"\nSupported values: ${size_limit_descs}"
+      message(FATAL_ERROR "Unsupported value for BINARYDATACPP_SIZE_LIMIT:"
+        " \"${_BINARYDATACPP_SIZE_LIMIT}\"\nSupported values: ${size_limit_descs}"
       )
     endif()
     list(GET size_limits ${size_limit_index} _BINARYDATACPP_SIZE_LIMIT)
@@ -143,8 +143,8 @@ function(jucer_project_settings)
 
     list(FIND cxx_lang_standard_descs "${_CXX_LANGUAGE_STANDARD}" cxx_lang_standard_index)
     if(cxx_lang_standard_index EQUAL -1)
-      message(FATAL_ERROR "Unsupported value for CXX_LANGUAGE_STANDARD: "
-        "\"${_CXX_LANGUAGE_STANDARD}\"\nSupported values: ${cxx_lang_standard_descs}"
+      message(FATAL_ERROR "Unsupported value for CXX_LANGUAGE_STANDARD:"
+        " \"${_CXX_LANGUAGE_STANDARD}\"\nSupported values: ${cxx_lang_standard_descs}"
       )
     endif()
     list(GET cxx_lang_standards ${cxx_lang_standard_index} _CXX_LANGUAGE_STANDARD)
@@ -309,8 +309,8 @@ function(jucer_project_files source_group_name)
 
   function(_FRUT_jucer_project_files_assert_x_or_dot input row_number property)
     if(NOT input STREQUAL "x" AND NOT input STREQUAL ".")
-      message(FATAL_ERROR "Expected \"x\" or \".\" token for \"${property}\", got "
-        "\"${input}\" instead (row ${row_number})"
+      message(FATAL_ERROR "Expected \"x\" or \".\" token for \"${property}\", got"
+        " \"${input}\" instead (row ${row_number})"
       )
     endif()
   endfunction()
@@ -397,8 +397,8 @@ endfunction()
 function(jucer_project_module module_name PATH_KEYWORD modules_folder)
 
   if(NOT PATH_KEYWORD STREQUAL "PATH")
-    message(FATAL_ERROR "Invalid second argument. Expected \"PATH\" keyword, "
-      "but got \"${PATH_KEYWORD}\" instead."
+    message(FATAL_ERROR "Invalid second argument. Expected \"PATH\" keyword, but got"
+      " \"${PATH_KEYWORD}\" instead."
     )
   endif()
 
@@ -683,8 +683,8 @@ endfunction()
 function(jucer_appconfig_header USER_CODE_SECTION_KEYWORD user_code_section)
 
   if(NOT USER_CODE_SECTION_KEYWORD STREQUAL "USER_CODE_SECTION")
-    message(FATAL_ERROR "Invalid second argument. Expected \"USER_CODE_SECTION\" "
-      "keyword, but got \"${USER_CODE_SECTION_KEYWORD}\" instead."
+    message(FATAL_ERROR "Invalid second argument. Expected \"USER_CODE_SECTION\" keyword,"
+      " but got \"${USER_CODE_SECTION_KEYWORD}\" instead."
     )
   endif()
 
@@ -914,8 +914,8 @@ function(jucer_export_target exporter)
 
   if(DEFINED _USE_APP_SANDBOX)
     if(_USE_APP_SANDBOX AND NOT CMAKE_GENERATOR STREQUAL "Xcode")
-      message(WARNING "USE_APP_SANDBOX is only supported when using the Xcode generator. "
-        "You should call `cmake -G Xcode`."
+      message(WARNING "USE_APP_SANDBOX is only supported when using the Xcode generator."
+        " You should call `cmake -G Xcode`."
       )
     endif()
     set(JUCER_USE_APP_SANDBOX "${_USE_APP_SANDBOX}" PARENT_SCOPE)
@@ -983,8 +983,8 @@ function(jucer_export_target exporter)
 
   if(DEFINED _USE_HARDENED_RUNTIME)
     if(_USE_HARDENED_RUNTIME AND NOT CMAKE_GENERATOR STREQUAL "Xcode")
-      message(WARNING "USE_HARDENED_RUNTIME is only supported when using the Xcode "
-        "generator. You should call `cmake -G Xcode`."
+      message(WARNING "USE_HARDENED_RUNTIME is only supported when using the Xcode"
+        " generator. You should call `cmake -G Xcode`."
       )
     endif()
     set(JUCER_USE_HARDENED_RUNTIME "${_USE_HARDENED_RUNTIME}" PARENT_SCOPE)
@@ -1076,8 +1076,8 @@ function(jucer_export_target exporter)
 
   if(DEFINED _PUSH_NOTIFICATIONS_CAPABILITY)
     if(_PUSH_NOTIFICATIONS_CAPABILITY AND NOT CMAKE_GENERATOR STREQUAL "Xcode")
-      message(WARNING "PUSH_NOTIFICATIONS_CAPABILITY is only supported when using the "
-        "Xcode generator. You should call `cmake -G Xcode`."
+      message(WARNING "PUSH_NOTIFICATIONS_CAPABILITY is only supported when using the"
+        " Xcode generator. You should call `cmake -G Xcode`."
       )
     endif()
     set(JUCER_PUSH_NOTIFICATIONS_CAPABILITY "${_PUSH_NOTIFICATIONS_CAPABILITY}"
@@ -1146,15 +1146,15 @@ function(jucer_export_target exporter)
   endif()
 
   if(DEFINED _KEEP_CUSTOM_XCODE_SCHEMES)
-    message(WARNING "KEEP_CUSTOM_XCODE_SCHEMES is ignored. Reprojucer.cmake won't "
-      "create any Xcode schemes, so it won't delete any either."
+    message(WARNING "KEEP_CUSTOM_XCODE_SCHEMES is ignored. Reprojucer.cmake won't create"
+      " any Xcode schemes, so it won't delete any either."
     )
   endif()
 
   if(DEFINED _USE_HEADERMAP)
     if(_USE_HEADERMAP AND NOT CMAKE_GENERATOR STREQUAL "Xcode")
-      message(WARNING "USE_HEADERMAP is only supported when using the Xcode generator. "
-        "You should call `cmake -G Xcode`."
+      message(WARNING "USE_HEADERMAP is only supported when using the Xcode generator."
+        " You should call `cmake -G Xcode`."
       )
     endif()
     set(JUCER_USE_HEADERMAP "${_USE_HEADERMAP}" PARENT_SCOPE)
@@ -1209,9 +1209,9 @@ function(jucer_export_target exporter)
   if(DEFINED _WINDOWS_TARGET_PLATFORM)
     set(platform "${_WINDOWS_TARGET_PLATFORM}")
     if(NOT platform STREQUAL CMAKE_VS_WINDOWS_TARGET_PLATFORM_VERSION)
-      message(STATUS "CMAKE_VS_WINDOWS_TARGET_PLATFORM_VERSION "
-        "(${CMAKE_VS_WINDOWS_TARGET_PLATFORM_VERSION}) doesn't match "
-        "WINDOWS_TARGET_PLATFORM (${platform})."
+      message(STATUS "CMAKE_VS_WINDOWS_TARGET_PLATFORM_VERSION"
+        " (${CMAKE_VS_WINDOWS_TARGET_PLATFORM_VERSION}) doesn't match"
+        " WINDOWS_TARGET_PLATFORM (${platform})."
       )
     endif()
   endif()
@@ -1266,14 +1266,14 @@ function(jucer_export_target_configuration
   endif()
 
   if(NOT exporter IN_LIST JUCER_PROJECT_EXPORT_TARGETS)
-    message(FATAL_ERROR "You must call jucer_export_target(\"${exporter}\") before "
-      "calling jucer_export_target_configuration(\"${exporter}\")."
+    message(FATAL_ERROR "You must call jucer_export_target(\"${exporter}\") before"
+      " calling jucer_export_target_configuration(\"${exporter}\")."
     )
   endif()
 
   if(NOT NAME_KEYWORD STREQUAL "NAME")
-    message(FATAL_ERROR "Invalid second argument. Expected \"NAME\" keyword, "
-      "but got \"${NAME_KEYWORD}\" instead."
+    message(FATAL_ERROR "Invalid second argument. Expected \"NAME\" keyword, but got"
+      " \"${NAME_KEYWORD}\" instead."
     )
   endif()
 
@@ -1286,8 +1286,8 @@ function(jucer_export_target_configuration
   endif()
 
   if(NOT DEBUG_MODE_KEYWORD STREQUAL "DEBUG_MODE")
-    message(FATAL_ERROR "Invalid fourth argument. Expected \"DEBUG_MODE\" keyword, "
-      "but got \"${DEBUG_MODE_KEYWORD}\" instead."
+    message(FATAL_ERROR "Invalid fourth argument. Expected \"DEBUG_MODE\" keyword, but"
+      " got \"${DEBUG_MODE_KEYWORD}\" instead."
     )
   endif()
 
@@ -1541,8 +1541,8 @@ function(jucer_export_target_configuration
 
   if(DEFINED _CUSTOM_XCODE_FLAGS)
     if(NOT CMAKE_GENERATOR STREQUAL "Xcode")
-      message(WARNING "CUSTOM_XCODE_FLAGS is only supported when using the Xcode "
-        "generator. You should call `cmake -G Xcode`."
+      message(WARNING "CUSTOM_XCODE_FLAGS is only supported when using the Xcode"
+        " generator. You should call `cmake -G Xcode`."
       )
     endif()
     set(JUCER_CUSTOM_XCODE_FLAGS_${config} "${_CUSTOM_XCODE_FLAGS}" PARENT_SCOPE)
@@ -1577,8 +1577,8 @@ function(jucer_export_target_configuration
 
   if(DEFINED _CODE_SIGNING_IDENTITY)
     if(NOT CMAKE_GENERATOR STREQUAL "Xcode")
-      message(WARNING "CODE_SIGNING_IDENTITY is only supported when using the Xcode "
-        "generator. You should call `cmake -G Xcode`."
+      message(WARNING "CODE_SIGNING_IDENTITY is only supported when using the Xcode"
+        " generator. You should call `cmake -G Xcode`."
       )
     endif()
     set(JUCER_CODE_SIGNING_IDENTITY_${config} "${_CODE_SIGNING_IDENTITY}" PARENT_SCOPE)
@@ -1813,23 +1813,23 @@ function(jucer_project_end)
     foreach(exporter IN LISTS Reprojucer_supported_exporters)
       string(APPEND exporters_list "\n  - ${exporter}")
     endforeach()
-    message(FATAL_ERROR "Reprojucer.cmake doesn't support any export target for your "
-      "current platform. It supports the following export targets:${exporters_list}\n"
-      "If you think Reprojucer.cmake should support another export target, please create "
-      "an issue on GitHub: https://github.com/McMartin/FRUT/issues/new\n"
+    message(FATAL_ERROR "Reprojucer.cmake doesn't support any export target for your"
+      " current platform. It supports the following export targets:${exporters_list}\n"
+      "If you think Reprojucer.cmake should support another export target, please create"
+      " an issue on GitHub: https://github.com/McMartin/FRUT/issues/new\n"
     )
   endif()
 
   if(NOT current_exporter IN_LIST JUCER_PROJECT_EXPORT_TARGETS)
-    message(FATAL_ERROR "You must call jucer_export_target(\"${current_exporter}\") "
-      "before calling jucer_project_end()."
+    message(FATAL_ERROR "You must call jucer_export_target(\"${current_exporter}\")"
+      " before calling jucer_project_end()."
     )
   endif()
 
   if(NOT JUCER_PROJECT_CONFIGURATIONS)
-    message(FATAL_ERROR "You must call "
-      "jucer_export_target_configuration(\"${current_exporter}\") before "
-      "calling jucer_project_end()."
+    message(FATAL_ERROR "You must call"
+      " jucer_export_target_configuration(\"${current_exporter}\") before calling"
+      " jucer_project_end()."
     )
   endif()
 
@@ -2568,9 +2568,9 @@ endfunction()
 function(_FRUT_abs_path_based_on_jucer_project_dir out_path in_path)
 
   if(NOT IS_ABSOLUTE "${in_path}" AND NOT DEFINED JUCER_PROJECT_DIR)
-    message(FATAL_ERROR "Cannot join \"\${JUCER_PROJECT_DIR}\" and \"${in_path}\" to "
-      "construct an absolute path because JUCER_PROJECT_DIR is not defined. You should "
-      "call jucer_project_begin() first, e.g.:\n"
+    message(FATAL_ERROR "Cannot join \"\${JUCER_PROJECT_DIR}\" and \"${in_path}\" to"
+      " construct an absolute path because JUCER_PROJECT_DIR is not defined. You should"
+      " call jucer_project_begin() first, e.g.:\n"
       "  jucer_project_begin(\n"
       "    PROJECT_FILE \"<path/to/YourProject.jucer>\"\n"
       "  )\n"
@@ -2645,8 +2645,8 @@ function(_FRUT_add_extra_commands_APPLE target exporter)
 
   if(DEFINED JUCER_PREBUILD_SHELL_SCRIPT)
     if(NOT DEFINED JUCER_TARGET_PROJECT_FOLDER)
-      message(FATAL_ERROR "JUCER_TARGET_PROJECT_FOLDER must be defined. Give "
-        "TARGET_PROJECT_FOLDER when calling jucer_export_target(\"${exporter}\")."
+      message(FATAL_ERROR "JUCER_TARGET_PROJECT_FOLDER must be defined. Give"
+        " TARGET_PROJECT_FOLDER when calling jucer_export_target(\"${exporter}\")."
       )
     endif()
     if(NOT IS_DIRECTORY "${JUCER_TARGET_PROJECT_FOLDER}")
@@ -2660,8 +2660,8 @@ function(_FRUT_add_extra_commands_APPLE target exporter)
 
   if(DEFINED JUCER_POSTBUILD_SHELL_SCRIPT)
     if(NOT DEFINED JUCER_TARGET_PROJECT_FOLDER)
-      message(FATAL_ERROR "JUCER_TARGET_PROJECT_FOLDER must be defined. Give "
-        "TARGET_PROJECT_FOLDER when calling jucer_export_target(\"${exporter}\")."
+      message(FATAL_ERROR "JUCER_TARGET_PROJECT_FOLDER must be defined. Give"
+        " TARGET_PROJECT_FOLDER when calling jucer_export_target(\"${exporter}\")."
       )
     endif()
     if(NOT IS_DIRECTORY "${JUCER_TARGET_PROJECT_FOLDER}")
@@ -2689,8 +2689,8 @@ function(_FRUT_add_extra_commands_MSVC target exporter)
   endforeach()
   if(DEFINED all_confs_prebuild_command)
     if(NOT DEFINED JUCER_TARGET_PROJECT_FOLDER)
-      message(FATAL_ERROR "JUCER_TARGET_PROJECT_FOLDER must be defined. Give "
-        "TARGET_PROJECT_FOLDER when calling jucer_export_target(\"${exporter}\")."
+      message(FATAL_ERROR "JUCER_TARGET_PROJECT_FOLDER must be defined. Give"
+        " TARGET_PROJECT_FOLDER when calling jucer_export_target(\"${exporter}\")."
       )
     endif()
     if(NOT IS_DIRECTORY "${JUCER_TARGET_PROJECT_FOLDER}")
@@ -2713,8 +2713,8 @@ function(_FRUT_add_extra_commands_MSVC target exporter)
   endforeach()
   if(DEFINED all_confs_postbuild_command)
     if(NOT DEFINED JUCER_TARGET_PROJECT_FOLDER)
-      message(FATAL_ERROR "JUCER_TARGET_PROJECT_FOLDER must be defined. Give "
-        "TARGET_PROJECT_FOLDER when calling jucer_export_target(\"${exporter}\")."
+      message(FATAL_ERROR "JUCER_TARGET_PROJECT_FOLDER must be defined. Give"
+        " TARGET_PROJECT_FOLDER when calling jucer_export_target(\"${exporter}\")."
       )
     endif()
     if(NOT IS_DIRECTORY "${JUCER_TARGET_PROJECT_FOLDER}")
@@ -2927,17 +2927,17 @@ function(_FRUT_check_SDK_folders exporter)
   if(JUCER_BUILD_VST OR JUCER_FLAG_JUCE_PLUGINHOST_VST)
     if(DEFINED JUCER_VST_LEGACY_SDK_FOLDER)
       if(NOT IS_DIRECTORY "${JUCER_VST_LEGACY_SDK_FOLDER}")
-        message(WARNING "JUCER_VST_LEGACY_SDK_FOLDER: no such directory "
-          "\"${JUCER_VST_LEGACY_SDK_FOLDER}\""
+        message(WARNING "JUCER_VST_LEGACY_SDK_FOLDER: no such directory"
+          " \"${JUCER_VST_LEGACY_SDK_FOLDER}\""
         )
       elseif(NOT EXISTS "${JUCER_VST_LEGACY_SDK_FOLDER}/pluginterfaces/vst2.x/aeffect.h")
-        message(WARNING "JUCER_VST_LEGACY_SDK_FOLDER: \"${JUCER_VST_LEGACY_SDK_FOLDER}\" "
-          "doesn't seem to contain the VST SDK"
+        message(WARNING "JUCER_VST_LEGACY_SDK_FOLDER: \"${JUCER_VST_LEGACY_SDK_FOLDER}\""
+          " doesn't seem to contain the VST SDK"
         )
       endif()
     elseif(NOT DEFINED JUCER_VERSION OR JUCER_VERSION VERSION_GREATER 5.3.2)
-      message(WARNING "JUCER_VST_LEGACY_SDK_FOLDER is not defined. You should give "
-        "VST_LEGACY_SDK_FOLDER when calling jucer_export_target(\"${exporter}\")."
+      message(WARNING "JUCER_VST_LEGACY_SDK_FOLDER is not defined. You should give"
+        " VST_LEGACY_SDK_FOLDER when calling jucer_export_target(\"${exporter}\")."
       )
     endif()
 
@@ -2947,13 +2947,13 @@ function(_FRUT_check_SDK_folders exporter)
           "JUCER_VST_SDK_FOLDER: no such directory \"${JUCER_VST_SDK_FOLDER}\""
         )
       elseif(NOT EXISTS "${JUCER_VST_SDK_FOLDER}/public.sdk/source/vst2.x/audioeffectx.h")
-        message(WARNING "JUCER_VST_SDK_FOLDER: \"${JUCER_VST_SDK_FOLDER}\" doesn't seem "
-          "to contain the VST SDK"
+        message(WARNING "JUCER_VST_SDK_FOLDER: \"${JUCER_VST_SDK_FOLDER}\" doesn't seem"
+          " to contain the VST SDK"
         )
       endif()
     elseif(DEFINED JUCER_VERSION AND JUCER_VERSION VERSION_LESS 4.2.4)
-      message(WARNING "JUCER_VST_SDK_FOLDER is not defined. You should give "
-        "VST_SDK_FOLDER when calling jucer_export_target(\"${exporter}\")."
+      message(WARNING "JUCER_VST_SDK_FOLDER is not defined. You should give"
+        " VST_SDK_FOLDER when calling jucer_export_target(\"${exporter}\")."
       )
     endif()
   endif()
@@ -2969,13 +2969,13 @@ function(_FRUT_check_SDK_folders exporter)
           "JUCER_VST3_SDK_FOLDER: no such directory \"${JUCER_VST3_SDK_FOLDER}\""
         )
       elseif(NOT EXISTS "${JUCER_VST3_SDK_FOLDER}/base/source/baseiids.cpp")
-        message(WARNING "JUCER_VST3_SDK_FOLDER: \"${JUCER_VST3_SDK_FOLDER}\" doesn't "
-          "seem to contain the VST3 SDK"
+        message(WARNING "JUCER_VST3_SDK_FOLDER: \"${JUCER_VST3_SDK_FOLDER}\" doesn't"
+          " seem to contain the VST3 SDK"
         )
       endif()
-    elseif((APPLE OR MSVC) AND NOT EXISTS "${juce_internal_vst3_sdk_path}")
-      message(WARNING "JUCER_VST3_SDK_FOLDER is not defined. You should give "
-        "VST3_SDK_FOLDER when calling jucer_export_target(\"${exporter}\")."
+   elseif((APPLE OR MSVC) AND NOT EXISTS "${juce_internal_vst3_sdk_path}")
+      message(WARNING "JUCER_VST3_SDK_FOLDER is not defined. You should give"
+        " VST3_SDK_FOLDER when calling jucer_export_target(\"${exporter}\")."
       )
     endif()
   endif()
@@ -2990,13 +2990,13 @@ function(_FRUT_check_SDK_folders exporter)
           "JUCER_RTAS_SDK_FOLDER: no such directory \"${JUCER_RTAS_SDK_FOLDER}\""
         )
       elseif(NOT EXISTS "${JUCER_RTAS_SDK_FOLDER}/${file_to_check_for}")
-        message(WARNING "JUCER_RTAS_SDK_FOLDER: \"${JUCER_RTAS_SDK_FOLDER}\" doesn't "
-          "seem to contain the RTAS SDK"
+        message(WARNING "JUCER_RTAS_SDK_FOLDER: \"${JUCER_RTAS_SDK_FOLDER}\" doesn't"
+          " seem to contain the RTAS SDK"
         )
       endif()
     elseif(APPLE OR MSVC)
-      message(WARNING "JUCER_RTAS_SDK_FOLDER is not defined. You should give "
-        "RTAS_SDK_FOLDER when calling jucer_export_target(\"${exporter}\")."
+      message(WARNING "JUCER_RTAS_SDK_FOLDER is not defined. You should give"
+        " RTAS_SDK_FOLDER when calling jucer_export_target(\"${exporter}\")."
       )
     endif()
   endif()
@@ -3008,13 +3008,13 @@ function(_FRUT_check_SDK_folders exporter)
           "JUCER_AAX_SDK_FOLDER: no such directory \"${JUCER_AAX_SDK_FOLDER}\""
         )
       elseif(NOT EXISTS "${JUCER_AAX_SDK_FOLDER}/Interfaces/AAX_Exports.cpp")
-        message(WARNING "JUCER_AAX_SDK_FOLDER: \"${JUCER_AAX_SDK_FOLDER}\" doesn't "
-          "seem to contain the AAX SDK"
+        message(WARNING "JUCER_AAX_SDK_FOLDER: \"${JUCER_AAX_SDK_FOLDER}\" doesn't"
+          " seem to contain the AAX SDK"
         )
       endif()
     elseif(APPLE OR MSVC)
-      message(WARNING "JUCER_AAX_SDK_FOLDER is not defined. You should give "
-        "AAX_SDK_FOLDER when calling jucer_export_target(\"${exporter}\")."
+      message(WARNING "JUCER_AAX_SDK_FOLDER is not defined. You should give"
+        " AAX_SDK_FOLDER when calling jucer_export_target(\"${exporter}\")."
       )
     endif()
   endif()
@@ -3143,8 +3143,8 @@ function(_FRUT_generate_AppConfig_header)
       set(user_code_section "\n")
     endif()
   else()
-    string(CONCAT user_code_section "\n\n// (You can get your own code in this section "
-      "by calling jucer_appconfig_header)\n\n"
+    string(CONCAT user_code_section "\n\n// (You can get your own code in this section by"
+      " calling jucer_appconfig_header)\n\n"
     )
   endif()
 
@@ -3613,8 +3613,8 @@ function(_FRUT_generate_JuceHeader_header)
     endif()
     math(EXPR size_limit_in_bytes "${JUCER_BINARYDATACPP_SIZE_LIMIT} * 1024")
     if(NOT DEFINED size_limit_in_bytes)
-      message(FATAL_ERROR "Error when computing size_limit_in_bytes = "
-        "${JUCER_BINARYDATACPP_SIZE_LIMIT} * 1024"
+      message(FATAL_ERROR "Error when computing size_limit_in_bytes ="
+        " ${JUCER_BINARYDATACPP_SIZE_LIMIT} * 1024"
       )
     endif()
     if("${JUCER_BINARYDATA_NAMESPACE}" STREQUAL "")
@@ -3739,8 +3739,8 @@ function(_FRUT_generate_plist_file
     if(DEFINED JUCER_MICROPHONE_ACCESS_TEXT)
       set(microphone_usage_description "${JUCER_MICROPHONE_ACCESS_TEXT}")
     else()
-      string(CONCAT microphone_usage_description "This app requires audio input. If you "
-        "do not have an audio interface connected it will use the built-in microphone."
+      string(CONCAT microphone_usage_description "This app requires audio input. If you"
+        " do not have an audio interface connected it will use the built-in microphone."
       )
     endif()
     string(APPEND plist_entries "
@@ -3753,8 +3753,8 @@ function(_FRUT_generate_plist_file
     if(DEFINED JUCER_CAMERA_ACCESS_TEXT)
       set(camera_usage_description "${JUCER_CAMERA_ACCESS_TEXT}")
     else()
-      string(CONCAT camera_usage_description "This app requires access to the camera to "
-        "function correctly."
+      string(CONCAT camera_usage_description "This app requires access to the camera to"
+        " function correctly."
       )
     endif()
     string(APPEND plist_entries "
@@ -4049,8 +4049,8 @@ function(_FRUT_get_au_quoted_four_chars au_enum_case out_var)
   elseif(au_enum_case STREQUAL "kAudioUnitType_Panner")
     set(quoted_four_chars "'aupn'")
   else()
-    message(WARNING "Unknown Audio Unit type \"${au_enum_case}\", not converting it to "
-      "four chars literal."
+    message(WARNING "Unknown Audio Unit type \"${au_enum_case}\", not converting it to"
+      " four chars literal."
     )
     set(quoted_four_chars "${au_enum_case}")
   endif()
@@ -4592,8 +4592,8 @@ function(_FRUT_set_compiler_and_linker_settings_APPLE target)
         XCODE_ATTRIBUTE_CODE_SIGN_ENTITLEMENTS "${JUCER_ENTITLEMENTS_FILE}"
       )
     else()
-      message(WARNING "Reprojucer.cmake only supports entitlements when using the Xcode "
-        "generator. You should call `cmake -G Xcode` if you want to use entitlements."
+      message(WARNING "Reprojucer.cmake only supports entitlements when using the Xcode"
+        " generator. You should call `cmake -G Xcode` if you want to use entitlements."
       )
     endif()
   endif()
@@ -5253,11 +5253,11 @@ endfunction()
 
 function(_FRUT_warn_about_unsupported_setting setting projucer_setting issue_number)
 
-  message(WARNING "Reprojucer.cmake doesn't support the setting ${setting} "
-    "(\"${projucer_setting}\" in Projucer). If you would like Reprojucer.cmake to "
-    "support this setting, please leave a comment on the issue \"Reprojucer.cmake "
-    "doesn't support the setting ${setting}\" on GitHub: "
-    "https://github.com/McMartin/FRUT/issues/${issue_number}"
+  message(WARNING "Reprojucer.cmake doesn't support the setting ${setting}"
+    " (\"${projucer_setting}\" in Projucer). If you would like Reprojucer.cmake to"
+    " support this setting, please leave a comment on the issue \"Reprojucer.cmake"
+    " doesn't support the setting ${setting}\" on GitHub:"
+    " https://github.com/McMartin/FRUT/issues/${issue_number}"
   )
 
 endfunction()
