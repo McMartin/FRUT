@@ -5292,11 +5292,10 @@ function(_FRUT_write_failure_report_and_abort action helper_name execute_process
   configure_file("${Reprojucer_templates_DIR}/failed-to.md"
     "failed-to-${action}-${helper_name}.md" @ONLY
   )
-  message(FATAL_ERROR "Failed to ${action} ${helper_name}. Please report this"
-    " problem by creating a new issue on GitHub:"
-    " https://github.com/McMartin/FRUT/issues/new.\nPlease copy-paste the contents of"
-    " ${CMAKE_CURRENT_BINARY_DIR}/failed-to-${action}-${helper_name}.md in the"
-    " commment."
+  message(FATAL_ERROR "Failed to ${action} ${helper_name}. Please report this problem by"
+    " creating a new issue on GitHub: https://github.com/McMartin/FRUT/issues/new."
+    "\nPlease copy-paste the contents of"
+    " ${CMAKE_CURRENT_BINARY_DIR}/failed-to-${action}-${helper_name}.md in the commment."
   )
 
 endfunction()
