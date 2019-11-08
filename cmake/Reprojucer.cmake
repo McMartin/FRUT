@@ -2823,9 +2823,11 @@ function(_FRUT_build_and_install_helper_exe helper_name helper_version)
     NO_DEFAULT_PATH
   )
   if(NOT ${helper_name}_exe)
+    set(binary_dir "${Reprojucer.cmake_DIR}/${helper_name}/_build/${CMAKE_GENERATOR}")
+
     message(STATUS "Building and installing ${helper_name}")
     try_compile(${helper_name}
-      "${Reprojucer.cmake_DIR}/${helper_name}/_build/${CMAKE_GENERATOR}"
+      "${binary_dir}"
       "${Reprojucer.cmake_DIR}/${helper_name}"
       ${helper_name} install
       CMAKE_FLAGS
