@@ -2875,7 +2875,7 @@ function(_FRUT_build_and_install_helper_exe helper_name helper_version)
         " the commment."
       )
     endif()
-    message(STATUS "Installed ${helper_name} in ${install_prefix}")
+    message(STATUS "Installed ${helper_name} in \"${install_prefix}\"")
     find_program(${helper_name}_exe "${helper_filename}"
       PATHS "${install_prefix}"
       NO_DEFAULT_PATH
