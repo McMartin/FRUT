@@ -42,6 +42,9 @@ get_filename_component(JUCE_modules_DIR
 )
 
 
+project(BinaryDataBuilder VERSION 0.3.1)
+
+
 if(NOT DEFINED CMAKE_CONFIGURATION_TYPES)
   if(NOT DEFINED CMAKE_BUILD_TYPE OR CMAKE_BUILD_TYPE STREQUAL "")
     message(STATUS "Setting CMAKE_BUILD_TYPE to \"Debug\" as it was not specified.")
@@ -49,8 +52,6 @@ if(NOT DEFINED CMAKE_CONFIGURATION_TYPES)
   endif()
 endif()
 
-
-project(BinaryDataBuilder VERSION 0.3.1)
 
 add_executable(BinaryDataBuilder
   "${CMAKE_CURRENT_LIST_DIR}/main.cpp"
