@@ -2825,19 +2825,47 @@ function(_FRUT_build_and_install_helper_exe helper_name helper_version)
   if(NOT ${helper_name}_exe)
     set(binary_dir "${Reprojucer.cmake_DIR}/${helper_name}/_build/${CMAKE_GENERATOR}")
 
-    message(STATUS "Building and installing ${helper_name}")
-    try_compile(${helper_name}
-      "${binary_dir}"
-      "${Reprojucer.cmake_DIR}/${helper_name}"
-      ${helper_name} install
-      CMAKE_FLAGS
-      "-DJUCE_modules_DIRS=${JUCER_PROJECT_MODULES_FOLDERS}"
-      "-DCMAKE_INSTALL_PREFIX=${install_prefix}"
-      OUTPUT_VARIABLE try_compile_output
+    message(STATUS "Configuring ${helper_name} in \"${binary_dir}\"")
+    file(MAKE_DIRECTORY "${binary_dir}")
+    execute_process(
+      COMMAND
+        "${CMAKE_COMMAND}"
+        "${Reprojucer.cmake_DIR}/${helper_name}"
+        "-G" "${CMAKE_GENERATOR}"
+        "-DJUCE_modules_DIRS=${JUCER_PROJECT_MODULES_FOLDERS}"
+        "-DCMAKE_INSTALL_PREFIX=${install_prefix}"
+        "-Dbuilt_by_Reprojucer=TRUE"
+      WORKING_DIRECTORY "${binary_dir}"
+      OUTPUT_VARIABLE configure_output
+      RESULT_VARIABLE configure_result
     )
-    if(NOT ${helper_name})
-      _FRUT_write_failure_report_and_abort("${helper_name}" "${try_compile_output}")
+    set(output "${configure_output}")
+    if(NOT configure_result EQUAL 0)
+      _FRUT_write_failure_report_and_abort("configure" "${helper_name}" "${output}")
     endif()
+
+    message(STATUS "Building ${helper_name} in \"${binary_dir}\"")
+    execute_process(
+      COMMAND "${CMAKE_COMMAND}" "--build" "${binary_dir}" "--target" "${helper_name}"
+      OUTPUT_VARIABLE build_output
+      RESULT_VARIABLE build_result
+    )
+    string(APPEND output "\n${build_output}")
+    if(NOT build_result EQUAL 0)
+      _FRUT_write_failure_report_and_abort("build" "${helper_name}" "${output}")
+    endif()
+
+    message(STATUS "Installing ${helper_name} in \"${install_prefix}\"")
+    execute_process(
+      COMMAND "${CMAKE_COMMAND}" "--build" "${binary_dir}" "--target" "install"
+      OUTPUT_VARIABLE install_output
+      RESULT_VARIABLE install_result
+    )
+    string(APPEND output "\n${install_output}")
+    if(NOT install_result EQUAL 0)
+      _FRUT_write_failure_report_and_abort("install" "${helper_name}" "${output}")
+    endif()
+
     message(STATUS "Installed ${helper_name} in \"${install_prefix}\"")
     find_program(${helper_name}_exe "${helper_filename}"
       PATHS "${install_prefix}"
@@ -5228,7 +5256,7 @@ function(_FRUT_warn_about_unsupported_setting setting projucer_setting issue_num
 endfunction()
 
 
-function(_FRUT_write_failure_report_and_abort helper_name try_compile_output)
+function(_FRUT_write_failure_report_and_abort action helper_name execute_process_output)
 
   execute_process(
     COMMAND "git" "rev-parse" "HEAD"
@@ -5260,14 +5288,14 @@ function(_FRUT_write_failure_report_and_abort helper_name try_compile_output)
     set(juce_version "unknown (no juce_core module)")
   endif()
 
-  string(REPLACE "\r\n" "\n" try_compile_output "${try_compile_output}")
-  configure_file("${Reprojucer_templates_DIR}/failed-to-build-and-install.md"
-    "failed-to-build-and-install-${helper_name}.md" @ONLY
+  string(REPLACE "\r\n" "\n" execute_process_output "${execute_process_output}")
+  configure_file("${Reprojucer_templates_DIR}/failed-to.md"
+    "failed-to-${action}-${helper_name}.md" @ONLY
   )
-  message(FATAL_ERROR "Failed to build and install ${helper_name}. Please report this"
+  message(FATAL_ERROR "Failed to ${action} ${helper_name}. Please report this"
     " problem by creating a new issue on GitHub:"
     " https://github.com/McMartin/FRUT/issues/new.\nPlease copy-paste the contents of"
-    " ${CMAKE_CURRENT_BINARY_DIR}/failed-to-build-and-install-${helper_name}.md in the"
+    " ${CMAKE_CURRENT_BINARY_DIR}/failed-to-${action}-${helper_name}.md in the"
     " commment."
   )
 

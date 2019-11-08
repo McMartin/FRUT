@@ -1,4 +1,4 @@
-### Failed to build and install `@helper_name@`
+### Failed to @action@ `@helper_name@`
 
 
 #### Versions
@@ -33,8 +33,8 @@ JUCER_VERSION: "@JUCER_VERSION@"
 ```
 
 
-#### Output of `try_compile(@helper_name@)`
+#### Output of `execute_process()`
 
 ```
-@try_compile_output@
+@execute_process_output@
 ```

@@ -117,8 +117,7 @@ if(WIN32 AND NOT MSVC)
 endif()
 
 
-get_cmake_property(is_in_try_compile IN_TRY_COMPILE)
-if(is_in_try_compile)
+if(built_by_Reprojucer)
   install(TARGETS BinaryDataBuilder DESTINATION ".")
 else()
   install(TARGETS BinaryDataBuilder DESTINATION "FRUT/cmake/bin")
