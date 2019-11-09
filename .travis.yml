@@ -328,6 +328,45 @@ script-anchors:
     # Configure all JUCE 5.4.4 projects
     - cmake .. -G Xcode -DJUCE_VERSION="5.4.4"
 
+  - &script-Xcode-iOS
+    # Run .entitlements files generation tests
+    - cd ${TRAVIS_BUILD_DIR}/tests/test-projects/entitlements-generation/guiapp-iOS/binary_dir
+    - cmake .. -G Xcode -DCMAKE_SYSTEM_NAME=iOS
+    - cd ${TRAVIS_BUILD_DIR}/tests/test-projects/entitlements-generation/plugin-iOS/binary_dir
+    - cmake .. -G Xcode -DCMAKE_SYSTEM_NAME=iOS
+    - git diff --exit-code
+
+    # Run .plist files generation tests
+    - cd ${TRAVIS_BUILD_DIR}/tests/test-projects/plist-generation/guiapp-iOS/binary_dir
+    - cmake .. -G Xcode -DCMAKE_SYSTEM_NAME=iOS
+    - cd ${TRAVIS_BUILD_DIR}/tests/test-projects/plist-generation/plugin-iOS/binary_dir
+    - cmake .. -G Xcode -DCMAKE_SYSTEM_NAME=iOS
+    - git diff --exit-code
+
+    - mkdir ${TRAVIS_BUILD_DIR}/ci/AllJuceProjects/build
+    - cd ${TRAVIS_BUILD_DIR}/ci/AllJuceProjects/build
+
+    # Configure all JUCE 4.2.0 projects
+    - cmake .. -G Xcode -DCMAKE_SYSTEM_NAME=iOS -DJUCE_VERSION="4.2.0"
+
+    # Configure all JUCE 4.3.1 projects
+    - cmake .. -G Xcode -DCMAKE_SYSTEM_NAME=iOS -DJUCE_VERSION="4.3.1"
+
+    # Configure all JUCE 5.0.0 projects
+    - cmake .. -G Xcode -DCMAKE_SYSTEM_NAME=iOS -DJUCE_VERSION="5.0.0"
+
+    # Configure all JUCE 5.2.1 projects
+    - cmake .. -G Xcode -DCMAKE_SYSTEM_NAME=iOS -DJUCE_VERSION="5.2.1"
+
+    # Configure all JUCE 5.3.1 projects
+    - cmake .. -G Xcode -DCMAKE_SYSTEM_NAME=iOS -DJUCE_VERSION="5.3.1"
+
+    # Configure all JUCE 5.4.3 projects
+    - cmake .. -G Xcode -DCMAKE_SYSTEM_NAME=iOS -DJUCE_VERSION="5.4.3"
+
+    # Configure all JUCE 5.4.3 projects
+    - cmake .. -G Xcode -DCMAKE_SYSTEM_NAME=iOS -DJUCE_VERSION="5.4.4"
+
 matrix:
   include:
     - os: linux
@@ -365,3 +404,10 @@ matrix:
       env: GENERATOR=Xcode
       osx_image: xcode9.4
       script: *script-Xcode
+
+    - os: osx
+      env: GENERATOR=Xcode CMAKE_SYSTEM_NAME=iOS
+      osx_image: xcode10.1
+      before_install:
+        - HOMEBREW_NO_AUTO_UPDATE=1 brew upgrade cmake
+      script: *script-Xcode-iOS
