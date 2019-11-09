@@ -84,6 +84,12 @@ function(test_app_plist_support_document_browser)
 endfunction()
 
 
+function(test_app_plist_status_bar_hidden)
+  set(JUCER_STATUS_BAR_HIDDEN ON)
+  _FRUT_generate_plist_file(target "App-StatusBarHidden" "APPL" "????")
+endfunction()
+
+
 function(test_app_plist_microphone_access_default)
   set(JUCER_MICROPHONE_ACCESS ON)
   _FRUT_generate_plist_file(target "App-MicrophoneUsage-default" "APPL" "????")
@@ -125,5 +131,6 @@ test_app_plist_microphone_access_custom()
 test_app_plist_microphone_access_default()
 test_app_plist_push_notifications_capability()
 test_app_plist_screen_orientation()
+test_app_plist_status_bar_hidden()
 test_app_plist_support_document_browser()
 test_app_plist_version()

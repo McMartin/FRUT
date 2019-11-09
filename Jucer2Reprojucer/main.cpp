@@ -1504,6 +1504,8 @@ int main(int argc, char* argv[])
                                      "FILE_SHARING_ENABLED", {});
         convertOnOffSettingIfDefined(exporter, "UISupportsDocumentBrowser",
                                      "SUPPORT_DOCUMENT_BROWSER", {});
+        convertOnOffSettingIfDefined(exporter, "UIStatusBarHidden", "STATUS_BAR_HIDDEN",
+                                     {});
       }
 
       if (exporterType == "XCODE_MAC")

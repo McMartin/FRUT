@@ -799,6 +799,7 @@ function(jucer_export_target exporter)
       "IPAD_SCREEN_ORIENTATION"
       "FILE_SHARING_ENABLED"
       "SUPPORT_DOCUMENT_BROWSER"
+      "STATUS_BAR_HIDDEN"
     )
   else()
     list(APPEND single_value_keywords "VST_LEGACY_SDK_FOLDER" "VST_SDK_FOLDER")
@@ -991,6 +992,10 @@ function(jucer_export_target exporter)
 
   if(DEFINED _SUPPORT_DOCUMENT_BROWSER)
     set(JUCER_SUPPORT_DOCUMENT_BROWSER "${_SUPPORT_DOCUMENT_BROWSER}" PARENT_SCOPE)
+  endif()
+
+  if(DEFINED _STATUS_BAR_HIDDEN)
+    set(JUCER_STATUS_BAR_HIDDEN "${_STATUS_BAR_HIDDEN}" PARENT_SCOPE)
   endif()
 
   if(DEFINED _DOCUMENT_FILE_EXTENSIONS)
@@ -4046,13 +4051,24 @@ function(_FRUT_generate_plist_file
     )
   endif()
 
-  if(IOS AND NOT target MATCHES "_AUv3_AppExtension$")
+  if(JUCER_STATUS_BAR_HIDDEN AND NOT target MATCHES "_AUv3_AppExtension$")
     string(APPEND plist_entries "
-    <key>UIRequiresFullScreen</key>
-    <true/>
     <key>UIStatusBarHidden</key>
     <true/>"
     )
+  endif()
+
+  if(IOS AND NOT target MATCHES "_AUv3_AppExtension$")
+    string(APPEND plist_entries "
+    <key>UIRequiresFullScreen</key>
+    <true/>"
+    )
+    if(NOT JUCER_STATUS_BAR_HIDDEN)
+      string(APPEND plist_entries "
+    <key>UIStatusBarHidden</key>
+    <true/>"
+      )
+    endif()
 
     string(APPEND plist_entries "
     <key>UISupportedInterfaceOrientations</key>
