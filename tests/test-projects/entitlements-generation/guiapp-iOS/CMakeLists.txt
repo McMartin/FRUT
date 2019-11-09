@@ -53,6 +53,12 @@ function(test_entitlements_app_groups_capability_three_ids)
 endfunction()
 
 
+function(test_entitlements_icloud_permissions)
+  set(JUCER_ICLOUD_PERMISSIONS ON)
+  _FRUT_generate_entitlements_file("iCloudPermissions.entitlements" _)
+endfunction()
+
+
 function(test_entitlements_push_notifications_capability)
   set(JUCER_PUSH_NOTIFICATIONS_CAPABILITY ON)
   _FRUT_generate_entitlements_file("PushNotificationsCapability.entitlements" _)
@@ -63,4 +69,5 @@ test_entitlements_app_groups_capability_empty()
 test_entitlements_app_groups_capability_one_id()
 test_entitlements_app_groups_capability_three_ids()
 test_entitlements_default()
+test_entitlements_icloud_permissions()
 test_entitlements_push_notifications_capability()

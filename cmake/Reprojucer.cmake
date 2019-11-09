@@ -805,6 +805,7 @@ function(jucer_export_target exporter)
       "AUDIO_BACKGROUND_CAPABILITY"
       "BLUETOOTH_MIDI_BACKGROUND_CAPABILITY"
       "APP_GROUPS_CAPABILITY"
+      "ICLOUD_PERMISSIONS"
     )
     list(APPEND multi_value_keywords "APP_GROUP_ID")
   else()
@@ -1201,6 +1202,10 @@ function(jucer_export_target exporter)
 
   if(DEFINED _APP_GROUPS_CAPABILITY)
     set(JUCER_APP_GROUPS_CAPABILITY "${_APP_GROUPS_CAPABILITY}" PARENT_SCOPE)
+  endif()
+
+  if(DEFINED _ICLOUD_PERMISSIONS)
+    set(JUCER_ICLOUD_PERMISSIONS "${_ICLOUD_PERMISSIONS}" PARENT_SCOPE)
   endif()
 
   if(DEFINED _CUSTOM_PLIST)
@@ -3766,6 +3771,23 @@ function(_FRUT_generate_entitlements_file output_filename out_var)
     endforeach()
   endif()
 
+  if(JUCER_IOS AND JUCER_ICLOUD_PERMISSIONS)
+    string(APPEND entitlements_content
+      "\t<key>com.apple.developer.icloud-container-identifiers</key>\n"
+      "\t<array>\n"
+      "        <string>iCloud.$(CFBundleIdentifier)</string>\n"
+      "    </array>\n"
+      "\t<key>com.apple.developer.icloud-services</key>\n"
+      "\t<array>\n"
+      "        <string>CloudDocuments</string>\n"
+      "    </array>\n"
+      "\t<key>com.apple.developer.ubiquity-container-identifiers</key>\n"
+      "\t<array>\n"
+      "        <string>iCloud.$(CFBundleIdentifier)</string>\n"
+      "    </array>\n"
+    )
+  endif()
+
   if(NOT entitlements_content STREQUAL "")
     configure_file("${Reprojucer_templates_DIR}/project.entitlements"
       "${output_filename}" @ONLY
@@ -5050,6 +5072,7 @@ function(_FRUT_set_compiler_and_linker_settings_APPLE target)
     OR JUCER_APP_GROUPS_CAPABILITY
     OR JUCER_USE_APP_SANDBOX
     OR JUCER_USE_HARDENED_RUNTIME
+    OR (JUCER_IOS AND JUCER_ICLOUD_PERMISSIONS)
     OR (
       JUCER_PROJECT_TYPE STREQUAL "Audio Plug-in"
       AND (

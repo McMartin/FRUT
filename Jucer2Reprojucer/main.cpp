@@ -1660,6 +1660,8 @@ int main(int argc, char* argv[])
                                      "BLUETOOTH_MIDI_BACKGROUND_CAPABILITY", {});
         convertOnOffSettingIfDefined(exporter, "iosAppGroups", "APP_GROUPS_CAPABILITY",
                                      {});
+        convertOnOffSettingIfDefined(exporter, "iCloudPermissions", "ICLOUD_PERMISSIONS",
+                                     {});
       }
 
       if (isXcodeExporter)

@@ -51,6 +51,7 @@ Define the settings specific to an export target.
     [AUDIO_BACKGROUND_CAPABILITY <ON|OFF>]  # [7]
     [BLUETOOTH_MIDI_BACKGROUND_CAPABILITY <ON|OFF>]  # [7]
     [APP_GROUPS_CAPABILITY <ON|OFF>]  # [7]
+    [ICLOUD_PERMISSIONS <ON|OFF>] # [7]
     [PUSH_NOTIFICATIONS_CAPABILITY <ON|OFF>]  # [3]
 
     [CUSTOM_PLIST <plist_content>]  # [3]
