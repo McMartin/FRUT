@@ -605,9 +605,9 @@ function(jucer_project_module module_name PATH_KEYWORD modules_folder)
   list(APPEND JUCER_PROJECT_MINGW_LIBS ${mingw_libs})
   set(JUCER_PROJECT_MINGW_LIBS "${JUCER_PROJECT_MINGW_LIBS}" PARENT_SCOPE)
 
-  string(REGEX REPLACE "[ ,]+" ";" osx_libs "${module_info_OSXLibs}")
-  list(APPEND JUCER_PROJECT_OSX_LIBS ${osx_libs})
-  set(JUCER_PROJECT_OSX_LIBS "${JUCER_PROJECT_OSX_LIBS}" PARENT_SCOPE)
+  string(REGEX REPLACE "[ ,]+" ";" xcode_libs "${module_info_OSXLibs}")
+  list(APPEND JUCER_PROJECT_XCODE_LIBS ${xcode_libs})
+  set(JUCER_PROJECT_XCODE_LIBS "${JUCER_PROJECT_XCODE_LIBS}" PARENT_SCOPE)
 
   string(REGEX REPLACE "[ ,]+" ";" windows_libs "${module_info_windowsLibs}")
   list(APPEND JUCER_PROJECT_WINDOWS_LIBS ${windows_libs})
@@ -4605,8 +4605,8 @@ function(_FRUT_set_compiler_and_linker_settings_APPLE target)
     endif()
   endif()
 
-  foreach(osx_lib IN LISTS JUCER_PROJECT_OSX_LIBS)
-    target_link_libraries(${target} PRIVATE "-l${osx_lib}")
+  foreach(xcode_lib IN LISTS JUCER_PROJECT_XCODE_LIBS)
+    target_link_libraries(${target} PRIVATE "-l${xcode_lib}")
   endforeach()
 
 endfunction()
