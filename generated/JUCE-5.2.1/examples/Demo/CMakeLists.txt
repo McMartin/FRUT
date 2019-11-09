@@ -263,6 +263,55 @@ jucer_export_target_configuration(
 )
 
 jucer_export_target(
+  "Xcode (iOS)"
+  EXTRA_COMPILER_FLAGS
+    "-pedantic"
+    "-Wall"
+    "-Wshadow"
+    "-Wno-missing-field-initializers"
+    "-Wshadow"
+    "-Wshorten-64-to-32"
+    "-Wstrict-aliasing"
+    "-Wuninitialized"
+    "-Wunused-parameter"
+    "-Wconversion"
+    "-Wsign-compare"
+    "-Wint-conversion"
+    "-Woverloaded-virtual"
+    "-Wreorder"
+    "-Wconstant-conversion"
+    "-Wsign-conversion"
+    "-Wextra-semi"
+  ICON_LARGE "Resources/juce_icon.png"
+  MICROPHONE_ACCESS ON
+  CUSTOM_PLIST "<plist>
+<dict>
+	<key>NSAppTransportSecurity</key>
+	<dict>
+		<key>NSAllowsArbitraryLoads</key>
+		<true/>
+	</dict>
+</dict>
+</plist>"
+)
+
+jucer_export_target_configuration(
+  "Xcode (iOS)"
+  NAME "Debug"
+  DEBUG_MODE ON
+  BINARY_NAME "JuceDemo"
+  # PREPROCESSOR_DEFINITIONS
+)
+
+jucer_export_target_configuration(
+  "Xcode (iOS)"
+  NAME "Release"
+  DEBUG_MODE OFF
+  BINARY_NAME "JuceDemo"
+  # PREPROCESSOR_DEFINITIONS
+)
+
+jucer_export_target(
   "Visual Studio 2013"
   EXTRA_COMPILER_FLAGS
     "/FC"

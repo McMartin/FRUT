@@ -57,8 +57,13 @@ set(AudioPluginHost_jucer_FILE
 )
 add_subdirectory("extras/AudioPluginHost")
 
-set(Projucer_jucer_FILE "${JUCE_ROOT}/extras/Projucer/Projucer.jucer")
-add_subdirectory("extras/Projucer")
+
+# All exporters but "Xcode (iOS)"
+
+if(NOT IOS)
+  set(Projucer_jucer_FILE "${JUCE_ROOT}/extras/Projucer/Projucer.jucer")
+  add_subdirectory("extras/Projucer")
+endif()
 
 
 # All exporters but "Visual Studio 2015"
@@ -71,14 +76,20 @@ if(NOT MSVC_VERSION EQUAL 1900)
 endif()
 
 
-# "Xcode (MacOSX)", "Visual Studio 2017" and "Linux Makefile" exporters
+# All exporters but "Visual Studio 2015" and "Visual Studio 2013"
 
-if(APPLE OR MSVC_VERSION GREATER 1909 OR CMAKE_HOST_SYSTEM_NAME STREQUAL "Linux")
+if(NOT MSVC_VERSION EQUAL 1900 AND NOT MSVC_VERSION EQUAL 1800)
   set(AudioPerformanceTest_jucer_FILE
     "${JUCE_ROOT}/extras/AudioPerformanceTest/AudioPerformanceTest.jucer"
   )
   add_subdirectory("extras/AudioPerformanceTest")
+endif()
 
+
+# "Xcode (MacOSX)", "Visual Studio 2017" and "Linux Makefile" exporters
+
+if((APPLE AND NOT IOS) OR MSVC_VERSION GREATER 1909
+    OR CMAKE_HOST_SYSTEM_NAME STREQUAL "Linux")
   set(BinaryBuilder_jucer_FILE "${JUCE_ROOT}/extras/BinaryBuilder/BinaryBuilder.jucer")
   add_subdirectory("extras/BinaryBuilder")
 

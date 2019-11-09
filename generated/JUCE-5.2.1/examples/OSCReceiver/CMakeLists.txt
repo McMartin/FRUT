@@ -180,4 +180,22 @@ jucer_export_target_configuration(
   BINARY_NAME "OSCReceiver"
 )
 
+jucer_export_target(
+  "Xcode (iOS)"
+)
+
+jucer_export_target_configuration(
+  "Xcode (iOS)"
+  NAME "Debug"
+  DEBUG_MODE ON
+  BINARY_NAME "OSCReceiver"
+)
+
+jucer_export_target_configuration(
+  "Xcode (iOS)"
+  NAME "Release"
+  DEBUG_MODE OFF
+  BINARY_NAME "OSCReceiver"
+)
+
 jucer_project_end()

@@ -168,6 +168,27 @@ jucer_export_target_configuration(
 )
 
 jucer_export_target(
+  "Xcode (iOS)"
+  IPHONE_SCREEN_ORIENTATION "Portrait and Landscape"
+)
+
+jucer_export_target_configuration(
+  "Xcode (iOS)"
+  NAME "Debug"
+  DEBUG_MODE ON
+  BINARY_NAME "BlocksMonitor"
+  OPTIMISATION "-O0 (no optimisation)"
+)
+
+jucer_export_target_configuration(
+  "Xcode (iOS)"
+  NAME "Release"
+  DEBUG_MODE OFF
+  BINARY_NAME "BlocksMonitor"
+  OPTIMISATION "-O3 (fastest with safe optimisations)"
+)
+
+jucer_export_target(
   "Visual Studio 2013"
 )
 

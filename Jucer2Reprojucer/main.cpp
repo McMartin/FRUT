@@ -1264,10 +1264,11 @@ int main(int argc, char* argv[])
   // jucer_export_target() and jucer_export_target_configuration()
   {
     const auto supportedExporters = juce::StringArray{
-      "XCODE_MAC",          "VS2019",          "VS2017", "VS2015", "VS2013", "LINUX_MAKE",
-      "CODEBLOCKS_WINDOWS", "CODEBLOCKS_LINUX"};
+      "XCODE_MAC",  "XCODE_IPHONE",       "VS2019",          "VS2017", "VS2015", "VS2013",
+      "LINUX_MAKE", "CODEBLOCKS_WINDOWS", "CODEBLOCKS_LINUX"};
     const auto exporterNames = std::map<juce::String, const char*>{
       {"XCODE_MAC", "Xcode (MacOSX)"},
+      {"XCODE_IPHONE", "Xcode (iOS)"},
       {"VS2019", "Visual Studio 2019"},
       {"VS2017", "Visual Studio 2017"},
       {"VS2015", "Visual Studio 2015"},
@@ -1294,7 +1295,10 @@ int main(int argc, char* argv[])
       wLn("jucer_export_target(");
       wLn("  \"", exporterName, "\"");
 
-      if (exporterType == "XCODE_MAC"
+      const auto isXcodeExporter =
+        exporterType == "XCODE_MAC" || exporterType == "XCODE_IPHONE";
+
+      if (isXcodeExporter
           && (exporter.hasProperty("prebuildCommand")
               || exporter.hasProperty("postbuildCommand")))
       {
@@ -1440,7 +1444,15 @@ int main(int argc, char* argv[])
       convertSettingIfDefined(exporter, "smallIcon", "ICON_SMALL", convertIcon);
       convertSettingIfDefined(exporter, "bigIcon", "ICON_LARGE", convertIcon);
 
-      if (exporterType == "XCODE_MAC")
+      if (exporterType == "XCODE_IPHONE")
+      {
+        convertSettingIfDefined(exporter, "customXcassetsFolder",
+                                "CUSTOM_XCASSETS_FOLDER", {});
+        convertSettingIfDefined(exporter, "customLaunchStoryboard",
+                                "CUSTOM_LAUNCH_STORYBOARD", {});
+      }
+
+      if (isXcodeExporter)
       {
         convertSettingAsListIfDefined(
           exporter, "customXcodeResourceFolders", "CUSTOM_XCODE_RESOURCE_FOLDERS",
@@ -1457,7 +1469,55 @@ int main(int argc, char* argv[])
                                        "ADD_DUPLICATE_RESOURCES_FOLDER_TO_APP_EXTENSION",
                                        {});
         }
+      }
 
+      if (exporterType == "XCODE_IPHONE")
+      {
+        convertSettingIfDefined(exporter, "iosDeviceFamily", "DEVICE_FAMILY",
+                                [](const juce::var& v) -> juce::String {
+                                  const auto value = v.toString();
+
+                                  if (value == "1")
+                                    return "iPhone";
+
+                                  if (value == "2")
+                                    return "iPad";
+
+                                  if (value == "1,2")
+                                    return "Universal";
+
+                                  return value;
+                                });
+
+        const auto screenOrientationFn = [](const juce::var& v) -> juce::String {
+          const auto value = v.toString();
+
+          if (value == "portraitlandscape")
+            return "Portrait and Landscape";
+
+          if (value == "portrait")
+            return "Portrait";
+
+          if (value == "landscape")
+            return "Landscape";
+
+          return value;
+        };
+        convertSettingIfDefined(exporter, "iosScreenOrientation",
+                                "IPHONE_SCREEN_ORIENTATION", screenOrientationFn);
+        convertSettingIfDefined(exporter, "iPadScreenOrientation",
+                                "IPAD_SCREEN_ORIENTATION", screenOrientationFn);
+
+        convertOnOffSettingIfDefined(exporter, "UIFileSharingEnabled",
+                                     "FILE_SHARING_ENABLED", {});
+        convertOnOffSettingIfDefined(exporter, "UISupportsDocumentBrowser",
+                                     "SUPPORT_DOCUMENT_BROWSER", {});
+        convertOnOffSettingIfDefined(exporter, "UIStatusBarHidden", "STATUS_BAR_HIDDEN",
+                                     {});
+      }
+
+      if (exporterType == "XCODE_MAC")
+      {
         if (projectType == "guiapp")
         {
           convertSettingAsListIfDefined(
@@ -1572,7 +1632,10 @@ int main(int argc, char* argv[])
                  {"com.apple.security.automation.apple-events", "Apple Events"}});
             });
         }
+      }
 
+      if (isXcodeExporter)
+      {
         convertOnOffSettingIfDefined(exporter, "microphonePermissionNeeded",
                                      "MICROPHONE_ACCESS", {});
         convertSettingIfDefined(exporter, "microphonePermissionsText",
@@ -1581,9 +1644,36 @@ int main(int argc, char* argv[])
                                      {});
         convertSettingIfDefined(exporter, "cameraPermissionText", "CAMERA_ACCESS_TEXT",
                                 {});
+      }
 
+      if (exporterType == "XCODE_IPHONE")
+      {
+        convertOnOffSettingIfDefined(exporter, "iosBluetoothPermissionNeeded",
+                                     "BLUETOOTH_ACCESS", {});
+        convertSettingIfDefined(exporter, "iosBluetoothPermissionText",
+                                "BLUETOOTH_ACCESS_TEXT", {});
+      }
+
+      if (isXcodeExporter)
+      {
         convertOnOffSettingIfDefined(exporter, "iosInAppPurchasesValue",
                                      "IN_APP_PURCHASES_CAPABILITY", {});
+      }
+
+      if (exporterType == "XCODE_IPHONE")
+      {
+        convertOnOffSettingIfDefined(exporter, "iosBackgroundAudio",
+                                     "AUDIO_BACKGROUND_CAPABILITY", {});
+        convertOnOffSettingIfDefined(exporter, "iosBackgroundBle",
+                                     "BLUETOOTH_MIDI_BACKGROUND_CAPABILITY", {});
+        convertOnOffSettingIfDefined(exporter, "iosAppGroups", "APP_GROUPS_CAPABILITY",
+                                     {});
+        convertOnOffSettingIfDefined(exporter, "iCloudPermissions", "ICLOUD_PERMISSIONS",
+                                     {});
+      }
+
+      if (isXcodeExporter)
+      {
         convertOnOffSettingIfDefined(exporter, "iosPushNotifications",
                                      "PUSH_NOTIFICATIONS_CAPABILITY", {});
         convertSettingIfDefined(exporter, "customPList", "CUSTOM_PLIST", {});
@@ -1613,6 +1703,20 @@ int main(int argc, char* argv[])
                                 "EXPORTER_BUNDLE_IDENTIFIER", {});
         convertSettingIfDefined(exporter, "iosDevelopmentTeamID", "DEVELOPMENT_TEAM_ID",
                                 {});
+      }
+
+      if (exporterType == "XCODE_IPHONE")
+      {
+        convertSettingAsListIfDefined(
+          exporter, "iosAppGroupsId", "APP_GROUP_ID", [](const juce::var& v) {
+            auto groups = juce::StringArray::fromTokens(v.toString(), ";", {});
+            groups.trim();
+            return groups;
+          });
+      }
+
+      if (isXcodeExporter)
+      {
         convertOnOffSettingIfDefined(exporter, "keepCustomXcodeSchemes",
                                      "KEEP_CUSTOM_XCODE_SCHEMES", {});
         convertOnOffSettingIfDefined(exporter, "useHeaderMap", "USE_HEADERMAP", {});
@@ -1853,7 +1957,7 @@ int main(int argc, char* argv[])
                                   return {};
                                 });
 
-        if (exporterType == "XCODE_MAC")
+        if (isXcodeExporter)
         {
           convertOnOffSettingIfDefined(configuration, "enablePluginBinaryCopyStep",
                                        "ENABLE_PLUGIN_COPY_STEP", {});
@@ -1906,7 +2010,16 @@ int main(int argc, char* argv[])
             convertSettingIfDefined(configuration, "vstBinaryLocation",
                                     "VST_LEGACY_BINARY_LOCATION", {});
           }
+        }
 
+        if (exporterType == "XCODE_IPHONE")
+        {
+          convertSettingIfDefined(configuration, "iosCompatibility",
+                                  "IOS_DEPLOYMENT_TARGET", {});
+        }
+
+        if (exporterType == "XCODE_MAC")
+        {
           const auto sdks = juce::StringArray{
             "10.5 SDK",  "10.6 SDK",  "10.7 SDK",  "10.8 SDK",  "10.9 SDK",
             "10.10 SDK", "10.11 SDK", "10.12 SDK", "10.13 SDK", "10.14 SDK",
@@ -1960,7 +2073,10 @@ int main(int argc, char* argv[])
 
                                     return {};
                                   });
+        }
 
+        if (isXcodeExporter)
+        {
           convertSettingAsListIfDefined(configuration, "customXcodeFlags",
                                         "CUSTOM_XCODE_FLAGS", [](const juce::var& v) {
                                           return juce::StringArray::fromTokens(

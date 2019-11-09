@@ -178,6 +178,32 @@ jucer_project_module(
 )
 
 jucer_export_target(
+  "Xcode (iOS)"
+  IPHONE_SCREEN_ORIENTATION "Portrait and Landscape"
+  # DEVELOPMENT_TEAM_ID
+)
+
+jucer_export_target_configuration(
+  "Xcode (iOS)"
+  NAME "Debug"
+  DEBUG_MODE ON
+  BINARY_NAME "AUv3Synth"
+  OPTIMISATION "-O0 (no optimisation)"
+  IOS_DEPLOYMENT_TARGET "default"
+  # CODE_SIGNING_IDENTITY
+)
+
+jucer_export_target_configuration(
+  "Xcode (iOS)"
+  NAME "Release"
+  DEBUG_MODE OFF
+  BINARY_NAME "AUv3Synth"
+  OPTIMISATION "-O3 (fastest with safe optimisations)"
+  IOS_DEPLOYMENT_TARGET "default"
+  # CODE_SIGNING_IDENTITY
+)
+
+jucer_export_target(
   "Xcode (MacOSX)"
   # VST3_SDK_FOLDER
   # DEVELOPMENT_TEAM_ID

@@ -176,4 +176,40 @@ jucer_project_module(
   # JUCE_ENABLE_LIVE_CONSTANT_EDITOR
 )
 
+jucer_export_target(
+  "Xcode (iOS)"
+  EXTRA_COMPILER_FLAGS
+    "-Wall"
+    "-Wshadow"
+    "-Wno-missing-field-initializers"
+    "-Wshadow"
+    "-Wshorten-64-to-32"
+    "-Wstrict-aliasing"
+    "-Wuninitialized"
+    "-Wunused-parameter"
+    "-Wconversion"
+    "-Wsign-compare"
+    "-Wint-conversion"
+    "-Woverloaded-virtual"
+    "-Wreorder"
+    "-Wconstant-conversion"
+    "-Wsign-conversion"
+  MICROPHONE_ACCESS ON
+  AUDIO_BACKGROUND_CAPABILITY ON
+)
+
+jucer_export_target_configuration(
+  "Xcode (iOS)"
+  NAME "Debug"
+  DEBUG_MODE ON
+  BINARY_NAME "InterAppAudioEffect"
+)
+
+jucer_export_target_configuration(
+  "Xcode (iOS)"
+  NAME "Release"
+  DEBUG_MODE OFF
+  BINARY_NAME "InterAppAudioEffect"
+)
+
 jucer_project_end()

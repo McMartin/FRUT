@@ -14,11 +14,13 @@ FRUT is easy, and you don't need to be a CMake expert to use it!
 
 - *Requirements*
 
-  - CMake (3.4 minimum)
+  - CMake (3.4 minimum, or `higher depending on the target platform
+    <#supported-projucer-exporters>`__)
   - JUCE (4.2.0 minimum)
 
 - *Supported platforms*
 
+  - iOS
   - Linux
   - macOS
   - Windows (MSVC and MinGW)
@@ -92,25 +94,23 @@ Supported Projucer exporters
 
   <table>
   <thead>
-    <tr><th>Supported</th><th>Exporter</th><th>Missing features</th></tr>
+    <tr><th>Supported</th><th>Exporter</th><th>CMake requirements and options</th><th>Missing features</th></tr>
   </thead>
   <tbody>
-    <tr><td align="center">✔️</td><td>Xcode (MacOSX)</td><td>
+    <tr><td align="center">✔️</td><td>Xcode (MacOSX)</td><td></td><td rowspan="2">
       <a href="https://github.com/McMartin/FRUT/labels/exporter%3A%20Xcode">3 unsupported Xcode exporter settings</a>
     </td></tr>
-    <tr><td align="center">❌</td><td>Xcode (iOS)</td><td>
-      <a href="https://github.com/McMartin/FRUT/labels/exporter%3A%20Xcode">3 unsupported Xcode exporter settings</a>
-    </td></tr>
-    <tr><td align="center">✔️</td><td>Visual Studio 2019</td><td rowspan="4">
+    <tr><td align="center">✔️</td><td>Xcode (iOS)</td><td>version 3.14 minimum<br/><pre>-G Xcode -DCMAKE_SYSTEM_NAME=iOS</pre></td></tr>
+    <tr><td align="center">✔️</td><td>Visual Studio 2019</td><td>version 3.14 minimum</td><td rowspan="4">
       <a href="https://github.com/McMartin/FRUT/labels/exporter%3A%20Visual%20Studio">1 unsupported Visual Studio exporter setting</a>
     </td></tr>
-    <tr><td align="center">✔️</td><td>Visual Studio 2017</td></tr>
-    <tr><td align="center">✔️</td><td>Visual Studio 2015</td></tr>
-    <tr><td align="center">✔️</td><td>Visual Studio 2013</td></tr>
-    <tr><td align="center">✔️</td><td>Linux Makefile</td><td></td></tr>
-    <tr><td align="center">❌</td><td>Android</td><td></td></tr>
-    <tr><td align="center">✔️</td><td>Code::Blocks (Windows)</td><td></td></tr>
-    <tr><td align="center">✔️</td><td>Code::Blocks (Linux)</td><td></td></tr>
+    <tr><td align="center">✔️</td><td>Visual Studio 2017</td><td>version 3.7 minimum<br/>(3.13.3 when VS&nbsp;2019 is installed)</td></tr>
+    <tr><td align="center">✔️</td><td>Visual Studio 2015</td><td></td></tr>
+    <tr><td align="center">✔️</td><td>Visual Studio 2013</td><td></td></tr>
+    <tr><td align="center">✔️</td><td>Linux Makefile</td><td></td><td></td></tr>
+    <tr><td align="center">❌</td><td>Android</td><td></td><td></td></tr>
+    <tr><td align="center">✔️</td><td>Code::Blocks&nbsp;(Windows)</td><td></td><td></td></tr>
+    <tr><td align="center">✔️</td><td>Code::Blocks&nbsp;(Linux)</td><td></td><td></td></tr>
   </tbody>
   </table>
 

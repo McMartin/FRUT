@@ -171,4 +171,43 @@ jucer_project_module(
   # JUCE_ENABLE_LIVE_CONSTANT_EDITOR
 )
 
+jucer_export_target(
+  "Xcode (iOS)"
+  EXTRA_COMPILER_FLAGS
+    "-Wall"
+    "-Wshadow"
+    "-Wno-missing-field-initializers"
+    "-Wshadow"
+    "-Wshorten-64-to-32"
+    "-Wstrict-aliasing"
+    "-Wuninitialized"
+    "-Wunused-parameter"
+    "-Wconversion"
+    "-Wsign-compare"
+    "-Wint-conversion"
+    "-Woverloaded-virtual"
+    "-Wreorder"
+    "-Wconstant-conversion"
+    "-Wsign-conversion"
+  IPHONE_SCREEN_ORIENTATION "Portrait and Landscape"
+  MICROPHONE_ACCESS ON
+  AUDIO_BACKGROUND_CAPABILITY ON
+)
+
+jucer_export_target_configuration(
+  "Xcode (iOS)"
+  NAME "Debug"
+  DEBUG_MODE ON
+  BINARY_NAME "InterAppAudioEffect"
+  OPTIMISATION "-O0 (no optimisation)"
+)
+
+jucer_export_target_configuration(
+  "Xcode (iOS)"
+  NAME "Release"
+  DEBUG_MODE OFF
+  BINARY_NAME "InterAppAudioEffect"
+  OPTIMISATION "-O3 (fastest with safe optimisations)"
+)
+
 jucer_project_end()

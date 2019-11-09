@@ -262,4 +262,27 @@ jucer_export_target_configuration(
     "/usr/X11R6/lib/"
 )
 
+jucer_export_target(
+  "Xcode (iOS)"
+  IPHONE_SCREEN_ORIENTATION "Landscape"
+  IPAD_SCREEN_ORIENTATION "Landscape"
+  MICROPHONE_ACCESS ON
+  AUDIO_BACKGROUND_CAPABILITY ON
+  BLUETOOTH_MIDI_BACKGROUND_CAPABILITY ON
+)
+
+jucer_export_target_configuration(
+  "Xcode (iOS)"
+  NAME "Debug"
+  DEBUG_MODE ON
+  BINARY_NAME "JuceDemoPlugin"
+)
+
+jucer_export_target_configuration(
+  "Xcode (iOS)"
+  NAME "Release"
+  DEBUG_MODE OFF
+  BINARY_NAME "JuceDemoPlugin"
+)
+
 jucer_project_end()

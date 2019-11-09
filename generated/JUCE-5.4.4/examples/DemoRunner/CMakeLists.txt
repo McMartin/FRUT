@@ -266,6 +266,31 @@ jucer_export_target_configuration(
 )
 
 jucer_export_target(
+  "Xcode (iOS)"
+  ICON_SMALL "Source/JUCEAppIcon.png"
+  ICON_LARGE "Source/JUCEAppIcon.png"
+  CUSTOM_XCODE_RESOURCE_FOLDERS
+    "../Assets"
+  FILE_SHARING_ENABLED ON
+  SUPPORT_DOCUMENT_BROWSER ON
+  MICROPHONE_ACCESS ON
+  CAMERA_ACCESS ON
+  ICLOUD_PERMISSIONS ON
+)
+
+jucer_export_target_configuration(
+  "Xcode (iOS)"
+  NAME "Debug"
+  DEBUG_MODE ON
+)
+
+jucer_export_target_configuration(
+  "Xcode (iOS)"
+  NAME "Release"
+  DEBUG_MODE OFF
+)
+
+jucer_export_target(
   "Visual Studio 2015"
   EXTRA_COMPILER_FLAGS
     "/w44265"

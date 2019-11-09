@@ -287,6 +287,53 @@ jucer_export_target_configuration(
 )
 
 jucer_export_target(
+  "Xcode (iOS)"
+  EXTRA_COMPILER_FLAGS
+    "-Wall"
+    "-Wshadow"
+    "-Wno-missing-field-initializers"
+    "-Wshadow"
+    "-Wshorten-64-to-32"
+    "-Wstrict-aliasing"
+    "-Wuninitialized"
+    "-Wunused-parameter"
+    "-Wconversion"
+    "-Wsign-compare"
+    "-Wint-conversion"
+    "-Wconditional-uninitialized"
+    "-Woverloaded-virtual"
+    "-Wreorder"
+    "-Wconstant-conversion"
+    "-Wsign-conversion"
+    "-Wunused-private-field"
+    "-Wbool-conversion"
+    "-Wextra-semi"
+    "-Wno-ignored-qualifiers"
+    "-Wunreachable-code"
+  ICON_SMALL "Source/JUCEAppIcon.png"
+  ICON_LARGE "Source/JUCEAppIcon.png"
+  CUSTOM_XCODE_RESOURCE_FOLDERS
+    "../Assets"
+  FILE_SHARING_ENABLED ON
+  SUPPORT_DOCUMENT_BROWSER ON
+  MICROPHONE_ACCESS ON
+  CAMERA_ACCESS ON
+  ICLOUD_PERMISSIONS ON
+)
+
+jucer_export_target_configuration(
+  "Xcode (iOS)"
+  NAME "Debug"
+  DEBUG_MODE ON
+)
+
+jucer_export_target_configuration(
+  "Xcode (iOS)"
+  NAME "Release"
+  DEBUG_MODE OFF
+)
+
+jucer_export_target(
   "Visual Studio 2013"
   ICON_SMALL "Source/JUCEAppIcon.png"
   ICON_LARGE "Source/JUCEAppIcon.png"

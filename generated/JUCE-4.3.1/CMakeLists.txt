@@ -70,21 +70,21 @@ add_subdirectory("examples/BLOCKS/BlocksSynth")
 set(JuceDemo_jucer_FILE "${JUCE_ROOT}/examples/Demo/JuceDemo.jucer")
 add_subdirectory("examples/Demo")
 
-set(Plugin_Host_jucer_FILE "${JUCE_ROOT}/examples/audio plugin host/Plugin Host.jucer")
-add_subdirectory("examples/audio plugin host")
 
-set(Projucer_jucer_FILE "${JUCE_ROOT}/extras/Projucer/Projucer.jucer")
-add_subdirectory("extras/Projucer")
+# All exporters but "Xcode (iOS)"
+
+if(NOT IOS)
+  set(Plugin_Host_jucer_FILE "${JUCE_ROOT}/examples/audio plugin host/Plugin Host.jucer")
+  add_subdirectory("examples/audio plugin host")
+
+  set(Projucer_jucer_FILE "${JUCE_ROOT}/extras/Projucer/Projucer.jucer")
+  add_subdirectory("extras/Projucer")
+endif()
 
 
 # All exporters but "Visual Studio 2015"
 
 if(NOT MSVC_VERSION EQUAL 1900)
-  set(BouncingBallWavetableDemo_jucer_FILE
-    "${JUCE_ROOT}/examples/BouncingBallWavetableDemo/BouncingBallWavetableDemo.jucer"
-  )
-  add_subdirectory("examples/BouncingBallWavetableDemo")
-
   set(NetworkGraphicsDemo_jucer_FILE
     "${JUCE_ROOT}/examples/NetworkGraphicsDemo/NetworkGraphicsDemo.jucer"
   )
@@ -98,20 +98,40 @@ if(NOT MSVC_VERSION EQUAL 1800)
   set(HelloWorld_jucer_FILE "${JUCE_ROOT}/examples/HelloWorld/HelloWorld.jucer")
   add_subdirectory("examples/HelloWorld")
 
-  set(MPETest_jucer_FILE "${JUCE_ROOT}/examples/MPETest/MPETest.jucer")
-  add_subdirectory("examples/MPETest")
-
   set(MidiTest_jucer_FILE "${JUCE_ROOT}/examples/MidiTest/MidiTest.jucer")
   add_subdirectory("examples/MidiTest")
-
-  set(OSCMonitor_jucer_FILE "${JUCE_ROOT}/examples/OSCMonitor/OSCMonitor.jucer")
-  add_subdirectory("examples/OSCMonitor")
 
   set(OSCReceiver_jucer_FILE "${JUCE_ROOT}/examples/OSCReceiver/OSCReceiver.jucer")
   add_subdirectory("examples/OSCReceiver")
 
   set(OSCSender_jucer_FILE "${JUCE_ROOT}/examples/OSCSender/OSCSender.jucer")
   add_subdirectory("examples/OSCSender")
+
+  set(AudioPerformanceTest_jucer_FILE
+    "${JUCE_ROOT}/extras/AudioPerformanceTest/AudioPerformanceTest.jucer"
+  )
+  add_subdirectory("extras/AudioPerformanceTest")
+endif()
+
+
+# All exporters but "Xcode (iOS)" and "Visual Studio 2015"
+
+if(NOT IOS AND NOT MSVC_VERSION EQUAL 1900)
+  set(BouncingBallWavetableDemo_jucer_FILE
+    "${JUCE_ROOT}/examples/BouncingBallWavetableDemo/BouncingBallWavetableDemo.jucer"
+  )
+  add_subdirectory("examples/BouncingBallWavetableDemo")
+endif()
+
+
+# All exporters but "Xcode (iOS)" and "Visual Studio 2013"
+
+if(NOT IOS AND NOT MSVC_VERSION EQUAL 1800)
+  set(MPETest_jucer_FILE "${JUCE_ROOT}/examples/MPETest/MPETest.jucer")
+  add_subdirectory("examples/MPETest")
+
+  set(OSCMonitor_jucer_FILE "${JUCE_ROOT}/examples/OSCMonitor/OSCMonitor.jucer")
+  add_subdirectory("examples/OSCMonitor")
 
   set(Surround_jucer_FILE "${JUCE_ROOT}/examples/PlugInSamples/Surround/Surround.jucer")
   add_subdirectory("examples/PlugInSamples/Surround")
@@ -121,19 +141,37 @@ if(NOT MSVC_VERSION EQUAL 1800)
   )
   add_subdirectory("examples/audio plugin demo")
 
-  set(AudioPerformanceTest_jucer_FILE
-    "${JUCE_ROOT}/extras/AudioPerformanceTest/AudioPerformanceTest.jucer"
-  )
-  add_subdirectory("extras/AudioPerformanceTest")
-
   set(UnitTestRunner_jucer_FILE "${JUCE_ROOT}/extras/UnitTestRunner/UnitTestRunner.jucer")
   add_subdirectory("extras/UnitTestRunner")
 endif()
 
 
+# "Xcode (MacOSX)" and "Xcode (iOS)" exporters
+
+if(APPLE)
+  set(AUv3Synth_jucer_FILE "${JUCE_ROOT}/examples/AUv3Synth/AUv3Synth.jucer")
+  add_subdirectory("examples/AUv3Synth")
+
+  set(AnimationAppExample_jucer_FILE
+    "${JUCE_ROOT}/examples/AnimationAppExample/AnimationAppExample.jucer"
+  )
+  add_subdirectory("examples/AnimationAppExample")
+
+  set(AudioAppExample_jucer_FILE
+    "${JUCE_ROOT}/examples/AudioAppExample/AudioAppExample.jucer"
+  )
+  add_subdirectory("examples/AudioAppExample")
+
+  set(OpenGLAppExample_jucer_FILE
+    "${JUCE_ROOT}/examples/OpenGLAppExample/OpenGLAppExample.jucer"
+  )
+  add_subdirectory("examples/OpenGLAppExample")
+endif()
+
+
 # "Xcode (MacOSX)" and "Visual Studio 2015" exporters
 
-if(APPLE OR MSVC_VERSION EQUAL 1900)
+if((APPLE AND NOT IOS) OR MSVC_VERSION EQUAL 1900)
   set(Arpeggiator_jucer_FILE
     "${JUCE_ROOT}/examples/PlugInSamples/Arpeggiator/Arpeggiator.jucer"
   )
@@ -158,7 +196,7 @@ endif()
 
 # "Xcode (MacOSX)" and "Visual Studio 2013" exporters
 
-if(APPLE OR MSVC_VERSION EQUAL 1800)
+if((APPLE AND NOT IOS) OR MSVC_VERSION EQUAL 1800)
   set(PluckedStringsDemo_jucer_FILE
     "${JUCE_ROOT}/examples/PluckedStringsDemo/PluckedStringsDemo.jucer"
   )
@@ -173,7 +211,7 @@ endif()
 
 # "Xcode (MacOSX)" and "Linux Makefile" exporters
 
-if(APPLE OR CMAKE_HOST_SYSTEM_NAME STREQUAL "Linux")
+if((APPLE AND NOT IOS) OR CMAKE_HOST_SYSTEM_NAME STREQUAL "Linux")
   set(BinaryBuilder_jucer_FILE "${JUCE_ROOT}/extras/binarybuilder/BinaryBuilder.jucer")
   add_subdirectory("extras/binarybuilder")
 endif()
@@ -181,29 +219,11 @@ endif()
 
 # "Xcode (MacOSX)" exporter only
 
-if(APPLE)
-  set(AUv3Synth_jucer_FILE "${JUCE_ROOT}/examples/AUv3Synth/AUv3Synth.jucer")
-  add_subdirectory("examples/AUv3Synth")
-
-  set(AnimationAppExample_jucer_FILE
-    "${JUCE_ROOT}/examples/AnimationAppExample/AnimationAppExample.jucer"
-  )
-  add_subdirectory("examples/AnimationAppExample")
-
-  set(AudioAppExample_jucer_FILE
-    "${JUCE_ROOT}/examples/AudioAppExample/AudioAppExample.jucer"
-  )
-  add_subdirectory("examples/AudioAppExample")
-
+if(APPLE AND NOT IOS)
   set(ComponentTutorialExample_jucer_FILE
     "${JUCE_ROOT}/examples/ComponentTutorialExample/ComponentTutorialExample.jucer"
   )
   add_subdirectory("examples/ComponentTutorialExample")
-
-  set(OpenGLAppExample_jucer_FILE
-    "${JUCE_ROOT}/examples/OpenGLAppExample/OpenGLAppExample.jucer"
-  )
-  add_subdirectory("examples/OpenGLAppExample")
 endif()
 
 

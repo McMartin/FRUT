@@ -16,7 +16,19 @@
 # along with FRUT.  If not, see <http://www.gnu.org/licenses/>.
 
 if(CMAKE_VERSION VERSION_LESS 3.4)
-  message(FATAL_ERROR "Reprojucer requires at least CMake version 3.4")
+  message(FATAL_ERROR "Reprojucer.cmake requires at least CMake version 3.4")
+endif()
+
+if(CMAKE_SYSTEM_NAME STREQUAL "iOS" AND CMAKE_VERSION VERSION_LESS 3.14)
+  message(FATAL_ERROR
+    "Reprojucer.cmake requires at least CMake version 3.14 for iOS support"
+  )
+endif()
+
+if(IOS AND NOT CMAKE_GENERATOR STREQUAL "Xcode")
+  message(FATAL_ERROR "Reprojucer.cmake only supports iOS when using the Xcode generator."
+    " You must call `cmake -G Xcode`."
+  )
 endif()
 
 
@@ -25,6 +37,7 @@ set(Reprojucer_templates_DIR "${Reprojucer.cmake_DIR}/templates")
 
 set(Reprojucer_supported_exporters
   "Xcode (MacOSX)"
+  "Xcode (iOS)"
   "Visual Studio 2019"
   "Visual Studio 2017"
   "Visual Studio 2015"
@@ -34,7 +47,8 @@ set(Reprojucer_supported_exporters
   "Code::Blocks (Linux)"
 )
 set(Reprojucer_supported_exporters_conditions
-  "APPLE"
+  "APPLE\;AND\;NOT\;IOS"
+  "IOS"
   "MSVC_VERSION\;GREATER\;1919"
   "MSVC_VERSION\;GREATER\;1909\;AND\;MSVC_VERSION\;LESS\;1920"
   "MSVC_VERSION\;EQUAL\;1900"
@@ -472,12 +486,12 @@ function(jucer_project_module module_name PATH_KEYWORD modules_folder)
   foreach(src_file IN LISTS module_src_files)
     unset(to_compile)
 
-    if(  (src_file MATCHES "_AU[._]"   AND NOT (JUCER_BUILD_AUDIOUNIT    AND APPLE))
+    if(  (src_file MATCHES "_AU[._]"   AND NOT (JUCER_BUILD_AUDIOUNIT    AND (APPLE AND NOT IOS)))
       OR (src_file MATCHES "_AUv3[._]" AND NOT (JUCER_BUILD_AUDIOUNIT_V3 AND APPLE))
-      OR (src_file MATCHES "_AAX[._]"  AND NOT (JUCER_BUILD_AAX          AND (APPLE OR MSVC)))
-      OR (src_file MATCHES "_RTAS[._]" AND NOT (JUCER_BUILD_RTAS         AND (APPLE OR MSVC)))
-      OR (src_file MATCHES "_VST2[._]" AND NOT (JUCER_BUILD_VST          AND TRUE))
-      OR (src_file MATCHES "_VST3[._]" AND NOT (JUCER_BUILD_VST3         AND (APPLE OR MSVC)))
+      OR (src_file MATCHES "_AAX[._]"  AND NOT (JUCER_BUILD_AAX          AND ((APPLE AND NOT IOS) OR MSVC)))
+      OR (src_file MATCHES "_RTAS[._]" AND NOT (JUCER_BUILD_RTAS         AND ((APPLE AND NOT IOS) OR MSVC)))
+      OR (src_file MATCHES "_VST2[._]" AND NOT (JUCER_BUILD_VST          AND NOT IOS))
+      OR (src_file MATCHES "_VST3[._]" AND NOT (JUCER_BUILD_VST3         AND ((APPLE AND NOT IOS) OR MSVC)))
     )
       set(to_compile FALSE)
     endif()
@@ -546,10 +560,12 @@ function(jucer_project_module module_name PATH_KEYWORD modules_folder)
   unset(module_info_version)
   set(module_info_searchpaths "")
   set(module_info_OSXFrameworks "")
+  set(module_info_iOSFrameworks "")
   set(module_info_linuxPackages "")
   set(module_info_linuxLibs "")
   set(module_info_mingwLibs "")
   set(module_info_OSXLibs "")
+  set(module_info_iOSLibs "")
   set(module_info_windowsLibs "")
   unset(module_info_minimumCppStandard)
 
@@ -589,9 +605,13 @@ function(jucer_project_module module_name PATH_KEYWORD modules_folder)
     "${JUCER_PROJECT_MODULES_INTERNAL_SEARCH_PATHS}" PARENT_SCOPE
   )
 
-  string(REGEX REPLACE "[ ,]+" ";" osx_frameworks "${module_info_OSXFrameworks}")
-  list(APPEND JUCER_PROJECT_OSX_FRAMEWORKS ${osx_frameworks})
-  set(JUCER_PROJECT_OSX_FRAMEWORKS "${JUCER_PROJECT_OSX_FRAMEWORKS}" PARENT_SCOPE)
+  if(IOS)
+    string(REGEX REPLACE "[ ,]+" ";" xcode_frameworks "${module_info_iOSFrameworks}")
+  else()
+    string(REGEX REPLACE "[ ,]+" ";" xcode_frameworks "${module_info_OSXFrameworks}")
+  endif()
+  list(APPEND JUCER_PROJECT_XCODE_FRAMEWORKS ${xcode_frameworks})
+  set(JUCER_PROJECT_XCODE_FRAMEWORKS "${JUCER_PROJECT_XCODE_FRAMEWORKS}" PARENT_SCOPE)
 
   string(REGEX REPLACE "[ ,]+" ";" linux_packages "${module_info_linuxPackages}")
   list(APPEND JUCER_PROJECT_LINUX_PACKAGES ${linux_packages})
@@ -605,9 +625,13 @@ function(jucer_project_module module_name PATH_KEYWORD modules_folder)
   list(APPEND JUCER_PROJECT_MINGW_LIBS ${mingw_libs})
   set(JUCER_PROJECT_MINGW_LIBS "${JUCER_PROJECT_MINGW_LIBS}" PARENT_SCOPE)
 
-  string(REGEX REPLACE "[ ,]+" ";" osx_libs "${module_info_OSXLibs}")
-  list(APPEND JUCER_PROJECT_OSX_LIBS ${osx_libs})
-  set(JUCER_PROJECT_OSX_LIBS "${JUCER_PROJECT_OSX_LIBS}" PARENT_SCOPE)
+  if(IOS)
+    string(REGEX REPLACE "[ ,]+" ";" xcode_libs "${module_info_iOSLibs}")
+  else()
+    string(REGEX REPLACE "[ ,]+" ";" xcode_libs "${module_info_OSXLibs}")
+  endif()
+  list(APPEND JUCER_PROJECT_XCODE_LIBS ${xcode_libs})
+  set(JUCER_PROJECT_XCODE_LIBS "${JUCER_PROJECT_XCODE_LIBS}" PARENT_SCOPE)
 
   string(REGEX REPLACE "[ ,]+" ";" windows_libs "${module_info_windowsLibs}")
   list(APPEND JUCER_PROJECT_WINDOWS_LIBS ${windows_libs})
@@ -657,6 +681,8 @@ function(jucer_project_module module_name PATH_KEYWORD modules_folder)
     set(module_lib_dir "${module_dir}/libs/Linux")
   elseif(WIN32 AND NOT MSVC)
     set(module_lib_dir "${module_dir}/libs/MinGW")
+  elseif(IOS)
+    set(module_lib_dir "${module_dir}/libs/iOS")
   elseif(APPLE)
     set(module_lib_dir "${module_dir}/libs/MacOSX")
   elseif(MSVC)
@@ -709,13 +735,7 @@ function(jucer_export_target exporter)
     return()
   endif()
 
-  set(single_value_keywords
-    "TARGET_PROJECT_FOLDER"
-    "VST_LEGACY_SDK_FOLDER"
-    "VST_SDK_FOLDER"
-    "ICON_SMALL"
-    "ICON_LARGE"
-  )
+  set(single_value_keywords "TARGET_PROJECT_FOLDER" "ICON_SMALL" "ICON_LARGE")
   set(multi_value_keywords
     "EXTRA_PREPROCESSOR_DEFINITIONS"
     "EXTRA_COMPILER_FLAGS"
@@ -723,15 +743,8 @@ function(jucer_export_target exporter)
     "EXTERNAL_LIBRARIES_TO_LINK"
   )
 
-  if(exporter STREQUAL "Xcode (MacOSX)")
+  if(exporter STREQUAL "Xcode (MacOSX)" OR exporter STREQUAL "Xcode (iOS)")
     list(APPEND single_value_keywords
-      "VST3_SDK_FOLDER"
-      "AAX_SDK_FOLDER"
-      "RTAS_SDK_FOLDER"
-      "USE_APP_SANDBOX"
-      "APP_SANDBOX_OPTIONS"
-      "USE_HARDENED_RUNTIME"
-      "HARDENED_RUNTIME_OPTIONS"
       "MICROPHONE_ACCESS"
       "MICROPHONE_ACCESS_TEXT"
       "CAMERA_ACCESS"
@@ -761,10 +774,44 @@ function(jucer_export_target exporter)
     if(JUCER_PROJECT_TYPE STREQUAL "Audio Plug-in")
       list(APPEND single_value_keywords "ADD_DUPLICATE_RESOURCES_FOLDER_TO_APP_EXTENSION")
     endif()
+  endif()
+
+  if(exporter STREQUAL "Xcode (MacOSX)")
+    list(APPEND single_value_keywords
+      "VST3_SDK_FOLDER"
+      "AAX_SDK_FOLDER"
+      "RTAS_SDK_FOLDER"
+      "USE_APP_SANDBOX"
+      "APP_SANDBOX_OPTIONS"
+      "USE_HARDENED_RUNTIME"
+      "HARDENED_RUNTIME_OPTIONS"
+    )
 
     if(JUCER_PROJECT_TYPE STREQUAL "GUI Application")
       list(APPEND multi_value_keywords "DOCUMENT_FILE_EXTENSIONS")
     endif()
+  endif()
+
+  if(exporter STREQUAL "Xcode (iOS)")
+    list(APPEND single_value_keywords
+      "CUSTOM_XCASSETS_FOLDER"
+      "CUSTOM_LAUNCH_STORYBOARD"
+      "DEVICE_FAMILY"
+      "IPHONE_SCREEN_ORIENTATION"
+      "IPAD_SCREEN_ORIENTATION"
+      "FILE_SHARING_ENABLED"
+      "SUPPORT_DOCUMENT_BROWSER"
+      "STATUS_BAR_HIDDEN"
+      "BLUETOOTH_ACCESS"
+      "BLUETOOTH_ACCESS_TEXT"
+      "AUDIO_BACKGROUND_CAPABILITY"
+      "BLUETOOTH_MIDI_BACKGROUND_CAPABILITY"
+      "APP_GROUPS_CAPABILITY"
+      "ICLOUD_PERMISSIONS"
+    )
+    list(APPEND multi_value_keywords "APP_GROUP_ID")
+  else()
+    list(APPEND single_value_keywords "VST_LEGACY_SDK_FOLDER" "VST_SDK_FOLDER")
   endif()
 
   if(exporter MATCHES "^Visual Studio 201(9|7|5|3)$")
@@ -888,6 +935,18 @@ function(jucer_export_target exporter)
     endif()
   endif()
 
+  if(DEFINED _CUSTOM_XCASSETS_FOLDER)
+    set(JUCER_CUSTOM_XCASSETS_FOLDER "${_CUSTOM_XCASSETS_FOLDER}" PARENT_SCOPE)
+  endif()
+
+  if(DEFINED _CUSTOM_LAUNCH_STORYBOARD)
+    _FRUT_abs_path_based_on_jucer_project_dir(storyboard "${_CUSTOM_LAUNCH_STORYBOARD}")
+    if(NOT EXISTS "${storyboard}")
+      message(FATAL_ERROR "No such file (CUSTOM_LAUNCH_STORYBOARD): ${storyboard}")
+    endif()
+    set(JUCER_CUSTOM_LAUNCH_STORYBOARD "${storyboard}" PARENT_SCOPE)
+  endif()
+
   if(DEFINED _CUSTOM_XCODE_RESOURCE_FOLDERS)
     set(resource_folders "")
     foreach(folder IN LISTS _CUSTOM_XCODE_RESOURCE_FOLDERS)
@@ -906,6 +965,58 @@ function(jucer_export_target exporter)
     set(JUCER_ADD_DUPLICATE_RESOURCES_FOLDER_TO_APP_EXTENSION
       "${_ADD_DUPLICATE_RESOURCES_FOLDER_TO_APP_EXTENSION}" PARENT_SCOPE
     )
+  endif()
+
+  if(DEFINED _DEVICE_FAMILY)
+    if(_DEVICE_FAMILY STREQUAL "iPhone")
+      set(JUCER_DEVICE_FAMILY "1" PARENT_SCOPE)
+    elseif(_DEVICE_FAMILY STREQUAL "iPad")
+      set(JUCER_DEVICE_FAMILY "2" PARENT_SCOPE)
+    elseif(_DEVICE_FAMILY STREQUAL "Universal")
+      set(JUCER_DEVICE_FAMILY "1,2" PARENT_SCOPE)
+    else()
+      message(FATAL_ERROR "Unsupported value for DEVICE_FAMILY: \"${_DEVICE_FAMILY}\"")
+    endif()
+  endif()
+
+  if(DEFINED _IPHONE_SCREEN_ORIENTATION)
+    set(screen_orientation "${_IPHONE_SCREEN_ORIENTATION}")
+    if(screen_orientation STREQUAL "Portrait and Landscape")
+      set(JUCER_IPHONE_SCREEN_ORIENTATION "portraitlandscape" PARENT_SCOPE)
+    elseif(screen_orientation STREQUAL "Portrait")
+      set(JUCER_IPHONE_SCREEN_ORIENTATION "portrait" PARENT_SCOPE)
+    elseif(screen_orientation STREQUAL "Landscape")
+      set(JUCER_IPHONE_SCREEN_ORIENTATION "landscape" PARENT_SCOPE)
+    else()
+      message(FATAL_ERROR
+        "Unsupported value for IPHONE_SCREEN_ORIENTATION: \"${screen_orientation}\"")
+    endif()
+  endif()
+
+  if(DEFINED _IPAD_SCREEN_ORIENTATION)
+    set(screen_orientation "${_IPAD_SCREEN_ORIENTATION}")
+    if(screen_orientation STREQUAL "Portrait and Landscape")
+      set(JUCER_IPAD_SCREEN_ORIENTATION "portraitlandscape" PARENT_SCOPE)
+    elseif(screen_orientation STREQUAL "Portrait")
+      set(JUCER_IPAD_SCREEN_ORIENTATION "portrait" PARENT_SCOPE)
+    elseif(screen_orientation STREQUAL "Landscape")
+      set(JUCER_IPAD_SCREEN_ORIENTATION "landscape" PARENT_SCOPE)
+    else()
+      message(FATAL_ERROR
+        "Unsupported value for IPAD_SCREEN_ORIENTATION: \"${screen_orientation}\"")
+    endif()
+  endif()
+
+  if(DEFINED _FILE_SHARING_ENABLED)
+    set(JUCER_FILE_SHARING_ENABLED "${_FILE_SHARING_ENABLED}" PARENT_SCOPE)
+  endif()
+
+  if(DEFINED _SUPPORT_DOCUMENT_BROWSER)
+    set(JUCER_SUPPORT_DOCUMENT_BROWSER "${_SUPPORT_DOCUMENT_BROWSER}" PARENT_SCOPE)
+  endif()
+
+  if(DEFINED _STATUS_BAR_HIDDEN)
+    set(JUCER_STATUS_BAR_HIDDEN "${_STATUS_BAR_HIDDEN}" PARENT_SCOPE)
   endif()
 
   if(DEFINED _DOCUMENT_FILE_EXTENSIONS)
@@ -1070,6 +1181,14 @@ function(jucer_export_target exporter)
     set(JUCER_CAMERA_ACCESS_TEXT "${_CAMERA_ACCESS_TEXT}" PARENT_SCOPE)
   endif()
 
+  if(DEFINED _BLUETOOTH_ACCESS)
+    set(JUCER_BLUETOOTH_ACCESS "${_BLUETOOTH_ACCESS}" PARENT_SCOPE)
+  endif()
+
+  if(DEFINED _BLUETOOTH_ACCESS_TEXT)
+    set(JUCER_BLUETOOTH_ACCESS_TEXT "${_BLUETOOTH_ACCESS_TEXT}" PARENT_SCOPE)
+  endif()
+
   if(DEFINED _IN_APP_PURCHASES_CAPABILITY AND _IN_APP_PURCHASES_CAPABILITY)
     set(JUCER_IN_APP_PURCHASES_CAPABILITY "${_IN_APP_PURCHASES_CAPABILITY}" PARENT_SCOPE)
   endif()
@@ -1083,6 +1202,24 @@ function(jucer_export_target exporter)
     set(JUCER_PUSH_NOTIFICATIONS_CAPABILITY "${_PUSH_NOTIFICATIONS_CAPABILITY}"
       PARENT_SCOPE
     )
+  endif()
+
+  if(DEFINED _AUDIO_BACKGROUND_CAPABILITY)
+    set(JUCER_AUDIO_BACKGROUND_CAPABILITY "${_AUDIO_BACKGROUND_CAPABILITY}" PARENT_SCOPE)
+  endif()
+
+  if(DEFINED _BLUETOOTH_MIDI_BACKGROUND_CAPABILITY)
+    set(JUCER_BLUETOOTH_MIDI_BACKGROUND_CAPABILITY
+      "${_BLUETOOTH_MIDI_BACKGROUND_CAPABILITY}" PARENT_SCOPE
+    )
+  endif()
+
+  if(DEFINED _APP_GROUPS_CAPABILITY)
+    set(JUCER_APP_GROUPS_CAPABILITY "${_APP_GROUPS_CAPABILITY}" PARENT_SCOPE)
+  endif()
+
+  if(DEFINED _ICLOUD_PERMISSIONS)
+    set(JUCER_ICLOUD_PERMISSIONS "${_ICLOUD_PERMISSIONS}" PARENT_SCOPE)
   endif()
 
   if(DEFINED _CUSTOM_PLIST)
@@ -1143,6 +1280,10 @@ function(jucer_export_target exporter)
 
   if(DEFINED _DEVELOPMENT_TEAM_ID)
     set(JUCER_DEVELOPMENT_TEAM_ID "${_DEVELOPMENT_TEAM_ID}" PARENT_SCOPE)
+  endif()
+
+  if(DEFINED _APP_GROUP_ID)
+    set(JUCER_APP_GROUP_ID "${_APP_GROUP_ID}" PARENT_SCOPE)
   endif()
 
   if(DEFINED _KEEP_CUSTOM_XCODE_SCHEMES)
@@ -1310,7 +1451,7 @@ function(jucer_export_target_configuration
     "LINK_TIME_OPTIMISATION"
   )
 
-  if(exporter STREQUAL "Xcode (MacOSX)")
+  if(exporter STREQUAL "Xcode (MacOSX)" OR exporter STREQUAL "Xcode (iOS)")
     list(APPEND single_value_keywords
       "ENABLE_PLUGIN_COPY_STEP"
       "VST_BINARY_LOCATION"
@@ -1320,9 +1461,6 @@ function(jucer_export_target_configuration
       "AAX_BINARY_LOCATION"
       "UNITY_BINARY_LOCATION"
       "VST_LEGACY_BINARY_LOCATION"
-      "OSX_BASE_SDK_VERSION"
-      "OSX_DEPLOYMENT_TARGET"
-      "OSX_ARCHITECTURE"
       "CXX_LANGUAGE_STANDARD"
       "CXX_LIBRARY"
       "CODE_SIGNING_IDENTITY"
@@ -1333,6 +1471,18 @@ function(jucer_export_target_configuration
       "CUSTOM_XCODE_FLAGS"
       "PLIST_PREPROCESSOR_DEFINITIONS"
     )
+  endif()
+
+  if(exporter STREQUAL "Xcode (MacOSX)")
+    list(APPEND single_value_keywords
+      "OSX_BASE_SDK_VERSION"
+      "OSX_DEPLOYMENT_TARGET"
+      "OSX_ARCHITECTURE"
+    )
+  endif()
+
+  if(exporter STREQUAL "Xcode (iOS)")
+    list(APPEND single_value_keywords "IOS_DEPLOYMENT_TARGET")
   endif()
 
   if(exporter MATCHES "^Visual Studio 201(9|7|5|3)$")
@@ -1537,6 +1687,10 @@ function(jucer_export_target_configuration
     if(DEFINED xcode_archs)
       set(JUCER_XCODE_ARCHS_${config} "${xcode_archs}" PARENT_SCOPE)
     endif()
+  endif()
+
+  if(DEFINED _IOS_DEPLOYMENT_TARGET)
+    set(JUCER_IOS_DEPLOYMENT_TARGET_${config} "${_IOS_DEPLOYMENT_TARGET}" PARENT_SCOPE)
   endif()
 
   if(DEFINED _CUSTOM_XCODE_FLAGS)
@@ -1796,7 +1950,7 @@ endfunction()
 function(jucer_project_end)
 
   unset(current_exporter)
-  foreach(exporter_index RANGE 7)
+  foreach(exporter_index RANGE 8)
     list(GET Reprojucer_supported_exporters_conditions ${exporter_index} condition)
     if(${condition})
       if(DEFINED current_exporter)
@@ -1886,7 +2040,20 @@ function(jucer_project_end)
     endforeach()
   endforeach()
 
-  if(APPLE)
+  if(IOS)
+    execute_process(
+      COMMAND "xcrun" "--sdk" "iphoneos" "--show-sdk-path"
+      OUTPUT_VARIABLE sdk_path
+      OUTPUT_STRIP_TRAILING_WHITESPACE
+    )
+    if(IS_DIRECTORY "${sdk_path}")
+      set(JUCER_IPHONEOS_SDK_PATH "${sdk_path}")
+    else()
+      message(WARNING "Running `xcrun --sdk iphoneos --show-sdk-path` didn't output a"
+        " valid directory."
+      )
+    endif()
+  elseif(APPLE)
     foreach(config IN LISTS JUCER_PROJECT_CONFIGURATIONS)
       set(sdk_version "${JUCER_OSX_BASE_SDK_VERSION_${config}}")
       execute_process(
@@ -1938,6 +2105,29 @@ function(jucer_project_end)
     )
   endif()
 
+  if(IOS)
+    if(NOT DEFINED JUCER_CUSTOM_XCASSETS_FOLDER
+        OR JUCER_CUSTOM_XCASSETS_FOLDER STREQUAL "")
+      _FRUT_create_xcassets_folder_from_icons(JUCER_XCASSETS)
+    else()
+      set(JUCER_XCASSETS "${JUCER_CUSTOM_XCASSETS_FOLDER}")
+    endif()
+
+    if(
+      (DEFINED JUCER_CUSTOM_LAUNCH_STORYBOARD
+        AND NOT JUCER_CUSTOM_LAUNCH_STORYBOARD STREQUAL "")
+      OR (NOT DEFINED JUCER_CUSTOM_XCASSETS_FOLDER
+        OR JUCER_CUSTOM_XCASSETS_FOLDER STREQUAL "")
+    )
+      set(custom_launch_storyboard "${JUCER_CUSTOM_LAUNCH_STORYBOARD}")
+      if(custom_launch_storyboard STREQUAL "")
+        _FRUT_generate_default_launch_storyboard_file(JUCER_LAUNCH_STORYBOARD_FILE)
+      else()
+        set(JUCER_LAUNCH_STORYBOARD_FILE "${custom_launch_storyboard}")
+      endif()
+    endif()
+  endif()
+
   source_group("Juce Library Code"
     REGULAR_EXPRESSION "${CMAKE_CURRENT_BINARY_DIR}/JuceLibraryCode/*"
   )
@@ -1964,12 +2154,15 @@ function(jucer_project_end)
   )
 
   if(JUCER_PROJECT_TYPE STREQUAL "Console Application")
+    if(IOS)
+      message(FATAL_ERROR "Console Application projects are not supported on iOS")
+    endif()
     add_executable(${target} ${all_sources})
     _FRUT_set_output_directory_properties(${target} "ConsoleApp")
     _FRUT_set_output_name_properties(${target})
     _FRUT_set_compiler_and_linker_settings(${target})
     _FRUT_add_extra_commands(${target} "${current_exporter}")
-    _FRUT_link_osx_frameworks(${target})
+    _FRUT_link_xcode_frameworks(${target})
     _FRUT_set_custom_xcode_flags(${target})
 
   elseif(JUCER_PROJECT_TYPE STREQUAL "GUI Application")
@@ -1980,7 +2173,7 @@ function(jucer_project_end)
     _FRUT_set_output_name_properties(${target})
     _FRUT_set_compiler_and_linker_settings(${target})
     _FRUT_add_extra_commands(${target} "${current_exporter}")
-    _FRUT_link_osx_frameworks(${target})
+    _FRUT_link_xcode_frameworks(${target})
     _FRUT_set_custom_xcode_flags(${target})
 
   elseif(JUCER_PROJECT_TYPE STREQUAL "Static Library")
@@ -1997,7 +2190,7 @@ function(jucer_project_end)
     _FRUT_set_output_name_properties(${target})
     _FRUT_set_compiler_and_linker_settings(${target})
     _FRUT_add_extra_commands(${target} "${current_exporter}")
-    _FRUT_link_osx_frameworks(${target})
+    _FRUT_link_xcode_frameworks(${target})
     _FRUT_set_custom_xcode_flags(${target})
 
   elseif(JUCER_PROJECT_TYPE STREQUAL "Audio Plug-in")
@@ -2049,7 +2242,7 @@ function(jucer_project_end)
     _FRUT_set_JucePlugin_Build_defines(${shared_code_target} "SharedCodeTarget")
     _FRUT_set_custom_xcode_flags(${shared_code_target})
 
-    if(JUCER_BUILD_VST)
+    if(JUCER_BUILD_VST AND NOT IOS)
       set(vst_target "${target}_VST")
       add_library(${vst_target} MODULE
         ${VST_sources}
@@ -2079,12 +2272,12 @@ function(jucer_project_end)
         )
       endif()
       _FRUT_set_JucePlugin_Build_defines(${vst_target} "VSTPlugIn")
-      _FRUT_link_osx_frameworks(${vst_target})
+      _FRUT_link_xcode_frameworks(${vst_target})
       _FRUT_set_custom_xcode_flags(${vst_target})
       unset(vst_target)
     endif()
 
-    if(JUCER_BUILD_VST3 AND (APPLE OR MSVC))
+    if(JUCER_BUILD_VST3 AND ((APPLE AND NOT IOS) OR MSVC))
       set(vst3_target "${target}_VST3")
       add_library(${vst3_target} MODULE
         ${VST3_sources}
@@ -2115,12 +2308,12 @@ function(jucer_project_end)
         )
       endif()
       _FRUT_set_JucePlugin_Build_defines(${vst3_target} "VST3PlugIn")
-      _FRUT_link_osx_frameworks(${vst3_target})
+      _FRUT_link_xcode_frameworks(${vst3_target})
       _FRUT_set_custom_xcode_flags(${vst3_target})
       unset(vst3_target)
     endif()
 
-    if(JUCER_BUILD_AUDIOUNIT AND APPLE)
+    if(JUCER_BUILD_AUDIOUNIT AND APPLE AND NOT IOS)
       set(au_target "${target}_AU")
       add_library(${au_target} MODULE ${AudioUnit_sources})
       _FRUT_add_bundle_resources(${au_target})
@@ -2147,7 +2340,7 @@ function(jucer_project_end)
         "$ENV{HOME}/Library/Audio/Plug-Ins/Components"
       )
       _FRUT_set_JucePlugin_Build_defines(${au_target} "AudioUnitPlugIn")
-      _FRUT_link_osx_frameworks(${au_target} "AudioUnit" "CoreAudioKit")
+      _FRUT_link_xcode_frameworks(${au_target} "AudioUnit" "CoreAudioKit")
       _FRUT_set_custom_xcode_flags(${au_target})
       unset(au_target)
     endif()
@@ -2174,14 +2367,18 @@ function(jucer_project_end)
       _FRUT_set_compiler_and_linker_settings(${auv3_target})
       _FRUT_add_extra_commands(${auv3_target} "${current_exporter}")
       _FRUT_set_JucePlugin_Build_defines(${auv3_target} "AudioUnitv3PlugIn")
-      _FRUT_link_osx_frameworks(
-        ${auv3_target} "AudioUnit" "CoreAudioKit" "AVFoundation"
-      )
+      if(IOS)
+        _FRUT_link_xcode_frameworks(${auv3_target} "CoreAudioKit" "AVFoundation")
+      else()
+        _FRUT_link_xcode_frameworks(
+          ${auv3_target} "AudioUnit" "CoreAudioKit" "AVFoundation"
+        )
+      endif()
       _FRUT_set_custom_xcode_flags(${auv3_target})
       unset(auv3_target)
     endif()
 
-    if(JUCER_BUILD_RTAS AND (APPLE OR MSVC))
+    if(JUCER_BUILD_RTAS AND ((APPLE AND NOT IOS) OR MSVC))
       set(rtas_target "${target}_RTAS")
       add_library(${rtas_target} MODULE
         ${RTAS_sources}
@@ -2320,12 +2517,12 @@ function(jucer_project_end)
         )
       endif()
       _FRUT_set_JucePlugin_Build_defines(${rtas_target} "RTASPlugIn")
-      _FRUT_link_osx_frameworks(${rtas_target})
+      _FRUT_link_xcode_frameworks(${rtas_target})
       _FRUT_set_custom_xcode_flags(${rtas_target})
       unset(rtas_target)
     endif()
 
-    if(JUCER_BUILD_AAX AND (APPLE OR MSVC))
+    if(JUCER_BUILD_AAX AND ((APPLE AND NOT IOS) OR MSVC))
       set(aax_target "${target}_AAX")
       add_library(${aax_target} MODULE
         ${AAX_sources}
@@ -2434,7 +2631,7 @@ function(jucer_project_end)
         endif()
       endif()
       _FRUT_set_JucePlugin_Build_defines(${aax_target} "AAXPlugIn")
-      _FRUT_link_osx_frameworks(${aax_target})
+      _FRUT_link_xcode_frameworks(${aax_target})
       _FRUT_set_custom_xcode_flags(${aax_target})
       unset(aax_target)
     endif()
@@ -2469,17 +2666,25 @@ function(jucer_project_end)
       _FRUT_set_compiler_and_linker_settings(${standalone_target})
       _FRUT_add_extra_commands(${standalone_target} "${current_exporter}")
       _FRUT_set_JucePlugin_Build_defines(${standalone_target} "StandalonePlugIn")
-      _FRUT_link_osx_frameworks(${standalone_target})
+      _FRUT_link_xcode_frameworks(${standalone_target})
       if(TARGET ${target}_AUv3_AppExtension)
         add_dependencies(${standalone_target} ${target}_AUv3_AppExtension)
+        if(IOS)
+          set(destination "$<TARGET_FILE_DIR:${standalone_target}>/PlugIns")
+        else()
+          set(destination "$<TARGET_FILE_DIR:${standalone_target}>/../PlugIns")
+        endif()
         install(TARGETS ${target}_AUv3_AppExtension
-          COMPONENT _embed_app_extension_in_standalone_app
-          DESTINATION "$<TARGET_FILE_DIR:${standalone_target}>/../PlugIns"
+          COMPONENT _embed_app_extension_in_standalone_app DESTINATION "${destination}"
         )
+        unset(epn)
+        if(IOS)
+          set(epn "-DEFFECTIVE_PLATFORM_NAME=$(EFFECTIVE_PLATFORM_NAME)")
+        endif()
         add_custom_command(TARGET ${standalone_target} POST_BUILD
           COMMAND
           "${CMAKE_COMMAND}"
-          "-DCMAKE_INSTALL_CONFIG_NAME=$<CONFIG>"
+          "-DCMAKE_INSTALL_CONFIG_NAME=$<CONFIG>" ${epn}
           "-DCMAKE_INSTALL_COMPONENT=_embed_app_extension_in_standalone_app"
           "-P" "${CMAKE_CURRENT_BINARY_DIR}/cmake_install.cmake"
         )
@@ -2488,7 +2693,7 @@ function(jucer_project_end)
       unset(standalone_target)
     endif()
 
-    if(JUCER_BUILD_UNITY_PLUGIN)
+    if(JUCER_BUILD_UNITY_PLUGIN AND NOT IOS)
       set(unity_target "${target}_Unity_Plugin")
       add_library(${unity_target} MODULE
         ${Unity_sources}
@@ -2552,7 +2757,7 @@ function(jucer_project_end)
         endif()
       endif()
       _FRUT_set_JucePlugin_Build_defines(${unity_target} "UnityPlugIn")
-      _FRUT_link_osx_frameworks(${unity_target})
+      _FRUT_link_xcode_frameworks(${unity_target})
       _FRUT_set_custom_xcode_flags(${unity_target})
       unset(unity_target)
     endif()
@@ -2596,6 +2801,9 @@ function(_FRUT_add_bundle_resources target)
     ${JUCER_ICON_FILE}
     ${JUCER_CUSTOM_XCODE_RESOURCE_FOLDERS}
   )
+  if(IOS)
+    list(APPEND bundle_resources ${JUCER_XCASSETS} ${JUCER_LAUNCH_STORYBOARD_FILE})
+  endif()
 
   target_sources(${target} PRIVATE ${bundle_resources})
   set_source_files_properties(${bundle_resources} PROPERTIES
@@ -2944,7 +3152,7 @@ function(_FRUT_check_SDK_folders exporter)
           " to contain the VST SDK"
         )
       endif()
-    elseif(DEFINED JUCER_VERSION AND JUCER_VERSION VERSION_LESS 4.2.4)
+    elseif((DEFINED JUCER_VERSION AND JUCER_VERSION VERSION_LESS 4.2.4) AND NOT IOS)
       message(WARNING "JUCER_VST_SDK_FOLDER is not defined. You should give"
         " VST_SDK_FOLDER when calling jucer_export_target(\"${exporter}\")."
       )
@@ -2966,7 +3174,8 @@ function(_FRUT_check_SDK_folders exporter)
           " seem to contain the VST3 SDK"
         )
       endif()
-   elseif((APPLE OR MSVC) AND NOT EXISTS "${juce_internal_vst3_sdk_path}")
+    elseif(((APPLE AND NOT IOS) OR MSVC)
+        AND NOT EXISTS "${juce_internal_vst3_sdk_path}")
       message(WARNING "JUCER_VST3_SDK_FOLDER is not defined. You should give"
         " VST3_SDK_FOLDER when calling jucer_export_target(\"${exporter}\")."
       )
@@ -2987,7 +3196,7 @@ function(_FRUT_check_SDK_folders exporter)
           " seem to contain the RTAS SDK"
         )
       endif()
-    elseif(APPLE OR MSVC)
+    elseif((APPLE AND NOT IOS) OR MSVC)
       message(WARNING "JUCER_RTAS_SDK_FOLDER is not defined. You should give"
         " RTAS_SDK_FOLDER when calling jucer_export_target(\"${exporter}\")."
       )
@@ -3005,7 +3214,7 @@ function(_FRUT_check_SDK_folders exporter)
           " seem to contain the AAX SDK"
         )
       endif()
-    elseif(APPLE OR MSVC)
+    elseif((APPLE AND NOT IOS) OR MSVC)
       message(WARNING "JUCER_AAX_SDK_FOLDER is not defined. You should give"
         " AAX_SDK_FOLDER when calling jucer_export_target(\"${exporter}\")."
       )
@@ -3096,6 +3305,36 @@ function(_FRUT_compute_vst3_category out_var)
   endif()
 
   set(${out_var} "${vst3_category}" PARENT_SCOPE)
+
+endfunction()
+
+
+function(_FRUT_create_xcassets_folder_from_icons out_var)
+
+  _FRUT_build_and_install_helper_exe("XcassetsBuilder" "0.1.0")
+
+  set(XcassetsBuilder_args "${CMAKE_CURRENT_BINARY_DIR}/${JUCER_PROJECT_NAME}")
+  if(DEFINED JUCER_SMALL_ICON)
+    list(APPEND XcassetsBuilder_args "${JUCER_SMALL_ICON}")
+  else()
+    list(APPEND XcassetsBuilder_args "<None>")
+  endif()
+  if(DEFINED JUCER_LARGE_ICON)
+    list(APPEND XcassetsBuilder_args "${JUCER_LARGE_ICON}")
+  else()
+    list(APPEND XcassetsBuilder_args "<None>")
+  endif()
+
+  execute_process(
+    COMMAND "${XcassetsBuilder_exe}" ${XcassetsBuilder_args}
+    OUTPUT_VARIABLE xcassets_path
+    RESULT_VARIABLE XcassetsBuilder_return_code
+  )
+  if(NOT XcassetsBuilder_return_code EQUAL 0)
+    message(FATAL_ERROR "Error when executing XcassetsBuilder")
+  endif()
+
+  set(${out_var} "${xcassets_path}" PARENT_SCOPE)
 
 endfunction()
 
@@ -3414,19 +3653,7 @@ function(_FRUT_generate_AppConfig_header)
     _FRUT_bool_to_int("${JUCER_PLUGIN_AAX_DISABLE_BYPASS}" AAXDisableBypass_value)
     _FRUT_bool_to_int("${JUCER_PLUGIN_AAX_DISABLE_MULTI_MONO}" AAXDisableMultiMono_value)
 
-    if(JUCER_PLUGIN_MIDI_INPUT)
-      if(JUCER_PLUGIN_IS_A_SYNTH)
-        set(iaa_type_code "auri")
-      else()
-        set(iaa_type_code "aurm")
-      endif()
-    else()
-      if(JUCER_PLUGIN_IS_A_SYNTH)
-        set(iaa_type_code "aurg")
-      else()
-        set(iaa_type_code "aurx")
-      endif()
-    endif()
+    _FRUT_get_iaa_type_code(iaa_type_code)
     _FRUT_char_literal("${iaa_type_code}" IAAType_value)
     set(IAASubType_value "JucePlugin_PluginCode")
     set(IAAName_value "\"${JUCER_PLUGIN_MANUFACTURER}: ${JUCER_PLUGIN_NAME}\"")
@@ -3510,31 +3737,87 @@ function(_FRUT_generate_AppConfig_header)
 endfunction()
 
 
+function(_FRUT_generate_default_launch_storyboard_file out_var)
+
+  configure_file("${Reprojucer_templates_DIR}/LaunchScreen.storyboard"
+    "LaunchScreen.storyboard" COPYONLY
+  )
+
+  set(${out_var} "${CMAKE_CURRENT_BINARY_DIR}/LaunchScreen.storyboard" PARENT_SCOPE)
+
+endfunction()
+
+
+
 function(_FRUT_generate_entitlements_file output_filename out_var)
 
   set(entitlements_content "")
 
   if(JUCER_PROJECT_TYPE STREQUAL "Audio Plug-in")
-    string(APPEND entitlements_content
-      "\t<key>com.apple.security.app-sandbox</key>\n" "\t<true/>\n"
-    )
-  else()
-    if(JUCER_PUSH_NOTIFICATIONS_CAPABILITY)
+    if(IOS)
+      if(JUCER_ENABLE_INTER_APP_AUDIO)
+        string(APPEND entitlements_content "\t<key>inter-app-audio</key>\n" "\t<true/>\n")
+      endif()
+    else()
       string(APPEND entitlements_content
-        "\t<key>com.apple.developer.aps-environment</key>\n"
-        "\t<string>development</string>\n"
+        "\t<key>com.apple.security.app-sandbox</key>\n" "\t<true/>\n"
       )
     endif()
+  else()
+    if(JUCER_PUSH_NOTIFICATIONS_CAPABILITY)
+      if(IOS)
+        string(APPEND entitlements_content
+          "\t<key>aps-environment</key>\n"
+          "\t<string>development</string>\n"
+        )
+      else()
+        string(APPEND entitlements_content
+          "\t<key>com.apple.developer.aps-environment</key>\n"
+          "\t<string>development</string>\n"
+        )
+      endif()
+    endif()
   endif()
+
+  if(JUCER_APP_GROUPS_CAPABILITY)
+    string(APPEND entitlements_content
+      "\t<key>com.apple.security.application-groups</key>\n"
+      "\t<array>\n"
+    )
+    foreach(group IN LISTS JUCER_APP_GROUP_ID)
+      string(STRIP "${group}" group)
+      string(APPEND entitlements_content "\t\t<string>${group}</string>\n")
+    endforeach()
+    string(APPEND entitlements_content "\t</array>\n")
+  endif()
+
   if(JUCER_USE_HARDENED_RUNTIME)
     foreach(option IN LISTS JUCER_HARDENED_RUNTIME_OPTIONS)
       string(APPEND entitlements_content "\t<key>${option}</key>\n" "\t<true/>\n")
     endforeach()
   endif()
+
   if(JUCER_USE_APP_SANDBOX)
     foreach(option IN LISTS JUCER_APP_SANDBOX_OPTIONS)
       string(APPEND entitlements_content "\t<key>${option}</key>\n" "\t<true/>\n")
     endforeach()
+  endif()
+
+  if(IOS AND JUCER_ICLOUD_PERMISSIONS)
+    string(APPEND entitlements_content
+      "\t<key>com.apple.developer.icloud-container-identifiers</key>\n"
+      "\t<array>\n"
+      "        <string>iCloud.$(CFBundleIdentifier)</string>\n"
+      "    </array>\n"
+      "\t<key>com.apple.developer.icloud-services</key>\n"
+      "\t<array>\n"
+      "        <string>CloudDocuments</string>\n"
+      "    </array>\n"
+      "\t<key>com.apple.developer.ubiquity-container-identifiers</key>\n"
+      "\t<array>\n"
+      "        <string>iCloud.$(CFBundleIdentifier)</string>\n"
+      "    </array>\n"
+    )
   endif()
 
   if(NOT entitlements_content STREQUAL "")
@@ -3756,7 +4039,67 @@ function(_FRUT_generate_plist_file
     )
   endif()
 
-  get_filename_component(bundle_icon_file "${JUCER_ICON_FILE}" NAME)
+  if(IOS)
+    if(JUCER_BLUETOOTH_ACCESS)
+      if(DEFINED JUCER_BLUETOOTH_ACCESS_TEXT)
+        set(bluetooth_usage_description "${JUCER_BLUETOOTH_ACCESS_TEXT}")
+      else()
+        string(CONCAT bluetooth_usage_description "This app requires access to Bluetooth"
+          " to function correctly."
+        )
+      endif()
+      string(APPEND plist_entries "
+    <key>NSBluetoothAlwaysUsageDescription</key>
+    <string>${bluetooth_usage_description}</string>
+    <key>NSBluetoothPeripheralUsageDescription</key>
+    <string>${bluetooth_usage_description}</string>"
+      )
+    endif()
+
+    string(APPEND plist_entries "
+    <key>LSRequiresIPhoneOS</key>
+    <true/>"
+    )
+
+    if(NOT target MATCHES "_AUv3_AppExtension$")
+      string(APPEND plist_entries "
+    <key>UIViewControllerBasedStatusBarAppearance</key>
+    <false/>"
+      )
+    endif()
+
+    if(
+      (DEFINED JUCER_CUSTOM_LAUNCH_STORYBOARD
+        AND NOT JUCER_CUSTOM_LAUNCH_STORYBOARD STREQUAL "")
+      OR (NOT DEFINED JUCER_CUSTOM_XCASSETS_FOLDER
+        OR JUCER_CUSTOM_XCASSETS_FOLDER STREQUAL "")
+    )
+      set(storyboard_name "${JUCER_CUSTOM_LAUNCH_STORYBOARD}")
+      if(storyboard_name STREQUAL "")
+        set(storyboard_name "LaunchScreen")
+      else()
+        get_filename_component(storyboard_name "${storyboard_name}" NAME)
+        string(REGEX REPLACE "[.]storyboard$" "" storyboard_name "${storyboard_name}")
+      endif()
+      string(APPEND plist_entries "
+    <key>UILaunchStoryboardName</key>
+    <string>${storyboard_name}</string>"
+      )
+    endif()
+  endif()
+
+  string(APPEND plist_entries "
+    <key>CFBundleExecutable</key>
+    <string>${bundle_executable}</string>"
+  )
+
+  if(NOT IOS)
+    get_filename_component(bundle_icon_file "${JUCER_ICON_FILE}" NAME)
+    string(APPEND plist_entries "
+    <key>CFBundleIconFile</key>
+    <string>${bundle_icon_file}</string>"
+    )
+  endif()
 
   if(DEFINED JUCER_COMPANY_COPYRIGHT
       OR NOT (DEFINED JUCER_VERSION AND JUCER_VERSION VERSION_LESS 5.2.0))
@@ -3766,10 +4109,6 @@ function(_FRUT_generate_plist_file
   endif()
 
   string(APPEND plist_entries "
-    <key>CFBundleExecutable</key>
-    <string>${bundle_executable}</string>
-    <key>CFBundleIconFile</key>
-    <string>${bundle_icon_file}</string>
     <key>CFBundleIdentifier</key>
     <string>${bundle_identifier_in_plist}</string>
     <key>CFBundleName</key>
@@ -3826,9 +4165,130 @@ function(_FRUT_generate_plist_file
     )
   endif()
 
+  if(JUCER_FILE_SHARING_ENABLED AND NOT target MATCHES "_AUv3_AppExtension$")
+    string(APPEND plist_entries "
+    <key>UIFileSharingEnabled</key>
+    <true/>"
+    )
+  endif()
+
+  if(JUCER_SUPPORT_DOCUMENT_BROWSER)
+    string(APPEND plist_entries "
+    <key>UISupportsDocumentBrowser</key>
+    <true/>"
+    )
+  endif()
+
+  if(JUCER_STATUS_BAR_HIDDEN AND NOT target MATCHES "_AUv3_AppExtension$")
+    string(APPEND plist_entries "
+    <key>UIStatusBarHidden</key>
+    <true/>"
+    )
+  endif()
+
+  if(IOS AND NOT target MATCHES "_AUv3_AppExtension$")
+    string(APPEND plist_entries "
+    <key>UIRequiresFullScreen</key>
+    <true/>"
+    )
+    if(NOT JUCER_STATUS_BAR_HIDDEN)
+      string(APPEND plist_entries "
+    <key>UIStatusBarHidden</key>
+    <true/>"
+      )
+    endif()
+
+    string(APPEND plist_entries "
+    <key>UISupportedInterfaceOrientations</key>
+    <array>"
+    )
+    if(DEFINED JUCER_IPHONE_SCREEN_ORIENTATION)
+      set(iphone_screen_orientation "${JUCER_IPHONE_SCREEN_ORIENTATION}")
+    else()
+      set(iphone_screen_orientation "portraitlandscape")
+    endif()
+    if(iphone_screen_orientation MATCHES "portrait")
+      string(APPEND plist_entries "
+      <string>UIInterfaceOrientationPortrait</string>"
+      )
+    endif()
+    if(iphone_screen_orientation MATCHES "landscape")
+      string(APPEND plist_entries "
+      <string>UIInterfaceOrientationLandscapeLeft</string>
+      <string>UIInterfaceOrientationLandscapeRight</string>"
+      )
+    endif()
+    string(APPEND plist_entries "\n    </array>")
+    if(DEFINED JUCER_IPAD_SCREEN_ORIENTATION)
+      set(ipad_screen_orientation "${JUCER_IPAD_SCREEN_ORIENTATION}")
+    else()
+      set(ipad_screen_orientation "portraitlandscape")
+    endif()
+    if(NOT ipad_screen_orientation STREQUAL iphone_screen_orientation)
+      string(APPEND plist_entries "
+    <key>UISupportedInterfaceOrientations~ipad</key>
+    <array>"
+      )
+      if(ipad_screen_orientation MATCHES "portrait")
+        string(APPEND plist_entries "
+      <string>UIInterfaceOrientationPortrait</string>"
+        )
+      endif()
+      if(ipad_screen_orientation MATCHES "landscape")
+        string(APPEND plist_entries "
+      <string>UIInterfaceOrientationLandscapeLeft</string>
+      <string>UIInterfaceOrientationLandscapeRight</string>"
+        )
+      endif()
+      string(APPEND plist_entries "\n    </array>")
+    endif()
+
+    string(APPEND plist_entries "\n    <key>UIBackgroundModes</key>")
+    if(JUCER_AUDIO_BACKGROUND_CAPABILITY
+        OR JUCER_BLUETOOTH_MIDI_BACKGROUND_CAPABILITY
+        OR JUCER_PUSH_NOTIFICATIONS_CAPABILITY)
+      string(APPEND plist_entries "\n    <array>")
+      if(JUCER_AUDIO_BACKGROUND_CAPABILITY)
+        string(APPEND plist_entries "\n      <string>audio</string>")
+      endif()
+      if(JUCER_BLUETOOTH_MIDI_BACKGROUND_CAPABILITY)
+        string(APPEND plist_entries "\n      <string>bluetooth-central</string>")
+      endif()
+      if(JUCER_PUSH_NOTIFICATIONS_CAPABILITY)
+        string(APPEND plist_entries "\n      <string>remote-notification</string>")
+      endif()
+      string(APPEND plist_entries "\n    </array>")
+    else()
+      string(APPEND plist_entries "\n    <array/>")
+    endif()
+  endif()
+
+  _FRUT_version_to_dec("${JUCER_PROJECT_VERSION}" dec_version)
+
+  if(IOS AND target MATCHES "_StandalonePlugin$" AND JUCER_ENABLE_INTER_APP_AUDIO)
+    _FRUT_get_iaa_type_code(iaa_type_code)
+
+    string(APPEND plist_entries "
+    <key>AudioComponents</key>
+    <array>
+      <dict>
+        <key>name</key>
+        <string>@JUCER_PLUGIN_MANUFACTURER@: @JUCER_PLUGIN_NAME@</string>
+        <key>manufacturer</key>
+        <string>@JUCER_PLUGIN_MANUFACTURER_CODE@</string>
+        <key>type</key>
+        <string>${iaa_type_code}</string>
+        <key>subtype</key>
+        <string>@JUCER_PLUGIN_CODE@</string>
+        <key>version</key>
+        <integer>${dec_version}</integer>
+      </dict>
+    </array>"
+    )
+  endif()
+
   if(target MATCHES "_AU$")
     _FRUT_get_au_main_type_code(au_main_type_code)
-    _FRUT_version_to_dec("${JUCER_PROJECT_VERSION}" dec_version)
 
     string(APPEND plist_entries "
     <key>AudioComponents</key>
@@ -4053,6 +4513,27 @@ function(_FRUT_get_au_quoted_four_chars au_enum_case out_var)
 endfunction()
 
 
+function(_FRUT_get_iaa_type_code out_var)
+
+  if(JUCER_PLUGIN_MIDI_INPUT)
+    if(JUCER_PLUGIN_IS_A_SYNTH)
+      set(code "auri")
+    else()
+      set(code "aurm")
+    endif()
+  else()
+    if(JUCER_PLUGIN_IS_A_SYNTH)
+      set(code "aurg")
+    else()
+      set(code "aurx")
+    endif()
+  endif()
+
+  set(${out_var} "${code}" PARENT_SCOPE)
+
+endfunction()
+
+
 function(_FRUT_install_to_plugin_binary_location target plugin_type default_destination)
 
   unset(all_confs_destination)
@@ -4092,47 +4573,63 @@ function(_FRUT_install_to_plugin_binary_location target plugin_type default_dest
 endfunction()
 
 
-function(_FRUT_link_osx_frameworks target)
+function(_FRUT_link_xcode_frameworks target)
 
   if(NOT APPLE)
     return()
   endif()
 
-  set(osx_frameworks
-    ${JUCER_PROJECT_OSX_FRAMEWORKS}
+  set(xcode_frameworks
+    ${JUCER_PROJECT_XCODE_FRAMEWORKS}
     ${JUCER_EXTRA_SYSTEM_FRAMEWORKS}
     ${JUCER_EXTRA_FRAMEWORKS}
     ${ARGN}
   )
   if(JUCER_FLAG_JUCE_PLUGINHOST_AU)
-    list(APPEND osx_frameworks "AudioUnit" "CoreAudioKit")
+    if(IOS)
+      list(APPEND xcode_frameworks "CoreAudioKit")
+    else()
+      list(APPEND xcode_frameworks "AudioUnit" "CoreAudioKit")
+    endif()
+  endif()
+  if(IOS AND JUCER_PUSH_NOTIFICATIONS_CAPABILITY)
+    list(APPEND xcode_frameworks "UserNotifications")
+  endif()
+  if(IOS AND JUCER_FLAG_JUCE_USE_CAMERA)
+    list(APPEND xcode_frameworks "ImageIO")
   endif()
   if(JUCER_IN_APP_PURCHASES_CAPABILITY)
     list(APPEND osx_frameworks "StoreKit")
   endif()
 
-  if(osx_frameworks)
-    list(SORT osx_frameworks)
-    list(REMOVE_DUPLICATES osx_frameworks)
+  if(xcode_frameworks)
+    list(SORT xcode_frameworks)
+    list(REMOVE_DUPLICATES xcode_frameworks)
     if(NOT JUCER_FLAG_JUCE_QUICKTIME)
-      list(REMOVE_ITEM osx_frameworks "QuickTime")
+      list(REMOVE_ITEM xcode_frameworks "QuickTime")
     endif()
 
-    foreach(config IN LISTS JUCER_PROJECT_CONFIGURATIONS)
-      set(CMAKE_FRAMEWORK_PATH "")
-      set(sdk_version "${JUCER_OSX_BASE_SDK_VERSION_${config}}")
-      set(sdk_path "${JUCER_MACOSX_SDK_PATH_${config}}")
-      if(IS_DIRECTORY "${sdk_path}")
-        set(CMAKE_FRAMEWORK_PATH "${sdk_path}/System/Library/Frameworks")
-      endif()
-
-      foreach(framework_name IN LISTS osx_frameworks)
-        find_library(${framework_name}_framework_${sdk_version} ${framework_name})
-        target_link_libraries(${target} PRIVATE
-          "$<$<CONFIG:${config}>:${${framework_name}_framework_${sdk_version}}>"
-        )
+    if(IOS)
+      foreach(framework_name IN LISTS xcode_frameworks)
+        target_link_libraries(${target} PRIVATE "-framework ${framework_name}")
       endforeach()
-    endforeach()
+    else()
+      foreach(config IN LISTS JUCER_PROJECT_CONFIGURATIONS)
+        set(CMAKE_FRAMEWORK_PATH "")
+        set(sdk_version "${JUCER_OSX_BASE_SDK_VERSION_${config}}")
+        set(sdk_path "${JUCER_MACOSX_SDK_PATH_${config}}")
+        if(IS_DIRECTORY "${sdk_path}")
+          set(CMAKE_FRAMEWORK_PATH "${sdk_path}/System/Library/Frameworks")
+        endif()
+
+        foreach(framework_name IN LISTS xcode_frameworks)
+          find_library(${framework_name}_framework_${sdk_version} ${framework_name})
+          target_link_libraries(${target} PRIVATE
+            "$<$<CONFIG:${config}>:${${framework_name}_framework_${sdk_version}}>"
+          )
+        endforeach()
+      endforeach()
+    endif()
   endif()
 
   if(JUCER_EXTRA_CUSTOM_FRAMEWORKS)
@@ -4495,7 +4992,35 @@ function(_FRUT_set_compiler_and_linker_settings_APPLE target)
     endif()
   endif()
 
-  if(CMAKE_GENERATOR STREQUAL "Xcode")
+  if(IOS)
+    if(DEFINED JUCER_DEVICE_FAMILY)
+      set(targeted_device_family "${JUCER_DEVICE_FAMILY}")
+    else()
+      set(targeted_device_family "1,2")
+    endif()
+
+    set_target_properties(${target} PROPERTIES
+      XCODE_ATTRIBUTE_ASSETCATALOG_COMPILER_APPICON_NAME "AppIcon"
+      XCODE_ATTRIBUTE_ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME "LaunchImage"
+      XCODE_ATTRIBUTE_SDKROOT "iphoneos"
+      XCODE_ATTRIBUTE_TARGETED_DEVICE_FAMILY "${targeted_device_family}"
+    )
+
+    set(all_confs_ios_deployment_target "")
+    foreach(config IN LISTS JUCER_PROJECT_CONFIGURATIONS)
+      if(DEFINED JUCER_IOS_DEPLOYMENT_TARGET_${config}
+          AND NOT JUCER_IOS_DEPLOYMENT_TARGET_${config} STREQUAL "default")
+        string(APPEND all_confs_ios_deployment_target
+          "$<$<CONFIG:${config}>:${JUCER_IOS_DEPLOYMENT_TARGET_${config}}>"
+        )
+      else()
+        string(APPEND all_confs_ios_deployment_target "$<$<CONFIG:${config}>:9.3>")
+      endif()
+    endforeach()
+    set_target_properties(${target} PROPERTIES
+      XCODE_ATTRIBUTE_IPHONEOS_DEPLOYMENT_TARGET "${all_confs_ios_deployment_target}"
+    )
+  elseif(CMAKE_GENERATOR STREQUAL "Xcode")
     set(all_confs_osx_deployment_target "")
     set(all_confs_sdkroot "")
     foreach(config IN LISTS JUCER_PROJECT_CONFIGURATIONS)
@@ -4550,21 +5075,33 @@ function(_FRUT_set_compiler_and_linker_settings_APPLE target)
   unset(all_confs_code_sign_identity)
   foreach(config IN LISTS JUCER_PROJECT_CONFIGURATIONS)
     unset(identity)
-    if(DEFINED JUCER_DEVELOPMENT_TEAM_ID AND NOT JUCER_DEVELOPMENT_TEAM_ID STREQUAL "")
+    if(IOS)
       if(DEFINED JUCER_CODE_SIGNING_IDENTITY_${config})
         set(identity "${JUCER_CODE_SIGNING_IDENTITY_${config}}")
       else()
-        set(identity "Mac Developer")
+        set(identity "iPhone Developer")
       endif()
-    elseif(DEFINED JUCER_CODE_SIGNING_IDENTITY_${config}
-        AND NOT JUCER_CODE_SIGNING_IDENTITY_${config} STREQUAL "Mac Developer")
-      set(identity "${JUCER_CODE_SIGNING_IDENTITY_${config}}")
+    else()
+      if(DEFINED JUCER_DEVELOPMENT_TEAM_ID AND NOT JUCER_DEVELOPMENT_TEAM_ID STREQUAL "")
+        if(DEFINED JUCER_CODE_SIGNING_IDENTITY_${config})
+          set(identity "${JUCER_CODE_SIGNING_IDENTITY_${config}}")
+        else()
+          set(identity "Mac Developer")
+        endif()
+      elseif(DEFINED JUCER_CODE_SIGNING_IDENTITY_${config}
+          AND NOT JUCER_CODE_SIGNING_IDENTITY_${config} STREQUAL "Mac Developer")
+        set(identity "${JUCER_CODE_SIGNING_IDENTITY_${config}}")
+      endif()
     endif()
     if(DEFINED identity)
       string(APPEND all_confs_code_sign_identity $<$<CONFIG:${config}>:${identity}>)
     endif()
   endforeach()
-  if(DEFINED all_confs_code_sign_identity)
+  if(IOS)
+    set_target_properties(${target} PROPERTIES
+      XCODE_ATTRIBUTE_CODE_SIGN_IDENTITY[sdk=iphoneos*] "${all_confs_code_sign_identity}"
+    )
+  elseif(DEFINED all_confs_code_sign_identity)
     set_target_properties(${target} PROPERTIES
       XCODE_ATTRIBUTE_CODE_SIGN_IDENTITY "${all_confs_code_sign_identity}"
     )
@@ -4576,10 +5113,24 @@ function(_FRUT_set_compiler_and_linker_settings_APPLE target)
     )
   endif()
 
-  if(JUCER_PUSH_NOTIFICATIONS_CAPABILITY
-      OR JUCER_USE_APP_SANDBOX
-      OR JUCER_USE_HARDENED_RUNTIME
-      OR target MATCHES "_AUv3_AppExtension$")
+  if(
+    JUCER_PUSH_NOTIFICATIONS_CAPABILITY
+    OR JUCER_APP_GROUPS_CAPABILITY
+    OR JUCER_USE_APP_SANDBOX
+    OR JUCER_USE_HARDENED_RUNTIME
+    OR (IOS AND JUCER_ICLOUD_PERMISSIONS)
+    OR (
+      JUCER_PROJECT_TYPE STREQUAL "Audio Plug-in"
+      AND (
+        (NOT IOS AND target MATCHES "_AUv3_AppExtension$")
+        OR (
+          IOS
+          AND target MATCHES "_StandalonePlugin$"
+          AND JUCER_ENABLE_INTER_APP_AUDIO
+        )
+      )
+    )
+  )
     if(CMAKE_GENERATOR STREQUAL "Xcode")
       set_target_properties(${target} PROPERTIES
         XCODE_ATTRIBUTE_CODE_SIGN_ENTITLEMENTS "${JUCER_ENTITLEMENTS_FILE}"
@@ -4605,8 +5156,8 @@ function(_FRUT_set_compiler_and_linker_settings_APPLE target)
     endif()
   endif()
 
-  foreach(osx_lib IN LISTS JUCER_PROJECT_OSX_LIBS)
-    target_link_libraries(${target} PRIVATE "-l${osx_lib}")
+  foreach(xcode_lib IN LISTS JUCER_PROJECT_XCODE_LIBS)
+    target_link_libraries(${target} PRIVATE "-l${xcode_lib}")
   endforeach()
 
 endfunction()
