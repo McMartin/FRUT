@@ -42,6 +42,9 @@ get_filename_component(JUCE_modules_DIR
 )
 
 
+project(PListMerger VERSION 0.1.0)
+
+
 if(NOT DEFINED CMAKE_CONFIGURATION_TYPES)
   if(NOT DEFINED CMAKE_BUILD_TYPE OR CMAKE_BUILD_TYPE STREQUAL "")
     message(STATUS "Setting CMAKE_BUILD_TYPE to \"Debug\" as it was not specified.")
@@ -49,8 +52,6 @@ if(NOT DEFINED CMAKE_CONFIGURATION_TYPES)
   endif()
 endif()
 
-
-project(PListMerger VERSION 0.1.0)
 
 add_executable(PListMerger
   "${CMAKE_CURRENT_LIST_DIR}/main.cpp"
@@ -111,8 +112,7 @@ if(WIN32 AND NOT MSVC)
 endif()
 
 
-get_cmake_property(is_in_try_compile IN_TRY_COMPILE)
-if(is_in_try_compile)
+if(built_by_Reprojucer)
   install(TARGETS PListMerger DESTINATION ".")
 else()
   install(TARGETS PListMerger DESTINATION "FRUT/cmake/bin")
