@@ -57,33 +57,44 @@ set(AudioPluginHost_jucer_FILE
 )
 add_subdirectory("extras/AudioPluginHost")
 
-set(Projucer_jucer_FILE "${JUCE_ROOT}/extras/Projucer/Projucer.jucer")
-add_subdirectory("extras/Projucer")
+
+# All exporters but "Xcode (iOS)"
+
+if(NOT IOS)
+  set(Projucer_jucer_FILE "${JUCE_ROOT}/extras/Projucer/Projucer.jucer")
+  add_subdirectory("extras/Projucer")
+endif()
 
 
-# All exporters but "Visual Studio 2015"
+# All exporters but "Xcode (iOS)" and "Visual Studio 2015"
 
-if(NOT MSVC_VERSION EQUAL 1900)
+if(NOT IOS AND NOT MSVC_VERSION EQUAL 1900)
   set(UnitTestRunner_jucer_FILE "${JUCE_ROOT}/extras/UnitTestRunner/UnitTestRunner.jucer")
   add_subdirectory("extras/UnitTestRunner")
 endif()
 
 
-# "Xcode (MacOSX)", "Visual Studio 2019" and "Linux Makefile" exporters
+# All exporters but "Visual Studio 2017" and "Visual Studio 2015"
 
-if(APPLE OR MSVC_VERSION GREATER 1919 OR CMAKE_HOST_SYSTEM_NAME STREQUAL "Linux")
+if(NOT MSVC_VERSION LESS 1920)
   set(AudioPerformanceTest_jucer_FILE
     "${JUCE_ROOT}/extras/AudioPerformanceTest/AudioPerformanceTest.jucer"
   )
   add_subdirectory("extras/AudioPerformanceTest")
 
-  set(BinaryBuilder_jucer_FILE "${JUCE_ROOT}/extras/BinaryBuilder/BinaryBuilder.jucer")
-  add_subdirectory("extras/BinaryBuilder")
-
   set(NetworkGraphicsDemo_jucer_FILE
     "${JUCE_ROOT}/extras/NetworkGraphicsDemo/NetworkGraphicsDemo.jucer"
   )
   add_subdirectory("extras/NetworkGraphicsDemo")
+endif()
+
+
+# "Xcode (MacOSX)", "Visual Studio 2019" and "Linux Makefile" exporters
+
+if((APPLE AND NOT IOS) OR MSVC_VERSION GREATER 1919
+    OR CMAKE_HOST_SYSTEM_NAME STREQUAL "Linux")
+  set(BinaryBuilder_jucer_FILE "${JUCE_ROOT}/extras/BinaryBuilder/BinaryBuilder.jucer")
+  add_subdirectory("extras/BinaryBuilder")
 endif()
 
 
