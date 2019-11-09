@@ -1448,6 +1448,8 @@ int main(int argc, char* argv[])
       {
         convertSettingIfDefined(exporter, "customXcassetsFolder",
                                 "CUSTOM_XCASSETS_FOLDER", {});
+        convertSettingIfDefined(exporter, "customLaunchStoryboard",
+                                "CUSTOM_LAUNCH_STORYBOARD", {});
       }
 
       if (isXcodeExporter)

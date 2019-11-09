@@ -795,6 +795,7 @@ function(jucer_export_target exporter)
   if(exporter STREQUAL "Xcode (iOS)")
     list(APPEND single_value_keywords
       "CUSTOM_XCASSETS_FOLDER"
+      "CUSTOM_LAUNCH_STORYBOARD"
       "DEVICE_FAMILY"
       "IPHONE_SCREEN_ORIENTATION"
       "IPAD_SCREEN_ORIENTATION"
@@ -936,6 +937,14 @@ function(jucer_export_target exporter)
 
   if(DEFINED _CUSTOM_XCASSETS_FOLDER)
     set(JUCER_CUSTOM_XCASSETS_FOLDER "${_CUSTOM_XCASSETS_FOLDER}" PARENT_SCOPE)
+  endif()
+
+  if(DEFINED _CUSTOM_LAUNCH_STORYBOARD)
+    _FRUT_abs_path_based_on_jucer_project_dir(storyboard "${_CUSTOM_LAUNCH_STORYBOARD}")
+    if(NOT EXISTS "${storyboard}")
+      message(FATAL_ERROR "No such file (CUSTOM_LAUNCH_STORYBOARD): ${storyboard}")
+    endif()
+    set(JUCER_CUSTOM_LAUNCH_STORYBOARD "${storyboard}" PARENT_SCOPE)
   endif()
 
   if(DEFINED _CUSTOM_XCODE_RESOURCE_FOLDERS)
@@ -2104,7 +2113,19 @@ function(jucer_project_end)
       set(JUCER_XCASSETS "${JUCER_CUSTOM_XCASSETS_FOLDER}")
     endif()
 
-    _FRUT_generate_default_launch_storyboard_file(JUCER_LAUNCH_STORYBOARD_FILE)
+    if(
+      (DEFINED JUCER_CUSTOM_LAUNCH_STORYBOARD
+        AND NOT JUCER_CUSTOM_LAUNCH_STORYBOARD STREQUAL "")
+      OR (NOT DEFINED JUCER_CUSTOM_XCASSETS_FOLDER
+        OR JUCER_CUSTOM_XCASSETS_FOLDER STREQUAL "")
+    )
+      set(custom_launch_storyboard "${JUCER_CUSTOM_LAUNCH_STORYBOARD}")
+      if(custom_launch_storyboard STREQUAL "")
+        _FRUT_generate_default_launch_storyboard_file(JUCER_LAUNCH_STORYBOARD_FILE)
+      else()
+        set(JUCER_LAUNCH_STORYBOARD_FILE "${custom_launch_storyboard}")
+      endif()
+    endif()
   endif()
 
   source_group("Juce Library Code"
@@ -4047,10 +4068,24 @@ function(_FRUT_generate_plist_file
       )
     endif()
 
-    string(APPEND plist_entries "
-    <key>UILaunchStoryboardName</key>
-    <string>LaunchScreen</string>"
+    if(
+      (DEFINED JUCER_CUSTOM_LAUNCH_STORYBOARD
+        AND NOT JUCER_CUSTOM_LAUNCH_STORYBOARD STREQUAL "")
+      OR (NOT DEFINED JUCER_CUSTOM_XCASSETS_FOLDER
+        OR JUCER_CUSTOM_XCASSETS_FOLDER STREQUAL "")
     )
+      set(storyboard_name "${JUCER_CUSTOM_LAUNCH_STORYBOARD}")
+      if(storyboard_name STREQUAL "")
+        set(storyboard_name "LaunchScreen")
+      else()
+        get_filename_component(storyboard_name "${storyboard_name}" NAME)
+        string(REGEX REPLACE "[.]storyboard$" "" storyboard_name "${storyboard_name}")
+      endif()
+      string(APPEND plist_entries "
+    <key>UILaunchStoryboardName</key>
+    <string>${storyboard_name}</string>"
+      )
+    endif()
   endif()
 
   string(APPEND plist_entries "
