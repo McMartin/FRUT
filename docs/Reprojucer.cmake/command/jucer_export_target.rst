@@ -110,7 +110,7 @@ master/generated/JUCE-5.4.3/extras/AudioPluginHost/CMakeLists.txt#L194-L208>`_:
 
 
 From `the DemoRunner example of JUCE 5.4.3 <https://github.com/McMartin/FRUT/blob/master/
-generated/JUCE-5.4.3/examples/DemoRunner/CMakeLists.txt#L325-L333>`_:
+generated/JUCE-5.4.3/examples/DemoRunner/CMakeLists.txt#L369-L377>`_:
 
 .. code-block:: cmake
   :lineno-start: 325

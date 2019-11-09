@@ -320,4 +320,31 @@ jucer_export_target_configuration(
   DEBUG_INFORMATION_FORMAT "Program Database (/Zi)"
 )
 
+jucer_export_target(
+  "Xcode (iOS)"
+  ICON_SMALL "Source/JUCEAppIcon.png"
+  ICON_LARGE "Source/JUCEAppIcon.png"
+  MICROPHONE_ACCESS ON
+)
+
+jucer_export_target_configuration(
+  "Xcode (iOS)"
+  NAME "Debug"
+  DEBUG_MODE ON
+  BINARY_NAME "Plugin Host"
+  LINK_TIME_OPTIMISATION OFF
+  OPTIMISATION "-O0 (no optimisation)"
+  ENABLE_PLUGIN_COPY_STEP ON
+)
+
+jucer_export_target_configuration(
+  "Xcode (iOS)"
+  NAME "Release"
+  DEBUG_MODE OFF
+  BINARY_NAME "Plugin Host"
+  LINK_TIME_OPTIMISATION ON
+  OPTIMISATION "-O3 (fastest with safe optimisations)"
+  ENABLE_PLUGIN_COPY_STEP ON
+)
+
 jucer_project_end()
