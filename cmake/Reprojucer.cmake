@@ -1370,6 +1370,10 @@ function(jucer_export_target_configuration
     )
   endif()
 
+  if(exporter STREQUAL "Xcode (iOS)")
+    list(APPEND single_value_keywords "IOS_DEPLOYMENT_TARGET")
+  endif()
+
   if(exporter MATCHES "^Visual Studio 201(9|7|5|3)$")
     list(APPEND single_value_keywords
       "ENABLE_PLUGIN_COPY_STEP"
@@ -1572,6 +1576,10 @@ function(jucer_export_target_configuration
     if(DEFINED xcode_archs)
       set(JUCER_XCODE_ARCHS_${config} "${xcode_archs}" PARENT_SCOPE)
     endif()
+  endif()
+
+  if(DEFINED _IOS_DEPLOYMENT_TARGET)
+    set(JUCER_IOS_DEPLOYMENT_TARGET_${config} "${_IOS_DEPLOYMENT_TARGET}" PARENT_SCOPE)
   endif()
 
   if(DEFINED _CUSTOM_XCODE_FLAGS)
@@ -4728,9 +4736,23 @@ function(_FRUT_set_compiler_and_linker_settings_APPLE target)
     set_target_properties(${target} PROPERTIES
       XCODE_ATTRIBUTE_ASSETCATALOG_COMPILER_APPICON_NAME "AppIcon"
       XCODE_ATTRIBUTE_ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME "LaunchImage"
-      XCODE_ATTRIBUTE_IPHONEOS_DEPLOYMENT_TARGET "9.3"
       XCODE_ATTRIBUTE_SDKROOT "iphoneos"
       XCODE_ATTRIBUTE_TARGETED_DEVICE_FAMILY "1,2"
+    )
+
+    set(all_confs_ios_deployment_target "")
+    foreach(config IN LISTS JUCER_PROJECT_CONFIGURATIONS)
+      if(DEFINED JUCER_IOS_DEPLOYMENT_TARGET_${config}
+          AND NOT JUCER_IOS_DEPLOYMENT_TARGET_${config} STREQUAL "default")
+        string(APPEND all_confs_ios_deployment_target
+          "$<$<CONFIG:${config}>:${JUCER_IOS_DEPLOYMENT_TARGET_${config}}>"
+        )
+      else()
+        string(APPEND all_confs_ios_deployment_target "$<$<CONFIG:${config}>:9.3>")
+      endif()
+    endforeach()
+    set_target_properties(${target} PROPERTIES
+      XCODE_ATTRIBUTE_IPHONEOS_DEPLOYMENT_TARGET "${all_confs_ios_deployment_target}"
     )
   elseif(CMAKE_GENERATOR STREQUAL "Xcode")
     set(all_confs_osx_deployment_target "")

@@ -1918,6 +1918,12 @@ int main(int argc, char* argv[])
           }
         }
 
+        if (exporterType == "XCODE_IPHONE")
+        {
+          convertSettingIfDefined(configuration, "iosCompatibility",
+                                  "IOS_DEPLOYMENT_TARGET", {});
+        }
+
         if (exporterType == "XCODE_MAC")
         {
           const auto sdks = juce::StringArray{

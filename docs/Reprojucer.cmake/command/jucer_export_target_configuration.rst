@@ -33,6 +33,8 @@ Define the settings specific to a configuration associated with an export target
     [OSX_DEPLOYMENT_TARGET <osx_deployment_target>]  # [3]
     [OSX_ARCHITECTURE <osx_architecture>]  # [3]
 
+    [IOS_DEPLOYMENT_TARGET <ios_deployment_target>]  # [4]
+
     [CUSTOM_XCODE_FLAGS <xcode_flag> [<xcode_flag> ...]]  # [2]
     [CXX_LANGUAGE_STANDARD <cxx_standard>]  # [2]
     [CXX_LIBRARY <cxx_library>]  # [2]
