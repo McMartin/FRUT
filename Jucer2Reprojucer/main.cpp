@@ -1480,6 +1480,25 @@ int main(int argc, char* argv[])
 
                                   return value;
                                 });
+
+        const auto screenOrientationFn = [](const juce::var& v) -> juce::String {
+          const auto value = v.toString();
+
+          if (value == "portraitlandscape")
+            return "Portrait and Landscape";
+
+          if (value == "portrait")
+            return "Portrait";
+
+          if (value == "landscape")
+            return "Landscape";
+
+          return value;
+        };
+        convertSettingIfDefined(exporter, "iosScreenOrientation",
+                                "IPHONE_SCREEN_ORIENTATION", screenOrientationFn);
+        convertSettingIfDefined(exporter, "iPadScreenOrientation",
+                                "IPAD_SCREEN_ORIENTATION", screenOrientationFn);
       }
 
       if (exporterType == "XCODE_MAC")

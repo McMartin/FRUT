@@ -34,6 +34,8 @@ Define the settings specific to an export target.
     [HARDENED_RUNTIME_OPTIONS <hardened_runtime_option> [<hardened_runtime_option> ...]]  # [5]
 
     [DEVICE_FAMILY <iPhone|iPad|Universal>]  # [7]
+    [IPHONE_SCREEN_ORIENTATION <Portrait and Landscape|Portrait|Landscape>]  # [7]
+    [IPAD_SCREEN_ORIENTATION <Portrait and Landscape|Portrait|Landscape>]  # [7]
 
     [MICROPHONE_ACCESS <ON|OFF>]  # [3]
     [MICROPHONE_ACCESS_TEXT <microphone_access_text>]  # [3]

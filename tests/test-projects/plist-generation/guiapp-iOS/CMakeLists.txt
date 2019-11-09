@@ -58,6 +58,20 @@ function(test_app_plist_exporter_bundle_identifier)
 endfunction()
 
 
+function(test_app_plist_screen_orientation)
+  foreach(iphone_screen_orientation IN ITEMS "portraitlandscape" "portrait" "landscape")
+    foreach(ipad_screen_orientation IN ITEMS "portraitlandscape" "portrait" "landscape")
+      set(JUCER_IPHONE_SCREEN_ORIENTATION "${iphone_screen_orientation}")
+      set(JUCER_IPAD_SCREEN_ORIENTATION "${ipad_screen_orientation}")
+      _FRUT_generate_plist_file(target
+        "App-ScreenOrientation-iPhone_${iphone_screen_orientation}-iPad_${ipad_screen_orientation}"
+        "APPL" "????"
+      )
+    endforeach()
+  endforeach()
+endfunction()
+
+
 function(test_app_plist_microphone_access_default)
   set(JUCER_MICROPHONE_ACCESS ON)
   _FRUT_generate_plist_file(target "App-MicrophoneUsage-default" "APPL" "????")
@@ -97,4 +111,5 @@ test_app_plist_exporter_bundle_identifier()
 test_app_plist_microphone_access_custom()
 test_app_plist_microphone_access_default()
 test_app_plist_push_notifications_capability()
+test_app_plist_screen_orientation()
 test_app_plist_version()

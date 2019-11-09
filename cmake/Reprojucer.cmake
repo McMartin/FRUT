@@ -795,6 +795,8 @@ function(jucer_export_target exporter)
   if(exporter STREQUAL "Xcode (iOS)")
     list(APPEND single_value_keywords
       "DEVICE_FAMILY"
+      "IPHONE_SCREEN_ORIENTATION"
+      "IPAD_SCREEN_ORIENTATION"
     )
   else()
     list(APPEND single_value_keywords "VST_LEGACY_SDK_FOLDER" "VST_SDK_FOLDER")
@@ -950,6 +952,34 @@ function(jucer_export_target exporter)
       set(JUCER_DEVICE_FAMILY "1,2" PARENT_SCOPE)
     else()
       message(FATAL_ERROR "Unsupported value for DEVICE_FAMILY: \"${_DEVICE_FAMILY}\"")
+    endif()
+  endif()
+
+  if(DEFINED _IPHONE_SCREEN_ORIENTATION)
+    set(screen_orientation "${_IPHONE_SCREEN_ORIENTATION}")
+    if(screen_orientation STREQUAL "Portrait and Landscape")
+      set(JUCER_IPHONE_SCREEN_ORIENTATION "portraitlandscape" PARENT_SCOPE)
+    elseif(screen_orientation STREQUAL "Portrait")
+      set(JUCER_IPHONE_SCREEN_ORIENTATION "portrait" PARENT_SCOPE)
+    elseif(screen_orientation STREQUAL "Landscape")
+      set(JUCER_IPHONE_SCREEN_ORIENTATION "landscape" PARENT_SCOPE)
+    else()
+      message(FATAL_ERROR
+        "Unsupported value for IPHONE_SCREEN_ORIENTATION: \"${screen_orientation}\"")
+    endif()
+  endif()
+
+  if(DEFINED _IPAD_SCREEN_ORIENTATION)
+    set(screen_orientation "${_IPAD_SCREEN_ORIENTATION}")
+    if(screen_orientation STREQUAL "Portrait and Landscape")
+      set(JUCER_IPAD_SCREEN_ORIENTATION "portraitlandscape" PARENT_SCOPE)
+    elseif(screen_orientation STREQUAL "Portrait")
+      set(JUCER_IPAD_SCREEN_ORIENTATION "portrait" PARENT_SCOPE)
+    elseif(screen_orientation STREQUAL "Landscape")
+      set(JUCER_IPAD_SCREEN_ORIENTATION "landscape" PARENT_SCOPE)
+    else()
+      message(FATAL_ERROR
+        "Unsupported value for IPAD_SCREEN_ORIENTATION: \"${screen_orientation}\"")
     endif()
   endif()
 
@@ -3997,14 +4027,53 @@ function(_FRUT_generate_plist_file
     <key>UIRequiresFullScreen</key>
     <true/>
     <key>UIStatusBarHidden</key>
-    <true/>
-    <key>UISupportedInterfaceOrientations</key>
-    <array>
-      <string>UIInterfaceOrientationPortrait</string>
-      <string>UIInterfaceOrientationLandscapeLeft</string>
-      <string>UIInterfaceOrientationLandscapeRight</string>
-    </array>"
+    <true/>"
     )
+
+    string(APPEND plist_entries "
+    <key>UISupportedInterfaceOrientations</key>
+    <array>"
+    )
+    if(DEFINED JUCER_IPHONE_SCREEN_ORIENTATION)
+      set(iphone_screen_orientation "${JUCER_IPHONE_SCREEN_ORIENTATION}")
+    else()
+      set(iphone_screen_orientation "portraitlandscape")
+    endif()
+    if(iphone_screen_orientation MATCHES "portrait")
+      string(APPEND plist_entries "
+      <string>UIInterfaceOrientationPortrait</string>"
+      )
+    endif()
+    if(iphone_screen_orientation MATCHES "landscape")
+      string(APPEND plist_entries "
+      <string>UIInterfaceOrientationLandscapeLeft</string>
+      <string>UIInterfaceOrientationLandscapeRight</string>"
+      )
+    endif()
+    string(APPEND plist_entries "\n    </array>")
+    if(DEFINED JUCER_IPAD_SCREEN_ORIENTATION)
+      set(ipad_screen_orientation "${JUCER_IPAD_SCREEN_ORIENTATION}")
+    else()
+      set(ipad_screen_orientation "portraitlandscape")
+    endif()
+    if(NOT ipad_screen_orientation STREQUAL iphone_screen_orientation)
+      string(APPEND plist_entries "
+    <key>UISupportedInterfaceOrientations~ipad</key>
+    <array>"
+      )
+      if(ipad_screen_orientation MATCHES "portrait")
+        string(APPEND plist_entries "
+      <string>UIInterfaceOrientationPortrait</string>"
+        )
+      endif()
+      if(ipad_screen_orientation MATCHES "landscape")
+        string(APPEND plist_entries "
+      <string>UIInterfaceOrientationLandscapeLeft</string>
+      <string>UIInterfaceOrientationLandscapeRight</string>"
+        )
+      endif()
+      string(APPEND plist_entries "\n    </array>")
+    endif()
 
     string(APPEND plist_entries "\n    <key>UIBackgroundModes</key>")
     if(JUCER_PUSH_NOTIFICATIONS_CAPABILITY)
