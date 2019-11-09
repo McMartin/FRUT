@@ -190,4 +190,24 @@ jucer_export_target_configuration(
   # ARCHITECTURE "x64"
 )
 
+jucer_export_target(
+  "Xcode (iOS)"
+)
+
+jucer_export_target_configuration(
+  "Xcode (iOS)"
+  NAME "Debug"
+  DEBUG_MODE ON
+  BINARY_NAME "OSCSender"
+  OPTIMISATION "-O0 (no optimisation)"
+)
+
+jucer_export_target_configuration(
+  "Xcode (iOS)"
+  NAME "Release"
+  DEBUG_MODE OFF
+  BINARY_NAME "OSCSender"
+  OPTIMISATION "-O3 (fastest with safe optimisations)"
+)
+
 jucer_project_end()

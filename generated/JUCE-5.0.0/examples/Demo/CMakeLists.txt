@@ -270,6 +270,39 @@ jucer_export_target_configuration(
 )
 
 jucer_export_target(
+  "Xcode (iOS)"
+  ICON_LARGE "Resources/juce_icon.png"
+  MICROPHONE_ACCESS ON
+  CUSTOM_PLIST "<plist>
+<dict>
+	<key>NSAppTransportSecurity</key>
+	<dict>
+		<key>NSAllowsArbitraryLoads</key>
+		<true/>
+	</dict>
+</dict>
+</plist>"
+)
+
+jucer_export_target_configuration(
+  "Xcode (iOS)"
+  NAME "Debug"
+  DEBUG_MODE ON
+  BINARY_NAME "JuceDemo"
+  # PREPROCESSOR_DEFINITIONS
+  OPTIMISATION "-O0 (no optimisation)"
+)
+
+jucer_export_target_configuration(
+  "Xcode (iOS)"
+  NAME "Release"
+  DEBUG_MODE OFF
+  BINARY_NAME "JuceDemo"
+  # PREPROCESSOR_DEFINITIONS
+  OPTIMISATION "-O3 (fastest with safe optimisations)"
+)
+
+jucer_export_target(
   "Visual Studio 2013"
   ICON_LARGE "Resources/juce_icon.png"
 )
