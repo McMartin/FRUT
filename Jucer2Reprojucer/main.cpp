@@ -1264,10 +1264,11 @@ int main(int argc, char* argv[])
   // jucer_export_target() and jucer_export_target_configuration()
   {
     const auto supportedExporters = juce::StringArray{
-      "XCODE_MAC",          "VS2019",          "VS2017", "VS2015", "VS2013", "LINUX_MAKE",
-      "CODEBLOCKS_WINDOWS", "CODEBLOCKS_LINUX"};
+      "XCODE_MAC",  "XCODE_IPHONE",       "VS2019",          "VS2017", "VS2015", "VS2013",
+      "LINUX_MAKE", "CODEBLOCKS_WINDOWS", "CODEBLOCKS_LINUX"};
     const auto exporterNames = std::map<juce::String, const char*>{
       {"XCODE_MAC", "Xcode (MacOSX)"},
+      {"XCODE_IPHONE", "Xcode (iOS)"},
       {"VS2019", "Visual Studio 2019"},
       {"VS2017", "Visual Studio 2017"},
       {"VS2015", "Visual Studio 2015"},
@@ -1294,7 +1295,10 @@ int main(int argc, char* argv[])
       wLn("jucer_export_target(");
       wLn("  \"", exporterName, "\"");
 
-      if (exporterType == "XCODE_MAC"
+      const auto isXcodeExporter =
+        exporterType == "XCODE_MAC" || exporterType == "XCODE_IPHONE";
+
+      if (isXcodeExporter
           && (exporter.hasProperty("prebuildCommand")
               || exporter.hasProperty("postbuildCommand")))
       {
@@ -1440,7 +1444,7 @@ int main(int argc, char* argv[])
       convertSettingIfDefined(exporter, "smallIcon", "ICON_SMALL", convertIcon);
       convertSettingIfDefined(exporter, "bigIcon", "ICON_LARGE", convertIcon);
 
-      if (exporterType == "XCODE_MAC")
+      if (isXcodeExporter)
       {
         convertSettingAsListIfDefined(
           exporter, "customXcodeResourceFolders", "CUSTOM_XCODE_RESOURCE_FOLDERS",
@@ -1457,7 +1461,10 @@ int main(int argc, char* argv[])
                                        "ADD_DUPLICATE_RESOURCES_FOLDER_TO_APP_EXTENSION",
                                        {});
         }
+      }
 
+      if (exporterType == "XCODE_MAC")
+      {
         if (projectType == "guiapp")
         {
           convertSettingAsListIfDefined(
@@ -1572,7 +1579,10 @@ int main(int argc, char* argv[])
                  {"com.apple.security.automation.apple-events", "Apple Events"}});
             });
         }
+      }
 
+      if (isXcodeExporter)
+      {
         convertOnOffSettingIfDefined(exporter, "microphonePermissionNeeded",
                                      "MICROPHONE_ACCESS", {});
         convertSettingIfDefined(exporter, "microphonePermissionsText",
@@ -1853,7 +1863,7 @@ int main(int argc, char* argv[])
                                   return {};
                                 });
 
-        if (exporterType == "XCODE_MAC")
+        if (isXcodeExporter)
         {
           convertOnOffSettingIfDefined(configuration, "enablePluginBinaryCopyStep",
                                        "ENABLE_PLUGIN_COPY_STEP", {});
@@ -1906,7 +1916,10 @@ int main(int argc, char* argv[])
             convertSettingIfDefined(configuration, "vstBinaryLocation",
                                     "VST_LEGACY_BINARY_LOCATION", {});
           }
+        }
 
+        if (exporterType == "XCODE_MAC")
+        {
           const auto sdks = juce::StringArray{
             "10.5 SDK",  "10.6 SDK",  "10.7 SDK",  "10.8 SDK",  "10.9 SDK",
             "10.10 SDK", "10.11 SDK", "10.12 SDK", "10.13 SDK", "10.14 SDK",
@@ -1960,7 +1973,10 @@ int main(int argc, char* argv[])
 
                                     return {};
                                   });
+        }
 
+        if (isXcodeExporter)
+        {
           convertSettingAsListIfDefined(configuration, "customXcodeFlags",
                                         "CUSTOM_XCODE_FLAGS", [](const juce::var& v) {
                                           return juce::StringArray::fromTokens(

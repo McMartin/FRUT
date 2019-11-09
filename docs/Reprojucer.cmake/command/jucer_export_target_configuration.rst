@@ -29,47 +29,50 @@ Define the settings specific to a configuration associated with an export target
     [UNITY_BINARY_LOCATION <binary_location>]  # [1]
     [VST_LEGACY_BINARY_LOCATION <binary_location>]  # [1]
 
-    [OSX_BASE_SDK_VERSION <osx_sdk>]  # [2]
-    [OSX_DEPLOYMENT_TARGET <osx_deployment_target>]  # [2]
-    [OSX_ARCHITECTURE <osx_architecture>]  # [2]
+    [OSX_BASE_SDK_VERSION <osx_sdk>]  # [3]
+    [OSX_DEPLOYMENT_TARGET <osx_deployment_target>]  # [3]
+    [OSX_ARCHITECTURE <osx_architecture>]  # [3]
+
     [CUSTOM_XCODE_FLAGS <xcode_flag> [<xcode_flag> ...]]  # [2]
     [CXX_LANGUAGE_STANDARD <cxx_standard>]  # [2]
     [CXX_LIBRARY <cxx_library>]  # [2]
     [CODE_SIGNING_IDENTITY <code_signing_identity>]  # [2]
     [STRIP_LOCAL_SYMBOLS <ON|OFF>]  # [2]
 
-    [DEBUG_INFORMATION_FORMAT <debug_information_format>]  # [3]
-    [WARNING_LEVEL <warning_level>]  # [3]
-    [TREAT_WARNINGS_AS_ERRORS <ON|OFF>]  # [3]
-    [RUNTIME_LIBRARY <runtime_library>]  # [3]
-    [WHOLE_PROGRAM_OPTIMISATION <whole_program_optimisation>]  # [3]
-    [MULTI_PROCESSOR_COMPILATION <ON|OFF>]  # [3]
-    [INCREMENTAL_LINKING <ON|OFF>]  # [3]
-    [FORCE_GENERATION_OF_DEBUG_SYMBOLS <ON|OFF>]  # [4]
-    [PREBUILD_COMMAND <command_content>]  # [3]
-    [POSTBUILD_COMMAND <command_content>]  # [3]
-    [GENERATE_MANIFEST <ON|OFF>]  # [3]
-    [CHARACTER_SET <character_set>]  # [3]
+    [DEBUG_INFORMATION_FORMAT <debug_information_format>]  # [5]
+    [WARNING_LEVEL <warning_level>]  # [5]
+    [TREAT_WARNINGS_AS_ERRORS <ON|OFF>]  # [5]
+    [RUNTIME_LIBRARY <runtime_library>]  # [5]
+    [WHOLE_PROGRAM_OPTIMISATION <whole_program_optimisation>]  # [5]
+    [MULTI_PROCESSOR_COMPILATION <ON|OFF>]  # [5]
+    [INCREMENTAL_LINKING <ON|OFF>]  # [5]
+    [FORCE_GENERATION_OF_DEBUG_SYMBOLS <ON|OFF>]  # [6]
+    [PREBUILD_COMMAND <command_content>]  # [5]
+    [POSTBUILD_COMMAND <command_content>]  # [5]
+    [GENERATE_MANIFEST <ON|OFF>]  # [5]
+    [CHARACTER_SET <character_set>]  # [5]
 
     [RELAX_IEEE_COMPLIANCE <ON|OFF>]  # [1]
 
-    [ARCHITECTURE <architecture>]  # [5]
+    [ARCHITECTURE <architecture>]  # [7]
   )
 
 ``<exporter>`` must be one of the :ref:`supported exporters <supported-exporters>`.
 
 Optional keywords support:
 
-- ``[1]``: only supported by the ``"Xcode (MacOSX)"``, ``"Visual Studio 2019"``,
-  ``"Visual Studio 2017"``, ``"Visual Studio 2015"``, and ``"Visual Studio 2013"``
-  exporters.
-- ``[2]``: only supported by the ``"Xcode (MacOSX)"`` exporter.
-- ``[3]``: only supported by the ``"Visual Studio 2019"``, ``"Visual Studio 2017"``,
+- ``[1]``: only supported by the ``"Xcode (MacOSX)"``, ``"Xcode (iOS)"``,
+  ``"Visual Studio 2019"``, ``"Visual Studio 2017"``, ``"Visual Studio 2015"``, and
+  ``"Visual Studio 2013"`` exporters.
+- ``[2]``: only supported by the ``"Xcode (MacOSX)"`` and ``"Xcode (iOS)"`` exporters.
+- ``[3]``: only supported by the ``"Xcode (MacOSX)"`` exporter.
+- ``[4]``: only supported by the ``"Xcode (iOS)"`` exporter.
+- ``[5]``: only supported by the ``"Visual Studio 2019"``, ``"Visual Studio 2017"``,
   ``"Visual Studio 2015"``, and ``"Visual Studio 2013"`` exporters.
-- ``[4]``: only supported by the ``"Visual Studio 2019"``, ``"Visual Studio 2017"``,
+- ``[6]``: only supported by the ``"Visual Studio 2019"``, ``"Visual Studio 2017"``,
   ``"Visual Studio 2015"``, and ``"Visual Studio 2013"`` exporters, when ``DEBUG_MODE`` is
   ``OFF``.
-- ``[5]``: only supported by the ``"Visual Studio 2019"``, ``"Visual Studio 2017"``,
+- ``[7]``: only supported by the ``"Visual Studio 2019"``, ``"Visual Studio 2017"``,
   ``"Visual Studio 2015"``, ``"Visual Studio 2013"``, ``"Linux Makefile"``,
   ``"Code::Blocks (Windows)"``, and ``"Code::Blocks (Linux)"`` exporters.
 
