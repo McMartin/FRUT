@@ -240,6 +240,7 @@ jucer_export_target_configuration(
 jucer_export_target(
   "Xcode (iOS)"
   ICON_LARGE "Source/juce_icon.png"
+  IPHONE_SCREEN_ORIENTATION "Portrait and Landscape"
 )
 
 jucer_export_target_configuration(
@@ -248,6 +249,7 @@ jucer_export_target_configuration(
   DEBUG_MODE ON
   BINARY_NAME "JUCE Network Graphics Demo"
   OPTIMISATION "-O0 (no optimisation)"
+  IOS_DEPLOYMENT_TARGET "default"
 )
 
 jucer_export_target_configuration(
@@ -256,6 +258,7 @@ jucer_export_target_configuration(
   DEBUG_MODE OFF
   BINARY_NAME "JUCE Network Graphics Demo"
   OPTIMISATION "-O3 (fastest with safe optimisations)"
+  IOS_DEPLOYMENT_TARGET "default"
 )
 
 jucer_export_target(

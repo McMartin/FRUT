@@ -264,7 +264,11 @@ jucer_export_target_configuration(
 
 jucer_export_target(
   "Xcode (iOS)"
+  IPHONE_SCREEN_ORIENTATION "Landscape"
+  IPAD_SCREEN_ORIENTATION "Landscape"
   MICROPHONE_ACCESS ON
+  AUDIO_BACKGROUND_CAPABILITY ON
+  BLUETOOTH_MIDI_BACKGROUND_CAPABILITY ON
 )
 
 jucer_export_target_configuration(

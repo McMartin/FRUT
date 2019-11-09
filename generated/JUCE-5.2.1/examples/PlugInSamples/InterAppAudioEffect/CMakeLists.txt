@@ -195,6 +195,7 @@ jucer_export_target(
     "-Wconstant-conversion"
     "-Wsign-conversion"
   MICROPHONE_ACCESS ON
+  AUDIO_BACKGROUND_CAPABILITY ON
 )
 
 jucer_export_target_configuration(

@@ -174,6 +174,7 @@ jucer_export_target_configuration(
 
 jucer_export_target(
   "Xcode (iOS)"
+  IPHONE_SCREEN_ORIENTATION "Portrait and Landscape"
 )
 
 jucer_export_target_configuration(
@@ -182,6 +183,7 @@ jucer_export_target_configuration(
   DEBUG_MODE ON
   BINARY_NAME "OSCReceiver"
   OPTIMISATION "-O0 (no optimisation)"
+  IOS_DEPLOYMENT_TARGET "default"
 )
 
 jucer_export_target_configuration(
@@ -190,6 +192,7 @@ jucer_export_target_configuration(
   DEBUG_MODE OFF
   BINARY_NAME "OSCReceiver"
   OPTIMISATION "-O3 (fastest with safe optimisations)"
+  IOS_DEPLOYMENT_TARGET "default"
 )
 
 jucer_project_end()

@@ -267,6 +267,7 @@ jucer_export_target_configuration(
 jucer_export_target(
   "Xcode (iOS)"
   ICON_LARGE "Resources/juce_icon.png"
+  IPHONE_SCREEN_ORIENTATION "Portrait and Landscape"
   MICROPHONE_ACCESS ON
   CUSTOM_PLIST "<plist>
 <dict>
@@ -286,6 +287,7 @@ jucer_export_target_configuration(
   BINARY_NAME "JuceDemo"
   # PREPROCESSOR_DEFINITIONS
   OPTIMISATION "-O0 (no optimisation)"
+  IOS_DEPLOYMENT_TARGET "default"
 )
 
 jucer_export_target_configuration(
@@ -295,6 +297,7 @@ jucer_export_target_configuration(
   BINARY_NAME "JuceDemo"
   # PREPROCESSOR_DEFINITIONS
   OPTIMISATION "-O3 (fastest with safe optimisations)"
+  IOS_DEPLOYMENT_TARGET "default"
 )
 
 jucer_export_target(

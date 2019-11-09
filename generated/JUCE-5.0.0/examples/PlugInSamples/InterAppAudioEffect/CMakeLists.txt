@@ -189,7 +189,9 @@ jucer_export_target(
     "-Wreorder"
     "-Wconstant-conversion"
     "-Wsign-conversion"
+  IPHONE_SCREEN_ORIENTATION "Portrait and Landscape"
   MICROPHONE_ACCESS ON
+  AUDIO_BACKGROUND_CAPABILITY ON
 )
 
 jucer_export_target_configuration(

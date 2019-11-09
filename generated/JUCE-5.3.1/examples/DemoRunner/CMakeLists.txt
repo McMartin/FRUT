@@ -279,7 +279,12 @@ jucer_export_target(
   ICON_LARGE "Source/JUCEAppIcon.png"
   CUSTOM_XCODE_RESOURCE_FOLDERS
     "../Assets"
+  IPHONE_SCREEN_ORIENTATION "Landscape"
+  IPAD_SCREEN_ORIENTATION "Landscape"
+  FILE_SHARING_ENABLED ON
+  SUPPORT_DOCUMENT_BROWSER ON
   MICROPHONE_ACCESS ON
+  ICLOUD_PERMISSIONS ON
 )
 
 jucer_export_target_configuration(

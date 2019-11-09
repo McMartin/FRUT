@@ -176,6 +176,7 @@ jucer_export_target_configuration(
 
 jucer_export_target(
   "Xcode (iOS)"
+  IPHONE_SCREEN_ORIENTATION "Portrait and Landscape"
 )
 
 jucer_export_target_configuration(

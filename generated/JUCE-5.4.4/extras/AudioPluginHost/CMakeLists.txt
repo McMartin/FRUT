@@ -321,7 +321,12 @@ jucer_export_target(
   "Xcode (iOS)"
   ICON_SMALL "Source/JUCEAppIcon.png"
   ICON_LARGE "Source/JUCEAppIcon.png"
+  DEVICE_FAMILY "Universal"
+  IPHONE_SCREEN_ORIENTATION "Portrait and Landscape"
+  IPAD_SCREEN_ORIENTATION "Portrait and Landscape"
   MICROPHONE_ACCESS ON
+  AUDIO_BACKGROUND_CAPABILITY ON
+  BLUETOOTH_MIDI_BACKGROUND_CAPABILITY ON
 )
 
 jucer_export_target_configuration(

@@ -156,6 +156,7 @@ jucer_export_target_configuration(
 jucer_export_target(
   "Xcode (iOS)"
   # EXTRA_COMPILER_FLAGS
+  IPHONE_SCREEN_ORIENTATION "Portrait and Landscape"
 )
 
 jucer_export_target_configuration(
@@ -164,6 +165,7 @@ jucer_export_target_configuration(
   DEBUG_MODE ON
   BINARY_NAME "AudioPerformanceTest"
   OPTIMISATION "-O0 (no optimisation)"
+  IOS_DEPLOYMENT_TARGET "default"
 )
 
 jucer_export_target_configuration(
@@ -172,6 +174,7 @@ jucer_export_target_configuration(
   DEBUG_MODE OFF
   BINARY_NAME "AudioPerformanceTest"
   OPTIMISATION "-O3 (fastest with safe optimisations)"
+  IOS_DEPLOYMENT_TARGET "default"
 )
 
 jucer_export_target(

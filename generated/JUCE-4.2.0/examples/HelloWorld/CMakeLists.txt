@@ -114,6 +114,7 @@ jucer_export_target_configuration(
 
 jucer_export_target(
   "Xcode (iOS)"
+  IPHONE_SCREEN_ORIENTATION "Portrait and Landscape"
 )
 
 jucer_export_target_configuration(
@@ -122,6 +123,7 @@ jucer_export_target_configuration(
   DEBUG_MODE ON
   BINARY_NAME "HelloWorld"
   OPTIMISATION "-O0 (no optimisation)"
+  IOS_DEPLOYMENT_TARGET "default"
 )
 
 jucer_export_target_configuration(
@@ -130,6 +132,7 @@ jucer_export_target_configuration(
   DEBUG_MODE OFF
   BINARY_NAME "HelloWorld"
   OPTIMISATION "-Os (minimise code size)"
+  IOS_DEPLOYMENT_TARGET "default"
 )
 
 jucer_export_target(
