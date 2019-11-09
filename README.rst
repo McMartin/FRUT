@@ -20,6 +20,7 @@ FRUT is easy, and you don't need to be a CMake expert to use it!
 
 - *Supported platforms*
 
+  - iOS
   - Linux
   - macOS
   - Windows (MSVC and MinGW)
@@ -93,15 +94,13 @@ Supported Projucer exporters
 
   <table>
   <thead>
-    <tr><th>Supported</th><th>Exporter</th><th>CMake requirements</th><th>Missing features</th></tr>
+    <tr><th>Supported</th><th>Exporter</th><th>CMake requirements and options</th><th>Missing features</th></tr>
   </thead>
   <tbody>
-    <tr><td align="center">✔️</td><td>Xcode (MacOSX)</td><td></td><td>
+    <tr><td align="center">✔️</td><td>Xcode (MacOSX)</td><td></td><td rowspan="2">
       <a href="https://github.com/McMartin/FRUT/labels/exporter%3A%20Xcode">3 unsupported Xcode exporter settings</a>
     </td></tr>
-    <tr><td align="center">❌</td><td>Xcode (iOS)</td><td></td><td>
-      <a href="https://github.com/McMartin/FRUT/labels/exporter%3A%20Xcode">3 unsupported Xcode exporter settings</a>
-    </td></tr>
+    <tr><td align="center">✔️</td><td>Xcode (iOS)</td><td>version 3.14 minimum<br/><pre>-G Xcode -DCMAKE_SYSTEM_NAME=iOS</pre></td></tr>
     <tr><td align="center">✔️</td><td>Visual Studio 2019</td><td>version 3.14 minimum</td><td rowspan="4">
       <a href="https://github.com/McMartin/FRUT/labels/exporter%3A%20Visual%20Studio">1 unsupported Visual Studio exporter setting</a>
     </td></tr>
