@@ -3526,11 +3526,13 @@ function(_FRUT_generate_entitlements_file output_filename out_var)
       )
     endif()
   endif()
+
   if(JUCER_USE_HARDENED_RUNTIME)
     foreach(option IN LISTS JUCER_HARDENED_RUNTIME_OPTIONS)
       string(APPEND entitlements_content "\t<key>${option}</key>\n" "\t<true/>\n")
     endforeach()
   endif()
+
   if(JUCER_USE_APP_SANDBOX)
     foreach(option IN LISTS JUCER_APP_SANDBOX_OPTIONS)
       string(APPEND entitlements_content "\t<key>${option}</key>\n" "\t<true/>\n")
@@ -4576,10 +4578,15 @@ function(_FRUT_set_compiler_and_linker_settings_APPLE target)
     )
   endif()
 
-  if(JUCER_PUSH_NOTIFICATIONS_CAPABILITY
-      OR JUCER_USE_APP_SANDBOX
-      OR JUCER_USE_HARDENED_RUNTIME
-      OR target MATCHES "_AUv3_AppExtension$")
+  if(
+    JUCER_PUSH_NOTIFICATIONS_CAPABILITY
+    OR JUCER_USE_APP_SANDBOX
+    OR JUCER_USE_HARDENED_RUNTIME
+    OR (
+      JUCER_PROJECT_TYPE STREQUAL "Audio Plug-in"
+      AND target MATCHES "_AUv3_AppExtension$"
+    )
+  )
     if(CMAKE_GENERATOR STREQUAL "Xcode")
       set_target_properties(${target} PROPERTIES
         XCODE_ATTRIBUTE_CODE_SIGN_ENTITLEMENTS "${JUCER_ENTITLEMENTS_FILE}"
