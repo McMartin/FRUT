@@ -185,6 +185,45 @@ jucer_project_module(
 )
 
 jucer_export_target(
+  "Xcode (iOS)"
+  # EXTRA_PREPROCESSOR_DEFINITIONS
+  EXTRA_COMPILER_FLAGS
+    "-pedantic"
+    "-Wall"
+    "-Wshadow"
+    "-Wno-missing-field-initializers"
+    "-Wshadow"
+    "-Wshorten-64-to-32"
+    "-Wstrict-aliasing"
+    "-Wuninitialized"
+    "-Wunused-parameter"
+    "-Wconversion"
+    "-Wsign-compare"
+    "-Wint-conversion"
+    "-Woverloaded-virtual"
+    "-Wreorder"
+    "-Wconstant-conversion"
+    "-Wsign-conversion"
+    "-Wextra-semi"
+  ICON_SMALL "BinaryData/icon.png"
+  ICON_LARGE "BinaryData/icon.png"
+)
+
+jucer_export_target_configuration(
+  "Xcode (iOS)"
+  NAME "Debug"
+  DEBUG_MODE ON
+  BINARY_NAME "InAppPurchase"
+)
+
+jucer_export_target_configuration(
+  "Xcode (iOS)"
+  NAME "Release"
+  DEBUG_MODE OFF
+  BINARY_NAME "InAppPurchase"
+)
+
+jucer_export_target(
   "Xcode (MacOSX)"
 )
 

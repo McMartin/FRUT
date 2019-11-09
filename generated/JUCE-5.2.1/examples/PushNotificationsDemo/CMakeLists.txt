@@ -171,6 +171,48 @@ jucer_project_module(
 )
 
 jucer_export_target(
+  "Xcode (iOS)"
+  EXTRA_COMPILER_FLAGS
+    "-pedantic"
+    "-Werror"
+    "-Wall"
+    "-Wshadow"
+    "-Wno-missing-field-initializers"
+    "-Wshadow"
+    "-Wshorten-64-to-32"
+    "-Wstrict-aliasing"
+    "-Wuninitialized"
+    "-Wunused-parameter"
+    "-Wconversion"
+    "-Wsign-compare"
+    "-Wint-conversion"
+    "-Woverloaded-virtual"
+    "-Wreorder"
+    "-Wconstant-conversion"
+    "-Wsign-conversion"
+    "-F../../../../3rd_party/FacebookSDKs-iOS-4"
+    "-F../../../../3rd_party/Firebase_ios_sdk/Analytics"
+    "-F../../../../3rd_party/Firebase_ios_sdk/Messaging"
+  CUSTOM_XCODE_RESOURCE_FOLDERS
+    "./BinaryResources/sounds"
+  PUSH_NOTIFICATIONS_CAPABILITY ON
+)
+
+jucer_export_target_configuration(
+  "Xcode (iOS)"
+  NAME "Debug"
+  DEBUG_MODE ON
+  BINARY_NAME "PushNotificationsDemo"
+)
+
+jucer_export_target_configuration(
+  "Xcode (iOS)"
+  NAME "Release"
+  DEBUG_MODE OFF
+  BINARY_NAME "PushNotificationsDemo"
+)
+
+jucer_export_target(
   "Xcode (MacOSX)"
   CUSTOM_XCODE_RESOURCE_FOLDERS
     "./BinaryResources/images"
