@@ -800,6 +800,8 @@ function(jucer_export_target exporter)
       "FILE_SHARING_ENABLED"
       "SUPPORT_DOCUMENT_BROWSER"
       "STATUS_BAR_HIDDEN"
+      "BLUETOOTH_ACCESS"
+      "BLUETOOTH_ACCESS_TEXT"
     )
   else()
     list(APPEND single_value_keywords "VST_LEGACY_SDK_FOLDER" "VST_SDK_FOLDER")
@@ -1158,6 +1160,14 @@ function(jucer_export_target exporter)
 
   if(DEFINED _CAMERA_ACCESS_TEXT)
     set(JUCER_CAMERA_ACCESS_TEXT "${_CAMERA_ACCESS_TEXT}" PARENT_SCOPE)
+  endif()
+
+  if(DEFINED _BLUETOOTH_ACCESS)
+    set(JUCER_BLUETOOTH_ACCESS "${_BLUETOOTH_ACCESS}" PARENT_SCOPE)
+  endif()
+
+  if(DEFINED _BLUETOOTH_ACCESS_TEXT)
+    set(JUCER_BLUETOOTH_ACCESS_TEXT "${_BLUETOOTH_ACCESS_TEXT}" PARENT_SCOPE)
   endif()
 
   if(DEFINED _IN_APP_PURCHASES_CAPABILITY AND _IN_APP_PURCHASES_CAPABILITY)
@@ -3942,6 +3952,22 @@ function(_FRUT_generate_plist_file
   endif()
 
   if(IOS)
+    if(JUCER_BLUETOOTH_ACCESS)
+      if(DEFINED JUCER_BLUETOOTH_ACCESS_TEXT)
+        set(bluetooth_usage_description "${JUCER_BLUETOOTH_ACCESS_TEXT}")
+      else()
+        string(CONCAT bluetooth_usage_description "This app requires access to Bluetooth"
+          " to function correctly."
+        )
+      endif()
+      string(APPEND plist_entries "
+    <key>NSBluetoothAlwaysUsageDescription</key>
+    <string>${bluetooth_usage_description}</string>
+    <key>NSBluetoothPeripheralUsageDescription</key>
+    <string>${bluetooth_usage_description}</string>"
+      )
+    endif()
+
     string(APPEND plist_entries "
     <key>LSRequiresIPhoneOS</key>
     <true/>"

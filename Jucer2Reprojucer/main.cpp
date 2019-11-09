@@ -1636,7 +1636,18 @@ int main(int argc, char* argv[])
                                      {});
         convertSettingIfDefined(exporter, "cameraPermissionText", "CAMERA_ACCESS_TEXT",
                                 {});
+      }
 
+      if (exporterType == "XCODE_IPHONE")
+      {
+        convertOnOffSettingIfDefined(exporter, "iosBluetoothPermissionNeeded",
+                                     "BLUETOOTH_ACCESS", {});
+        convertSettingIfDefined(exporter, "iosBluetoothPermissionText",
+                                "BLUETOOTH_ACCESS_TEXT", {});
+      }
+
+      if (isXcodeExporter)
+      {
         convertOnOffSettingIfDefined(exporter, "iosInAppPurchasesValue",
                                      "IN_APP_PURCHASES_CAPABILITY", {});
         convertOnOffSettingIfDefined(exporter, "iosPushNotifications",

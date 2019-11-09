@@ -44,6 +44,9 @@ Define the settings specific to an export target.
     [MICROPHONE_ACCESS_TEXT <microphone_access_text>]  # [3]
     [CAMERA_ACCESS <ON|OFF>]  # [3]
     [CAMERA_ACCESS_TEXT <camera_access_text>]  # [3]
+    [BLUETOOTH_ACCESS <ON|OFF>]  # [7]
+    [BLUETOOTH_ACCESS_TEXT <bluetooth_access_text>]  # [7]
+
     [IN_APP_PURCHASES_CAPABILITY <ON|OFF>]  # [3]
     [PUSH_NOTIFICATIONS_CAPABILITY <ON|OFF>]  # [3]
     [CUSTOM_PLIST <plist_content>]  # [3]
