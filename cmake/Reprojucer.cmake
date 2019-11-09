@@ -794,6 +794,7 @@ function(jucer_export_target exporter)
 
   if(exporter STREQUAL "Xcode (iOS)")
     list(APPEND single_value_keywords
+      "CUSTOM_XCASSETS_FOLDER"
       "DEVICE_FAMILY"
       "IPHONE_SCREEN_ORIENTATION"
       "IPAD_SCREEN_ORIENTATION"
@@ -931,6 +932,10 @@ function(jucer_export_target exporter)
       endif()
       set(JUCER_LARGE_ICON "${large_icon}" PARENT_SCOPE)
     endif()
+  endif()
+
+  if(DEFINED _CUSTOM_XCASSETS_FOLDER)
+    set(JUCER_CUSTOM_XCASSETS_FOLDER "${_CUSTOM_XCASSETS_FOLDER}" PARENT_SCOPE)
   endif()
 
   if(DEFINED _CUSTOM_XCODE_RESOURCE_FOLDERS)
@@ -2092,7 +2097,13 @@ function(jucer_project_end)
   endif()
 
   if(IOS)
-    _FRUT_create_xcassets_folder_from_icons(JUCER_XCASSETS)
+    if(NOT DEFINED JUCER_CUSTOM_XCASSETS_FOLDER
+        OR JUCER_CUSTOM_XCASSETS_FOLDER STREQUAL "")
+      _FRUT_create_xcassets_folder_from_icons(JUCER_XCASSETS)
+    else()
+      set(JUCER_XCASSETS "${JUCER_CUSTOM_XCASSETS_FOLDER}")
+    endif()
+
     _FRUT_generate_default_launch_storyboard_file(JUCER_LAUNCH_STORYBOARD_FILE)
   endif()
 
@@ -3771,7 +3782,7 @@ function(_FRUT_generate_entitlements_file output_filename out_var)
     endforeach()
   endif()
 
-  if(JUCER_IOS AND JUCER_ICLOUD_PERMISSIONS)
+  if(IOS AND JUCER_ICLOUD_PERMISSIONS)
     string(APPEND entitlements_content
       "\t<key>com.apple.developer.icloud-container-identifiers</key>\n"
       "\t<array>\n"
@@ -5072,7 +5083,7 @@ function(_FRUT_set_compiler_and_linker_settings_APPLE target)
     OR JUCER_APP_GROUPS_CAPABILITY
     OR JUCER_USE_APP_SANDBOX
     OR JUCER_USE_HARDENED_RUNTIME
-    OR (JUCER_IOS AND JUCER_ICLOUD_PERMISSIONS)
+    OR (IOS AND JUCER_ICLOUD_PERMISSIONS)
     OR (
       JUCER_PROJECT_TYPE STREQUAL "Audio Plug-in"
       AND (

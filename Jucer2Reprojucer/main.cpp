@@ -1444,6 +1444,12 @@ int main(int argc, char* argv[])
       convertSettingIfDefined(exporter, "smallIcon", "ICON_SMALL", convertIcon);
       convertSettingIfDefined(exporter, "bigIcon", "ICON_LARGE", convertIcon);
 
+      if (exporterType == "XCODE_IPHONE")
+      {
+        convertSettingIfDefined(exporter, "customXcassetsFolder",
+                                "CUSTOM_XCASSETS_FOLDER", {});
+      }
+
       if (isXcodeExporter)
       {
         convertSettingAsListIfDefined(

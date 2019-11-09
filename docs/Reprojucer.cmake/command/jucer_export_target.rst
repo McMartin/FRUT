@@ -24,6 +24,7 @@ Define the settings specific to an export target.
     [ICON_SMALL <icon_file>]
     [ICON_LARGE <icon_file>]
 
+    [CUSTOM_XCASSETS_FOLDER <xcassets_folder>]  # [7]
     [CUSTOM_XCODE_RESOURCE_FOLDERS <xcode_resource_folder> [<xcode_resource_folder> ...]]  # [3]
     [ADD_DUPLICATE_RESOURCES_FOLDER_TO_APP_EXTENSION <ON|OFF>]  # [4]
 
