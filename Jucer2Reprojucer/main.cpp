@@ -1463,6 +1463,25 @@ int main(int argc, char* argv[])
         }
       }
 
+      if (exporterType == "XCODE_IPHONE")
+      {
+        convertSettingIfDefined(exporter, "iosDeviceFamily", "DEVICE_FAMILY",
+                                [](const juce::var& v) -> juce::String {
+                                  const auto value = v.toString();
+
+                                  if (value == "1")
+                                    return "iPhone";
+
+                                  if (value == "2")
+                                    return "iPad";
+
+                                  if (value == "1,2")
+                                    return "Universal";
+
+                                  return value;
+                                });
+      }
+
       if (exporterType == "XCODE_MAC")
       {
         if (projectType == "guiapp")

@@ -793,6 +793,9 @@ function(jucer_export_target exporter)
   endif()
 
   if(exporter STREQUAL "Xcode (iOS)")
+    list(APPEND single_value_keywords
+      "DEVICE_FAMILY"
+    )
   else()
     list(APPEND single_value_keywords "VST_LEGACY_SDK_FOLDER" "VST_SDK_FOLDER")
   endif()
@@ -936,6 +939,18 @@ function(jucer_export_target exporter)
     set(JUCER_ADD_DUPLICATE_RESOURCES_FOLDER_TO_APP_EXTENSION
       "${_ADD_DUPLICATE_RESOURCES_FOLDER_TO_APP_EXTENSION}" PARENT_SCOPE
     )
+  endif()
+
+  if(DEFINED _DEVICE_FAMILY)
+    if(_DEVICE_FAMILY STREQUAL "iPhone")
+      set(JUCER_DEVICE_FAMILY "1" PARENT_SCOPE)
+    elseif(_DEVICE_FAMILY STREQUAL "iPad")
+      set(JUCER_DEVICE_FAMILY "2" PARENT_SCOPE)
+    elseif(_DEVICE_FAMILY STREQUAL "Universal")
+      set(JUCER_DEVICE_FAMILY "1,2" PARENT_SCOPE)
+    else()
+      message(FATAL_ERROR "Unsupported value for DEVICE_FAMILY: \"${_DEVICE_FAMILY}\"")
+    endif()
   endif()
 
   if(DEFINED _DOCUMENT_FILE_EXTENSIONS)
@@ -4733,11 +4748,17 @@ function(_FRUT_set_compiler_and_linker_settings_APPLE target)
   endif()
 
   if(IOS)
+    if(DEFINED JUCER_DEVICE_FAMILY)
+      set(targeted_device_family "${JUCER_DEVICE_FAMILY}")
+    else()
+      set(targeted_device_family "1,2")
+    endif()
+
     set_target_properties(${target} PROPERTIES
       XCODE_ATTRIBUTE_ASSETCATALOG_COMPILER_APPICON_NAME "AppIcon"
       XCODE_ATTRIBUTE_ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME "LaunchImage"
       XCODE_ATTRIBUTE_SDKROOT "iphoneos"
-      XCODE_ATTRIBUTE_TARGETED_DEVICE_FAMILY "1,2"
+      XCODE_ATTRIBUTE_TARGETED_DEVICE_FAMILY "${targeted_device_family}"
     )
 
     set(all_confs_ios_deployment_target "")

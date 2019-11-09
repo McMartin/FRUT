@@ -33,6 +33,8 @@ Define the settings specific to an export target.
     [USE_HARDENED_RUNTIME <ON|OFF>]  # [5]
     [HARDENED_RUNTIME_OPTIONS <hardened_runtime_option> [<hardened_runtime_option> ...]]  # [5]
 
+    [DEVICE_FAMILY <iPhone|iPad|Universal>]  # [7]
+
     [MICROPHONE_ACCESS <ON|OFF>]  # [3]
     [MICROPHONE_ACCESS_TEXT <microphone_access_text>]  # [3]
     [CAMERA_ACCESS <ON|OFF>]  # [3]
