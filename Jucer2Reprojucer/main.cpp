@@ -1499,6 +1499,9 @@ int main(int argc, char* argv[])
                                 "IPHONE_SCREEN_ORIENTATION", screenOrientationFn);
         convertSettingIfDefined(exporter, "iPadScreenOrientation",
                                 "IPAD_SCREEN_ORIENTATION", screenOrientationFn);
+
+        convertOnOffSettingIfDefined(exporter, "UIFileSharingEnabled",
+                                     "FILE_SHARING_ENABLED", {});
       }
 
       if (exporterType == "XCODE_MAC")

@@ -797,6 +797,7 @@ function(jucer_export_target exporter)
       "DEVICE_FAMILY"
       "IPHONE_SCREEN_ORIENTATION"
       "IPAD_SCREEN_ORIENTATION"
+      "FILE_SHARING_ENABLED"
     )
   else()
     list(APPEND single_value_keywords "VST_LEGACY_SDK_FOLDER" "VST_SDK_FOLDER")
@@ -981,6 +982,10 @@ function(jucer_export_target exporter)
       message(FATAL_ERROR
         "Unsupported value for IPAD_SCREEN_ORIENTATION: \"${screen_orientation}\"")
     endif()
+  endif()
+
+  if(DEFINED _FILE_SHARING_ENABLED)
+    set(JUCER_FILE_SHARING_ENABLED "${_FILE_SHARING_ENABLED}" PARENT_SCOPE)
   endif()
 
   if(DEFINED _DOCUMENT_FILE_EXTENSIONS)
@@ -4019,6 +4024,13 @@ function(_FRUT_generate_plist_file
         <string>XML</string>
       </dict>
     </array>"
+    )
+  endif()
+
+  if(JUCER_FILE_SHARING_ENABLED AND NOT target MATCHES "_AUv3_AppExtension$")
+    string(APPEND plist_entries "
+    <key>UIFileSharingEnabled</key>
+    <true/>"
     )
   endif()
 

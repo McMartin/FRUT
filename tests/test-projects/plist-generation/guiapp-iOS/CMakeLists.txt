@@ -72,6 +72,12 @@ function(test_app_plist_screen_orientation)
 endfunction()
 
 
+function(test_app_plist_file_sharing_enabled)
+  set(JUCER_FILE_SHARING_ENABLED ON)
+  _FRUT_generate_plist_file(target "App-FileSharingEnabled" "APPL" "????")
+endfunction()
+
+
 function(test_app_plist_microphone_access_default)
   set(JUCER_MICROPHONE_ACCESS ON)
   _FRUT_generate_plist_file(target "App-MicrophoneUsage-default" "APPL" "????")
@@ -108,6 +114,7 @@ test_app_plist_camera_access_default()
 test_app_plist_copyright()
 test_app_plist_default()
 test_app_plist_exporter_bundle_identifier()
+test_app_plist_file_sharing_enabled()
 test_app_plist_microphone_access_custom()
 test_app_plist_microphone_access_default()
 test_app_plist_push_notifications_capability()
