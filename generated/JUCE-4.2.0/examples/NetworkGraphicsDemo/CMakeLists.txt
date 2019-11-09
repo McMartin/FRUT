@@ -205,6 +205,27 @@ jucer_export_target_configuration(
 )
 
 jucer_export_target(
+  "Xcode (iOS)"
+  ICON_LARGE "Source/juce_icon.png"
+)
+
+jucer_export_target_configuration(
+  "Xcode (iOS)"
+  NAME "Debug"
+  DEBUG_MODE ON
+  BINARY_NAME "JUCE Network Graphics Demo"
+  OPTIMISATION "-O0 (no optimisation)"
+)
+
+jucer_export_target_configuration(
+  "Xcode (iOS)"
+  NAME "Release"
+  DEBUG_MODE OFF
+  BINARY_NAME "JUCE Network Graphics Demo"
+  OPTIMISATION "-O3 (fastest with safe optimisations)"
+)
+
+jucer_export_target(
   "Linux Makefile"
   ICON_LARGE "Source/juce_icon.png"
 )
