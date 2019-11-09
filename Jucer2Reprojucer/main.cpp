@@ -1502,6 +1502,8 @@ int main(int argc, char* argv[])
 
         convertOnOffSettingIfDefined(exporter, "UIFileSharingEnabled",
                                      "FILE_SHARING_ENABLED", {});
+        convertOnOffSettingIfDefined(exporter, "UISupportsDocumentBrowser",
+                                     "SUPPORT_DOCUMENT_BROWSER", {});
       }
 
       if (exporterType == "XCODE_MAC")

@@ -798,6 +798,7 @@ function(jucer_export_target exporter)
       "IPHONE_SCREEN_ORIENTATION"
       "IPAD_SCREEN_ORIENTATION"
       "FILE_SHARING_ENABLED"
+      "SUPPORT_DOCUMENT_BROWSER"
     )
   else()
     list(APPEND single_value_keywords "VST_LEGACY_SDK_FOLDER" "VST_SDK_FOLDER")
@@ -986,6 +987,10 @@ function(jucer_export_target exporter)
 
   if(DEFINED _FILE_SHARING_ENABLED)
     set(JUCER_FILE_SHARING_ENABLED "${_FILE_SHARING_ENABLED}" PARENT_SCOPE)
+  endif()
+
+  if(DEFINED _SUPPORT_DOCUMENT_BROWSER)
+    set(JUCER_SUPPORT_DOCUMENT_BROWSER "${_SUPPORT_DOCUMENT_BROWSER}" PARENT_SCOPE)
   endif()
 
   if(DEFINED _DOCUMENT_FILE_EXTENSIONS)
@@ -4030,6 +4035,13 @@ function(_FRUT_generate_plist_file
   if(JUCER_FILE_SHARING_ENABLED AND NOT target MATCHES "_AUv3_AppExtension$")
     string(APPEND plist_entries "
     <key>UIFileSharingEnabled</key>
+    <true/>"
+    )
+  endif()
+
+  if(JUCER_SUPPORT_DOCUMENT_BROWSER)
+    string(APPEND plist_entries "
+    <key>UISupportsDocumentBrowser</key>
     <true/>"
     )
   endif()

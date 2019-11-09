@@ -37,6 +37,7 @@ Define the settings specific to an export target.
     [IPHONE_SCREEN_ORIENTATION <Portrait and Landscape|Portrait|Landscape>]  # [7]
     [IPAD_SCREEN_ORIENTATION <Portrait and Landscape|Portrait|Landscape>]  # [7]
     [FILE_SHARING_ENABLED <ON|OFF>]  # [7]
+    [SUPPORT_DOCUMENT_BROWSER <ON|OFF>]  # [7]
 
     [MICROPHONE_ACCESS <ON|OFF>]  # [3]
     [MICROPHONE_ACCESS_TEXT <microphone_access_text>]  # [3]
