@@ -1658,6 +1658,8 @@ int main(int argc, char* argv[])
                                      "AUDIO_BACKGROUND_CAPABILITY", {});
         convertOnOffSettingIfDefined(exporter, "iosBackgroundBle",
                                      "BLUETOOTH_MIDI_BACKGROUND_CAPABILITY", {});
+        convertOnOffSettingIfDefined(exporter, "iosAppGroups", "APP_GROUPS_CAPABILITY",
+                                     {});
       }
 
       if (isXcodeExporter)
@@ -1691,6 +1693,20 @@ int main(int argc, char* argv[])
                                 "EXPORTER_BUNDLE_IDENTIFIER", {});
         convertSettingIfDefined(exporter, "iosDevelopmentTeamID", "DEVELOPMENT_TEAM_ID",
                                 {});
+      }
+
+      if (exporterType == "XCODE_IPHONE")
+      {
+        convertSettingAsListIfDefined(
+          exporter, "iosAppGroupsId", "APP_GROUP_ID", [](const juce::var& v) {
+            auto groups = juce::StringArray::fromTokens(v.toString(), ";", {});
+            groups.trim();
+            return groups;
+          });
+      }
+
+      if (isXcodeExporter)
+      {
         convertOnOffSettingIfDefined(exporter, "keepCustomXcodeSchemes",
                                      "KEEP_CUSTOM_XCODE_SCHEMES", {});
         convertOnOffSettingIfDefined(exporter, "useHeaderMap", "USE_HEADERMAP", {});

@@ -32,11 +32,35 @@ function(test_entitlements_default)
 endfunction()
 
 
+function(test_entitlements_app_groups_capability_empty)
+  set(JUCER_APP_GROUPS_CAPABILITY ON)
+  set(JUCER_APP_GROUP_ID "")
+  _FRUT_generate_entitlements_file("AppGroupsCapability-empty.entitlements" _)
+endfunction()
+
+
+function(test_entitlements_app_groups_capability_one_id)
+  set(JUCER_APP_GROUPS_CAPABILITY ON)
+  set(JUCER_APP_GROUP_ID "first")
+  _FRUT_generate_entitlements_file("AppGroupsCapability-one_ID.entitlements" _)
+endfunction()
+
+
+function(test_entitlements_app_groups_capability_three_ids)
+  set(JUCER_APP_GROUPS_CAPABILITY ON)
+  set(JUCER_APP_GROUP_ID "first; second ; third")
+  _FRUT_generate_entitlements_file("AppGroupsCapability-three_IDs.entitlements" _)
+endfunction()
+
+
 function(test_entitlements_push_notifications_capability)
   set(JUCER_PUSH_NOTIFICATIONS_CAPABILITY ON)
   _FRUT_generate_entitlements_file("PushNotificationsCapability.entitlements" _)
 endfunction()
 
 
+test_entitlements_app_groups_capability_empty()
+test_entitlements_app_groups_capability_one_id()
+test_entitlements_app_groups_capability_three_ids()
 test_entitlements_default()
 test_entitlements_push_notifications_capability()

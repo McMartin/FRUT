@@ -50,6 +50,7 @@ Define the settings specific to an export target.
     [IN_APP_PURCHASES_CAPABILITY <ON|OFF>]  # [3]
     [AUDIO_BACKGROUND_CAPABILITY <ON|OFF>]  # [7]
     [BLUETOOTH_MIDI_BACKGROUND_CAPABILITY <ON|OFF>]  # [7]
+    [APP_GROUPS_CAPABILITY <ON|OFF>]  # [7]
     [PUSH_NOTIFICATIONS_CAPABILITY <ON|OFF>]  # [3]
 
     [CUSTOM_PLIST <plist_content>]  # [3]
@@ -61,6 +62,9 @@ Define the settings specific to an export target.
     [POSTBUILD_SHELL_SCRIPT <shell_script_content>]  # [3]
     [EXPORTER_BUNDLE_IDENTIFIER <bundle_identifier>]  # [3]
     [DEVELOPMENT_TEAM_ID <development_team_id>]  # [3]
+
+    [APP_GROUP_ID <app_group_id> [<app_group_id> ...]]  # [7]
+
     [USE_HEADERMAP <ON|OFF>]  # [3]
 
     [PLATFORM_TOOLSET <platform_toolset>]  # [8]

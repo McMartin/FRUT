@@ -804,7 +804,9 @@ function(jucer_export_target exporter)
       "BLUETOOTH_ACCESS_TEXT"
       "AUDIO_BACKGROUND_CAPABILITY"
       "BLUETOOTH_MIDI_BACKGROUND_CAPABILITY"
+      "APP_GROUPS_CAPABILITY"
     )
+    list(APPEND multi_value_keywords "APP_GROUP_ID")
   else()
     list(APPEND single_value_keywords "VST_LEGACY_SDK_FOLDER" "VST_SDK_FOLDER")
   endif()
@@ -1197,6 +1199,10 @@ function(jucer_export_target exporter)
     )
   endif()
 
+  if(DEFINED _APP_GROUPS_CAPABILITY)
+    set(JUCER_APP_GROUPS_CAPABILITY "${_APP_GROUPS_CAPABILITY}" PARENT_SCOPE)
+  endif()
+
   if(DEFINED _CUSTOM_PLIST)
     set(JUCER_CUSTOM_PLIST "${_CUSTOM_PLIST}" PARENT_SCOPE)
   endif()
@@ -1255,6 +1261,10 @@ function(jucer_export_target exporter)
 
   if(DEFINED _DEVELOPMENT_TEAM_ID)
     set(JUCER_DEVELOPMENT_TEAM_ID "${_DEVELOPMENT_TEAM_ID}" PARENT_SCOPE)
+  endif()
+
+  if(DEFINED _APP_GROUP_ID)
+    set(JUCER_APP_GROUP_ID "${_APP_GROUP_ID}" PARENT_SCOPE)
   endif()
 
   if(DEFINED _KEEP_CUSTOM_XCODE_SCHEMES)
@@ -3732,6 +3742,18 @@ function(_FRUT_generate_entitlements_file output_filename out_var)
     endif()
   endif()
 
+  if(JUCER_APP_GROUPS_CAPABILITY)
+    string(APPEND entitlements_content
+      "\t<key>com.apple.security.application-groups</key>\n"
+      "\t<array>\n"
+    )
+    foreach(group IN LISTS JUCER_APP_GROUP_ID)
+      string(STRIP "${group}" group)
+      string(APPEND entitlements_content "\t\t<string>${group}</string>\n")
+    endforeach()
+    string(APPEND entitlements_content "\t</array>\n")
+  endif()
+
   if(JUCER_USE_HARDENED_RUNTIME)
     foreach(option IN LISTS JUCER_HARDENED_RUNTIME_OPTIONS)
       string(APPEND entitlements_content "\t<key>${option}</key>\n" "\t<true/>\n")
@@ -5025,6 +5047,7 @@ function(_FRUT_set_compiler_and_linker_settings_APPLE target)
 
   if(
     JUCER_PUSH_NOTIFICATIONS_CAPABILITY
+    OR JUCER_APP_GROUPS_CAPABILITY
     OR JUCER_USE_APP_SANDBOX
     OR JUCER_USE_HARDENED_RUNTIME
     OR (
