@@ -3516,19 +3516,7 @@ function(_FRUT_generate_AppConfig_header)
     _FRUT_bool_to_int("${JUCER_PLUGIN_AAX_DISABLE_BYPASS}" AAXDisableBypass_value)
     _FRUT_bool_to_int("${JUCER_PLUGIN_AAX_DISABLE_MULTI_MONO}" AAXDisableMultiMono_value)
 
-    if(JUCER_PLUGIN_MIDI_INPUT)
-      if(JUCER_PLUGIN_IS_A_SYNTH)
-        set(iaa_type_code "auri")
-      else()
-        set(iaa_type_code "aurm")
-      endif()
-    else()
-      if(JUCER_PLUGIN_IS_A_SYNTH)
-        set(iaa_type_code "aurg")
-      else()
-        set(iaa_type_code "aurx")
-      endif()
-    endif()
+    _FRUT_get_iaa_type_code(iaa_type_code)
     _FRUT_char_literal("${iaa_type_code}" IAAType_value)
     set(IAASubType_value "JucePlugin_PluginCode")
     set(IAAName_value "\"${JUCER_PLUGIN_MANUFACTURER}: ${JUCER_PLUGIN_NAME}\"")
@@ -3629,9 +3617,15 @@ function(_FRUT_generate_entitlements_file output_filename out_var)
   set(entitlements_content "")
 
   if(JUCER_PROJECT_TYPE STREQUAL "Audio Plug-in")
-    string(APPEND entitlements_content
-      "\t<key>com.apple.security.app-sandbox</key>\n" "\t<true/>\n"
-    )
+    if(IOS)
+      if(JUCER_ENABLE_INTER_APP_AUDIO)
+        string(APPEND entitlements_content "\t<key>inter-app-audio</key>\n" "\t<true/>\n")
+      endif()
+    else()
+      string(APPEND entitlements_content
+        "\t<key>com.apple.security.app-sandbox</key>\n" "\t<true/>\n"
+      )
+    endif()
   else()
     if(JUCER_PUSH_NOTIFICATIONS_CAPABILITY)
       if(IOS)
@@ -4001,9 +3995,32 @@ function(_FRUT_generate_plist_file
     endif()
   endif()
 
+  _FRUT_version_to_dec("${JUCER_PROJECT_VERSION}" dec_version)
+
+  if(IOS AND target MATCHES "_StandalonePlugin$" AND JUCER_ENABLE_INTER_APP_AUDIO)
+    _FRUT_get_iaa_type_code(iaa_type_code)
+
+    string(APPEND plist_entries "
+    <key>AudioComponents</key>
+    <array>
+      <dict>
+        <key>name</key>
+        <string>@JUCER_PLUGIN_MANUFACTURER@: @JUCER_PLUGIN_NAME@</string>
+        <key>manufacturer</key>
+        <string>@JUCER_PLUGIN_MANUFACTURER_CODE@</string>
+        <key>type</key>
+        <string>${iaa_type_code}</string>
+        <key>subtype</key>
+        <string>@JUCER_PLUGIN_CODE@</string>
+        <key>version</key>
+        <integer>${dec_version}</integer>
+      </dict>
+    </array>"
+    )
+  endif()
+
   if(target MATCHES "_AU$")
     _FRUT_get_au_main_type_code(au_main_type_code)
-    _FRUT_version_to_dec("${JUCER_PROJECT_VERSION}" dec_version)
 
     string(APPEND plist_entries "
     <key>AudioComponents</key>
@@ -4224,6 +4241,27 @@ function(_FRUT_get_au_quoted_four_chars au_enum_case out_var)
   endif()
 
   set(${out_var} "${quoted_four_chars}" PARENT_SCOPE)
+
+endfunction()
+
+
+function(_FRUT_get_iaa_type_code out_var)
+
+  if(JUCER_PLUGIN_MIDI_INPUT)
+    if(JUCER_PLUGIN_IS_A_SYNTH)
+      set(code "auri")
+    else()
+      set(code "aurm")
+    endif()
+  else()
+    if(JUCER_PLUGIN_IS_A_SYNTH)
+      set(code "aurg")
+    else()
+      set(code "aurx")
+    endif()
+  endif()
+
+  set(${out_var} "${code}" PARENT_SCOPE)
 
 endfunction()
 
@@ -4793,8 +4831,14 @@ function(_FRUT_set_compiler_and_linker_settings_APPLE target)
     OR JUCER_USE_HARDENED_RUNTIME
     OR (
       JUCER_PROJECT_TYPE STREQUAL "Audio Plug-in"
-      AND NOT IOS
-      AND target MATCHES "_AUv3_AppExtension$"
+      AND (
+        (NOT IOS AND target MATCHES "_AUv3_AppExtension$")
+        OR (
+          IOS
+          AND target MATCHES "_StandalonePlugin$"
+          AND JUCER_ENABLE_INTER_APP_AUDIO
+        )
+      )
     )
   )
     if(CMAKE_GENERATOR STREQUAL "Xcode")

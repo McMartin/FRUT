@@ -35,6 +35,12 @@ function(test_entitlements_default)
 endfunction()
 
 
+function(test_entitlements_enable_iaa)
+  set(JUCER_ENABLE_INTER_APP_AUDIO ON)
+  _FRUT_generate_entitlements_file("EnableIAA.entitlements" _)
+endfunction()
+
+
 function(test_entitlements_push_notifications_capability)
   set(JUCER_PUSH_NOTIFICATIONS_CAPABILITY ON)
   _FRUT_generate_entitlements_file("PushNotificationsCapability.entitlements" _)
@@ -45,4 +51,5 @@ endfunction()
 
 
 test_entitlements_default()
+test_entitlements_enable_iaa()
 test_entitlements_push_notifications_capability()

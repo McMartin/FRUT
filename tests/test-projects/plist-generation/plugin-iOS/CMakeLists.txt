@@ -65,9 +65,15 @@ function(test_Standalone_Plugin_plist_default)
   _FRUT_generate_plist_file(target_StandalonePlugin "Standalone_Plugin-default" "APPL" "????")
 endfunction()
 
+function(test_Standalone_Plugin_plist_IAA)
+  set(JUCER_ENABLE_INTER_APP_AUDIO ON)
+  _FRUT_generate_plist_file(target_StandalonePlugin "Standalone_Plugin-IAA" "APPL" "????")
+endfunction()
+
 
 test_AUv3_AppExtension_plist_Synth()
 test_AUv3_AppExtension_plist_default()
 test_AUv3_AppExtension_plist_exporter_bundle_identifier()
 test_AUv3_AppExtension_plist_factoryFunction()
+test_Standalone_Plugin_plist_IAA()
 test_Standalone_Plugin_plist_default()
