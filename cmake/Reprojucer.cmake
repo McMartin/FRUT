@@ -802,6 +802,8 @@ function(jucer_export_target exporter)
       "STATUS_BAR_HIDDEN"
       "BLUETOOTH_ACCESS"
       "BLUETOOTH_ACCESS_TEXT"
+      "AUDIO_BACKGROUND_CAPABILITY"
+      "BLUETOOTH_MIDI_BACKGROUND_CAPABILITY"
     )
   else()
     list(APPEND single_value_keywords "VST_LEGACY_SDK_FOLDER" "VST_SDK_FOLDER")
@@ -1182,6 +1184,16 @@ function(jucer_export_target exporter)
     endif()
     set(JUCER_PUSH_NOTIFICATIONS_CAPABILITY "${_PUSH_NOTIFICATIONS_CAPABILITY}"
       PARENT_SCOPE
+    )
+  endif()
+
+  if(DEFINED _AUDIO_BACKGROUND_CAPABILITY)
+    set(JUCER_AUDIO_BACKGROUND_CAPABILITY "${_AUDIO_BACKGROUND_CAPABILITY}" PARENT_SCOPE)
+  endif()
+
+  if(DEFINED _BLUETOOTH_MIDI_BACKGROUND_CAPABILITY)
+    set(JUCER_BLUETOOTH_MIDI_BACKGROUND_CAPABILITY
+      "${_BLUETOOTH_MIDI_BACKGROUND_CAPABILITY}" PARENT_SCOPE
     )
   endif()
 
@@ -4142,12 +4154,20 @@ function(_FRUT_generate_plist_file
     endif()
 
     string(APPEND plist_entries "\n    <key>UIBackgroundModes</key>")
-    if(JUCER_PUSH_NOTIFICATIONS_CAPABILITY)
-      string(APPEND plist_entries "
-    <array>
-      <string>remote-notification</string>
-    </array>"
-      )
+    if(JUCER_AUDIO_BACKGROUND_CAPABILITY
+        OR JUCER_BLUETOOTH_MIDI_BACKGROUND_CAPABILITY
+        OR JUCER_PUSH_NOTIFICATIONS_CAPABILITY)
+      string(APPEND plist_entries "\n    <array>")
+      if(JUCER_AUDIO_BACKGROUND_CAPABILITY)
+        string(APPEND plist_entries "\n      <string>audio</string>")
+      endif()
+      if(JUCER_BLUETOOTH_MIDI_BACKGROUND_CAPABILITY)
+        string(APPEND plist_entries "\n      <string>bluetooth-central</string>")
+      endif()
+      if(JUCER_PUSH_NOTIFICATIONS_CAPABILITY)
+        string(APPEND plist_entries "\n      <string>remote-notification</string>")
+      endif()
+      string(APPEND plist_entries "\n    </array>")
     else()
       string(APPEND plist_entries "\n    <array/>")
     endif()

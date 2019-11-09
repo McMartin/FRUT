@@ -126,14 +126,34 @@ function(test_app_plist_bluetooth_access_custom)
 endfunction()
 
 
+function(test_app_plist_audio_background_capability)
+  set(JUCER_AUDIO_BACKGROUND_CAPABILITY ON)
+  _FRUT_generate_plist_file(target "App-AudioBackgroundCapability" "APPL" "????")
+endfunction()
+
+function(test_app_plist_bluetooth_midi_background_capability)
+  set(JUCER_BLUETOOTH_MIDI_BACKGROUND_CAPABILITY ON)
+  _FRUT_generate_plist_file(target "App-BluetoothMIDIBackgroundCapability" "APPL" "????")
+endfunction()
+
 function(test_app_plist_push_notifications_capability)
   set(JUCER_PUSH_NOTIFICATIONS_CAPABILITY ON)
   _FRUT_generate_plist_file(target "App-PushNotificationsCapability" "APPL" "????")
 endfunction()
 
+function(test_app_plist_all_background_capabilities)
+  set(JUCER_AUDIO_BACKGROUND_CAPABILITY ON)
+  set(JUCER_BLUETOOTH_MIDI_BACKGROUND_CAPABILITY ON)
+  set(JUCER_PUSH_NOTIFICATIONS_CAPABILITY ON)
+  _FRUT_generate_plist_file(target "App-AllBackgroundCapabilities" "APPL" "????")
+endfunction()
 
+
+test_app_plist_all_background_capabilities()
+test_app_plist_audio_background_capability()
 test_app_plist_bluetooth_access_custom()
 test_app_plist_bluetooth_access_default()
+test_app_plist_bluetooth_midi_background_capability()
 test_app_plist_bundle_identifier()
 test_app_plist_camera_access_custom()
 test_app_plist_camera_access_default()

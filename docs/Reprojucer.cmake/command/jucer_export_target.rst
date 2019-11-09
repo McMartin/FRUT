@@ -48,7 +48,10 @@ Define the settings specific to an export target.
     [BLUETOOTH_ACCESS_TEXT <bluetooth_access_text>]  # [7]
 
     [IN_APP_PURCHASES_CAPABILITY <ON|OFF>]  # [3]
+    [AUDIO_BACKGROUND_CAPABILITY <ON|OFF>]  # [7]
+    [BLUETOOTH_MIDI_BACKGROUND_CAPABILITY <ON|OFF>]  # [7]
     [PUSH_NOTIFICATIONS_CAPABILITY <ON|OFF>]  # [3]
+
     [CUSTOM_PLIST <plist_content>]  # [3]
     [EXTRA_SYSTEM_FRAMEWORKS <osx_framework> [<osx_framework> ...]]  # [3]
     [EXTRA_FRAMEWORKS <osx_framework> [<osx_framework> ...]]  # [3]

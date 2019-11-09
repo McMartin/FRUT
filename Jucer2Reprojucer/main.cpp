@@ -1650,6 +1650,18 @@ int main(int argc, char* argv[])
       {
         convertOnOffSettingIfDefined(exporter, "iosInAppPurchasesValue",
                                      "IN_APP_PURCHASES_CAPABILITY", {});
+      }
+
+      if (exporterType == "XCODE_IPHONE")
+      {
+        convertOnOffSettingIfDefined(exporter, "iosBackgroundAudio",
+                                     "AUDIO_BACKGROUND_CAPABILITY", {});
+        convertOnOffSettingIfDefined(exporter, "iosBackgroundBle",
+                                     "BLUETOOTH_MIDI_BACKGROUND_CAPABILITY", {});
+      }
+
+      if (isXcodeExporter)
+      {
         convertOnOffSettingIfDefined(exporter, "iosPushNotifications",
                                      "PUSH_NOTIFICATIONS_CAPABILITY", {});
         convertSettingIfDefined(exporter, "customPList", "CUSTOM_PLIST", {});
