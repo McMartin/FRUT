@@ -4546,11 +4546,8 @@ function(_FRUT_install_to_plugin_binary_location target plugin_type default_dest
       set(destination "${default_destination}")
     endif()
     if(NOT destination STREQUAL "")
-      if(DEFINED JUCER_ENABLE_PLUGIN_COPY_STEP_${config})
-        if(JUCER_ENABLE_PLUGIN_COPY_STEP_${config})
-          string(APPEND all_confs_destination $<$<CONFIG:${config}>:${destination}>)
-        endif()
-      elseif(APPLE)
+      if(JUCER_ENABLE_PLUGIN_COPY_STEP_${config}
+          OR (NOT DEFINED JUCER_ENABLE_PLUGIN_COPY_STEP_${config} AND APPLE))
         string(APPEND all_confs_destination $<$<CONFIG:${config}>:${destination}>)
       endif()
     endif()
