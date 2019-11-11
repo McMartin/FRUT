@@ -4555,17 +4555,15 @@ function(_FRUT_install_to_plugin_binary_location target plugin_type default_dest
     endif()
   endforeach()
 
-  if(NOT should_install)
-    return()
+  if(should_install)
+    add_custom_command(TARGET ${target} POST_BUILD
+      COMMAND
+      "${CMAKE_COMMAND}"
+      "-DCMAKE_INSTALL_CONFIG_NAME=$<CONFIG>"
+      "-DCMAKE_INSTALL_COMPONENT=${component}"
+      "-P" "${CMAKE_CURRENT_BINARY_DIR}/cmake_install.cmake"
+    )
   endif()
-
-  add_custom_command(TARGET ${target} POST_BUILD
-    COMMAND
-    "${CMAKE_COMMAND}"
-    "-DCMAKE_INSTALL_CONFIG_NAME=$<CONFIG>"
-    "-DCMAKE_INSTALL_COMPONENT=${component}"
-    "-P" "${CMAKE_CURRENT_BINARY_DIR}/cmake_install.cmake"
-  )
 
 endfunction()
 
