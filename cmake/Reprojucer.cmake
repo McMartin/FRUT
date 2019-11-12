@@ -1968,7 +1968,7 @@ function(jucer_project_end)
       string(APPEND exporters_list "\n  - ${exporter}")
     endforeach()
     message(FATAL_ERROR "Reprojucer.cmake doesn't support any export target for your"
-      " current platform. It supports the following export targets:${exporters_list}\n"
+      " current platform. It supports the following export targets:${exporters_list}.\n"
       "If you think Reprojucer.cmake should support another export target, please create"
       " an issue on GitHub: https://github.com/McMartin/FRUT/issues/new\n"
     )
@@ -5794,7 +5794,7 @@ function(_FRUT_warn_about_unsupported_setting setting projucer_setting issue_num
 
   message(WARNING "Reprojucer.cmake doesn't support the setting ${setting}"
     " (\"${projucer_setting}\" in Projucer). If you would like Reprojucer.cmake to"
-    " support this setting, please leave a comment on the issue \"Reprojucer.cmake"
+    " support this setting, please write a new comment on the issue \"Reprojucer.cmake"
     " doesn't support the setting ${setting}\" on GitHub:"
     " https://github.com/McMartin/FRUT/issues/${issue_number}"
   )
