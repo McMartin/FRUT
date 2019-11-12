@@ -70,7 +70,9 @@ function(jucer_project_begin)
   if(DEFINED _PROJECT_FILE)
     get_filename_component(abs_project_file "${_PROJECT_FILE}" ABSOLUTE)
     if(NOT EXISTS "${abs_project_file}")
-      message(FATAL_ERROR "No such JUCE project file: \"${_PROJECT_FILE}\"")
+      message(FATAL_ERROR
+        "No such JUCE project file: \"${_PROJECT_FILE}\" (\"${abs_project_file}\")"
+      )
     endif()
     get_filename_component(project_dir "${abs_project_file}" DIRECTORY)
     set(JUCER_PROJECT_DIR "${project_dir}" PARENT_SCOPE)
@@ -920,7 +922,9 @@ function(jucer_export_target exporter)
     if(NOT _ICON_SMALL STREQUAL "<None>")
       _FRUT_abs_path_based_on_jucer_project_dir(small_icon "${_ICON_SMALL}")
       if(NOT EXISTS "${small_icon}")
-        message(FATAL_ERROR "No such file (ICON_SMALL): \"${small_icon}\"")
+        message(FATAL_ERROR
+          "No such file (ICON_SMALL): \"${_ICON_SMALL}\" (\"${small_icon}\")"
+        )
       endif()
       set(JUCER_SMALL_ICON "${small_icon}" PARENT_SCOPE)
     endif()
@@ -930,7 +934,9 @@ function(jucer_export_target exporter)
     if(NOT _ICON_LARGE STREQUAL "<None>")
       _FRUT_abs_path_based_on_jucer_project_dir(large_icon "${_ICON_LARGE}")
       if(NOT EXISTS "${large_icon}")
-        message(FATAL_ERROR "No such file (ICON_LARGE): \"${large_icon}\"")
+        message(FATAL_ERROR
+          "No such file (ICON_LARGE): \"${_ICON_LARGE}\" (\"${large_icon}\")"
+        )
       endif()
       set(JUCER_LARGE_ICON "${large_icon}" PARENT_SCOPE)
     endif()
@@ -943,7 +949,9 @@ function(jucer_export_target exporter)
   if(DEFINED _CUSTOM_LAUNCH_STORYBOARD)
     _FRUT_abs_path_based_on_jucer_project_dir(storyboard "${_CUSTOM_LAUNCH_STORYBOARD}")
     if(NOT EXISTS "${storyboard}")
-      message(FATAL_ERROR "No such file (CUSTOM_LAUNCH_STORYBOARD): \"${storyboard}\"")
+      message(FATAL_ERROR "No such file (CUSTOM_LAUNCH_STORYBOARD):"
+        " \"${_CUSTOM_LAUNCH_STORYBOARD}\" (\"${storyboard}\")"
+      )
     endif()
     set(JUCER_CUSTOM_LAUNCH_STORYBOARD "${storyboard}" PARENT_SCOPE)
   endif()
