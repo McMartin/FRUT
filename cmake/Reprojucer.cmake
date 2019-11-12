@@ -2741,20 +2741,18 @@ function(jucer_project_end)
       elseif(MSVC)
         _FRUT_install_to_plugin_binary_location(${unity_target} "UNITY" "")
 
-        unset(all_confs_destination)
+        set(component "_install_${unity_target}_to_UNITY_binary_location")
         foreach(config IN LISTS JUCER_PROJECT_CONFIGURATIONS)
           if(DEFINED JUCER_UNITY_BINARY_LOCATION_${config}
               AND JUCER_ENABLE_PLUGIN_COPY_STEP_${config})
             set(destination "${JUCER_UNITY_BINARY_LOCATION_${config}}")
-            string(APPEND all_confs_destination $<$<CONFIG:${config}>:${destination}>)
+            if(NOT destination STREQUAL "")
+              install(FILES "${unity_script_file}" CONFIGURATIONS "${config}"
+                COMPONENT "${component}" DESTINATION "${destination}"
+              )
+            endif()
           endif()
         endforeach()
-        if(DEFINED all_confs_destination)
-          install(FILES "${unity_script_file}"
-            COMPONENT "_install_${unity_target}_to_UNITY_binary_location"
-            DESTINATION ${all_confs_destination}
-          )
-        endif()
       endif()
       _FRUT_set_JucePlugin_Build_defines(${unity_target} "UnityPlugIn")
       _FRUT_link_xcode_frameworks(${unity_target})
@@ -4536,7 +4534,10 @@ endfunction()
 
 function(_FRUT_install_to_plugin_binary_location target plugin_type default_destination)
 
-  unset(all_confs_destination)
+  set(component "_install_${target}_to_${plugin_type}_binary_location")
+
+  set(should_install FALSE)
+
   foreach(config IN LISTS JUCER_PROJECT_CONFIGURATIONS)
     if(DEFINED JUCER_${plugin_type}_BINARY_LOCATION_${config})
       set(destination "${JUCER_${plugin_type}_BINARY_LOCATION_${config}}")
@@ -4544,31 +4545,25 @@ function(_FRUT_install_to_plugin_binary_location target plugin_type default_dest
       set(destination "${default_destination}")
     endif()
     if(NOT destination STREQUAL "")
-      if(DEFINED JUCER_ENABLE_PLUGIN_COPY_STEP_${config})
-        if(JUCER_ENABLE_PLUGIN_COPY_STEP_${config})
-          string(APPEND all_confs_destination $<$<CONFIG:${config}>:${destination}>)
-        endif()
-      elseif(APPLE)
-        string(APPEND all_confs_destination $<$<CONFIG:${config}>:${destination}>)
+      if(JUCER_ENABLE_PLUGIN_COPY_STEP_${config}
+          OR (NOT DEFINED JUCER_ENABLE_PLUGIN_COPY_STEP_${config} AND APPLE))
+        install(TARGETS ${target} CONFIGURATIONS "${config}"
+          COMPONENT "${component}" DESTINATION "${destination}"
+        )
+        set(should_install TRUE)
       endif()
     endif()
   endforeach()
 
-  if(NOT DEFINED all_confs_destination)
-    return()
+  if(should_install)
+    add_custom_command(TARGET ${target} POST_BUILD
+      COMMAND
+      "${CMAKE_COMMAND}"
+      "-DCMAKE_INSTALL_CONFIG_NAME=$<CONFIG>"
+      "-DCMAKE_INSTALL_COMPONENT=${component}"
+      "-P" "${CMAKE_CURRENT_BINARY_DIR}/cmake_install.cmake"
+    )
   endif()
-
-  set(component "_install_${target}_to_${plugin_type}_binary_location")
-
-  install(TARGETS ${target} COMPONENT ${component} DESTINATION ${all_confs_destination})
-
-  add_custom_command(TARGET ${target} POST_BUILD
-    COMMAND
-    "${CMAKE_COMMAND}"
-    "-DCMAKE_INSTALL_CONFIG_NAME=$<CONFIG>"
-    "-DCMAKE_INSTALL_COMPONENT=${component}"
-    "-P" "${CMAKE_CURRENT_BINARY_DIR}/cmake_install.cmake"
-  )
 
 endfunction()
 
