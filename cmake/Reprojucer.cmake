@@ -68,10 +68,13 @@ function(jucer_project_begin)
   endif()
 
   if(DEFINED _PROJECT_FILE)
-    if(NOT EXISTS "${_PROJECT_FILE}")
-      message(FATAL_ERROR "No such JUCE project file: ${_PROJECT_FILE}")
+    get_filename_component(abs_project_file "${_PROJECT_FILE}" ABSOLUTE)
+    if(NOT EXISTS "${abs_project_file}")
+      message(FATAL_ERROR
+        "No such JUCE project file: \"${_PROJECT_FILE}\" (\"${abs_project_file}\")"
+      )
     endif()
-    get_filename_component(project_dir "${_PROJECT_FILE}" DIRECTORY)
+    get_filename_component(project_dir "${abs_project_file}" DIRECTORY)
     set(JUCER_PROJECT_DIR "${project_dir}" PARENT_SCOPE)
   else()
     set(JUCER_PROJECT_DIR "${CMAKE_CURRENT_SOURCE_DIR}" PARENT_SCOPE)
@@ -430,7 +433,7 @@ function(jucer_project_module module_name PATH_KEYWORD modules_folder)
     endif()
   endforeach()
   if(NOT EXISTS "${module_header_file}")
-    message(FATAL_ERROR "${module_dir}/ is not a valid JUCE module")
+    message(FATAL_ERROR "\"${module_dir}/\" is not a valid JUCE module")
   endif()
 
   set(make_juce_code_browsable ON)
@@ -919,7 +922,9 @@ function(jucer_export_target exporter)
     if(NOT _ICON_SMALL STREQUAL "<None>")
       _FRUT_abs_path_based_on_jucer_project_dir(small_icon "${_ICON_SMALL}")
       if(NOT EXISTS "${small_icon}")
-        message(FATAL_ERROR "No such file (ICON_SMALL): ${small_icon}")
+        message(FATAL_ERROR
+          "No such file (ICON_SMALL): \"${_ICON_SMALL}\" (\"${small_icon}\")"
+        )
       endif()
       set(JUCER_SMALL_ICON "${small_icon}" PARENT_SCOPE)
     endif()
@@ -929,7 +934,9 @@ function(jucer_export_target exporter)
     if(NOT _ICON_LARGE STREQUAL "<None>")
       _FRUT_abs_path_based_on_jucer_project_dir(large_icon "${_ICON_LARGE}")
       if(NOT EXISTS "${large_icon}")
-        message(FATAL_ERROR "No such file (ICON_LARGE): ${large_icon}")
+        message(FATAL_ERROR
+          "No such file (ICON_LARGE): \"${_ICON_LARGE}\" (\"${large_icon}\")"
+        )
       endif()
       set(JUCER_LARGE_ICON "${large_icon}" PARENT_SCOPE)
     endif()
@@ -942,7 +949,9 @@ function(jucer_export_target exporter)
   if(DEFINED _CUSTOM_LAUNCH_STORYBOARD)
     _FRUT_abs_path_based_on_jucer_project_dir(storyboard "${_CUSTOM_LAUNCH_STORYBOARD}")
     if(NOT EXISTS "${storyboard}")
-      message(FATAL_ERROR "No such file (CUSTOM_LAUNCH_STORYBOARD): ${storyboard}")
+      message(FATAL_ERROR "No such file (CUSTOM_LAUNCH_STORYBOARD):"
+        " \"${_CUSTOM_LAUNCH_STORYBOARD}\" (\"${storyboard}\")"
+      )
     endif()
     set(JUCER_CUSTOM_LAUNCH_STORYBOARD "${storyboard}" PARENT_SCOPE)
   endif()
@@ -1968,7 +1977,7 @@ function(jucer_project_end)
       string(APPEND exporters_list "\n  - ${exporter}")
     endforeach()
     message(FATAL_ERROR "Reprojucer.cmake doesn't support any export target for your"
-      " current platform. It supports the following export targets:${exporters_list}\n"
+      " current platform. It supports the following export targets:${exporters_list}.\n"
       "If you think Reprojucer.cmake should support another export target, please create"
       " an issue on GitHub: https://github.com/McMartin/FRUT/issues/new\n"
     )
@@ -5794,7 +5803,7 @@ function(_FRUT_warn_about_unsupported_setting setting projucer_setting issue_num
 
   message(WARNING "Reprojucer.cmake doesn't support the setting ${setting}"
     " (\"${projucer_setting}\" in Projucer). If you would like Reprojucer.cmake to"
-    " support this setting, please leave a comment on the issue \"Reprojucer.cmake"
+    " support this setting, please write a new comment on the issue \"Reprojucer.cmake"
     " doesn't support the setting ${setting}\" on GitHub:"
     " https://github.com/McMartin/FRUT/issues/${issue_number}"
   )
