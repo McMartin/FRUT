@@ -33,7 +33,7 @@ endif()
 
 
 set(Reprojucer.cmake_DIR "${CMAKE_CURRENT_LIST_DIR}")
-set(Reprojucer_templates_DIR "${Reprojucer.cmake_DIR}/templates")
+set(Reprojucer_data_DIR "${Reprojucer.cmake_DIR}/data")
 
 set(Reprojucer_supported_exporters
   "Xcode (MacOSX)"
@@ -538,7 +538,7 @@ function(jucer_project_module module_name PATH_KEYWORD modules_folder)
       else()
         set(proxied_src_file "${module_name}/${src_file_basename}")
       endif()
-      configure_file("${Reprojucer_templates_DIR}/JuceLibraryCode-Wrapper.cpp.in"
+      configure_file("${Reprojucer_data_DIR}/JuceLibraryCode-Wrapper.cpp.in"
         "JuceLibraryCode/${proxy_prefix}${src_file_basename}" @ONLY
       )
       list(APPEND module_sources
@@ -1269,7 +1269,7 @@ function(jucer_export_target exporter)
 
   if(DEFINED _PREBUILD_SHELL_SCRIPT)
     set(script_content "${_PREBUILD_SHELL_SCRIPT}")
-    configure_file("${Reprojucer_templates_DIR}/script.in" "prebuild.sh" @ONLY)
+    configure_file("${Reprojucer_data_DIR}/script.in" "prebuild.sh" @ONLY)
     set(JUCER_PREBUILD_SHELL_SCRIPT "${CMAKE_CURRENT_BINARY_DIR}/prebuild.sh"
       PARENT_SCOPE
     )
@@ -1277,7 +1277,7 @@ function(jucer_export_target exporter)
 
   if(DEFINED _POSTBUILD_SHELL_SCRIPT)
     set(script_content "${_POSTBUILD_SHELL_SCRIPT}")
-    configure_file("${Reprojucer_templates_DIR}/script.in" "postbuild.sh" @ONLY)
+    configure_file("${Reprojucer_data_DIR}/script.in" "postbuild.sh" @ONLY)
     set(JUCER_POSTBUILD_SHELL_SCRIPT "${CMAKE_CURRENT_BINARY_DIR}/postbuild.sh"
       PARENT_SCOPE
     )
@@ -1838,9 +1838,7 @@ function(jucer_export_target_configuration
 
   if(DEFINED _PREBUILD_COMMAND)
     set(script_content "${_PREBUILD_COMMAND}")
-    configure_file("${Reprojucer_templates_DIR}/script.in"
-      "prebuild_${config}.cmd" @ONLY
-    )
+    configure_file("${Reprojucer_data_DIR}/script.in" "prebuild_${config}.cmd" @ONLY)
     set(JUCER_PREBUILD_COMMAND_${config}
       "${CMAKE_CURRENT_BINARY_DIR}/prebuild_${config}.cmd" PARENT_SCOPE
     )
@@ -1848,9 +1846,7 @@ function(jucer_export_target_configuration
 
   if(DEFINED _POSTBUILD_COMMAND)
     set(script_content "${_POSTBUILD_COMMAND}")
-    configure_file("${Reprojucer_templates_DIR}/script.in"
-      "postbuild_${config}.cmd" @ONLY
-    )
+    configure_file("${Reprojucer_data_DIR}/script.in" "postbuild_${config}.cmd" @ONLY)
     set(JUCER_POSTBUILD_COMMAND_${config}
       "${CMAKE_CURRENT_BINARY_DIR}/postbuild_${config}.cmd" PARENT_SCOPE
     )
@@ -2130,9 +2126,7 @@ function(jucer_project_end)
     )
       set(custom_launch_storyboard "${JUCER_CUSTOM_LAUNCH_STORYBOARD}")
       if(custom_launch_storyboard STREQUAL "")
-        set(JUCER_LAUNCH_STORYBOARD_FILE
-          "${Reprojucer_templates_DIR}/LaunchScreen.storyboard"
-        )
+        set(JUCER_LAUNCH_STORYBOARD_FILE "${Reprojucer_data_DIR}/LaunchScreen.storyboard")
       else()
         set(JUCER_LAUNCH_STORYBOARD_FILE "${custom_launch_storyboard}")
       endif()
@@ -2731,7 +2725,7 @@ function(jucer_project_end)
       set(unity_script_file
         "${CMAKE_CURRENT_BINARY_DIR}/JuceLibraryCode/${project_name}_UnityScript.cs"
       )
-      configure_file("${Reprojucer_templates_DIR}/UnityScript.cs.in"
+      configure_file("${Reprojucer_data_DIR}/UnityScript.cs.in"
         "${unity_script_file}" @ONLY
       )
       if(APPLE)
@@ -3732,9 +3726,9 @@ function(_FRUT_generate_AppConfig_header)
 
   if(DEFINED JUCER_VERSION AND JUCER_VERSION VERSION_LESS 5.0.0)
     string(TOUPPER "${JUCER_PROJECT_ID}" upper_project_id)
-    set(template_file "${Reprojucer_templates_DIR}/AppConfig-4.h.in")
+    set(template_file "${Reprojucer_data_DIR}/AppConfig-4.h.in")
   else()
-    set(template_file "${Reprojucer_templates_DIR}/AppConfig.h.in")
+    set(template_file "${Reprojucer_data_DIR}/AppConfig.h.in")
   endif()
   configure_file("${template_file}" "JuceLibraryCode/AppConfig.h" @ONLY)
   list(APPEND JUCER_PROJECT_FILES
@@ -3818,7 +3812,7 @@ function(_FRUT_generate_entitlements_file output_filename out_var)
   endif()
 
   if(NOT entitlements_content STREQUAL "")
-    configure_file("${Reprojucer_templates_DIR}/project.entitlements.in"
+    configure_file("${Reprojucer_data_DIR}/project.entitlements.in"
       "${output_filename}" @ONLY
     )
 
@@ -3947,7 +3941,7 @@ function(_FRUT_generate_JuceHeader_header)
     set(include_guard_top "#pragma once")
     set(include_guard_bottom "")
   endif()
-  configure_file("${Reprojucer_templates_DIR}/JuceHeader.h.in"
+  configure_file("${Reprojucer_data_DIR}/JuceHeader.h.in"
     "JuceLibraryCode/JuceHeader.h" @ONLY
   )
   list(APPEND JUCER_PROJECT_FILES
@@ -4404,7 +4398,7 @@ function(_FRUT_generate_plist_file
   endif()
 
   string(CONFIGURE "${plist_entries}" plist_entries @ONLY)
-  configure_file("${Reprojucer_templates_DIR}/Info.plist.in" "${plist_filename}" @ONLY)
+  configure_file("${Reprojucer_data_DIR}/Info.plist.in" "${plist_filename}" @ONLY)
 
 endfunction()
 
@@ -4445,7 +4439,7 @@ function(_FRUT_generate_resources_rc_file output_path)
   endwhile()
   string(REPLACE ";" "," comma_separated_version_number "${version_parts}")
 
-  configure_file("${Reprojucer_templates_DIR}/resources.rc.in" "${output_path}" @ONLY)
+  configure_file("${Reprojucer_data_DIR}/resources.rc.in" "${output_path}" @ONLY)
 
 endfunction()
 
@@ -4730,8 +4724,8 @@ function(_FRUT_set_bundle_properties target extension)
     XCODE_ATTRIBUTE_WRAPPER_EXTENSION "${extension}"
   )
 
-  target_sources(${target} PRIVATE "${Reprojucer_templates_DIR}/PkgInfo")
-  set_source_files_properties("${Reprojucer_templates_DIR}/PkgInfo"
+  target_sources(${target} PRIVATE "${Reprojucer_data_DIR}/PkgInfo")
+  set_source_files_properties("${Reprojucer_data_DIR}/PkgInfo"
     PROPERTIES MACOSX_PACKAGE_LOCATION "."
   )
 
@@ -5834,7 +5828,7 @@ function(_FRUT_write_failure_report_and_abort action helper_name execute_process
   endif()
 
   string(REPLACE "\r\n" "\n" execute_process_output "${execute_process_output}")
-  configure_file("${Reprojucer_templates_DIR}/failed-to.md.in"
+  configure_file("${Reprojucer_data_DIR}/failed-to.md.in"
     "failed-to-${action}-${helper_name}.md" @ONLY
   )
   message(FATAL_ERROR "Failed to ${action} ${helper_name}. Please report this problem by"

@@ -35,6 +35,6 @@ install(FILES "${CMAKE_CURRENT_LIST_DIR}/cmake/Reprojucer.cmake"
   DESTINATION "FRUT/cmake"
 )
 
-install(DIRECTORY "${CMAKE_CURRENT_LIST_DIR}/cmake/templates"
+install(DIRECTORY "${CMAKE_CURRENT_LIST_DIR}/cmake/data"
   DESTINATION "FRUT/cmake"
 )
