@@ -2130,7 +2130,9 @@ function(jucer_project_end)
     )
       set(custom_launch_storyboard "${JUCER_CUSTOM_LAUNCH_STORYBOARD}")
       if(custom_launch_storyboard STREQUAL "")
-        _FRUT_generate_default_launch_storyboard_file(JUCER_LAUNCH_STORYBOARD_FILE)
+        set(JUCER_LAUNCH_STORYBOARD_FILE
+          "${Reprojucer_templates_DIR}/LaunchScreen.storyboard"
+        )
       else()
         set(JUCER_LAUNCH_STORYBOARD_FILE "${custom_launch_storyboard}")
       endif()
@@ -3742,18 +3744,6 @@ function(_FRUT_generate_AppConfig_header)
   set(JUCER_PROJECT_FILES "${JUCER_PROJECT_FILES}" PARENT_SCOPE)
 
 endfunction()
-
-
-function(_FRUT_generate_default_launch_storyboard_file out_var)
-
-  configure_file("${Reprojucer_templates_DIR}/LaunchScreen.storyboard"
-    "LaunchScreen.storyboard" COPYONLY
-  )
-
-  set(${out_var} "${CMAKE_CURRENT_BINARY_DIR}/LaunchScreen.storyboard" PARENT_SCOPE)
-
-endfunction()
-
 
 
 function(_FRUT_generate_entitlements_file output_filename out_var)
