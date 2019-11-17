@@ -110,6 +110,31 @@ Now we can build ``MyGreatProject`` using CMake: ::
 including Ninja, NMake Makefiles (on Windows), Unix Makefiles (on Linux and macOS), Visual
 Studio 2013, 2015 and 2017 (on Windows), and Xcode (on macOS).
 
+Docker
+------
+
+Build
+^^^^^
+To build the Docker image, run ::
+
+  $ cd <root>/FRUT/docker
+  $ docker build -t frut:latest .
+
+This resulting image will contain ``Jucer2Reprojucer`` and ``Reprojucer.cmake`` as well as an ``entrypoint.sh`` for convenince 
+
+Run
+^^^
+To convert a `.jucer` file, run ::
+
+  $ docker run --rm -v <juce_project_directory>:/work frut /work/<juce_project>.jucer
+
+The ``.cmake`` file will be created in the same directory as the ``.jucer`` file. 
+
+Additionally, the Docker image can be entered for manual operation ::
+
+  $ docker run --rm --entrypoint="" -v <juce_project_directory>:/work frut
+
+
 
 Contributing
 ------------
