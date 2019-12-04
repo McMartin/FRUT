@@ -284,13 +284,53 @@ void writeUserNotes(LineWriter& wLn, const juce::ValueTree& valueTree)
 
 int main(int argc, char* argv[])
 {
+  const std::vector<std::string> knownFlags{"h", "help", "relocatable"};
+  const std::vector<std::string> knownParams{"juce-modules", "user-modules"};
+
   argh::parser argumentParser;
-  argumentParser.add_params({"--juce-modules", "--user-modules"});
+  for (const auto& param : knownParams)
+  {
+    argumentParser.add_param(param);
+  }
   argumentParser.parse(argc, argv);
 
   const auto askingForHelp = argumentParser[{"-h", "--help"}];
+  auto errorInArguments = false;
 
-  if (argumentParser.size() != 3 || askingForHelp)
+  for (const auto& flag : argumentParser.flags())
+  {
+    if (std::find(knownFlags.begin(), knownFlags.end(), flag) == knownFlags.end())
+    {
+      printError("unknown option \"" + flag + "\"");
+      errorInArguments = true;
+    }
+  }
+
+  for (const auto& paramAndValue : argumentParser.params())
+  {
+    const auto& param = std::get<0>(paramAndValue);
+    if (std::find(knownParams.begin(), knownParams.end(), param) == knownParams.end())
+    {
+      printError("unknown option \"" + param + "\"");
+      errorInArguments = true;
+    }
+  }
+
+  if (!askingForHelp)
+  {
+    if (argumentParser.size() < 3)
+    {
+      printError("not enough positional arguments");
+      errorInArguments = true;
+    }
+    else if (argumentParser.size() > 3)
+    {
+      printError("too many positional arguments");
+      errorInArguments = true;
+    }
+  }
+
+  if (askingForHelp || errorInArguments)
   {
     std::cerr
       << "usage: Jucer2Reprojucer [-h] [--juce-modules=<path>] [--user-modules=<path>]\n"
