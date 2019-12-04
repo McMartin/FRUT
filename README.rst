@@ -177,7 +177,7 @@ Now we can build ``MyGreatProject`` using CMake: ::
 
 ``<generator>`` can be one of many `CMake Generators`_ supported by your platform,
 including Ninja, NMake Makefiles (on Windows), Unix Makefiles (on Linux and macOS), Visual
-Studio 2013, 2015 and 2017 (on Windows), and Xcode (on macOS).
+Studio 2013, 2015, 2017 and 2019 (on Windows), and Xcode (on macOS).
 
 
 Contributing
