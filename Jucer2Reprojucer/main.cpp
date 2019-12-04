@@ -318,7 +318,7 @@ int main(int argc, char* argv[])
 
   if (!askingForHelp)
   {
-    if (argumentParser.size() < 3)
+    if (argumentParser.size() < 2)
     {
       printError("not enough positional arguments");
       errorInArguments = true;
@@ -335,7 +335,7 @@ int main(int argc, char* argv[])
     std::cerr
       << "usage: Jucer2Reprojucer [-h] [--juce-modules=<path>] [--user-modules=<path>]\n"
       << "                        [--relocatable]\n"
-      << "                        <jucer_project_file> <Reprojucer.cmake_file>\n"
+      << "                        <jucer_project_file> [<Reprojucer.cmake_file>]\n"
       << "\n"
       << "Converts a .jucer file into a CMakeLists.txt file that uses Reprojucer.cmake.\n"
       << "The CMakeLists.txt file is written in the current working directory.\n"
@@ -397,10 +397,13 @@ int main(int argc, char* argv[])
 
   const auto reprojucerFilePath = juce::String{argumentParser[2]};
   const auto reprojucerFile =
-    juce::File::getCurrentWorkingDirectory().getChildFile(reprojucerFilePath);
+    reprojucerFilePath.isNotEmpty()
+      ? juce::File::getCurrentWorkingDirectory().getChildFile(reprojucerFilePath)
+      : juce::File{};
 
-  if (!reprojucerFile.existsAsFile()
-      || !reprojucerFile.getFileName().endsWith("Reprojucer.cmake"))
+  if (reprojucerFilePath.isNotEmpty()
+      && (!reprojucerFile.existsAsFile()
+          || !reprojucerFile.getFileName().endsWith("Reprojucer.cmake")))
   {
     printError(reprojucerFilePath + " is not a valid Reprojucer.cmake file.");
     return 1;
@@ -584,11 +587,19 @@ int main(int argc, char* argv[])
 
   // include(Reprojucer)
   {
-    wLn("list(APPEND CMAKE_MODULE_PATH \"${CMAKE_CURRENT_LIST_DIR}/",
-        reprojucerFile.getParentDirectory()
-          .getRelativePathFrom(juce::File::getCurrentWorkingDirectory())
-          .replace("\\", "/"),
-        "\")");
+    if (reprojucerFilePath.isNotEmpty())
+    {
+      wLn("list(APPEND CMAKE_MODULE_PATH \"${CMAKE_CURRENT_LIST_DIR}/",
+          reprojucerFile.getParentDirectory()
+            .getRelativePathFrom(juce::File::getCurrentWorkingDirectory())
+            .replace("\\", "/"),
+          "\")");
+    }
+    else
+    {
+      wLn("# list(APPEND CMAKE_MODULE_PATH"
+          " \"${CMAKE_CURRENT_LIST_DIR}/<relative_path_to_FRUT>/cmake\")");
+    }
     wLn("include(Reprojucer)");
     wLn();
     wLn();
