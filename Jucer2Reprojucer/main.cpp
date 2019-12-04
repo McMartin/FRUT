@@ -288,7 +288,9 @@ int main(int argc, char* argv[])
   argumentParser.add_params({"--juce-modules", "--user-modules"});
   argumentParser.parse(argc, argv);
 
-  if (argumentParser.size() != 3 || argumentParser[{"-h", "--help"}])
+  const auto askingForHelp = argumentParser[{"-h", "--help"}];
+
+  if (argumentParser.size() != 3 || askingForHelp)
   {
     std::cerr
       << "usage: Jucer2Reprojucer [-h] [--juce-modules=<path>] [--user-modules=<path>]\n"
@@ -308,7 +310,7 @@ int main(int argc, char* argv[])
       << "                              the location of the .jucer file, but requires\n"
       << "                              defining a variable when calling cmake\n"
       << std::endl;
-    return 1;
+    return askingForHelp ? 0 : 1;
   }
 
   const auto jucerFilePath = juce::String{argumentParser[1]};
