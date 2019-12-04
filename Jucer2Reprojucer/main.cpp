@@ -291,9 +291,9 @@ int main(int argc, char* argv[])
   if (argumentParser.size() != 3 || argumentParser[{"-h", "--help"}])
   {
     std::cerr
-      << "usage: Jucer2Reprojucer <jucer_project_file> <Reprojucer.cmake_file>\n"
-      << "                        [--juce-modules=<path>] [--user-modules=<path>]\n"
+      << "usage: Jucer2Reprojucer [--juce-modules=<path>] [--user-modules=<path>]\n"
       << "                        [--relocatable]\n"
+      << "                        <jucer_project_file> <Reprojucer.cmake_file>\n"
       << "\n"
       << "Converts a .jucer file into a CMakeLists.txt file that uses Reprojucer.cmake.\n"
       << "The CMakeLists.txt file is written in the current working directory.\n"
