@@ -291,7 +291,7 @@ int main(int argc, char* argv[])
   if (argumentParser.size() != 3 || argumentParser[{"-h", "--help"}])
   {
     std::cerr
-      << "usage: Jucer2Reprojucer [--juce-modules=<path>] [--user-modules=<path>]\n"
+      << "usage: Jucer2Reprojucer [-h] [--juce-modules=<path>] [--user-modules=<path>]\n"
       << "                        [--relocatable]\n"
       << "                        <jucer_project_file> <Reprojucer.cmake_file>\n"
       << "\n"
@@ -301,9 +301,9 @@ int main(int argc, char* argv[])
       << "    <jucer_project_file>      path to the .jucer file to convert\n"
       << "    <Reprojucer.cmake_file>   path to Reprojucer.cmake\n"
       << "\n"
+      << "    -h, --help                show this help message and exit\n"
       << "    --juce-modules <path>     global path to JUCE modules\n"
       << "    --user-modules <path>     global path to user modules\n"
-      << "\n"
       << "    --relocatable             makes the CMakeLists.txt file independent from\n"
       << "                              the location of the .jucer file, but requires\n"
       << "                              defining a variable when calling cmake\n"
