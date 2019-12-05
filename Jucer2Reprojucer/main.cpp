@@ -284,16 +284,58 @@ void writeUserNotes(LineWriter& wLn, const juce::ValueTree& valueTree)
 
 int main(int argc, char* argv[])
 {
+  const std::vector<std::string> knownFlags{"h", "help", "relocatable"};
+  const std::vector<std::string> knownParams{"juce-modules", "user-modules"};
+
   argh::parser argumentParser;
-  argumentParser.add_params({"--juce-modules", "--user-modules"});
+  for (const auto& param : knownParams)
+  {
+    argumentParser.add_param(param);
+  }
   argumentParser.parse(argc, argv);
 
-  if (argumentParser.size() != 3 || argumentParser[{"-h", "--help"}])
+  const auto askingForHelp = argumentParser[{"-h", "--help"}];
+  auto errorInArguments = false;
+
+  for (const auto& flag : argumentParser.flags())
+  {
+    if (std::find(knownFlags.begin(), knownFlags.end(), flag) == knownFlags.end())
+    {
+      printError("unknown option \"" + flag + "\"");
+      errorInArguments = true;
+    }
+  }
+
+  for (const auto& paramAndValue : argumentParser.params())
+  {
+    const auto& param = std::get<0>(paramAndValue);
+    if (std::find(knownParams.begin(), knownParams.end(), param) == knownParams.end())
+    {
+      printError("unknown option \"" + param + "\"");
+      errorInArguments = true;
+    }
+  }
+
+  if (!askingForHelp)
+  {
+    if (argumentParser.size() < 2)
+    {
+      printError("not enough positional arguments");
+      errorInArguments = true;
+    }
+    else if (argumentParser.size() > 3)
+    {
+      printError("too many positional arguments");
+      errorInArguments = true;
+    }
+  }
+
+  if (askingForHelp || errorInArguments)
   {
     std::cerr
-      << "usage: Jucer2Reprojucer <jucer_project_file> <Reprojucer.cmake_file>\n"
-      << "                        [--juce-modules=<path>] [--user-modules=<path>]\n"
+      << "usage: Jucer2Reprojucer [-h] [--juce-modules=<path>] [--user-modules=<path>]\n"
       << "                        [--relocatable]\n"
+      << "                        <jucer_project_file> [<Reprojucer.cmake_file>]\n"
       << "\n"
       << "Converts a .jucer file into a CMakeLists.txt file that uses Reprojucer.cmake.\n"
       << "The CMakeLists.txt file is written in the current working directory.\n"
@@ -301,14 +343,14 @@ int main(int argc, char* argv[])
       << "    <jucer_project_file>      path to the .jucer file to convert\n"
       << "    <Reprojucer.cmake_file>   path to Reprojucer.cmake\n"
       << "\n"
+      << "    -h, --help                show this help message and exit\n"
       << "    --juce-modules <path>     global path to JUCE modules\n"
       << "    --user-modules <path>     global path to user modules\n"
-      << "\n"
       << "    --relocatable             makes the CMakeLists.txt file independent from\n"
       << "                              the location of the .jucer file, but requires\n"
       << "                              defining a variable when calling cmake\n"
       << std::endl;
-    return 1;
+    return askingForHelp ? 0 : 1;
   }
 
   const auto jucerFilePath = juce::String{argumentParser[1]};
@@ -355,10 +397,13 @@ int main(int argc, char* argv[])
 
   const auto reprojucerFilePath = juce::String{argumentParser[2]};
   const auto reprojucerFile =
-    juce::File::getCurrentWorkingDirectory().getChildFile(reprojucerFilePath);
+    reprojucerFilePath.isNotEmpty()
+      ? juce::File::getCurrentWorkingDirectory().getChildFile(reprojucerFilePath)
+      : juce::File{};
 
-  if (!reprojucerFile.existsAsFile()
-      || !reprojucerFile.getFileName().endsWith("Reprojucer.cmake"))
+  if (reprojucerFilePath.isNotEmpty()
+      && (!reprojucerFile.existsAsFile()
+          || !reprojucerFile.getFileName().endsWith("Reprojucer.cmake")))
   {
     printError(reprojucerFilePath + " is not a valid Reprojucer.cmake file.");
     return 1;
@@ -542,11 +587,19 @@ int main(int argc, char* argv[])
 
   // include(Reprojucer)
   {
-    wLn("list(APPEND CMAKE_MODULE_PATH \"${CMAKE_CURRENT_LIST_DIR}/",
-        reprojucerFile.getParentDirectory()
-          .getRelativePathFrom(juce::File::getCurrentWorkingDirectory())
-          .replace("\\", "/"),
-        "\")");
+    if (reprojucerFilePath.isNotEmpty())
+    {
+      wLn("list(APPEND CMAKE_MODULE_PATH \"${CMAKE_CURRENT_LIST_DIR}/",
+          reprojucerFile.getParentDirectory()
+            .getRelativePathFrom(juce::File::getCurrentWorkingDirectory())
+            .replace("\\", "/"),
+          "\")");
+    }
+    else
+    {
+      wLn("# list(APPEND CMAKE_MODULE_PATH"
+          " \"${CMAKE_CURRENT_LIST_DIR}/<relative_path_to_FRUT>/cmake\")");
+    }
     wLn("include(Reprojucer)");
     wLn();
     wLn();
