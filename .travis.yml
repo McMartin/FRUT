@@ -408,6 +408,4 @@ matrix:
     - os: osx
       env: GENERATOR=Xcode CMAKE_SYSTEM_NAME=iOS
       osx_image: xcode10.1
-      before_install:
-        - HOMEBREW_NO_AUTO_UPDATE=1 brew upgrade cmake
       script: *script-Xcode-iOS
