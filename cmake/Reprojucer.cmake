@@ -2954,10 +2954,12 @@ function(_FRUT_add_Rez_command_to_AU_plugin au_target)
   endif()
 
   set(rez_output "${CMAKE_CURRENT_BINARY_DIR}/${JUCER_PROJECT_NAME}.rsrc")
+  set(audio_unit_headers "/System/Library/Frameworks/AudioUnit.framework/Headers")
 
   set(rez_defines "")
   set(rez_archs "")
   set(all_confs_sysroot "")
+  set(all_confs_include_audio_unit_headers "")
   foreach(config IN LISTS JUCER_PROJECT_CONFIGURATIONS)
     foreach(osx_architecture IN LISTS JUCER_OSX_ARCHITECTURES_${config})
       list(APPEND rez_defines
@@ -2974,6 +2976,10 @@ function(_FRUT_add_Rez_command_to_AU_plugin au_target)
     if(IS_DIRECTORY "${sysroot}")
       list(APPEND all_confs_sysroot
         "$<$<CONFIG:${config}>:-isysroot>" "$<$<CONFIG:${config}>:${sysroot}>"
+      )
+      list(APPEND all_confs_include_audio_unit_headers
+        "$<$<CONFIG:${config}>:-i>"
+        "$<$<CONFIG:${config}>:${sysroot}${audio_unit_headers}>"
       )
     endif()
   endforeach()
@@ -2996,6 +3002,7 @@ function(_FRUT_add_Rez_command_to_AU_plugin au_target)
     ${rez_defines}
     ${rez_archs}
     "-i" "${carbon_include_dir}"
+    ${all_confs_include_audio_unit_headers}
     "-i" "${CMAKE_CURRENT_BINARY_DIR}/JuceLibraryCode"
     "-i" "${juce_audio_plugin_client_include_dir}"
     ${all_confs_sysroot}
