@@ -20,7 +20,7 @@ get_filename_component(UnitTestRunner_jucer_FILE
 
 
 jucer_project_begin(
-  JUCER_VERSION "5.4.4"
+  JUCER_VERSION "5.4.5"
   PROJECT_FILE "${UnitTestRunner_jucer_FILE}"
   PROJECT_ID "Z2Xzcp"
 )
