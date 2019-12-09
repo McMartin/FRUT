@@ -293,6 +293,9 @@ contributors:
       <a href="https://github.com/McMartin/FRUT/pulls?q=state%3Amerged+author%3ADustVoice" title="Code">💻</a>
     </td>
     <td>
+      <a href="https://github.com/dimitrisudell"><img src="https://github.com/dimitrisudell.png" width="100"><br />Dimitri Sudell</a>
+      <br />
+      <a href="https://github.com/McMartin/FRUT/issues?q=is%3Aissue+author%3Adimitrisudell" title="Bug reports">🐛</a>
     </td>
     <td>
     </td>
