@@ -20,14 +20,14 @@ get_filename_component(Projucer_jucer_FILE
 
 
 jucer_project_begin(
-  JUCER_VERSION "5.4.4"
+  JUCER_VERSION "5.4.5"
   PROJECT_FILE "${Projucer_jucer_FILE}"
   PROJECT_ID "M70qfTRRk"
 )
 
 jucer_project_settings(
   PROJECT_NAME "Projucer"
-  PROJECT_VERSION "5.4.4"
+  PROJECT_VERSION "5.4.5"
   COMPANY_NAME "ROLI Ltd."
   COMPANY_COPYRIGHT "ROLI Ltd."
   REPORT_JUCE_APP_USAGE OFF # Required for closed source applications without an Indie or Pro JUCE license
@@ -548,6 +548,8 @@ jucer_export_target(
   ICON_LARGE "Source/BinaryData/Icons/juce_icon.png"
   DOCUMENT_FILE_EXTENSIONS
     ".jucer"
+  MICROPHONE_ACCESS ON
+  CAMERA_ACCESS ON
   CUSTOM_PLIST "<plist>
 <dict>
 	<key>NSAppTransportSecurity</key>

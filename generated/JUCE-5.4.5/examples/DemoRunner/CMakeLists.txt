@@ -20,14 +20,14 @@ get_filename_component(DemoRunner_jucer_FILE
 
 
 jucer_project_begin(
-  JUCER_VERSION "5.4.4"
+  JUCER_VERSION "5.4.5"
   PROJECT_FILE "${DemoRunner_jucer_FILE}"
   PROJECT_ID "yj7xMM"
 )
 
 jucer_project_settings(
   PROJECT_NAME "DemoRunner"
-  PROJECT_VERSION "5.4.4"
+  PROJECT_VERSION "5.4.5"
   COMPANY_NAME "ROLI Ltd."
   COMPANY_COPYRIGHT "Copyright (c) 2018 - ROLI Ltd."
   COMPANY_WEBSITE "https://www.juce.com/"
@@ -275,6 +275,7 @@ jucer_export_target(
   SUPPORT_DOCUMENT_BROWSER ON
   MICROPHONE_ACCESS ON
   CAMERA_ACCESS ON
+  BLUETOOTH_ACCESS ON
   ICLOUD_PERMISSIONS ON
 )
 
