@@ -20,6 +20,9 @@ Define the settings specific to a configuration associated with an export target
     [LINK_TIME_OPTIMISATION <ON|OFF>]
     [OPTIMISATION <optimisation>]
 
+    [ADD_RECOMMENDED_COMPILER_WARNING_FLAGS <Enabled|Disabled>]  # [2]
+    [ADD_RECOMMENDED_COMPILER_WARNING_FLAGS <GCC|GCC 7 and below|LLVM|Disabled>]  # [8]
+
     [ENABLE_PLUGIN_COPY_STEP <ON|OFF>]  # [1]
     [VST_BINARY_LOCATION <binary_location>]  # [1]
     [VST3_BINARY_LOCATION <binary_location>]  # [1]
@@ -77,6 +80,8 @@ Optional keywords support:
 - ``[7]``: only supported by the ``"Visual Studio 2019"``, ``"Visual Studio 2017"``,
   ``"Visual Studio 2015"``, ``"Visual Studio 2013"``, ``"Linux Makefile"``,
   ``"Code::Blocks (Windows)"``, and ``"Code::Blocks (Linux)"`` exporters.
+- ``[8]``: only support by the ``"Linux Makefile"``, ``"Code::Blocks (Windows)"``, and
+  ``"Code::Blocks (Linux)"`` exporters.
 
 
 Examples

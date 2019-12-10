@@ -1521,6 +1521,8 @@ function(jucer_export_target_configuration
     if(NOT is_debug)
       list(APPEND single_value_keywords "FORCE_GENERATION_OF_DEBUG_SYMBOLS")
     endif()
+  else()
+    list(APPEND single_value_keywords "ADD_RECOMMENDED_COMPILER_WARNING_FLAGS")
   endif()
 
   if(exporter STREQUAL "Linux Makefile")
@@ -1570,6 +1572,35 @@ function(jucer_export_target_configuration
 
   if(DEFINED _LINK_TIME_OPTIMISATION)
     set(JUCER_LINK_TIME_OPTIMISATION_${config} "${_LINK_TIME_OPTIMISATION}" PARENT_SCOPE)
+  endif()
+
+  if(DEFINED _ADD_RECOMMENDED_COMPILER_WARNING_FLAGS)
+    set(kind_text "${_ADD_RECOMMENDED_COMPILER_WARNING_FLAGS}")
+    unset(kind)
+    if(exporter STREQUAL "Xcode (MacOSX)" OR exporter STREQUAL "Xcode (iOS)")
+      if(kind_text STREQUAL "Enabled")
+        set(kind "LLVM")
+      elseif(kind_text STREQUAL "Disabled")
+        set(kind "")
+      endif()
+    elseif(exporter STREQUAL "Linux Makefile"
+        OR exporter MATCHES "^Code::Blocks \((Windows|Linux)\)$")
+      if(kind_text STREQUAL "GCC")
+        set(kind "GCC")
+      elseif(kind_text STREQUAL "GCC 7 and below")
+        set(kind "GCC-7")
+      elseif(kind_text STREQUAL "LLVM")
+        set(kind "LLVM")
+      elseif(kind_text STREQUAL "Disabled")
+        set(kind "")
+      endif()
+    endif()
+    if(NOT DEFINED kind)
+      message(FATAL_ERROR
+        "Unsupported value for ADD_RECOMMENDED_COMPILER_WARNING_FLAGS: \"${kind_text}\""
+      )
+    endif()
+    set(JUCER_ADD_RECOMMENDED_COMPILER_WARNING_FLAGS "${kind}" PARENT_SCOPE)
   endif()
 
   if(DEFINED _OPTIMISATION)
@@ -4532,6 +4563,40 @@ function(_FRUT_get_iaa_type_code out_var)
 endfunction()
 
 
+function(_FRUT_get_recommended_compiler_warning_flags kind out_var)
+
+  if(kind STREQUAL "LLVM")
+    set(flags
+      "-Wall" "-Wshadow-all" "-Wshorten-64-to-32" "-Wstrict-aliasing" "-Wuninitialized"
+      "-Wunused-parameter" "-Wconversion" "-Wsign-compare" "-Wint-conversion"
+      "-Wconditional-uninitialized" "-Woverloaded-virtual" "-Wreorder"
+      "-Wconstant-conversion" "-Wsign-conversion" "-Wunused-private-field"
+      "-Wbool-conversion" "-Wextra-semi" "-Wunreachable-code"
+      "-Wzero-as-null-pointer-constant" "-Wcast-align"
+      "-Winconsistent-missing-destructor-override" "-Wshift-sign-overflow"
+      "-Wnullable-to-nonnull-conversion" "-Wno-missing-field-initializers"
+      "-Wno-ignored-qualifiers"
+    )
+  elseif(kind STREQUAL "GCC" OR kind STREQUAL "GCC-7")
+    set(flags
+      "-Wall" "-Wextra" "-Wstrict-aliasing" "-Wuninitialized" "-Wunused-parameter"
+      "-Wsign-compare" "-Woverloaded-virtual" "-Wreorder" "-Wsign-conversion"
+      "-Wunreachable-code" "-Wzero-as-null-pointer-constant" "-Wcast-align"
+      "-Wno-implicit-fallthrough" "-Wno-maybe-uninitialized"
+      "-Wno-missing-field-initializers" "-Wno-ignored-qualifiers"
+    )
+    if(kind STREQUAL "GCC-7")
+      list(APPEND flags "-Wno-strict-overflow")
+    endif()
+  else()
+    set(flags "")
+  endif()
+
+  set(${out_var} "${flags}" PARENT_SCOPE)
+
+endfunction()
+
+
 function(_FRUT_install_to_plugin_binary_location target plugin_type default_destination)
 
   set(component "_install_${target}_to_${plugin_type}_binary_location")
@@ -4779,6 +4844,13 @@ function(_FRUT_set_compiler_and_linker_settings target)
       "${JUCER_AAX_SDK_FOLDER}/Interfaces"
       "${JUCER_AAX_SDK_FOLDER}/Interfaces/ACF"
     )
+  endif()
+
+  if(DEFINED JUCER_ADD_RECOMMENDED_COMPILER_WARNING_FLAGS)
+    _FRUT_get_recommended_compiler_warning_flags(
+      "${JUCER_ADD_RECOMMENDED_COMPILER_WARNING_FLAGS}" warning_flags
+    )
+    target_compile_options(${target} PRIVATE ${warning_flags})
   endif()
 
   foreach(config IN LISTS JUCER_PROJECT_CONFIGURATIONS)

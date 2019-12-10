@@ -204,6 +204,7 @@ jucer_export_target_configuration(
   NAME "Debug"
   DEBUG_MODE ON
   BINARY_NAME "AudioPluginHost"
+  ADD_RECOMMENDED_COMPILER_WARNING_FLAGS "Enabled"
 )
 
 jucer_export_target_configuration(
@@ -211,6 +212,7 @@ jucer_export_target_configuration(
   NAME "Release"
   DEBUG_MODE OFF
   BINARY_NAME "AudioPluginHost"
+  ADD_RECOMMENDED_COMPILER_WARNING_FLAGS "Enabled"
   OPTIMISATION "-Os (minimise code size)"
 )
 
@@ -335,6 +337,7 @@ jucer_export_target_configuration(
   DEBUG_MODE ON
   BINARY_NAME "Plugin Host"
   LINK_TIME_OPTIMISATION OFF
+  ADD_RECOMMENDED_COMPILER_WARNING_FLAGS "Enabled"
   OPTIMISATION "-O0 (no optimisation)"
   ENABLE_PLUGIN_COPY_STEP ON
 )
@@ -345,6 +348,7 @@ jucer_export_target_configuration(
   DEBUG_MODE OFF
   BINARY_NAME "Plugin Host"
   LINK_TIME_OPTIMISATION ON
+  ADD_RECOMMENDED_COMPILER_WARNING_FLAGS "Enabled"
   OPTIMISATION "-O3 (fastest with safe optimisations)"
   ENABLE_PLUGIN_COPY_STEP ON
 )

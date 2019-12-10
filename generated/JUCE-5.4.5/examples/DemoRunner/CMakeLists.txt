@@ -239,12 +239,14 @@ jucer_export_target_configuration(
   "Xcode (MacOSX)"
   NAME "Debug"
   DEBUG_MODE ON
+  ADD_RECOMMENDED_COMPILER_WARNING_FLAGS "Enabled"
 )
 
 jucer_export_target_configuration(
   "Xcode (MacOSX)"
   NAME "Release"
   DEBUG_MODE OFF
+  ADD_RECOMMENDED_COMPILER_WARNING_FLAGS "Enabled"
 )
 
 jucer_export_target(
@@ -283,12 +285,14 @@ jucer_export_target_configuration(
   "Xcode (iOS)"
   NAME "Debug"
   DEBUG_MODE ON
+  ADD_RECOMMENDED_COMPILER_WARNING_FLAGS "Enabled"
 )
 
 jucer_export_target_configuration(
   "Xcode (iOS)"
   NAME "Release"
   DEBUG_MODE OFF
+  ADD_RECOMMENDED_COMPILER_WARNING_FLAGS "Enabled"
 )
 
 jucer_export_target(
