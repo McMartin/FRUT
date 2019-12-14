@@ -589,6 +589,7 @@ jucer_export_target_configuration(
   NAME "Debug"
   DEBUG_MODE ON
   BINARY_NAME "Projucer"
+  ADD_RECOMMENDED_COMPILER_WARNING_FLAGS "Enabled"
   CXX_LIBRARY "LLVM libc++"
 )
 
@@ -598,6 +599,7 @@ jucer_export_target_configuration(
   DEBUG_MODE OFF
   BINARY_NAME "Projucer"
   LINK_TIME_OPTIMISATION OFF
+  ADD_RECOMMENDED_COMPILER_WARNING_FLAGS "Enabled"
   CXX_LIBRARY "LLVM libc++"
 )
 

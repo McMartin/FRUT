@@ -201,6 +201,7 @@ jucer_export_target_configuration(
   NAME "Debug"
   DEBUG_MODE ON
   BINARY_NAME "UnitTestRunner"
+  ADD_RECOMMENDED_COMPILER_WARNING_FLAGS "Enabled"
   OSX_DEPLOYMENT_TARGET "10.10"
   CXX_LANGUAGE_STANDARD "GNU++14"
 )
@@ -210,6 +211,7 @@ jucer_export_target_configuration(
   NAME "Release"
   DEBUG_MODE OFF
   BINARY_NAME "UnitTestRunner"
+  ADD_RECOMMENDED_COMPILER_WARNING_FLAGS "Enabled"
   OSX_DEPLOYMENT_TARGET "10.10"
   CXX_LANGUAGE_STANDARD "GNU++14"
 )

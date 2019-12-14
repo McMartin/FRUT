@@ -1974,6 +1974,46 @@ int main(int argc, char* argv[])
                                        });
         }
 
+        if (isXcodeExporter)
+        {
+          convertSettingIfDefined(configuration, "recommendedWarnings",
+                                  "ADD_RECOMMENDED_COMPILER_WARNING_FLAGS",
+                                  [](const juce::var& v) -> juce::String {
+                                    const auto value = v.toString();
+
+                                    if (value == "LLVM")
+                                      return "Enabled";
+
+                                    if (value.isEmpty())
+                                      return "Disabled";
+
+                                    return {};
+                                  });
+        }
+        else if (exporterType == "CODEBLOCKS_LINUX"
+                 || exporterType == "CODEBLOCKS_WINDOWS" || exporterType == "LINUX_MAKE")
+        {
+          convertSettingIfDefined(configuration, "recommendedWarnings",
+                                  "ADD_RECOMMENDED_COMPILER_WARNING_FLAGS",
+                                  [](const juce::var& v) -> juce::String {
+                                    const auto value = v.toString();
+
+                                    if (value == "GCC")
+                                      return "GCC";
+
+                                    if (value == "GCC-7")
+                                      return "GCC 7 and below";
+
+                                    if (value == "LLVM")
+                                      return "LLVM";
+
+                                    if (value.isEmpty())
+                                      return "Disabled";
+
+                                    return {};
+                                  });
+        }
+
         convertSettingIfDefined(configuration, "optimisation", "OPTIMISATION",
                                 [&isVSExporter](const juce::var& v) -> juce::String {
                                   if (isVSExporter)
