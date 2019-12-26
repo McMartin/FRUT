@@ -2176,11 +2176,20 @@ int main(int argc, char* argv[])
 
         if (isXcodeExporter)
         {
-          convertSettingAsListIfDefined(configuration, "customXcodeFlags",
-                                        "CUSTOM_XCODE_FLAGS", [](const juce::var& v) {
-                                          return juce::StringArray::fromTokens(
-                                            v.toString(), ",", "\"'");
-                                        });
+          convertSettingAsListIfDefined(
+            configuration, "customXcodeFlags", "CUSTOM_XCODE_FLAGS",
+            [](const juce::var& v) {
+              auto customFlags = juce::StringArray::fromTokens(v.toString(), ",", "\"'");
+              customFlags.removeEmptyStrings();
+
+              for (auto& flag : customFlags)
+              {
+                flag = flag.upToFirstOccurrenceOf("=", false, false).trim() + " = "
+                       + flag.fromFirstOccurrenceOf("=", false, false).trim();
+              }
+
+              return customFlags;
+            });
 
           convertSettingAsListIfDefined(configuration, "plistPreprocessorDefinitions",
                                         "PLIST_PREPROCESSOR_DEFINITIONS", {});
