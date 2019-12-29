@@ -213,6 +213,11 @@ juce::StringArray parsePreprocessorDefinitions(const juce::String& input)
     {
       ++s;
 
+      while (!s.isEmpty() && *s == ' ')
+      {
+        ++s;
+      }
+
       while (!s.isEmpty() && !s.isWhitespace())
       {
         if (*s == ',')
