@@ -1,5 +1,5 @@
 // Copyright (C) 2017  Matthieu Talbot
-// Copyright (C) 2017-2019  Alain Martin
+// Copyright (C) 2017-2020  Alain Martin
 // Copyright (C) 2017  Florian Goltz
 // Copyright (C) 2019  Johannes Elliesen
 //
@@ -1235,7 +1235,7 @@ int main(int argc, char* argv[])
       wLn("  PATH \"",
           useGlobalPath ? (isJuceModule ? "${JUCE_MODULES_GLOBAL_PATH}"
                                         : "${USER_MODULES_GLOBAL_PATH}")
-                        : relativeModulePath,
+                        : relativeModulePath.replace("\\", "/"),
           "\"");
 
       const auto moduleHeader =
