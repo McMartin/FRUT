@@ -1,4 +1,6 @@
-# Copyright (c) 2016 Alain Martin
+# Copyright (C) 2016-2019  Alain Martin
+# Copyright (C) 2017  Matthieu Talbot
+# Copyright (C) 2018-2019  Scott Wheeler
 #
 # This file is part of FRUT.
 #

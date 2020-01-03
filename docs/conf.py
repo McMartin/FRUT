@@ -1,4 +1,4 @@
-# Copyright (c) 2018 Alain Martin
+# Copyright (C) 2018-2019  Alain Martin
 #
 # This file is part of FRUT.
 #
@@ -16,7 +16,7 @@
 # along with FRUT.  If not, see <http://www.gnu.org/licenses/>.
 
 project = 'FRUT'
-copyright = '2019, Alain Martin'
+copyright = '2017-2019, Alain Martin'
 
 master_doc = 'index'
 
