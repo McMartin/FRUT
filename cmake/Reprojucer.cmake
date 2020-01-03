@@ -1,4 +1,4 @@
-# Copyright (C) 2016-2019  Alain Martin
+# Copyright (C) 2016-2020  Alain Martin
 # Copyright (C) 2017  Matthieu Talbot
 # Copyright (C) 2018-2019  Scott Wheeler
 #
@@ -1531,7 +1531,7 @@ function(jucer_export_target_configuration
     list(APPEND single_value_keywords "ARCHITECTURE")
   endif()
 
-  if(exporter MATCHES "^Code::Blocks \((Windows|Linux)\)$")
+  if(exporter MATCHES "^Code::Blocks \\((Windows|Linux)\\)$")
     list(APPEND single_value_keywords "ARCHITECTURE")
   endif()
 
@@ -1586,7 +1586,7 @@ function(jucer_export_target_configuration
         set(kind "")
       endif()
     elseif(exporter STREQUAL "Linux Makefile"
-        OR exporter MATCHES "^Code::Blocks \((Windows|Linux)\)$")
+        OR exporter MATCHES "^Code::Blocks \\((Windows|Linux)\\)$")
       if(kind_text STREQUAL "GCC")
         set(kind "GCC")
       elseif(kind_text STREQUAL "GCC 7 and below")
@@ -1966,7 +1966,7 @@ function(jucer_export_target_configuration
     set(JUCER_ARCHITECTURE_FLAG_${config} "${architecture_flag}" PARENT_SCOPE)
   endif()
 
-  if(DEFINED _ARCHITECTURE AND exporter MATCHES "^Code::Blocks \((Windows|Linux)\)$")
+  if(DEFINED _ARCHITECTURE AND exporter MATCHES "^Code::Blocks \\((Windows|Linux)\\)$")
     set(architecture "${_ARCHITECTURE}")
     if(architecture STREQUAL "32-bit (-m32)")
       set(architecture_flag "-m32")
