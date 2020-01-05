@@ -4991,12 +4991,6 @@ function(_FRUT_set_compiler_and_linker_settings_APPLE target)
       )
     endif()
 
-    if(DEFINED JUCER_CXX_LIBRARY_${config})
-      target_compile_options(${target} PRIVATE
-        $<$<CONFIG:${config}>:-stdlib=${JUCER_CXX_LIBRARY_${config}}>
-      )
-    endif()
-
     if(JUCER_RELAX_IEEE_COMPLIANCE_${config})
       target_compile_options(${target} PRIVATE $<$<CONFIG:${config}>:-ffast-math>)
     endif()
@@ -5016,6 +5010,14 @@ function(_FRUT_set_compiler_and_linker_settings_APPLE target)
           target_compile_options(${target} PRIVATE $<$<CONFIG:${config}>:-flto>)
         endif()
       endif()
+    endif()
+  endforeach()
+
+  foreach(config IN LISTS JUCER_PROJECT_CONFIGURATIONS)
+    if(DEFINED JUCER_CXX_LIBRARY_${config})
+      target_compile_options(${target} PRIVATE
+        $<$<CONFIG:${config}>:-stdlib=${JUCER_CXX_LIBRARY_${config}}>
+      )
     endif()
   endforeach()
 
