@@ -1680,7 +1680,7 @@ function(jucer_export_target_configuration
 
   if(DEFINED _OSX_BASE_SDK_VERSION)
     set(version "${_OSX_BASE_SDK_VERSION}")
-    if(version MATCHES "^10\\.([5-9]|1[0-4]) SDK$")
+    if(version MATCHES "^10\\.([5-9]|1[0-5]) SDK$")
       set(JUCER_OSX_BASE_SDK_VERSION_${config} "10.${CMAKE_MATCH_1}" PARENT_SCOPE)
     elseif(NOT version STREQUAL "Use Default")
       message(FATAL_ERROR "Unsupported value for OSX_BASE_SDK_VERSION: \"${version}\"")
@@ -1689,7 +1689,7 @@ function(jucer_export_target_configuration
 
   if(DEFINED _OSX_DEPLOYMENT_TARGET)
     set(target "${_OSX_DEPLOYMENT_TARGET}")
-    if(target MATCHES "^10\\.([5-9]|1[0-4])$")
+    if(target MATCHES "^10\\.([5-9]|1[0-5])$")
       set(JUCER_OSX_DEPLOYMENT_TARGET_${config} "10.${CMAKE_MATCH_1}" PARENT_SCOPE)
     elseif(NOT target STREQUAL "Use Default")
       message(FATAL_ERROR "Unsupported value for OSX_DEPLOYMENT_TARGET: \"${target}\"")
