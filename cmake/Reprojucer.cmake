@@ -2593,15 +2593,11 @@ function(jucer_project_end)
           else()
             set(aax_config "Release")
           endif()
-          if(DEFINED JUCER_VERSION AND JUCER_VERSION VERSION_LESS 5.3.2)
-            if(JUCER_CXX_LIBRARY_${config} STREQUAL "libc++"
-                OR JUCER_OSX_DEPLOYMENT_TARGET_${config} VERSION_GREATER 10.8)
-              set(aax_libcpp "_libcpp")
-            else()
-              set(aax_libcpp "")
-            endif()
-          else()
-            set(aax_libcpp "_libcpp")
+          set(aax_libcpp "_libcpp")
+          if(DEFINED JUCER_VERSION AND JUCER_VERSION VERSION_LESS 5.3.2
+              AND NOT (JUCER_CXX_LIBRARY_${config} STREQUAL "libc++"
+                       OR JUCER_OSX_DEPLOYMENT_TARGET_${config} VERSION_GREATER 10.8))
+            set(aax_libcpp "")
           endif()
           set(aax_lib
             "${JUCER_AAX_SDK_FOLDER}/Libs/${aax_config}/libAAXLibrary${aax_libcpp}.a"
