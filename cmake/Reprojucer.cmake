@@ -1680,7 +1680,10 @@ function(jucer_export_target_configuration
 
   if(DEFINED _OSX_BASE_SDK_VERSION)
     set(version "${_OSX_BASE_SDK_VERSION}")
-    if(version MATCHES "^10\\.([5-9]|1[0-5]) SDK$")
+    if(version MATCHES "^10\\.([5-6]) SDK$"
+        AND DEFINED JUCER_VERSION AND JUCER_VERSION VERSION_LESS 5.3.2)
+      set(JUCER_OSX_BASE_SDK_VERSION_${config} "10.${CMAKE_MATCH_1}" PARENT_SCOPE)
+    elseif(version MATCHES "^10\\.([7-9]|1[0-5]) SDK$")
       set(JUCER_OSX_BASE_SDK_VERSION_${config} "10.${CMAKE_MATCH_1}" PARENT_SCOPE)
     elseif(NOT version STREQUAL "Use Default")
       message(FATAL_ERROR "Unsupported value for OSX_BASE_SDK_VERSION: \"${version}\"")
@@ -1689,7 +1692,10 @@ function(jucer_export_target_configuration
 
   if(DEFINED _OSX_DEPLOYMENT_TARGET)
     set(target "${_OSX_DEPLOYMENT_TARGET}")
-    if(target MATCHES "^10\\.([5-9]|1[0-5])$")
+    if(target MATCHES "^10\\.([5-6])$"
+        AND DEFINED JUCER_VERSION AND JUCER_VERSION VERSION_LESS 5.3.2)
+      set(JUCER_OSX_DEPLOYMENT_TARGET_${config} "10.${CMAKE_MATCH_1}" PARENT_SCOPE)
+    elseif(target MATCHES "^10\\.([7-9]|1[0-5])$")
       set(JUCER_OSX_DEPLOYMENT_TARGET_${config} "10.${CMAKE_MATCH_1}" PARENT_SCOPE)
     elseif(NOT target STREQUAL "Use Default")
       message(FATAL_ERROR "Unsupported value for OSX_DEPLOYMENT_TARGET: \"${target}\"")
@@ -1758,6 +1764,11 @@ function(jucer_export_target_configuration
 
   if(DEFINED _CXX_LIBRARY)
     set(cxx_library "${_CXX_LIBRARY}")
+    if(NOT (DEFINED JUCER_VERSION AND JUCER_VERION VERSION_LESS 5.3.2))
+      message(WARNING "The setting \"C++ Library\" was removed in Projucer 5.3.2, so"
+        " CXX_LIBRARY \"${cxx_library}\" will be ignored."
+      )
+    endif()
     if(cxx_library STREQUAL "LLVM libc++")
       set(JUCER_CXX_LIBRARY_${config} "libc++" PARENT_SCOPE)
     elseif(cxx_library STREQUAL "GNU libstdc++")
@@ -2582,11 +2593,15 @@ function(jucer_project_end)
           else()
             set(aax_config "Release")
           endif()
-          if(JUCER_CXX_LIBRARY_${config} STREQUAL "libc++"
-              OR JUCER_OSX_DEPLOYMENT_TARGET_${config} VERSION_GREATER 10.8)
-            set(aax_libcpp "_libcpp")
+          if(DEFINED JUCER_VERSION AND JUCER_VERSION VERSION_LESS 5.3.2)
+            if(JUCER_CXX_LIBRARY_${config} STREQUAL "libc++"
+                OR JUCER_OSX_DEPLOYMENT_TARGET_${config} VERSION_GREATER 10.8)
+              set(aax_libcpp "_libcpp")
+            else()
+              set(aax_libcpp "")
+            endif()
           else()
-            set(aax_libcpp "")
+            set(aax_libcpp "_libcpp")
           endif()
           set(aax_lib
             "${JUCER_AAX_SDK_FOLDER}/Libs/${aax_config}/libAAXLibrary${aax_libcpp}.a"
@@ -5013,13 +5028,19 @@ function(_FRUT_set_compiler_and_linker_settings_APPLE target)
     endif()
   endforeach()
 
-  foreach(config IN LISTS JUCER_PROJECT_CONFIGURATIONS)
-    if(DEFINED JUCER_CXX_LIBRARY_${config})
-      target_compile_options(${target} PRIVATE
-        $<$<CONFIG:${config}>:-stdlib=${JUCER_CXX_LIBRARY_${config}}>
-      )
-    endif()
-  endforeach()
+  if(DEFINED JUCER_VERSION AND JUCER_VERSION VERSION_LESS 5.3.2)
+    foreach(config IN LISTS JUCER_PROJECT_CONFIGURATIONS)
+      if(DEFINED JUCER_CXX_LIBRARY_${config})
+        target_compile_options(${target} PRIVATE
+          $<$<CONFIG:${config}>:-stdlib=${JUCER_CXX_LIBRARY_${config}}>
+        )
+      endif()
+    endforeach()
+  elseif(CMAKE_GENERATOR STREQUAL "Xcode")
+    set_target_properties(${target} PROPERTIES XCODE_ATTRIBUTE_CLANG_CXX_LIBRARY "libc++")
+  else()
+    target_compile_options(${target} PRIVATE "-stdlib=libc++")
+  endif()
 
   if(JUCER_IN_APP_PURCHASES_CAPABILITY)
     target_compile_definitions(${target} PRIVATE "JUCE_IN_APP_PURCHASES=1")
