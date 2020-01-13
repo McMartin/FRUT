@@ -146,7 +146,7 @@ We first build and install FRUT with CMake: ::
   -- Generating done
   -- Build files have been written to: <root>/FRUT/build
 
-  $ cmake --build . --target install
+  $ cmake --build . --target install --parallel
   ...
 
 If it fails to build and install, please report the problem by creating a new issue on
