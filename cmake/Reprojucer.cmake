@@ -5024,18 +5024,44 @@ function(_FRUT_set_compiler_and_linker_settings_APPLE target)
     endif()
   endforeach()
 
-  if(DEFINED JUCER_VERSION AND JUCER_VERSION VERSION_LESS 5.3.2)
-    foreach(config IN LISTS JUCER_PROJECT_CONFIGURATIONS)
-      if(DEFINED JUCER_CXX_LIBRARY_${config})
-        target_compile_options(${target} PRIVATE
-          $<$<CONFIG:${config}>:-stdlib=${JUCER_CXX_LIBRARY_${config}}>
+  if(CMAKE_GENERATOR STREQUAL "Xcode")
+    if(DEFINED JUCER_VERSION AND JUCER_VERSION VERSION_LESS 5.3.2)
+      unset(all_confs_cxx_library)
+      foreach(config IN LISTS JUCER_PROJECT_CONFIGURATIONS)
+        if(DEFINED JUCER_CXX_LIBRARY_${config})
+          string(APPEND all_confs_cxx_library
+            "$<$<CONFIG:${config}>:${JUCER_CXX_LIBRARY_${config}}>"
+          )
+        endif()
+      endforeach()
+      if(DEFINED all_confs_cxx_library)
+        set_target_properties(${target} PROPERTIES
+          XCODE_ATTRIBUTE_CLANG_CXX_LIBRARY "${all_confs_cxx_library}"
         )
       endif()
-    endforeach()
-  elseif(CMAKE_GENERATOR STREQUAL "Xcode")
-    set_target_properties(${target} PROPERTIES XCODE_ATTRIBUTE_CLANG_CXX_LIBRARY "libc++")
+    else()
+      set_target_properties(${target} PROPERTIES
+        XCODE_ATTRIBUTE_CLANG_CXX_LIBRARY "libc++"
+      )
+    endif()
   else()
-    target_compile_options(${target} PRIVATE "-stdlib=libc++")
+    if(DEFINED JUCER_VERSION AND JUCER_VERSION VERSION_LESS 5.3.2)
+      foreach(config IN LISTS JUCER_PROJECT_CONFIGURATIONS)
+        if(DEFINED JUCER_CXX_LIBRARY_${config})
+          target_compile_options(${target} PRIVATE
+            $<$<CONFIG:${config}>:-stdlib=${JUCER_CXX_LIBRARY_${config}}>
+          )
+          set_property(TARGET ${target} APPEND_STRING PROPERTY
+            LINK_FLAGS " $<$<CONFIG:${config}>:-stdlib=${JUCER_CXX_LIBRARY_${config}}>"
+          )
+        endif()
+      endforeach()
+    else()
+      target_compile_options(${target} PRIVATE "-stdlib=libc++")
+      set_property(TARGET ${target} APPEND_STRING PROPERTY
+        LINK_FLAGS " -stdlib=libc++"
+      )
+    endif()
   endif()
 
   if(JUCER_IN_APP_PURCHASES_CAPABILITY)
