@@ -1,4 +1,5 @@
 # Copyright (C) 2016-2020  Alain Martin
+# Copyright (C) 2017 Matthieu Talbot
 #
 # This file is part of FRUT.
 #
