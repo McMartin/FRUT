@@ -304,6 +304,23 @@ contributors:
       <a href="https://github.com/McMartin/FRUT/pulls?q=state%3Amerged+reviewed-by%3Adanra+-author%3Adanra+" title="Pull Request reviews">👀</a>
     </td>
   </tr>
+  <tr>
+    <td>
+      <a href="https://github.com/rorywalsh"><img src="https://github.com/rorywalsh.png" width="100"><br />Rory Walsh</a>
+      <br />
+      <a href="https://github.com/McMartin/FRUT/issues?q=is%3Aissue+author%3Arorywalsh" title="Bug reports">🐛</a>
+    </td>
+    <td>
+    </td>
+    <td>
+    </td>
+    <td>
+    </td>
+    <td>
+    </td>
+    <td>
+    </td>
+  </tr>
   </tbody>
   </table>
 
