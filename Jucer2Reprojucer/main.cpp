@@ -1949,15 +1949,17 @@ int main(int argc, char* argv[])
               continue;
             }
 
-            if (isAbsolutePath(path))
+            const auto unquotedPath = path.unquoted();
+
+            if (isAbsolutePath(unquotedPath))
             {
-              absOrRelToJucerFileDirPaths.add(escape("\\", path));
+              absOrRelToJucerFileDirPaths.add(escape("\\", unquotedPath));
             }
             else
             {
-              absOrRelToJucerFileDirPaths.add(escape(
-                "\\",
-                targetProjectDir.getChildFile(path).getRelativePathFrom(jucerFileDir)));
+              absOrRelToJucerFileDirPaths.add(
+                escape("\\", targetProjectDir.getChildFile(unquotedPath)
+                               .getRelativePathFrom(jucerFileDir)));
             }
           }
 
