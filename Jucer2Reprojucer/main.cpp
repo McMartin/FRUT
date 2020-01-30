@@ -109,14 +109,14 @@ namespace
 {
 
 template <class Head>
-void writeToStream(std::ostream& stream, Head&& head)
+void writeToStream(juce::MemoryOutputStream& stream, Head&& head)
 {
   stream << std::forward<Head>(head);
 }
 
 
 template <class Head, class... Tail>
-void writeToStream(std::ostream& stream, Head&& head, Tail&&... tail)
+void writeToStream(juce::MemoryOutputStream& stream, Head&& head, Tail&&... tail)
 {
   stream << std::forward<Head>(head);
   writeToStream(stream, std::forward<Tail>(tail)...);
@@ -125,7 +125,7 @@ void writeToStream(std::ostream& stream, Head&& head, Tail&&... tail)
 
 struct LineWriter
 {
-  explicit LineWriter(std::ostream& stream)
+  explicit LineWriter(juce::MemoryOutputStream& stream)
     : mStream(stream)
   {
   }
@@ -140,7 +140,7 @@ struct LineWriter
   }
 
 private:
-  std::ostream& mStream;
+  juce::MemoryOutputStream& mStream;
 };
 
 
@@ -435,8 +435,8 @@ int main(int argc, char* argv[])
     return 1;
   }
 
-  std::ofstream out{"CMakeLists.txt", std::ios_base::out | std::ios_base::binary};
-  LineWriter wLn{out};
+  juce::MemoryOutputStream outputStream;
+  LineWriter wLn{outputStream};
 
   const auto convertSetting =
     [&wLn](const juce::ValueTree& valueTree, const juce::Identifier& property,
@@ -526,7 +526,7 @@ int main(int argc, char* argv[])
 
   const auto convertSettingAsList =
     [&wLn](const juce::ValueTree& valueTree, const juce::Identifier& property,
-           const std::string& cmakeKeyword,
+           const juce::String& cmakeKeyword,
            std::function<juce::StringArray(const juce::var&)> converterFn) {
       if (!converterFn)
       {
@@ -556,7 +556,7 @@ int main(int argc, char* argv[])
   const auto convertSettingAsListIfDefined =
     [&convertSettingAsList](
       const juce::ValueTree& valueTree, const juce::Identifier& property,
-      const std::string& cmakeKeyword,
+      const juce::String& cmakeKeyword,
       std::function<juce::StringArray(const juce::var&)> converterFn) {
       if (valueTree.hasProperty(property))
       {
@@ -621,7 +621,7 @@ int main(int argc, char* argv[])
                || std::isdigit(c, std::locale::classic()));
     },
     '_');
-  const auto jucerFileCMakeVar = escapedJucerFileName + "_FILE";
+  const auto jucerFileCMakeVar = juce::String{escapedJucerFileName} + "_FILE";
 
   // get_filename_component() or set(*_FILE)
   {
@@ -2472,12 +2472,19 @@ int main(int argc, char* argv[])
 
   wLn("jucer_project_end()");
 
-  out << std::flush;
+  const auto outputFile =
+    juce::File::getCurrentWorkingDirectory().getChildFile("CMakeLists.txt");
 
-  std::cout << juce::File::getCurrentWorkingDirectory()
-                 .getChildFile("CMakeLists.txt")
-                 .getFullPathName()
-            << " has been successfully generated." << std::endl;
+  if (outputFile.replaceWithData(outputStream.getData(), outputStream.getDataSize()))
+  {
+    std::cout << outputFile.getFullPathName() << " has been successfully generated."
+              << std::endl;
+  }
+  else
+  {
+    printError("Failed to write to " + outputFile.getFullPathName());
+    return 1;
+  }
 
   return 0;
 }
