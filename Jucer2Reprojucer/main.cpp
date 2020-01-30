@@ -76,6 +76,7 @@
 
 #include <algorithm>
 #include <cstdlib>
+#include <cstring>
 #include <fstream>
 #include <functional>
 #include <iostream>
@@ -2474,6 +2475,22 @@ int main(int argc, char* argv[])
 
   const auto outputFile =
     juce::File::getCurrentWorkingDirectory().getChildFile("CMakeLists.txt");
+
+  std::unique_ptr<juce::FileInputStream> fileStream{outputFile.createInputStream()};
+  if (fileStream)
+  {
+    juce::MemoryOutputStream fileContents;
+    fileContents.writeFromInputStream(*fileStream, -1);
+
+    if (fileContents.getDataSize() == outputStream.getDataSize()
+        && std::memcmp(fileContents.getData(), outputStream.getData(),
+                       fileContents.getDataSize())
+             == 0)
+    {
+      std::cout << outputFile.getFullPathName() << " is already up-to-date." << std::endl;
+      return 0;
+    }
+  }
 
   if (outputFile.replaceWithData(outputStream.getData(), outputStream.getDataSize()))
   {
