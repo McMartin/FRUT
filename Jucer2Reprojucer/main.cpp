@@ -2470,7 +2470,9 @@ int main(int argc, char* argv[])
     }
   }
 
-  out << "jucer_project_end()" << kNewLine << std::flush;
+  wLn("jucer_project_end()");
+
+  out << std::flush;
 
   std::cout << juce::File::getCurrentWorkingDirectory()
                  .getChildFile("CMakeLists.txt")
