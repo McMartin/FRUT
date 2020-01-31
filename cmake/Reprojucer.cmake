@@ -5056,8 +5056,9 @@ function(_FRUT_set_compiler_and_linker_settings_APPLE target)
           target_compile_options(${target} PRIVATE
             $<$<CONFIG:${config}>:-stdlib=${JUCER_CXX_LIBRARY_${config}}>
           )
+          string(TOUPPER "${config}" upper_config)
           set_property(TARGET ${target} APPEND_STRING PROPERTY
-            LINK_FLAGS " $<$<CONFIG:${config}>:-stdlib=${JUCER_CXX_LIBRARY_${config}}>"
+            LINK_FLAGS_${upper_config} " -stdlib=${JUCER_CXX_LIBRARY_${config}}"
           )
         endif()
       endforeach()
