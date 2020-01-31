@@ -4986,7 +4986,11 @@ function(_FRUT_set_compiler_and_linker_settings target)
     endforeach()
   endforeach()
 
-  target_link_libraries(${target} PRIVATE ${JUCER_EXTRA_LINKER_FLAGS})
+  foreach(flag IN LISTS JUCER_EXTRA_LINKER_FLAGS)
+    set_property(TARGET ${target} APPEND_STRING PROPERTY LINK_FLAGS " ${flag}")
+    set_property(TARGET ${target} APPEND_STRING PROPERTY STATIC_LIBRARY_FLAGS " ${flag}")
+  endforeach()
+
   target_link_libraries(${target} PRIVATE ${JUCER_EXTERNAL_LIBRARIES_TO_LINK})
 
 endfunction()
@@ -5056,8 +5060,9 @@ function(_FRUT_set_compiler_and_linker_settings_APPLE target)
           target_compile_options(${target} PRIVATE
             $<$<CONFIG:${config}>:-stdlib=${JUCER_CXX_LIBRARY_${config}}>
           )
+          string(TOUPPER "${config}" upper_config)
           set_property(TARGET ${target} APPEND_STRING PROPERTY
-            LINK_FLAGS " $<$<CONFIG:${config}>:-stdlib=${JUCER_CXX_LIBRARY_${config}}>"
+            LINK_FLAGS_${upper_config} " -stdlib=${JUCER_CXX_LIBRARY_${config}}"
           )
         endif()
       endforeach()
