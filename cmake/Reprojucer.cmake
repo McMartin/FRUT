@@ -4986,7 +4986,11 @@ function(_FRUT_set_compiler_and_linker_settings target)
     endforeach()
   endforeach()
 
-  target_link_libraries(${target} PRIVATE ${JUCER_EXTRA_LINKER_FLAGS})
+  foreach(flag IN LISTS JUCER_EXTRA_LINKER_FLAGS)
+    set_property(TARGET ${target} APPEND_STRING PROPERTY LINK_FLAGS " ${flag}")
+    set_property(TARGET ${target} APPEND_STRING PROPERTY STATIC_LIBRARY_FLAGS " ${flag}")
+  endforeach()
+
   target_link_libraries(${target} PRIVATE ${JUCER_EXTERNAL_LIBRARIES_TO_LINK})
 
 endfunction()
