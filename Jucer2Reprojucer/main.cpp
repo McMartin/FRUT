@@ -456,7 +456,8 @@ int main(int argc, char* argv[])
       }
       else
       {
-        wLn("  ", cmakeKeyword, " \"", escape("\\\";", value), "\"");
+        wLn("  ", cmakeKeyword, " \"", escape("\\\";", value.trimCharactersAtEnd("\\")),
+            "\"");
       }
     };
 
@@ -549,7 +550,7 @@ int main(int argc, char* argv[])
 
         for (const auto& item : value)
         {
-          wLn("    \"", escape("\\\";", item), "\"");
+          wLn("    \"", escape("\\\";", item.trimCharactersAtEnd("\\")), "\"");
         }
       }
     };
