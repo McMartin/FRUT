@@ -1954,13 +1954,12 @@ int main(int argc, char* argv[])
 
             if (isAbsolutePath(unquotedPath))
             {
-              absOrRelToJucerFileDirPaths.add(escape("\\", unquotedPath));
+              absOrRelToJucerFileDirPaths.add(unquotedPath);
             }
             else
             {
-              absOrRelToJucerFileDirPaths.add(
-                escape("\\", targetProjectDir.getChildFile(unquotedPath)
-                               .getRelativePathFrom(jucerFileDir)));
+              absOrRelToJucerFileDirPaths.add(targetProjectDir.getChildFile(unquotedPath)
+                                                .getRelativePathFrom(jucerFileDir));
             }
           }
 
