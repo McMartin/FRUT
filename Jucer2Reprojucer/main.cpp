@@ -456,7 +456,8 @@ int main(int argc, char* argv[])
       }
       else
       {
-        wLn("  ", cmakeKeyword, " \"", escape("\\\";", value), "\"");
+        wLn("  ", cmakeKeyword, " \"", escape("\\\";", value.trimCharactersAtEnd("\\")),
+            "\"");
       }
     };
 
@@ -549,7 +550,7 @@ int main(int argc, char* argv[])
 
         for (const auto& item : value)
         {
-          wLn("    \"", escape("\\\";", item), "\"");
+          wLn("    \"", escape("\\\";", item.trimCharactersAtEnd("\\")), "\"");
         }
       }
     };
@@ -1954,13 +1955,12 @@ int main(int argc, char* argv[])
 
             if (isAbsolutePath(unquotedPath))
             {
-              absOrRelToJucerFileDirPaths.add(escape("\\", unquotedPath));
+              absOrRelToJucerFileDirPaths.add(unquotedPath);
             }
             else
             {
-              absOrRelToJucerFileDirPaths.add(
-                escape("\\", targetProjectDir.getChildFile(unquotedPath)
-                               .getRelativePathFrom(jucerFileDir)));
+              absOrRelToJucerFileDirPaths.add(targetProjectDir.getChildFile(unquotedPath)
+                                                .getRelativePathFrom(jucerFileDir));
             }
           }
 
