@@ -1789,7 +1789,9 @@ function(jucer_export_target_configuration
   endif()
 
   if(DEFINED _PLIST_PREPROCESSOR_DEFINITIONS)
-    # TODO with PLIST_PREPROCESS
+    set(JUCER_PLIST_PREPROCESSOR_DEFINITIONS_${config}
+      "${_PLIST_PREPROCESSOR_DEFINITIONS}" PARENT_SCOPE
+    )
   endif()
 
   if(DEFINED _CODE_SIGNING_IDENTITY)
@@ -4059,6 +4061,20 @@ function(_FRUT_generate_plist_file
     if(DEFINED JUCER_PLIST_PREFIX_HEADER AND NOT JUCER_PLIST_PREFIX_HEADER STREQUAL "")
       set_target_properties(${target} PROPERTIES
         XCODE_ATTRIBUTE_INFOPLIST_PREFIX_HEADER "${JUCER_PLIST_PREFIX_HEADER}"
+      )
+    endif()
+
+    unset(all_confs_plist_defines)
+    foreach(config IN LISTS JUCER_PROJECT_CONFIGURATIONS)
+      if(JUCER_PLIST_PREPROCESSOR_DEFINITIONS_${config})
+        string(APPEND all_confs_plist_defines
+          "$<$<CONFIG:${config}>:${JUCER_PLIST_PREPROCESSOR_DEFINITIONS_${config}}>"
+        )
+      endif()
+    endforeach()
+    if(DEFINED all_confs_plist_defines)
+      set_target_properties(${target} PROPERTIES
+        XCODE_ATTRIBUTE_INFOPLIST_PREPROCESSOR_DEFINITIONS "${all_confs_plist_defines}"
       )
     endif()
   else()

@@ -2220,8 +2220,11 @@ int main(int argc, char* argv[])
               return customFlags;
             });
 
-          convertSettingAsListIfDefined(configuration, "plistPreprocessorDefinitions",
-                                        "PLIST_PREPROCESSOR_DEFINITIONS", {});
+          convertSettingAsListIfDefined(
+            configuration, "plistPreprocessorDefinitions",
+            "PLIST_PREPROCESSOR_DEFINITIONS", [](const juce::var& v) {
+              return parsePreprocessorDefinitions(v.toString());
+            });
 
           convertSettingIfDefined(configuration, "cppLanguageStandard",
                                   "CXX_LANGUAGE_STANDARD",

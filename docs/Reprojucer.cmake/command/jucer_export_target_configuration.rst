@@ -56,6 +56,7 @@ Define the settings specific to a configuration associated with an export target
     [IOS_DEPLOYMENT_TARGET <ios_deployment_target>]  # [4]
 
     [CUSTOM_XCODE_FLAGS <xcode_flag> [<xcode_flag> ...]]  # [2]
+    [PLIST_PREPROCESSOR_DEFINITIONS <preprocessor_definition> [<preprocessor_definition> ...]]  # [2]
     [CXX_LANGUAGE_STANDARD <cxx_standard>]  # [2]
     [CXX_LIBRARY <cxx_library>]  # [2]
     [CODE_SIGNING_IDENTITY <code_signing_identity>]  # [2]
