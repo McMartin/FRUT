@@ -48,6 +48,7 @@ Define the settings specific to an export target.
 
     [DOCUMENT_FILE_EXTENSIONS <file_extension> [<file_extension> ...]]  # [6]
     [USE_APP_SANDBOX <ON|OFF>]  # [5]
+    [APP_SANDBOX_INHERITANCE <ON|OFF>]  # [5]
     [APP_SANDBOX_OPTIONS <app_sandbox_option> [<app_sandbox_option> ...]]  # [5]
     [USE_HARDENED_RUNTIME <ON|OFF>]  # [5]
     [HARDENED_RUNTIME_OPTIONS <hardened_runtime_option> [<hardened_runtime_option> ...]]  # [5]
