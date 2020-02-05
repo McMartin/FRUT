@@ -1237,7 +1237,12 @@ function(jucer_export_target exporter)
   endif()
 
   if(DEFINED _PLIST_PREPROCESS AND _PLIST_PREPROCESS)
-    _FRUT_warn_about_unsupported_setting("PLIST_PREPROCESS" "PList Preprocess" 394)
+    if(_PLIST_PREPROCESS AND NOT CMAKE_GENERATOR STREQUAL "Xcode")
+      message(WARNING "PLIST_PREPROCESS is only supported when using the Xcode generator."
+        " You should call `cmake -G Xcode`."
+      )
+    endif()
+    set(JUCER_PLIST_PREPROCESS "${_PLIST_PREPROCESS}" PARENT_SCOPE)
   endif()
 
   if(DEFINED _PLIST_PREFIX_HEADER)
@@ -4032,9 +4037,16 @@ function(_FRUT_generate_plist_file
 
   set(plist_filename "Info-${plist_suffix}.plist")
   if(CMAKE_GENERATOR STREQUAL "Xcode")
+    if(JUCER_PLIST_PREPROCESS)
+      set(infoplist_preprocess "YES")
+    else()
+      set(infoplist_preprocess "NO")
+    endif()
+
     set(bundle_executable "\${EXECUTABLE_NAME}")
     set_target_properties(${target} PROPERTIES
       XCODE_ATTRIBUTE_INFOPLIST_FILE "${CMAKE_CURRENT_BINARY_DIR}/${plist_filename}"
+      XCODE_ATTRIBUTE_INFOPLIST_PREPROCESS "${infoplist_preprocess}"
       XCODE_ATTRIBUTE_PRODUCT_BUNDLE_IDENTIFIER "${bundle_identifier}"
     )
   else()

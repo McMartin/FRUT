@@ -74,6 +74,7 @@ Define the settings specific to an export target.
     [PUSH_NOTIFICATIONS_CAPABILITY <ON|OFF>]  # [3]
 
     [CUSTOM_PLIST <plist_content>]  # [3]
+    [PLIST_PREPROCESS <ON|OFF>]  # [3]
     [EXTRA_SYSTEM_FRAMEWORKS <osx_framework> [<osx_framework> ...]]  # [3]
     [EXTRA_FRAMEWORKS <osx_framework> [<osx_framework> ...]]  # [3]
     [FRAMEWORK_SEARCH_PATHS <framework_search_path> [<framework_search_path> ...]]  # [3]
