@@ -25,20 +25,20 @@ include(Reprojucer)
 
 
 function(test_entitlements_default)
-  _FRUT_generate_entitlements_file("default.entitlements" _)
+  _FRUT_generate_entitlements_file(target "default.entitlements" _)
 endfunction()
 
 
 function(test_entitlements_use_app_sandbox_no_options)
   set(JUCER_USE_APP_SANDBOX ON)
-  _FRUT_generate_entitlements_file("UseAppSandbox_NoOptions.entitlements" _)
+  _FRUT_generate_entitlements_file(target "UseAppSandbox_NoOptions.entitlements" _)
 endfunction()
 
 
 function(test_entitlements_use_app_sandbox_one_option)
   set(JUCER_USE_APP_SANDBOX ON)
   set(JUCER_APP_SANDBOX_OPTIONS "com.apple.security.device.microphone")
-  _FRUT_generate_entitlements_file("UseAppSandbox_OneOption.entitlements" _)
+  _FRUT_generate_entitlements_file(target "UseAppSandbox_OneOption.entitlements" _)
 endfunction()
 
 
@@ -49,20 +49,20 @@ function(test_entitlements_use_app_sandbox_several_options)
     "com.apple.security.device.microphone"
     "com.apple.security.device.usb"
   )
-  _FRUT_generate_entitlements_file("UseAppSandbox_SeveralOptions.entitlements" _)
+  _FRUT_generate_entitlements_file(target "UseAppSandbox_SeveralOptions.entitlements" _)
 endfunction()
 
 
 function(test_entitlements_use_hardened_runtime_no_options)
   set(JUCER_USE_HARDENED_RUNTIME ON)
-  _FRUT_generate_entitlements_file("UseHardenedRuntime_NoOptions.entitlements" _)
+  _FRUT_generate_entitlements_file(target "UseHardenedRuntime_NoOptions.entitlements" _)
 endfunction()
 
 
 function(test_entitlements_use_hardened_runtime_one_option)
   set(JUCER_USE_HARDENED_RUNTIME ON)
   set(JUCER_HARDENED_RUNTIME_OPTIONS "com.apple.security.cs.allow-jit")
-  _FRUT_generate_entitlements_file("UseHardenedRuntime_OneOption.entitlements" _)
+  _FRUT_generate_entitlements_file(target "UseHardenedRuntime_OneOption.entitlements" _)
 endfunction()
 
 
@@ -73,13 +73,13 @@ function(test_entitlements_use_hardened_runtime_several_options)
     "com.apple.security.cs.disable-library-validation"
     "com.apple.security.device.audio-input"
   )
-  _FRUT_generate_entitlements_file("UseHardenedRuntime_SeveralOptions.entitlements" _)
+  _FRUT_generate_entitlements_file(target "UseHardenedRuntime_SeveralOptions.entitlements" _)
 endfunction()
 
 
 function(test_entitlements_push_notifications_capability)
   set(JUCER_PUSH_NOTIFICATIONS_CAPABILITY ON)
-  _FRUT_generate_entitlements_file("PushNotificationsCapability.entitlements" _)
+  _FRUT_generate_entitlements_file(target "PushNotificationsCapability.entitlements" _)
 endfunction()
 
 
@@ -89,7 +89,7 @@ function(test_entitlements_all_settings)
   set(JUCER_USE_HARDENED_RUNTIME ON)
   set(JUCER_HARDENED_RUNTIME_OPTIONS "com.apple.security.device.audio-input")
   set(JUCER_PUSH_NOTIFICATIONS_CAPABILITY ON)
-  _FRUT_generate_entitlements_file("AllSettings.entitlements" _)
+  _FRUT_generate_entitlements_file(target "AllSettings.entitlements" _)
 endfunction()
 
 

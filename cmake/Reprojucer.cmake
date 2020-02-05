@@ -2146,13 +2146,6 @@ function(jucer_project_end)
     source_group("Juce Library Code" FILES "${JUCER_RESOURCES_RC_FILE}")
   endif()
 
-  if(CMAKE_GENERATOR STREQUAL "Xcode")
-    string(REGEX REPLACE "[\"#@,;:<>*^|?\\/]" "" project_filename "${JUCER_PROJECT_NAME}")
-    _FRUT_generate_entitlements_file("${project_filename}.entitlements"
-      JUCER_ENTITLEMENTS_FILE
-    )
-  endif()
-
   if(IOS)
     if(NOT DEFINED JUCER_CUSTOM_XCASSETS_FOLDER
         OR JUCER_CUSTOM_XCASSETS_FOLDER STREQUAL "")
@@ -2198,7 +2191,6 @@ function(jucer_project_end)
     ${JUCER_PROJECT_MODULES_BROWSABLE_FILES}
     ${JUCER_ICON_FILE}
     ${JUCER_RESOURCES_RC_FILE}
-    ${JUCER_ENTITLEMENTS_FILE}
   )
 
   if(JUCER_PROJECT_TYPE STREQUAL "Console Application")
@@ -3796,7 +3788,7 @@ function(_FRUT_generate_AppConfig_header)
 endfunction()
 
 
-function(_FRUT_generate_entitlements_file output_filename out_var)
+function(_FRUT_generate_entitlements_file target output_filename out_var)
 
   set(entitlements_content "")
 
@@ -3805,7 +3797,7 @@ function(_FRUT_generate_entitlements_file output_filename out_var)
       if(JUCER_ENABLE_INTER_APP_AUDIO)
         string(APPEND entitlements_content "\t<key>inter-app-audio</key>\n" "\t<true/>\n")
       endif()
-    else()
+    elseif(target MATCHES "_AUv3_AppExtension$")
       string(APPEND entitlements_content
         "\t<key>com.apple.security.app-sandbox</key>\n" "\t<true/>\n"
       )
@@ -3864,7 +3856,7 @@ function(_FRUT_generate_entitlements_file output_filename out_var)
     )
   endif()
 
-  configure_file("${Reprojucer_data_DIR}/project.entitlements.in"
+  configure_file("${Reprojucer_data_DIR}/target.entitlements.in"
     "${output_filename}" @ONLY
   )
 
@@ -5232,6 +5224,11 @@ function(_FRUT_set_compiler_and_linker_settings_APPLE target)
     )
   endif()
 
+  if(CMAKE_GENERATOR STREQUAL "Xcode")
+    _FRUT_generate_entitlements_file(${target} "${target}.entitlements" entitlements_file)
+    target_sources(${target} PRIVATE "${entitlements_file}")
+  endif()
+
   if(
     JUCER_PUSH_NOTIFICATIONS_CAPABILITY
     OR JUCER_APP_GROUPS_CAPABILITY
@@ -5252,7 +5249,7 @@ function(_FRUT_set_compiler_and_linker_settings_APPLE target)
   )
     if(CMAKE_GENERATOR STREQUAL "Xcode")
       set_target_properties(${target} PROPERTIES
-        XCODE_ATTRIBUTE_CODE_SIGN_ENTITLEMENTS "${JUCER_ENTITLEMENTS_FILE}"
+        XCODE_ATTRIBUTE_CODE_SIGN_ENTITLEMENTS "${entitlements_file}"
       )
     else()
       message(WARNING "Reprojucer.cmake only supports entitlements when using the Xcode"
