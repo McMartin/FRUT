@@ -20,14 +20,14 @@ get_filename_component(Projucer_jucer_FILE
 
 
 jucer_project_begin(
-  JUCER_VERSION "5.4.5"
+  JUCER_VERSION "5.4.6"
   PROJECT_FILE "${Projucer_jucer_FILE}"
   PROJECT_ID "M70qfTRRk"
 )
 
 jucer_project_settings(
   PROJECT_NAME "Projucer"
-  PROJECT_VERSION "5.4.5"
+  PROJECT_VERSION "5.4.6"
   COMPANY_NAME "ROLI Ltd."
   COMPANY_COPYRIGHT "ROLI Ltd."
   REPORT_JUCE_APP_USAGE OFF # Required for closed source applications without an Indie or Pro JUCE license
@@ -399,6 +399,8 @@ jucer_project_files("Projucer/Utility/Helpers"
   .         .         .         "Source/Utility/Helpers/jucer_RelativePath.h"
   .         .         .         "Source/Utility/Helpers/jucer_TranslationHelpers.h"
   .         .         .         "Source/Utility/Helpers/jucer_ValueSourceHelpers.h"
+  x         .         .         "Source/Utility/Helpers/jucer_VersionInfo.cpp"
+  .         .         .         "Source/Utility/Helpers/jucer_VersionInfo.h"
 )
 
 jucer_project_files("Projucer/Utility/PIPs"
@@ -487,7 +489,7 @@ jucer_project_module(
 jucer_project_module(
   juce_events
   PATH "../../modules"
-  # JUCE_EXECUTE_APP_SUSPEND_ON_IOS_BACKGROUND_TASK
+  # JUCE_EXECUTE_APP_SUSPEND_ON_BACKGROUND_TASK
 )
 
 jucer_project_module(
