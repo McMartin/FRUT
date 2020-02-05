@@ -20,7 +20,7 @@ get_filename_component(AudioPerformanceTest_jucer_FILE
 
 
 jucer_project_begin(
-  JUCER_VERSION "5.4.5"
+  JUCER_VERSION "5.4.6"
   PROJECT_FILE "${AudioPerformanceTest_jucer_FILE}"
   PROJECT_ID "AKfc5m"
 )
@@ -114,7 +114,7 @@ jucer_project_module(
 jucer_project_module(
   juce_events
   PATH "../../modules"
-  # JUCE_EXECUTE_APP_SUSPEND_ON_IOS_BACKGROUND_TASK
+  # JUCE_EXECUTE_APP_SUSPEND_ON_BACKGROUND_TASK
 )
 
 jucer_project_module(
