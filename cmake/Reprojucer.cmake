@@ -1246,7 +1246,13 @@ function(jucer_export_target exporter)
   endif()
 
   if(DEFINED _PLIST_PREFIX_HEADER)
-    # TODO with PLIST_PREPROCESS
+    _FRUT_abs_path_based_on_jucer_project_dir(prefix_header "${_PLIST_PREFIX_HEADER}")
+    if(NOT EXISTS "${prefix_header}")
+      message(FATAL_ERROR "No such file (PLIST_PREFIX_HEADER):"
+        " \"${_PLIST_PREFIX_HEADER}\" (\"${prefix_header}\")"
+      )
+    endif()
+    set(JUCER_PLIST_PREFIX_HEADER "${prefix_header}" PARENT_SCOPE)
   endif()
 
   if(DEFINED _EXTRA_SYSTEM_FRAMEWORKS)
@@ -4049,6 +4055,12 @@ function(_FRUT_generate_plist_file
       XCODE_ATTRIBUTE_INFOPLIST_PREPROCESS "${infoplist_preprocess}"
       XCODE_ATTRIBUTE_PRODUCT_BUNDLE_IDENTIFIER "${bundle_identifier}"
     )
+
+    if(DEFINED JUCER_PLIST_PREFIX_HEADER AND NOT JUCER_PLIST_PREFIX_HEADER STREQUAL "")
+      set_target_properties(${target} PROPERTIES
+        XCODE_ATTRIBUTE_INFOPLIST_PREFIX_HEADER "${JUCER_PLIST_PREFIX_HEADER}"
+      )
+    endif()
   else()
     set(bundle_executable "\${MACOSX_BUNDLE_BUNDLE_NAME}")
     set_target_properties(${target} PROPERTIES
