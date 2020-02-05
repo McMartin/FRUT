@@ -1747,7 +1747,9 @@ int main(int argc, char* argv[])
                                      "PUSH_NOTIFICATIONS_CAPABILITY", {});
         convertSettingIfDefined(exporter, "customPList", "CUSTOM_PLIST", {});
         convertOnOffSettingIfDefined(exporter, "PListPreprocess", "PLIST_PREPROCESS", {});
+        convertOnOffSettingIfDefined(exporter, "pListPreprocess", "PLIST_PREPROCESS", {});
         convertSettingIfDefined(exporter, "PListPrefixHeader", "PLIST_PREFIX_HEADER", {});
+        convertSettingIfDefined(exporter, "pListPrefixHeader", "PLIST_PREFIX_HEADER", {});
         convertSettingAsListIfDefined(
           exporter, "extraFrameworks",
           jucerVersionAsTuple > Version{5, 3, 2} ? "EXTRA_SYSTEM_FRAMEWORKS"
