@@ -29,9 +29,6 @@ set(JUCER_PROJECT_TYPE "Audio Plug-in")
 
 function(test_entitlements_default)
   _FRUT_generate_entitlements_file("default.entitlements" _)
-  if(EXISTS "${CMAKE_CURRENT_BINARY_DIR}/default.entitlements")
-    message(FATAL_ERROR "Unexpected .entitlements file")
-  endif()
 endfunction()
 
 
@@ -44,9 +41,6 @@ endfunction()
 function(test_entitlements_push_notifications_capability)
   set(JUCER_PUSH_NOTIFICATIONS_CAPABILITY ON)
   _FRUT_generate_entitlements_file("PushNotificationsCapability.entitlements" _)
-  if(EXISTS "${CMAKE_CURRENT_BINARY_DIR}/PushNotificationsCapability.entitlements")
-    message(FATAL_ERROR "Unexpected .entitlements file")
-  endif()
 endfunction()
 
 
