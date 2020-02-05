@@ -89,6 +89,7 @@ Define the settings specific to an export target.
 
     [USE_HEADERMAP <ON|OFF>]  # [3]
 
+    [MANIFEST_FILE <manifest_file>]  # [8]
     [PLATFORM_TOOLSET <platform_toolset>]  # [8]
     [USE_IPP_LIBRARY <ipp_library_linking_method>]  # [8]
     [WINDOWS_TARGET_PLATFORM <windows_target_platform>]  # [8]
