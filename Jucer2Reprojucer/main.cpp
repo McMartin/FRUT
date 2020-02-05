@@ -1635,7 +1635,29 @@ int main(int argc, char* argv[])
                {"com.apple.security.assets.movies.read-only",
                 "File Access: Movies Folder (Read Only)"},
                {"com.apple.security.assets.movies.read-write",
-                "File Access: Movies Folder (Read/Write)"}});
+                "File Access: Movies Folder (Read/Write)"},
+               {"com.apple.security.temporary-exception.audio-unit-host",
+                "Temporary Exception: Audio Unit Hosting"},
+               {"com.apple.security.temporary-exception.mach-lookup.global-name",
+                "Temporary Exception: Global Mach Service"},
+               {"com.apple.security.temporary-exception.mach-register.global-name",
+                "Temporary Exception: Global Mach Service Dynamic Registration"},
+               {"com.apple.security.temporary-exception.files.home-relative-path.read-"
+                "only",
+                "Temporary Exception: Home Directory File Access (Read Only)"},
+               {"com.apple.security.temporary-exception.files.home-relative-path.read-"
+                "write",
+                "Temporary Exception: Home Directory File Access (Read/Write)"},
+               {"com.apple.security.temporary-exception.files.absolute-path.read-only",
+                "Temporary Exception: Absolute Path File Access (Read Only)"},
+               {"com.apple.security.temporary-exception.files.absolute-path.read-write",
+                "Temporary Exception: Absolute Path File Access (Read/Write)"},
+               {"com.apple.security.temporary-exception.iokit-user-client-class",
+                "Temporary Exception: IOKit User Client Class"},
+               {"com.apple.security.temporary-exception.shared-preference.read-only",
+                "Temporary Exception: Shared Preference Domain (Read Only)"},
+               {"com.apple.security.temporary-exception.shared-preference.read-write",
+                "Temporary Exception: Shared Preference Domain (Read/Write)"}});
           });
 
         convertOnOffSettingIfDefined(exporter, "hardenedRuntime", "USE_HARDENED_RUNTIME",

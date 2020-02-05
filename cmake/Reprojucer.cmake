@@ -1064,6 +1064,16 @@ function(jucer_export_target exporter)
       "File Access: Music Folder (Read/Write)"
       "File Access: Movies Folder (Read Only)"
       "File Access: Movies Folder (Read/Write)"
+      "Temporary Exception: Audio Unit Hosting"
+      "Temporary Exception: Global Mach Service"
+      "Temporary Exception: Global Mach Service Dynamic Registration"
+      "Temporary Exception: Home Directory File Access (Read Only)"
+      "Temporary Exception: Home Directory File Access (Read/Write)"
+      "Temporary Exception: Absolute Path File Access (Read Only)"
+      "Temporary Exception: Absolute Path File Access (Read/Write)"
+      "Temporary Exception: IOKit User Client Class"
+      "Temporary Exception: Shared Preference Domain (Read Only)"
+      "Temporary Exception: Shared Preference Domain (Read/Write)"
     )
     set(entitlement_keys
       "com.apple.security.network.server"
@@ -1086,6 +1096,16 @@ function(jucer_export_target exporter)
       "com.apple.security.assets.music.read-write"
       "com.apple.security.assets.movies.read-only"
       "com.apple.security.assets.movies.read-write"
+      "com.apple.security.temporary-exception.audio-unit-host"
+      "com.apple.security.temporary-exception.mach-lookup.global-name"
+      "com.apple.security.temporary-exception.mach-register.global-name"
+      "com.apple.security.temporary-exception.files.home-relative-path.read-only"
+      "com.apple.security.temporary-exception.files.home-relative-path.read-write"
+      "com.apple.security.temporary-exception.files.absolute-path.read-only"
+      "com.apple.security.temporary-exception.files.absolute-path.read-write"
+      "com.apple.security.temporary-exception.iokit-user-client-class"
+      "com.apple.security.temporary-exception.shared-preference.read-only"
+      "com.apple.security.temporary-exception.shared-preference.read-write"
     )
     set(app_sandbox_options "")
     foreach(option_string IN LISTS _APP_SANDBOX_OPTIONS)
