@@ -1745,9 +1745,27 @@ int main(int argc, char* argv[])
       {
         convertOnOffSettingIfDefined(exporter, "iosPushNotifications",
                                      "PUSH_NOTIFICATIONS_CAPABILITY", {});
+
         convertSettingIfDefined(exporter, "customPList", "CUSTOM_PLIST", {});
         convertOnOffSettingIfDefined(exporter, "PListPreprocess", "PLIST_PREPROCESS", {});
-        convertSettingIfDefined(exporter, "PListPrefixHeader", "PLIST_PREFIX_HEADER", {});
+        convertOnOffSettingIfDefined(exporter, "pListPreprocess", "PLIST_PREPROCESS", {});
+        const auto convertPrefixHeader = [&jucerFile, &exporter](const juce::var& v) {
+          const auto value = v.toString();
+
+          if (value.isEmpty())
+            return juce::String{};
+
+          const auto jucerFileDir = jucerFile.getParentDirectory();
+          const auto targetProjectDir =
+            jucerFileDir.getChildFile(exporter.getProperty("targetFolder").toString());
+
+          return targetProjectDir.getChildFile(value).getRelativePathFrom(jucerFileDir);
+        };
+        convertSettingIfDefined(exporter, "PListPrefixHeader", "PLIST_PREFIX_HEADER",
+                                convertPrefixHeader);
+        convertSettingIfDefined(exporter, "pListPrefixHeader", "PLIST_PREFIX_HEADER",
+                                convertPrefixHeader);
+
         convertSettingAsListIfDefined(
           exporter, "extraFrameworks",
           jucerVersionAsTuple > Version{5, 3, 2} ? "EXTRA_SYSTEM_FRAMEWORKS"
@@ -2202,8 +2220,11 @@ int main(int argc, char* argv[])
               return customFlags;
             });
 
-          convertSettingAsListIfDefined(configuration, "plistPreprocessorDefinitions",
-                                        "PLIST_PREPROCESSOR_DEFINITIONS", {});
+          convertSettingAsListIfDefined(
+            configuration, "plistPreprocessorDefinitions",
+            "PLIST_PREPROCESSOR_DEFINITIONS", [](const juce::var& v) {
+              return parsePreprocessorDefinitions(v.toString());
+            });
 
           convertSettingIfDefined(configuration, "cppLanguageStandard",
                                   "CXX_LANGUAGE_STANDARD",

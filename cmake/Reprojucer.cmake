@@ -1237,11 +1237,22 @@ function(jucer_export_target exporter)
   endif()
 
   if(DEFINED _PLIST_PREPROCESS AND _PLIST_PREPROCESS)
-    _FRUT_warn_about_unsupported_setting("PLIST_PREPROCESS" "PList Preprocess" 394)
+    if(_PLIST_PREPROCESS AND NOT CMAKE_GENERATOR STREQUAL "Xcode")
+      message(WARNING "PLIST_PREPROCESS is only supported when using the Xcode generator."
+        " You should call `cmake -G Xcode`."
+      )
+    endif()
+    set(JUCER_PLIST_PREPROCESS "${_PLIST_PREPROCESS}" PARENT_SCOPE)
   endif()
 
   if(DEFINED _PLIST_PREFIX_HEADER)
-    # TODO with PLIST_PREPROCESS
+    _FRUT_abs_path_based_on_jucer_project_dir(prefix_header "${_PLIST_PREFIX_HEADER}")
+    if(NOT EXISTS "${prefix_header}")
+      message(FATAL_ERROR "No such file (PLIST_PREFIX_HEADER):"
+        " \"${_PLIST_PREFIX_HEADER}\" (\"${prefix_header}\")"
+      )
+    endif()
+    set(JUCER_PLIST_PREFIX_HEADER "${prefix_header}" PARENT_SCOPE)
   endif()
 
   if(DEFINED _EXTRA_SYSTEM_FRAMEWORKS)
@@ -1778,7 +1789,9 @@ function(jucer_export_target_configuration
   endif()
 
   if(DEFINED _PLIST_PREPROCESSOR_DEFINITIONS)
-    # TODO with PLIST_PREPROCESS
+    set(JUCER_PLIST_PREPROCESSOR_DEFINITIONS_${config}
+      "${_PLIST_PREPROCESSOR_DEFINITIONS}" PARENT_SCOPE
+    )
   endif()
 
   if(DEFINED _CODE_SIGNING_IDENTITY)
@@ -4032,11 +4045,38 @@ function(_FRUT_generate_plist_file
 
   set(plist_filename "Info-${plist_suffix}.plist")
   if(CMAKE_GENERATOR STREQUAL "Xcode")
+    if(JUCER_PLIST_PREPROCESS)
+      set(infoplist_preprocess "YES")
+    else()
+      set(infoplist_preprocess "NO")
+    endif()
+
     set(bundle_executable "\${EXECUTABLE_NAME}")
     set_target_properties(${target} PROPERTIES
       XCODE_ATTRIBUTE_INFOPLIST_FILE "${CMAKE_CURRENT_BINARY_DIR}/${plist_filename}"
+      XCODE_ATTRIBUTE_INFOPLIST_PREPROCESS "${infoplist_preprocess}"
       XCODE_ATTRIBUTE_PRODUCT_BUNDLE_IDENTIFIER "${bundle_identifier}"
     )
+
+    if(DEFINED JUCER_PLIST_PREFIX_HEADER AND NOT JUCER_PLIST_PREFIX_HEADER STREQUAL "")
+      set_target_properties(${target} PROPERTIES
+        XCODE_ATTRIBUTE_INFOPLIST_PREFIX_HEADER "${JUCER_PLIST_PREFIX_HEADER}"
+      )
+    endif()
+
+    unset(all_confs_plist_defines)
+    foreach(config IN LISTS JUCER_PROJECT_CONFIGURATIONS)
+      if(JUCER_PLIST_PREPROCESSOR_DEFINITIONS_${config})
+        string(APPEND all_confs_plist_defines
+          "$<$<CONFIG:${config}>:${JUCER_PLIST_PREPROCESSOR_DEFINITIONS_${config}}>"
+        )
+      endif()
+    endforeach()
+    if(DEFINED all_confs_plist_defines)
+      set_target_properties(${target} PROPERTIES
+        XCODE_ATTRIBUTE_INFOPLIST_PREPROCESSOR_DEFINITIONS "${all_confs_plist_defines}"
+      )
+    endif()
   else()
     set(bundle_executable "\${MACOSX_BUNDLE_BUNDLE_NAME}")
     set_target_properties(${target} PROPERTIES
