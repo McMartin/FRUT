@@ -1323,7 +1323,13 @@ function(jucer_export_target exporter)
   endif()
 
   if(DEFINED _MANIFEST_FILE)
-    _FRUT_warn_about_unsupported_setting("MANIFEST_FILE" "Manifest file" 440)
+    _FRUT_abs_path_based_on_jucer_project_dir(manifest_file "${_MANIFEST_FILE}")
+    if(NOT EXISTS "${manifest_file}")
+      message(FATAL_ERROR "No such file (MANIFEST_FILE):"
+        " \"${_MANIFEST_FILE}\" (\"${manifest_file}\")"
+      )
+    endif()
+    set(JUCER_MANIFEST_FILE "${manifest_file}" PARENT_SCOPE)
   endif()
 
   if(DEFINED _PLATFORM_TOOLSET)
@@ -2213,6 +2219,10 @@ function(jucer_project_end)
     ${JUCER_RESOURCES_RC_FILE}
     ${JUCER_ENTITLEMENTS_FILE}
   )
+
+  if(MSVC)
+    list(APPEND all_sources ${JUCER_MANIFEST_FILE})
+  endif()
 
   if(JUCER_PROJECT_TYPE STREQUAL "Console Application")
     if(IOS)
