@@ -2006,9 +2006,19 @@ int main(int argc, char* argv[])
       {
         const auto configuration = configurations.getChild(i);
 
+        const auto originalConfigName = configuration.getProperty("name").toString();
+        const auto sanitizedConfigName = sanitizeConfigurationName(originalConfigName);
+
         wLn("jucer_export_target_configuration(");
         wLn("  \"", exporterName, "\"");
-        wLn("  NAME \"", configuration.getProperty("name").toString(), "\"");
+        if (originalConfigName != sanitizedConfigName)
+        {
+          const auto jucerFileBasename = jucerFile.getFileName();
+          wLn("  NAME \"", sanitizedConfigName, "\" # \"", originalConfigName, "\" in ",
+              jucerFileBasename);
+        }
+        else
+          wLn("  NAME \"", sanitizedConfigName, "\"");
 
         const auto isDebug = bool{configuration.getProperty("isDebug")};
         wLn("  DEBUG_MODE ", (isDebug ? "ON" : "OFF"));
