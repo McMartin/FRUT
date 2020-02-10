@@ -691,14 +691,7 @@ int main(int argc, char* argv[])
     wLn();
   }
 
-  auto escapedJucerFileName = jucerFileName.toStdString();
-  std::replace_if(
-    escapedJucerFileName.begin(), escapedJucerFileName.end(),
-    [](const std::string::value_type& c) {
-      return !(std::isalpha(c, std::locale::classic())
-               || std::isdigit(c, std::locale::classic()));
-    },
-    '_');
+  auto escapedJucerFileName = sanitizeName(jucerFileName);
   const auto jucerFileCMakeVar = juce::String{escapedJucerFileName} + "_FILE";
 
   // get_filename_component() or set(*_FILE)
