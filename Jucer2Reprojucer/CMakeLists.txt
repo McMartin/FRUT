@@ -103,7 +103,7 @@ jucer_project_module(
 
 jucer_export_target(
   "Xcode (MacOSX)"
-  COMPILER_FLAGS_FOR_maximum_warnings "-Werror -Weverything -Wno-c++98-compat -Wno-c++98-compat-pedantic -Wno-padded"
+  COMPILER_FLAGS_FOR_maximum_warnings "-Werror -Weverything -Wno-c++98-compat -Wno-c++98-compat-pedantic -Wno-exit-time-destructors -Wno-padded"
 )
 
 jucer_export_target_configuration(
