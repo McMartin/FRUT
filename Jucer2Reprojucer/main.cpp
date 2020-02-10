@@ -151,6 +151,82 @@ void printError(const juce::String& error)
 }
 
 
+/** Sanitizes a string to match the regex ^[A-Za-z0-9_]*$. Sanitization follows these
+ *  rules:
+ *  1) Invalid characters are replaced with "_".
+ *  2) At most one consecutive replacement "_" is kept (if the original name contained
+ *     multiple "_" they remain unaltered).
+ *  3) No replacement "_" is added at the end or at the beginning.
+ */
+juce::String sanitizeName(const juce::String& input)
+{
+  const juce::String validCharacters =
+    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789_";
+  juce::String output;
+  bool mustInsertReplacementChar = false;
+  for (auto c = input.getCharPointer(); !c.isEmpty();)
+  {
+    // keep valid characters
+    if (validCharacters.containsChar(*c))
+    {
+      if (mustInsertReplacementChar)
+      {
+        output += '_';
+        mustInsertReplacementChar = false;
+      }
+      output += *c;
+    }
+    // replace invalid characters with "_"
+    else
+    {
+      // don't add "_" at the beginning
+      if (output.isNotEmpty())
+        mustInsertReplacementChar = true;
+    }
+    c++;
+  }
+  return output;
+}
+
+/** Sanitizes a configuration name. Valid config names match the regex ^[A-Za-z0-9_]*$.
+ *  Sanitization is done with sanitizeName(). An optional digit is added until the
+ *  configuration name is unique. The sanitization is synchronized across
+ *  the entire project.
+ */
+juce::String sanitizeConfigurationName(const juce::String& originalName)
+{
+  static std::map<juce::String, juce::String> sanitizedNameTable;
+  static juce::StringArray sanitizedNameList;
+  juce::String sanitizedName;
+
+  // check if this name was sanitized before
+  if (sanitizedNameTable.find(originalName) != sanitizedNameTable.end())
+    return sanitizedNameTable[originalName];
+
+  // need to sanitize
+  sanitizedName = sanitizeName(originalName);
+
+  // add digits until unique
+  int number = 1;
+  auto sanitizedNameWithoutNumber = sanitizedName;
+  while (sanitizedNameList.contains(sanitizedName))
+    sanitizedName = sanitizedNameWithoutNumber + "_" + juce::String(number++);
+
+  // remember it for later
+  sanitizedNameTable[originalName] = sanitizedName;
+  sanitizedNameList.add(sanitizedName);
+
+  if (originalName != sanitizedName)
+  {
+    std::cerr << "warning: Configuration '" << originalName << "' "
+              << "contains invalid characters. The name was changed to '" << sanitizedName
+              << "'" << std::endl;
+  }
+
+  return sanitizedName;
+}
+
+
 juce::String makeValidIdentifier(juce::String s)
 {
   if (s.isEmpty())
