@@ -745,6 +745,7 @@ function(jucer_export_target exporter)
     "EXTRA_COMPILER_FLAGS"
     "EXTRA_LINKER_FLAGS"
     "EXTERNAL_LIBRARIES_TO_LINK"
+    "IMPORTED_STATIC_LIBRARIES_PATHS"
   )
 
   if(exporter STREQUAL "Xcode (MacOSX)" OR exporter STREQUAL "Xcode (iOS)")
@@ -909,6 +910,10 @@ function(jucer_export_target exporter)
 
   if(DEFINED _EXTRA_LINKER_FLAGS)
     set(JUCER_EXTRA_LINKER_FLAGS "${_EXTRA_LINKER_FLAGS}" PARENT_SCOPE)
+  endif()
+
+  if(DEFINED _IMPORTED_STATIC_LIBRARIES_PATHS)
+      set(IMPORTED_STATIC_LIBRARIES_PATHS "${_IMPORTED_STATIC_LIBRARIES_PATHS}" PARENT_SCOPE)
   endif()
 
   if(DEFINED _EXTERNAL_LIBRARIES_TO_LINK)
@@ -4990,6 +4995,18 @@ function(_FRUT_set_compiler_and_linker_settings target)
     set_property(TARGET ${target} APPEND_STRING PROPERTY LINK_FLAGS " ${flag}")
     set_property(TARGET ${target} APPEND_STRING PROPERTY STATIC_LIBRARY_FLAGS " ${flag}")
   endforeach()
+
+  foreach(lib_path IN LISTS IMPORTED_STATIC_LIBRARIES_PATHS)
+     get_filename_component(lib_file_name "${lib_path}" NAME)
+     # extract library name
+     string(REGEX REPLACE "lib(.+)\.(.+)$" "\\1;" lib_name "${lib_file_name}")
+     message(STATUS "Added imported static library ${lib_name} located at ${lib_path}")
+
+     add_library(${lib_name} STATIC IMPORTED)
+     set_property(TARGET ${lib_name} PROPERTY IMPORTED_LOCATION "${lib_path}")
+     list(APPEND IMPORTED_STATIC_LIBRARIES ${lib_name})
+   endforeach()
+   target_link_libraries(${target} PRIVATE ${IMPORTED_STATIC_LIBRARIES})
 
   target_link_libraries(${target} PRIVATE ${JUCER_EXTERNAL_LIBRARIES_TO_LINK})
 
