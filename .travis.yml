@@ -364,7 +364,7 @@ script-anchors:
     # Configure all JUCE 5.4.3 projects
     - cmake .. -G Xcode -DCMAKE_SYSTEM_NAME=iOS -DJUCE_VERSION="5.4.3"
 
-    # Configure all JUCE 5.4.3 projects
+    # Configure all JUCE 5.4.6 projects
     - cmake .. -G Xcode -DCMAKE_SYSTEM_NAME=iOS -DJUCE_VERSION="5.4.6"
 
 matrix:
