@@ -309,6 +309,9 @@ contributors:
       <a href="https://github.com/McMartin/FRUT/issues?q=is%3Aissue+author%3Arorywalsh" title="Bug reports">🐛</a>
     </td>
     <td>
+      <a href="https://github.com/eyalamirmusic"><img src="https://github.com/eyalamirmusic.png" width="100"><br />Eyal Amir</a>
+      <br />
+      <a href="https://github.com/McMartin/FRUT/issues?q=is%3Aissue+author%3Aeyalamirmusic" title="Bug reports">🐛</a>
     </td>
     <td>
     </td>
