@@ -4088,9 +4088,8 @@ function(_FRUT_generate_plist_file
       )
     endif()
   else()
-    set(bundle_executable "\${MACOSX_BUNDLE_BUNDLE_NAME}")
+    set(bundle_executable "\${MACOSX_BUNDLE_EXECUTABLE_NAME}")
     set_target_properties(${target} PROPERTIES
-      MACOSX_BUNDLE_BUNDLE_NAME "${JUCER_PROJECT_NAME}"
       MACOSX_BUNDLE_GUI_IDENTIFIER "${bundle_identifier}"
       MACOSX_BUNDLE_INFO_PLIST "${CMAKE_CURRENT_BINARY_DIR}/${plist_filename}"
     )
