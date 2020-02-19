@@ -20,14 +20,14 @@ get_filename_component(Projucer_jucer_FILE
 
 
 jucer_project_begin(
-  JUCER_VERSION "5.4.6"
+  JUCER_VERSION "5.4.7"
   PROJECT_FILE "${Projucer_jucer_FILE}"
   PROJECT_ID "M70qfTRRk"
 )
 
 jucer_project_settings(
   PROJECT_NAME "Projucer"
-  PROJECT_VERSION "5.4.6"
+  PROJECT_VERSION "5.4.7"
   COMPANY_NAME "ROLI Ltd."
   COMPANY_COPYRIGHT "ROLI Ltd."
   REPORT_JUCE_APP_USAGE OFF # Required for closed source applications without an Indie or Pro JUCE license
@@ -552,25 +552,6 @@ jucer_export_target(
     ".jucer"
   MICROPHONE_ACCESS ON
   CAMERA_ACCESS ON
-  CUSTOM_PLIST "<plist>
-<dict>
-	<key>NSAppTransportSecurity</key>
-	<dict>
-		<key>NSAllowsArbitraryLoads</key>
-		<true/>
-		<key>NSExceptionDomains</key>
-		<dict>
-			<key>amazonaws.com</key>
-			<dict>
-				<key>NSExceptionAllowsInsecureHTTPLoads</key>
-				<true/>
-				<key>NSIncludesSubdomains</key>
-				<true/>
-			</dict>
-		</dict>
-	</dict>
-</dict>
-</plist>"
   EXTRA_SYSTEM_FRAMEWORKS
     "AudioUnit"
     "Accelerate"
