@@ -1576,6 +1576,7 @@ function(jucer_export_target_configuration
     set(library_search_paths "")
     foreach(path IN LISTS _EXTRA_LIBRARY_SEARCH_PATHS)
       file(TO_CMAKE_PATH "${path}" path)
+      set(path "${CMAKE_SYSROOT}/${path}")
       _FRUT_abs_path_based_on_jucer_project_dir(path "${path}")
       list(APPEND library_search_paths "${path}")
     endforeach()
