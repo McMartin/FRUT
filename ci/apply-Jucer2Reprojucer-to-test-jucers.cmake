@@ -32,10 +32,10 @@ endif()
 get_filename_component(Jucer2Reprojucer_EXE "${Jucer2Reprojucer_EXE}" ABSOLUTE)
 
 
-file(GLOB_RECURSE jucer_files RELATIVE "${tests_DIR}" "${tests_DIR}/*.jucer")
+file(GLOB_RECURSE jucer_files "${tests_DIR}/*.jucer")
 
 foreach(jucer_file IN LISTS jucer_files)
-  get_filename_component(working_dir "${tests_DIR}/${jucer_file}" DIRECTORY)
+  get_filename_component(working_dir "${jucer_file}" DIRECTORY)
   get_filename_component(jucer_file_name "${jucer_file}" NAME)
 
   execute_process(WORKING_DIRECTORY ${working_dir}
@@ -48,7 +48,7 @@ foreach(jucer_file IN LISTS jucer_files)
 
   if(NOT result EQUAL 0)
     message(FATAL_ERROR "Failed to run ${Jucer2Reprojucer_EXE} "
-      "${tests_DIR}/${jucer_file} ${CMAKE_CURRENT_LIST_DIR}/../cmake/Reprojucer.cmake"
+      "${jucer_file} ${CMAKE_CURRENT_LIST_DIR}/../cmake/Reprojucer.cmake"
     )
   endif()
 endforeach()
