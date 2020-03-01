@@ -24,7 +24,7 @@ endif()
 list(REMOVE_DUPLICATES JUCE_modules_DIRS)
 
 foreach(modules_dir IN LISTS JUCE_modules_DIRS)
-  if (EXISTS "${modules_dir}/juce_core/juce_core.h"
+  if(EXISTS "${modules_dir}/juce_core/juce_core.h"
     AND EXISTS "${modules_dir}/juce_data_structures/juce_data_structures.h"
     AND EXISTS "${modules_dir}/juce_events/juce_events.h"
     AND EXISTS "${modules_dir}/juce_graphics/juce_graphics.h"
