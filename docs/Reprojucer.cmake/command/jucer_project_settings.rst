@@ -49,6 +49,9 @@ Define the settings specific to a JUCE project.
     [CXX_LANGUAGE_STANDARD <cxx_language_standard>]
     [PREPROCESSOR_DEFINITIONS <preprocessor_definition> [<preprocessor_definition> ...]]
     [HEADER_SEARCH_PATHS <header_search_path> [<header_search_path> ...]]
+
+    [POST_EXPORT_SHELL_COMMAND_MACOS_LINUX <post_export_shell_command>]
+    [POST_EXPORT_SHELL_COMMAND_WINDOWS <post_export_shell_command]
   )
 
 

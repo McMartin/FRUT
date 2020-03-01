@@ -178,15 +178,10 @@ function(jucer_project_settings)
     set(_HEADER_SEARCH_PATHS "${header_search_paths}")
   endif()
 
-  if(DEFINED _POST_EXPORT_SHELL_COMMAND_MACOS_LINUX)
-    _FRUT_warn_about_unsupported_setting("POST_EXPORT_SHELL_COMMAND_MACOS_LINUX"
-      "Post-Export Shell Command (macOS, Linux)" 499
-    )
-  endif()
-
-  if(DEFINED _POST_EXPORT_SHELL_COMMAND_WINDOWS)
-    _FRUT_warn_about_unsupported_setting("POST_EXPORT_SHELL_COMMAND_WINDOWS"
-      "Post-Export Shell Command (Windows)" 500
+  if(DEFINED _POST_EXPORT_SHELL_COMMAND_MACOS_LINUX
+      OR DEFINED _POST_EXPORT_SHELL_COMMAND_WINDOWS)
+    option(JUCER_RUN_POST_EXPORT_SHELL_COMMANDS
+      "If ON, run Post-Export Shell Commands of JUCE projects"
     )
   endif()
 
@@ -2834,6 +2829,35 @@ function(jucer_project_end)
   else()
     message(FATAL_ERROR "Unknown project type: ${JUCER_PROJECT_TYPE}")
 
+  endif()
+
+  if(WIN32)
+    set(user_cmd "${JUCER_POST_EXPORT_SHELL_COMMAND_WINDOWS}")
+  else()
+    set(user_cmd "${JUCER_POST_EXPORT_SHELL_COMMAND_MACOS_LINUX}")
+  endif()
+  _FRUT_abs_path_based_on_jucer_project_dir(project_root_folder ".")
+  string(REPLACE "%%1%%" "${project_root_folder}" user_cmd "${user_cmd}")
+  if(NOT user_cmd STREQUAL "")
+    if(WIN32)
+      set(full_cmd "cmd.exe" "/c" "${user_cmd}")
+    else()
+      set(full_cmd "/bin/sh" "-c" "${user_cmd}")
+    endif()
+    if(JUCER_RUN_POST_EXPORT_SHELL_COMMANDS)
+      message(STATUS "[${JUCER_PROJECT_NAME}] Running '${user_cmd}'")
+      execute_process(COMMAND ${full_cmd}
+        TIMEOUT 10  # seconds
+        RESULT_VARIABLE cmd_result
+      )
+      if(NOT cmd_result EQUAL 0)
+        message(FATAL_ERROR "Running '${user_cmd}' failed with ${cmd_result}")
+      endif()
+    else()
+      message(STATUS "[${JUCER_PROJECT_NAME}] Would run '${user_cmd}' if"
+        " JUCER_RUN_POST_EXPORT_SHELL_COMMANDS was ON."
+      )
+    endif()
   endif()
 
 endfunction()
