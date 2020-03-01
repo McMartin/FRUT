@@ -102,11 +102,7 @@ endif()
 
 if(WIN32 AND NOT MSVC)
   target_link_libraries(BinaryDataBuilder PRIVATE
-    -lshlwapi
-    -lversion
-    -lwininet
-    -lwinmm
-    -lws2_32
+    -lshlwapi -lversion -lwininet -lwinmm -lws2_32
   )
 endif()
 

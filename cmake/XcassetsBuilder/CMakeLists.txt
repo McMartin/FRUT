@@ -115,9 +115,7 @@ if(APPLE)
   find_library(QuartzCore_framework "QuartzCore")
 
   target_link_libraries(XcassetsBuilder PRIVATE
-    ${Cocoa_framework}
-    ${IOKit_framework}
-    ${QuartzCore_framework}
+    ${Cocoa_framework} ${IOKit_framework} ${QuartzCore_framework}
   )
 endif()
 
@@ -144,12 +142,7 @@ endif()
 if(WIN32 AND NOT MSVC)
   target_compile_options(XcassetsBuilder PRIVATE "-Wa,-mbig-obj")
   target_link_libraries(XcassetsBuilder PRIVATE
-    -limm32
-    -lshlwapi
-    -lversion
-    -lwininet
-    -lwinmm
-    -lws2_32
+    -limm32 -lshlwapi -lversion -lwininet -lwinmm -lws2_32
   )
 endif()
 
