@@ -24,7 +24,7 @@ endif()
 list(REMOVE_DUPLICATES JUCE_modules_DIRS)
 
 foreach(modules_dir IN LISTS JUCE_modules_DIRS)
-  if (EXISTS "${modules_dir}/juce_core/juce_core.h")
+  if(EXISTS "${modules_dir}/juce_core/juce_core.h")
     set(JUCE_modules_DIR ${modules_dir})
     break()
   endif()
@@ -53,23 +53,15 @@ if(NOT DEFINED CMAKE_CONFIGURATION_TYPES)
 endif()
 
 
-add_executable(PListMerger
-  "${CMAKE_CURRENT_LIST_DIR}/main.cpp"
-)
+add_executable(PListMerger "${CMAKE_CURRENT_LIST_DIR}/main.cpp")
 
 if(APPLE)
-  target_sources(PListMerger PRIVATE
-    "${JUCE_modules_DIR}/juce_core/juce_core.mm"
-  )
+  target_sources(PListMerger PRIVATE "${JUCE_modules_DIR}/juce_core/juce_core.mm")
 else()
-  target_sources(PListMerger PRIVATE
-    "${JUCE_modules_DIR}/juce_core/juce_core.cpp"
-  )
+  target_sources(PListMerger PRIVATE "${JUCE_modules_DIR}/juce_core/juce_core.cpp")
 endif()
 
-target_include_directories(PListMerger PRIVATE
-  "${JUCE_modules_DIR}"
-)
+target_include_directories(PListMerger PRIVATE "${JUCE_modules_DIR}")
 
 target_compile_definitions(PListMerger PRIVATE
   $<$<CONFIG:Debug>:DEBUG=1>
@@ -103,11 +95,7 @@ endif()
 
 if(WIN32 AND NOT MSVC)
   target_link_libraries(PListMerger PRIVATE
-    -lshlwapi
-    -lversion
-    -lwininet
-    -lwinmm
-    -lws2_32
+    -lshlwapi -lversion -lwininet -lwinmm -lws2_32
   )
 endif()
 

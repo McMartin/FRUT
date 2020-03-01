@@ -25,7 +25,7 @@ endif()
 list(REMOVE_DUPLICATES JUCE_modules_DIRS)
 
 foreach(modules_dir IN LISTS JUCE_modules_DIRS)
-  if (EXISTS "${modules_dir}/juce_core/juce_core.h"
+  if(EXISTS "${modules_dir}/juce_core/juce_core.h"
     AND EXISTS "${modules_dir}/juce_data_structures/juce_data_structures.h"
     AND EXISTS "${modules_dir}/juce_events/juce_events.h"
     AND EXISTS "${modules_dir}/juce_graphics/juce_graphics.h"
@@ -84,9 +84,7 @@ else()
   )
 endif()
 
-target_include_directories(IconBuilder PRIVATE
-  "${JUCE_modules_DIR}"
-)
+target_include_directories(IconBuilder PRIVATE "${JUCE_modules_DIR}")
 
 target_compile_definitions(IconBuilder PRIVATE
   $<$<CONFIG:Debug>:DEBUG=1>
@@ -118,9 +116,7 @@ if(APPLE)
   find_library(QuartzCore_framework "QuartzCore")
 
   target_link_libraries(IconBuilder PRIVATE
-    ${Cocoa_framework}
-    ${IOKit_framework}
-    ${QuartzCore_framework}
+    ${Cocoa_framework} ${IOKit_framework} ${QuartzCore_framework}
   )
 endif()
 
@@ -147,12 +143,7 @@ endif()
 if(WIN32 AND NOT MSVC)
   target_compile_options(IconBuilder PRIVATE "-Wa,-mbig-obj")
   target_link_libraries(IconBuilder PRIVATE
-    -limm32
-    -lshlwapi
-    -lversion
-    -lwininet
-    -lwinmm
-    -lws2_32
+    -limm32 -lshlwapi -lversion -lwininet -lwinmm -lws2_32
   )
 endif()
 
