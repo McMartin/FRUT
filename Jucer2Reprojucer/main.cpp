@@ -641,7 +641,18 @@ int main(int argc, char* argv[])
     else
     {
       wLn("set(", jucerFileCMakeVar);
-      wLn("  \"", cmakeAbsolutePath(jucerFilePath), "\"");
+      const auto relativeJucerFilePath =
+        juce::File::getCurrentWorkingDirectory()
+          .getChildFile(jucerFilePath)
+          .getRelativePathFrom(juce::File::getCurrentWorkingDirectory());
+      // On Windows, it is not possible to make a relative path between two drives, so
+      // `relativeJucerFilePath` might be absolute if the .jucer file is on another drive.
+      const auto jucerFileCMakePath =
+        (juce::File::isAbsolutePath(relativeJucerFilePath)
+           ? relativeJucerFilePath
+           : "${CMAKE_CURRENT_LIST_DIR}/" + relativeJucerFilePath)
+          .replace("\\", "/");
+      wLn("  \"", jucerFileCMakePath, "\"");
       wLn(")");
     }
     wLn();
