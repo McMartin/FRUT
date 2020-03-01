@@ -63,18 +63,12 @@ add_executable(BinaryDataBuilder
 )
 
 if(APPLE)
-  target_sources(BinaryDataBuilder PRIVATE
-    "${JUCE_modules_DIR}/juce_core/juce_core.mm"
-  )
+  target_sources(BinaryDataBuilder PRIVATE "${JUCE_modules_DIR}/juce_core/juce_core.mm")
 else()
-  target_sources(BinaryDataBuilder PRIVATE
-    "${JUCE_modules_DIR}/juce_core/juce_core.cpp"
-  )
+  target_sources(BinaryDataBuilder PRIVATE "${JUCE_modules_DIR}/juce_core/juce_core.cpp")
 endif()
 
-target_include_directories(BinaryDataBuilder PRIVATE
-  "${JUCE_modules_DIR}"
-)
+target_include_directories(BinaryDataBuilder PRIVATE "${JUCE_modules_DIR}")
 
 target_compile_definitions(BinaryDataBuilder PRIVATE
   $<$<CONFIG:Debug>:DEBUG=1>

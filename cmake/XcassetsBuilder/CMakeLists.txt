@@ -83,9 +83,7 @@ else()
   )
 endif()
 
-target_include_directories(XcassetsBuilder PRIVATE
-  "${JUCE_modules_DIR}"
-)
+target_include_directories(XcassetsBuilder PRIVATE "${JUCE_modules_DIR}")
 
 target_compile_definitions(XcassetsBuilder PRIVATE
   $<$<CONFIG:Debug>:DEBUG=1>

@@ -53,23 +53,15 @@ if(NOT DEFINED CMAKE_CONFIGURATION_TYPES)
 endif()
 
 
-add_executable(PListMerger
-  "${CMAKE_CURRENT_LIST_DIR}/main.cpp"
-)
+add_executable(PListMerger "${CMAKE_CURRENT_LIST_DIR}/main.cpp")
 
 if(APPLE)
-  target_sources(PListMerger PRIVATE
-    "${JUCE_modules_DIR}/juce_core/juce_core.mm"
-  )
+  target_sources(PListMerger PRIVATE "${JUCE_modules_DIR}/juce_core/juce_core.mm")
 else()
-  target_sources(PListMerger PRIVATE
-    "${JUCE_modules_DIR}/juce_core/juce_core.cpp"
-  )
+  target_sources(PListMerger PRIVATE "${JUCE_modules_DIR}/juce_core/juce_core.cpp")
 endif()
 
-target_include_directories(PListMerger PRIVATE
-  "${JUCE_modules_DIR}"
-)
+target_include_directories(PListMerger PRIVATE "${JUCE_modules_DIR}")
 
 target_compile_definitions(PListMerger PRIVATE
   $<$<CONFIG:Debug>:DEBUG=1>

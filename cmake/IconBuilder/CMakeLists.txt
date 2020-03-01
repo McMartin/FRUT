@@ -84,9 +84,7 @@ else()
   )
 endif()
 
-target_include_directories(IconBuilder PRIVATE
-  "${JUCE_modules_DIR}"
-)
+target_include_directories(IconBuilder PRIVATE "${JUCE_modules_DIR}")
 
 target_compile_definitions(IconBuilder PRIVATE
   $<$<CONFIG:Debug>:DEBUG=1>
