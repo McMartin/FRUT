@@ -5987,9 +5987,9 @@ function(_FRUT_write_failure_report_and_abort action helper_name execute_process
     WORKING_DIRECTORY "${Reprojucer.cmake_DIR}"
     OUTPUT_VARIABLE git_rev_parse_output
     RESULT_VARIABLE git_rev_parse_return_code
+    OUTPUT_STRIP_TRAILING_WHITESPACE
   )
   if(git_rev_parse_return_code EQUAL 0)
-    string(STRIP "${git_rev_parse_output}" git_rev_parse_output)
     set(frut_version "commit ${git_rev_parse_output}")
   else()
     set(frut_version "unknown (`git rev-parse HEAD` failed)")
@@ -6001,9 +6001,9 @@ function(_FRUT_write_failure_report_and_abort action helper_name execute_process
       WORKING_DIRECTORY "${JUCER_PROJECT_MODULE_juce_core_PATH}"
       OUTPUT_VARIABLE git_describe_output
       RESULT_VARIABLE git_describe_return_code
+      OUTPUT_STRIP_TRAILING_WHITESPACE
     )
     if(git_describe_return_code EQUAL 0)
-      string(STRIP "${git_describe_output}" git_describe_output)
       set(juce_version "`${git_describe_output}`")
     else()
       set(juce_version "`${JUCER_PROJECT_MODULE_juce_core_VERSION}`")
