@@ -1302,36 +1302,39 @@ int main(int argc, char* argv[])
     juce::StringArray appConfigLines;
     appConfigLines.addLines(appConfigFile.loadFileAsString());
 
-    juce::StringArray userCodeSectionLines;
-
-    for (auto i = 0; i < appConfigLines.size(); ++i)
+    if (!appConfigLines.isEmpty())
     {
-      if (appConfigLines[i].contains("[BEGIN_USER_CODE_SECTION]"))
+      juce::StringArray userCodeSectionLines;
+
+      for (auto i = 0; i < appConfigLines.size(); ++i)
       {
-        for (auto j = i + 1; j < appConfigLines.size()
-                             && !appConfigLines[j].contains("[END_USER_CODE_SECTION]");
-             ++j)
+        if (appConfigLines[i].contains("[BEGIN_USER_CODE_SECTION]"))
         {
-          userCodeSectionLines.add(appConfigLines[j]);
+          for (auto j = i + 1; j < appConfigLines.size()
+                               && !appConfigLines[j].contains("[END_USER_CODE_SECTION]");
+               ++j)
+          {
+            userCodeSectionLines.add(appConfigLines[j]);
+          }
+
+          break;
         }
-
-        break;
       }
-    }
 
-    const auto kDefaultProjucerUserCodeSectionComment = juce::StringArray{
-      "",
-      "// (You can add your own code in this section, and the Projucer will not "
-      "overwrite it)",
-      ""};
+      const auto kDefaultProjucerUserCodeSectionComment = juce::StringArray{
+        "",
+        "// (You can add your own code in this section, and the Projucer will not "
+        "overwrite it)",
+        ""};
 
-    if (userCodeSectionLines != kDefaultProjucerUserCodeSectionComment)
-    {
-      wLn("jucer_appconfig_header(");
-      wLn("  USER_CODE_SECTION");
-      wLn("\"", escape("\\\"", userCodeSectionLines.joinIntoString("\n")), "\"");
-      wLn(")");
-      wLn();
+      if (userCodeSectionLines != kDefaultProjucerUserCodeSectionComment)
+      {
+        wLn("jucer_appconfig_header(");
+        wLn("  USER_CODE_SECTION");
+        wLn("\"", escape("\\\"", userCodeSectionLines.joinIntoString("\n")), "\"");
+        wLn(")");
+        wLn();
+      }
     }
   }
 
