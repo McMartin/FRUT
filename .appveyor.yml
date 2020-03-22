@@ -4,6 +4,8 @@ branches:
 
 clone_depth: 50
 
+image: Visual Studio 2015
+
 install:
   - cmake --version
 
