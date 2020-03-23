@@ -314,6 +314,9 @@ contributors:
       <a href="https://github.com/McMartin/FRUT/issues?q=is%3Aissue+author%3Aeyalamirmusic" title="Bug reports">🐛</a>
     </td>
     <td>
+      <a href="https://github.com/mhetrick"><img src="https://github.com/mhetrick.png" width="100"><br />Michael Hetrick</a>
+      <br />
+      <a href="https://github.com/McMartin/FRUT/issues?q=is%3Aissue+author%3Amhetrick" title="Bug reports">🐛</a>
     </td>
     <td>
     </td>
