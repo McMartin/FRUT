@@ -4760,6 +4760,11 @@ function(_FRUT_link_xcode_frameworks target)
       list(REMOVE_ITEM xcode_frameworks "QuickTime")
     endif()
 
+    if("AudioUnit" IN_LIST xcode_frameworks)
+      list(REMOVE_ITEM xcode_frameworks "AudioUnit")
+      list(INSERT xcode_frameworks 0 "AudioUnit")
+    endif()
+
     if(IOS)
       foreach(framework_name IN LISTS xcode_frameworks)
         target_link_libraries(${target} PRIVATE "-framework ${framework_name}")
