@@ -4,6 +4,14 @@ branches:
 
 clone_depth: 50
 
+image: Visual Studio 2015
+
+environment:
+  matrix:
+    - GENERATOR: "MinGW Makefiles"
+    - GENERATOR: "Visual Studio 12 2013"
+    - GENERATOR: "Visual Studio 14 2015"
+
 install:
   - cmake --version
 
@@ -22,78 +30,196 @@ install:
   - git clone --branch=5.4.7 --depth=1 --single-branch
     -- https://github.com/WeAreROLI/JUCE.git "%APPVEYOR_BUILD_FOLDER%/ci/tmp/JUCE-5.4.7"
 
-  - set PATH=%PATH:C:\Program Files\Git\usr\bin;=%
-  - set PATH=C:\mingw-w64\i686-5.3.0-posix-dwarf-rt_v4-rev0\mingw32\bin;%PATH%
+for:
+  - matrix:
+      only:
+        - GENERATOR: "MinGW Makefiles"
+
+    build_script:
+      - set PATH=%PATH:C:\Program Files\Git\usr\bin;=%
+      - set PATH=C:\mingw-w64\i686-5.3.0-posix-dwarf-rt_v4-rev0\mingw32\bin;%PATH%
+
+      - mkdir %APPVEYOR_BUILD_FOLDER%\build_Debug
+      - mkdir %APPVEYOR_BUILD_FOLDER%\build_Release
+
+      # Configure and build FRUT with JUCE 4.2.0
+      - cd %APPVEYOR_BUILD_FOLDER%\build_Debug
+      - >
+        cmake .. -G "MinGW Makefiles" -DCMAKE_BUILD_TYPE=Debug
+        -DJUCE_ROOT="%APPVEYOR_BUILD_FOLDER%/ci/tmp/JUCE-4.2.0"
+      - cmake --build . -- -j4
+      - cd %APPVEYOR_BUILD_FOLDER%\build_Release
+      - >
+        cmake .. -G "MinGW Makefiles" -DCMAKE_BUILD_TYPE=Release
+        -DJUCE_ROOT="%APPVEYOR_BUILD_FOLDER%/ci/tmp/JUCE-4.2.0"
+
+      # Configure and build FRUT with JUCE 4.3.1
+      - cd %APPVEYOR_BUILD_FOLDER%\build_Debug
+      - >
+        cmake .. -G "MinGW Makefiles" -DCMAKE_BUILD_TYPE=Debug
+        -DJUCE_ROOT="%APPVEYOR_BUILD_FOLDER%/ci/tmp/JUCE-4.3.1"
+      - cmake --build . -- -j4
+      - cd %APPVEYOR_BUILD_FOLDER%\build_Release
+      - >
+        cmake .. -G "MinGW Makefiles" -DCMAKE_BUILD_TYPE=Release
+        -DJUCE_ROOT="%APPVEYOR_BUILD_FOLDER%/ci/tmp/JUCE-4.3.1"
+
+      # Configure and build FRUT with JUCE 5.2.1
+      - cd %APPVEYOR_BUILD_FOLDER%\build_Debug
+      - >
+        cmake .. -G "MinGW Makefiles" -DCMAKE_BUILD_TYPE=Debug
+        -DJUCE_ROOT="%APPVEYOR_BUILD_FOLDER%/ci/tmp/JUCE-5.2.1"
+      - cmake --build . -- -j4
+      - cd %APPVEYOR_BUILD_FOLDER%\build_Release
+      - >
+        cmake .. -G "MinGW Makefiles" -DCMAKE_BUILD_TYPE=Release
+        -DJUCE_ROOT="%APPVEYOR_BUILD_FOLDER%/ci/tmp/JUCE-5.2.1"
+
+      # Configure and build FRUT with JUCE 5.4.3
+      - cd %APPVEYOR_BUILD_FOLDER%\build_Debug
+      - >
+        cmake .. -G "MinGW Makefiles" -DCMAKE_BUILD_TYPE=Debug
+        -DJUCE_ROOT="%APPVEYOR_BUILD_FOLDER%/ci/tmp/JUCE-5.4.3"
+      - cmake --build . -- -j4
+      - cd %APPVEYOR_BUILD_FOLDER%\build_Release
+      - >
+        cmake .. -G "MinGW Makefiles" -DCMAKE_BUILD_TYPE=Release
+        -DJUCE_ROOT="%APPVEYOR_BUILD_FOLDER%/ci/tmp/JUCE-5.4.3"
+
+      # Configure and build FRUT with JUCE 5.4.7
+      - cd %APPVEYOR_BUILD_FOLDER%\build_Debug
+      - >
+        cmake .. -G "MinGW Makefiles" -DCMAKE_BUILD_TYPE=Debug
+        -DJUCE_ROOT="%APPVEYOR_BUILD_FOLDER%/ci/tmp/JUCE-5.4.7"
+      - cmake --build . -- -j4
+      - cd %APPVEYOR_BUILD_FOLDER%\build_Release
+      - >
+        cmake .. -G "MinGW Makefiles" -DCMAKE_BUILD_TYPE=Release
+        -DJUCE_ROOT="%APPVEYOR_BUILD_FOLDER%/ci/tmp/JUCE-5.4.7"
+
+      # Build and install FRUT in ./prefix
+      - cmake .. -DCMAKE_INSTALL_PREFIX="%APPVEYOR_BUILD_FOLDER%/prefix"
+      - cmake --build . --target install -- -j4
+
+    test_script:
+      # Check that generated CMakeLists.txt files are up-to-date
+      - cd %APPVEYOR_BUILD_FOLDER%
+      - >
+        cmake -DJucer2Reprojucer_EXE="prefix/FRUT/bin/Jucer2Reprojucer.exe"
+        -P ci/apply-Jucer2Reprojucer-to-test-jucers.cmake
+      - >
+        cmake -DJUCE_VERSION="4.2.0"
+        -DJucer2Reprojucer_EXE="prefix/FRUT/bin/Jucer2Reprojucer.exe"
+        -P ci/apply-Jucer2Reprojucer-to-JUCE-jucers.cmake
+      - >
+        cmake -DJUCE_VERSION="4.3.1"
+        -DJucer2Reprojucer_EXE="prefix/FRUT/bin/Jucer2Reprojucer.exe"
+        -P ci/apply-Jucer2Reprojucer-to-JUCE-jucers.cmake
+      - >
+        cmake -DJUCE_VERSION="5.0.0"
+        -DJucer2Reprojucer_EXE="prefix/FRUT/bin/Jucer2Reprojucer.exe"
+        -P ci/apply-Jucer2Reprojucer-to-JUCE-jucers.cmake
+      - >
+        cmake -DJUCE_VERSION="5.2.1"
+        -DJucer2Reprojucer_EXE="prefix/FRUT/bin/Jucer2Reprojucer.exe"
+        -P ci/apply-Jucer2Reprojucer-to-JUCE-jucers.cmake
+      - >
+        cmake -DJUCE_VERSION="5.3.1"
+        -DJucer2Reprojucer_EXE="prefix/FRUT/bin/Jucer2Reprojucer.exe"
+        -P ci/apply-Jucer2Reprojucer-to-JUCE-jucers.cmake
+      - >
+        cmake -DJUCE_VERSION="5.4.3"
+        -DJucer2Reprojucer_EXE="prefix/FRUT/bin/Jucer2Reprojucer.exe"
+        -P ci/apply-Jucer2Reprojucer-to-JUCE-jucers.cmake
+      - >
+        cmake -DJUCE_VERSION="5.4.7"
+        -DJucer2Reprojucer_EXE="prefix/FRUT/bin/Jucer2Reprojucer.exe"
+        -P ci/apply-Jucer2Reprojucer-to-JUCE-jucers.cmake
+      - git diff --exit-code
+
+  - matrix:
+      only:
+        - GENERATOR: "Visual Studio 12 2013"
+
+    build_script:
+      - mkdir %APPVEYOR_BUILD_FOLDER%\build
+      - cd %APPVEYOR_BUILD_FOLDER%\build
+
+      # Configure and build FRUT with JUCE 4.2.0
+      - cmake .. -G "%GENERATOR%" -DJUCE_ROOT="%APPVEYOR_BUILD_FOLDER%/ci/tmp/JUCE-4.2.0"
+      - cmake --build . --config Debug -- -v:m -maxcpucount
+
+      # Configure and build FRUT with JUCE 4.3.1
+      - cmake .. -G "%GENERATOR%" -DJUCE_ROOT="%APPVEYOR_BUILD_FOLDER%/ci/tmp/JUCE-4.3.1"
+      - cmake --build . --config Debug -- -v:m -maxcpucount
+
+      # Configure and build FRUT with JUCE 5.0.0
+      - cmake .. -G "%GENERATOR%" -DJUCE_ROOT="%APPVEYOR_BUILD_FOLDER%/ci/tmp/JUCE-5.0.0"
+      - cmake --build . --config Debug -- -v:m -maxcpucount
+
+      # Configure and build FRUT with JUCE 5.2.1
+      - cmake .. -G "%GENERATOR%" -DJUCE_ROOT="%APPVEYOR_BUILD_FOLDER%/ci/tmp/JUCE-5.2.1"
+      - cmake --build . --config Debug -- -v:m -maxcpucount
+
+      # Configure and build FRUT with JUCE 5.3.1
+      - cmake .. -G "%GENERATOR%" -DJUCE_ROOT="%APPVEYOR_BUILD_FOLDER%/ci/tmp/JUCE-5.3.1"
+      - cmake --build . --config Debug -- -v:m -maxcpucount
+
+      # Configure and build FRUT with JUCE 5.4.3
+      - cmake .. -G "%GENERATOR%" -DJUCE_ROOT="%APPVEYOR_BUILD_FOLDER%/ci/tmp/JUCE-5.4.3"
+      - cmake --build . --config Debug -- -v:m -maxcpucount
+
+      # Configure and build FRUT with JUCE 5.4.3
+      - cmake .. -G "%GENERATOR%" -DJUCE_ROOT="%APPVEYOR_BUILD_FOLDER%/ci/tmp/JUCE-5.4.3"
+      - cmake --build . --config Debug -- -v:m -maxcpucount
+
+      # Build and install FRUT in ./prefix
+      - cmake .. -DCMAKE_INSTALL_PREFIX="%APPVEYOR_BUILD_FOLDER%/prefix"
+      - cmake --build . --config Release --target install -- -v:m -maxcpucount
 
 build_script:
-  - mkdir %APPVEYOR_BUILD_FOLDER%\build_Debug
-  - mkdir %APPVEYOR_BUILD_FOLDER%\build_Release
+  - mkdir %APPVEYOR_BUILD_FOLDER%\build
+  - cd %APPVEYOR_BUILD_FOLDER%\build
 
   # Configure and build FRUT with JUCE 4.2.0
-  - cd %APPVEYOR_BUILD_FOLDER%\build_Debug
-  - >
-    cmake .. -G "MinGW Makefiles" -DCMAKE_BUILD_TYPE=Debug
-    -DJUCE_ROOT="%APPVEYOR_BUILD_FOLDER%/ci/tmp/JUCE-4.2.0"
-  - cmake --build . -- -j4
-  - cd %APPVEYOR_BUILD_FOLDER%\build_Release
-  - >
-    cmake .. -G "MinGW Makefiles" -DCMAKE_BUILD_TYPE=Release
-    -DJUCE_ROOT="%APPVEYOR_BUILD_FOLDER%/ci/tmp/JUCE-4.2.0"
+  - cmake .. -G "%GENERATOR%" -DJUCE_ROOT="%APPVEYOR_BUILD_FOLDER%/ci/tmp/JUCE-4.2.0"
+  - cmake --build . --config Debug -- -v:m -maxcpucount
 
   # Configure and build FRUT with JUCE 4.3.1
-  - cd %APPVEYOR_BUILD_FOLDER%\build_Debug
-  - >
-    cmake .. -G "MinGW Makefiles" -DCMAKE_BUILD_TYPE=Debug
-    -DJUCE_ROOT="%APPVEYOR_BUILD_FOLDER%/ci/tmp/JUCE-4.3.1"
-  - cmake --build . -- -j4
-  - cd %APPVEYOR_BUILD_FOLDER%\build_Release
-  - >
-    cmake .. -G "MinGW Makefiles" -DCMAKE_BUILD_TYPE=Release
-    -DJUCE_ROOT="%APPVEYOR_BUILD_FOLDER%/ci/tmp/JUCE-4.3.1"
+  - cmake .. -G "%GENERATOR%" -DJUCE_ROOT="%APPVEYOR_BUILD_FOLDER%/ci/tmp/JUCE-4.3.1"
+  - cmake --build . --config Debug -- -v:m -maxcpucount
+
+  # Configure and build FRUT with JUCE 5.0.0
+  - cmake .. -G "%GENERATOR%" -DJUCE_ROOT="%APPVEYOR_BUILD_FOLDER%/ci/tmp/JUCE-5.0.0"
+  - cmake --build . --config Debug -- -v:m -maxcpucount
 
   # Configure and build FRUT with JUCE 5.2.1
-  - cd %APPVEYOR_BUILD_FOLDER%\build_Debug
-  - >
-    cmake .. -G "MinGW Makefiles" -DCMAKE_BUILD_TYPE=Debug
-    -DJUCE_ROOT="%APPVEYOR_BUILD_FOLDER%/ci/tmp/JUCE-5.2.1"
-  - cmake --build . -- -j4
-  - cd %APPVEYOR_BUILD_FOLDER%\build_Release
-  - >
-    cmake .. -G "MinGW Makefiles" -DCMAKE_BUILD_TYPE=Release
-    -DJUCE_ROOT="%APPVEYOR_BUILD_FOLDER%/ci/tmp/JUCE-5.2.1"
+  - cmake .. -G "%GENERATOR%" -DJUCE_ROOT="%APPVEYOR_BUILD_FOLDER%/ci/tmp/JUCE-5.2.1"
+  - cmake --build . --config Debug -- -v:m -maxcpucount
+
+  # Configure and build FRUT with JUCE 5.3.1
+  - cmake .. -G "%GENERATOR%" -DJUCE_ROOT="%APPVEYOR_BUILD_FOLDER%/ci/tmp/JUCE-5.3.1"
+  - cmake --build . --config Debug -- -v:m -maxcpucount
 
   # Configure and build FRUT with JUCE 5.4.3
-  - cd %APPVEYOR_BUILD_FOLDER%\build_Debug
-  - >
-    cmake .. -G "MinGW Makefiles" -DCMAKE_BUILD_TYPE=Debug
-    -DJUCE_ROOT="%APPVEYOR_BUILD_FOLDER%/ci/tmp/JUCE-5.4.3"
-  - cmake --build . -- -j4
-  - cd %APPVEYOR_BUILD_FOLDER%\build_Release
-  - >
-    cmake .. -G "MinGW Makefiles" -DCMAKE_BUILD_TYPE=Release
-    -DJUCE_ROOT="%APPVEYOR_BUILD_FOLDER%/ci/tmp/JUCE-5.4.3"
+  - cmake .. -G "%GENERATOR%" -DJUCE_ROOT="%APPVEYOR_BUILD_FOLDER%/ci/tmp/JUCE-5.4.3"
+  - cmake --build . --config Debug -- -v:m -maxcpucount
+
+  # Configure and build FRUT with JUCE 5.4.3
+  - cmake .. -G "%GENERATOR%" -DJUCE_ROOT="%APPVEYOR_BUILD_FOLDER%/ci/tmp/JUCE-5.4.3"
+  - cmake --build . --config Debug -- -v:m -maxcpucount
 
   # Configure and build FRUT with JUCE 5.4.7
-  - cd %APPVEYOR_BUILD_FOLDER%\build_Debug
-  - >
-    cmake .. -G "MinGW Makefiles" -DCMAKE_BUILD_TYPE=Debug
-    -DJUCE_ROOT="%APPVEYOR_BUILD_FOLDER%/ci/tmp/JUCE-5.4.7"
-  - cmake --build . -- -j4
-  - cd %APPVEYOR_BUILD_FOLDER%\build_Release
-  - >
-    cmake .. -G "MinGW Makefiles" -DCMAKE_BUILD_TYPE=Release
-    -DJUCE_ROOT="%APPVEYOR_BUILD_FOLDER%/ci/tmp/JUCE-5.4.7"
+  - cmake .. -G "%GENERATOR%" -DJUCE_ROOT="%APPVEYOR_BUILD_FOLDER%/ci/tmp/JUCE-5.4.7"
+  - cmake --build . --config Debug -- -v:m -maxcpucount
 
   # Build and install FRUT in ./prefix
   - cmake .. -DCMAKE_INSTALL_PREFIX="%APPVEYOR_BUILD_FOLDER%/prefix"
-  - cmake --build . --target install -- -j4
+  - cmake --build . --config Release --target install -- -v:m -maxcpucount
 
 test_script:
   # Check that generated CMakeLists.txt files are up-to-date
   - cd %APPVEYOR_BUILD_FOLDER%
-  - >
-    cmake -DJucer2Reprojucer_EXE="prefix/FRUT/bin/Jucer2Reprojucer.exe"
-    -P ci/apply-Jucer2Reprojucer-to-test-jucers.cmake
   - >
     cmake -DJUCE_VERSION="4.2.0"
     -DJucer2Reprojucer_EXE="prefix/FRUT/bin/Jucer2Reprojucer.exe"
@@ -122,4 +248,50 @@ test_script:
     cmake -DJUCE_VERSION="5.4.7"
     -DJucer2Reprojucer_EXE="prefix/FRUT/bin/Jucer2Reprojucer.exe"
     -P ci/apply-Jucer2Reprojucer-to-JUCE-jucers.cmake
-  - git diff --exit-code
+  - >
+    cmake -DJucer2Reprojucer_EXE="prefix/FRUT/bin/Jucer2Reprojucer.exe"
+    -P ci/apply-Jucer2Reprojucer-to-test-jucers.cmake
+  - git diff --quiet
+
+  - mkdir %APPVEYOR_BUILD_FOLDER%\ci\AllJuceProjects\build
+  - cd %APPVEYOR_BUILD_FOLDER%\ci\AllJuceProjects\build
+
+  # Configure all JUCE 4.2.0 projects
+  - >
+    cmake .. -G "%GENERATOR%" -DJUCE_VERSION="4.2.0"
+    -DJUCER_AAX_SDK_FOLDER="%APPVEYOR_BUILD_FOLDER%/ci/fake-SDKs/AAX"
+    -DJUCER_VST3_SDK_FOLDER="%APPVEYOR_BUILD_FOLDER%/ci/fake-SDKs/VST3"
+    -DJUCER_VST_SDK_FOLDER="%APPVEYOR_BUILD_FOLDER%/ci/fake-SDKs/VST"
+
+  # Configure all JUCE 4.3.1 projects
+  - >
+    cmake .. -G "%GENERATOR%" -DJUCE_VERSION="4.3.1"
+    -DJUCER_AAX_SDK_FOLDER="%APPVEYOR_BUILD_FOLDER%/ci/fake-SDKs/AAX"
+    -DJUCER_VST3_SDK_FOLDER="%APPVEYOR_BUILD_FOLDER%/ci/fake-SDKs/VST3"
+
+  # Configure all JUCE 5.0.0 projects
+  - >
+    cmake .. -G "%GENERATOR%" -DJUCE_VERSION="5.0.0"
+    -DJUCER_AAX_SDK_FOLDER="%APPVEYOR_BUILD_FOLDER%/ci/fake-SDKs/AAX"
+    -DJUCER_VST3_SDK_FOLDER="%APPVEYOR_BUILD_FOLDER%/ci/fake-SDKs/VST3"
+
+  # Configure all JUCE 5.2.1 projects
+  - >
+    cmake .. -G "%GENERATOR%" -DJUCE_VERSION="5.2.1"
+    -DJUCER_AAX_SDK_FOLDER="%APPVEYOR_BUILD_FOLDER%/ci/fake-SDKs/AAX"
+    -DJUCER_VST3_SDK_FOLDER="%APPVEYOR_BUILD_FOLDER%/ci/fake-SDKs/VST3"
+
+  # Configure all JUCE 5.3.1 projects
+  - >
+    cmake .. -G "%GENERATOR%" -DJUCE_VERSION="5.3.1"
+    -DJUCER_VST3_SDK_FOLDER="%APPVEYOR_BUILD_FOLDER%/ci/fake-SDKs/VST3"
+
+  # Configure all JUCE 5.4.3 projects
+  - >
+    cmake .. -G "%GENERATOR%" -DJUCE_VERSION="5.4.3"
+    -DJUCER_VST3_SDK_FOLDER="%APPVEYOR_BUILD_FOLDER%/ci/fake-SDKs/VST3"
+
+  # Configure all JUCE 5.4.7 projects
+  - >
+    cmake .. -G "%GENERATOR%" -DJUCE_VERSION="5.4.7"
+    -DJUCER_VST3_SDK_FOLDER="%APPVEYOR_BUILD_FOLDER%/ci/fake-SDKs/VST3"

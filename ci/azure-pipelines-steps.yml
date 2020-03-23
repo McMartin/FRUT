@@ -50,7 +50,6 @@ steps:
   - script: mkdir ci\AllJuceProjects\build
     displayName: mkdir ci/AllJuceProjects/build
 
-
   - ${{ each juceVersion in parameters.juceVersions }}:
     - script: >
         cmake .. -G "$(cmakeGenerator)" -DJUCE_VERSION="${{ juceVersion }}"
