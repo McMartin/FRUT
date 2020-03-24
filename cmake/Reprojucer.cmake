@@ -1460,7 +1460,7 @@ function(jucer_export_target_configuration
     return()
   endif()
 
-  list(APPEND JUCER_PROJECT_CONFIGURATIONS ${config})
+  list(APPEND JUCER_PROJECT_CONFIGURATIONS "${config}")
   set(JUCER_PROJECT_CONFIGURATIONS "${JUCER_PROJECT_CONFIGURATIONS}" PARENT_SCOPE)
 
   set(JUCER_CONFIGURATION_IS_DEBUG_${config} "${is_debug}" PARENT_SCOPE)
