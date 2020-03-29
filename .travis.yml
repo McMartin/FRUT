@@ -31,7 +31,7 @@ script-anchors:
     - cd ${TRAVIS_BUILD_DIR}/Debug_build
     - cmake .. -G"${GENERATOR}" -DCMAKE_BUILD_TYPE=Debug
       -DJUCE_ROOT="${TRAVIS_BUILD_DIR}/ci/tmp/JUCE-4.2.0"
-    - cmake --build . -- -j4
+    - cmake --build . --parallel
     - cd ${TRAVIS_BUILD_DIR}/Release_build
     - cmake .. -G"${GENERATOR}" -DCMAKE_BUILD_TYPE=Release
       -DJUCE_ROOT="${TRAVIS_BUILD_DIR}/ci/tmp/JUCE-4.2.0"
@@ -40,7 +40,7 @@ script-anchors:
     - cd ${TRAVIS_BUILD_DIR}/Debug_build
     - cmake .. -G"${GENERATOR}" -DCMAKE_BUILD_TYPE=Debug
       -DJUCE_ROOT="${TRAVIS_BUILD_DIR}/ci/tmp/JUCE-4.3.1"
-    - cmake --build . -- -j4
+    - cmake --build . --parallel
     - cd ${TRAVIS_BUILD_DIR}/Release_build
     - cmake .. -G"${GENERATOR}" -DCMAKE_BUILD_TYPE=Release
       -DJUCE_ROOT="${TRAVIS_BUILD_DIR}/ci/tmp/JUCE-4.3.1"
@@ -49,7 +49,7 @@ script-anchors:
     - cd ${TRAVIS_BUILD_DIR}/Debug_build
     - cmake .. -G"${GENERATOR}" -DCMAKE_BUILD_TYPE=Debug
       -DJUCE_ROOT="${TRAVIS_BUILD_DIR}/ci/tmp/JUCE-5.0.0"
-    - cmake --build . -- -j4
+    - cmake --build . --parallel
     - cd ${TRAVIS_BUILD_DIR}/Release_build
     - cmake .. -G"${GENERATOR}" -DCMAKE_BUILD_TYPE=Release
       -DJUCE_ROOT="${TRAVIS_BUILD_DIR}/ci/tmp/JUCE-5.0.0"
@@ -58,7 +58,7 @@ script-anchors:
     - cd ${TRAVIS_BUILD_DIR}/Debug_build
     - cmake .. -G"${GENERATOR}" -DCMAKE_BUILD_TYPE=Debug
       -DJUCE_ROOT="${TRAVIS_BUILD_DIR}/ci/tmp/JUCE-5.2.1"
-    - cmake --build . -- -j4
+    - cmake --build . --parallel
     - cd ${TRAVIS_BUILD_DIR}/Release_build
     - cmake .. -G"${GENERATOR}" -DCMAKE_BUILD_TYPE=Release
       -DJUCE_ROOT="${TRAVIS_BUILD_DIR}/ci/tmp/JUCE-5.2.1"
@@ -67,7 +67,7 @@ script-anchors:
     - cd ${TRAVIS_BUILD_DIR}/Debug_build
     - cmake .. -G"${GENERATOR}" -DCMAKE_BUILD_TYPE=Debug
       -DJUCE_ROOT="${TRAVIS_BUILD_DIR}/ci/tmp/JUCE-5.3.1"
-    - cmake --build . -- -j4
+    - cmake --build . --parallel
     - cd ${TRAVIS_BUILD_DIR}/Release_build
     - cmake .. -G"${GENERATOR}" -DCMAKE_BUILD_TYPE=Release
       -DJUCE_ROOT="${TRAVIS_BUILD_DIR}/ci/tmp/JUCE-5.3.1"
@@ -76,7 +76,7 @@ script-anchors:
     - cd ${TRAVIS_BUILD_DIR}/Debug_build
     - cmake .. -G"${GENERATOR}" -DCMAKE_BUILD_TYPE=Debug
       -DJUCE_ROOT="${TRAVIS_BUILD_DIR}/ci/tmp/JUCE-5.4.3"
-    - cmake --build . -- -j4
+    - cmake --build . --parallel
     - cd ${TRAVIS_BUILD_DIR}/Release_build
     - cmake .. -G"${GENERATOR}" -DCMAKE_BUILD_TYPE=Release
       -DJUCE_ROOT="${TRAVIS_BUILD_DIR}/ci/tmp/JUCE-5.4.3"
@@ -85,14 +85,14 @@ script-anchors:
     - cd ${TRAVIS_BUILD_DIR}/Debug_build
     - cmake .. -G"${GENERATOR}" -DCMAKE_BUILD_TYPE=Debug
       -DJUCE_ROOT="${TRAVIS_BUILD_DIR}/ci/tmp/JUCE-5.4.7"
-    - cmake --build . -- -j4
+    - cmake --build . --parallel
     - cd ${TRAVIS_BUILD_DIR}/Release_build
     - cmake .. -G"${GENERATOR}" -DCMAKE_BUILD_TYPE=Release
       -DJUCE_ROOT="${TRAVIS_BUILD_DIR}/ci/tmp/JUCE-5.4.7"
 
     # Build and install FRUT in ./prefix
     - cmake .. -G"${GENERATOR}" -DCMAKE_INSTALL_PREFIX="${TRAVIS_BUILD_DIR}/prefix"
-    - cmake --build . --target install -- -j4
+    - cmake --build . --parallel --target install
 
     # Check that generated CMakeLists.txt files are up-to-date
     - cd ${TRAVIS_BUILD_DIR}

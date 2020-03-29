@@ -23,14 +23,14 @@ steps:
         ${{ parameters.cmakeOptions }}
       workingDirectory: build
       displayName: Configure FRUT with JUCE ${{ juceVersion }}
-    - script: cmake --build . --config Debug -- -v:m -maxcpucount
+    - script: cmake --build . --parallel --config Debug -- -v:m
       workingDirectory: build
       displayName: Build FRUT with JUCE ${{ juceVersion }}
 
   - script: cmake .. -DCMAKE_INSTALL_PREFIX="$(Build.SourcesDirectory)/prefix"
     workingDirectory: build
     displayName: Configure FRUT for installation in ./prefix
-  - script: cmake --build . --config Release --target install -- -v:m -maxcpucount
+  - script: cmake --build . --parallel --config Release --target install -- -v:m
     workingDirectory: build
     displayName: Build and install FRUT in ./prefix
 
