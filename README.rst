@@ -145,6 +145,8 @@ We first build and install FRUT with CMake: ::
   -- Build files have been written to: <root>/FRUT/build
 
   $ cmake --build . --target install
+  # or
+  $ cmake --build . --target install --parallel  # requires CMake 3.12 or later
   ...
 
 If it fails to build and install, please report the problem by creating a new issue on
@@ -171,6 +173,8 @@ Now we can build ``MyGreatProject`` using CMake: ::
   -- Build files have been written to: <root>/MyGreatProject/build
 
   $ cmake --build .
+  # or
+  $ cmake --build . --parallel  # requires CMake 3.12 or later
   ...
 
 ``<generator>`` can be one of many `CMake Generators`_ supported by your platform,
