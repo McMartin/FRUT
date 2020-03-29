@@ -3159,8 +3159,14 @@ function(_FRUT_build_and_install_helper_exe helper_name helper_version)
     endif()
 
     message(STATUS "Building ${helper_name} in \"${binary_dir}\"")
+    set(build_command
+      "${CMAKE_COMMAND}" "--build" "${binary_dir}" "--target" "${helper_name}"
+    )
+    if(NOT CMAKE_VERSION VERSION_LESS 3.12)
+      list(APPEND build_command "--parallel")
+    endif()
     execute_process(
-      COMMAND "${CMAKE_COMMAND}" "--build" "${binary_dir}" "--target" "${helper_name}"
+      COMMAND ${build_command}
       OUTPUT_VARIABLE build_output
       RESULT_VARIABLE build_result
     )
