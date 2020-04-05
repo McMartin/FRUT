@@ -1,4 +1,4 @@
-// Copyright (C) 2019  Alain Martin
+// Copyright (C) 2019-2020  Alain Martin
 //
 // This file is part of FRUT.
 //
@@ -44,7 +44,7 @@ public:
 
   static Image rescaleImageForIcon(Drawable&, int iconSize);
 
-#include "jucer_ProjectExport_XCode.h"
+#include "jucer_ProjectExport_Xcode.h"
 
 private:
   const File mSmallIcon;

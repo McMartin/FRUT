@@ -61,7 +61,7 @@ endif()
 
 add_executable(XcassetsBuilder
   "${CMAKE_CURRENT_LIST_DIR}/main.cpp"
-  "${CMAKE_CURRENT_LIST_DIR}/Source/Project Saving/jucer_ProjectExporter.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/Source/ProjectSaving/jucer_ProjectExporter.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/Source/Utility/jucer_FileHelpers.cpp"
 )
 
