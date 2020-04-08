@@ -3137,14 +3137,16 @@ function(_FRUT_build_and_install_helper_exe helper_name helper_version)
     NO_DEFAULT_PATH
   )
   if(NOT ${helper_name}_exe)
-    set(binary_dir "${Reprojucer.cmake_DIR}/${helper_name}/_build/${CMAKE_GENERATOR}")
+    set(binary_dir
+      "${Reprojucer.cmake_DIR}/tools/${helper_name}/_build/${CMAKE_GENERATOR}"
+    )
 
     message(STATUS "Configuring ${helper_name} in \"${binary_dir}\"")
     file(MAKE_DIRECTORY "${binary_dir}")
     execute_process(
       COMMAND
         "${CMAKE_COMMAND}"
-        "${Reprojucer.cmake_DIR}/${helper_name}"
+        "${Reprojucer.cmake_DIR}/tools/${helper_name}"
         "-G" "${CMAKE_GENERATOR}"
         "-DJUCE_modules_DIRS=${JUCER_PROJECT_MODULES_FOLDERS}"
         "-DCMAKE_INSTALL_PREFIX=${install_prefix}"
