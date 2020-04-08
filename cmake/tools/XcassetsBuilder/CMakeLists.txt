@@ -15,36 +15,6 @@
 # You should have received a copy of the GNU General Public License
 # along with FRUT.  If not, see <http://www.gnu.org/licenses/>.
 
-if(NOT DEFINED JUCE_modules_DIRS)
-  message(FATAL_ERROR "JUCE_modules_DIRS must be defined")
-endif()
-list(REMOVE_DUPLICATES JUCE_modules_DIRS)
-
-foreach(modules_dir IN LISTS JUCE_modules_DIRS)
-  if(EXISTS "${modules_dir}/juce_core/juce_core.h"
-    AND EXISTS "${modules_dir}/juce_data_structures/juce_data_structures.h"
-    AND EXISTS "${modules_dir}/juce_events/juce_events.h"
-    AND EXISTS "${modules_dir}/juce_graphics/juce_graphics.h"
-    AND EXISTS "${modules_dir}/juce_gui_basics/juce_gui_basics.h"
-  )
-    set(JUCE_modules_DIR ${modules_dir})
-    break()
-  endif()
-endforeach()
-
-if(NOT DEFINED JUCE_modules_DIR)
-  message(FATAL_ERROR "Could not find juce_core, juce_data_structures, juce_events,"
-    " juce_graphics and juce_gui_basics when searching in the following directories:"
-    " ${JUCE_modules_DIRS}"
-  )
-endif()
-
-get_filename_component(JUCE_modules_DIR
-  "${JUCE_modules_DIR}" ABSOLUTE
-  BASE_DIR "${CMAKE_BINARY_DIR}"
-)
-
-
 if(NOT DEFINED CMAKE_CONFIGURATION_TYPES)
   if(NOT DEFINED CMAKE_BUILD_TYPE OR CMAKE_BUILD_TYPE STREQUAL "")
     message(STATUS "Setting CMAKE_BUILD_TYPE to \"Debug\" as it was not specified.")
