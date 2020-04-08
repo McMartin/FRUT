@@ -1,4 +1,4 @@
-# Copyright (C) 2017-2019  Alain Martin
+# Copyright (C) 2017-2020  Alain Martin
 # Copyright (C) 2019  David Holland
 #
 # This file is part of FRUT.
@@ -15,9 +15,6 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with FRUT.  If not, see <http://www.gnu.org/licenses/>.
-
-cmake_minimum_required(VERSION 3.4)
-
 
 if(NOT DEFINED JUCE_modules_DIRS)
   message(FATAL_ERROR "JUCE_modules_DIRS must be defined")
@@ -47,9 +44,6 @@ get_filename_component(JUCE_modules_DIR
   "${JUCE_modules_DIR}" ABSOLUTE
   BASE_DIR "${CMAKE_BINARY_DIR}"
 )
-
-
-project(IconBuilder VERSION 0.2.0)
 
 
 if(NOT DEFINED CMAKE_CONFIGURATION_TYPES)
@@ -105,7 +99,7 @@ set_target_properties(IconBuilder PROPERTIES
   CXX_EXTENSIONS OFF
   CXX_STANDARD 11
   CXX_STANDARD_REQUIRED ON
-  OUTPUT_NAME IconBuilder-${PROJECT_VERSION}
+  OUTPUT_NAME IconBuilder-0.2.0
 )
 
 if(APPLE)

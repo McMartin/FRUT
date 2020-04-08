@@ -3137,20 +3137,19 @@ function(_FRUT_build_and_install_tool tool_name tool_version)
     NO_DEFAULT_PATH
   )
   if(NOT ${tool_name}_exe)
-    set(binary_dir
-      "${Reprojucer.cmake_DIR}/tools/${tool_name}/_build/${CMAKE_GENERATOR}"
-    )
+    set(binary_dir "${Reprojucer.cmake_DIR}/tools/_build/${CMAKE_GENERATOR}")
 
     message(STATUS "Configuring ${tool_name} in \"${binary_dir}\"")
     file(MAKE_DIRECTORY "${binary_dir}")
     execute_process(
       COMMAND
         "${CMAKE_COMMAND}"
-        "${Reprojucer.cmake_DIR}/tools/${tool_name}"
+        "${Reprojucer.cmake_DIR}/tools"
         "-G" "${CMAKE_GENERATOR}"
         "-DJUCE_modules_DIRS=${JUCER_PROJECT_MODULES_FOLDERS}"
         "-DCMAKE_INSTALL_PREFIX=${install_prefix}"
         "-Dbuilt_by_Reprojucer=TRUE"
+        "-Dtool_to_build=${tool_name}"
       WORKING_DIRECTORY "${binary_dir}"
       OUTPUT_VARIABLE configure_output
       RESULT_VARIABLE configure_result

@@ -15,9 +15,6 @@
 # You should have received a copy of the GNU General Public License
 # along with FRUT.  If not, see <http://www.gnu.org/licenses/>.
 
-cmake_minimum_required(VERSION 3.4)
-
-
 if(NOT DEFINED JUCE_modules_DIRS)
   message(FATAL_ERROR "JUCE_modules_DIRS must be defined")
 endif()
@@ -46,9 +43,6 @@ get_filename_component(JUCE_modules_DIR
   "${JUCE_modules_DIR}" ABSOLUTE
   BASE_DIR "${CMAKE_BINARY_DIR}"
 )
-
-
-project(XcassetsBuilder VERSION 0.1.0)
 
 
 if(NOT DEFINED CMAKE_CONFIGURATION_TYPES)
@@ -104,7 +98,7 @@ set_target_properties(XcassetsBuilder PROPERTIES
   CXX_EXTENSIONS OFF
   CXX_STANDARD 11
   CXX_STANDARD_REQUIRED ON
-  OUTPUT_NAME XcassetsBuilder-${PROJECT_VERSION}
+  OUTPUT_NAME XcassetsBuilder-0.1.0
 )
 
 if(APPLE)

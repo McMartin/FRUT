@@ -15,7 +15,17 @@
 # You should have received a copy of the GNU General Public License
 # along with FRUT.  If not, see <http://www.gnu.org/licenses/>.
 
-add_subdirectory(BinaryDataBuilder)
-add_subdirectory(IconBuilder)
-add_subdirectory(PListMerger)
-add_subdirectory(XcassetsBuilder)
+cmake_minimum_required(VERSION 3.4)
+
+
+project(tools)
+
+
+if(built_by_Reprojucer)
+  add_subdirectory("${tool_to_build}")
+else()
+  add_subdirectory(BinaryDataBuilder)
+  add_subdirectory(IconBuilder)
+  add_subdirectory(PListMerger)
+  add_subdirectory(XcassetsBuilder)
+endif()

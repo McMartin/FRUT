@@ -1,4 +1,4 @@
-# Copyright (C) 2016-2019  Alain Martin
+# Copyright (C) 2016-2020  Alain Martin
 #
 # This file is part of FRUT.
 #
@@ -14,9 +14,6 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with FRUT.  If not, see <http://www.gnu.org/licenses/>.
-
-cmake_minimum_required(VERSION 3.4)
-
 
 if(NOT DEFINED JUCE_modules_DIRS)
   message(FATAL_ERROR "JUCE_modules_DIRS must be defined")
@@ -40,9 +37,6 @@ get_filename_component(JUCE_modules_DIR
   "${JUCE_modules_DIR}" ABSOLUTE
   BASE_DIR "${CMAKE_BINARY_DIR}"
 )
-
-
-project(BinaryDataBuilder VERSION 0.3.1)
 
 
 if(NOT DEFINED CMAKE_CONFIGURATION_TYPES)
@@ -85,7 +79,7 @@ set_target_properties(BinaryDataBuilder PROPERTIES
   CXX_EXTENSIONS OFF
   CXX_STANDARD 11
   CXX_STANDARD_REQUIRED ON
-  OUTPUT_NAME BinaryDataBuilder-${PROJECT_VERSION}
+  OUTPUT_NAME BinaryDataBuilder-0.3.1
 )
 
 if(APPLE)
