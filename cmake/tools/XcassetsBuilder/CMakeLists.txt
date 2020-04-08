@@ -56,12 +56,7 @@ target_compile_definitions(XcassetsBuilder PRIVATE
   JUCE_USE_CURL=0
 )
 
-set_target_properties(XcassetsBuilder PROPERTIES
-  CXX_EXTENSIONS OFF
-  CXX_STANDARD 11
-  CXX_STANDARD_REQUIRED ON
-  OUTPUT_NAME XcassetsBuilder-0.1.0
-)
+set_target_properties(XcassetsBuilder PROPERTIES OUTPUT_NAME XcassetsBuilder-0.1.0)
 
 if(APPLE)
   target_compile_options(XcassetsBuilder PRIVATE "-Wno-deprecated-declarations")

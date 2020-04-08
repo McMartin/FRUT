@@ -36,12 +36,7 @@ target_compile_definitions(PListMerger PRIVATE
   JUCE_USE_CURL=0
 )
 
-set_target_properties(PListMerger PROPERTIES
-  CXX_EXTENSIONS OFF
-  CXX_STANDARD 11
-  CXX_STANDARD_REQUIRED ON
-  OUTPUT_NAME PListMerger-0.1.0
-)
+set_target_properties(PListMerger PROPERTIES OUTPUT_NAME PListMerger-0.1.0)
 
 if(APPLE)
   find_library(Cocoa_framework "Cocoa")

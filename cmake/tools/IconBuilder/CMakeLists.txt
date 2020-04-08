@@ -57,12 +57,7 @@ target_compile_definitions(IconBuilder PRIVATE
   JUCE_USE_CURL=0
 )
 
-set_target_properties(IconBuilder PROPERTIES
-  CXX_EXTENSIONS OFF
-  CXX_STANDARD 11
-  CXX_STANDARD_REQUIRED ON
-  OUTPUT_NAME IconBuilder-0.2.0
-)
+set_target_properties(IconBuilder PROPERTIES OUTPUT_NAME IconBuilder-0.2.0)
 
 if(APPLE)
   target_compile_options(IconBuilder PRIVATE "-Wno-deprecated-declarations")

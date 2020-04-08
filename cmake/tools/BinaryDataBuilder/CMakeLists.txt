@@ -43,12 +43,7 @@ target_compile_definitions(BinaryDataBuilder PRIVATE
   JUCE_USE_CURL=0
 )
 
-set_target_properties(BinaryDataBuilder PROPERTIES
-  CXX_EXTENSIONS OFF
-  CXX_STANDARD 11
-  CXX_STANDARD_REQUIRED ON
-  OUTPUT_NAME BinaryDataBuilder-0.3.1
-)
+set_target_properties(BinaryDataBuilder PROPERTIES OUTPUT_NAME BinaryDataBuilder-0.3.1)
 
 if(APPLE)
   find_library(Cocoa_framework "Cocoa")

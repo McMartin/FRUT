@@ -59,6 +59,11 @@ endif()
 project(tools)
 
 
+set(CMAKE_CXX_EXTENSIONS OFF)
+set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+
 if(built_by_Reprojucer)
   add_subdirectory("${tool_to_build}")
 else()
