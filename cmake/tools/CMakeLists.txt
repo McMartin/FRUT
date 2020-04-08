@@ -65,6 +65,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 
 include("${CMAKE_CURRENT_LIST_DIR}/juce_core.cmake")
+include("${CMAKE_CURRENT_LIST_DIR}/juce_gui_basics.cmake")
 
 
 if(built_by_Reprojucer)
