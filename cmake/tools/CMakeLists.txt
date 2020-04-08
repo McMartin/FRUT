@@ -64,6 +64,9 @@ set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 
+include("${CMAKE_CURRENT_LIST_DIR}/juce_core.cmake")
+
+
 if(built_by_Reprojucer)
   add_subdirectory("${tool_to_build}")
 else()
