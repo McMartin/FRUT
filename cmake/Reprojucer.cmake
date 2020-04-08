@@ -3124,29 +3124,29 @@ function(_FRUT_bool_to_int bool_value out_int_value)
 endfunction()
 
 
-function(_FRUT_build_and_install_helper_exe helper_name helper_version)
+function(_FRUT_build_and_install_tool tool_name tool_version)
 
-  set(helper_filename "${helper_name}-${helper_version}")
+  set(tool_filename "${tool_name}-${tool_version}")
   set(install_prefix "${Reprojucer.cmake_DIR}/bin")
-  if(NOT EXISTS "${${helper_name}_exe}"
-      OR NOT ${helper_name}_exe MATCHES "${helper_filename}")
-    unset(${helper_name}_exe CACHE)
+  if(NOT EXISTS "${${tool_name}_exe}"
+      OR NOT ${tool_name}_exe MATCHES "${tool_filename}")
+    unset(${tool_name}_exe CACHE)
   endif()
-  find_program(${helper_name}_exe "${helper_filename}"
+  find_program(${tool_name}_exe "${tool_filename}"
     PATHS "${install_prefix}"
     NO_DEFAULT_PATH
   )
-  if(NOT ${helper_name}_exe)
+  if(NOT ${tool_name}_exe)
     set(binary_dir
-      "${Reprojucer.cmake_DIR}/tools/${helper_name}/_build/${CMAKE_GENERATOR}"
+      "${Reprojucer.cmake_DIR}/tools/${tool_name}/_build/${CMAKE_GENERATOR}"
     )
 
-    message(STATUS "Configuring ${helper_name} in \"${binary_dir}\"")
+    message(STATUS "Configuring ${tool_name} in \"${binary_dir}\"")
     file(MAKE_DIRECTORY "${binary_dir}")
     execute_process(
       COMMAND
         "${CMAKE_COMMAND}"
-        "${Reprojucer.cmake_DIR}/tools/${helper_name}"
+        "${Reprojucer.cmake_DIR}/tools/${tool_name}"
         "-G" "${CMAKE_GENERATOR}"
         "-DJUCE_modules_DIRS=${JUCER_PROJECT_MODULES_FOLDERS}"
         "-DCMAKE_INSTALL_PREFIX=${install_prefix}"
@@ -3157,21 +3157,21 @@ function(_FRUT_build_and_install_helper_exe helper_name helper_version)
     )
     set(output "${configure_output}")
     if(NOT configure_result EQUAL 0)
-      _FRUT_write_failure_report_and_abort("configure" "${helper_name}" "${output}")
+      _FRUT_write_failure_report_and_abort("configure" "${tool_name}" "${output}")
     endif()
 
-    message(STATUS "Building ${helper_name} in \"${binary_dir}\"")
+    message(STATUS "Building ${tool_name} in \"${binary_dir}\"")
     execute_process(
-      COMMAND "${CMAKE_COMMAND}" "--build" "${binary_dir}" "--target" "${helper_name}"
+      COMMAND "${CMAKE_COMMAND}" "--build" "${binary_dir}" "--target" "${tool_name}"
       OUTPUT_VARIABLE build_output
       RESULT_VARIABLE build_result
     )
     string(APPEND output "\n${build_output}")
     if(NOT build_result EQUAL 0)
-      _FRUT_write_failure_report_and_abort("build" "${helper_name}" "${output}")
+      _FRUT_write_failure_report_and_abort("build" "${tool_name}" "${output}")
     endif()
 
-    message(STATUS "Installing ${helper_name} in \"${install_prefix}\"")
+    message(STATUS "Installing ${tool_name} in \"${install_prefix}\"")
     execute_process(
       COMMAND "${CMAKE_COMMAND}" "--build" "${binary_dir}" "--target" "install"
       OUTPUT_VARIABLE install_output
@@ -3179,16 +3179,16 @@ function(_FRUT_build_and_install_helper_exe helper_name helper_version)
     )
     string(APPEND output "\n${install_output}")
     if(NOT install_result EQUAL 0)
-      _FRUT_write_failure_report_and_abort("install" "${helper_name}" "${output}")
+      _FRUT_write_failure_report_and_abort("install" "${tool_name}" "${output}")
     endif()
 
-    message(STATUS "Installed ${helper_name} in \"${install_prefix}\"")
-    find_program(${helper_name}_exe "${helper_filename}"
+    message(STATUS "Installed ${tool_name} in \"${install_prefix}\"")
+    find_program(${tool_name}_exe "${tool_filename}"
       PATHS "${install_prefix}"
       NO_DEFAULT_PATH
     )
-    if(NOT ${helper_name}_exe)
-      message(FATAL_ERROR "Could not find ${helper_filename}")
+    if(NOT ${tool_name}_exe)
+      message(FATAL_ERROR "Could not find ${tool_filename}")
     endif()
   endif()
 
@@ -3419,7 +3419,7 @@ endfunction()
 
 function(_FRUT_create_xcassets_folder_from_icons out_var)
 
-  _FRUT_build_and_install_helper_exe("XcassetsBuilder" "0.1.0")
+  _FRUT_build_and_install_tool("XcassetsBuilder" "0.1.0")
 
   set(XcassetsBuilder_args "${CMAKE_CURRENT_BINARY_DIR}/${JUCER_PROJECT_NAME}")
   if(DEFINED JUCER_SMALL_ICON)
@@ -3929,7 +3929,7 @@ endfunction()
 
 function(_FRUT_generate_icon_file icon_format icon_file_output_dir out_icon_filename)
 
-  _FRUT_build_and_install_helper_exe("IconBuilder" "0.2.0")
+  _FRUT_build_and_install_tool("IconBuilder" "0.2.0")
 
   if(DEFINED JUCER_VERSION)
     set(projucer_version "${JUCER_VERSION}")
@@ -3968,7 +3968,7 @@ function(_FRUT_generate_JuceHeader_header)
 
   list(LENGTH JUCER_PROJECT_RESOURCES resources_count)
   if(resources_count GREATER 0)
-    _FRUT_build_and_install_helper_exe("BinaryDataBuilder" "0.3.1")
+    _FRUT_build_and_install_tool("BinaryDataBuilder" "0.3.1")
 
     if(DEFINED JUCER_VERSION)
       set(projucer_version "${JUCER_VERSION}")
@@ -4505,7 +4505,7 @@ function(_FRUT_generate_plist_file
   endif()
 
   if(JUCER_CUSTOM_PLIST)
-    _FRUT_build_and_install_helper_exe("PListMerger" "0.1.0")
+    _FRUT_build_and_install_tool("PListMerger" "0.1.0")
 
     execute_process(
       COMMAND
@@ -6010,7 +6010,7 @@ function(_FRUT_warn_about_unsupported_setting setting projucer_setting issue_num
 endfunction()
 
 
-function(_FRUT_write_failure_report_and_abort action helper_name execute_process_output)
+function(_FRUT_write_failure_report_and_abort action tool_name execute_process_output)
 
   execute_process(
     COMMAND "git" "rev-parse" "HEAD"
@@ -6044,12 +6044,12 @@ function(_FRUT_write_failure_report_and_abort action helper_name execute_process
 
   string(REPLACE "\r\n" "\n" execute_process_output "${execute_process_output}")
   configure_file("${Reprojucer_data_DIR}/failed-to.md.in"
-    "failed-to-${action}-${helper_name}.md" @ONLY
+    "failed-to-${action}-${tool_name}.md" @ONLY
   )
-  message(FATAL_ERROR "Failed to ${action} ${helper_name}. Please report this problem by"
+  message(FATAL_ERROR "Failed to ${action} ${tool_name}. Please report this problem by"
     " creating a new issue on GitHub: https://github.com/McMartin/FRUT/issues/new."
     "\nPlease copy-paste the contents of"
-    " ${CMAKE_CURRENT_BINARY_DIR}/failed-to-${action}-${helper_name}.md in the commment."
+    " ${CMAKE_CURRENT_BINARY_DIR}/failed-to-${action}-${tool_name}.md in the commment."
   )
 
 endfunction()
