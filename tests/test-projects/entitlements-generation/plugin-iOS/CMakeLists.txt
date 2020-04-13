@@ -31,12 +31,10 @@ function(test_entitlements_default)
   _FRUT_generate_entitlements_file("default.entitlements" _)
 endfunction()
 
-
 function(test_entitlements_enable_iaa)
   set(JUCER_ENABLE_INTER_APP_AUDIO ON)
   _FRUT_generate_entitlements_file("EnableIAA.entitlements" _)
 endfunction()
-
 
 function(test_entitlements_push_notifications_capability)
   set(JUCER_PUSH_NOTIFICATIONS_CAPABILITY ON)
@@ -44,6 +42,24 @@ function(test_entitlements_push_notifications_capability)
 endfunction()
 
 
+function(test_AUv3_entitlements_default)
+  _FRUT_generate_entitlements_file("AUv3-default.entitlements" _)
+endfunction()
+
+function(test_AUv3_entitlements_enable_iaa)
+  set(JUCER_ENABLE_INTER_APP_AUDIO ON)
+  _FRUT_generate_entitlements_file("AUv3-EnableIAA.entitlements" _)
+endfunction()
+
+function(test_AUv3_entitlements_push_notifications_capability)
+  set(JUCER_PUSH_NOTIFICATIONS_CAPABILITY ON)
+  _FRUT_generate_entitlements_file("AUv3-PushNotificationsCapability.entitlements" _)
+endfunction()
+
+
+test_AUv3_entitlements_default()
+test_AUv3_entitlements_enable_iaa()
+test_AUv3_entitlements_push_notifications_capability()
 test_entitlements_default()
 test_entitlements_enable_iaa()
 test_entitlements_push_notifications_capability()
