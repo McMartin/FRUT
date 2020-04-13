@@ -1,4 +1,4 @@
-# Copyright (C) 2018-2019  Alain Martin
+# Copyright (C) 2019-2020  Alain Martin
 #
 # This file is part of FRUT.
 #
@@ -15,18 +15,19 @@
 # You should have received a copy of the GNU General Public License
 # along with FRUT.  If not, see <http://www.gnu.org/licenses/>.
 
-cmake_minimum_required(VERSION 3.4)
+add_executable(XcassetsBuilder
+  "${CMAKE_CURRENT_LIST_DIR}/main.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/Source/ProjectSaving/jucer_ProjectExporter.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/Source/Utility/jucer_FileHelpers.cpp"
+)
 
-project(FRUT)
+set_target_properties(XcassetsBuilder PROPERTIES OUTPUT_NAME XcassetsBuilder-0.1.0)
+
+target_link_libraries(XcassetsBuilder PRIVATE tools_juce_gui_basics)
 
 
-add_subdirectory(Jucer2Reprojucer)
-
-
-set(JUCE_modules_DIRS "${JUCE_ROOT}/modules")
-
-add_subdirectory(cmake/tools)
-
-install(FILES "${CMAKE_CURRENT_LIST_DIR}/cmake/Reprojucer.cmake" DESTINATION "FRUT/cmake")
-
-install(DIRECTORY "${CMAKE_CURRENT_LIST_DIR}/cmake/data" DESTINATION "FRUT/cmake")
+if(built_by_Reprojucer)
+  install(TARGETS XcassetsBuilder DESTINATION ".")
+else()
+  install(TARGETS XcassetsBuilder DESTINATION "FRUT/cmake/bin")
+endif()

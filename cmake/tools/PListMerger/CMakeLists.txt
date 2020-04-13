@@ -1,4 +1,4 @@
-# Copyright (C) 2018-2019  Alain Martin
+# Copyright (C) 2017-2020  Alain Martin
 #
 # This file is part of FRUT.
 #
@@ -15,18 +15,15 @@
 # You should have received a copy of the GNU General Public License
 # along with FRUT.  If not, see <http://www.gnu.org/licenses/>.
 
-cmake_minimum_required(VERSION 3.4)
+add_executable(PListMerger "${CMAKE_CURRENT_LIST_DIR}/main.cpp")
 
-project(FRUT)
+set_target_properties(PListMerger PROPERTIES OUTPUT_NAME PListMerger-0.1.0)
+
+target_link_libraries(PListMerger PRIVATE tools_juce_core)
 
 
-add_subdirectory(Jucer2Reprojucer)
-
-
-set(JUCE_modules_DIRS "${JUCE_ROOT}/modules")
-
-add_subdirectory(cmake/tools)
-
-install(FILES "${CMAKE_CURRENT_LIST_DIR}/cmake/Reprojucer.cmake" DESTINATION "FRUT/cmake")
-
-install(DIRECTORY "${CMAKE_CURRENT_LIST_DIR}/cmake/data" DESTINATION "FRUT/cmake")
+if(built_by_Reprojucer)
+  install(TARGETS PListMerger DESTINATION ".")
+else()
+  install(TARGETS PListMerger DESTINATION "FRUT/cmake/bin")
+endif()

@@ -1,4 +1,4 @@
-# Copyright (C) 2018-2019  Alain Martin
+# Copyright (C) 2017-2020  Alain Martin
 #
 # This file is part of FRUT.
 #
@@ -15,18 +15,19 @@
 # You should have received a copy of the GNU General Public License
 # along with FRUT.  If not, see <http://www.gnu.org/licenses/>.
 
-cmake_minimum_required(VERSION 3.4)
+add_executable(IconBuilder
+  "${CMAKE_CURRENT_LIST_DIR}/main.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/Source/Project Saving/jucer_ProjectExporter.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/Source/Utility/jucer_FileHelpers.cpp"
+)
 
-project(FRUT)
+set_target_properties(IconBuilder PROPERTIES OUTPUT_NAME IconBuilder-0.2.0)
+
+target_link_libraries(IconBuilder PRIVATE tools_juce_gui_basics)
 
 
-add_subdirectory(Jucer2Reprojucer)
-
-
-set(JUCE_modules_DIRS "${JUCE_ROOT}/modules")
-
-add_subdirectory(cmake/tools)
-
-install(FILES "${CMAKE_CURRENT_LIST_DIR}/cmake/Reprojucer.cmake" DESTINATION "FRUT/cmake")
-
-install(DIRECTORY "${CMAKE_CURRENT_LIST_DIR}/cmake/data" DESTINATION "FRUT/cmake")
+if(built_by_Reprojucer)
+  install(TARGETS IconBuilder DESTINATION ".")
+else()
+  install(TARGETS IconBuilder DESTINATION "FRUT/cmake/bin")
+endif()
