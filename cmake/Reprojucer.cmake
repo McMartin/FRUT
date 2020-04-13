@@ -3861,16 +3861,13 @@ function(_FRUT_generate_entitlements_file output_filename out_var)
   else()
     if(JUCER_PUSH_NOTIFICATIONS_CAPABILITY)
       if(IOS)
-        string(APPEND entitlements_content
-          "\t<key>aps-environment</key>\n"
-          "\t<string>development</string>\n"
-        )
+        string(APPEND entitlements_content "\t<key>aps-environment</key>\n")
       else()
         string(APPEND entitlements_content
           "\t<key>com.apple.developer.aps-environment</key>\n"
-          "\t<string>development</string>\n"
         )
       endif()
+      string(APPEND entitlements_content "\t<string>development</string>\n")
     endif()
   endif()
 
