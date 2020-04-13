@@ -3861,14 +3861,8 @@ function(_FRUT_generate_entitlements_file target output_filename out_var)
   set(entitlements_content "")
 
   if(JUCER_PROJECT_TYPE STREQUAL "Audio Plug-in")
-    if(IOS)
-      if(JUCER_ENABLE_INTER_APP_AUDIO)
-        string(APPEND entitlements_content "\t<key>inter-app-audio</key>\n" "\t<true/>\n")
-      endif()
-    elseif(target MATCHES "_AUv3_AppExtension$")
-      string(APPEND entitlements_content
-        "\t<key>com.apple.security.app-sandbox</key>\n" "\t<true/>\n"
-      )
+    if(IOS AND JUCER_ENABLE_INTER_APP_AUDIO)
+      string(APPEND entitlements_content "\t<key>inter-app-audio</key>\n" "\t<true/>\n")
     endif()
   else()
     if(JUCER_PUSH_NOTIFICATIONS_CAPABILITY)
@@ -3899,6 +3893,16 @@ function(_FRUT_generate_entitlements_file target output_filename out_var)
     foreach(option IN LISTS JUCER_HARDENED_RUNTIME_OPTIONS)
       string(APPEND entitlements_content "\t<key>${option}</key>\n" "\t<true/>\n")
     endforeach()
+  endif()
+
+  if(JUCER_USE_APP_SANDBOX OR (
+    NOT IOS
+    AND JUCER_PROJECT_TYPE STREQUAL "Audio Plug-in"
+    AND target MATCHES "_AUv3_AppExtension$"
+  ))
+    string(APPEND entitlements_content
+      "\t<key>com.apple.security.app-sandbox</key>\n" "\t<true/>\n"
+    )
   endif()
 
   if(JUCER_USE_APP_SANDBOX)
