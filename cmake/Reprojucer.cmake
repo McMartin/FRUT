@@ -781,6 +781,7 @@ function(jucer_export_target exporter)
       "AAX_SDK_FOLDER"
       "RTAS_SDK_FOLDER"
       "USE_APP_SANDBOX"
+      "APP_SANDBOX_INHERITANCE"
       "APP_SANDBOX_OPTIONS"
       "USE_HARDENED_RUNTIME"
       "HARDENED_RUNTIME_OPTIONS"
@@ -1035,6 +1036,15 @@ function(jucer_export_target exporter)
       )
     endif()
     set(JUCER_USE_APP_SANDBOX "${_USE_APP_SANDBOX}" PARENT_SCOPE)
+  endif()
+
+  if(DEFINED _APP_SANDBOX_INHERITANCE)
+    if(_APP_SANDBOX_INHERITANCE AND NOT CMAKE_GENERATOR STREQUAL "Xcode")
+      message(WARNING "APP_SANDBOX_INHERITANCE is only supported when using the Xcode"
+        " generator. You should call `cmake -G Xcode`."
+      )
+    endif()
+    set(JUCER_APP_SANDBOX_INHERITANCE "${_APP_SANDBOX_INHERITANCE}" PARENT_SCOPE)
   endif()
 
   if(DEFINED _APP_SANDBOX_OPTIONS)
@@ -3903,6 +3913,17 @@ function(_FRUT_generate_entitlements_file target output_filename out_var)
     string(APPEND entitlements_content
       "\t<key>com.apple.security.app-sandbox</key>\n" "\t<true/>\n"
     )
+
+    if(JUCER_APP_SANDBOX_INHERITANCE)
+      if(JUCER_APP_SANDBOX_OPTIONS)
+        message(WARNING "Setting APP_SANDBOX_OPTIONS in addition to enabling"
+          " APP_SANDBOX_INHERITANCE can make child processes fail to launch."
+        )
+      endif()
+      string(APPEND entitlements_content
+        "\t<key>com.apple.security.inherit</key>\n" "\t<true/>\n"
+      )
+    endif()
   endif()
 
   if(JUCER_USE_APP_SANDBOX)

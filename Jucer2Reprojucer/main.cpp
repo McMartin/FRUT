@@ -1611,6 +1611,8 @@ int main(int argc, char* argv[])
         }
 
         convertOnOffSettingIfDefined(exporter, "appSandbox", "USE_APP_SANDBOX", {});
+        convertOnOffSettingIfDefined(exporter, "appSandboxInheritance",
+                                     "APP_SANDBOX_INHERITANCE", {});
         convertSettingAsListIfDefined(
           exporter, "appSandboxOptions", "APP_SANDBOX_OPTIONS",
           [&convertIdsToStrings](const juce::var& v) {

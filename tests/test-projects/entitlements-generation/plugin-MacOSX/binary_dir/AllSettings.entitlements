@@ -6,6 +6,8 @@
 	<true/>
 	<key>com.apple.security.app-sandbox</key>
 	<true/>
+	<key>com.apple.security.inherit</key>
+	<true/>
 	<key>com.apple.security.device.microphone</key>
 	<true/>
 </dict>
