@@ -26,18 +26,12 @@ include(Reprojucer)
 
 function(test_entitlements_default)
   _FRUT_generate_entitlements_file("default.entitlements" _)
-  if(EXISTS "${CMAKE_CURRENT_BINARY_DIR}/default.entitlements")
-    message(FATAL_ERROR "Unexpected .entitlements file")
-  endif()
 endfunction()
 
 
 function(test_entitlements_use_app_sandbox_no_options)
   set(JUCER_USE_APP_SANDBOX ON)
   _FRUT_generate_entitlements_file("UseAppSandbox_NoOptions.entitlements" _)
-  if(EXISTS "${CMAKE_CURRENT_BINARY_DIR}/UseAppSandbox_NoOptions.entitlements")
-    message(FATAL_ERROR "Unexpected .entitlements file")
-  endif()
 endfunction()
 
 
@@ -62,9 +56,6 @@ endfunction()
 function(test_entitlements_use_hardened_runtime_no_options)
   set(JUCER_USE_HARDENED_RUNTIME ON)
   _FRUT_generate_entitlements_file("UseHardenedRuntime_NoOptions.entitlements" _)
-  if(EXISTS "${CMAKE_CURRENT_BINARY_DIR}/UseHardenedRuntime_NoOptions.entitlements")
-    message(FATAL_ERROR "Unexpected .entitlements file")
-  endif()
 endfunction()
 
 

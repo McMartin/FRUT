@@ -26,9 +26,6 @@ include(Reprojucer)
 
 function(test_entitlements_default)
   _FRUT_generate_entitlements_file("default.entitlements" _)
-  if(EXISTS "${CMAKE_CURRENT_BINARY_DIR}/default.entitlements")
-    message(FATAL_ERROR "Unexpected .entitlements file")
-  endif()
 endfunction()
 
 

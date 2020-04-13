@@ -3932,13 +3932,11 @@ function(_FRUT_generate_entitlements_file output_filename out_var)
     )
   endif()
 
-  if(NOT entitlements_content STREQUAL "")
-    configure_file("${Reprojucer_data_DIR}/project.entitlements.in"
-      "${output_filename}" @ONLY
-    )
+  configure_file("${Reprojucer_data_DIR}/project.entitlements.in"
+    "${output_filename}" @ONLY
+  )
 
-    set(${out_var} "${CMAKE_CURRENT_BINARY_DIR}/${output_filename}" PARENT_SCOPE)
-  endif()
+  set(${out_var} "${CMAKE_CURRENT_BINARY_DIR}/${output_filename}" PARENT_SCOPE)
 
 endfunction()
 
