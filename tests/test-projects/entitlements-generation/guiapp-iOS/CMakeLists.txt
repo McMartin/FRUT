@@ -25,43 +25,40 @@ include(Reprojucer)
 
 
 function(test_entitlements_default)
-  _FRUT_generate_entitlements_file("default.entitlements" _)
-  if(EXISTS "${CMAKE_CURRENT_BINARY_DIR}/default.entitlements")
-    message(FATAL_ERROR "Unexpected .entitlements file")
-  endif()
+  _FRUT_generate_entitlements_file(target "default.entitlements" _)
 endfunction()
 
 
 function(test_entitlements_app_groups_capability_empty)
   set(JUCER_APP_GROUPS_CAPABILITY ON)
   set(JUCER_APP_GROUP_ID "")
-  _FRUT_generate_entitlements_file("AppGroupsCapability-empty.entitlements" _)
+  _FRUT_generate_entitlements_file(target "AppGroupsCapability-empty.entitlements" _)
 endfunction()
 
 
 function(test_entitlements_app_groups_capability_one_id)
   set(JUCER_APP_GROUPS_CAPABILITY ON)
   set(JUCER_APP_GROUP_ID "first")
-  _FRUT_generate_entitlements_file("AppGroupsCapability-one_ID.entitlements" _)
+  _FRUT_generate_entitlements_file(target "AppGroupsCapability-one_ID.entitlements" _)
 endfunction()
 
 
 function(test_entitlements_app_groups_capability_three_ids)
   set(JUCER_APP_GROUPS_CAPABILITY ON)
   set(JUCER_APP_GROUP_ID "first; second ; third")
-  _FRUT_generate_entitlements_file("AppGroupsCapability-three_IDs.entitlements" _)
+  _FRUT_generate_entitlements_file(target "AppGroupsCapability-three_IDs.entitlements" _)
 endfunction()
 
 
 function(test_entitlements_icloud_permissions)
   set(JUCER_ICLOUD_PERMISSIONS ON)
-  _FRUT_generate_entitlements_file("iCloudPermissions.entitlements" _)
+  _FRUT_generate_entitlements_file(target "iCloudPermissions.entitlements" _)
 endfunction()
 
 
 function(test_entitlements_push_notifications_capability)
   set(JUCER_PUSH_NOTIFICATIONS_CAPABILITY ON)
-  _FRUT_generate_entitlements_file("PushNotificationsCapability.entitlements" _)
+  _FRUT_generate_entitlements_file(target "PushNotificationsCapability.entitlements" _)
 endfunction()
 
 

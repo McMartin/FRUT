@@ -28,28 +28,38 @@ set(JUCER_PROJECT_TYPE "Audio Plug-in")
 
 
 function(test_entitlements_default)
-  _FRUT_generate_entitlements_file("default.entitlements" _)
-  if(EXISTS "${CMAKE_CURRENT_BINARY_DIR}/default.entitlements")
-    message(FATAL_ERROR "Unexpected .entitlements file")
-  endif()
+  _FRUT_generate_entitlements_file(target "default.entitlements" _)
 endfunction()
-
 
 function(test_entitlements_enable_iaa)
   set(JUCER_ENABLE_INTER_APP_AUDIO ON)
-  _FRUT_generate_entitlements_file("EnableIAA.entitlements" _)
+  _FRUT_generate_entitlements_file(target "EnableIAA.entitlements" _)
 endfunction()
-
 
 function(test_entitlements_push_notifications_capability)
   set(JUCER_PUSH_NOTIFICATIONS_CAPABILITY ON)
-  _FRUT_generate_entitlements_file("PushNotificationsCapability.entitlements" _)
-  if(EXISTS "${CMAKE_CURRENT_BINARY_DIR}/PushNotificationsCapability.entitlements")
-    message(FATAL_ERROR "Unexpected .entitlements file")
-  endif()
+  _FRUT_generate_entitlements_file(target "PushNotificationsCapability.entitlements" _)
 endfunction()
 
 
+function(test_AUv3_entitlements_default)
+  _FRUT_generate_entitlements_file(target_AUv3_AppExtension "AUv3-default.entitlements" _)
+endfunction()
+
+function(test_AUv3_entitlements_enable_iaa)
+  set(JUCER_ENABLE_INTER_APP_AUDIO ON)
+  _FRUT_generate_entitlements_file(target_AUv3_AppExtension "AUv3-EnableIAA.entitlements" _)
+endfunction()
+
+function(test_AUv3_entitlements_push_notifications_capability)
+  set(JUCER_PUSH_NOTIFICATIONS_CAPABILITY ON)
+  _FRUT_generate_entitlements_file(target_AUv3_AppExtension "AUv3-PushNotificationsCapability.entitlements" _)
+endfunction()
+
+
+test_AUv3_entitlements_default()
+test_AUv3_entitlements_enable_iaa()
+test_AUv3_entitlements_push_notifications_capability()
 test_entitlements_default()
 test_entitlements_enable_iaa()
 test_entitlements_push_notifications_capability()

@@ -781,6 +781,7 @@ function(jucer_export_target exporter)
       "AAX_SDK_FOLDER"
       "RTAS_SDK_FOLDER"
       "USE_APP_SANDBOX"
+      "APP_SANDBOX_INHERITANCE"
       "APP_SANDBOX_OPTIONS"
       "USE_HARDENED_RUNTIME"
       "HARDENED_RUNTIME_OPTIONS"
@@ -1037,6 +1038,15 @@ function(jucer_export_target exporter)
     set(JUCER_USE_APP_SANDBOX "${_USE_APP_SANDBOX}" PARENT_SCOPE)
   endif()
 
+  if(DEFINED _APP_SANDBOX_INHERITANCE)
+    if(_APP_SANDBOX_INHERITANCE AND NOT CMAKE_GENERATOR STREQUAL "Xcode")
+      message(WARNING "APP_SANDBOX_INHERITANCE is only supported when using the Xcode"
+        " generator. You should call `cmake -G Xcode`."
+      )
+    endif()
+    set(JUCER_APP_SANDBOX_INHERITANCE "${_APP_SANDBOX_INHERITANCE}" PARENT_SCOPE)
+  endif()
+
   if(DEFINED _APP_SANDBOX_OPTIONS)
     set(projucer_strings
       "Network: Incoming Connections (Server)"
@@ -1059,6 +1069,16 @@ function(jucer_export_target exporter)
       "File Access: Music Folder (Read/Write)"
       "File Access: Movies Folder (Read Only)"
       "File Access: Movies Folder (Read/Write)"
+      "Temporary Exception: Audio Unit Hosting"
+      "Temporary Exception: Global Mach Service"
+      "Temporary Exception: Global Mach Service Dynamic Registration"
+      "Temporary Exception: Home Directory File Access (Read Only)"
+      "Temporary Exception: Home Directory File Access (Read/Write)"
+      "Temporary Exception: Absolute Path File Access (Read Only)"
+      "Temporary Exception: Absolute Path File Access (Read/Write)"
+      "Temporary Exception: IOKit User Client Class"
+      "Temporary Exception: Shared Preference Domain (Read Only)"
+      "Temporary Exception: Shared Preference Domain (Read/Write)"
     )
     set(entitlement_keys
       "com.apple.security.network.server"
@@ -1081,6 +1101,16 @@ function(jucer_export_target exporter)
       "com.apple.security.assets.music.read-write"
       "com.apple.security.assets.movies.read-only"
       "com.apple.security.assets.movies.read-write"
+      "com.apple.security.temporary-exception.audio-unit-host"
+      "com.apple.security.temporary-exception.mach-lookup.global-name"
+      "com.apple.security.temporary-exception.mach-register.global-name"
+      "com.apple.security.temporary-exception.files.home-relative-path.read-only"
+      "com.apple.security.temporary-exception.files.home-relative-path.read-write"
+      "com.apple.security.temporary-exception.files.absolute-path.read-only"
+      "com.apple.security.temporary-exception.files.absolute-path.read-write"
+      "com.apple.security.temporary-exception.iokit-user-client-class"
+      "com.apple.security.temporary-exception.shared-preference.read-only"
+      "com.apple.security.temporary-exception.shared-preference.read-write"
     )
     set(app_sandbox_options "")
     foreach(option_string IN LISTS _APP_SANDBOX_OPTIONS)
@@ -2162,13 +2192,6 @@ function(jucer_project_end)
     source_group("Juce Library Code" FILES "${JUCER_RESOURCES_RC_FILE}")
   endif()
 
-  if(CMAKE_GENERATOR STREQUAL "Xcode")
-    string(REGEX REPLACE "[\"#@,;:<>*^|?\\/]" "" project_filename "${JUCER_PROJECT_NAME}")
-    _FRUT_generate_entitlements_file("${project_filename}.entitlements"
-      JUCER_ENTITLEMENTS_FILE
-    )
-  endif()
-
   if(IOS)
     if(NOT DEFINED JUCER_CUSTOM_XCASSETS_FOLDER
         OR JUCER_CUSTOM_XCASSETS_FOLDER STREQUAL "")
@@ -2214,7 +2237,6 @@ function(jucer_project_end)
     ${JUCER_PROJECT_MODULES_BROWSABLE_FILES}
     ${JUCER_ICON_FILE}
     ${JUCER_RESOURCES_RC_FILE}
-    ${JUCER_ENTITLEMENTS_FILE}
   )
 
   if(MSVC)
@@ -3844,33 +3866,24 @@ function(_FRUT_generate_AppConfig_header)
 endfunction()
 
 
-function(_FRUT_generate_entitlements_file output_filename out_var)
+function(_FRUT_generate_entitlements_file target output_filename out_var)
 
   set(entitlements_content "")
 
   if(JUCER_PROJECT_TYPE STREQUAL "Audio Plug-in")
-    if(IOS)
-      if(JUCER_ENABLE_INTER_APP_AUDIO)
-        string(APPEND entitlements_content "\t<key>inter-app-audio</key>\n" "\t<true/>\n")
-      endif()
-    else()
-      string(APPEND entitlements_content
-        "\t<key>com.apple.security.app-sandbox</key>\n" "\t<true/>\n"
-      )
+    if(IOS AND JUCER_ENABLE_INTER_APP_AUDIO)
+      string(APPEND entitlements_content "\t<key>inter-app-audio</key>\n" "\t<true/>\n")
     endif()
   else()
     if(JUCER_PUSH_NOTIFICATIONS_CAPABILITY)
       if(IOS)
-        string(APPEND entitlements_content
-          "\t<key>aps-environment</key>\n"
-          "\t<string>development</string>\n"
-        )
+        string(APPEND entitlements_content "\t<key>aps-environment</key>\n")
       else()
         string(APPEND entitlements_content
           "\t<key>com.apple.developer.aps-environment</key>\n"
-          "\t<string>development</string>\n"
         )
       endif()
+      string(APPEND entitlements_content "\t<string>development</string>\n")
     endif()
   endif()
 
@@ -3890,6 +3903,27 @@ function(_FRUT_generate_entitlements_file output_filename out_var)
     foreach(option IN LISTS JUCER_HARDENED_RUNTIME_OPTIONS)
       string(APPEND entitlements_content "\t<key>${option}</key>\n" "\t<true/>\n")
     endforeach()
+  endif()
+
+  if(JUCER_USE_APP_SANDBOX OR (
+    NOT IOS
+    AND JUCER_PROJECT_TYPE STREQUAL "Audio Plug-in"
+    AND target MATCHES "_AUv3_AppExtension$"
+  ))
+    string(APPEND entitlements_content
+      "\t<key>com.apple.security.app-sandbox</key>\n" "\t<true/>\n"
+    )
+
+    if(JUCER_APP_SANDBOX_INHERITANCE)
+      if(JUCER_APP_SANDBOX_OPTIONS)
+        message(WARNING "Setting APP_SANDBOX_OPTIONS in addition to enabling"
+          " APP_SANDBOX_INHERITANCE can make child processes fail to launch."
+        )
+      endif()
+      string(APPEND entitlements_content
+        "\t<key>com.apple.security.inherit</key>\n" "\t<true/>\n"
+      )
+    endif()
   endif()
 
   if(JUCER_USE_APP_SANDBOX)
@@ -3915,13 +3949,11 @@ function(_FRUT_generate_entitlements_file output_filename out_var)
     )
   endif()
 
-  if(NOT entitlements_content STREQUAL "")
-    configure_file("${Reprojucer_data_DIR}/project.entitlements.in"
-      "${output_filename}" @ONLY
-    )
+  configure_file("${Reprojucer_data_DIR}/target.entitlements.in"
+    "${output_filename}" @ONLY
+  )
 
-    set(${out_var} "${CMAKE_CURRENT_BINARY_DIR}/${output_filename}" PARENT_SCOPE)
-  endif()
+  set(${out_var} "${CMAKE_CURRENT_BINARY_DIR}/${output_filename}" PARENT_SCOPE)
 
 endfunction()
 
@@ -5333,9 +5365,12 @@ function(_FRUT_set_compiler_and_linker_settings_APPLE target)
       )
     )
   )
+    _FRUT_generate_entitlements_file(${target} "${target}.entitlements" entitlements_file)
+
     if(CMAKE_GENERATOR STREQUAL "Xcode")
+      target_sources(${target} PRIVATE "${entitlements_file}")
       set_target_properties(${target} PROPERTIES
-        XCODE_ATTRIBUTE_CODE_SIGN_ENTITLEMENTS "${JUCER_ENTITLEMENTS_FILE}"
+        XCODE_ATTRIBUTE_CODE_SIGN_ENTITLEMENTS "${entitlements_file}"
       )
     else()
       message(WARNING "Reprojucer.cmake only supports entitlements when using the Xcode"
