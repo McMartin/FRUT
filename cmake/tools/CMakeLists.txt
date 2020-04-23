@@ -48,15 +48,15 @@ get_filename_component(JUCE_modules_DIR
 )
 
 
+project(tools)
+
+
 if(NOT DEFINED CMAKE_CONFIGURATION_TYPES)
   if(NOT DEFINED CMAKE_BUILD_TYPE OR CMAKE_BUILD_TYPE STREQUAL "")
     message(STATUS "Setting CMAKE_BUILD_TYPE to \"Debug\" as it was not specified.")
     set(CMAKE_BUILD_TYPE Debug)
   endif()
 endif()
-
-
-project(tools)
 
 
 set(CMAKE_CXX_EXTENSIONS OFF)
