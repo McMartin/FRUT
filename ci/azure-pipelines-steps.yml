@@ -9,7 +9,7 @@ steps:
   - ${{ each juceVersion in parameters.juceVersions }}:
     - script: >
         git clone --branch=${{ juceVersion }} --depth=1 --single-branch
-        -- https://github.com/WeAreROLI/JUCE.git ci/tmp/JUCE-${{ juceVersion }}
+        -- https://github.com/juce-framework/JUCE.git ci/tmp/JUCE-${{ juceVersion }}
       displayName: Clone JUCE ${{ juceVersion }}
 
   - script: mkdir build

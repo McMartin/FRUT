@@ -18,10 +18,10 @@
 // clang-format off
 
 // Lines 27-49, 52-119, 122-128, and 130-161 of this file were copied from
-// https://github.com/WeAreROLI/JUCE/blob/4.2.0/extras/Projucer/Source/Project%20Saving/jucer_ProjectExport_XCode.h
+// https://github.com/juce-framework/JUCE/blob/4.2.0/extras/Projucer/Source/Project%20Saving/jucer_ProjectExport_XCode.h
 
 // Lines 164-188, 191-223, 226-232, and 234-265 of this file were copied from
-// https://github.com/WeAreROLI/JUCE/blob/5.4.0/extras/Projucer/Source/ProjectSaving/jucer_ProjectExport_Xcode.h
+// https://github.com/juce-framework/JUCE/blob/5.4.0/extras/Projucer/Source/ProjectSaving/jucer_ProjectExport_Xcode.h
 
 
 /*

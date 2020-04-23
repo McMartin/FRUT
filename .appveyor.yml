@@ -16,19 +16,19 @@ install:
   - cmake --version
 
   - git clone --branch=4.2.0 --depth=1 --single-branch
-    -- https://github.com/WeAreROLI/JUCE.git ci/tmp/JUCE-4.2.0
+    -- https://github.com/juce-framework/JUCE.git ci/tmp/JUCE-4.2.0
   - git clone --branch=4.3.1 --depth=1 --single-branch
-    -- https://github.com/WeAreROLI/JUCE.git ci/tmp/JUCE-4.3.1
+    -- https://github.com/juce-framework/JUCE.git ci/tmp/JUCE-4.3.1
   - git clone --branch=5.0.0 --depth=1 --single-branch
-    -- https://github.com/WeAreROLI/JUCE.git ci/tmp/JUCE-5.0.0
+    -- https://github.com/juce-framework/JUCE.git ci/tmp/JUCE-5.0.0
   - git clone --branch=5.2.1 --depth=1 --single-branch
-    -- https://github.com/WeAreROLI/JUCE.git ci/tmp/JUCE-5.2.1
+    -- https://github.com/juce-framework/JUCE.git ci/tmp/JUCE-5.2.1
   - git clone --branch=5.3.1 --depth=1 --single-branch
-    -- https://github.com/WeAreROLI/JUCE.git ci/tmp/JUCE-5.3.1
+    -- https://github.com/juce-framework/JUCE.git ci/tmp/JUCE-5.3.1
   - git clone --branch=5.4.3 --depth=1 --single-branch
-    -- https://github.com/WeAreROLI/JUCE.git ci/tmp/JUCE-5.4.3
+    -- https://github.com/juce-framework/JUCE.git ci/tmp/JUCE-5.4.3
   - git clone --branch=5.4.7 --depth=1 --single-branch
-    -- https://github.com/WeAreROLI/JUCE.git ci/tmp/JUCE-5.4.7
+    -- https://github.com/juce-framework/JUCE.git ci/tmp/JUCE-5.4.7
 
 for:
   - matrix:

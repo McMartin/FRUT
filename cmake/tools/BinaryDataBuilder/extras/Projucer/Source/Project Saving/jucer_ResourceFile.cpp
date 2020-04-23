@@ -18,13 +18,13 @@
 // clang-format off
 
 // Lines 30-97, 100-110, 114-128, 132-151, 154-161, 165-173, 177-244, 247-252, 255-271, and 275-289 of this file were copied from
-// https://github.com/WeAreROLI/JUCE/blob/4.2.0/extras/Projucer/Source/Project%20Saving/jucer_ResourceFile.cpp
+// https://github.com/juce-framework/JUCE/blob/4.2.0/extras/Projucer/Source/Project%20Saving/jucer_ResourceFile.cpp
 
 // Lines 292-316, 320-326, 330-344, and 348-365 of this file were copied from
-// https://github.com/WeAreROLI/JUCE/blob/5.0.0/extras/Projucer/Source/Project%20Saving/jucer_ResourceFile.cpp
+// https://github.com/juce-framework/JUCE/blob/5.0.0/extras/Projucer/Source/Project%20Saving/jucer_ResourceFile.cpp
 
 // Lines 368-392, 396-402, 406-420, 424-448, 452-458, 462-470, and 474-559 of this file were copied from
-// https://github.com/WeAreROLI/JUCE/blob/5.3.2/extras/Projucer/Source/ProjectSaving/jucer_ResourceFile.cpp
+// https://github.com/juce-framework/JUCE/blob/5.3.2/extras/Projucer/Source/ProjectSaving/jucer_ResourceFile.cpp
 
 
 /*
