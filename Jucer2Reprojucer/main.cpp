@@ -18,7 +18,6 @@
 // You should have received a copy of the GNU General Public License
 // along with FRUT.  If not, see <http://www.gnu.org/licenses/>.
 
-
 #if defined(__clang__)
   #pragma clang diagnostic push
   #pragma clang diagnostic ignored "-Wcast-align"
