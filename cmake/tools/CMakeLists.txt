@@ -48,6 +48,9 @@ get_filename_component(JUCE_modules_DIR
 )
 
 
+project(tools)
+
+
 if(NOT DEFINED CMAKE_CONFIGURATION_TYPES)
   if(NOT DEFINED CMAKE_BUILD_TYPE OR CMAKE_BUILD_TYPE STREQUAL "")
     message(STATUS "Setting CMAKE_BUILD_TYPE to \"Debug\" as it was not specified.")
@@ -56,21 +59,30 @@ if(NOT DEFINED CMAKE_CONFIGURATION_TYPES)
 endif()
 
 
-project(tools)
-
-
 set(CMAKE_CXX_EXTENSIONS OFF)
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 
-include("${CMAKE_CURRENT_LIST_DIR}/juce_core.cmake")
-include("${CMAKE_CURRENT_LIST_DIR}/juce_gui_basics.cmake")
-
-
 if(built_by_Reprojucer)
-  add_subdirectory("${tool_to_build}")
+  if(tool_to_build STREQUAL "BinaryDataBuilder")
+    include("${CMAKE_CURRENT_LIST_DIR}/juce_core.cmake")
+    add_subdirectory(BinaryDataBuilder)
+  elseif(tool_to_build STREQUAL "IconBuilder")
+    include("${CMAKE_CURRENT_LIST_DIR}/juce_gui_basics.cmake")
+    add_subdirectory(IconBuilder)
+  elseif(tool_to_build STREQUAL "PListMerger")
+    include("${CMAKE_CURRENT_LIST_DIR}/juce_core.cmake")
+    add_subdirectory(PListMerger)
+  elseif(tool_to_build STREQUAL "XcassetsBuilder")
+    include("${CMAKE_CURRENT_LIST_DIR}/juce_gui_basics.cmake")
+    add_subdirectory(XcassetsBuilder)
+  else()
+    message(FATAL_ERROR "Unknown tool to build")
+  endif()
 else()
+  include("${CMAKE_CURRENT_LIST_DIR}/juce_core.cmake")
+  include("${CMAKE_CURRENT_LIST_DIR}/juce_gui_basics.cmake")
   add_subdirectory(BinaryDataBuilder)
   add_subdirectory(IconBuilder)
   add_subdirectory(PListMerger)

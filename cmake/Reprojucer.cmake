@@ -3183,7 +3183,7 @@ function(_FRUT_build_and_install_tool tool_name tool_version)
 
     message(STATUS "Building ${tool_name} in \"${binary_dir}\"")
     execute_process(
-      COMMAND "${CMAKE_COMMAND}" "--build" "${binary_dir}" "--target" "${tool_name}"
+      COMMAND "${CMAKE_COMMAND}" "--build" "${binary_dir}"
       OUTPUT_VARIABLE build_output
       RESULT_VARIABLE build_result
     )
