@@ -31,10 +31,7 @@ if(NOT DEFINED JUCE_ROOT)
   message(FATAL_ERROR "JUCE_ROOT must be defined")
 endif()
 
-get_filename_component(JUCE_ROOT
-  "${JUCE_ROOT}" ABSOLUTE
-  BASE_DIR "${CMAKE_BINARY_DIR}"
-)
+get_filename_component(JUCE_ROOT "${JUCE_ROOT}" ABSOLUTE BASE_DIR "${CMAKE_BINARY_DIR}")
 
 if(NOT IS_DIRECTORY "${JUCE_ROOT}")
   message(FATAL_ERROR "No such directory: ${JUCE_ROOT}")
