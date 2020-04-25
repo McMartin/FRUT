@@ -108,21 +108,6 @@ static const auto kDefaultLicenseBasedValue = "ON";
 namespace
 {
 
-template <class Head>
-void writeToStream(juce::MemoryOutputStream& stream, Head&& head)
-{
-  stream << std::forward<Head>(head);
-}
-
-
-template <class Head, class... Tail>
-void writeToStream(juce::MemoryOutputStream& stream, Head&& head, Tail&&... tail)
-{
-  stream << std::forward<Head>(head);
-  writeToStream(stream, std::forward<Tail>(tail)...);
-}
-
-
 struct LineWriter
 {
   explicit LineWriter(juce::MemoryOutputStream& stream)
@@ -132,6 +117,19 @@ struct LineWriter
 
   LineWriter(const LineWriter&) = delete;
   LineWriter& operator=(const LineWriter&) = delete;
+
+  template <class Head>
+  void writeToStream(juce::MemoryOutputStream& stream, Head&& head)
+  {
+    stream << std::forward<Head>(head);
+  }
+
+  template <class Head, class... Tail>
+  void writeToStream(juce::MemoryOutputStream& stream, Head&& head, Tail&&... tail)
+  {
+    stream << std::forward<Head>(head);
+    writeToStream(stream, std::forward<Tail>(tail)...);
+  }
 
   template <typename... Args>
   void operator()(Args&&... args)
