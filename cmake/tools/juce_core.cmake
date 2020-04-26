@@ -37,6 +37,8 @@ target_compile_definitions(tools_juce_core PUBLIC
 )
 
 if(APPLE)
+  target_compile_options(tools_juce_core PRIVATE -Wno-deprecated-declarations)
+
   find_library(Cocoa_framework "Cocoa")
   find_library(IOKit_framework "IOKit")
 
@@ -49,6 +51,8 @@ if(CMAKE_HOST_SYSTEM_NAME STREQUAL "Linux")
 endif()
 
 if(WIN32 AND NOT MSVC)
+  target_compile_options(tools_juce_core PRIVATE -Wno-cpp)
+
   target_link_libraries(tools_juce_core PUBLIC
     -lshlwapi -lversion -lwininet -lwinmm -lws2_32
   )
