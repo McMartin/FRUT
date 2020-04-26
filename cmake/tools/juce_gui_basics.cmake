@@ -86,6 +86,8 @@ if(CMAKE_HOST_SYSTEM_NAME STREQUAL "Linux")
 endif()
 
 if(WIN32 AND NOT MSVC)
+  target_compile_options(tools_juce_gui_basics PRIVATE -Wno-cpp -Wno-multichar)
+
   target_compile_options(tools_juce_gui_basics PUBLIC "-Wa,-mbig-obj")
   target_link_libraries(tools_juce_gui_basics PUBLIC
     -limm32 -lshlwapi -lversion -lwininet -lwinmm -lws2_32
