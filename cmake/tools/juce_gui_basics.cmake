@@ -54,9 +54,7 @@ target_compile_definitions(tools_juce_gui_basics PUBLIC
 )
 
 if(APPLE)
-  target_compile_options(tools_juce_gui_basics PUBLIC
-    "-Wno-deprecated-declarations"
-  )
+  target_compile_options(tools_juce_gui_basics PUBLIC "-Wno-deprecated-declarations")
 
   find_library(Cocoa_framework "Cocoa")
   find_library(IOKit_framework "IOKit")
