@@ -2501,7 +2501,7 @@ int main(int argc, char* argv[])
 
         if (exporterType == "CODEBLOCKS_WINDOWS")
         {
-          if (jucerProject.hasProperty("windowsCodeBlocksArchitecture")
+          if (configuration.hasProperty("windowsCodeBlocksArchitecture")
               || jucerVersionAsTuple >= Version{5, 0, 0})
           {
             convertSetting(configuration, "windowsCodeBlocksArchitecture", "ARCHITECTURE",
@@ -2511,7 +2511,7 @@ int main(int argc, char* argv[])
 
         if (exporterType == "CODEBLOCKS_LINUX")
         {
-          if (jucerProject.hasProperty("linuxCodeBlocksArchitecture")
+          if (configuration.hasProperty("linuxCodeBlocksArchitecture")
               || jucerVersionAsTuple >= Version{5, 0, 0})
           {
             convertSetting(configuration, "linuxCodeBlocksArchitecture", "ARCHITECTURE",
