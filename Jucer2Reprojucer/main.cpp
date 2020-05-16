@@ -1220,9 +1220,20 @@ int main(int argc, char* argv[])
 
   // jucer_project_module()
   {
-    const auto modulePathsVT = juce::ValueTree::fromXml(safeGetChildByName(jucerProject, "EXPORTFORMATS"))
-                               .getChild(0)
-                               .getChildWithName("MODULEPATHS");
+    const auto& modulePaths = [&safeGetChildByName, &jucerProject,
+                               &fallbackXmlElement]() -> const juce::XmlElement& {
+      const auto& exportFormats = safeGetChildByName(jucerProject, "EXPORTFORMATS");
+      for (auto pExporter = exportFormats.getFirstChildElement(); pExporter != nullptr;
+           pExporter = pExporter->getNextElement())
+      {
+        if (!pExporter->isTextElement())
+        {
+          return safeGetChildByName(*pExporter, "MODULEPATHS");
+        }
+      }
+      return fallbackXmlElement;
+    }();
+    const auto modulePathsVT = juce::ValueTree::fromXml(modulePaths);
 
     const auto& modules = safeGetChildByName(jucerProject, "MODULES");
     for (auto pModule = modules.getFirstChildElement(); pModule != nullptr;
@@ -1371,10 +1382,17 @@ int main(int argc, char* argv[])
       {"CODEBLOCKS_LINUX", "Code::Blocks (Linux)"},
     };
 
-    const auto exportFormatsVT = juce::ValueTree::fromXml(safeGetChildByName(jucerProject, "EXPORTFORMATS"));
-    for (auto iExporter = 0; iExporter < exportFormatsVT.getNumChildren(); ++iExporter)
+    const auto& exportFormats = safeGetChildByName(jucerProject, "EXPORTFORMATS");
+    for (auto pExporter = exportFormats.getFirstChildElement(); pExporter != nullptr;
+         pExporter = pExporter->getNextElement())
     {
-      const auto exporterVT = exportFormatsVT.getChild(iExporter);
+      if (pExporter->isTextElement())
+      {
+        continue;
+      }
+
+      const auto& exporter = *pExporter;
+      const auto exporterVT = juce::ValueTree::fromXml(exporter);
       const auto exporterType = exporterVT.getType().toString();
 
       if (!supportedExporters.contains(exporterType))
