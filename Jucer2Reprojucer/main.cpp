@@ -290,12 +290,12 @@ getChildByAttributeRecursively(const juce::XmlElement& parent,
 }
 
 
-void writeUserNotes(LineWriter& wLn, const juce::ValueTree& VT)
+void writeUserNotes(LineWriter& wLn, const juce::XmlElement& element)
 {
-  if (VT.hasProperty("userNotes"))
+  if (element.hasAttribute("userNotes"))
   {
     wLn("  # NOTES");
-    const auto userNotes = VT.getProperty("userNotes").toString();
+    const auto& userNotes = element.getStringAttribute("userNotes");
     for (const auto& line : juce::StringArray::fromLines(userNotes))
     {
       wLn("  #   ", line);
@@ -827,7 +827,7 @@ int main(int argc, char* argv[])
     convertSettingIfDefined(jucerProjectVT, "postExportShellCommandWin",
                             "POST_EXPORT_SHELL_COMMAND_WINDOWS", {});
 
-    writeUserNotes(wLn, jucerProjectVT);
+    writeUserNotes(wLn, jucerProject);
 
     wLn(")");
     wLn();
@@ -2001,7 +2001,7 @@ int main(int argc, char* argv[])
                                 });
       }
 
-      writeUserNotes(wLn, exporterVT);
+      writeUserNotes(wLn, exporter);
 
       wLn(")");
       wLn();
@@ -2571,7 +2571,7 @@ int main(int argc, char* argv[])
           }
         }
 
-        writeUserNotes(wLn, configurationVT);
+        writeUserNotes(wLn, configuration);
 
         wLn(")");
         wLn();
