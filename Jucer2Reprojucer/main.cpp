@@ -1224,10 +1224,17 @@ int main(int argc, char* argv[])
                                .getChild(0)
                                .getChildWithName("MODULEPATHS");
 
-    const auto modulesVT = juce::ValueTree::fromXml(safeGetChildByName(jucerProject, "MODULES"));
-    for (auto i = 0; i < modulesVT.getNumChildren(); ++i)
+    const auto& modules = safeGetChildByName(jucerProject, "MODULES");
+    for (auto pModule = modules.getFirstChildElement(); pModule != nullptr;
+         pModule = pModule->getNextElement())
     {
-      const auto moduleVT = modulesVT.getChild(i);
+      if (pModule->isTextElement())
+      {
+        continue;
+      }
+
+      const auto& module = *pModule;
+      const auto moduleVT = juce::ValueTree::fromXml(module);
       const auto moduleName = moduleVT.getProperty("id").toString();
 
       const auto useGlobalPath = bool{moduleVT.getProperty("useGlobalPath")};
