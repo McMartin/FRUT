@@ -409,7 +409,6 @@ int main(int argc, char* argv[])
   };
 
   const auto& jucerProject = *xml;
-  const auto jucerProjectVT = juce::ValueTree::fromXml(jucerProject);
 
   const auto& jucerVersion = jucerProject.getStringAttribute("jucerVersion");
   const auto jucerVersionTokens = juce::StringArray::fromTokens(jucerVersion, ".", {});
@@ -1323,7 +1322,6 @@ int main(int argc, char* argv[])
       }
       return fallbackXmlElement;
     }();
-    const auto modulePathsVT = juce::ValueTree::fromXml(modulePaths);
 
     const auto& modules = safeGetChildByName(jucerProject, "MODULES");
     for (auto pModule = modules.getFirstChildElement(); pModule != nullptr;
@@ -1335,7 +1333,6 @@ int main(int argc, char* argv[])
       }
 
       const auto& module = *pModule;
-      const auto moduleVT = juce::ValueTree::fromXml(module);
       const auto& moduleName = module.getStringAttribute("id");
 
       const auto useGlobalPath = toBoolLikeVar(module.getStringAttribute("useGlobalPath"));
@@ -1487,7 +1484,6 @@ int main(int argc, char* argv[])
       }
 
       const auto& exporter = *pExporter;
-      const auto exporterVT = juce::ValueTree::fromXml(exporter);
       const auto& exporterType = exporter.getTagName();
 
       if (!supportedExporters.contains(exporterType))
@@ -1497,7 +1493,6 @@ int main(int argc, char* argv[])
 
       const auto exporterName = exporterNames.at(exporterType);
       const auto& configurations = safeGetChildByName(exporter, "CONFIGURATIONS");
-      const auto configurationsVT =juce::ValueTree::fromXml(configurations);
 
       wLn("jucer_export_target(");
       wLn("  \"", exporterName, "\"");
@@ -2091,7 +2086,6 @@ int main(int argc, char* argv[])
         }
 
         const auto& configuration = *pConfiguration;
-        const auto configurationVT = juce::ValueTree::fromXml(configuration);
 
         wLn("jucer_export_target_configuration(");
         wLn("  \"", exporterName, "\"");
