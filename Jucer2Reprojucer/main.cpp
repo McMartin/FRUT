@@ -23,7 +23,6 @@
   #pragma clang diagnostic ignored "-Wcast-align"
   #pragma clang diagnostic ignored "-Wcast-qual"
   #pragma clang diagnostic ignored "-Wdocumentation"
-  #pragma clang diagnostic ignored "-Wdocumentation-deprecated-sync"
   #pragma clang diagnostic ignored "-Wdocumentation-unknown-command"
   #pragma clang diagnostic ignored "-Wexit-time-destructors"
   #pragma clang diagnostic ignored "-Wextra-semi"
