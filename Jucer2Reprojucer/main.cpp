@@ -806,7 +806,8 @@ int main(int argc, char* argv[])
                             [](const juce::var& v) -> juce::String {
                               if (v.toString().isEmpty())
                                 return "Default";
-                              return juce::File::descriptionOfSizeInBytes(int{v});
+                              return juce::File::descriptionOfSizeInBytes(
+                                v.toString().getIntValue());
                             });
     if (jucerProjectVT.hasProperty("includeBinaryInJuceHeader"))
     {
@@ -2164,7 +2165,7 @@ int main(int argc, char* argv[])
         {
           convertOnOffSettingIfDefined(configurationVT, "wholeProgramOptimisation",
                                        "LINK_TIME_OPTIMISATION", [](const juce::var& v) {
-                                         if (int{v} == 0)
+                                         if (v.toString().getIntValue() == 0)
                                            return "ON";
 
                                          return "OFF";
@@ -2215,7 +2216,7 @@ int main(int argc, char* argv[])
                                 [&isVSExporter](const juce::var& v) -> juce::String {
                                   if (isVSExporter)
                                   {
-                                    switch (int{v})
+                                    switch (v.toString().getIntValue())
                                     {
                                     case 1:
                                       return "No optimisation";
@@ -2228,7 +2229,7 @@ int main(int argc, char* argv[])
                                     return {};
                                   }
 
-                                  switch (int{v})
+                                  switch (v.toString().getIntValue())
                                   {
                                   case 1:
                                     return "-O0 (no optimisation)";
@@ -2467,7 +2468,7 @@ int main(int argc, char* argv[])
 
           convertSettingIfDefined(configurationVT, "winWarningLevel", "WARNING_LEVEL",
                                   [](const juce::var& v) -> juce::String {
-                                    switch (int{v})
+                                    switch (v.toString().getIntValue())
                                     {
                                     case 2:
                                       return "Low";
@@ -2507,7 +2508,7 @@ int main(int argc, char* argv[])
                                       if (v.toString().isEmpty())
                                         return "Enable when possible";
 
-                                      if (int{v} > 0)
+                                      if (v.toString().getIntValue() > 0)
                                         return "Always disable";
 
                                       return {};
