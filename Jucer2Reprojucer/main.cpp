@@ -387,7 +387,20 @@ int main(int argc, char* argv[])
     return 1;
   }
 
-  const auto jucerProjectVT = juce::ValueTree::fromXml(*xml);
+  const juce::XmlElement fallbackXmlElement{":"};
+  const auto safeGetChildByName =
+    [&fallbackXmlElement](const juce::XmlElement& element,
+                          const juce::StringRef childName) -> const juce::XmlElement& {
+    if (const auto pChild = element.getChildByName(childName))
+    {
+      return *pChild;
+    }
+
+    return fallbackXmlElement;
+  };
+
+  const auto& jucerProject = *xml;
+  const auto jucerProjectVT = juce::ValueTree::fromXml(jucerProject);
 
   const auto jucerVersion = jucerProjectVT.getProperty("jucerVersion").toString();
   const auto jucerVersionTokens = juce::StringArray::fromTokens(jucerVersion, ".", {});
@@ -1197,16 +1210,16 @@ int main(int argc, char* argv[])
         groupNames.strings.removeLast();
       };
 
-    processGroup(jucerProjectVT.getChildWithName("MAINGROUP"));
+    processGroup(juce::ValueTree::fromXml(safeGetChildByName(jucerProject, "MAINGROUP")));
   }
 
   // jucer_project_module()
   {
-    const auto modulePathsVT = jucerProjectVT.getChildWithName("EXPORTFORMATS")
+    const auto modulePathsVT = juce::ValueTree::fromXml(safeGetChildByName(jucerProject, "EXPORTFORMATS"))
                                .getChild(0)
                                .getChildWithName("MODULEPATHS");
 
-    const auto modulesVT = jucerProjectVT.getChildWithName("MODULES");
+    const auto modulesVT = juce::ValueTree::fromXml(safeGetChildByName(jucerProject, "MODULES"));
     for (auto i = 0; i < modulesVT.getNumChildren(); ++i)
     {
       const auto moduleVT = modulesVT.getChild(i);
@@ -1256,7 +1269,7 @@ int main(int argc, char* argv[])
       juce::StringArray moduleHeaderLines;
       moduleHeader.readLines(moduleHeaderLines);
 
-      const auto modulesOptionsVT = jucerProjectVT.getChildWithName("JUCEOPTIONS");
+      const auto modulesOptionsVT = juce::ValueTree::fromXml(safeGetChildByName(jucerProject, "JUCEOPTIONS"));
 
       for (const auto& line : moduleHeaderLines)
       {
@@ -1346,7 +1359,7 @@ int main(int argc, char* argv[])
       {"CODEBLOCKS_LINUX", "Code::Blocks (Linux)"},
     };
 
-    const auto exportFormatsVT = jucerProjectVT.getChildWithName("EXPORTFORMATS");
+    const auto exportFormatsVT = juce::ValueTree::fromXml(safeGetChildByName(jucerProject, "EXPORTFORMATS"));
     for (auto iExporter = 0; iExporter < exportFormatsVT.getNumChildren(); ++iExporter)
     {
       const auto exporterVT = exportFormatsVT.getChild(iExporter);
@@ -1405,7 +1418,7 @@ int main(int argc, char* argv[])
       const auto pluginFormats = juce::StringArray::fromTokens(
         jucerProjectVT.getProperty("pluginFormats").toString(), ",", {});
       const auto hasJuceAudioProcessorsModule =
-        jucerProjectVT.getChildWithName("MODULES")
+        juce::ValueTree::fromXml(safeGetChildByName(jucerProject, "MODULES"))
           .getChildWithProperty("id", "juce_audio_processors")
           .isValid();
 
@@ -1413,7 +1426,7 @@ int main(int argc, char* argv[])
       const auto isVstAudioPlugin = isAudioPlugin
                                     && (pluginFormats.contains("buildVST")
                                         || bool{jucerProjectVT.getProperty("buildVST")});
-      const auto pluginHostVstOption = jucerProjectVT.getChildWithName("JUCEOPTIONS")
+      const auto pluginHostVstOption = juce::ValueTree::fromXml(safeGetChildByName(jucerProject, "JUCEOPTIONS"))
                                          .getProperty("JUCE_PLUGINHOST_VST")
                                          .toString();
       const auto isVstPluginHost =
@@ -1436,7 +1449,7 @@ int main(int argc, char* argv[])
       const auto isVst3AudioPlugin = isAudioPlugin
                                      && (pluginFormats.contains("buildVST3")
                                          || bool{jucerProjectVT.getProperty("buildVST3")});
-      const auto pluginHostVst3Option = jucerProjectVT.getChildWithName("JUCEOPTIONS")
+      const auto pluginHostVst3Option = juce::ValueTree::fromXml(safeGetChildByName(jucerProject, "JUCEOPTIONS"))
                                           .getProperty("JUCE_PLUGINHOST_VST3")
                                           .toString();
       const auto isVst3PluginHost =
@@ -1498,13 +1511,13 @@ int main(int argc, char* argv[])
       convertOnOffSettingIfDefined(exporterVT, "enableGNUExtensions",
                                    "GNU_COMPILER_EXTENSIONS", {});
 
-      const auto convertIcon = [&jucerProjectVT](const juce::var& v) -> juce::String {
+      const auto convertIcon = [&safeGetChildByName, &jucerProject](const juce::var& v) -> juce::String {
         const auto fileId = v.toString();
 
         if (fileId.isNotEmpty())
         {
           const auto fileVT = getChildWithPropertyRecursively(
-            jucerProjectVT.getChildWithName("MAINGROUP"), "id", fileId);
+            juce::ValueTree::fromXml(safeGetChildByName(jucerProject, "MAINGROUP")), "id", fileId);
 
           if (fileVT.isValid())
           {
