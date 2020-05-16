@@ -580,7 +580,7 @@ int main(int argc, char* argv[])
     };
 
   const auto convertSettingAsList =
-    [&wLn](const juce::ValueTree& VT, const juce::Identifier& property,
+    [&wLn](const juce::XmlElement& element, const juce::StringRef attributeName,
            const juce::String& cmakeKeyword,
            std::function<juce::StringArray(const juce::String&)> converterFn) {
       if (!converterFn)
@@ -590,7 +590,7 @@ int main(int argc, char* argv[])
         };
       }
 
-      auto value = converterFn(VT.getProperty(property).toString());
+      auto value = converterFn(element.getStringAttribute(attributeName));
       value.removeEmptyStrings();
 
       if (value.isEmpty())
@@ -610,12 +610,13 @@ int main(int argc, char* argv[])
 
   const auto convertSettingAsListIfDefined =
     [&convertSettingAsList](
-      const juce::ValueTree& VT, const juce::Identifier& property,
+      const juce::XmlElement& element, const juce::StringRef attributeName,
       const juce::String& cmakeKeyword,
       std::function<juce::StringArray(const juce::String&)> converterFn) {
-      if (VT.hasProperty(property))
+      if (element.hasAttribute(attributeName))
       {
-        convertSettingAsList(VT, property, cmakeKeyword, std::move(converterFn));
+        convertSettingAsList(element, attributeName, cmakeKeyword,
+                             std::move(converterFn));
       }
     };
 
@@ -860,10 +861,10 @@ int main(int argc, char* argv[])
     }
 
     convertSettingAsListIfDefined(
-      jucerProjectVT, "defines", "PREPROCESSOR_DEFINITIONS",
+      jucerProject, "defines", "PREPROCESSOR_DEFINITIONS",
       [](const juce::String& value) { return parsePreprocessorDefinitions(value); });
     convertSettingAsListIfDefined(
-      jucerProjectVT, "headerPath", "HEADER_SEARCH_PATHS", [](const juce::String& value) {
+      jucerProject, "headerPath", "HEADER_SEARCH_PATHS", [](const juce::String& value) {
         return juce::StringArray::fromTokens(value, ";\r\n", {});
       });
 
@@ -889,7 +890,7 @@ int main(int argc, char* argv[])
         if (!jucerProjectVT.hasProperty("pluginFormats"))
         {
           convertSettingAsList(
-            jucerProjectVT, "pluginFormats", "PLUGIN_FORMATS",
+            jucerProject, "pluginFormats", "PLUGIN_FORMATS",
             [&vstIsLegacy](const juce::String&) {
               return juce::StringArray{vstIsLegacy ? "VST3" : "VST", "AU", "Standalone"};
             });
@@ -897,7 +898,7 @@ int main(int argc, char* argv[])
         else
         {
           convertSettingAsList(
-            jucerProjectVT, "pluginFormats", "PLUGIN_FORMATS",
+            jucerProject, "pluginFormats", "PLUGIN_FORMATS",
             [&jucerVersionAsTuple, &vstIsLegacy](const juce::String& value) {
               const auto supportsUnity = jucerVersionAsTuple >= Version{5, 3, 2};
               const auto ids = juce::StringArray::fromTokens(value, ",", {});
@@ -918,13 +919,13 @@ int main(int argc, char* argv[])
 
         if (!jucerProjectVT.hasProperty("pluginCharacteristicsValue"))
         {
-          convertSettingAsList(jucerProjectVT, "pluginCharacteristicsValue",
+          convertSettingAsList(jucerProject, "pluginCharacteristicsValue",
                                "PLUGIN_CHARACTERISTICS", {});
         }
         else
         {
           convertSettingAsList(
-            jucerProjectVT, "pluginCharacteristicsValue", "PLUGIN_CHARACTERISTICS",
+            jucerProject, "pluginCharacteristicsValue", "PLUGIN_CHARACTERISTICS",
             [](const juce::String& value) {
               const auto ids = juce::StringArray::fromTokens(value, ",", {});
               return convertIdsToStrings(
@@ -1084,7 +1085,7 @@ int main(int argc, char* argv[])
         if (!jucerProjectVT.hasProperty("pluginVST3Category"))
         {
           convertSettingAsList(
-            jucerProjectVT, "pluginVST3Category", "PLUGIN_VST3_CATEGORY",
+            jucerProject, "pluginVST3Category", "PLUGIN_VST3_CATEGORY",
             [isSynthAudioPlugin](const juce::String&) {
               return isSynthAudioPlugin ? juce::StringArray{"Instrument", "Synth"}
                                         : juce::StringArray{"Fx"};
@@ -1093,7 +1094,7 @@ int main(int argc, char* argv[])
         else
         {
           convertSettingAsList(
-            jucerProjectVT, "pluginVST3Category", "PLUGIN_VST3_CATEGORY",
+            jucerProject, "pluginVST3Category", "PLUGIN_VST3_CATEGORY",
             [](const juce::String& value) {
               auto vst3_category = juce::StringArray::fromTokens(value, ",", {});
               if (vst3_category.contains("Instrument"))
@@ -1114,7 +1115,7 @@ int main(int argc, char* argv[])
         if (!jucerProjectVT.hasProperty("pluginRTASCategory"))
         {
           convertSettingAsList(
-            jucerProjectVT, "pluginRTASCategory", "PLUGIN_RTAS_CATEGORY",
+            jucerProject, "pluginRTASCategory", "PLUGIN_RTAS_CATEGORY",
             [isSynthAudioPlugin](const juce::String&) {
               return juce::StringArray{isSynthAudioPlugin ? "ePlugInCategory_SWGenerators"
                                                           : "ePlugInCategory_None"};
@@ -1123,7 +1124,7 @@ int main(int argc, char* argv[])
         else
         {
           convertSettingAsList(
-            jucerProjectVT, "pluginRTASCategory", "PLUGIN_RTAS_CATEGORY",
+            jucerProject, "pluginRTASCategory", "PLUGIN_RTAS_CATEGORY",
             [](const juce::String& value) {
               const auto ids = juce::StringArray::fromTokens(value, ",", {});
               return convertIdsToStrings(ids, {{"0", "ePlugInCategory_None"},
@@ -1147,7 +1148,7 @@ int main(int argc, char* argv[])
         if (!jucerProjectVT.hasProperty("pluginAAXCategory"))
         {
           convertSettingAsList(
-            jucerProjectVT, "pluginAAXCategory", "PLUGIN_AAX_CATEGORY",
+            jucerProject, "pluginAAXCategory", "PLUGIN_AAX_CATEGORY",
             [isSynthAudioPlugin](const juce::String&) -> juce::StringArray {
               return juce::StringArray{isSynthAudioPlugin
                                          ? "AAX_ePlugInCategory_SWGenerators"
@@ -1157,7 +1158,7 @@ int main(int argc, char* argv[])
         else
         {
           convertSettingAsList(
-            jucerProjectVT, "pluginAAXCategory", "PLUGIN_AAX_CATEGORY",
+            jucerProject, "pluginAAXCategory", "PLUGIN_AAX_CATEGORY",
             [](const juce::String& value) -> juce::StringArray {
               const auto ids = juce::StringArray::fromTokens(value, ",", {});
               return convertIdsToStrings(ids, {{"0", "AAX_ePlugInCategory_None"},
@@ -1608,10 +1609,10 @@ int main(int argc, char* argv[])
       }
 
       convertSettingAsListIfDefined(
-        exporterVT, "extraDefs", "EXTRA_PREPROCESSOR_DEFINITIONS",
+        exporter, "extraDefs", "EXTRA_PREPROCESSOR_DEFINITIONS",
         [](const juce::String& value) { return parsePreprocessorDefinitions(value); });
       convertSettingAsListIfDefined(
-        exporterVT, "extraCompilerFlags", "EXTRA_COMPILER_FLAGS", [](const juce::String& value) {
+        exporter, "extraCompilerFlags", "EXTRA_COMPILER_FLAGS", [](const juce::String& value) {
           return juce::StringArray::fromTokens(value, false);
         });
 
@@ -1631,10 +1632,10 @@ int main(int argc, char* argv[])
       }
 
       convertSettingAsListIfDefined(
-        exporterVT, "extraLinkerFlags", "EXTRA_LINKER_FLAGS", [](const juce::String& value) {
+        exporter, "extraLinkerFlags", "EXTRA_LINKER_FLAGS", [](const juce::String& value) {
           return juce::StringArray::fromTokens(value, false);
         });
-      convertSettingAsListIfDefined(exporterVT, "externalLibraries",
+      convertSettingAsListIfDefined(exporter, "externalLibraries",
                                     "EXTERNAL_LIBRARIES_TO_LINK", {});
 
       convertOnOffSettingIfDefined(exporterVT, "enableGNUExtensions",
@@ -1668,7 +1669,7 @@ int main(int argc, char* argv[])
       if (isXcodeExporter)
       {
         convertSettingAsListIfDefined(
-          exporterVT, "customXcodeResourceFolders", "CUSTOM_XCODE_RESOURCE_FOLDERS",
+          exporter, "customXcodeResourceFolders", "CUSTOM_XCODE_RESOURCE_FOLDERS",
           [](const juce::String& value) {
             auto folders = juce::StringArray::fromLines(value);
             folders.trim();
@@ -1730,7 +1731,7 @@ int main(int argc, char* argv[])
         if (projectType == "guiapp")
         {
           convertSettingAsListIfDefined(
-            exporterVT, "documentExtensions", "DOCUMENT_FILE_EXTENSIONS",
+            exporter, "documentExtensions", "DOCUMENT_FILE_EXTENSIONS",
             [](const juce::String& value) {
               return juce::StringArray::fromTokens(value, ",", {});
             });
@@ -1740,7 +1741,7 @@ int main(int argc, char* argv[])
         convertOnOffSettingIfDefined(exporterVT, "appSandboxInheritance",
                                      "APP_SANDBOX_INHERITANCE", {});
         convertSettingAsListIfDefined(
-          exporterVT, "appSandboxOptions", "APP_SANDBOX_OPTIONS", [](const juce::String& value) {
+          exporter, "appSandboxOptions", "APP_SANDBOX_OPTIONS", [](const juce::String& value) {
             const auto ids = juce::StringArray::fromTokens(value, ",", {});
             return convertIdsToStrings(
               ids,
@@ -1807,7 +1808,7 @@ int main(int argc, char* argv[])
         if (jucerVersionAsTuple >= Version{5, 4, 4})
         {
           convertSettingAsListIfDefined(
-            exporterVT, "hardenedRuntimeOptions", "HARDENED_RUNTIME_OPTIONS",
+            exporter, "hardenedRuntimeOptions", "HARDENED_RUNTIME_OPTIONS",
             [](const juce::String& value) {
               const auto ids = juce::StringArray::fromTokens(value, ",", {});
               return convertIdsToStrings(
@@ -1841,7 +1842,7 @@ int main(int argc, char* argv[])
         else
         {
           convertSettingAsListIfDefined(
-            exporterVT, "hardenedRuntimeOptions", "HARDENED_RUNTIME_OPTIONS",
+            exporter, "hardenedRuntimeOptions", "HARDENED_RUNTIME_OPTIONS",
             [](const juce::String& value) {
               const auto ids = juce::StringArray::fromTokens(value, ",", {});
               return convertIdsToStrings(
@@ -1931,7 +1932,7 @@ int main(int argc, char* argv[])
                                 convertPrefixHeader);
 
         convertSettingAsListIfDefined(
-          exporterVT, "extraFrameworks",
+          exporter, "extraFrameworks",
           jucerVersionAsTuple > Version{5, 3, 2} ? "EXTRA_SYSTEM_FRAMEWORKS"
                                                  : "EXTRA_FRAMEWORKS",
           [](const juce::String& value) {
@@ -1939,13 +1940,13 @@ int main(int argc, char* argv[])
             frameworks.trim();
             return frameworks;
           });
-        convertSettingAsListIfDefined(exporterVT, "frameworkSearchPaths",
+        convertSettingAsListIfDefined(exporter, "frameworkSearchPaths",
                                       "FRAMEWORK_SEARCH_PATHS", {});
-        convertSettingAsListIfDefined(exporterVT, "extraCustomFrameworks",
+        convertSettingAsListIfDefined(exporter, "extraCustomFrameworks",
                                       "EXTRA_CUSTOM_FRAMEWORKS", {});
-        convertSettingAsListIfDefined(exporterVT, "embeddedFrameworks",
+        convertSettingAsListIfDefined(exporter, "embeddedFrameworks",
                                       "EMBEDDED_FRAMEWORKS", {});
-        convertSettingAsListIfDefined(exporterVT, "xcodeSubprojects", "XCODE_SUBPROJECTS",
+        convertSettingAsListIfDefined(exporter, "xcodeSubprojects", "XCODE_SUBPROJECTS",
                                       {});
         convertSettingIfDefined(exporterVT, "prebuildCommand", "PREBUILD_SHELL_SCRIPT", {});
         convertSettingIfDefined(exporterVT, "postbuildCommand", "POSTBUILD_SHELL_SCRIPT",
@@ -1959,7 +1960,7 @@ int main(int argc, char* argv[])
       if (exporterType == "XCODE_IPHONE")
       {
         convertSettingAsListIfDefined(
-          exporterVT, "iosAppGroupsId", "APP_GROUP_ID", [](const juce::String& value) {
+          exporter, "iosAppGroupsId", "APP_GROUP_ID", [](const juce::String& value) {
             auto groups = juce::StringArray::fromTokens(value, ";", {});
             groups.trim();
             return groups;
@@ -2050,7 +2051,7 @@ int main(int argc, char* argv[])
                                 });
 
         convertSettingAsListIfDefined(
-          exporterVT, "linuxExtraPkgConfig", "PKGCONFIG_LIBRARIES", [](const juce::String& value) {
+          exporter, "linuxExtraPkgConfig", "PKGCONFIG_LIBRARIES", [](const juce::String& value) {
             return juce::StringArray::fromTokens(value, " ", "\"'");
           });
       }
@@ -2148,13 +2149,13 @@ int main(int argc, char* argv[])
           return absOrRelToJucerFileDirPaths;
         };
 
-        convertSettingAsListIfDefined(configurationVT, "headerPath", "HEADER_SEARCH_PATHS",
+        convertSettingAsListIfDefined(configuration, "headerPath", "HEADER_SEARCH_PATHS",
                                       convertSearchPaths);
-        convertSettingAsListIfDefined(configurationVT, "libraryPath",
+        convertSettingAsListIfDefined(configuration, "libraryPath",
                                       "EXTRA_LIBRARY_SEARCH_PATHS", convertSearchPaths);
 
         convertSettingAsListIfDefined(
-          configurationVT, "defines", "PREPROCESSOR_DEFINITIONS",
+          configuration, "defines", "PREPROCESSOR_DEFINITIONS",
           [](const juce::String& value) { return parsePreprocessorDefinitions(value); });
 
         convertOnOffSettingIfDefined(configurationVT, "linkTimeOptimisation",
@@ -2360,7 +2361,7 @@ int main(int argc, char* argv[])
         if (isXcodeExporter)
         {
           convertSettingAsListIfDefined(
-            configurationVT, "customXcodeFlags", "CUSTOM_XCODE_FLAGS",
+            configuration, "customXcodeFlags", "CUSTOM_XCODE_FLAGS",
             [](const juce::String& value) {
               auto customFlags = juce::StringArray::fromTokens(value, ",", "\"'");
               customFlags.removeEmptyStrings();
@@ -2375,7 +2376,7 @@ int main(int argc, char* argv[])
             });
 
           convertSettingAsListIfDefined(
-            configurationVT, "plistPreprocessorDefinitions",
+            configuration, "plistPreprocessorDefinitions",
             "PLIST_PREPROCESSOR_DEFINITIONS", [](const juce::String& value) {
               return parsePreprocessorDefinitions(value);
             });
