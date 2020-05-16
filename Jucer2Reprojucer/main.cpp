@@ -193,6 +193,23 @@ juce::String escape(const juce::String& charsToEscape, juce::String value)
 }
 
 
+juce::StringArray
+convertIdsToStrings(const juce::var& v,
+                    const std::vector<std::pair<juce::String, const char*>>& idsToStrings)
+{
+  const auto ids = juce::StringArray::fromTokens(v.toString(), ",", {});
+  juce::StringArray strings;
+  for (const auto& idToString : idsToStrings)
+  {
+    if (ids.contains(idToString.first))
+    {
+      strings.add(idToString.second);
+    }
+  }
+  return strings;
+}
+
+
 juce::StringArray parsePreprocessorDefinitions(const juce::String& input)
 {
   juce::StringArray output;
@@ -371,11 +388,6 @@ int main(int argc, char* argv[])
   }
 
   const auto jucerProject = juce::ValueTree::fromXml(*xml);
-  if (!jucerProject.hasType("JUCERPROJECT"))
-  {
-    printError(jucerFilePath + " is not a valid Jucer project.");
-    return 1;
-  }
 
   const auto jucerVersion = jucerProject.getProperty("jucerVersion").toString();
   const auto jucerVersionTokens = juce::StringArray::fromTokens(jucerVersion, ".", {});
@@ -561,21 +573,6 @@ int main(int argc, char* argv[])
       {
         convertSettingAsList(valueTree, property, cmakeKeyword, std::move(converterFn));
       }
-    };
-
-  const auto convertIdsToStrings =
-    [](const juce::var& v,
-       const std::vector<std::pair<juce::String, const char*>>& idsToStrings) {
-      const auto ids = juce::StringArray::fromTokens(v.toString(), ",", {});
-      juce::StringArray strings;
-      for (const auto& idToString : idsToStrings)
-      {
-        if (ids.contains(idToString.first))
-        {
-          strings.add(idToString.second);
-        }
-      }
-      return strings;
     };
 
   const auto jucerFileName = jucerFile.getFileName();
@@ -832,7 +829,7 @@ int main(int argc, char* argv[])
       {
         convertSettingAsList(
           jucerProject, "pluginFormats", "PLUGIN_FORMATS",
-          [&jucerVersionAsTuple, &convertIdsToStrings, &vstIsLegacy](const juce::var& v) {
+          [&jucerVersionAsTuple, &vstIsLegacy](const juce::var& v) {
             if (v.isVoid())
             {
               return juce::StringArray{vstIsLegacy ? "VST3" : "VST", "AU", "Standalone"};
@@ -853,7 +850,7 @@ int main(int argc, char* argv[])
 
         convertSettingAsList(
           jucerProject, "pluginCharacteristicsValue", "PLUGIN_CHARACTERISTICS",
-          [&convertIdsToStrings](const juce::var& v) {
+          [](const juce::var& v) {
             if (v.isVoid())
             {
               return juce::StringArray{};
@@ -912,11 +909,9 @@ int main(int argc, char* argv[])
       const auto pluginCharacteristics = juce::StringArray::fromTokens(
         jucerProject.getProperty("pluginCharacteristicsValue").toString(), ",", {});
 
-      const auto isSynthAudioPlugin =
-        jucerVersionAsTuple >= Version{5, 3, 1}
-          ? pluginCharacteristics.contains("pluginIsSynth")
-          : jucerProject.hasProperty("pluginIsSynth")
-              && bool{jucerProject.getProperty("pluginIsSynth")};
+      const auto isSynthAudioPlugin = jucerVersionAsTuple >= Version{5, 3, 1}
+                                        ? pluginCharacteristics.contains("pluginIsSynth")
+                                        : bool{jucerProject.getProperty("pluginIsSynth")};
 
       if (jucerVersionAsTuple < Version{5, 3, 1})
       {
@@ -1033,7 +1028,7 @@ int main(int argc, char* argv[])
       {
         convertSettingAsList(
           jucerProject, "pluginRTASCategory", "PLUGIN_RTAS_CATEGORY",
-          [isSynthAudioPlugin, &convertIdsToStrings](const juce::var& v) {
+          [isSynthAudioPlugin](const juce::var& v) {
             if (v.isVoid())
             {
               return juce::StringArray{isSynthAudioPlugin ? "ePlugInCategory_SWGenerators"
@@ -1057,8 +1052,7 @@ int main(int argc, char* argv[])
           });
         convertSettingAsList(
           jucerProject, "pluginAAXCategory", "PLUGIN_AAX_CATEGORY",
-          [isSynthAudioPlugin,
-           &convertIdsToStrings](const juce::var& v) -> juce::StringArray {
+          [isSynthAudioPlugin](const juce::var& v) -> juce::StringArray {
             if (v.isVoid())
             {
               return juce::StringArray{isSynthAudioPlugin
@@ -1215,7 +1209,7 @@ int main(int argc, char* argv[])
     const auto modules = jucerProject.getChildWithName("MODULES");
     for (auto i = 0; i < modules.getNumChildren(); ++i)
     {
-      const auto& module = modules.getChild(i);
+      const auto module = modules.getChild(i);
       const auto moduleName = module.getProperty("id").toString();
 
       const auto useGlobalPath = bool{module.getProperty("useGlobalPath")};
@@ -1611,8 +1605,7 @@ int main(int argc, char* argv[])
         convertOnOffSettingIfDefined(exporter, "appSandboxInheritance",
                                      "APP_SANDBOX_INHERITANCE", {});
         convertSettingAsListIfDefined(
-          exporter, "appSandboxOptions", "APP_SANDBOX_OPTIONS",
-          [&convertIdsToStrings](const juce::var& v) {
+          exporter, "appSandboxOptions", "APP_SANDBOX_OPTIONS", [](const juce::var& v) {
             return convertIdsToStrings(
               v,
               {{"com.apple.security.network.server",
@@ -1679,7 +1672,7 @@ int main(int argc, char* argv[])
         {
           convertSettingAsListIfDefined(
             exporter, "hardenedRuntimeOptions", "HARDENED_RUNTIME_OPTIONS",
-            [&convertIdsToStrings](const juce::var& v) {
+            [](const juce::var& v) {
               return convertIdsToStrings(
                 v,
                 {{"com.apple.security.cs.allow-jit",
@@ -1712,7 +1705,7 @@ int main(int argc, char* argv[])
         {
           convertSettingAsListIfDefined(
             exporter, "hardenedRuntimeOptions", "HARDENED_RUNTIME_OPTIONS",
-            [&convertIdsToStrings](const juce::var& v) {
+            [](const juce::var& v) {
               return convertIdsToStrings(
                 v,
                 {{"com.apple.security.cs.allow-jit",
