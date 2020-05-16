@@ -912,11 +912,9 @@ int main(int argc, char* argv[])
       const auto pluginCharacteristics = juce::StringArray::fromTokens(
         jucerProject.getProperty("pluginCharacteristicsValue").toString(), ",", {});
 
-      const auto isSynthAudioPlugin =
-        jucerVersionAsTuple >= Version{5, 3, 1}
-          ? pluginCharacteristics.contains("pluginIsSynth")
-          : jucerProject.hasProperty("pluginIsSynth")
-              && bool{jucerProject.getProperty("pluginIsSynth")};
+      const auto isSynthAudioPlugin = jucerVersionAsTuple >= Version{5, 3, 1}
+                                        ? pluginCharacteristics.contains("pluginIsSynth")
+                                        : bool{jucerProject.getProperty("pluginIsSynth")};
 
       if (jucerVersionAsTuple < Version{5, 3, 1})
       {
