@@ -1401,7 +1401,8 @@ int main(int argc, char* argv[])
       }
 
       const auto exporterName = exporterNames.at(exporterType);
-      const auto configurationsVT = exporterVT.getChildWithName("CONFIGURATIONS");
+      const auto& configurations = safeGetChildByName(exporter, "CONFIGURATIONS");
+      const auto configurationsVT =juce::ValueTree::fromXml(configurations);
 
       wLn("jucer_export_target(");
       wLn("  \"", exporterName, "\"");
@@ -1422,13 +1423,18 @@ int main(int argc, char* argv[])
 
       if (isVSExporter)
       {
-        const auto needsTargetFolder = [&configurationsVT]() {
-          for (auto i = 0; i < configurationsVT.getNumChildren(); ++i)
+        const auto needsTargetFolder = [&configurations]() {
+          for (auto pConfiguration = configurations.getFirstChildElement();
+               pConfiguration != nullptr;
+               pConfiguration = pConfiguration->getNextElement())
           {
-            const auto configurationVT = configurationsVT.getChild(i);
+            if (pConfiguration->isTextElement())
+            {
+              continue;
+            }
 
-            if (configurationVT.hasProperty("prebuildCommand")
-                || configurationVT.hasProperty("postbuildCommand"))
+            if (pConfiguration->hasAttribute("prebuildCommand")
+                || pConfiguration->hasAttribute("postbuildCommand"))
             {
               return true;
             }
@@ -1995,9 +2001,16 @@ int main(int argc, char* argv[])
       wLn(")");
       wLn();
 
-      for (auto i = 0; i < configurationsVT.getNumChildren(); ++i)
+      for (auto pConfiguration = configurations.getFirstChildElement();
+           pConfiguration != nullptr; pConfiguration = pConfiguration->getNextElement())
       {
-        const auto configurationVT = configurationsVT.getChild(i);
+        if (pConfiguration->isTextElement())
+        {
+          continue;
+        }
+
+        const auto& configuration = *pConfiguration;
+        const auto configurationVT = juce::ValueTree::fromXml(configuration);
 
         wLn("jucer_export_target_configuration(");
         wLn("  \"", exporterName, "\"");
