@@ -263,29 +263,30 @@ juce::StringArray parsePreprocessorDefinitions(const juce::String& input)
 }
 
 
-juce::ValueTree getChildWithPropertyRecursively(const juce::ValueTree& VT,
-                                                const juce::Identifier& propertyName,
-                                                const juce::var& propertyValue)
+const juce::XmlElement*
+getChildByAttributeRecursively(const juce::XmlElement& parent,
+                               const juce::StringRef attributeName,
+                               const juce::StringRef attributeValue)
 {
-  const auto childVT = VT.getChildWithProperty(propertyName, propertyValue);
-
-  if (childVT.isValid())
+  if (const auto pChild = parent.getChildByAttribute(attributeName, attributeValue))
   {
-    return childVT;
+    return pChild;
   }
 
-  for (auto i = 0; i < VT.getNumChildren(); ++i)
+  for (auto pChild = parent.getFirstChildElement(); pChild != nullptr;
+       pChild = pChild->getNextElement())
   {
-    const auto grandchildVT =
-      getChildWithPropertyRecursively(VT.getChild(i), propertyName, propertyValue);
-
-    if (grandchildVT.isValid())
+    if (!pChild->isTextElement())
     {
-      return grandchildVT;
+      if (const auto pGrandChild =
+            getChildByAttributeRecursively(*pChild, attributeName, attributeValue))
+      {
+        return pGrandChild;
+      }
     }
   }
 
-  return {};
+  return nullptr;
 }
 
 
@@ -1516,12 +1517,10 @@ int main(int argc, char* argv[])
 
         if (fileId.isNotEmpty())
         {
-          const auto fileVT = getChildWithPropertyRecursively(
-            juce::ValueTree::fromXml(safeGetChildByName(jucerProject, "MAINGROUP")), "id", fileId);
-
-          if (fileVT.isValid())
+          if (const auto pFile = getChildByAttributeRecursively(
+                safeGetChildByName(jucerProject, "MAINGROUP"), "id", fileId))
           {
-            return fileVT.getProperty("file").toString();
+            return pFile->getStringAttribute("file");
           }
         }
 
