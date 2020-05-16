@@ -1175,34 +1175,38 @@ int main(int argc, char* argv[])
 
     juce::StringArray groupNames;
 
-    std::function<void(const juce::ValueTree&)> processGroup =
-      [&groupNames, &processGroup, &writeFiles](const juce::ValueTree& groupVT) {
-        groupNames.add(groupVT.getProperty("name").toString());
+    std::function<void(const juce::XmlElement&)> processGroup =
+      [&groupNames, &processGroup, &writeFiles](const juce::XmlElement& group) {
+        groupNames.add(group.getStringAttribute("name"));
 
         const auto fullGroupName = groupNames.joinIntoString("/");
 
         std::vector<File> files;
 
-        for (auto i = 0; i < groupVT.getNumChildren(); ++i)
+        for (auto pFileOrGroup = group.getFirstChildElement(); pFileOrGroup != nullptr;
+             pFileOrGroup = pFileOrGroup->getNextElement())
         {
-          const auto fileOrGroupVT = groupVT.getChild(i);
-
-          if (fileOrGroupVT.hasType("FILE"))
+          if (pFileOrGroup->isTextElement())
           {
-            const auto& fileVT = fileOrGroupVT;
+            continue;
+          }
 
-            files.push_back({int{fileVT.getProperty("compile")} == 1,
-                             int{fileVT.getProperty("xcodeResource")} == 1,
-                             int{fileVT.getProperty("resource")} == 1,
-                             fileVT.getProperty("file").toString(),
-                             fileVT.getProperty("compilerFlagScheme").toString()});
+          if (pFileOrGroup->hasTagName("FILE"))
+          {
+            const auto& file = *pFileOrGroup;
+
+            files.push_back({file.getIntAttribute("compile") == 1,
+                             file.getIntAttribute("xcodeResource") == 1,
+                             file.getIntAttribute("resource") == 1,
+                             file.getStringAttribute("file"),
+                             file.getStringAttribute("compilerFlagScheme")});
           }
           else
           {
             writeFiles(fullGroupName, files);
             files.clear();
 
-            processGroup(fileOrGroupVT);
+            processGroup(*pFileOrGroup);
           }
         }
 
@@ -1211,7 +1215,7 @@ int main(int argc, char* argv[])
         groupNames.strings.removeLast();
       };
 
-    processGroup(juce::ValueTree::fromXml(safeGetChildByName(jucerProject, "MAINGROUP")));
+    processGroup(safeGetChildByName(jucerProject, "MAINGROUP"));
   }
 
   // jucer_project_module()
