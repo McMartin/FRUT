@@ -263,25 +263,25 @@ juce::StringArray parsePreprocessorDefinitions(const juce::String& input)
 }
 
 
-juce::ValueTree getChildWithPropertyRecursively(const juce::ValueTree& valueTree,
+juce::ValueTree getChildWithPropertyRecursively(const juce::ValueTree& VT,
                                                 const juce::Identifier& propertyName,
                                                 const juce::var& propertyValue)
 {
-  const auto child = valueTree.getChildWithProperty(propertyName, propertyValue);
+  const auto childVT = VT.getChildWithProperty(propertyName, propertyValue);
 
-  if (child.isValid())
+  if (childVT.isValid())
   {
-    return child;
+    return childVT;
   }
 
-  for (auto i = 0; i < valueTree.getNumChildren(); ++i)
+  for (auto i = 0; i < VT.getNumChildren(); ++i)
   {
-    const auto grandchild =
-      getChildWithPropertyRecursively(valueTree.getChild(i), propertyName, propertyValue);
+    const auto grandchildVT =
+      getChildWithPropertyRecursively(VT.getChild(i), propertyName, propertyValue);
 
-    if (grandchild.isValid())
+    if (grandchildVT.isValid())
     {
-      return grandchild;
+      return grandchildVT;
     }
   }
 
@@ -289,12 +289,12 @@ juce::ValueTree getChildWithPropertyRecursively(const juce::ValueTree& valueTree
 }
 
 
-void writeUserNotes(LineWriter& wLn, const juce::ValueTree& valueTree)
+void writeUserNotes(LineWriter& wLn, const juce::ValueTree& VT)
 {
-  if (valueTree.hasProperty("userNotes"))
+  if (VT.hasProperty("userNotes"))
   {
     wLn("  # NOTES");
-    const auto userNotes = valueTree.getProperty("userNotes").toString();
+    const auto userNotes = VT.getProperty("userNotes").toString();
     for (const auto& line : juce::StringArray::fromLines(userNotes))
     {
       wLn("  #   ", line);
@@ -387,9 +387,9 @@ int main(int argc, char* argv[])
     return 1;
   }
 
-  const auto jucerProject = juce::ValueTree::fromXml(*xml);
+  const auto jucerProjectVT = juce::ValueTree::fromXml(*xml);
 
-  const auto jucerVersion = jucerProject.getProperty("jucerVersion").toString();
+  const auto jucerVersion = jucerProjectVT.getProperty("jucerVersion").toString();
   const auto jucerVersionTokens = juce::StringArray::fromTokens(jucerVersion, ".", {});
   if (jucerVersionTokens.size() != 3)
   {
@@ -449,7 +449,7 @@ int main(int argc, char* argv[])
   LineWriter wLn{outputStream};
 
   const auto convertSetting =
-    [&wLn](const juce::ValueTree& valueTree, const juce::Identifier& property,
+    [&wLn](const juce::ValueTree& VT, const juce::Identifier& property,
            const juce::String& cmakeKeyword,
            std::function<juce::String(const juce::var&)> converterFn) {
       if (!converterFn)
@@ -457,7 +457,7 @@ int main(int argc, char* argv[])
         converterFn = [](const juce::var& v) { return v.toString(); };
       }
 
-      const auto value = converterFn(valueTree.getProperty(property));
+      const auto value = converterFn(VT.getProperty(property));
 
       if (value.isEmpty())
       {
@@ -471,27 +471,27 @@ int main(int argc, char* argv[])
     };
 
   const auto convertSettingIfDefined =
-    [&convertSetting](const juce::ValueTree& valueTree, const juce::Identifier& property,
+    [&convertSetting](const juce::ValueTree& VT, const juce::Identifier& property,
                       const juce::String& cmakeKeyword,
                       std::function<juce::String(const juce::var&)> converterFn) {
-      if (valueTree.hasProperty(property))
+      if (VT.hasProperty(property))
       {
-        convertSetting(valueTree, property, cmakeKeyword, std::move(converterFn));
+        convertSetting(VT, property, cmakeKeyword, std::move(converterFn));
       }
     };
 
   const auto convertSettingWithDefault =
-    [&convertSetting](const juce::ValueTree& valueTree, const juce::Identifier& property,
+    [&convertSetting](const juce::ValueTree& VT, const juce::Identifier& property,
                       const juce::String& cmakeKeyword,
                       const juce::String& defaultValue) {
-      convertSetting(valueTree, property, cmakeKeyword,
+      convertSetting(VT, property, cmakeKeyword,
                      [&defaultValue](const juce::var& v) -> juce::String {
                        return v.isVoid() ? defaultValue : v.toString();
                      });
     };
 
   const auto convertOnOffSetting =
-    [&wLn](const juce::ValueTree& valueTree, const juce::Identifier& property,
+    [&wLn](const juce::ValueTree& VT, const juce::Identifier& property,
            const juce::String& cmakeKeyword,
            std::function<juce::String(const juce::var&)> converterFn) {
       if (!converterFn)
@@ -501,7 +501,7 @@ int main(int argc, char* argv[])
         };
       }
 
-      const auto value = converterFn(valueTree.getProperty(property));
+      const auto value = converterFn(VT.getProperty(property));
 
       if (value.isEmpty())
       {
@@ -514,21 +514,21 @@ int main(int argc, char* argv[])
     };
 
   const auto convertOnOffSettingIfDefined =
-    [&convertOnOffSetting](const juce::ValueTree& valueTree,
+    [&convertOnOffSetting](const juce::ValueTree& VT,
                            const juce::Identifier& property,
                            const juce::String& cmakeKeyword,
                            std::function<juce::String(const juce::var&)> converterFn) {
-      if (valueTree.hasProperty(property))
+      if (VT.hasProperty(property))
       {
-        convertOnOffSetting(valueTree, property, cmakeKeyword, std::move(converterFn));
+        convertOnOffSetting(VT, property, cmakeKeyword, std::move(converterFn));
       }
     };
 
   const auto convertOnOffSettingWithDefault =
-    [&convertOnOffSetting](const juce::ValueTree& valueTree,
+    [&convertOnOffSetting](const juce::ValueTree& VT,
                            const juce::Identifier& property,
                            const juce::String& cmakeKeyword, bool defaultValue) {
-      convertOnOffSetting(valueTree, property, cmakeKeyword,
+      convertOnOffSetting(VT, property, cmakeKeyword,
                           [defaultValue](const juce::var& v) -> juce::String {
                             return v.isVoid() ? (defaultValue ? "ON" : "OFF")
                                               : (bool{v} ? "ON" : "OFF");
@@ -536,7 +536,7 @@ int main(int argc, char* argv[])
     };
 
   const auto convertSettingAsList =
-    [&wLn](const juce::ValueTree& valueTree, const juce::Identifier& property,
+    [&wLn](const juce::ValueTree& VT, const juce::Identifier& property,
            const juce::String& cmakeKeyword,
            std::function<juce::StringArray(const juce::var&)> converterFn) {
       if (!converterFn)
@@ -546,7 +546,7 @@ int main(int argc, char* argv[])
         };
       }
 
-      auto value = converterFn(valueTree.getProperty(property));
+      auto value = converterFn(VT.getProperty(property));
       value.removeEmptyStrings();
 
       if (value.isEmpty())
@@ -566,17 +566,17 @@ int main(int argc, char* argv[])
 
   const auto convertSettingAsListIfDefined =
     [&convertSettingAsList](
-      const juce::ValueTree& valueTree, const juce::Identifier& property,
+      const juce::ValueTree& VT, const juce::Identifier& property,
       const juce::String& cmakeKeyword,
       std::function<juce::StringArray(const juce::var&)> converterFn) {
-      if (valueTree.hasProperty(property))
+      if (VT.hasProperty(property))
       {
-        convertSettingAsList(valueTree, property, cmakeKeyword, std::move(converterFn));
+        convertSettingAsList(VT, property, cmakeKeyword, std::move(converterFn));
       }
     };
 
   const auto jucerFileName = jucerFile.getFileName();
-  const auto jucerProjectName = jucerProject.getProperty("name").toString();
+  const auto jucerProjectName = jucerProjectVT.getProperty("name").toString();
 
   // Preamble
   {
@@ -681,23 +681,23 @@ int main(int argc, char* argv[])
     wLn("jucer_project_begin(");
     wLn("  JUCER_VERSION \"", jucerVersion, "\"");
     wLn("  PROJECT_FILE \"${", jucerFileCMakeVar, "}\"");
-    convertSetting(jucerProject, "id", "PROJECT_ID", {});
+    convertSetting(jucerProjectVT, "id", "PROJECT_ID", {});
     wLn(")");
     wLn();
   }
 
-  const auto projectType = jucerProject.getProperty("projectType").toString();
+  const auto projectType = jucerProjectVT.getProperty("projectType").toString();
 
   // jucer_project_settings()
   {
     wLn("jucer_project_settings(");
-    convertSetting(jucerProject, "name", "PROJECT_NAME", {});
-    convertSettingWithDefault(jucerProject, "version", "PROJECT_VERSION", "1.0.0");
+    convertSetting(jucerProjectVT, "name", "PROJECT_NAME", {});
+    convertSettingWithDefault(jucerProjectVT, "version", "PROJECT_VERSION", "1.0.0");
 
-    convertSettingIfDefined(jucerProject, "companyName", "COMPANY_NAME", {});
-    convertSettingIfDefined(jucerProject, "companyCopyright", "COMPANY_COPYRIGHT", {});
-    convertSettingIfDefined(jucerProject, "companyWebsite", "COMPANY_WEBSITE", {});
-    convertSettingIfDefined(jucerProject, "companyEmail", "COMPANY_EMAIL", {});
+    convertSettingIfDefined(jucerProjectVT, "companyName", "COMPANY_NAME", {});
+    convertSettingIfDefined(jucerProjectVT, "companyCopyright", "COMPANY_COPYRIGHT", {});
+    convertSettingIfDefined(jucerProjectVT, "companyWebsite", "COMPANY_WEBSITE", {});
+    convertSettingIfDefined(jucerProjectVT, "companyEmail", "COMPANY_EMAIL", {});
 
     if (jucerVersionAsTuple >= Version{5, 0, 0})
     {
@@ -708,12 +708,12 @@ int main(int argc, char* argv[])
                + " # Required for closed source applications without an Indie or Pro "
                  "JUCE license";
       };
-      convertOnOffSetting(jucerProject, "reportAppUsage", "REPORT_JUCE_APP_USAGE",
+      convertOnOffSetting(jucerProjectVT, "reportAppUsage", "REPORT_JUCE_APP_USAGE",
                           booleanWithLicenseRequiredTagline);
-      convertOnOffSetting(jucerProject, "displaySplashScreen",
+      convertOnOffSetting(jucerProjectVT, "displaySplashScreen",
                           "DISPLAY_THE_JUCE_SPLASH_SCREEN",
                           booleanWithLicenseRequiredTagline);
-      convertSettingIfDefined(jucerProject, "splashScreenColour", "SPLASH_SCREEN_COLOUR",
+      convertSettingIfDefined(jucerProjectVT, "splashScreenColour", "SPLASH_SCREEN_COLOUR",
                               {});
     }
 
@@ -737,8 +737,8 @@ int main(int argc, char* argv[])
     }();
     wLn("  PROJECT_TYPE \"", projectTypeDescription, "\"");
 
-    const auto defaultCompanyName = [&jucerProject]() {
-      const auto companyNameString = jucerProject.getProperty("companyName").toString();
+    const auto defaultCompanyName = [&jucerProjectVT]() {
+      const auto companyNameString = jucerProjectVT.getProperty("companyName").toString();
       return companyNameString.isEmpty() ? "yourcompany" : companyNameString;
     }();
 
@@ -748,31 +748,31 @@ int main(int argc, char* argv[])
             + makeValidIdentifier(jucerProjectName)
         : "com.yourcompany." + makeValidIdentifier(jucerProjectName);
 
-    convertSettingWithDefault(jucerProject, "bundleIdentifier", "BUNDLE_IDENTIFIER",
+    convertSettingWithDefault(jucerProjectVT, "bundleIdentifier", "BUNDLE_IDENTIFIER",
                               defaultBundleIdentifier);
 
-    convertSettingIfDefined(jucerProject, "maxBinaryFileSize", "BINARYDATACPP_SIZE_LIMIT",
+    convertSettingIfDefined(jucerProjectVT, "maxBinaryFileSize", "BINARYDATACPP_SIZE_LIMIT",
                             [](const juce::var& v) -> juce::String {
                               if (v.toString().isEmpty())
                                 return "Default";
                               return juce::File::descriptionOfSizeInBytes(int{v});
                             });
-    if (jucerProject.hasProperty("includeBinaryInJuceHeader"))
+    if (jucerProjectVT.hasProperty("includeBinaryInJuceHeader"))
     {
-      convertOnOffSetting(jucerProject, "includeBinaryInJuceHeader", "INCLUDE_BINARYDATA",
+      convertOnOffSetting(jucerProjectVT, "includeBinaryInJuceHeader", "INCLUDE_BINARYDATA",
                           {});
     }
     else
     {
-      convertOnOffSettingIfDefined(jucerProject, "includeBinaryInAppConfig",
+      convertOnOffSettingIfDefined(jucerProjectVT, "includeBinaryInAppConfig",
                                    "INCLUDE_BINARYDATA", {});
     }
-    convertSettingIfDefined(jucerProject, "binaryDataNamespace", "BINARYDATA_NAMESPACE",
+    convertSettingIfDefined(jucerProjectVT, "binaryDataNamespace", "BINARYDATA_NAMESPACE",
                             {});
 
-    if (jucerProject.hasProperty("cppLanguageStandard"))
+    if (jucerProjectVT.hasProperty("cppLanguageStandard"))
     {
-      convertSetting(jucerProject, "cppLanguageStandard", "CXX_LANGUAGE_STANDARD",
+      convertSetting(jucerProjectVT, "cppLanguageStandard", "CXX_LANGUAGE_STANDARD",
                      [](const juce::var& v) -> juce::String {
                        const auto value = v.toString();
 
@@ -801,19 +801,19 @@ int main(int argc, char* argv[])
     }
 
     convertSettingAsListIfDefined(
-      jucerProject, "defines", "PREPROCESSOR_DEFINITIONS",
+      jucerProjectVT, "defines", "PREPROCESSOR_DEFINITIONS",
       [](const juce::var& v) { return parsePreprocessorDefinitions(v.toString()); });
     convertSettingAsListIfDefined(
-      jucerProject, "headerPath", "HEADER_SEARCH_PATHS", [](const juce::var& v) {
+      jucerProjectVT, "headerPath", "HEADER_SEARCH_PATHS", [](const juce::var& v) {
         return juce::StringArray::fromTokens(v.toString(), ";\r\n", {});
       });
 
-    convertSettingIfDefined(jucerProject, "postExportShellCommandPosix",
+    convertSettingIfDefined(jucerProjectVT, "postExportShellCommandPosix",
                             "POST_EXPORT_SHELL_COMMAND_MACOS_LINUX", {});
-    convertSettingIfDefined(jucerProject, "postExportShellCommandWin",
+    convertSettingIfDefined(jucerProjectVT, "postExportShellCommandWin",
                             "POST_EXPORT_SHELL_COMMAND_WINDOWS", {});
 
-    writeUserNotes(wLn, jucerProject);
+    writeUserNotes(wLn, jucerProjectVT);
 
     wLn(")");
     wLn();
@@ -828,7 +828,7 @@ int main(int argc, char* argv[])
       if (jucerVersionAsTuple >= Version{5, 3, 1})
       {
         convertSettingAsList(
-          jucerProject, "pluginFormats", "PLUGIN_FORMATS",
+          jucerProjectVT, "pluginFormats", "PLUGIN_FORMATS",
           [&jucerVersionAsTuple, &vstIsLegacy](const juce::var& v) {
             if (v.isVoid())
             {
@@ -849,7 +849,7 @@ int main(int argc, char* argv[])
           });
 
         convertSettingAsList(
-          jucerProject, "pluginCharacteristicsValue", "PLUGIN_CHARACTERISTICS",
+          jucerProjectVT, "pluginCharacteristicsValue", "PLUGIN_CHARACTERISTICS",
           [](const juce::var& v) {
             if (v.isVoid())
             {
@@ -869,74 +869,74 @@ int main(int argc, char* argv[])
       }
       else
       {
-        convertOnOffSettingWithDefault(jucerProject, "buildVST", "BUILD_VST", true);
-        convertOnOffSettingWithDefault(jucerProject, "buildVST3", "BUILD_VST3", false);
-        convertOnOffSettingWithDefault(jucerProject, "buildAU", "BUILD_AUDIOUNIT", true);
-        convertOnOffSettingWithDefault(jucerProject, "buildAUv3", "BUILD_AUDIOUNIT_V3",
+        convertOnOffSettingWithDefault(jucerProjectVT, "buildVST", "BUILD_VST", true);
+        convertOnOffSettingWithDefault(jucerProjectVT, "buildVST3", "BUILD_VST3", false);
+        convertOnOffSettingWithDefault(jucerProjectVT, "buildAU", "BUILD_AUDIOUNIT", true);
+        convertOnOffSettingWithDefault(jucerProjectVT, "buildAUv3", "BUILD_AUDIOUNIT_V3",
                                        false);
-        convertOnOffSettingWithDefault(jucerProject, "buildRTAS", "BUILD_RTAS", false);
-        convertOnOffSettingWithDefault(jucerProject, "buildAAX", "BUILD_AAX", false);
+        convertOnOffSettingWithDefault(jucerProjectVT, "buildRTAS", "BUILD_RTAS", false);
+        convertOnOffSettingWithDefault(jucerProjectVT, "buildAAX", "BUILD_AAX", false);
         if (jucerVersionAsTuple >= Version{5, 0, 0})
         {
-          convertOnOffSettingWithDefault(jucerProject, "buildStandalone",
+          convertOnOffSettingWithDefault(jucerProjectVT, "buildStandalone",
                                          "BUILD_STANDALONE_PLUGIN", false);
-          convertOnOffSettingWithDefault(jucerProject, "enableIAA",
+          convertOnOffSettingWithDefault(jucerProjectVT, "enableIAA",
                                          "ENABLE_INTER_APP_AUDIO", false);
         }
       }
 
-      convertSettingWithDefault(jucerProject, "pluginName", "PLUGIN_NAME",
+      convertSettingWithDefault(jucerProjectVT, "pluginName", "PLUGIN_NAME",
                                 jucerProjectName);
-      convertSettingWithDefault(jucerProject, "pluginDesc", "PLUGIN_DESCRIPTION",
+      convertSettingWithDefault(jucerProjectVT, "pluginDesc", "PLUGIN_DESCRIPTION",
                                 jucerProjectName);
 
-      convertSettingWithDefault(jucerProject, "pluginManufacturer", "PLUGIN_MANUFACTURER",
+      convertSettingWithDefault(jucerProjectVT, "pluginManufacturer", "PLUGIN_MANUFACTURER",
                                 defaultCompanyName);
-      convertSettingWithDefault(jucerProject, "pluginManufacturerCode",
+      convertSettingWithDefault(jucerProjectVT, "pluginManufacturerCode",
                                 "PLUGIN_MANUFACTURER_CODE", "Manu");
 
-      const auto defaultPluginCode = [&jucerProject]() {
-        const auto projectId = jucerProject.getProperty("id").toString();
+      const auto defaultPluginCode = [&jucerProjectVT]() {
+        const auto projectId = jucerProjectVT.getProperty("id").toString();
         const auto s = makeValidIdentifier(projectId + projectId) + "xxxx";
         return s.substring(0, 1).toUpperCase() + s.substring(1, 4).toLowerCase();
       }();
-      convertSettingWithDefault(jucerProject, "pluginCode", "PLUGIN_CODE",
+      convertSettingWithDefault(jucerProjectVT, "pluginCode", "PLUGIN_CODE",
                                 defaultPluginCode);
 
-      convertSetting(jucerProject, "pluginChannelConfigs",
+      convertSetting(jucerProjectVT, "pluginChannelConfigs",
                      "PLUGIN_CHANNEL_CONFIGURATIONS", {});
 
       const auto pluginCharacteristics = juce::StringArray::fromTokens(
-        jucerProject.getProperty("pluginCharacteristicsValue").toString(), ",", {});
+        jucerProjectVT.getProperty("pluginCharacteristicsValue").toString(), ",", {});
 
       const auto isSynthAudioPlugin = jucerVersionAsTuple >= Version{5, 3, 1}
                                         ? pluginCharacteristics.contains("pluginIsSynth")
-                                        : bool{jucerProject.getProperty("pluginIsSynth")};
+                                        : bool{jucerProjectVT.getProperty("pluginIsSynth")};
 
       if (jucerVersionAsTuple < Version{5, 3, 1})
       {
         wLn(juce::String{"  PLUGIN_IS_A_SYNTH "} + (isSynthAudioPlugin ? "ON" : "OFF"));
-        convertOnOffSettingWithDefault(jucerProject, "pluginWantsMidiIn",
+        convertOnOffSettingWithDefault(jucerProjectVT, "pluginWantsMidiIn",
                                        "PLUGIN_MIDI_INPUT", false);
-        convertOnOffSettingWithDefault(jucerProject, "pluginProducesMidiOut",
+        convertOnOffSettingWithDefault(jucerProjectVT, "pluginProducesMidiOut",
                                        "PLUGIN_MIDI_OUTPUT", false);
-        convertOnOffSettingWithDefault(jucerProject, "pluginIsMidiEffectPlugin",
+        convertOnOffSettingWithDefault(jucerProjectVT, "pluginIsMidiEffectPlugin",
                                        "MIDI_EFFECT_PLUGIN", false);
-        convertOnOffSettingWithDefault(jucerProject, "pluginEditorRequiresKeys",
+        convertOnOffSettingWithDefault(jucerProjectVT, "pluginEditorRequiresKeys",
                                        "KEY_FOCUS", false);
       }
 
       if (jucerVersionAsTuple >= Version{5, 3, 1})
       {
-        convertSettingWithDefault(jucerProject, "aaxIdentifier", "PLUGIN_AAX_IDENTIFIER",
+        convertSettingWithDefault(jucerProjectVT, "aaxIdentifier", "PLUGIN_AAX_IDENTIFIER",
                                   defaultBundleIdentifier);
       }
-      convertSettingWithDefault(jucerProject, "pluginAUExportPrefix",
+      convertSettingWithDefault(jucerProjectVT, "pluginAUExportPrefix",
                                 "PLUGIN_AU_EXPORT_PREFIX",
                                 makeValidIdentifier(jucerProjectName) + "AU");
       if (jucerVersionAsTuple >= Version{5, 3, 1})
       {
-        convertSetting(jucerProject, "pluginAUMainType", "PLUGIN_AU_MAIN_TYPE",
+        convertSetting(jucerProjectVT, "pluginAUMainType", "PLUGIN_AU_MAIN_TYPE",
                        [&pluginCharacteristics](const juce::var& v) -> juce::String {
                          if (v.isVoid())
                          {
@@ -970,41 +970,41 @@ int main(int argc, char* argv[])
       }
       else
       {
-        convertSetting(jucerProject, "pluginAUMainType", "PLUGIN_AU_MAIN_TYPE", {});
+        convertSetting(jucerProjectVT, "pluginAUMainType", "PLUGIN_AU_MAIN_TYPE", {});
       }
-      convertOnOffSettingIfDefined(jucerProject, "pluginAUIsSandboxSafe",
+      convertOnOffSettingIfDefined(jucerProjectVT, "pluginAUIsSandboxSafe",
                                    "PLUGIN_AU_IS_SANDBOX_SAFE", {});
 
-      if (jucerProject.hasProperty("pluginVSTNumMidiInputs")
+      if (jucerProjectVT.hasProperty("pluginVSTNumMidiInputs")
           || (jucerVersionAsTuple >= Version{5, 4, 2}
               && pluginCharacteristics.contains("pluginWantsMidiIn")))
       {
-        convertSettingWithDefault(jucerProject, "pluginVSTNumMidiInputs",
+        convertSettingWithDefault(jucerProjectVT, "pluginVSTNumMidiInputs",
                                   "PLUGIN_VST_NUM_MIDI_INPUTS", "16");
       }
-      if (jucerProject.hasProperty("pluginVSTNumMidiOutputs")
+      if (jucerProjectVT.hasProperty("pluginVSTNumMidiOutputs")
           || (jucerVersionAsTuple >= Version{5, 4, 2}
               && pluginCharacteristics.contains("pluginProducesMidiOut")))
       {
-        convertSettingWithDefault(jucerProject, "pluginVSTNumMidiOutputs",
+        convertSettingWithDefault(jucerProjectVT, "pluginVSTNumMidiOutputs",
                                   "PLUGIN_VST_NUM_MIDI_OUTPUTS", "16");
       }
 
       if (!vstIsLegacy)
       {
         convertSettingWithDefault(
-          jucerProject, "pluginVSTCategory",
+          jucerProjectVT, "pluginVSTCategory",
           jucerVersionAsTuple > Version{5, 3, 0} ? "PLUGIN_VST_CATEGORY" : "VST_CATEGORY",
           jucerVersionAsTuple >= Version{5, 3, 1}
             ? (isSynthAudioPlugin ? "kPlugCategSynth" : "kPlugCategEffect")
             : "");
       }
 
-      if (jucerProject.hasProperty("pluginVST3Category")
+      if (jucerProjectVT.hasProperty("pluginVST3Category")
           || jucerVersionAsTuple >= Version{5, 3, 1})
       {
         convertSettingAsList(
-          jucerProject, "pluginVST3Category", "PLUGIN_VST3_CATEGORY",
+          jucerProjectVT, "pluginVST3Category", "PLUGIN_VST3_CATEGORY",
           [isSynthAudioPlugin](const juce::var& v) {
             if (v.isVoid())
             {
@@ -1027,7 +1027,7 @@ int main(int argc, char* argv[])
       if (jucerVersionAsTuple >= Version{5, 3, 1})
       {
         convertSettingAsList(
-          jucerProject, "pluginRTASCategory", "PLUGIN_RTAS_CATEGORY",
+          jucerProjectVT, "pluginRTASCategory", "PLUGIN_RTAS_CATEGORY",
           [isSynthAudioPlugin](const juce::var& v) {
             if (v.isVoid())
             {
@@ -1051,7 +1051,7 @@ int main(int argc, char* argv[])
                                            {"8192", "ePlugInCategory_Effect"}});
           });
         convertSettingAsList(
-          jucerProject, "pluginAAXCategory", "PLUGIN_AAX_CATEGORY",
+          jucerProjectVT, "pluginAAXCategory", "PLUGIN_AAX_CATEGORY",
           [isSynthAudioPlugin](const juce::var& v) -> juce::StringArray {
             if (v.isVoid())
             {
@@ -1078,20 +1078,20 @@ int main(int argc, char* argv[])
       }
       else
       {
-        convertSetting(jucerProject, "pluginRTASCategory", "PLUGIN_RTAS_CATEGORY", {});
-        convertSetting(jucerProject, "pluginAAXCategory", "PLUGIN_AAX_CATEGORY", {});
+        convertSetting(jucerProjectVT, "pluginRTASCategory", "PLUGIN_RTAS_CATEGORY", {});
+        convertSetting(jucerProjectVT, "pluginAAXCategory", "PLUGIN_AAX_CATEGORY", {});
       }
 
       if (vstIsLegacy)
       {
         convertSettingWithDefault(
-          jucerProject, "pluginVSTCategory", "PLUGIN_VST_LEGACY_CATEGORY",
+          jucerProjectVT, "pluginVSTCategory", "PLUGIN_VST_LEGACY_CATEGORY",
           isSynthAudioPlugin ? "kPlugCategSynth" : "kPlugCategEffect");
       }
 
       if (jucerVersionAsTuple < Version{5, 3, 1})
       {
-        convertSetting(jucerProject, "aaxIdentifier", "PLUGIN_AAX_IDENTIFIER", {});
+        convertSetting(jucerProjectVT, "aaxIdentifier", "PLUGIN_AAX_IDENTIFIER", {});
       }
 
       wLn(")");
@@ -1102,7 +1102,7 @@ int main(int argc, char* argv[])
   // jucer_project_files()
   {
     const auto projectHasCompilerFlagSchemes =
-      jucerProject.getProperty("compilerFlagSchemes").toString().isNotEmpty();
+      jucerProjectVT.getProperty("compilerFlagSchemes").toString().isNotEmpty();
 
     struct File
     {
@@ -1162,33 +1162,33 @@ int main(int argc, char* argv[])
     juce::StringArray groupNames;
 
     std::function<void(const juce::ValueTree&)> processGroup =
-      [&groupNames, &processGroup, &writeFiles](const juce::ValueTree& group) {
-        groupNames.add(group.getProperty("name").toString());
+      [&groupNames, &processGroup, &writeFiles](const juce::ValueTree& groupVT) {
+        groupNames.add(groupVT.getProperty("name").toString());
 
         const auto fullGroupName = groupNames.joinIntoString("/");
 
         std::vector<File> files;
 
-        for (auto i = 0; i < group.getNumChildren(); ++i)
+        for (auto i = 0; i < groupVT.getNumChildren(); ++i)
         {
-          const auto fileOrGroup = group.getChild(i);
+          const auto fileOrGroupVT = groupVT.getChild(i);
 
-          if (fileOrGroup.hasType("FILE"))
+          if (fileOrGroupVT.hasType("FILE"))
           {
-            const auto& file = fileOrGroup;
+            const auto& fileVT = fileOrGroupVT;
 
-            files.push_back({int{file.getProperty("compile")} == 1,
-                             int{file.getProperty("xcodeResource")} == 1,
-                             int{file.getProperty("resource")} == 1,
-                             file.getProperty("file").toString(),
-                             file.getProperty("compilerFlagScheme").toString()});
+            files.push_back({int{fileVT.getProperty("compile")} == 1,
+                             int{fileVT.getProperty("xcodeResource")} == 1,
+                             int{fileVT.getProperty("resource")} == 1,
+                             fileVT.getProperty("file").toString(),
+                             fileVT.getProperty("compilerFlagScheme").toString()});
           }
           else
           {
             writeFiles(fullGroupName, files);
             files.clear();
 
-            processGroup(fileOrGroup);
+            processGroup(fileOrGroupVT);
           }
         }
 
@@ -1197,22 +1197,22 @@ int main(int argc, char* argv[])
         groupNames.strings.removeLast();
       };
 
-    processGroup(jucerProject.getChildWithName("MAINGROUP"));
+    processGroup(jucerProjectVT.getChildWithName("MAINGROUP"));
   }
 
   // jucer_project_module()
   {
-    const auto modulePaths = jucerProject.getChildWithName("EXPORTFORMATS")
+    const auto modulePathsVT = jucerProjectVT.getChildWithName("EXPORTFORMATS")
                                .getChild(0)
                                .getChildWithName("MODULEPATHS");
 
-    const auto modules = jucerProject.getChildWithName("MODULES");
-    for (auto i = 0; i < modules.getNumChildren(); ++i)
+    const auto modulesVT = jucerProjectVT.getChildWithName("MODULES");
+    for (auto i = 0; i < modulesVT.getNumChildren(); ++i)
     {
-      const auto module = modules.getChild(i);
-      const auto moduleName = module.getProperty("id").toString();
+      const auto moduleVT = modulesVT.getChild(i);
+      const auto moduleName = moduleVT.getProperty("id").toString();
 
-      const auto useGlobalPath = bool{module.getProperty("useGlobalPath")};
+      const auto useGlobalPath = bool{moduleVT.getProperty("useGlobalPath")};
       const auto isJuceModule = moduleName.startsWith("juce_");
 
       if (useGlobalPath)
@@ -1232,7 +1232,7 @@ int main(int argc, char* argv[])
       }
 
       const auto relativeModulePath =
-        modulePaths.getChildWithProperty("id", moduleName).getProperty("path").toString();
+        modulePathsVT.getChildWithProperty("id", moduleName).getProperty("path").toString();
 
       wLn("jucer_project_module(");
       wLn("  ", moduleName);
@@ -1256,14 +1256,14 @@ int main(int argc, char* argv[])
       juce::StringArray moduleHeaderLines;
       moduleHeader.readLines(moduleHeaderLines);
 
-      const auto modulesOptions = jucerProject.getChildWithName("JUCEOPTIONS");
+      const auto modulesOptionsVT = jucerProjectVT.getChildWithName("JUCEOPTIONS");
 
       for (const auto& line : moduleHeaderLines)
       {
         if (line.startsWith("/** Config: "))
         {
           const auto moduleOption = line.substring(12);
-          const auto optionValue = modulesOptions.getProperty(moduleOption).toString();
+          const auto optionValue = modulesOptionsVT.getProperty(moduleOption).toString();
 
           if (optionValue == "1" || optionValue == "enabled")
           {
@@ -1346,11 +1346,11 @@ int main(int argc, char* argv[])
       {"CODEBLOCKS_LINUX", "Code::Blocks (Linux)"},
     };
 
-    const auto exportFormats = jucerProject.getChildWithName("EXPORTFORMATS");
-    for (auto iExporter = 0; iExporter < exportFormats.getNumChildren(); ++iExporter)
+    const auto exportFormatsVT = jucerProjectVT.getChildWithName("EXPORTFORMATS");
+    for (auto iExporter = 0; iExporter < exportFormatsVT.getNumChildren(); ++iExporter)
     {
-      const auto exporter = exportFormats.getChild(iExporter);
-      const auto exporterType = exporter.getType().toString();
+      const auto exporterVT = exportFormatsVT.getChild(iExporter);
+      const auto exporterType = exporterVT.getType().toString();
 
       if (!supportedExporters.contains(exporterType))
       {
@@ -1358,7 +1358,7 @@ int main(int argc, char* argv[])
       }
 
       const auto exporterName = exporterNames.at(exporterType);
-      const auto configurations = exporter.getChildWithName("CONFIGURATIONS");
+      const auto configurationsVT = exporterVT.getChildWithName("CONFIGURATIONS");
 
       wLn("jucer_export_target(");
       wLn("  \"", exporterName, "\"");
@@ -1367,10 +1367,10 @@ int main(int argc, char* argv[])
         exporterType == "XCODE_MAC" || exporterType == "XCODE_IPHONE";
 
       if (isXcodeExporter
-          && (exporter.hasProperty("prebuildCommand")
-              || exporter.hasProperty("postbuildCommand")))
+          && (exporterVT.hasProperty("prebuildCommand")
+              || exporterVT.hasProperty("postbuildCommand")))
       {
-        wLn("  TARGET_PROJECT_FOLDER \"", exporter.getProperty("targetFolder").toString(),
+        wLn("  TARGET_PROJECT_FOLDER \"", exporterVT.getProperty("targetFolder").toString(),
             "\"  # only used by PREBUILD_SHELL_SCRIPT and POSTBUILD_SHELL_SCRIPT");
       }
 
@@ -1379,13 +1379,13 @@ int main(int argc, char* argv[])
 
       if (isVSExporter)
       {
-        const auto needsTargetFolder = [&configurations]() {
-          for (auto i = 0; i < configurations.getNumChildren(); ++i)
+        const auto needsTargetFolder = [&configurationsVT]() {
+          for (auto i = 0; i < configurationsVT.getNumChildren(); ++i)
           {
-            const auto configuration = configurations.getChild(i);
+            const auto configurationVT = configurationsVT.getChild(i);
 
-            if (configuration.hasProperty("prebuildCommand")
-                || configuration.hasProperty("postbuildCommand"))
+            if (configurationVT.hasProperty("prebuildCommand")
+                || configurationVT.hasProperty("postbuildCommand"))
             {
               return true;
             }
@@ -1396,24 +1396,24 @@ int main(int argc, char* argv[])
         if (needsTargetFolder)
         {
           wLn("  TARGET_PROJECT_FOLDER \"",
-              exporter.getProperty("targetFolder").toString(),
+              exporterVT.getProperty("targetFolder").toString(),
               "\" # only used by PREBUILD_COMMAND and POSTBUILD_COMMAND");
         }
       }
 
       const auto isAudioPlugin = projectType == "audioplug";
       const auto pluginFormats = juce::StringArray::fromTokens(
-        jucerProject.getProperty("pluginFormats").toString(), ",", {});
+        jucerProjectVT.getProperty("pluginFormats").toString(), ",", {});
       const auto hasJuceAudioProcessorsModule =
-        jucerProject.getChildWithName("MODULES")
+        jucerProjectVT.getChildWithName("MODULES")
           .getChildWithProperty("id", "juce_audio_processors")
           .isValid();
 
       const auto hasVst2Interface = jucerVersionAsTuple > Version{4, 2, 3};
       const auto isVstAudioPlugin = isAudioPlugin
                                     && (pluginFormats.contains("buildVST")
-                                        || bool{jucerProject.getProperty("buildVST")});
-      const auto pluginHostVstOption = jucerProject.getChildWithName("JUCEOPTIONS")
+                                        || bool{jucerProjectVT.getProperty("buildVST")});
+      const auto pluginHostVstOption = jucerProjectVT.getChildWithName("JUCEOPTIONS")
                                          .getProperty("JUCE_PLUGINHOST_VST")
                                          .toString();
       const auto isVstPluginHost =
@@ -1422,21 +1422,21 @@ int main(int argc, char* argv[])
 
       if (!hasVst2Interface && (isVstAudioPlugin || isVstPluginHost))
       {
-        convertSetting(exporter, "vstFolder", "VST_SDK_FOLDER", {});
+        convertSetting(exporterVT, "vstFolder", "VST_SDK_FOLDER", {});
       }
 
       const auto vstIsLegacy = jucerVersionAsTuple > Version{5, 3, 2};
 
       if (vstIsLegacy && (isVstAudioPlugin || isVstPluginHost))
       {
-        convertSetting(exporter, "vstLegacyFolder", "VST_LEGACY_SDK_FOLDER", {});
+        convertSetting(exporterVT, "vstLegacyFolder", "VST_LEGACY_SDK_FOLDER", {});
       }
 
       const auto supportsVst3 = exporterType == "XCODE_MAC" || isVSExporter;
       const auto isVst3AudioPlugin = isAudioPlugin
                                      && (pluginFormats.contains("buildVST3")
-                                         || bool{jucerProject.getProperty("buildVST3")});
-      const auto pluginHostVst3Option = jucerProject.getChildWithName("JUCEOPTIONS")
+                                         || bool{jucerProjectVT.getProperty("buildVST3")});
+      const auto pluginHostVst3Option = jucerProjectVT.getChildWithName("JUCEOPTIONS")
                                           .getProperty("JUCE_PLUGINHOST_VST3")
                                           .toString();
       const auto isVst3PluginHost =
@@ -1445,7 +1445,7 @@ int main(int argc, char* argv[])
 
       if (supportsVst3 && (isVst3AudioPlugin || isVst3PluginHost))
       {
-        convertSetting(exporter, "vst3Folder", "VST3_SDK_FOLDER", {});
+        convertSetting(exporterVT, "vst3Folder", "VST3_SDK_FOLDER", {});
       }
 
       const auto supportsAaxRtas = exporterType == "XCODE_MAC" || isVSExporter;
@@ -1453,28 +1453,28 @@ int main(int argc, char* argv[])
       if (supportsAaxRtas && isAudioPlugin)
       {
         if (pluginFormats.contains("buildAAX")
-            || bool{jucerProject.getProperty("buildAAX")})
+            || bool{jucerProjectVT.getProperty("buildAAX")})
         {
-          convertSetting(exporter, "aaxFolder", "AAX_SDK_FOLDER", {});
+          convertSetting(exporterVT, "aaxFolder", "AAX_SDK_FOLDER", {});
         }
 
         if (pluginFormats.contains("buildRTAS")
-            || bool{jucerProject.getProperty("buildRTAS")})
+            || bool{jucerProjectVT.getProperty("buildRTAS")})
         {
-          convertSetting(exporter, "rtasFolder", "RTAS_SDK_FOLDER", {});
+          convertSetting(exporterVT, "rtasFolder", "RTAS_SDK_FOLDER", {});
         }
       }
 
       convertSettingAsListIfDefined(
-        exporter, "extraDefs", "EXTRA_PREPROCESSOR_DEFINITIONS",
+        exporterVT, "extraDefs", "EXTRA_PREPROCESSOR_DEFINITIONS",
         [](const juce::var& v) { return parsePreprocessorDefinitions(v.toString()); });
       convertSettingAsListIfDefined(
-        exporter, "extraCompilerFlags", "EXTRA_COMPILER_FLAGS", [](const juce::var& v) {
+        exporterVT, "extraCompilerFlags", "EXTRA_COMPILER_FLAGS", [](const juce::var& v) {
           return juce::StringArray::fromTokens(v.toString(), false);
         });
 
       const auto compilerFlagSchemesArray = juce::StringArray::fromTokens(
-        jucerProject.getProperty("compilerFlagSchemes").toString(), ",", {});
+        jucerProjectVT.getProperty("compilerFlagSchemes").toString(), ",", {});
       // Use a juce::HashMap like Projucer does, in order to get the same ordering.
       juce::HashMap<juce::String, std::tuple<>> compilerFlagSchemesMap;
       for (const auto& scheme : compilerFlagSchemesArray)
@@ -1484,52 +1484,52 @@ int main(int argc, char* argv[])
       for (juce::HashMap<juce::String, std::tuple<>>::Iterator i(compilerFlagSchemesMap);
            i.next();)
       {
-        convertSettingIfDefined(exporter, i.getKey(), "COMPILER_FLAGS_FOR_" + i.getKey(),
+        convertSettingIfDefined(exporterVT, i.getKey(), "COMPILER_FLAGS_FOR_" + i.getKey(),
                                 {});
       }
 
       convertSettingAsListIfDefined(
-        exporter, "extraLinkerFlags", "EXTRA_LINKER_FLAGS", [](const juce::var& v) {
+        exporterVT, "extraLinkerFlags", "EXTRA_LINKER_FLAGS", [](const juce::var& v) {
           return juce::StringArray::fromTokens(v.toString(), false);
         });
-      convertSettingAsListIfDefined(exporter, "externalLibraries",
+      convertSettingAsListIfDefined(exporterVT, "externalLibraries",
                                     "EXTERNAL_LIBRARIES_TO_LINK", {});
 
-      convertOnOffSettingIfDefined(exporter, "enableGNUExtensions",
+      convertOnOffSettingIfDefined(exporterVT, "enableGNUExtensions",
                                    "GNU_COMPILER_EXTENSIONS", {});
 
-      const auto convertIcon = [&jucerProject](const juce::var& v) -> juce::String {
+      const auto convertIcon = [&jucerProjectVT](const juce::var& v) -> juce::String {
         const auto fileId = v.toString();
 
         if (fileId.isNotEmpty())
         {
-          const auto file = getChildWithPropertyRecursively(
-            jucerProject.getChildWithName("MAINGROUP"), "id", fileId);
+          const auto fileVT = getChildWithPropertyRecursively(
+            jucerProjectVT.getChildWithName("MAINGROUP"), "id", fileId);
 
-          if (file.isValid())
+          if (fileVT.isValid())
           {
-            return file.getProperty("file").toString();
+            return fileVT.getProperty("file").toString();
           }
         }
 
         return "<None>";
       };
 
-      convertSettingIfDefined(exporter, "smallIcon", "ICON_SMALL", convertIcon);
-      convertSettingIfDefined(exporter, "bigIcon", "ICON_LARGE", convertIcon);
+      convertSettingIfDefined(exporterVT, "smallIcon", "ICON_SMALL", convertIcon);
+      convertSettingIfDefined(exporterVT, "bigIcon", "ICON_LARGE", convertIcon);
 
       if (exporterType == "XCODE_IPHONE")
       {
-        convertSettingIfDefined(exporter, "customXcassetsFolder",
+        convertSettingIfDefined(exporterVT, "customXcassetsFolder",
                                 "CUSTOM_XCASSETS_FOLDER", {});
-        convertSettingIfDefined(exporter, "customLaunchStoryboard",
+        convertSettingIfDefined(exporterVT, "customLaunchStoryboard",
                                 "CUSTOM_LAUNCH_STORYBOARD", {});
       }
 
       if (isXcodeExporter)
       {
         convertSettingAsListIfDefined(
-          exporter, "customXcodeResourceFolders", "CUSTOM_XCODE_RESOURCE_FOLDERS",
+          exporterVT, "customXcodeResourceFolders", "CUSTOM_XCODE_RESOURCE_FOLDERS",
           [](const juce::var& v) {
             auto folders = juce::StringArray::fromLines(v.toString());
             folders.trim();
@@ -1539,7 +1539,7 @@ int main(int argc, char* argv[])
 
         if (isAudioPlugin)
         {
-          convertOnOffSettingIfDefined(exporter, "duplicateAppExResourcesFolder",
+          convertOnOffSettingIfDefined(exporterVT, "duplicateAppExResourcesFolder",
                                        "ADD_DUPLICATE_RESOURCES_FOLDER_TO_APP_EXTENSION",
                                        {});
         }
@@ -1547,7 +1547,7 @@ int main(int argc, char* argv[])
 
       if (exporterType == "XCODE_IPHONE")
       {
-        convertSettingIfDefined(exporter, "iosDeviceFamily", "DEVICE_FAMILY",
+        convertSettingIfDefined(exporterVT, "iosDeviceFamily", "DEVICE_FAMILY",
                                 [](const juce::var& v) -> juce::String {
                                   const auto value = v.toString();
 
@@ -1577,16 +1577,16 @@ int main(int argc, char* argv[])
 
           return value;
         };
-        convertSettingIfDefined(exporter, "iosScreenOrientation",
+        convertSettingIfDefined(exporterVT, "iosScreenOrientation",
                                 "IPHONE_SCREEN_ORIENTATION", screenOrientationFn);
-        convertSettingIfDefined(exporter, "iPadScreenOrientation",
+        convertSettingIfDefined(exporterVT, "iPadScreenOrientation",
                                 "IPAD_SCREEN_ORIENTATION", screenOrientationFn);
 
-        convertOnOffSettingIfDefined(exporter, "UIFileSharingEnabled",
+        convertOnOffSettingIfDefined(exporterVT, "UIFileSharingEnabled",
                                      "FILE_SHARING_ENABLED", {});
-        convertOnOffSettingIfDefined(exporter, "UISupportsDocumentBrowser",
+        convertOnOffSettingIfDefined(exporterVT, "UISupportsDocumentBrowser",
                                      "SUPPORT_DOCUMENT_BROWSER", {});
-        convertOnOffSettingIfDefined(exporter, "UIStatusBarHidden", "STATUS_BAR_HIDDEN",
+        convertOnOffSettingIfDefined(exporterVT, "UIStatusBarHidden", "STATUS_BAR_HIDDEN",
                                      {});
       }
 
@@ -1595,17 +1595,17 @@ int main(int argc, char* argv[])
         if (projectType == "guiapp")
         {
           convertSettingAsListIfDefined(
-            exporter, "documentExtensions", "DOCUMENT_FILE_EXTENSIONS",
+            exporterVT, "documentExtensions", "DOCUMENT_FILE_EXTENSIONS",
             [](const juce::var& v) {
               return juce::StringArray::fromTokens(v.toString(), ",", {});
             });
         }
 
-        convertOnOffSettingIfDefined(exporter, "appSandbox", "USE_APP_SANDBOX", {});
-        convertOnOffSettingIfDefined(exporter, "appSandboxInheritance",
+        convertOnOffSettingIfDefined(exporterVT, "appSandbox", "USE_APP_SANDBOX", {});
+        convertOnOffSettingIfDefined(exporterVT, "appSandboxInheritance",
                                      "APP_SANDBOX_INHERITANCE", {});
         convertSettingAsListIfDefined(
-          exporter, "appSandboxOptions", "APP_SANDBOX_OPTIONS", [](const juce::var& v) {
+          exporterVT, "appSandboxOptions", "APP_SANDBOX_OPTIONS", [](const juce::var& v) {
             return convertIdsToStrings(
               v,
               {{"com.apple.security.network.server",
@@ -1666,12 +1666,12 @@ int main(int argc, char* argv[])
                 "Temporary Exception: Shared Preference Domain (Read/Write)"}});
           });
 
-        convertOnOffSettingIfDefined(exporter, "hardenedRuntime", "USE_HARDENED_RUNTIME",
+        convertOnOffSettingIfDefined(exporterVT, "hardenedRuntime", "USE_HARDENED_RUNTIME",
                                      {});
         if (jucerVersionAsTuple >= Version{5, 4, 4})
         {
           convertSettingAsListIfDefined(
-            exporter, "hardenedRuntimeOptions", "HARDENED_RUNTIME_OPTIONS",
+            exporterVT, "hardenedRuntimeOptions", "HARDENED_RUNTIME_OPTIONS",
             [](const juce::var& v) {
               return convertIdsToStrings(
                 v,
@@ -1704,7 +1704,7 @@ int main(int argc, char* argv[])
         else
         {
           convertSettingAsListIfDefined(
-            exporter, "hardenedRuntimeOptions", "HARDENED_RUNTIME_OPTIONS",
+            exporterVT, "hardenedRuntimeOptions", "HARDENED_RUNTIME_OPTIONS",
             [](const juce::var& v) {
               return convertIdsToStrings(
                 v,
@@ -1733,51 +1733,51 @@ int main(int argc, char* argv[])
 
       if (isXcodeExporter)
       {
-        convertOnOffSettingIfDefined(exporter, "microphonePermissionNeeded",
+        convertOnOffSettingIfDefined(exporterVT, "microphonePermissionNeeded",
                                      "MICROPHONE_ACCESS", {});
-        convertSettingIfDefined(exporter, "microphonePermissionsText",
+        convertSettingIfDefined(exporterVT, "microphonePermissionsText",
                                 "MICROPHONE_ACCESS_TEXT", {});
-        convertOnOffSettingIfDefined(exporter, "cameraPermissionNeeded", "CAMERA_ACCESS",
+        convertOnOffSettingIfDefined(exporterVT, "cameraPermissionNeeded", "CAMERA_ACCESS",
                                      {});
-        convertSettingIfDefined(exporter, "cameraPermissionText", "CAMERA_ACCESS_TEXT",
+        convertSettingIfDefined(exporterVT, "cameraPermissionText", "CAMERA_ACCESS_TEXT",
                                 {});
       }
 
       if (exporterType == "XCODE_IPHONE")
       {
-        convertOnOffSettingIfDefined(exporter, "iosBluetoothPermissionNeeded",
+        convertOnOffSettingIfDefined(exporterVT, "iosBluetoothPermissionNeeded",
                                      "BLUETOOTH_ACCESS", {});
-        convertSettingIfDefined(exporter, "iosBluetoothPermissionText",
+        convertSettingIfDefined(exporterVT, "iosBluetoothPermissionText",
                                 "BLUETOOTH_ACCESS_TEXT", {});
       }
 
       if (isXcodeExporter)
       {
-        convertOnOffSettingIfDefined(exporter, "iosInAppPurchasesValue",
+        convertOnOffSettingIfDefined(exporterVT, "iosInAppPurchasesValue",
                                      "IN_APP_PURCHASES_CAPABILITY", {});
       }
 
       if (exporterType == "XCODE_IPHONE")
       {
-        convertOnOffSettingIfDefined(exporter, "iosBackgroundAudio",
+        convertOnOffSettingIfDefined(exporterVT, "iosBackgroundAudio",
                                      "AUDIO_BACKGROUND_CAPABILITY", {});
-        convertOnOffSettingIfDefined(exporter, "iosBackgroundBle",
+        convertOnOffSettingIfDefined(exporterVT, "iosBackgroundBle",
                                      "BLUETOOTH_MIDI_BACKGROUND_CAPABILITY", {});
-        convertOnOffSettingIfDefined(exporter, "iosAppGroups", "APP_GROUPS_CAPABILITY",
+        convertOnOffSettingIfDefined(exporterVT, "iosAppGroups", "APP_GROUPS_CAPABILITY",
                                      {});
-        convertOnOffSettingIfDefined(exporter, "iCloudPermissions", "ICLOUD_PERMISSIONS",
+        convertOnOffSettingIfDefined(exporterVT, "iCloudPermissions", "ICLOUD_PERMISSIONS",
                                      {});
       }
 
       if (isXcodeExporter)
       {
-        convertOnOffSettingIfDefined(exporter, "iosPushNotifications",
+        convertOnOffSettingIfDefined(exporterVT, "iosPushNotifications",
                                      "PUSH_NOTIFICATIONS_CAPABILITY", {});
 
-        convertSettingIfDefined(exporter, "customPList", "CUSTOM_PLIST", {});
-        convertOnOffSettingIfDefined(exporter, "PListPreprocess", "PLIST_PREPROCESS", {});
-        convertOnOffSettingIfDefined(exporter, "pListPreprocess", "PLIST_PREPROCESS", {});
-        const auto convertPrefixHeader = [&jucerFile, &exporter](const juce::var& v) {
+        convertSettingIfDefined(exporterVT, "customPList", "CUSTOM_PLIST", {});
+        convertOnOffSettingIfDefined(exporterVT, "PListPreprocess", "PLIST_PREPROCESS", {});
+        convertOnOffSettingIfDefined(exporterVT, "pListPreprocess", "PLIST_PREPROCESS", {});
+        const auto convertPrefixHeader = [&jucerFile, &exporterVT](const juce::var& v) {
           const auto value = v.toString();
 
           if (value.isEmpty())
@@ -1785,17 +1785,17 @@ int main(int argc, char* argv[])
 
           const auto jucerFileDir = jucerFile.getParentDirectory();
           const auto targetProjectDir =
-            jucerFileDir.getChildFile(exporter.getProperty("targetFolder").toString());
+            jucerFileDir.getChildFile(exporterVT.getProperty("targetFolder").toString());
 
           return targetProjectDir.getChildFile(value).getRelativePathFrom(jucerFileDir);
         };
-        convertSettingIfDefined(exporter, "PListPrefixHeader", "PLIST_PREFIX_HEADER",
+        convertSettingIfDefined(exporterVT, "PListPrefixHeader", "PLIST_PREFIX_HEADER",
                                 convertPrefixHeader);
-        convertSettingIfDefined(exporter, "pListPrefixHeader", "PLIST_PREFIX_HEADER",
+        convertSettingIfDefined(exporterVT, "pListPrefixHeader", "PLIST_PREFIX_HEADER",
                                 convertPrefixHeader);
 
         convertSettingAsListIfDefined(
-          exporter, "extraFrameworks",
+          exporterVT, "extraFrameworks",
           jucerVersionAsTuple > Version{5, 3, 2} ? "EXTRA_SYSTEM_FRAMEWORKS"
                                                  : "EXTRA_FRAMEWORKS",
           [](const juce::var& v) {
@@ -1803,27 +1803,27 @@ int main(int argc, char* argv[])
             frameworks.trim();
             return frameworks;
           });
-        convertSettingAsListIfDefined(exporter, "frameworkSearchPaths",
+        convertSettingAsListIfDefined(exporterVT, "frameworkSearchPaths",
                                       "FRAMEWORK_SEARCH_PATHS", {});
-        convertSettingAsListIfDefined(exporter, "extraCustomFrameworks",
+        convertSettingAsListIfDefined(exporterVT, "extraCustomFrameworks",
                                       "EXTRA_CUSTOM_FRAMEWORKS", {});
-        convertSettingAsListIfDefined(exporter, "embeddedFrameworks",
+        convertSettingAsListIfDefined(exporterVT, "embeddedFrameworks",
                                       "EMBEDDED_FRAMEWORKS", {});
-        convertSettingAsListIfDefined(exporter, "xcodeSubprojects", "XCODE_SUBPROJECTS",
+        convertSettingAsListIfDefined(exporterVT, "xcodeSubprojects", "XCODE_SUBPROJECTS",
                                       {});
-        convertSettingIfDefined(exporter, "prebuildCommand", "PREBUILD_SHELL_SCRIPT", {});
-        convertSettingIfDefined(exporter, "postbuildCommand", "POSTBUILD_SHELL_SCRIPT",
+        convertSettingIfDefined(exporterVT, "prebuildCommand", "PREBUILD_SHELL_SCRIPT", {});
+        convertSettingIfDefined(exporterVT, "postbuildCommand", "POSTBUILD_SHELL_SCRIPT",
                                 {});
-        convertSettingIfDefined(exporter, "bundleIdentifier",
+        convertSettingIfDefined(exporterVT, "bundleIdentifier",
                                 "EXPORTER_BUNDLE_IDENTIFIER", {});
-        convertSettingIfDefined(exporter, "iosDevelopmentTeamID", "DEVELOPMENT_TEAM_ID",
+        convertSettingIfDefined(exporterVT, "iosDevelopmentTeamID", "DEVELOPMENT_TEAM_ID",
                                 {});
       }
 
       if (exporterType == "XCODE_IPHONE")
       {
         convertSettingAsListIfDefined(
-          exporter, "iosAppGroupsId", "APP_GROUP_ID", [](const juce::var& v) {
+          exporterVT, "iosAppGroupsId", "APP_GROUP_ID", [](const juce::var& v) {
             auto groups = juce::StringArray::fromTokens(v.toString(), ";", {});
             groups.trim();
             return groups;
@@ -1832,18 +1832,18 @@ int main(int argc, char* argv[])
 
       if (isXcodeExporter)
       {
-        convertOnOffSettingIfDefined(exporter, "keepCustomXcodeSchemes",
+        convertOnOffSettingIfDefined(exporterVT, "keepCustomXcodeSchemes",
                                      "KEEP_CUSTOM_XCODE_SCHEMES", {});
-        convertOnOffSettingIfDefined(exporter, "useHeaderMap", "USE_HEADERMAP", {});
+        convertOnOffSettingIfDefined(exporterVT, "useHeaderMap", "USE_HEADERMAP", {});
       }
 
       if (isVSExporter)
       {
-        convertSettingIfDefined(exporter, "msvcManifestFile", "MANIFEST_FILE", {});
+        convertSettingIfDefined(exporterVT, "msvcManifestFile", "MANIFEST_FILE", {});
 
-        if (exporter.hasProperty("toolset"))
+        if (exporterVT.hasProperty("toolset"))
         {
-          const auto toolset = exporter.getProperty("toolset").toString();
+          const auto toolset = exporterVT.getProperty("toolset").toString();
           if (toolset.isEmpty())
           {
             wLn("  # PLATFORM_TOOLSET \"(default)\"");
@@ -1855,7 +1855,7 @@ int main(int argc, char* argv[])
         }
 
         convertSettingIfDefined(
-          exporter, "IPPLibrary", "USE_IPP_LIBRARY",
+          exporterVT, "IPPLibrary", "USE_IPP_LIBRARY",
           [&jucerVersionAsTuple](const juce::var& v) -> juce::String {
             const auto value = v.toString();
 
@@ -1881,12 +1881,12 @@ int main(int argc, char* argv[])
             return {};
           });
 
-        convertSettingIfDefined(exporter, "windowsTargetPlatformVersion",
+        convertSettingIfDefined(exporterVT, "windowsTargetPlatformVersion",
                                 "WINDOWS_TARGET_PLATFORM", {});
 
         if (exporterType == "VS2017")
         {
-          convertSettingIfDefined(exporter, "cppLanguageStandard", "CXX_STANDARD_TO_USE",
+          convertSettingIfDefined(exporterVT, "cppLanguageStandard", "CXX_STANDARD_TO_USE",
                                   [](const juce::var& v) -> juce::String {
                                     const auto value = v.toString();
 
@@ -1903,7 +1903,7 @@ int main(int argc, char* argv[])
 
       if (exporterType == "LINUX_MAKE")
       {
-        convertSettingIfDefined(exporter, "cppLanguageStandard", "CXX_STANDARD_TO_USE",
+        convertSettingIfDefined(exporterVT, "cppLanguageStandard", "CXX_STANDARD_TO_USE",
                                 [](const juce::var& v) -> juce::String {
                                   const auto value = v.toString();
 
@@ -1920,7 +1920,7 @@ int main(int argc, char* argv[])
                                 });
 
         convertSettingAsListIfDefined(
-          exporter, "linuxExtraPkgConfig", "PKGCONFIG_LIBRARIES", [](const juce::var& v) {
+          exporterVT, "linuxExtraPkgConfig", "PKGCONFIG_LIBRARIES", [](const juce::var& v) {
             return juce::StringArray::fromTokens(v.toString(), " ", "\"'");
           });
       }
@@ -1935,7 +1935,7 @@ int main(int argc, char* argv[])
           {"0x0A00", "Windows 10"},
         };
 
-        convertSettingIfDefined(exporter, "codeBlocksWindowsTarget", "TARGET_PLATFORM",
+        convertSettingIfDefined(exporterVT, "codeBlocksWindowsTarget", "TARGET_PLATFORM",
                                 [&windowsTargets](const juce::var& v) -> juce::String {
                                   const auto value = v.toString();
 
@@ -1949,24 +1949,24 @@ int main(int argc, char* argv[])
                                 });
       }
 
-      writeUserNotes(wLn, exporter);
+      writeUserNotes(wLn, exporterVT);
 
       wLn(")");
       wLn();
 
-      for (auto i = 0; i < configurations.getNumChildren(); ++i)
+      for (auto i = 0; i < configurationsVT.getNumChildren(); ++i)
       {
-        const auto configuration = configurations.getChild(i);
+        const auto configurationVT = configurationsVT.getChild(i);
 
         wLn("jucer_export_target_configuration(");
         wLn("  \"", exporterName, "\"");
-        wLn("  NAME \"", configuration.getProperty("name").toString(), "\"");
+        wLn("  NAME \"", configurationVT.getProperty("name").toString(), "\"");
 
-        const auto isDebug = bool{configuration.getProperty("isDebug")};
+        const auto isDebug = bool{configurationVT.getProperty("isDebug")};
         wLn("  DEBUG_MODE ", (isDebug ? "ON" : "OFF"));
 
-        convertSettingIfDefined(configuration, "targetName", "BINARY_NAME", {});
-        convertSettingIfDefined(configuration, "binaryPath", "BINARY_LOCATION", {});
+        convertSettingIfDefined(configurationVT, "targetName", "BINARY_NAME", {});
+        convertSettingIfDefined(configurationVT, "binaryPath", "BINARY_LOCATION", {});
 
         const auto isAbsolutePath = [](const juce::String& path) {
           return path.startsWithChar('/') || path.startsWithChar('~')
@@ -1976,7 +1976,7 @@ int main(int argc, char* argv[])
 
         const auto jucerFileDir = jucerFile.getParentDirectory();
         const auto targetProjectDir =
-          jucerFileDir.getChildFile(exporter.getProperty("targetFolder").toString());
+          jucerFileDir.getChildFile(exporterVT.getProperty("targetFolder").toString());
 
         const auto convertSearchPaths =
           [&isAbsolutePath, &jucerFileDir,
@@ -2013,22 +2013,22 @@ int main(int argc, char* argv[])
           return absOrRelToJucerFileDirPaths;
         };
 
-        convertSettingAsListIfDefined(configuration, "headerPath", "HEADER_SEARCH_PATHS",
+        convertSettingAsListIfDefined(configurationVT, "headerPath", "HEADER_SEARCH_PATHS",
                                       convertSearchPaths);
-        convertSettingAsListIfDefined(configuration, "libraryPath",
+        convertSettingAsListIfDefined(configurationVT, "libraryPath",
                                       "EXTRA_LIBRARY_SEARCH_PATHS", convertSearchPaths);
 
         convertSettingAsListIfDefined(
-          configuration, "defines", "PREPROCESSOR_DEFINITIONS",
+          configurationVT, "defines", "PREPROCESSOR_DEFINITIONS",
           [](const juce::var& v) { return parsePreprocessorDefinitions(v.toString()); });
 
-        convertOnOffSettingIfDefined(configuration, "linkTimeOptimisation",
+        convertOnOffSettingIfDefined(configurationVT, "linkTimeOptimisation",
                                      "LINK_TIME_OPTIMISATION", {});
 
-        if (!configuration.hasProperty("linkTimeOptimisation") && isVSExporter && !isDebug
+        if (!configurationVT.hasProperty("linkTimeOptimisation") && isVSExporter && !isDebug
             && jucerVersionAsTuple >= Version{5, 2, 0})
         {
-          convertOnOffSettingIfDefined(configuration, "wholeProgramOptimisation",
+          convertOnOffSettingIfDefined(configurationVT, "wholeProgramOptimisation",
                                        "LINK_TIME_OPTIMISATION", [](const juce::var& v) {
                                          if (int{v} == 0)
                                            return "ON";
@@ -2039,7 +2039,7 @@ int main(int argc, char* argv[])
 
         if (isXcodeExporter)
         {
-          convertSettingIfDefined(configuration, "recommendedWarnings",
+          convertSettingIfDefined(configurationVT, "recommendedWarnings",
                                   "ADD_RECOMMENDED_COMPILER_WARNING_FLAGS",
                                   [](const juce::var& v) -> juce::String {
                                     const auto value = v.toString();
@@ -2056,7 +2056,7 @@ int main(int argc, char* argv[])
         else if (exporterType == "CODEBLOCKS_LINUX"
                  || exporterType == "CODEBLOCKS_WINDOWS" || exporterType == "LINUX_MAKE")
         {
-          convertSettingIfDefined(configuration, "recommendedWarnings",
+          convertSettingIfDefined(configurationVT, "recommendedWarnings",
                                   "ADD_RECOMMENDED_COMPILER_WARNING_FLAGS",
                                   [](const juce::var& v) -> juce::String {
                                     const auto value = v.toString();
@@ -2077,7 +2077,7 @@ int main(int argc, char* argv[])
                                   });
         }
 
-        convertSettingIfDefined(configuration, "optimisation", "OPTIMISATION",
+        convertSettingIfDefined(configurationVT, "optimisation", "OPTIMISATION",
                                 [&isVSExporter](const juce::var& v) -> juce::String {
                                   if (isVSExporter)
                                   {
@@ -2115,19 +2115,19 @@ int main(int argc, char* argv[])
 
         if (isXcodeExporter)
         {
-          convertOnOffSettingIfDefined(configuration, "enablePluginBinaryCopyStep",
+          convertOnOffSettingIfDefined(configurationVT, "enablePluginBinaryCopyStep",
                                        "ENABLE_PLUGIN_COPY_STEP", {});
 
           if (!vstIsLegacy)
           {
-            if (configuration.hasProperty("xcodeVstBinaryLocation"))
+            if (configurationVT.hasProperty("xcodeVstBinaryLocation"))
             {
-              convertSetting(configuration, "xcodeVstBinaryLocation",
+              convertSetting(configurationVT, "xcodeVstBinaryLocation",
                              "VST_BINARY_LOCATION", {});
             }
             else
             {
-              convertSettingIfDefined(configuration, "vstBinaryLocation",
+              convertSettingIfDefined(configurationVT, "vstBinaryLocation",
                                       "VST_BINARY_LOCATION", {});
             }
           }
@@ -2149,28 +2149,28 @@ int main(int argc, char* argv[])
             const auto& newProperty = std::get<1>(binaryLocationTuple);
             const auto& cmakeKeyword = std::get<2>(binaryLocationTuple);
 
-            if (configuration.hasProperty(oldProperty))
+            if (configurationVT.hasProperty(oldProperty))
             {
-              convertSetting(configuration, oldProperty, cmakeKeyword, {});
+              convertSetting(configurationVT, oldProperty, cmakeKeyword, {});
             }
             else
             {
-              convertSettingIfDefined(configuration, newProperty, cmakeKeyword, {});
+              convertSettingIfDefined(configurationVT, newProperty, cmakeKeyword, {});
             }
           }
 
-          convertSettingIfDefined(configuration, "unityPluginBinaryLocation",
+          convertSettingIfDefined(configurationVT, "unityPluginBinaryLocation",
                                   "UNITY_BINARY_LOCATION", {});
           if (vstIsLegacy)
           {
-            convertSettingIfDefined(configuration, "vstBinaryLocation",
+            convertSettingIfDefined(configurationVT, "vstBinaryLocation",
                                     "VST_LEGACY_BINARY_LOCATION", {});
           }
         }
 
         if (exporterType == "XCODE_IPHONE")
         {
-          convertSettingIfDefined(configuration, "iosCompatibility",
+          convertSettingIfDefined(configurationVT, "iosCompatibility",
                                   "IOS_DEPLOYMENT_TARGET", {});
         }
 
@@ -2181,7 +2181,7 @@ int main(int argc, char* argv[])
             "10.10 SDK", "10.11 SDK", "10.12 SDK", "10.13 SDK", "10.14 SDK",
           };
 
-          convertSettingIfDefined(configuration, "osxSDK", "OSX_BASE_SDK_VERSION",
+          convertSettingIfDefined(configurationVT, "osxSDK", "OSX_BASE_SDK_VERSION",
                                   [&sdks](const juce::var& v) -> juce::String {
                                     const auto value = v.toString();
 
@@ -2194,7 +2194,7 @@ int main(int argc, char* argv[])
                                     return {};
                                   });
 
-          convertSettingIfDefined(configuration, "osxCompatibility",
+          convertSettingIfDefined(configurationVT, "osxCompatibility",
                                   "OSX_DEPLOYMENT_TARGET",
                                   [&sdks](const juce::var& v) -> juce::String {
                                     const auto value = v.toString();
@@ -2208,7 +2208,7 @@ int main(int argc, char* argv[])
                                     return {};
                                   });
 
-          convertSettingIfDefined(configuration, "osxArchitecture", "OSX_ARCHITECTURE",
+          convertSettingIfDefined(configurationVT, "osxArchitecture", "OSX_ARCHITECTURE",
                                   [](const juce::var& v) -> juce::String {
                                     const auto value = v.toString();
 
@@ -2234,7 +2234,7 @@ int main(int argc, char* argv[])
         if (isXcodeExporter)
         {
           convertSettingAsListIfDefined(
-            configuration, "customXcodeFlags", "CUSTOM_XCODE_FLAGS",
+            configurationVT, "customXcodeFlags", "CUSTOM_XCODE_FLAGS",
             [](const juce::var& v) {
               auto customFlags = juce::StringArray::fromTokens(v.toString(), ",", "\"'");
               customFlags.removeEmptyStrings();
@@ -2249,12 +2249,12 @@ int main(int argc, char* argv[])
             });
 
           convertSettingAsListIfDefined(
-            configuration, "plistPreprocessorDefinitions",
+            configurationVT, "plistPreprocessorDefinitions",
             "PLIST_PREPROCESSOR_DEFINITIONS", [](const juce::var& v) {
               return parsePreprocessorDefinitions(v.toString());
             });
 
-          convertSettingIfDefined(configuration, "cppLanguageStandard",
+          convertSettingIfDefined(configurationVT, "cppLanguageStandard",
                                   "CXX_LANGUAGE_STANDARD",
                                   [](const juce::var& v) -> juce::String {
                                     const auto value = v.toString();
@@ -2283,7 +2283,7 @@ int main(int argc, char* argv[])
                                     return {};
                                   });
 
-          convertSettingIfDefined(configuration, "cppLibType", "CXX_LIBRARY",
+          convertSettingIfDefined(configurationVT, "cppLibType", "CXX_LIBRARY",
                                   [](const juce::var& v) -> juce::String {
                                     const auto value = v.toString();
 
@@ -2299,39 +2299,39 @@ int main(int argc, char* argv[])
                                     return {};
                                   });
 
-          convertSettingIfDefined(configuration, "codeSigningIdentity",
+          convertSettingIfDefined(configurationVT, "codeSigningIdentity",
                                   "CODE_SIGNING_IDENTITY", {});
-          convertOnOffSettingIfDefined(configuration, "fastMath", "RELAX_IEEE_COMPLIANCE",
+          convertOnOffSettingIfDefined(configurationVT, "fastMath", "RELAX_IEEE_COMPLIANCE",
                                        {});
-          convertOnOffSettingIfDefined(configuration, "stripLocalSymbols",
+          convertOnOffSettingIfDefined(configurationVT, "stripLocalSymbols",
                                        "STRIP_LOCAL_SYMBOLS", {});
         }
 
         if (isVSExporter)
         {
-          convertOnOffSettingIfDefined(configuration, "enablePluginBinaryCopyStep",
+          convertOnOffSettingIfDefined(configurationVT, "enablePluginBinaryCopyStep",
                                        "ENABLE_PLUGIN_COPY_STEP", {});
 
           if (!vstIsLegacy)
           {
-            convertSettingIfDefined(configuration, "vstBinaryLocation",
+            convertSettingIfDefined(configurationVT, "vstBinaryLocation",
                                     "VST_BINARY_LOCATION", {});
           }
-          convertSettingIfDefined(configuration, "vst3BinaryLocation",
+          convertSettingIfDefined(configurationVT, "vst3BinaryLocation",
                                   "VST3_BINARY_LOCATION", {});
-          convertSettingIfDefined(configuration, "rtasBinaryLocation",
+          convertSettingIfDefined(configurationVT, "rtasBinaryLocation",
                                   "RTAS_BINARY_LOCATION", {});
-          convertSettingIfDefined(configuration, "aaxBinaryLocation",
+          convertSettingIfDefined(configurationVT, "aaxBinaryLocation",
                                   "AAX_BINARY_LOCATION", {});
-          convertSettingIfDefined(configuration, "unityPluginBinaryLocation",
+          convertSettingIfDefined(configurationVT, "unityPluginBinaryLocation",
                                   "UNITY_BINARY_LOCATION", {});
           if (vstIsLegacy)
           {
-            convertSettingIfDefined(configuration, "vstBinaryLocation",
+            convertSettingIfDefined(configurationVT, "vstBinaryLocation",
                                     "VST_LEGACY_BINARY_LOCATION", {});
           }
 
-          convertSettingIfDefined(configuration, "winWarningLevel", "WARNING_LEVEL",
+          convertSettingIfDefined(configurationVT, "winWarningLevel", "WARNING_LEVEL",
                                   [](const juce::var& v) -> juce::String {
                                     switch (int{v})
                                     {
@@ -2346,10 +2346,10 @@ int main(int argc, char* argv[])
                                     return "High";
                                   });
 
-          convertOnOffSettingIfDefined(configuration, "warningsAreErrors",
+          convertOnOffSettingIfDefined(configurationVT, "warningsAreErrors",
                                        "TREAT_WARNINGS_AS_ERRORS", {});
 
-          convertSettingIfDefined(configuration, "useRuntimeLibDLL", "RUNTIME_LIBRARY",
+          convertSettingIfDefined(configurationVT, "useRuntimeLibDLL", "RUNTIME_LIBRARY",
                                   [](const juce::var& v) -> juce::String {
                                     const auto value = v.toString();
 
@@ -2367,7 +2367,7 @@ int main(int argc, char* argv[])
 
           if (jucerVersionAsTuple < Version{5, 2, 0})
           {
-            convertSettingIfDefined(configuration, "wholeProgramOptimisation",
+            convertSettingIfDefined(configurationVT, "wholeProgramOptimisation",
                                     "WHOLE_PROGRAM_OPTIMISATION",
                                     [](const juce::var& v) -> juce::String {
                                       if (v.toString().isEmpty())
@@ -2380,25 +2380,25 @@ int main(int argc, char* argv[])
                                     });
           }
 
-          convertOnOffSettingIfDefined(configuration, "multiProcessorCompilation",
+          convertOnOffSettingIfDefined(configurationVT, "multiProcessorCompilation",
                                        "MULTI_PROCESSOR_COMPILATION", {});
-          convertOnOffSettingIfDefined(configuration, "enableIncrementalLinking",
+          convertOnOffSettingIfDefined(configurationVT, "enableIncrementalLinking",
                                        "INCREMENTAL_LINKING", {});
 
           if (!isDebug)
           {
-            convertOnOffSettingIfDefined(configuration, "alwaysGenerateDebugSymbols",
+            convertOnOffSettingIfDefined(configurationVT, "alwaysGenerateDebugSymbols",
                                          "FORCE_GENERATION_OF_DEBUG_SYMBOLS", {});
           }
 
-          convertSettingIfDefined(configuration, "prebuildCommand", "PREBUILD_COMMAND",
+          convertSettingIfDefined(configurationVT, "prebuildCommand", "PREBUILD_COMMAND",
                                   {});
-          convertSettingIfDefined(configuration, "postbuildCommand", "POSTBUILD_COMMAND",
+          convertSettingIfDefined(configurationVT, "postbuildCommand", "POSTBUILD_COMMAND",
                                   {});
-          convertOnOffSettingIfDefined(configuration, "generateManifest",
+          convertOnOffSettingIfDefined(configurationVT, "generateManifest",
                                        "GENERATE_MANIFEST", {});
 
-          convertSettingIfDefined(configuration, "characterSet", "CHARACTER_SET",
+          convertSettingIfDefined(configurationVT, "characterSet", "CHARACTER_SET",
                                   [](const juce::var& v) -> juce::String {
                                     const auto value = v.toString();
 
@@ -2408,10 +2408,10 @@ int main(int argc, char* argv[])
                                     return value;
                                   });
 
-          if (configuration.hasProperty("winArchitecture"))
+          if (configurationVT.hasProperty("winArchitecture"))
           {
             const auto winArchitecture =
-              configuration.getProperty("winArchitecture").toString();
+              configurationVT.getProperty("winArchitecture").toString();
             if (winArchitecture.isEmpty())
             {
               wLn("  # ARCHITECTURE");
@@ -2423,7 +2423,7 @@ int main(int argc, char* argv[])
           }
 
           convertSettingIfDefined(
-            configuration, "debugInformationFormat", "DEBUG_INFORMATION_FORMAT",
+            configurationVT, "debugInformationFormat", "DEBUG_INFORMATION_FORMAT",
             [](const juce::var& v) -> juce::String {
               const auto value = v.toString();
 
@@ -2442,13 +2442,13 @@ int main(int argc, char* argv[])
               return {};
             });
 
-          convertOnOffSettingIfDefined(configuration, "fastMath", "RELAX_IEEE_COMPLIANCE",
+          convertOnOffSettingIfDefined(configurationVT, "fastMath", "RELAX_IEEE_COMPLIANCE",
                                        {});
         }
 
         if (exporterType == "LINUX_MAKE")
         {
-          convertSettingIfDefined(configuration, "linuxArchitecture", "ARCHITECTURE",
+          convertSettingIfDefined(configurationVT, "linuxArchitecture", "ARCHITECTURE",
                                   [](const juce::var& v) -> juce::String {
                                     const auto value = v.toString();
 
@@ -2494,25 +2494,25 @@ int main(int argc, char* argv[])
 
         if (exporterType == "CODEBLOCKS_WINDOWS")
         {
-          if (configuration.hasProperty("windowsCodeBlocksArchitecture")
+          if (configurationVT.hasProperty("windowsCodeBlocksArchitecture")
               || jucerVersionAsTuple >= Version{5, 0, 0})
           {
-            convertSetting(configuration, "windowsCodeBlocksArchitecture", "ARCHITECTURE",
+            convertSetting(configurationVT, "windowsCodeBlocksArchitecture", "ARCHITECTURE",
                            codeBlocksArchitecture);
           }
         }
 
         if (exporterType == "CODEBLOCKS_LINUX")
         {
-          if (configuration.hasProperty("linuxCodeBlocksArchitecture")
+          if (configurationVT.hasProperty("linuxCodeBlocksArchitecture")
               || jucerVersionAsTuple >= Version{5, 0, 0})
           {
-            convertSetting(configuration, "linuxCodeBlocksArchitecture", "ARCHITECTURE",
+            convertSetting(configurationVT, "linuxCodeBlocksArchitecture", "ARCHITECTURE",
                            codeBlocksArchitecture);
           }
         }
 
-        writeUserNotes(wLn, configuration);
+        writeUserNotes(wLn, configurationVT);
 
         wLn(")");
         wLn();
