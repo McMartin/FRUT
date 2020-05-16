@@ -1488,7 +1488,7 @@ int main(int argc, char* argv[])
 
       const auto& exporter = *pExporter;
       const auto exporterVT = juce::ValueTree::fromXml(exporter);
-      const auto exporterType = exporterVT.getType().toString();
+      const auto& exporterType = exporter.getTagName();
 
       if (!supportedExporters.contains(exporterType))
       {
