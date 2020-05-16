@@ -371,11 +371,6 @@ int main(int argc, char* argv[])
   }
 
   const auto jucerProject = juce::ValueTree::fromXml(*xml);
-  if (!jucerProject.hasType("JUCERPROJECT"))
-  {
-    printError(jucerFilePath + " is not a valid Jucer project.");
-    return 1;
-  }
 
   const auto jucerVersion = jucerProject.getProperty("jucerVersion").toString();
   const auto jucerVersionTokens = juce::StringArray::fromTokens(jucerVersion, ".", {});
