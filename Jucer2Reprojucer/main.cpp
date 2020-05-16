@@ -1213,7 +1213,7 @@ int main(int argc, char* argv[])
     const auto modules = jucerProject.getChildWithName("MODULES");
     for (auto i = 0; i < modules.getNumChildren(); ++i)
     {
-      const auto& module = modules.getChild(i);
+      const auto module = modules.getChild(i);
       const auto moduleName = module.getProperty("id").toString();
 
       const auto useGlobalPath = bool{module.getProperty("useGlobalPath")};
