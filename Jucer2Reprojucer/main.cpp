@@ -750,7 +750,7 @@ int main(int argc, char* argv[])
       const auto tagLine = juce::String{" # Required for closed source applications"
                                         " without an Indie or Pro JUCE license"};
 
-      if (!jucerProjectVT.hasProperty("reportAppUsage"))
+      if (!jucerProject.hasAttribute("reportAppUsage"))
       {
         wLn("  REPORT_JUCE_APP_USAGE ", kDefaultLicenseBasedValue, tagLine);
       }
@@ -762,7 +762,7 @@ int main(int argc, char* argv[])
                             });
       }
 
-      if (!jucerProjectVT.hasProperty("displaySplashScreen"))
+      if (!jucerProject.hasAttribute("displaySplashScreen"))
       {
         wLn("  DISPLAY_THE_JUCE_SPLASH_SCREEN ", kDefaultLicenseBasedValue, tagLine);
       }
@@ -820,7 +820,7 @@ int main(int argc, char* argv[])
                               return juce::File::descriptionOfSizeInBytes(
                                 value.getIntValue());
                             });
-    if (jucerProjectVT.hasProperty("includeBinaryInJuceHeader"))
+    if (jucerProject.hasAttribute("includeBinaryInJuceHeader"))
     {
       convertOnOffSetting(jucerProject, "includeBinaryInJuceHeader", "INCLUDE_BINARYDATA",
                           {});
@@ -833,7 +833,7 @@ int main(int argc, char* argv[])
     convertSettingIfDefined(jucerProject, "binaryDataNamespace", "BINARYDATA_NAMESPACE",
                             {});
 
-    if (jucerProjectVT.hasProperty("cppLanguageStandard"))
+    if (jucerProject.hasAttribute("cppLanguageStandard"))
     {
       convertSetting(jucerProject, "cppLanguageStandard", "CXX_LANGUAGE_STANDARD",
                      [](const juce::String& value) -> juce::String {
@@ -888,7 +888,7 @@ int main(int argc, char* argv[])
 
       if (jucerVersionAsTuple >= Version{5, 3, 1})
       {
-        if (!jucerProjectVT.hasProperty("pluginFormats"))
+        if (!jucerProject.hasAttribute("pluginFormats"))
         {
           convertSettingAsList(
             jucerProject, "pluginFormats", "PLUGIN_FORMATS",
@@ -918,7 +918,7 @@ int main(int argc, char* argv[])
             });
         }
 
-        if (!jucerProjectVT.hasProperty("pluginCharacteristicsValue"))
+        if (!jucerProject.hasAttribute("pluginCharacteristicsValue"))
         {
           convertSettingAsList(jucerProject, "pluginCharacteristicsValue",
                                "PLUGIN_CHARACTERISTICS", {});
@@ -1012,7 +1012,7 @@ int main(int argc, char* argv[])
                                 makeValidIdentifier(jucerProjectName) + "AU");
       if (jucerVersionAsTuple >= Version{5, 3, 1})
       {
-        if (!jucerProjectVT.hasProperty("pluginAUMainType"))
+        if (!jucerProject.hasAttribute("pluginAUMainType"))
         {
           convertSetting(jucerProject, "pluginAUMainType", "PLUGIN_AU_MAIN_TYPE",
                          [&pluginCharacteristics](const juce::String&) -> juce::String {
@@ -1055,14 +1055,14 @@ int main(int argc, char* argv[])
       convertOnOffSettingIfDefined(jucerProject, "pluginAUIsSandboxSafe",
                                    "PLUGIN_AU_IS_SANDBOX_SAFE", {});
 
-      if (jucerProjectVT.hasProperty("pluginVSTNumMidiInputs")
+      if (jucerProject.hasAttribute("pluginVSTNumMidiInputs")
           || (jucerVersionAsTuple >= Version{5, 4, 2}
               && pluginCharacteristics.contains("pluginWantsMidiIn")))
       {
         convertSettingWithDefault(jucerProject, "pluginVSTNumMidiInputs",
                                   "PLUGIN_VST_NUM_MIDI_INPUTS", "16");
       }
-      if (jucerProjectVT.hasProperty("pluginVSTNumMidiOutputs")
+      if (jucerProject.hasAttribute("pluginVSTNumMidiOutputs")
           || (jucerVersionAsTuple >= Version{5, 4, 2}
               && pluginCharacteristics.contains("pluginProducesMidiOut")))
       {
@@ -1080,10 +1080,10 @@ int main(int argc, char* argv[])
             : "");
       }
 
-      if (jucerProjectVT.hasProperty("pluginVST3Category")
+      if (jucerProject.hasAttribute("pluginVST3Category")
           || jucerVersionAsTuple >= Version{5, 3, 1})
       {
-        if (!jucerProjectVT.hasProperty("pluginVST3Category"))
+        if (!jucerProject.hasAttribute("pluginVST3Category"))
         {
           convertSettingAsList(
             jucerProject, "pluginVST3Category", "PLUGIN_VST3_CATEGORY",
@@ -1113,7 +1113,7 @@ int main(int argc, char* argv[])
 
       if (jucerVersionAsTuple >= Version{5, 3, 1})
       {
-        if (!jucerProjectVT.hasProperty("pluginRTASCategory"))
+        if (!jucerProject.hasAttribute("pluginRTASCategory"))
         {
           convertSettingAsList(
             jucerProject, "pluginRTASCategory", "PLUGIN_RTAS_CATEGORY",
@@ -1146,7 +1146,7 @@ int main(int argc, char* argv[])
             });
         }
 
-        if (!jucerProjectVT.hasProperty("pluginAAXCategory"))
+        if (!jucerProject.hasAttribute("pluginAAXCategory"))
         {
           convertSettingAsList(
             jucerProject, "pluginAAXCategory", "PLUGIN_AAX_CATEGORY",
@@ -1506,8 +1506,8 @@ int main(int argc, char* argv[])
         exporterType == "XCODE_MAC" || exporterType == "XCODE_IPHONE";
 
       if (isXcodeExporter
-          && (exporterVT.hasProperty("prebuildCommand")
-              || exporterVT.hasProperty("postbuildCommand")))
+          && (exporter.hasAttribute("prebuildCommand")
+              || exporter.hasAttribute("postbuildCommand")))
       {
         wLn("  TARGET_PROJECT_FOLDER \"", exporter.getStringAttribute("targetFolder"),
             "\"  # only used by PREBUILD_SHELL_SCRIPT and POSTBUILD_SHELL_SCRIPT");
@@ -1977,7 +1977,7 @@ int main(int argc, char* argv[])
       {
         convertSettingIfDefined(exporter, "msvcManifestFile", "MANIFEST_FILE", {});
 
-        if (exporterVT.hasProperty("toolset"))
+        if (exporter.hasAttribute("toolset"))
         {
           const auto& toolset = exporter.getStringAttribute("toolset");
           if (toolset.isEmpty())
@@ -2160,7 +2160,7 @@ int main(int argc, char* argv[])
         convertOnOffSettingIfDefined(configuration, "linkTimeOptimisation",
                                      "LINK_TIME_OPTIMISATION", {});
 
-        if (!configurationVT.hasProperty("linkTimeOptimisation") && isVSExporter && !isDebug
+        if (!configuration.hasAttribute("linkTimeOptimisation") && isVSExporter && !isDebug
             && jucerVersionAsTuple >= Version{5, 2, 0})
         {
           convertOnOffSettingIfDefined(configuration, "wholeProgramOptimisation",
@@ -2252,7 +2252,7 @@ int main(int argc, char* argv[])
 
           if (!vstIsLegacy)
           {
-            if (configurationVT.hasProperty("xcodeVstBinaryLocation"))
+            if (configuration.hasAttribute("xcodeVstBinaryLocation"))
             {
               convertSetting(configuration, "xcodeVstBinaryLocation",
                              "VST_BINARY_LOCATION", {});
@@ -2281,7 +2281,7 @@ int main(int argc, char* argv[])
             const auto& newProperty = std::get<1>(binaryLocationTuple);
             const auto& cmakeKeyword = std::get<2>(binaryLocationTuple);
 
-            if (configurationVT.hasProperty(oldProperty))
+            if (configuration.hasAttribute(oldProperty))
             {
               convertSetting(configuration, oldProperty, cmakeKeyword, {});
             }
@@ -2526,7 +2526,7 @@ int main(int argc, char* argv[])
                                     return value;
                                   });
 
-          if (configurationVT.hasProperty("winArchitecture"))
+          if (configuration.hasAttribute("winArchitecture"))
           {
             const auto& winArchitecture =
               configuration.getStringAttribute("winArchitecture");
@@ -2607,7 +2607,7 @@ int main(int argc, char* argv[])
 
         if (exporterType == "CODEBLOCKS_WINDOWS")
         {
-          if (configurationVT.hasProperty("windowsCodeBlocksArchitecture")
+          if (configuration.hasAttribute("windowsCodeBlocksArchitecture")
               || jucerVersionAsTuple >= Version{5, 0, 0})
           {
             convertSetting(configuration, "windowsCodeBlocksArchitecture", "ARCHITECTURE",
@@ -2617,7 +2617,7 @@ int main(int argc, char* argv[])
 
         if (exporterType == "CODEBLOCKS_LINUX")
         {
-          if (configurationVT.hasProperty("linuxCodeBlocksArchitecture")
+          if (configuration.hasAttribute("linuxCodeBlocksArchitecture")
               || jucerVersionAsTuple >= Version{5, 0, 0})
           {
             convertSetting(configuration, "linuxCodeBlocksArchitecture", "ARCHITECTURE",
