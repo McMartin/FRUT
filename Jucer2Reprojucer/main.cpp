@@ -1267,8 +1267,13 @@ int main(int argc, char* argv[])
         }
       }
 
-      const auto relativeModulePath =
-        modulePathsVT.getChildWithProperty("id", moduleName).getProperty("path").toString();
+      const auto relativeModulePath = [&modulePaths, &moduleName]() -> juce::String {
+        if (const auto pModulePath = modulePaths.getChildByAttribute("id", moduleName))
+        {
+          return pModulePath->getStringAttribute("path");
+        }
+        return juce::String{};
+      }();
 
       wLn("jucer_project_module(");
       wLn("  ", moduleName);
@@ -1454,9 +1459,9 @@ int main(int argc, char* argv[])
       const auto pluginFormats = juce::StringArray::fromTokens(
         jucerProjectVT.getProperty("pluginFormats").toString(), ",", {});
       const auto hasJuceAudioProcessorsModule =
-        juce::ValueTree::fromXml(safeGetChildByName(jucerProject, "MODULES"))
-          .getChildWithProperty("id", "juce_audio_processors")
-          .isValid();
+        safeGetChildByName(jucerProject, "MODULES")
+          .getChildByAttribute("id", "juce_audio_processors")
+        != nullptr;
 
       const auto hasVst2Interface = jucerVersionAsTuple > Version{4, 2, 3};
       const auto isVstAudioPlugin = isAudioPlugin
