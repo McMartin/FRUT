@@ -859,9 +859,8 @@ int main(int argc, char* argv[])
       wLn("  ", "CXX_LANGUAGE_STANDARD", " \"C++11\"");
     }
 
-    convertSettingAsListIfDefined(
-      jucerProject, "defines", "PREPROCESSOR_DEFINITIONS",
-      [](const juce::String& value) { return parsePreprocessorDefinitions(value); });
+    convertSettingAsListIfDefined(jucerProject, "defines", "PREPROCESSOR_DEFINITIONS",
+                                  parsePreprocessorDefinitions);
     convertSettingAsListIfDefined(
       jucerProject, "headerPath", "HEADER_SEARCH_PATHS", [](const juce::String& value) {
         return juce::StringArray::fromTokens(value, ";\r\n", {});
@@ -1605,9 +1604,9 @@ int main(int argc, char* argv[])
         }
       }
 
-      convertSettingAsListIfDefined(
-        exporter, "extraDefs", "EXTRA_PREPROCESSOR_DEFINITIONS",
-        [](const juce::String& value) { return parsePreprocessorDefinitions(value); });
+      convertSettingAsListIfDefined(exporter, "extraDefs",
+                                    "EXTRA_PREPROCESSOR_DEFINITIONS",
+                                    parsePreprocessorDefinitions);
       convertSettingAsListIfDefined(exporter, "extraCompilerFlags",
                                     "EXTRA_COMPILER_FLAGS",
                                     [](const juce::String& value) {
@@ -2155,9 +2154,9 @@ int main(int argc, char* argv[])
         convertSettingAsListIfDefined(configuration, "libraryPath",
                                       "EXTRA_LIBRARY_SEARCH_PATHS", convertSearchPaths);
 
-        convertSettingAsListIfDefined(
-          configuration, "defines", "PREPROCESSOR_DEFINITIONS",
-          [](const juce::String& value) { return parsePreprocessorDefinitions(value); });
+        convertSettingAsListIfDefined(configuration, "defines",
+                                      "PREPROCESSOR_DEFINITIONS",
+                                      parsePreprocessorDefinitions);
 
         convertOnOffSettingIfDefined(configuration, "linkTimeOptimisation",
                                      "LINK_TIME_OPTIMISATION", {});
@@ -2379,9 +2378,7 @@ int main(int argc, char* argv[])
 
           convertSettingAsListIfDefined(configuration, "plistPreprocessorDefinitions",
                                         "PLIST_PREPROCESSOR_DEFINITIONS",
-                                        [](const juce::String& value) {
-                                          return parsePreprocessorDefinitions(value);
-                                        });
+                                        parsePreprocessorDefinitions);
 
           convertSettingIfDefined(configuration, "cppLanguageStandard",
                                   "CXX_LANGUAGE_STANDARD",
