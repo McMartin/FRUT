@@ -789,7 +789,8 @@ int main(int argc, char* argv[])
                             [](const juce::var& v) -> juce::String {
                               if (v.toString().isEmpty())
                                 return "Default";
-                              return juce::File::descriptionOfSizeInBytes(int{v});
+                              return juce::File::descriptionOfSizeInBytes(
+                                v.toString().getIntValue());
                             });
     if (jucerProject.hasProperty("includeBinaryInJuceHeader"))
     {
@@ -1248,9 +1249,9 @@ int main(int argc, char* argv[])
           {
             const auto& file = fileOrGroup;
 
-            files.push_back({int{file.getProperty("compile")} == 1,
-                             int{file.getProperty("xcodeResource")} == 1,
-                             int{file.getProperty("resource")} == 1,
+            files.push_back({file.getProperty("compile").toString().getIntValue() == 1,
+                             file.getProperty("xcodeResource").toString().getIntValue() == 1,
+                             file.getProperty("resource").toString().getIntValue() == 1,
                              file.getProperty("file").toString(),
                              file.getProperty("compilerFlagScheme").toString()});
           }
@@ -2101,7 +2102,7 @@ int main(int argc, char* argv[])
         {
           convertOnOffSettingIfDefined(configuration, "wholeProgramOptimisation",
                                        "LINK_TIME_OPTIMISATION", [](const juce::var& v) {
-                                         if (int{v} == 0)
+                                         if (v.toString().getIntValue() == 0)
                                            return "ON";
 
                                          return "OFF";
@@ -2152,7 +2153,7 @@ int main(int argc, char* argv[])
                                 [&isVSExporter](const juce::var& v) -> juce::String {
                                   if (isVSExporter)
                                   {
-                                    switch (int{v})
+                                    switch (v.toString().getIntValue())
                                     {
                                     case 1:
                                       return "No optimisation";
@@ -2165,7 +2166,7 @@ int main(int argc, char* argv[])
                                     return {};
                                   }
 
-                                  switch (int{v})
+                                  switch (v.toString().getIntValue())
                                   {
                                   case 1:
                                     return "-O0 (no optimisation)";
@@ -2404,7 +2405,7 @@ int main(int argc, char* argv[])
 
           convertSettingIfDefined(configuration, "winWarningLevel", "WARNING_LEVEL",
                                   [](const juce::var& v) -> juce::String {
-                                    switch (int{v})
+                                    switch (v.toString().getIntValue())
                                     {
                                     case 2:
                                       return "Low";
@@ -2444,7 +2445,7 @@ int main(int argc, char* argv[])
                                       if (v.toString().isEmpty())
                                         return "Enable when possible";
 
-                                      if (int{v} > 0)
+                                      if (v.toString().getIntValue() > 0)
                                         return "Always disable";
 
                                       return {};
