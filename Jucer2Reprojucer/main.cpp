@@ -1011,16 +1011,16 @@ int main(int argc, char* argv[])
               return isSynthAudioPlugin ? juce::StringArray{"Instrument", "Synth"}
                                         : juce::StringArray{"Fx"};
             }
-            auto vst3_category = juce::StringArray::fromTokens(v.toString(), ",", {});
-            if (vst3_category.contains("Instrument"))
+            auto vst3Category = juce::StringArray::fromTokens(v.toString(), ",", {});
+            if (vst3Category.contains("Instrument"))
             {
-              vst3_category.move(vst3_category.indexOf("Instrument"), 0);
+              vst3Category.move(vst3Category.indexOf("Instrument"), 0);
             }
-            if (vst3_category.contains("Fx"))
+            if (vst3Category.contains("Fx"))
             {
-              vst3_category.move(vst3_category.indexOf("Fx"), 0);
+              vst3Category.move(vst3Category.indexOf("Fx"), 0);
             }
-            return vst3_category;
+            return vst3Category;
           });
       }
 
