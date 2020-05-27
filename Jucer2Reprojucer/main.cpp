@@ -484,10 +484,16 @@ int main(int argc, char* argv[])
     [&convertSetting](const juce::ValueTree& valueTree, const juce::Identifier& property,
                       const juce::String& cmakeKeyword,
                       const juce::String& defaultValue) {
-      convertSetting(valueTree, property, cmakeKeyword,
-                     [&defaultValue](const juce::var& v) -> juce::String {
-                       return v.isVoid() ? defaultValue : v.toString();
-                     });
+      if (!valueTree.hasProperty(property))
+      {
+        convertSetting(valueTree, property, cmakeKeyword,
+                       [&defaultValue](const juce::var&) { return defaultValue; });
+      }
+      else
+      {
+        convertSetting(valueTree, property, cmakeKeyword,
+                       [](const juce::var& v) { return v.toString(); });
+      }
     };
 
   const auto convertOnOffSetting =
@@ -496,9 +502,16 @@ int main(int argc, char* argv[])
            std::function<juce::String(const juce::var&)> converterFn) {
       if (!converterFn)
       {
-        converterFn = [](const juce::var& v) -> juce::String {
-          return v.isVoid() ? "" : bool{v} ? "ON" : "OFF";
-        };
+        if (!valueTree.hasProperty(property))
+        {
+          converterFn = [](const juce::var&) -> juce::String { return {}; };
+        }
+        else
+        {
+          converterFn = [](const juce::var& v) -> juce::String {
+            return bool{v} ? "ON" : "OFF";
+          };
+        }
       }
 
       const auto value = converterFn(valueTree.getProperty(property));
@@ -528,11 +541,19 @@ int main(int argc, char* argv[])
     [&convertOnOffSetting](const juce::ValueTree& valueTree,
                            const juce::Identifier& property,
                            const juce::String& cmakeKeyword, bool defaultValue) {
-      convertOnOffSetting(valueTree, property, cmakeKeyword,
-                          [defaultValue](const juce::var& v) -> juce::String {
-                            return v.isVoid() ? (defaultValue ? "ON" : "OFF")
-                                              : (bool{v} ? "ON" : "OFF");
-                          });
+      if (!valueTree.hasProperty(property))
+      {
+        convertOnOffSetting(valueTree, property, cmakeKeyword,
+                            [defaultValue](const juce::var&) -> juce::String {
+                              return defaultValue ? "ON" : "OFF";
+                            });
+      }
+      else
+      {
+        convertOnOffSetting(
+          valueTree, property, cmakeKeyword,
+          [](const juce::var& v) -> juce::String { return bool{v} ? "ON" : "OFF"; });
+      }
     };
 
   const auto convertSettingAsList =
@@ -701,18 +722,31 @@ int main(int argc, char* argv[])
 
     if (jucerVersionAsTuple >= Version{5, 0, 0})
     {
-      const auto booleanWithLicenseRequiredTagline = [](const juce::var& v) {
-        const auto value =
-          v.isVoid() ? kDefaultLicenseBasedValue : (bool{v} ? "ON" : "OFF");
-        return juce::String{value}
-               + " # Required for closed source applications without an Indie or Pro "
-                 "JUCE license";
-      };
-      convertOnOffSetting(jucerProject, "reportAppUsage", "REPORT_JUCE_APP_USAGE",
-                          booleanWithLicenseRequiredTagline);
-      convertOnOffSetting(jucerProject, "displaySplashScreen",
-                          "DISPLAY_THE_JUCE_SPLASH_SCREEN",
-                          booleanWithLicenseRequiredTagline);
+      const auto tagLine = juce::String{" # Required for closed source applications"
+                                        " without an Indie or Pro JUCE license"};
+
+      if (!jucerProject.hasProperty("reportAppUsage"))
+      {
+        wLn("  REPORT_JUCE_APP_USAGE ", kDefaultLicenseBasedValue, tagLine);
+      }
+      else
+      {
+        convertOnOffSetting(
+          jucerProject, "reportAppUsage", "REPORT_JUCE_APP_USAGE",
+          [&tagLine](const juce::var& v) { return (bool{v} ? "ON" : "OFF") + tagLine; });
+      }
+
+      if (!jucerProject.hasProperty("displaySplashScreen"))
+      {
+        wLn("  DISPLAY_THE_JUCE_SPLASH_SCREEN ", kDefaultLicenseBasedValue, tagLine);
+      }
+      else
+      {
+        convertOnOffSetting(
+          jucerProject, "displaySplashScreen", "DISPLAY_THE_JUCE_SPLASH_SCREEN",
+          [&tagLine](const juce::var& v) { return (bool{v} ? "ON" : "OFF") + tagLine; });
+      }
+
       convertSettingIfDefined(jucerProject, "splashScreenColour", "SPLASH_SCREEN_COLOUR",
                               {});
     }
@@ -827,45 +861,55 @@ int main(int argc, char* argv[])
 
       if (jucerVersionAsTuple >= Version{5, 3, 1})
       {
-        convertSettingAsList(
-          jucerProject, "pluginFormats", "PLUGIN_FORMATS",
-          [&jucerVersionAsTuple, &vstIsLegacy](const juce::var& v) {
-            if (v.isVoid())
-            {
+        if (!jucerProject.hasProperty("pluginFormats"))
+        {
+          convertSettingAsList(
+            jucerProject, "pluginFormats", "PLUGIN_FORMATS",
+            [&vstIsLegacy](const juce::var&) {
               return juce::StringArray{vstIsLegacy ? "VST3" : "VST", "AU", "Standalone"};
-            }
-            const auto supportsUnity = jucerVersionAsTuple >= Version{5, 3, 2};
-            return convertIdsToStrings(
-              v, {{vstIsLegacy ? "" : "buildVST", vstIsLegacy ? "" : "VST"},
-                  {"buildVST3", "VST3"},
-                  {"buildAU", "AU"},
-                  {"buildAUv3", "AUv3"},
-                  {"buildRTAS", "RTAS"},
-                  {"buildAAX", "AAX"},
-                  {"buildStandalone", "Standalone"},
-                  {supportsUnity ? "buildUnity" : "", supportsUnity ? "Unity" : ""},
-                  {"enableIAA", "Enable IAA"},
-                  {vstIsLegacy ? "buildVST" : "", vstIsLegacy ? "VST (Legacy)" : ""}});
-          });
+            });
+        }
+        else
+        {
+          convertSettingAsList(
+            jucerProject, "pluginFormats", "PLUGIN_FORMATS",
+            [&jucerVersionAsTuple, &vstIsLegacy](const juce::var& v) {
+              const auto supportsUnity = jucerVersionAsTuple >= Version{5, 3, 2};
+              return convertIdsToStrings(
+                v, {{vstIsLegacy ? "" : "buildVST", vstIsLegacy ? "" : "VST"},
+                    {"buildVST3", "VST3"},
+                    {"buildAU", "AU"},
+                    {"buildAUv3", "AUv3"},
+                    {"buildRTAS", "RTAS"},
+                    {"buildAAX", "AAX"},
+                    {"buildStandalone", "Standalone"},
+                    {supportsUnity ? "buildUnity" : "", supportsUnity ? "Unity" : ""},
+                    {"enableIAA", "Enable IAA"},
+                    {vstIsLegacy ? "buildVST" : "", vstIsLegacy ? "VST (Legacy)" : ""}});
+            });
+        }
 
-        convertSettingAsList(
-          jucerProject, "pluginCharacteristicsValue", "PLUGIN_CHARACTERISTICS",
-          [](const juce::var& v) {
-            if (v.isVoid())
-            {
-              return juce::StringArray{};
-            }
-            return convertIdsToStrings(
-              v, {{"pluginIsSynth", "Plugin is a Synth"},
-                  {"pluginWantsMidiIn", "Plugin MIDI Input"},
-                  {"pluginProducesMidiOut", "Plugin MIDI Output"},
-                  {"pluginIsMidiEffectPlugin", "MIDI Effect Plugin"},
-                  {"pluginEditorRequiresKeys", "Plugin Editor Requires Keyboard Focus"},
-                  {"pluginRTASDisableBypass", "Disable RTAS Bypass"},
-                  {"pluginAAXDisableBypass", "Disable AAX Bypass"},
-                  {"pluginRTASDisableMultiMono", "Disable RTAS Multi-Mono"},
-                  {"pluginAAXDisableMultiMono", "Disable AAX Multi-Mono"}});
-          });
+        if (!jucerProject.hasProperty("pluginCharacteristicsValue"))
+        {
+          wLn("  # PLUGIN_CHARACTERISTICS");
+        }
+        else
+        {
+          convertSettingAsList(
+            jucerProject, "pluginCharacteristicsValue", "PLUGIN_CHARACTERISTICS",
+            [](const juce::var& v) {
+              return convertIdsToStrings(
+                v, {{"pluginIsSynth", "Plugin is a Synth"},
+                    {"pluginWantsMidiIn", "Plugin MIDI Input"},
+                    {"pluginProducesMidiOut", "Plugin MIDI Output"},
+                    {"pluginIsMidiEffectPlugin", "MIDI Effect Plugin"},
+                    {"pluginEditorRequiresKeys", "Plugin Editor Requires Keyboard Focus"},
+                    {"pluginRTASDisableBypass", "Disable RTAS Bypass"},
+                    {"pluginAAXDisableBypass", "Disable AAX Bypass"},
+                    {"pluginRTASDisableMultiMono", "Disable RTAS Multi-Mono"},
+                    {"pluginAAXDisableMultiMono", "Disable AAX Multi-Mono"}});
+            });
+        }
       }
       else
       {
@@ -936,10 +980,10 @@ int main(int argc, char* argv[])
                                 makeValidIdentifier(jucerProjectName) + "AU");
       if (jucerVersionAsTuple >= Version{5, 3, 1})
       {
-        convertSetting(jucerProject, "pluginAUMainType", "PLUGIN_AU_MAIN_TYPE",
-                       [&pluginCharacteristics](const juce::var& v) -> juce::String {
-                         if (v.isVoid())
-                         {
+        if (!jucerProject.hasProperty("pluginAUMainType"))
+        {
+          convertSetting(jucerProject, "pluginAUMainType", "PLUGIN_AU_MAIN_TYPE",
+                         [&pluginCharacteristics](const juce::var&) -> juce::String {
                            if (pluginCharacteristics.contains("pluginIsMidiEffectPlugin"))
                              return "kAudioUnitType_MIDIProcessor"; // 'aumi'
 
@@ -950,23 +994,28 @@ int main(int argc, char* argv[])
                              return "kAudioUnitType_MusicEffect"; // 'aumf'
 
                            return "kAudioUnitType_Effect"; // 'aufx'
-                         }
-
-                         const auto value = v.toString();
-                         // clang-format off
-                         if (value == "'aufx'") return "kAudioUnitType_Effect";
-                         if (value == "'aufc'") return "kAudioUnitType_FormatConverter";
-                         if (value == "'augn'") return "kAudioUnitType_Generator";
-                         if (value == "'aumi'") return "kAudioUnitType_MIDIProcessor";
-                         if (value == "'aumx'") return "kAudioUnitType_Mixer";
-                         if (value == "'aumu'") return "kAudioUnitType_MusicDevice";
-                         if (value == "'aumf'") return "kAudioUnitType_MusicEffect";
-                         if (value == "'auol'") return "kAudioUnitType_OfflineEffect";
-                         if (value == "'auou'") return "kAudioUnitType_Output";
-                         if (value == "'aupn'") return "kAudioUnitType_Panner";
-                         // clang-format on
-                         return value;
-                       });
+                         });
+        }
+        else
+        {
+          convertSetting(jucerProject, "pluginAUMainType", "PLUGIN_AU_MAIN_TYPE",
+                         [](const juce::var& v) -> juce::String {
+                           const auto value = v.toString();
+                           // clang-format off
+                           if (value == "'aufx'") return "kAudioUnitType_Effect";
+                           if (value == "'aufc'") return "kAudioUnitType_FormatConverter";
+                           if (value == "'augn'") return "kAudioUnitType_Generator";
+                           if (value == "'aumi'") return "kAudioUnitType_MIDIProcessor";
+                           if (value == "'aumx'") return "kAudioUnitType_Mixer";
+                           if (value == "'aumu'") return "kAudioUnitType_MusicDevice";
+                           if (value == "'aumf'") return "kAudioUnitType_MusicEffect";
+                           if (value == "'auol'") return "kAudioUnitType_OfflineEffect";
+                           if (value == "'auou'") return "kAudioUnitType_Output";
+                           if (value == "'aupn'") return "kAudioUnitType_Panner";
+                           // clang-format on
+                           return value;
+                         });
+        }
       }
       else
       {
@@ -1003,78 +1052,100 @@ int main(int argc, char* argv[])
       if (jucerProject.hasProperty("pluginVST3Category")
           || jucerVersionAsTuple >= Version{5, 3, 1})
       {
-        convertSettingAsList(
-          jucerProject, "pluginVST3Category", "PLUGIN_VST3_CATEGORY",
-          [isSynthAudioPlugin](const juce::var& v) {
-            if (v.isVoid())
-            {
+        if (!jucerProject.hasProperty("pluginVST3Category"))
+        {
+          convertSettingAsList(
+            jucerProject, "pluginVST3Category", "PLUGIN_VST3_CATEGORY",
+            [isSynthAudioPlugin](const juce::var&) {
               return isSynthAudioPlugin ? juce::StringArray{"Instrument", "Synth"}
                                         : juce::StringArray{"Fx"};
-            }
-            auto vst3Category = juce::StringArray::fromTokens(v.toString(), ",", {});
-            if (vst3Category.contains("Instrument"))
-            {
-              vst3Category.move(vst3Category.indexOf("Instrument"), 0);
-            }
-            if (vst3Category.contains("Fx"))
-            {
-              vst3Category.move(vst3Category.indexOf("Fx"), 0);
-            }
-            return vst3Category;
-          });
+            });
+        }
+        else
+        {
+          convertSettingAsList(
+            jucerProject, "pluginVST3Category", "PLUGIN_VST3_CATEGORY",
+            [](const juce::var& v) {
+              auto vst3Category = juce::StringArray::fromTokens(v.toString(), ",", {});
+              if (vst3Category.contains("Instrument"))
+              {
+                vst3Category.move(vst3Category.indexOf("Instrument"), 0);
+              }
+              if (vst3Category.contains("Fx"))
+              {
+                vst3Category.move(vst3Category.indexOf("Fx"), 0);
+              }
+              return vst3Category;
+            });
+        }
       }
 
       if (jucerVersionAsTuple >= Version{5, 3, 1})
       {
-        convertSettingAsList(
-          jucerProject, "pluginRTASCategory", "PLUGIN_RTAS_CATEGORY",
-          [isSynthAudioPlugin](const juce::var& v) {
-            if (v.isVoid())
-            {
+        if (!jucerProject.hasProperty("pluginRTASCategory"))
+        {
+          convertSettingAsList(
+            jucerProject, "pluginRTASCategory", "PLUGIN_RTAS_CATEGORY",
+            [isSynthAudioPlugin](const juce::var&) {
               return juce::StringArray{isSynthAudioPlugin ? "ePlugInCategory_SWGenerators"
                                                           : "ePlugInCategory_None"};
-            }
-            return convertIdsToStrings(v, {{"0", "ePlugInCategory_None"},
-                                           {"1", "ePlugInCategory_EQ"},
-                                           {"2", "ePlugInCategory_Dynamics"},
-                                           {"4", "ePlugInCategory_PitchShift"},
-                                           {"8", "ePlugInCategory_Reverb"},
-                                           {"16", "ePlugInCategory_Delay"},
-                                           {"32", "ePlugInCategory_Modulation"},
-                                           {"64", "ePlugInCategory_Harmonic"},
-                                           {"128", "ePlugInCategory_NoiseReduction"},
-                                           {"256", "ePlugInCategory_Dither"},
-                                           {"512", "ePlugInCategory_SoundField"},
-                                           {"1024", "ePlugInCategory_HWGenerators"},
-                                           {"2048", "ePlugInCategory_SWGenerators"},
-                                           {"4096", "ePlugInCategory_WrappedPlugin"},
-                                           {"8192", "ePlugInCategory_Effect"}});
-          });
-        convertSettingAsList(
-          jucerProject, "pluginAAXCategory", "PLUGIN_AAX_CATEGORY",
-          [isSynthAudioPlugin](const juce::var& v) -> juce::StringArray {
-            if (v.isVoid())
-            {
+            });
+        }
+        else
+        {
+          convertSettingAsList(jucerProject, "pluginRTASCategory", "PLUGIN_RTAS_CATEGORY",
+                               [](const juce::var& v) {
+                                 return convertIdsToStrings(
+                                   v, {{"0", "ePlugInCategory_None"},
+                                       {"1", "ePlugInCategory_EQ"},
+                                       {"2", "ePlugInCategory_Dynamics"},
+                                       {"4", "ePlugInCategory_PitchShift"},
+                                       {"8", "ePlugInCategory_Reverb"},
+                                       {"16", "ePlugInCategory_Delay"},
+                                       {"32", "ePlugInCategory_Modulation"},
+                                       {"64", "ePlugInCategory_Harmonic"},
+                                       {"128", "ePlugInCategory_NoiseReduction"},
+                                       {"256", "ePlugInCategory_Dither"},
+                                       {"512", "ePlugInCategory_SoundField"},
+                                       {"1024", "ePlugInCategory_HWGenerators"},
+                                       {"2048", "ePlugInCategory_SWGenerators"},
+                                       {"4096", "ePlugInCategory_WrappedPlugin"},
+                                       {"8192", "ePlugInCategory_Effect"}});
+                               });
+        }
+
+        if (!jucerProject.hasProperty("pluginAAXCategory"))
+        {
+          convertSettingAsList(
+            jucerProject, "pluginAAXCategory", "PLUGIN_AAX_CATEGORY",
+            [isSynthAudioPlugin](const juce::var&) -> juce::StringArray {
               return juce::StringArray{isSynthAudioPlugin
                                          ? "AAX_ePlugInCategory_SWGenerators"
                                          : "AAX_ePlugInCategory_None"};
-            }
-            return convertIdsToStrings(v, {{"0", "AAX_ePlugInCategory_None"},
-                                           {"1", "AAX_ePlugInCategory_EQ"},
-                                           {"2", "AAX_ePlugInCategory_Dynamics"},
-                                           {"4", "AAX_ePlugInCategory_PitchShift"},
-                                           {"8", "AAX_ePlugInCategory_Reverb"},
-                                           {"16", "AAX_ePlugInCategory_Delay"},
-                                           {"32", "AAX_ePlugInCategory_Modulation"},
-                                           {"64", "AAX_ePlugInCategory_Harmonic"},
-                                           {"128", "AAX_ePlugInCategory_NoiseReduction"},
-                                           {"256", "AAX_ePlugInCategory_Dither"},
-                                           {"512", "AAX_ePlugInCategory_SoundField"},
-                                           {"1024", "AAX_ePlugInCategory_HWGenerators"},
-                                           {"2048", "AAX_ePlugInCategory_SWGenerators"},
-                                           {"4096", "AAX_ePlugInCategory_WrappedPlugin"},
-                                           {"8192", "AAX_EPlugInCategory_Effect"}});
-          });
+            });
+        }
+        else
+        {
+          convertSettingAsList(jucerProject, "pluginAAXCategory", "PLUGIN_AAX_CATEGORY",
+                               [](const juce::var& v) -> juce::StringArray {
+                                 return convertIdsToStrings(
+                                   v, {{"0", "AAX_ePlugInCategory_None"},
+                                       {"1", "AAX_ePlugInCategory_EQ"},
+                                       {"2", "AAX_ePlugInCategory_Dynamics"},
+                                       {"4", "AAX_ePlugInCategory_PitchShift"},
+                                       {"8", "AAX_ePlugInCategory_Reverb"},
+                                       {"16", "AAX_ePlugInCategory_Delay"},
+                                       {"32", "AAX_ePlugInCategory_Modulation"},
+                                       {"64", "AAX_ePlugInCategory_Harmonic"},
+                                       {"128", "AAX_ePlugInCategory_NoiseReduction"},
+                                       {"256", "AAX_ePlugInCategory_Dither"},
+                                       {"512", "AAX_ePlugInCategory_SoundField"},
+                                       {"1024", "AAX_ePlugInCategory_HWGenerators"},
+                                       {"2048", "AAX_ePlugInCategory_SWGenerators"},
+                                       {"4096", "AAX_ePlugInCategory_WrappedPlugin"},
+                                       {"8192", "AAX_EPlugInCategory_Effect"}});
+                               });
+        }
       }
       else
       {
