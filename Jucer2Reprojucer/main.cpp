@@ -203,10 +203,9 @@ juce::String escape(const juce::String& charsToEscape, juce::String value)
 
 
 juce::StringArray
-convertIdsToStrings(const juce::var& v,
+convertIdsToStrings(const juce::StringArray& ids,
                     const std::vector<std::pair<juce::String, const char*>>& idsToStrings)
 {
-  const auto ids = juce::StringArray::fromTokens(v.toString(), ",", {});
   juce::StringArray strings;
   for (const auto& idToString : idsToStrings)
   {
@@ -886,16 +885,17 @@ int main(int argc, char* argv[])
             [&jucerVersionAsTuple, &vstIsLegacy](const juce::var& v) {
               const auto supportsUnity = jucerVersionAsTuple >= Version{5, 3, 2};
               return convertIdsToStrings(
-                v, {{vstIsLegacy ? "" : "buildVST", vstIsLegacy ? "" : "VST"},
-                    {"buildVST3", "VST3"},
-                    {"buildAU", "AU"},
-                    {"buildAUv3", "AUv3"},
-                    {"buildRTAS", "RTAS"},
-                    {"buildAAX", "AAX"},
-                    {"buildStandalone", "Standalone"},
-                    {supportsUnity ? "buildUnity" : "", supportsUnity ? "Unity" : ""},
-                    {"enableIAA", "Enable IAA"},
-                    {vstIsLegacy ? "buildVST" : "", vstIsLegacy ? "VST (Legacy)" : ""}});
+                juce::StringArray::fromTokens(v.toString(), ",", {}),
+                {{vstIsLegacy ? "" : "buildVST", vstIsLegacy ? "" : "VST"},
+                 {"buildVST3", "VST3"},
+                 {"buildAU", "AU"},
+                 {"buildAUv3", "AUv3"},
+                 {"buildRTAS", "RTAS"},
+                 {"buildAAX", "AAX"},
+                 {"buildStandalone", "Standalone"},
+                 {supportsUnity ? "buildUnity" : "", supportsUnity ? "Unity" : ""},
+                 {"enableIAA", "Enable IAA"},
+                 {vstIsLegacy ? "buildVST" : "", vstIsLegacy ? "VST (Legacy)" : ""}});
             });
         }
 
@@ -909,15 +909,16 @@ int main(int argc, char* argv[])
             jucerProject, "pluginCharacteristicsValue", "PLUGIN_CHARACTERISTICS",
             [](const juce::var& v) {
               return convertIdsToStrings(
-                v, {{"pluginIsSynth", "Plugin is a Synth"},
-                    {"pluginWantsMidiIn", "Plugin MIDI Input"},
-                    {"pluginProducesMidiOut", "Plugin MIDI Output"},
-                    {"pluginIsMidiEffectPlugin", "MIDI Effect Plugin"},
-                    {"pluginEditorRequiresKeys", "Plugin Editor Requires Keyboard Focus"},
-                    {"pluginRTASDisableBypass", "Disable RTAS Bypass"},
-                    {"pluginAAXDisableBypass", "Disable AAX Bypass"},
-                    {"pluginRTASDisableMultiMono", "Disable RTAS Multi-Mono"},
-                    {"pluginAAXDisableMultiMono", "Disable AAX Multi-Mono"}});
+                juce::StringArray::fromTokens(v.toString(), ",", {}),
+                {{"pluginIsSynth", "Plugin is a Synth"},
+                 {"pluginWantsMidiIn", "Plugin MIDI Input"},
+                 {"pluginProducesMidiOut", "Plugin MIDI Output"},
+                 {"pluginIsMidiEffectPlugin", "MIDI Effect Plugin"},
+                 {"pluginEditorRequiresKeys", "Plugin Editor Requires Keyboard Focus"},
+                 {"pluginRTASDisableBypass", "Disable RTAS Bypass"},
+                 {"pluginAAXDisableBypass", "Disable AAX Bypass"},
+                 {"pluginRTASDisableMultiMono", "Disable RTAS Multi-Mono"},
+                 {"pluginAAXDisableMultiMono", "Disable AAX Multi-Mono"}});
             });
         }
       }
@@ -1106,21 +1107,22 @@ int main(int argc, char* argv[])
           convertSettingAsList(jucerProject, "pluginRTASCategory", "PLUGIN_RTAS_CATEGORY",
                                [](const juce::var& v) {
                                  return convertIdsToStrings(
-                                   v, {{"0", "ePlugInCategory_None"},
-                                       {"1", "ePlugInCategory_EQ"},
-                                       {"2", "ePlugInCategory_Dynamics"},
-                                       {"4", "ePlugInCategory_PitchShift"},
-                                       {"8", "ePlugInCategory_Reverb"},
-                                       {"16", "ePlugInCategory_Delay"},
-                                       {"32", "ePlugInCategory_Modulation"},
-                                       {"64", "ePlugInCategory_Harmonic"},
-                                       {"128", "ePlugInCategory_NoiseReduction"},
-                                       {"256", "ePlugInCategory_Dither"},
-                                       {"512", "ePlugInCategory_SoundField"},
-                                       {"1024", "ePlugInCategory_HWGenerators"},
-                                       {"2048", "ePlugInCategory_SWGenerators"},
-                                       {"4096", "ePlugInCategory_WrappedPlugin"},
-                                       {"8192", "ePlugInCategory_Effect"}});
+                                   juce::StringArray::fromTokens(v.toString(), ",", {}),
+                                   {{"0", "ePlugInCategory_None"},
+                                    {"1", "ePlugInCategory_EQ"},
+                                    {"2", "ePlugInCategory_Dynamics"},
+                                    {"4", "ePlugInCategory_PitchShift"},
+                                    {"8", "ePlugInCategory_Reverb"},
+                                    {"16", "ePlugInCategory_Delay"},
+                                    {"32", "ePlugInCategory_Modulation"},
+                                    {"64", "ePlugInCategory_Harmonic"},
+                                    {"128", "ePlugInCategory_NoiseReduction"},
+                                    {"256", "ePlugInCategory_Dither"},
+                                    {"512", "ePlugInCategory_SoundField"},
+                                    {"1024", "ePlugInCategory_HWGenerators"},
+                                    {"2048", "ePlugInCategory_SWGenerators"},
+                                    {"4096", "ePlugInCategory_WrappedPlugin"},
+                                    {"8192", "ePlugInCategory_Effect"}});
                                });
         }
 
@@ -1139,21 +1141,22 @@ int main(int argc, char* argv[])
           convertSettingAsList(jucerProject, "pluginAAXCategory", "PLUGIN_AAX_CATEGORY",
                                [](const juce::var& v) -> juce::StringArray {
                                  return convertIdsToStrings(
-                                   v, {{"0", "AAX_ePlugInCategory_None"},
-                                       {"1", "AAX_ePlugInCategory_EQ"},
-                                       {"2", "AAX_ePlugInCategory_Dynamics"},
-                                       {"4", "AAX_ePlugInCategory_PitchShift"},
-                                       {"8", "AAX_ePlugInCategory_Reverb"},
-                                       {"16", "AAX_ePlugInCategory_Delay"},
-                                       {"32", "AAX_ePlugInCategory_Modulation"},
-                                       {"64", "AAX_ePlugInCategory_Harmonic"},
-                                       {"128", "AAX_ePlugInCategory_NoiseReduction"},
-                                       {"256", "AAX_ePlugInCategory_Dither"},
-                                       {"512", "AAX_ePlugInCategory_SoundField"},
-                                       {"1024", "AAX_ePlugInCategory_HWGenerators"},
-                                       {"2048", "AAX_ePlugInCategory_SWGenerators"},
-                                       {"4096", "AAX_ePlugInCategory_WrappedPlugin"},
-                                       {"8192", "AAX_EPlugInCategory_Effect"}});
+                                   juce::StringArray::fromTokens(v.toString(), ",", {}),
+                                   {{"0", "AAX_ePlugInCategory_None"},
+                                    {"1", "AAX_ePlugInCategory_EQ"},
+                                    {"2", "AAX_ePlugInCategory_Dynamics"},
+                                    {"4", "AAX_ePlugInCategory_PitchShift"},
+                                    {"8", "AAX_ePlugInCategory_Reverb"},
+                                    {"16", "AAX_ePlugInCategory_Delay"},
+                                    {"32", "AAX_ePlugInCategory_Modulation"},
+                                    {"64", "AAX_ePlugInCategory_Harmonic"},
+                                    {"128", "AAX_ePlugInCategory_NoiseReduction"},
+                                    {"256", "AAX_ePlugInCategory_Dither"},
+                                    {"512", "AAX_ePlugInCategory_SoundField"},
+                                    {"1024", "AAX_ePlugInCategory_HWGenerators"},
+                                    {"2048", "AAX_ePlugInCategory_SWGenerators"},
+                                    {"4096", "AAX_ePlugInCategory_WrappedPlugin"},
+                                    {"8192", "AAX_EPlugInCategory_Effect"}});
                                });
         }
       }
@@ -1688,7 +1691,7 @@ int main(int argc, char* argv[])
         convertSettingAsListIfDefined(
           exporter, "appSandboxOptions", "APP_SANDBOX_OPTIONS", [](const juce::var& v) {
             return convertIdsToStrings(
-              v,
+              juce::StringArray::fromTokens(v.toString(), ",", {}),
               {{"com.apple.security.network.server",
                 "Network: Incoming Connections (Server)"},
                {"com.apple.security.network.client",
@@ -1755,7 +1758,7 @@ int main(int argc, char* argv[])
             exporter, "hardenedRuntimeOptions", "HARDENED_RUNTIME_OPTIONS",
             [](const juce::var& v) {
               return convertIdsToStrings(
-                v,
+                juce::StringArray::fromTokens(v.toString(), ",", {}),
                 {{"com.apple.security.cs.allow-jit",
                   "Runtime Exceptions: Allow Execution of JIT-compiled Code"},
                  {"com.apple.security.cs.allow-unsigned-executable-memory",
@@ -1788,7 +1791,7 @@ int main(int argc, char* argv[])
             exporter, "hardenedRuntimeOptions", "HARDENED_RUNTIME_OPTIONS",
             [](const juce::var& v) {
               return convertIdsToStrings(
-                v,
+                juce::StringArray::fromTokens(v.toString(), ",", {}),
                 {{"com.apple.security.cs.allow-jit",
                   "Allow Execution of JIT-compiled Code"},
                  {"com.apple.security.cs.allow-unsigned-executable-memory",
