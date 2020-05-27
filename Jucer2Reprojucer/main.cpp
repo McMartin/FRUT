@@ -148,6 +148,15 @@ void printError(const juce::String& error)
 }
 
 
+// Matches juce::var::VariantType_String::toBool. This means that `toBoolLikeVar(s)` and
+// `bool{juce::var{s}}` are equivalent.
+bool toBoolLikeVar(const juce::String& s)
+{
+  return s.getIntValue() != 0 || s.trim().equalsIgnoreCase("true")
+         || s.trim().equalsIgnoreCase("yes");
+}
+
+
 juce::String makeValidIdentifier(juce::String s)
 {
   if (s.isEmpty())
@@ -509,7 +518,7 @@ int main(int argc, char* argv[])
         else
         {
           converterFn = [](const juce::var& v) -> juce::String {
-            return bool{v} ? "ON" : "OFF";
+            return toBoolLikeVar(v.toString()) ? "ON" : "OFF";
           };
         }
       }
@@ -552,7 +561,7 @@ int main(int argc, char* argv[])
       {
         convertOnOffSetting(
           valueTree, property, cmakeKeyword,
-          [](const juce::var& v) -> juce::String { return bool{v} ? "ON" : "OFF"; });
+          [](const juce::var& v) -> juce::String { return toBoolLikeVar(v.toString()) ? "ON" : "OFF"; });
       }
     };
 
@@ -733,7 +742,7 @@ int main(int argc, char* argv[])
       {
         convertOnOffSetting(
           jucerProject, "reportAppUsage", "REPORT_JUCE_APP_USAGE",
-          [&tagLine](const juce::var& v) { return (bool{v} ? "ON" : "OFF") + tagLine; });
+          [&tagLine](const juce::var& v) { return (toBoolLikeVar(v.toString()) ? "ON" : "OFF") + tagLine; });
       }
 
       if (!jucerProject.hasProperty("displaySplashScreen"))
@@ -744,7 +753,7 @@ int main(int argc, char* argv[])
       {
         convertOnOffSetting(
           jucerProject, "displaySplashScreen", "DISPLAY_THE_JUCE_SPLASH_SCREEN",
-          [&tagLine](const juce::var& v) { return (bool{v} ? "ON" : "OFF") + tagLine; });
+          [&tagLine](const juce::var& v) { return (toBoolLikeVar(v.toString()) ? "ON" : "OFF") + tagLine; });
       }
 
       convertSettingIfDefined(jucerProject, "splashScreenColour", "SPLASH_SCREEN_COLOUR",
@@ -956,7 +965,7 @@ int main(int argc, char* argv[])
 
       const auto isSynthAudioPlugin = jucerVersionAsTuple >= Version{5, 3, 1}
                                         ? pluginCharacteristics.contains("pluginIsSynth")
-                                        : bool{jucerProject.getProperty("pluginIsSynth")};
+                                        : toBoolLikeVar(jucerProject.getProperty("pluginIsSynth").toString());
 
       if (jucerVersionAsTuple < Version{5, 3, 1})
       {
@@ -1284,7 +1293,7 @@ int main(int argc, char* argv[])
       const auto module = modules.getChild(i);
       const auto moduleName = module.getProperty("id").toString();
 
-      const auto useGlobalPath = bool{module.getProperty("useGlobalPath")};
+      const auto useGlobalPath = toBoolLikeVar(module.getProperty("useGlobalPath").toString());
       const auto isJuceModule = moduleName.startsWith("juce_");
 
       if (useGlobalPath)
@@ -1484,7 +1493,7 @@ int main(int argc, char* argv[])
       const auto hasVst2Interface = jucerVersionAsTuple > Version{4, 2, 3};
       const auto isVstAudioPlugin = isAudioPlugin
                                     && (pluginFormats.contains("buildVST")
-                                        || bool{jucerProject.getProperty("buildVST")});
+                                        || toBoolLikeVar(jucerProject.getProperty("buildVST").toString()));
       const auto pluginHostVstOption = jucerProject.getChildWithName("JUCEOPTIONS")
                                          .getProperty("JUCE_PLUGINHOST_VST")
                                          .toString();
@@ -1507,7 +1516,7 @@ int main(int argc, char* argv[])
       const auto supportsVst3 = exporterType == "XCODE_MAC" || isVSExporter;
       const auto isVst3AudioPlugin = isAudioPlugin
                                      && (pluginFormats.contains("buildVST3")
-                                         || bool{jucerProject.getProperty("buildVST3")});
+                                         || toBoolLikeVar(jucerProject.getProperty("buildVST3").toString()));
       const auto pluginHostVst3Option = jucerProject.getChildWithName("JUCEOPTIONS")
                                           .getProperty("JUCE_PLUGINHOST_VST3")
                                           .toString();
@@ -1525,13 +1534,13 @@ int main(int argc, char* argv[])
       if (supportsAaxRtas && isAudioPlugin)
       {
         if (pluginFormats.contains("buildAAX")
-            || bool{jucerProject.getProperty("buildAAX")})
+            || toBoolLikeVar(jucerProject.getProperty("buildAAX").toString()))
         {
           convertSetting(exporter, "aaxFolder", "AAX_SDK_FOLDER", {});
         }
 
         if (pluginFormats.contains("buildRTAS")
-            || bool{jucerProject.getProperty("buildRTAS")})
+            || toBoolLikeVar(jucerProject.getProperty("buildRTAS").toString()))
         {
           convertSetting(exporter, "rtasFolder", "RTAS_SDK_FOLDER", {});
         }
@@ -2034,7 +2043,7 @@ int main(int argc, char* argv[])
         wLn("  \"", exporterName, "\"");
         wLn("  NAME \"", configuration.getProperty("name").toString(), "\"");
 
-        const auto isDebug = bool{configuration.getProperty("isDebug")};
+        const auto isDebug = toBoolLikeVar(configuration.getProperty("isDebug").toString());
         wLn("  DEBUG_MODE ", (isDebug ? "ON" : "OFF"));
 
         convertSettingIfDefined(configuration, "targetName", "BINARY_NAME", {});
