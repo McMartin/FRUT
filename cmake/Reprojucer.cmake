@@ -3265,7 +3265,7 @@ function(_FRUT_check_SDK_folders exporter)
           " doesn't seem to contain the VST SDK"
         )
       endif()
-    elseif(NOT DEFINED JUCER_VERSION OR JUCER_VERSION VERSION_GREATER 5.3.2)
+    elseif((NOT DEFINED JUCER_VERSION OR JUCER_VERSION VERSION_GREATER 5.3.2) AND NOT IOS)
       message(WARNING "JUCER_VST_LEGACY_SDK_FOLDER is not defined. You should give"
         " VST_LEGACY_SDK_FOLDER when calling jucer_export_target(\"${exporter}\")."
       )
