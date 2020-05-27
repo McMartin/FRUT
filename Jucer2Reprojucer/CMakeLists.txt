@@ -86,18 +86,6 @@ jucer_project_module(
   JUCE_USE_CURL OFF
 )
 
-jucer_project_module(
-  juce_data_structures
-  PATH "${JUCE_ROOT}/modules"
-  ADD_SOURCE_TO_PROJECT OFF
-)
-
-jucer_project_module(
-  juce_events
-  PATH "${JUCE_ROOT}/modules"
-  ADD_SOURCE_TO_PROJECT OFF
-)
-
 jucer_export_target(
   "Xcode (MacOSX)"
   COMPILER_FLAGS_FOR_maximum_warnings "-Werror -Weverything -Wno-c++98-compat -Wno-c++98-compat-pedantic -Wno-padded"
