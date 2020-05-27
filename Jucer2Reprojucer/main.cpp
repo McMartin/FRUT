@@ -271,38 +271,38 @@ juce::StringArray parsePreprocessorDefinitions(const juce::String& input)
 }
 
 
-juce::ValueTree getChildWithPropertyRecursively(const juce::ValueTree& valueTree,
-                                                const juce::Identifier& propertyName,
-                                                const juce::var& propertyValue)
+const juce::XmlElement* getChildByAttributeRecursively(const juce::XmlElement& parent,
+                                                       const juce::StringRef attributeName,
+                                                       const juce::StringRef attributeValue)
 {
-  const auto child = valueTree.getChildWithProperty(propertyName, propertyValue);
-
-  if (child.isValid())
+  if (const auto pChild = parent.getChildByAttribute(attributeName, attributeValue))
   {
-    return child;
+    return pChild;
   }
 
-  for (auto i = 0; i < valueTree.getNumChildren(); ++i)
+  for (auto pChild = parent.getFirstChildElement(); pChild != nullptr;
+       pChild = pChild->getNextElement())
   {
-    const auto grandchild =
-      getChildWithPropertyRecursively(valueTree.getChild(i), propertyName, propertyValue);
-
-    if (grandchild.isValid())
+    if (!pChild->isTextElement())
     {
-      return grandchild;
+      if (const auto pGrandChild =
+            getChildByAttributeRecursively(*pChild, attributeName, attributeValue))
+      {
+        return pGrandChild;
+      }
     }
   }
 
-  return {};
+  return nullptr;
 }
 
 
-void writeUserNotes(LineWriter& wLn, const juce::ValueTree& valueTree)
+void writeUserNotes(LineWriter& wLn, const juce::XmlElement& element)
 {
-  if (valueTree.hasProperty("userNotes"))
+  if (element.hasAttribute("userNotes"))
   {
     wLn("  # NOTES");
-    const auto userNotes = valueTree.getProperty("userNotes").toString();
+    const auto& userNotes = element.getStringAttribute("userNotes");
     for (const auto& line : juce::StringArray::fromLines(userNotes))
     {
       wLn("  #   ", line);
@@ -395,9 +395,21 @@ int main(int argc, char* argv[])
     return 1;
   }
 
-  const auto jucerProject = juce::ValueTree::fromXml(*xml);
+  const juce::XmlElement fallbackXmlElement{":"};
+  const auto safeGetChildByName =
+    [&fallbackXmlElement](const juce::XmlElement& element,
+                          const juce::StringRef childName) -> const juce::XmlElement& {
+    if (const auto pChild = element.getChildByName(childName))
+    {
+      return *pChild;
+    }
 
-  const auto jucerVersion = jucerProject.getProperty("jucerVersion").toString();
+    return fallbackXmlElement;
+  };
+
+  const auto& jucerProject = *xml;
+
+  const auto& jucerVersion = jucerProject.getStringAttribute("jucerVersion");
   const auto jucerVersionTokens = juce::StringArray::fromTokens(jucerVersion, ".", {});
   if (jucerVersionTokens.size() != 3)
   {
@@ -457,7 +469,7 @@ int main(int argc, char* argv[])
   LineWriter wLn{outputStream};
 
   const auto convertSetting =
-    [&wLn](const juce::ValueTree& valueTree, const juce::Identifier& property,
+    [&wLn](const juce::XmlElement& element, const juce::StringRef attributeName,
            const juce::String& cmakeKeyword,
            std::function<juce::String(const juce::String&)> converterFn) {
       if (!converterFn)
@@ -465,7 +477,7 @@ int main(int argc, char* argv[])
         converterFn = [](const juce::String& value) { return value; };
       }
 
-      const auto value = converterFn(valueTree.getProperty(property).toString());
+      const auto value = converterFn(element.getStringAttribute(attributeName));
 
       if (value.isEmpty())
       {
@@ -479,38 +491,38 @@ int main(int argc, char* argv[])
     };
 
   const auto convertSettingIfDefined =
-    [&convertSetting](const juce::ValueTree& valueTree, const juce::Identifier& property,
+    [&convertSetting](const juce::XmlElement& element, const juce::StringRef attributeName,
                       const juce::String& cmakeKeyword,
                       std::function<juce::String(const juce::String&)> converterFn) {
-      if (valueTree.hasProperty(property))
+      if (element.hasAttribute(attributeName))
       {
-        convertSetting(valueTree, property, cmakeKeyword, std::move(converterFn));
+        convertSetting(element, attributeName, cmakeKeyword, std::move(converterFn));
       }
     };
 
   const auto convertSettingWithDefault =
-    [&convertSetting](const juce::ValueTree& valueTree, const juce::Identifier& property,
+    [&convertSetting](const juce::XmlElement& element, const juce::StringRef attributeName,
                       const juce::String& cmakeKeyword,
                       const juce::String& defaultValue) {
-      if (!valueTree.hasProperty(property))
+      if (!element.hasAttribute(attributeName))
       {
-        convertSetting(valueTree, property, cmakeKeyword,
+        convertSetting(element, attributeName, cmakeKeyword,
                        [&defaultValue](const juce::String&) { return defaultValue; });
       }
       else
       {
-        convertSetting(valueTree, property, cmakeKeyword,
+        convertSetting(element, attributeName, cmakeKeyword,
                        [](const juce::String& value) { return value; });
       }
     };
 
   const auto convertOnOffSetting =
-    [&wLn](const juce::ValueTree& valueTree, const juce::Identifier& property,
+    [&wLn](const juce::XmlElement& element, const juce::StringRef attributeName,
            const juce::String& cmakeKeyword,
            std::function<juce::String(const juce::String&)> converterFn) {
       if (!converterFn)
       {
-        if (!valueTree.hasProperty(property))
+        if (!element.hasAttribute(attributeName))
         {
           converterFn = [](const juce::String&) -> juce::String { return {}; };
         }
@@ -522,7 +534,7 @@ int main(int argc, char* argv[])
         }
       }
 
-      const auto value = converterFn(valueTree.getProperty(property).toString());
+      const auto value = converterFn(element.getStringAttribute(attributeName));
 
       if (value.isEmpty())
       {
@@ -535,23 +547,23 @@ int main(int argc, char* argv[])
     };
 
   const auto convertOnOffSettingIfDefined =
-    [&convertOnOffSetting](const juce::ValueTree& valueTree,
-                           const juce::Identifier& property,
+    [&convertOnOffSetting](const juce::XmlElement& element,
+                           const juce::StringRef attributeName,
                            const juce::String& cmakeKeyword,
                            std::function<juce::String(const juce::String&)> converterFn) {
-      if (valueTree.hasProperty(property))
+      if (element.hasAttribute(attributeName))
       {
-        convertOnOffSetting(valueTree, property, cmakeKeyword, std::move(converterFn));
+        convertOnOffSetting(element, attributeName, cmakeKeyword, std::move(converterFn));
       }
     };
 
   const auto convertOnOffSettingWithDefault =
-    [&convertOnOffSetting](const juce::ValueTree& valueTree,
-                           const juce::Identifier& property,
+    [&convertOnOffSetting](const juce::XmlElement& element,
+                           const juce::StringRef attributeName,
                            const juce::String& cmakeKeyword, bool defaultValue) {
-      if (!valueTree.hasProperty(property))
+      if (!element.hasAttribute(attributeName))
       {
-        convertOnOffSetting(valueTree, property, cmakeKeyword,
+        convertOnOffSetting(element, attributeName, cmakeKeyword,
                             [defaultValue](const juce::String&) -> juce::String {
                               return defaultValue ? "ON" : "OFF";
                             });
@@ -559,13 +571,13 @@ int main(int argc, char* argv[])
       else
       {
         convertOnOffSetting(
-          valueTree, property, cmakeKeyword,
+          element, attributeName, cmakeKeyword,
           [](const juce::String& value) -> juce::String { return toBoolLikeVar(value) ? "ON" : "OFF"; });
       }
     };
 
   const auto convertSettingAsList =
-    [&wLn](const juce::ValueTree& valueTree, const juce::Identifier& property,
+    [&wLn](const juce::XmlElement& element, const juce::StringRef attributeName,
            const juce::String& cmakeKeyword,
            std::function<juce::StringArray(const juce::String&)> converterFn) {
       if (!converterFn)
@@ -575,7 +587,7 @@ int main(int argc, char* argv[])
         };
       }
 
-      auto value = converterFn(valueTree.getProperty(property).toString());
+      auto value = converterFn(element.getStringAttribute(attributeName));
       value.removeEmptyStrings();
 
       if (value.isEmpty())
@@ -595,17 +607,17 @@ int main(int argc, char* argv[])
 
   const auto convertSettingAsListIfDefined =
     [&convertSettingAsList](
-      const juce::ValueTree& valueTree, const juce::Identifier& property,
+      const juce::XmlElement& element, const juce::StringRef attributeName,
       const juce::String& cmakeKeyword,
       std::function<juce::StringArray(const juce::String&)> converterFn) {
-      if (valueTree.hasProperty(property))
+      if (element.hasAttribute(attributeName))
       {
-        convertSettingAsList(valueTree, property, cmakeKeyword, std::move(converterFn));
+        convertSettingAsList(element, attributeName, cmakeKeyword, std::move(converterFn));
       }
     };
 
   const auto jucerFileName = jucerFile.getFileName();
-  const auto jucerProjectName = jucerProject.getProperty("name").toString();
+  const auto& jucerProjectName = jucerProject.getStringAttribute("name");
 
   // Preamble
   {
@@ -715,7 +727,7 @@ int main(int argc, char* argv[])
     wLn();
   }
 
-  const auto projectType = jucerProject.getProperty("projectType").toString();
+  const auto& projectType = jucerProject.getStringAttribute("projectType");
 
   // jucer_project_settings()
   {
@@ -733,7 +745,7 @@ int main(int argc, char* argv[])
       const auto tagLine = juce::String{" # Required for closed source applications"
                                         " without an Indie or Pro JUCE license"};
 
-      if (!jucerProject.hasProperty("reportAppUsage"))
+      if (!jucerProject.hasAttribute("reportAppUsage"))
       {
         wLn("  REPORT_JUCE_APP_USAGE ", kDefaultLicenseBasedValue, tagLine);
       }
@@ -744,7 +756,7 @@ int main(int argc, char* argv[])
           [&tagLine](const juce::String& value) { return (toBoolLikeVar(value) ? "ON" : "OFF") + tagLine; });
       }
 
-      if (!jucerProject.hasProperty("displaySplashScreen"))
+      if (!jucerProject.hasAttribute("displaySplashScreen"))
       {
         wLn("  DISPLAY_THE_JUCE_SPLASH_SCREEN ", kDefaultLicenseBasedValue, tagLine);
       }
@@ -780,7 +792,7 @@ int main(int argc, char* argv[])
     wLn("  PROJECT_TYPE \"", projectTypeDescription, "\"");
 
     const auto defaultCompanyName = [&jucerProject]() {
-      const auto companyNameString = jucerProject.getProperty("companyName").toString();
+      const auto& companyNameString = jucerProject.getStringAttribute("companyName");
       return companyNameString.isEmpty() ? "yourcompany" : companyNameString;
     }();
 
@@ -800,7 +812,7 @@ int main(int argc, char* argv[])
                               return juce::File::descriptionOfSizeInBytes(
                                 value.getIntValue());
                             });
-    if (jucerProject.hasProperty("includeBinaryInJuceHeader"))
+    if (jucerProject.hasAttribute("includeBinaryInJuceHeader"))
     {
       convertOnOffSetting(jucerProject, "includeBinaryInJuceHeader", "INCLUDE_BINARYDATA",
                           {});
@@ -813,7 +825,7 @@ int main(int argc, char* argv[])
     convertSettingIfDefined(jucerProject, "binaryDataNamespace", "BINARYDATA_NAMESPACE",
                             {});
 
-    if (jucerProject.hasProperty("cppLanguageStandard"))
+    if (jucerProject.hasAttribute("cppLanguageStandard"))
     {
       convertSetting(jucerProject, "cppLanguageStandard", "CXX_LANGUAGE_STANDARD",
                      [](const juce::String& value) -> juce::String {
@@ -868,7 +880,7 @@ int main(int argc, char* argv[])
 
       if (jucerVersionAsTuple >= Version{5, 3, 1})
       {
-        if (!jucerProject.hasProperty("pluginFormats"))
+        if (!jucerProject.hasAttribute("pluginFormats"))
         {
           convertSettingAsList(
             jucerProject, "pluginFormats", "PLUGIN_FORMATS",
@@ -897,7 +909,7 @@ int main(int argc, char* argv[])
             });
         }
 
-        if (!jucerProject.hasProperty("pluginCharacteristicsValue"))
+        if (!jucerProject.hasAttribute("pluginCharacteristicsValue"))
         {
           wLn("  # PLUGIN_CHARACTERISTICS");
         }
@@ -949,7 +961,7 @@ int main(int argc, char* argv[])
                                 "PLUGIN_MANUFACTURER_CODE", "Manu");
 
       const auto defaultPluginCode = [&jucerProject]() {
-        const auto projectId = jucerProject.getProperty("id").toString();
+        const auto& projectId = jucerProject.getStringAttribute("id");
         const auto s = makeValidIdentifier(projectId + projectId) + "xxxx";
         return s.substring(0, 1).toUpperCase() + s.substring(1, 4).toLowerCase();
       }();
@@ -960,11 +972,11 @@ int main(int argc, char* argv[])
                      "PLUGIN_CHANNEL_CONFIGURATIONS", {});
 
       const auto pluginCharacteristics = juce::StringArray::fromTokens(
-        jucerProject.getProperty("pluginCharacteristicsValue").toString(), ",", {});
+        jucerProject.getStringAttribute("pluginCharacteristicsValue"), ",", {});
 
       const auto isSynthAudioPlugin = jucerVersionAsTuple >= Version{5, 3, 1}
                                         ? pluginCharacteristics.contains("pluginIsSynth")
-                                        : toBoolLikeVar(jucerProject.getProperty("pluginIsSynth").toString());
+                                        : toBoolLikeVar(jucerProject.getStringAttribute("pluginIsSynth"));
 
       if (jucerVersionAsTuple < Version{5, 3, 1})
       {
@@ -989,7 +1001,7 @@ int main(int argc, char* argv[])
                                 makeValidIdentifier(jucerProjectName) + "AU");
       if (jucerVersionAsTuple >= Version{5, 3, 1})
       {
-        if (!jucerProject.hasProperty("pluginAUMainType"))
+        if (!jucerProject.hasAttribute("pluginAUMainType"))
         {
           convertSetting(jucerProject, "pluginAUMainType", "PLUGIN_AU_MAIN_TYPE",
                          [&pluginCharacteristics](const juce::String&) -> juce::String {
@@ -1032,14 +1044,14 @@ int main(int argc, char* argv[])
       convertOnOffSettingIfDefined(jucerProject, "pluginAUIsSandboxSafe",
                                    "PLUGIN_AU_IS_SANDBOX_SAFE", {});
 
-      if (jucerProject.hasProperty("pluginVSTNumMidiInputs")
+      if (jucerProject.hasAttribute("pluginVSTNumMidiInputs")
           || (jucerVersionAsTuple >= Version{5, 4, 2}
               && pluginCharacteristics.contains("pluginWantsMidiIn")))
       {
         convertSettingWithDefault(jucerProject, "pluginVSTNumMidiInputs",
                                   "PLUGIN_VST_NUM_MIDI_INPUTS", "16");
       }
-      if (jucerProject.hasProperty("pluginVSTNumMidiOutputs")
+      if (jucerProject.hasAttribute("pluginVSTNumMidiOutputs")
           || (jucerVersionAsTuple >= Version{5, 4, 2}
               && pluginCharacteristics.contains("pluginProducesMidiOut")))
       {
@@ -1057,10 +1069,10 @@ int main(int argc, char* argv[])
             : "");
       }
 
-      if (jucerProject.hasProperty("pluginVST3Category")
+      if (jucerProject.hasAttribute("pluginVST3Category")
           || jucerVersionAsTuple >= Version{5, 3, 1})
       {
-        if (!jucerProject.hasProperty("pluginVST3Category"))
+        if (!jucerProject.hasAttribute("pluginVST3Category"))
         {
           convertSettingAsList(
             jucerProject, "pluginVST3Category", "PLUGIN_VST3_CATEGORY",
@@ -1090,7 +1102,7 @@ int main(int argc, char* argv[])
 
       if (jucerVersionAsTuple >= Version{5, 3, 1})
       {
-        if (!jucerProject.hasProperty("pluginRTASCategory"))
+        if (!jucerProject.hasAttribute("pluginRTASCategory"))
         {
           convertSettingAsList(
             jucerProject, "pluginRTASCategory", "PLUGIN_RTAS_CATEGORY",
@@ -1123,7 +1135,7 @@ int main(int argc, char* argv[])
                                });
         }
 
-        if (!jucerProject.hasProperty("pluginAAXCategory"))
+        if (!jucerProject.hasAttribute("pluginAAXCategory"))
         {
           convertSettingAsList(
             jucerProject, "pluginAAXCategory", "PLUGIN_AAX_CATEGORY",
@@ -1183,7 +1195,7 @@ int main(int argc, char* argv[])
   // jucer_project_files()
   {
     const auto projectHasCompilerFlagSchemes =
-      jucerProject.getProperty("compilerFlagSchemes").toString().isNotEmpty();
+      jucerProject.getStringAttribute("compilerFlagSchemes").isNotEmpty();
 
     struct File
     {
@@ -1242,34 +1254,38 @@ int main(int argc, char* argv[])
 
     juce::StringArray groupNames;
 
-    std::function<void(const juce::ValueTree&)> processGroup =
-      [&groupNames, &processGroup, &writeFiles](const juce::ValueTree& group) {
-        groupNames.add(group.getProperty("name").toString());
+    std::function<void(const juce::XmlElement&)> processGroup =
+      [&groupNames, &processGroup, &writeFiles](const juce::XmlElement& group) {
+        groupNames.add(group.getStringAttribute("name"));
 
         const auto fullGroupName = groupNames.joinIntoString("/");
 
         std::vector<File> files;
 
-        for (auto i = 0; i < group.getNumChildren(); ++i)
+        for (auto pFileOrGroup = group.getFirstChildElement(); pFileOrGroup != nullptr;
+             pFileOrGroup = pFileOrGroup->getNextElement())
         {
-          const auto fileOrGroup = group.getChild(i);
-
-          if (fileOrGroup.hasType("FILE"))
+          if (pFileOrGroup->isTextElement())
           {
-            const auto& file = fileOrGroup;
+            continue;
+          }
 
-            files.push_back({file.getProperty("compile").toString().getIntValue() == 1,
-                             file.getProperty("xcodeResource").toString().getIntValue() == 1,
-                             file.getProperty("resource").toString().getIntValue() == 1,
-                             file.getProperty("file").toString(),
-                             file.getProperty("compilerFlagScheme").toString()});
+          if (pFileOrGroup->hasTagName("FILE"))
+          {
+            const auto& file = *pFileOrGroup;
+
+            files.push_back({file.getStringAttribute("compile").getIntValue() == 1,
+                             file.getStringAttribute("xcodeResource").getIntValue() == 1,
+                             file.getStringAttribute("resource").getIntValue() == 1,
+                             file.getStringAttribute("file"),
+                             file.getStringAttribute("compilerFlagScheme")});
           }
           else
           {
             writeFiles(fullGroupName, files);
             files.clear();
 
-            processGroup(fileOrGroup);
+            processGroup(*pFileOrGroup);
           }
         }
 
@@ -1278,22 +1294,38 @@ int main(int argc, char* argv[])
         groupNames.strings.removeLast();
       };
 
-    processGroup(jucerProject.getChildWithName("MAINGROUP"));
+    processGroup(safeGetChildByName(jucerProject, "MAINGROUP"));
   }
 
   // jucer_project_module()
   {
-    const auto modulePaths = jucerProject.getChildWithName("EXPORTFORMATS")
-                               .getChild(0)
-                               .getChildWithName("MODULEPATHS");
+    const auto& modulePaths = [&safeGetChildByName, &jucerProject,
+                               &fallbackXmlElement]() -> const juce::XmlElement& {
+      const auto& exportFormats = safeGetChildByName(jucerProject, "EXPORTFORMATS");
+      for (auto pExporter = exportFormats.getFirstChildElement(); pExporter != nullptr;
+           pExporter = pExporter->getNextElement())
+      {
+        if (!pExporter->isTextElement())
+        {
+          return safeGetChildByName(*pExporter, "MODULEPATHS");
+        }
+      }
+      return fallbackXmlElement;
+    }();
 
-    const auto modules = jucerProject.getChildWithName("MODULES");
-    for (auto i = 0; i < modules.getNumChildren(); ++i)
+    const auto& modules = safeGetChildByName(jucerProject, "MODULES");
+    for (auto pModule = modules.getFirstChildElement(); pModule != nullptr;
+         pModule = pModule->getNextElement())
     {
-      const auto module = modules.getChild(i);
-      const auto moduleName = module.getProperty("id").toString();
+      if (pModule->isTextElement())
+      {
+        continue;
+      }
 
-      const auto useGlobalPath = toBoolLikeVar(module.getProperty("useGlobalPath").toString());
+      const auto& module = *pModule;
+      const auto& moduleName = module.getStringAttribute("id");
+
+      const auto useGlobalPath = toBoolLikeVar(module.getStringAttribute("useGlobalPath"));
       const auto isJuceModule = moduleName.startsWith("juce_");
 
       if (useGlobalPath)
@@ -1312,8 +1344,13 @@ int main(int argc, char* argv[])
         }
       }
 
-      const auto relativeModulePath =
-        modulePaths.getChildWithProperty("id", moduleName).getProperty("path").toString();
+      const auto relativeModulePath = [&modulePaths, &moduleName]() -> juce::String {
+        if (const auto pModulePath = modulePaths.getChildByAttribute("id", moduleName))
+        {
+          return pModulePath->getStringAttribute("path");
+        }
+        return juce::String{};
+      }();
 
       wLn("jucer_project_module(");
       wLn("  ", moduleName);
@@ -1337,14 +1374,14 @@ int main(int argc, char* argv[])
       juce::StringArray moduleHeaderLines;
       moduleHeader.readLines(moduleHeaderLines);
 
-      const auto modulesOptions = jucerProject.getChildWithName("JUCEOPTIONS");
+      const auto& modulesOptions = safeGetChildByName(jucerProject, "JUCEOPTIONS");
 
       for (const auto& line : moduleHeaderLines)
       {
         if (line.startsWith("/** Config: "))
         {
           const auto moduleOption = line.substring(12);
-          const auto optionValue = modulesOptions.getProperty(moduleOption).toString();
+          const auto& optionValue = modulesOptions.getStringAttribute(moduleOption);
 
           if (optionValue == "1" || optionValue == "enabled")
           {
@@ -1427,11 +1464,17 @@ int main(int argc, char* argv[])
       {"CODEBLOCKS_LINUX", "Code::Blocks (Linux)"},
     };
 
-    const auto exportFormats = jucerProject.getChildWithName("EXPORTFORMATS");
-    for (auto iExporter = 0; iExporter < exportFormats.getNumChildren(); ++iExporter)
+    const auto& exportFormats = safeGetChildByName(jucerProject, "EXPORTFORMATS");
+    for (auto pExporter = exportFormats.getFirstChildElement(); pExporter != nullptr;
+         pExporter = pExporter->getNextElement())
     {
-      const auto exporter = exportFormats.getChild(iExporter);
-      const auto exporterType = exporter.getType().toString();
+      if (pExporter->isTextElement())
+      {
+        continue;
+      }
+
+      const auto& exporter = *pExporter;
+      const auto& exporterType = exporter.getTagName();
 
       if (!supportedExporters.contains(exporterType))
       {
@@ -1439,7 +1482,7 @@ int main(int argc, char* argv[])
       }
 
       const auto exporterName = exporterNames.at(exporterType);
-      const auto configurations = exporter.getChildWithName("CONFIGURATIONS");
+      const auto& configurations = safeGetChildByName(exporter, "CONFIGURATIONS");
 
       wLn("jucer_export_target(");
       wLn("  \"", exporterName, "\"");
@@ -1448,10 +1491,10 @@ int main(int argc, char* argv[])
         exporterType == "XCODE_MAC" || exporterType == "XCODE_IPHONE";
 
       if (isXcodeExporter
-          && (exporter.hasProperty("prebuildCommand")
-              || exporter.hasProperty("postbuildCommand")))
+          && (exporter.hasAttribute("prebuildCommand")
+              || exporter.hasAttribute("postbuildCommand")))
       {
-        wLn("  TARGET_PROJECT_FOLDER \"", exporter.getProperty("targetFolder").toString(),
+        wLn("  TARGET_PROJECT_FOLDER \"", exporter.getStringAttribute("targetFolder"),
             "\"  # only used by PREBUILD_SHELL_SCRIPT and POSTBUILD_SHELL_SCRIPT");
       }
 
@@ -1461,12 +1504,17 @@ int main(int argc, char* argv[])
       if (isVSExporter)
       {
         const auto needsTargetFolder = [&configurations]() {
-          for (auto i = 0; i < configurations.getNumChildren(); ++i)
+          for (auto pConfiguration = configurations.getFirstChildElement();
+               pConfiguration != nullptr;
+               pConfiguration = pConfiguration->getNextElement())
           {
-            const auto configuration = configurations.getChild(i);
+            if (pConfiguration->isTextElement())
+            {
+              continue;
+            }
 
-            if (configuration.hasProperty("prebuildCommand")
-                || configuration.hasProperty("postbuildCommand"))
+            if (pConfiguration->hasAttribute("prebuildCommand")
+                || pConfiguration->hasAttribute("postbuildCommand"))
             {
               return true;
             }
@@ -1477,26 +1525,25 @@ int main(int argc, char* argv[])
         if (needsTargetFolder)
         {
           wLn("  TARGET_PROJECT_FOLDER \"",
-              exporter.getProperty("targetFolder").toString(),
+              exporter.getStringAttribute("targetFolder"),
               "\" # only used by PREBUILD_COMMAND and POSTBUILD_COMMAND");
         }
       }
 
       const auto isAudioPlugin = projectType == "audioplug";
       const auto pluginFormats = juce::StringArray::fromTokens(
-        jucerProject.getProperty("pluginFormats").toString(), ",", {});
+        jucerProject.getStringAttribute("pluginFormats"), ",", {});
       const auto hasJuceAudioProcessorsModule =
-        jucerProject.getChildWithName("MODULES")
-          .getChildWithProperty("id", "juce_audio_processors")
-          .isValid();
+        safeGetChildByName(jucerProject, "MODULES")
+          .getChildByAttribute("id", "juce_audio_processors")
+        != nullptr;
 
       const auto hasVst2Interface = jucerVersionAsTuple > Version{4, 2, 3};
       const auto isVstAudioPlugin = isAudioPlugin
                                     && (pluginFormats.contains("buildVST")
-                                        || toBoolLikeVar(jucerProject.getProperty("buildVST").toString()));
-      const auto pluginHostVstOption = jucerProject.getChildWithName("JUCEOPTIONS")
-                                         .getProperty("JUCE_PLUGINHOST_VST")
-                                         .toString();
+                                        || toBoolLikeVar(jucerProject.getStringAttribute("buildVST")));
+      const auto& pluginHostVstOption = safeGetChildByName(jucerProject, "JUCEOPTIONS")
+                                          .getStringAttribute("JUCE_PLUGINHOST_VST");
       const auto isVstPluginHost =
         hasJuceAudioProcessorsModule
         && (pluginHostVstOption == "enabled" || pluginHostVstOption == "1");
@@ -1516,10 +1563,9 @@ int main(int argc, char* argv[])
       const auto supportsVst3 = exporterType == "XCODE_MAC" || isVSExporter;
       const auto isVst3AudioPlugin = isAudioPlugin
                                      && (pluginFormats.contains("buildVST3")
-                                         || toBoolLikeVar(jucerProject.getProperty("buildVST3").toString()));
-      const auto pluginHostVst3Option = jucerProject.getChildWithName("JUCEOPTIONS")
-                                          .getProperty("JUCE_PLUGINHOST_VST3")
-                                          .toString();
+                                         || toBoolLikeVar(jucerProject.getStringAttribute("buildVST3")));
+      const auto& pluginHostVst3Option = safeGetChildByName(jucerProject, "JUCEOPTIONS")
+                                           .getStringAttribute("JUCE_PLUGINHOST_VST3");
       const auto isVst3PluginHost =
         hasJuceAudioProcessorsModule
         && (pluginHostVst3Option == "enabled" || pluginHostVst3Option == "1");
@@ -1534,13 +1580,13 @@ int main(int argc, char* argv[])
       if (supportsAaxRtas && isAudioPlugin)
       {
         if (pluginFormats.contains("buildAAX")
-            || toBoolLikeVar(jucerProject.getProperty("buildAAX").toString()))
+            || toBoolLikeVar(jucerProject.getStringAttribute("buildAAX")))
         {
           convertSetting(exporter, "aaxFolder", "AAX_SDK_FOLDER", {});
         }
 
         if (pluginFormats.contains("buildRTAS")
-            || toBoolLikeVar(jucerProject.getProperty("buildRTAS").toString()))
+            || toBoolLikeVar(jucerProject.getStringAttribute("buildRTAS")))
         {
           convertSetting(exporter, "rtasFolder", "RTAS_SDK_FOLDER", {});
         }
@@ -1555,7 +1601,7 @@ int main(int argc, char* argv[])
         });
 
       const auto compilerFlagSchemesArray = juce::StringArray::fromTokens(
-        jucerProject.getProperty("compilerFlagSchemes").toString(), ",", {});
+        jucerProject.getStringAttribute("compilerFlagSchemes"), ",", {});
       // Use a juce::HashMap like Projucer does, in order to get the same ordering.
       juce::HashMap<juce::String, std::tuple<>> compilerFlagSchemesMap;
       for (const auto& scheme : compilerFlagSchemesArray)
@@ -1579,15 +1625,13 @@ int main(int argc, char* argv[])
       convertOnOffSettingIfDefined(exporter, "enableGNUExtensions",
                                    "GNU_COMPILER_EXTENSIONS", {});
 
-      const auto convertIcon = [&jucerProject](const juce::String& fileId) -> juce::String {
+      const auto convertIcon = [&safeGetChildByName, &jucerProject](const juce::String& fileId) -> juce::String {
         if (fileId.isNotEmpty())
         {
-          const auto file = getChildWithPropertyRecursively(
-            jucerProject.getChildWithName("MAINGROUP"), "id", fileId);
-
-          if (file.isValid())
+          if (const auto pFile = getChildByAttributeRecursively(
+                safeGetChildByName(jucerProject, "MAINGROUP"), "id", fileId))
           {
-            return file.getProperty("file").toString();
+            return pFile->getStringAttribute("file");
           }
         }
 
@@ -1858,7 +1902,7 @@ int main(int argc, char* argv[])
 
           const auto jucerFileDir = jucerFile.getParentDirectory();
           const auto targetProjectDir =
-            jucerFileDir.getChildFile(exporter.getProperty("targetFolder").toString());
+            jucerFileDir.getChildFile(exporter.getStringAttribute("targetFolder"));
 
           return targetProjectDir.getChildFile(value).getRelativePathFrom(jucerFileDir);
         };
@@ -1914,9 +1958,9 @@ int main(int argc, char* argv[])
       {
         convertSettingIfDefined(exporter, "msvcManifestFile", "MANIFEST_FILE", {});
 
-        if (exporter.hasProperty("toolset"))
+        if (exporter.hasAttribute("toolset"))
         {
-          const auto toolset = exporter.getProperty("toolset").toString();
+          const auto& toolset = exporter.getStringAttribute("toolset");
           if (toolset.isEmpty())
           {
             wLn("  # PLATFORM_TOOLSET \"(default)\"");
@@ -2019,15 +2063,21 @@ int main(int argc, char* argv[])
       wLn(")");
       wLn();
 
-      for (auto i = 0; i < configurations.getNumChildren(); ++i)
+      for (auto pConfiguration = configurations.getFirstChildElement();
+           pConfiguration != nullptr; pConfiguration = pConfiguration->getNextElement())
       {
-        const auto configuration = configurations.getChild(i);
+        if (pConfiguration->isTextElement())
+        {
+          continue;
+        }
+
+        const auto& configuration = *pConfiguration;
 
         wLn("jucer_export_target_configuration(");
         wLn("  \"", exporterName, "\"");
-        wLn("  NAME \"", configuration.getProperty("name").toString(), "\"");
+        wLn("  NAME \"", configuration.getStringAttribute("name"), "\"");
 
-        const auto isDebug = toBoolLikeVar(configuration.getProperty("isDebug").toString());
+        const auto isDebug = toBoolLikeVar(configuration.getStringAttribute("isDebug"));
         wLn("  DEBUG_MODE ", (isDebug ? "ON" : "OFF"));
 
         convertSettingIfDefined(configuration, "targetName", "BINARY_NAME", {});
@@ -2041,7 +2091,7 @@ int main(int argc, char* argv[])
 
         const auto jucerFileDir = jucerFile.getParentDirectory();
         const auto targetProjectDir =
-          jucerFileDir.getChildFile(exporter.getProperty("targetFolder").toString());
+          jucerFileDir.getChildFile(exporter.getStringAttribute("targetFolder"));
 
         const auto convertSearchPaths =
           [&isAbsolutePath, &jucerFileDir,
@@ -2088,7 +2138,7 @@ int main(int argc, char* argv[])
         convertOnOffSettingIfDefined(configuration, "linkTimeOptimisation",
                                      "LINK_TIME_OPTIMISATION", {});
 
-        if (!configuration.hasProperty("linkTimeOptimisation") && isVSExporter && !isDebug
+        if (!configuration.hasAttribute("linkTimeOptimisation") && isVSExporter && !isDebug
             && jucerVersionAsTuple >= Version{5, 2, 0})
         {
           convertOnOffSettingIfDefined(configuration, "wholeProgramOptimisation",
@@ -2179,7 +2229,7 @@ int main(int argc, char* argv[])
 
           if (!vstIsLegacy)
           {
-            if (configuration.hasProperty("xcodeVstBinaryLocation"))
+            if (configuration.hasAttribute("xcodeVstBinaryLocation"))
             {
               convertSetting(configuration, "xcodeVstBinaryLocation",
                              "VST_BINARY_LOCATION", {});
@@ -2208,7 +2258,7 @@ int main(int argc, char* argv[])
             const auto& newProperty = std::get<1>(binaryLocationTuple);
             const auto& cmakeKeyword = std::get<2>(binaryLocationTuple);
 
-            if (configuration.hasProperty(oldProperty))
+            if (configuration.hasAttribute(oldProperty))
             {
               convertSetting(configuration, oldProperty, cmakeKeyword, {});
             }
@@ -2451,10 +2501,10 @@ int main(int argc, char* argv[])
                                     return value;
                                   });
 
-          if (configuration.hasProperty("winArchitecture"))
+          if (configuration.hasAttribute("winArchitecture"))
           {
-            const auto winArchitecture =
-              configuration.getProperty("winArchitecture").toString();
+            const auto& winArchitecture =
+              configuration.getStringAttribute("winArchitecture");
             if (winArchitecture.isEmpty())
             {
               wLn("  # ARCHITECTURE");
@@ -2531,7 +2581,7 @@ int main(int argc, char* argv[])
 
         if (exporterType == "CODEBLOCKS_WINDOWS")
         {
-          if (configuration.hasProperty("windowsCodeBlocksArchitecture")
+          if (configuration.hasAttribute("windowsCodeBlocksArchitecture")
               || jucerVersionAsTuple >= Version{5, 0, 0})
           {
             convertSetting(configuration, "windowsCodeBlocksArchitecture", "ARCHITECTURE",
@@ -2541,7 +2591,7 @@ int main(int argc, char* argv[])
 
         if (exporterType == "CODEBLOCKS_LINUX")
         {
-          if (configuration.hasProperty("linuxCodeBlocksArchitecture")
+          if (configuration.hasAttribute("linuxCodeBlocksArchitecture")
               || jucerVersionAsTuple >= Version{5, 0, 0})
           {
             convertSetting(configuration, "linuxCodeBlocksArchitecture", "ARCHITECTURE",
