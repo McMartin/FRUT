@@ -557,22 +557,21 @@ int main(int argc, char* argv[])
       }
     };
 
-  const auto convertOnOffSettingWithDefault =
-    [&convertOnOffSetting](const juce::XmlElement& element,
-                           const juce::StringRef attributeName,
-                           const juce::String& cmakeKeyword, bool defaultValue) {
-      if (element.hasAttribute(attributeName))
-      {
-        convertOnOffSetting(element, attributeName, cmakeKeyword, {});
-      }
-      else
-      {
-        convertOnOffSetting(element, attributeName, cmakeKeyword,
-                            [defaultValue](const juce::String&) -> juce::String {
-                              return defaultValue ? "ON" : "OFF";
-                            });
-      }
-    };
+  const auto convertOnOffSettingWithDefault = [&convertOnOffSetting](
+                                                const juce::XmlElement& element,
+                                                const juce::StringRef attributeName,
+                                                const juce::String& cmakeKeyword,
+                                                const juce::String& defaultValue) {
+    if (element.hasAttribute(attributeName))
+    {
+      convertOnOffSetting(element, attributeName, cmakeKeyword, {});
+    }
+    else
+    {
+      convertOnOffSetting(element, attributeName, cmakeKeyword,
+                          [&defaultValue](const juce::String&) { return defaultValue; });
+    }
+  };
 
   const auto convertSettingAsList =
     [&wLn](const juce::XmlElement& element, const juce::StringRef attributeName,
@@ -937,19 +936,19 @@ int main(int argc, char* argv[])
       }
       else
       {
-        convertOnOffSettingWithDefault(jucerProject, "buildVST", "BUILD_VST", true);
-        convertOnOffSettingWithDefault(jucerProject, "buildVST3", "BUILD_VST3", false);
-        convertOnOffSettingWithDefault(jucerProject, "buildAU", "BUILD_AUDIOUNIT", true);
+        convertOnOffSettingWithDefault(jucerProject, "buildVST", "BUILD_VST", "ON");
+        convertOnOffSettingWithDefault(jucerProject, "buildVST3", "BUILD_VST3", "OFF");
+        convertOnOffSettingWithDefault(jucerProject, "buildAU", "BUILD_AUDIOUNIT", "ON");
         convertOnOffSettingWithDefault(jucerProject, "buildAUv3", "BUILD_AUDIOUNIT_V3",
-                                       false);
-        convertOnOffSettingWithDefault(jucerProject, "buildRTAS", "BUILD_RTAS", false);
-        convertOnOffSettingWithDefault(jucerProject, "buildAAX", "BUILD_AAX", false);
+                                       "OFF");
+        convertOnOffSettingWithDefault(jucerProject, "buildRTAS", "BUILD_RTAS", "OFF");
+        convertOnOffSettingWithDefault(jucerProject, "buildAAX", "BUILD_AAX", "OFF");
         if (jucerVersionAsTuple >= Version{5, 0, 0})
         {
           convertOnOffSettingWithDefault(jucerProject, "buildStandalone",
-                                         "BUILD_STANDALONE_PLUGIN", false);
+                                         "BUILD_STANDALONE_PLUGIN", "OFF");
           convertOnOffSettingWithDefault(jucerProject, "enableIAA",
-                                         "ENABLE_INTER_APP_AUDIO", false);
+                                         "ENABLE_INTER_APP_AUDIO", "OFF");
         }
       }
 
@@ -986,13 +985,13 @@ int main(int argc, char* argv[])
       {
         wLn(juce::String{"  PLUGIN_IS_A_SYNTH "} + (isSynthAudioPlugin ? "ON" : "OFF"));
         convertOnOffSettingWithDefault(jucerProject, "pluginWantsMidiIn",
-                                       "PLUGIN_MIDI_INPUT", false);
+                                       "PLUGIN_MIDI_INPUT", "OFF");
         convertOnOffSettingWithDefault(jucerProject, "pluginProducesMidiOut",
-                                       "PLUGIN_MIDI_OUTPUT", false);
+                                       "PLUGIN_MIDI_OUTPUT", "OFF");
         convertOnOffSettingWithDefault(jucerProject, "pluginIsMidiEffectPlugin",
-                                       "MIDI_EFFECT_PLUGIN", false);
+                                       "MIDI_EFFECT_PLUGIN", "OFF");
         convertOnOffSettingWithDefault(jucerProject, "pluginEditorRequiresKeys",
-                                       "KEY_FOCUS", false);
+                                       "KEY_FOCUS", "OFF");
       }
 
       if (jucerVersionAsTuple >= Version{5, 3, 1})
