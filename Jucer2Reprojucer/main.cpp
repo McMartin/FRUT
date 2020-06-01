@@ -507,8 +507,7 @@ int main(int argc, char* argv[])
       const juce::String& cmakeKeyword, const juce::String& defaultValue) {
       if (element.hasAttribute(attributeName))
       {
-        convertSetting(element, attributeName, cmakeKeyword,
-                       [](const juce::String& value) { return value; });
+        convertSetting(element, attributeName, cmakeKeyword, {});
       }
       else
       {
@@ -564,10 +563,7 @@ int main(int argc, char* argv[])
                            const juce::String& cmakeKeyword, bool defaultValue) {
       if (element.hasAttribute(attributeName))
       {
-        convertOnOffSetting(element, attributeName, cmakeKeyword,
-                            [](const juce::String& value) -> juce::String {
-                              return toBoolLikeVar(value) ? "ON" : "OFF";
-                            });
+        convertOnOffSetting(element, attributeName, cmakeKeyword, {});
       }
       else
       {
