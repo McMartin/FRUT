@@ -472,12 +472,9 @@ int main(int argc, char* argv[])
     [&wLn](const juce::XmlElement& element, const juce::StringRef attributeName,
            const juce::String& cmakeKeyword,
            std::function<juce::String(const juce::String&)> converterFn) {
-      if (!converterFn)
-      {
-        converterFn = [](const juce::String& value) { return value; };
-      }
-
-      const auto value = converterFn(element.getStringAttribute(attributeName));
+      const auto value = converterFn
+                           ? converterFn(element.getStringAttribute(attributeName))
+                           : element.getStringAttribute(attributeName);
 
       if (value.isEmpty())
       {
@@ -520,21 +517,13 @@ int main(int argc, char* argv[])
     [&wLn](const juce::XmlElement& element, const juce::StringRef attributeName,
            const juce::String& cmakeKeyword,
            std::function<juce::String(const juce::String&)> converterFn) {
-      if (!converterFn)
-      {
-        if (element.hasAttribute(attributeName))
-        {
-          converterFn = [](const juce::String& value) -> juce::String {
-            return toBoolLikeVar(value) ? "ON" : "OFF";
-          };
-        }
-        else
-        {
-          converterFn = [](const juce::String&) -> juce::String { return {}; };
-        }
-      }
-
-      const auto value = converterFn(element.getStringAttribute(attributeName));
+      const auto value =
+        converterFn
+          ? converterFn(element.getStringAttribute(attributeName))
+          : juce::String{
+            element.hasAttribute(attributeName)
+              ? toBoolLikeVar(element.getStringAttribute(attributeName)) ? "ON" : "OFF"
+              : ""};
 
       if (value.isEmpty())
       {
@@ -577,14 +566,10 @@ int main(int argc, char* argv[])
     [&wLn](const juce::XmlElement& element, const juce::StringRef attributeName,
            const juce::String& cmakeKeyword,
            std::function<juce::StringArray(const juce::String&)> converterFn) {
-      if (!converterFn)
-      {
-        converterFn = [](const juce::String& value) {
-          return juce::StringArray::fromLines(value);
-        };
-      }
-
-      const auto values = converterFn(element.getStringAttribute(attributeName));
+      const auto values =
+        converterFn
+          ? converterFn(element.getStringAttribute(attributeName))
+          : juce::StringArray::fromLines(element.getStringAttribute(attributeName));
 
       if (values.isEmpty())
       {
