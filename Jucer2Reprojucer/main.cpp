@@ -589,8 +589,7 @@ int main(int argc, char* argv[])
         };
       }
 
-      auto values = converterFn(element.getStringAttribute(attributeName));
-      values.removeEmptyStrings();
+      const auto values = converterFn(element.getStringAttribute(attributeName));
 
       if (values.isEmpty())
       {
@@ -602,7 +601,10 @@ int main(int argc, char* argv[])
 
         for (const auto& item : values)
         {
-          wLn("    \"", escape("\\\";", item.trimCharactersAtEnd("\\")), "\"");
+          if (item.isNotEmpty())
+          {
+            wLn("    \"", escape("\\\";", item.trimCharactersAtEnd("\\")), "\"");
+          }
         }
       }
     };
@@ -1666,7 +1668,6 @@ int main(int argc, char* argv[])
           [](const juce::String& value) {
             auto folders = juce::StringArray::fromLines(value);
             folders.trim();
-            folders.removeEmptyStrings();
             return folders;
           });
 
