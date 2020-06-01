@@ -1145,18 +1145,17 @@ int main(int argc, char* argv[])
 
         if (!jucerProject.hasAttribute("pluginAAXCategory"))
         {
-          convertSettingAsList(
-            jucerProject, "pluginAAXCategory", "PLUGIN_AAX_CATEGORY",
-            [isSynthAudioPlugin](const juce::String&) -> juce::StringArray {
-              return juce::StringArray{isSynthAudioPlugin
-                                         ? "AAX_ePlugInCategory_SWGenerators"
-                                         : "AAX_ePlugInCategory_None"};
-            });
+          convertSettingAsList(jucerProject, "pluginAAXCategory", "PLUGIN_AAX_CATEGORY",
+                               [isSynthAudioPlugin](const juce::String&) {
+                                 return juce::StringArray{
+                                   isSynthAudioPlugin ? "AAX_ePlugInCategory_SWGenerators"
+                                                      : "AAX_ePlugInCategory_None"};
+                               });
         }
         else
         {
           convertSettingAsList(jucerProject, "pluginAAXCategory", "PLUGIN_AAX_CATEGORY",
-                               [](const juce::String& value) -> juce::StringArray {
+                               [](const juce::String& value) {
                                  return convertIdsToStrings(
                                    juce::StringArray::fromTokens(value, ",", {}),
                                    {{"0", "AAX_ePlugInCategory_None"},
