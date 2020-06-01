@@ -1358,7 +1358,7 @@ int main(int argc, char* argv[])
         {
           return pModulePath->getStringAttribute("path");
         }
-        return juce::String{};
+        return {};
       }();
 
       wLn("jucer_project_module(");
