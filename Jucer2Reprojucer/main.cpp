@@ -219,7 +219,7 @@ convertIdsToStrings(const juce::StringArray& ids,
 
 juce::StringArray parsePreprocessorDefinitions(const juce::String& input)
 {
-  juce::StringArray output;
+  juce::StringArray definitions;
 
   for (auto s = input.getCharPointer(); !s.isEmpty();)
   {
@@ -262,11 +262,11 @@ juce::StringArray parsePreprocessorDefinitions(const juce::String& input)
 
     if (definition.isNotEmpty())
     {
-      output.add(value.isEmpty() ? definition : definition + '=' + value);
+      definitions.add(value.isEmpty() ? definition : definition + '=' + value);
     }
   }
 
-  return output;
+  return definitions;
 }
 
 
@@ -589,10 +589,9 @@ int main(int argc, char* argv[])
         };
       }
 
-      auto value = converterFn(element.getStringAttribute(attributeName));
-      value.removeEmptyStrings();
+      const auto values = converterFn(element.getStringAttribute(attributeName));
 
-      if (value.isEmpty())
+      if (values.isEmpty())
       {
         wLn("  # ", cmakeKeyword);
       }
@@ -600,9 +599,12 @@ int main(int argc, char* argv[])
       {
         wLn("  ", cmakeKeyword);
 
-        for (const auto& item : value)
+        for (const auto& item : values)
         {
-          wLn("    \"", escape("\\\";", item.trimCharactersAtEnd("\\")), "\"");
+          if (item.isNotEmpty())
+          {
+            wLn("    \"", escape("\\\";", item.trimCharactersAtEnd("\\")), "\"");
+          }
         }
       }
     };
@@ -1092,16 +1094,16 @@ int main(int argc, char* argv[])
           convertSettingAsList(
             jucerProject, "pluginVST3Category", "PLUGIN_VST3_CATEGORY",
             [](const juce::String& value) {
-              auto vst3Category = juce::StringArray::fromTokens(value, ",", {});
-              if (vst3Category.contains("Instrument"))
+              auto vst3Categories = juce::StringArray::fromTokens(value, ",", {});
+              if (vst3Categories.contains("Instrument"))
               {
-                vst3Category.move(vst3Category.indexOf("Instrument"), 0);
+                vst3Categories.move(vst3Categories.indexOf("Instrument"), 0);
               }
-              if (vst3Category.contains("Fx"))
+              if (vst3Categories.contains("Fx"))
               {
-                vst3Category.move(vst3Category.indexOf("Fx"), 0);
+                vst3Categories.move(vst3Categories.indexOf("Fx"), 0);
               }
-              return vst3Category;
+              return vst3Categories;
             });
         }
       }
@@ -1437,13 +1439,13 @@ int main(int argc, char* argv[])
         }
       }
 
-      const auto kDefaultProjucerUserCodeSectionComment = juce::StringArray{
+      const auto kDefaultProjucerUserCodeSectionCommentLines = juce::StringArray{
         "",
         "// (You can add your own code in this section, and the Projucer will not "
         "overwrite it)",
         ""};
 
-      if (userCodeSectionLines != kDefaultProjucerUserCodeSectionComment)
+      if (userCodeSectionLines != kDefaultProjucerUserCodeSectionCommentLines)
       {
         wLn("jucer_appconfig_header(");
         wLn("  USER_CODE_SECTION");
@@ -1666,7 +1668,6 @@ int main(int argc, char* argv[])
           [](const juce::String& value) {
             auto folders = juce::StringArray::fromLines(value);
             folders.trim();
-            folders.removeEmptyStrings();
             return folders;
           });
 
