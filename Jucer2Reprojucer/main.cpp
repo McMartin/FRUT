@@ -471,7 +471,7 @@ int main(int argc, char* argv[])
   const auto convertSetting =
     [&wLn](const juce::XmlElement& element, const juce::StringRef attributeName,
            const juce::String& cmakeKeyword,
-           std::function<juce::String(const juce::String&)> converterFn) {
+           const std::function<juce::String(const juce::String&)>& converterFn) {
       const auto value = converterFn
                            ? converterFn(element.getStringAttribute(attributeName))
                            : element.getStringAttribute(attributeName);
@@ -488,13 +488,13 @@ int main(int argc, char* argv[])
     };
 
   const auto convertSettingIfDefined =
-    [&convertSetting](const juce::XmlElement& element,
-                      const juce::StringRef attributeName,
-                      const juce::String& cmakeKeyword,
-                      std::function<juce::String(const juce::String&)> converterFn) {
+    [&convertSetting](
+      const juce::XmlElement& element, const juce::StringRef attributeName,
+      const juce::String& cmakeKeyword,
+      const std::function<juce::String(const juce::String&)>& converterFn) {
       if (element.hasAttribute(attributeName))
       {
-        convertSetting(element, attributeName, cmakeKeyword, std::move(converterFn));
+        convertSetting(element, attributeName, cmakeKeyword, converterFn);
       }
     };
 
@@ -516,7 +516,7 @@ int main(int argc, char* argv[])
   const auto convertOnOffSetting =
     [&wLn](const juce::XmlElement& element, const juce::StringRef attributeName,
            const juce::String& cmakeKeyword,
-           std::function<juce::String(const juce::String&)> converterFn) {
+           const std::function<juce::String(const juce::String&)>& converterFn) {
       const auto value =
         converterFn
           ? converterFn(element.getStringAttribute(attributeName))
@@ -536,13 +536,13 @@ int main(int argc, char* argv[])
     };
 
   const auto convertOnOffSettingIfDefined =
-    [&convertOnOffSetting](const juce::XmlElement& element,
-                           const juce::StringRef attributeName,
-                           const juce::String& cmakeKeyword,
-                           std::function<juce::String(const juce::String&)> converterFn) {
+    [&convertOnOffSetting](
+      const juce::XmlElement& element, const juce::StringRef attributeName,
+      const juce::String& cmakeKeyword,
+      const std::function<juce::String(const juce::String&)>& converterFn) {
       if (element.hasAttribute(attributeName))
       {
-        convertOnOffSetting(element, attributeName, cmakeKeyword, std::move(converterFn));
+        convertOnOffSetting(element, attributeName, cmakeKeyword, converterFn);
       }
     };
 
@@ -565,7 +565,7 @@ int main(int argc, char* argv[])
   const auto convertSettingAsList =
     [&wLn](const juce::XmlElement& element, const juce::StringRef attributeName,
            const juce::String& cmakeKeyword,
-           std::function<juce::StringArray(const juce::String&)> converterFn) {
+           const std::function<juce::StringArray(const juce::String&)>& converterFn) {
       const auto values =
         converterFn
           ? converterFn(element.getStringAttribute(attributeName))
@@ -593,11 +593,10 @@ int main(int argc, char* argv[])
     [&convertSettingAsList](
       const juce::XmlElement& element, const juce::StringRef attributeName,
       const juce::String& cmakeKeyword,
-      std::function<juce::StringArray(const juce::String&)> converterFn) {
+      const std::function<juce::StringArray(const juce::String&)>& converterFn) {
       if (element.hasAttribute(attributeName))
       {
-        convertSettingAsList(element, attributeName, cmakeKeyword,
-                             std::move(converterFn));
+        convertSettingAsList(element, attributeName, cmakeKeyword, converterFn);
       }
     };
 
