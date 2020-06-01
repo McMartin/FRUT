@@ -138,7 +138,7 @@ We first build and install FRUT with CMake: ::
 
   $ mkdir build && cd build/
 
-  $ cmake .. -DCMAKE_INSTALL_PREFIX=../prefix -DJUCE_ROOT=../../JUCE
+  $ cmake .. -DCMAKE_INSTALL_PREFIX="../prefix" -DJUCE_ROOT="../../JUCE"
   ...
   -- Configuring done
   -- Generating done
