@@ -1322,12 +1322,14 @@ int main(int argc, char* argv[])
           printError("The module " + moduleName.toStdString()
                      + " requires a global path. You should pass the JUCE modules global "
                        "path using --juce-modules.");
+          return 1;
         }
         if (!isJuceModule && userModulesPath.isEmpty())
         {
           printError("The module " + moduleName.toStdString()
                      + " requires a global path. You should pass the user modules global "
                        "path using --user-modules.");
+          return 1;
         }
       }
 
