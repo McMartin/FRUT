@@ -1331,7 +1331,7 @@ int main(int argc, char* argv[])
         }
       }
 
-      const auto relativeModulePath = [&modulePaths, &moduleName]() -> juce::String {
+      const auto modulePath = [&modulePaths, &moduleName]() -> juce::String {
         if (const auto pModulePath = modulePaths.getChildByAttribute("id", moduleName))
         {
           return pModulePath->getStringAttribute("path");
@@ -1344,12 +1344,12 @@ int main(int argc, char* argv[])
       wLn("  PATH \"",
           useGlobalPath ? (isJuceModule ? "${JUCE_MODULES_GLOBAL_PATH}"
                                         : "${USER_MODULES_GLOBAL_PATH}")
-                        : relativeModulePath.replace("\\", "/"),
+                        : modulePath.replace("\\", "/"),
           "\"");
 
       const auto moduleHeader =
         (useGlobalPath ? (isJuceModule ? juceModules : userModules)
-                       : jucerFile.getParentDirectory().getChildFile(relativeModulePath))
+                       : jucerFile.getParentDirectory().getChildFile(modulePath))
           .getChildFile(moduleName)
           .getChildFile(moduleName + ".h");
       if (!moduleHeader.existsAsFile())
