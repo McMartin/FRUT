@@ -1319,16 +1319,18 @@ int main(int argc, char* argv[])
       {
         if (isJuceModule && juceModulesPath.isEmpty())
         {
-          printError("The module " + moduleName.toStdString()
-                     + " requires a global path. You should pass the JUCE modules global "
-                       "path using --juce-modules.");
+          printError(
+            "At least one JUCE module used in " + jucerFilePath
+            + " relies on the global \"JUCE Modules\" path set in Projucer. You must "
+              "provide this path using --juce-modules=\"<global-JUCE-modules-path>\".");
           return 1;
         }
         if (!isJuceModule && userModulesPath.isEmpty())
         {
-          printError("The module " + moduleName.toStdString()
-                     + " requires a global path. You should pass the user modules global "
-                       "path using --user-modules.");
+          printError(
+            "At least one user module used in " + jucerFilePath
+            + " relies on the global \"User Modules\" path set in Projucer. You must "
+              "provide this path using --user-modules=\"<global-user-modules-path>\".");
           return 1;
         }
       }
