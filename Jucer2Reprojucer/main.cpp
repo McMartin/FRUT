@@ -471,13 +471,10 @@ int main(int argc, char* argv[])
   const auto convertSetting =
     [&wLn](const juce::XmlElement& element, const juce::StringRef attributeName,
            const juce::String& cmakeKeyword,
-           std::function<juce::String(const juce::String&)> converterFn) {
-      if (!converterFn)
-      {
-        converterFn = [](const juce::String& value) { return value; };
-      }
-
-      const auto value = converterFn(element.getStringAttribute(attributeName));
+           const std::function<juce::String(const juce::String&)>& converterFn) {
+      const auto value = converterFn
+                           ? converterFn(element.getStringAttribute(attributeName))
+                           : element.getStringAttribute(attributeName);
 
       if (value.isEmpty())
       {
@@ -491,13 +488,13 @@ int main(int argc, char* argv[])
     };
 
   const auto convertSettingIfDefined =
-    [&convertSetting](const juce::XmlElement& element,
-                      const juce::StringRef attributeName,
-                      const juce::String& cmakeKeyword,
-                      std::function<juce::String(const juce::String&)> converterFn) {
+    [&convertSetting](
+      const juce::XmlElement& element, const juce::StringRef attributeName,
+      const juce::String& cmakeKeyword,
+      const std::function<juce::String(const juce::String&)>& converterFn) {
       if (element.hasAttribute(attributeName))
       {
-        convertSetting(element, attributeName, cmakeKeyword, std::move(converterFn));
+        convertSetting(element, attributeName, cmakeKeyword, converterFn);
       }
     };
 
@@ -505,37 +502,28 @@ int main(int argc, char* argv[])
     [&convertSetting](
       const juce::XmlElement& element, const juce::StringRef attributeName,
       const juce::String& cmakeKeyword, const juce::String& defaultValue) {
-      if (!element.hasAttribute(attributeName))
+      if (element.hasAttribute(attributeName))
       {
-        convertSetting(element, attributeName, cmakeKeyword,
-                       [&defaultValue](const juce::String&) { return defaultValue; });
+        convertSetting(element, attributeName, cmakeKeyword, {});
       }
       else
       {
         convertSetting(element, attributeName, cmakeKeyword,
-                       [](const juce::String& value) { return value; });
+                       [&defaultValue](const juce::String&) { return defaultValue; });
       }
     };
 
   const auto convertOnOffSetting =
     [&wLn](const juce::XmlElement& element, const juce::StringRef attributeName,
            const juce::String& cmakeKeyword,
-           std::function<juce::String(const juce::String&)> converterFn) {
-      if (!converterFn)
-      {
-        if (!element.hasAttribute(attributeName))
-        {
-          converterFn = [](const juce::String&) -> juce::String { return {}; };
-        }
-        else
-        {
-          converterFn = [](const juce::String& value) -> juce::String {
-            return toBoolLikeVar(value) ? "ON" : "OFF";
-          };
-        }
-      }
-
-      const auto value = converterFn(element.getStringAttribute(attributeName));
+           const std::function<juce::String(const juce::String&)>& converterFn) {
+      const auto value =
+        converterFn
+          ? converterFn(element.getStringAttribute(attributeName))
+          : juce::String{
+            element.hasAttribute(attributeName)
+              ? toBoolLikeVar(element.getStringAttribute(attributeName)) ? "ON" : "OFF"
+              : ""};
 
       if (value.isEmpty())
       {
@@ -548,48 +536,40 @@ int main(int argc, char* argv[])
     };
 
   const auto convertOnOffSettingIfDefined =
-    [&convertOnOffSetting](const juce::XmlElement& element,
-                           const juce::StringRef attributeName,
-                           const juce::String& cmakeKeyword,
-                           std::function<juce::String(const juce::String&)> converterFn) {
+    [&convertOnOffSetting](
+      const juce::XmlElement& element, const juce::StringRef attributeName,
+      const juce::String& cmakeKeyword,
+      const std::function<juce::String(const juce::String&)>& converterFn) {
       if (element.hasAttribute(attributeName))
       {
-        convertOnOffSetting(element, attributeName, cmakeKeyword, std::move(converterFn));
+        convertOnOffSetting(element, attributeName, cmakeKeyword, converterFn);
       }
     };
 
-  const auto convertOnOffSettingWithDefault =
-    [&convertOnOffSetting](const juce::XmlElement& element,
-                           const juce::StringRef attributeName,
-                           const juce::String& cmakeKeyword, bool defaultValue) {
-      if (!element.hasAttribute(attributeName))
-      {
-        convertOnOffSetting(element, attributeName, cmakeKeyword,
-                            [defaultValue](const juce::String&) -> juce::String {
-                              return defaultValue ? "ON" : "OFF";
-                            });
-      }
-      else
-      {
-        convertOnOffSetting(element, attributeName, cmakeKeyword,
-                            [](const juce::String& value) -> juce::String {
-                              return toBoolLikeVar(value) ? "ON" : "OFF";
-                            });
-      }
-    };
+  const auto convertOnOffSettingWithDefault = [&convertOnOffSetting](
+                                                const juce::XmlElement& element,
+                                                const juce::StringRef attributeName,
+                                                const juce::String& cmakeKeyword,
+                                                const juce::String& defaultValue) {
+    if (element.hasAttribute(attributeName))
+    {
+      convertOnOffSetting(element, attributeName, cmakeKeyword, {});
+    }
+    else
+    {
+      convertOnOffSetting(element, attributeName, cmakeKeyword,
+                          [&defaultValue](const juce::String&) { return defaultValue; });
+    }
+  };
 
   const auto convertSettingAsList =
     [&wLn](const juce::XmlElement& element, const juce::StringRef attributeName,
            const juce::String& cmakeKeyword,
-           std::function<juce::StringArray(const juce::String&)> converterFn) {
-      if (!converterFn)
-      {
-        converterFn = [](const juce::String& value) {
-          return juce::StringArray::fromLines(value);
-        };
-      }
-
-      const auto values = converterFn(element.getStringAttribute(attributeName));
+           const std::function<juce::StringArray(const juce::String&)>& converterFn) {
+      const auto values =
+        converterFn
+          ? converterFn(element.getStringAttribute(attributeName))
+          : juce::StringArray::fromLines(element.getStringAttribute(attributeName));
 
       if (values.isEmpty())
       {
@@ -613,11 +593,10 @@ int main(int argc, char* argv[])
     [&convertSettingAsList](
       const juce::XmlElement& element, const juce::StringRef attributeName,
       const juce::String& cmakeKeyword,
-      std::function<juce::StringArray(const juce::String&)> converterFn) {
+      const std::function<juce::StringArray(const juce::String&)>& converterFn) {
       if (element.hasAttribute(attributeName))
       {
-        convertSettingAsList(element, attributeName, cmakeKeyword,
-                             std::move(converterFn));
+        convertSettingAsList(element, attributeName, cmakeKeyword, converterFn);
       }
     };
 
@@ -750,29 +729,29 @@ int main(int argc, char* argv[])
       const auto tagLine = juce::String{" # Required for closed source applications"
                                         " without an Indie or Pro JUCE license"};
 
-      if (!jucerProject.hasAttribute("reportAppUsage"))
-      {
-        wLn("  REPORT_JUCE_APP_USAGE ", kDefaultLicenseBasedValue, tagLine);
-      }
-      else
+      if (jucerProject.hasAttribute("reportAppUsage"))
       {
         convertOnOffSetting(jucerProject, "reportAppUsage", "REPORT_JUCE_APP_USAGE",
                             [&tagLine](const juce::String& value) {
                               return (toBoolLikeVar(value) ? "ON" : "OFF") + tagLine;
                             });
       }
-
-      if (!jucerProject.hasAttribute("displaySplashScreen"))
-      {
-        wLn("  DISPLAY_THE_JUCE_SPLASH_SCREEN ", kDefaultLicenseBasedValue, tagLine);
-      }
       else
+      {
+        wLn("  REPORT_JUCE_APP_USAGE ", kDefaultLicenseBasedValue, tagLine);
+      }
+
+      if (jucerProject.hasAttribute("displaySplashScreen"))
       {
         convertOnOffSetting(jucerProject, "displaySplashScreen",
                             "DISPLAY_THE_JUCE_SPLASH_SCREEN",
                             [&tagLine](const juce::String& value) {
                               return (toBoolLikeVar(value) ? "ON" : "OFF") + tagLine;
                             });
+      }
+      else
+      {
+        wLn("  DISPLAY_THE_JUCE_SPLASH_SCREEN ", kDefaultLicenseBasedValue, tagLine);
       }
 
       convertSettingIfDefined(jucerProject, "splashScreenColour", "SPLASH_SCREEN_COLOUR",
@@ -887,15 +866,7 @@ int main(int argc, char* argv[])
 
       if (jucerVersionAsTuple >= Version{5, 3, 1})
       {
-        if (!jucerProject.hasAttribute("pluginFormats"))
-        {
-          convertSettingAsList(
-            jucerProject, "pluginFormats", "PLUGIN_FORMATS",
-            [&vstIsLegacy](const juce::String&) {
-              return juce::StringArray{vstIsLegacy ? "VST3" : "VST", "AU", "Standalone"};
-            });
-        }
-        else
+        if (jucerProject.hasAttribute("pluginFormats"))
         {
           convertSettingAsList(
             jucerProject, "pluginFormats", "PLUGIN_FORMATS",
@@ -915,12 +886,16 @@ int main(int argc, char* argv[])
                  {vstIsLegacy ? "buildVST" : "", vstIsLegacy ? "VST (Legacy)" : ""}});
             });
         }
-
-        if (!jucerProject.hasAttribute("pluginCharacteristicsValue"))
-        {
-          wLn("  # PLUGIN_CHARACTERISTICS");
-        }
         else
+        {
+          convertSettingAsList(
+            jucerProject, "pluginFormats", "PLUGIN_FORMATS",
+            [&vstIsLegacy](const juce::String&) {
+              return juce::StringArray{vstIsLegacy ? "VST3" : "VST", "AU", "Standalone"};
+            });
+        }
+
+        if (jucerProject.hasAttribute("pluginCharacteristicsValue"))
         {
           convertSettingAsList(
             jucerProject, "pluginCharacteristicsValue", "PLUGIN_CHARACTERISTICS",
@@ -938,22 +913,26 @@ int main(int argc, char* argv[])
                  {"pluginAAXDisableMultiMono", "Disable AAX Multi-Mono"}});
             });
         }
+        else
+        {
+          wLn("  # PLUGIN_CHARACTERISTICS");
+        }
       }
       else
       {
-        convertOnOffSettingWithDefault(jucerProject, "buildVST", "BUILD_VST", true);
-        convertOnOffSettingWithDefault(jucerProject, "buildVST3", "BUILD_VST3", false);
-        convertOnOffSettingWithDefault(jucerProject, "buildAU", "BUILD_AUDIOUNIT", true);
+        convertOnOffSettingWithDefault(jucerProject, "buildVST", "BUILD_VST", "ON");
+        convertOnOffSettingWithDefault(jucerProject, "buildVST3", "BUILD_VST3", "OFF");
+        convertOnOffSettingWithDefault(jucerProject, "buildAU", "BUILD_AUDIOUNIT", "ON");
         convertOnOffSettingWithDefault(jucerProject, "buildAUv3", "BUILD_AUDIOUNIT_V3",
-                                       false);
-        convertOnOffSettingWithDefault(jucerProject, "buildRTAS", "BUILD_RTAS", false);
-        convertOnOffSettingWithDefault(jucerProject, "buildAAX", "BUILD_AAX", false);
+                                       "OFF");
+        convertOnOffSettingWithDefault(jucerProject, "buildRTAS", "BUILD_RTAS", "OFF");
+        convertOnOffSettingWithDefault(jucerProject, "buildAAX", "BUILD_AAX", "OFF");
         if (jucerVersionAsTuple >= Version{5, 0, 0})
         {
           convertOnOffSettingWithDefault(jucerProject, "buildStandalone",
-                                         "BUILD_STANDALONE_PLUGIN", false);
+                                         "BUILD_STANDALONE_PLUGIN", "OFF");
           convertOnOffSettingWithDefault(jucerProject, "enableIAA",
-                                         "ENABLE_INTER_APP_AUDIO", false);
+                                         "ENABLE_INTER_APP_AUDIO", "OFF");
         }
       }
 
@@ -990,13 +969,13 @@ int main(int argc, char* argv[])
       {
         wLn(juce::String{"  PLUGIN_IS_A_SYNTH "} + (isSynthAudioPlugin ? "ON" : "OFF"));
         convertOnOffSettingWithDefault(jucerProject, "pluginWantsMidiIn",
-                                       "PLUGIN_MIDI_INPUT", false);
+                                       "PLUGIN_MIDI_INPUT", "OFF");
         convertOnOffSettingWithDefault(jucerProject, "pluginProducesMidiOut",
-                                       "PLUGIN_MIDI_OUTPUT", false);
+                                       "PLUGIN_MIDI_OUTPUT", "OFF");
         convertOnOffSettingWithDefault(jucerProject, "pluginIsMidiEffectPlugin",
-                                       "MIDI_EFFECT_PLUGIN", false);
+                                       "MIDI_EFFECT_PLUGIN", "OFF");
         convertOnOffSettingWithDefault(jucerProject, "pluginEditorRequiresKeys",
-                                       "KEY_FOCUS", false);
+                                       "KEY_FOCUS", "OFF");
       }
 
       if (jucerVersionAsTuple >= Version{5, 3, 1})
@@ -1009,23 +988,7 @@ int main(int argc, char* argv[])
                                 makeValidIdentifier(jucerProjectName) + "AU");
       if (jucerVersionAsTuple >= Version{5, 3, 1})
       {
-        if (!jucerProject.hasAttribute("pluginAUMainType"))
-        {
-          convertSetting(jucerProject, "pluginAUMainType", "PLUGIN_AU_MAIN_TYPE",
-                         [&pluginCharacteristics](const juce::String&) -> juce::String {
-                           if (pluginCharacteristics.contains("pluginIsMidiEffectPlugin"))
-                             return "kAudioUnitType_MIDIProcessor"; // 'aumi'
-
-                           if (pluginCharacteristics.contains("pluginIsSynth"))
-                             return "kAudioUnitType_MusicDevice"; // 'aumu'
-
-                           if (pluginCharacteristics.contains("pluginWantsMidiIn"))
-                             return "kAudioUnitType_MusicEffect"; // 'aumf'
-
-                           return "kAudioUnitType_Effect"; // 'aufx'
-                         });
-        }
-        else
+        if (jucerProject.hasAttribute("pluginAUMainType"))
         {
           convertSetting(jucerProject, "pluginAUMainType", "PLUGIN_AU_MAIN_TYPE",
                          [](const juce::String& value) -> juce::String {
@@ -1042,6 +1005,22 @@ int main(int argc, char* argv[])
                            if (value == "'aupn'") return "kAudioUnitType_Panner";
                            // clang-format on
                            return value;
+                         });
+        }
+        else
+        {
+          convertSetting(jucerProject, "pluginAUMainType", "PLUGIN_AU_MAIN_TYPE",
+                         [&pluginCharacteristics](const juce::String&) -> juce::String {
+                           if (pluginCharacteristics.contains("pluginIsMidiEffectPlugin"))
+                             return "kAudioUnitType_MIDIProcessor"; // 'aumi'
+
+                           if (pluginCharacteristics.contains("pluginIsSynth"))
+                             return "kAudioUnitType_MusicDevice"; // 'aumu'
+
+                           if (pluginCharacteristics.contains("pluginWantsMidiIn"))
+                             return "kAudioUnitType_MusicEffect"; // 'aumf'
+
+                           return "kAudioUnitType_Effect"; // 'aufx'
                          });
         }
       }
@@ -1080,16 +1059,7 @@ int main(int argc, char* argv[])
       if (jucerProject.hasAttribute("pluginVST3Category")
           || jucerVersionAsTuple >= Version{5, 3, 1})
       {
-        if (!jucerProject.hasAttribute("pluginVST3Category"))
-        {
-          convertSettingAsList(jucerProject, "pluginVST3Category", "PLUGIN_VST3_CATEGORY",
-                               [isSynthAudioPlugin](const juce::String&) {
-                                 return isSynthAudioPlugin
-                                          ? juce::StringArray{"Instrument", "Synth"}
-                                          : juce::StringArray{"Fx"};
-                               });
-        }
-        else
+        if (jucerProject.hasAttribute("pluginVST3Category"))
         {
           convertSettingAsList(
             jucerProject, "pluginVST3Category", "PLUGIN_VST3_CATEGORY",
@@ -1106,20 +1076,20 @@ int main(int argc, char* argv[])
               return vst3Categories;
             });
         }
+        else
+        {
+          convertSettingAsList(jucerProject, "pluginVST3Category", "PLUGIN_VST3_CATEGORY",
+                               [isSynthAudioPlugin](const juce::String&) {
+                                 return isSynthAudioPlugin
+                                          ? juce::StringArray{"Instrument", "Synth"}
+                                          : juce::StringArray{"Fx"};
+                               });
+        }
       }
 
       if (jucerVersionAsTuple >= Version{5, 3, 1})
       {
-        if (!jucerProject.hasAttribute("pluginRTASCategory"))
-        {
-          convertSettingAsList(jucerProject, "pluginRTASCategory", "PLUGIN_RTAS_CATEGORY",
-                               [isSynthAudioPlugin](const juce::String&) {
-                                 return juce::StringArray{
-                                   isSynthAudioPlugin ? "ePlugInCategory_SWGenerators"
-                                                      : "ePlugInCategory_None"};
-                               });
-        }
-        else
+        if (jucerProject.hasAttribute("pluginRTASCategory"))
         {
           convertSettingAsList(jucerProject, "pluginRTASCategory", "PLUGIN_RTAS_CATEGORY",
                                [](const juce::String& value) {
@@ -1142,21 +1112,20 @@ int main(int argc, char* argv[])
                                     {"8192", "ePlugInCategory_Effect"}});
                                });
         }
-
-        if (!jucerProject.hasAttribute("pluginAAXCategory"))
-        {
-          convertSettingAsList(
-            jucerProject, "pluginAAXCategory", "PLUGIN_AAX_CATEGORY",
-            [isSynthAudioPlugin](const juce::String&) -> juce::StringArray {
-              return juce::StringArray{isSynthAudioPlugin
-                                         ? "AAX_ePlugInCategory_SWGenerators"
-                                         : "AAX_ePlugInCategory_None"};
-            });
-        }
         else
         {
+          convertSettingAsList(jucerProject, "pluginRTASCategory", "PLUGIN_RTAS_CATEGORY",
+                               [isSynthAudioPlugin](const juce::String&) {
+                                 return juce::StringArray{
+                                   isSynthAudioPlugin ? "ePlugInCategory_SWGenerators"
+                                                      : "ePlugInCategory_None"};
+                               });
+        }
+
+        if (jucerProject.hasAttribute("pluginAAXCategory"))
+        {
           convertSettingAsList(jucerProject, "pluginAAXCategory", "PLUGIN_AAX_CATEGORY",
-                               [](const juce::String& value) -> juce::StringArray {
+                               [](const juce::String& value) {
                                  return convertIdsToStrings(
                                    juce::StringArray::fromTokens(value, ",", {}),
                                    {{"0", "AAX_ePlugInCategory_None"},
@@ -1174,6 +1143,15 @@ int main(int argc, char* argv[])
                                     {"2048", "AAX_ePlugInCategory_SWGenerators"},
                                     {"4096", "AAX_ePlugInCategory_WrappedPlugin"},
                                     {"8192", "AAX_EPlugInCategory_Effect"}});
+                               });
+        }
+        else
+        {
+          convertSettingAsList(jucerProject, "pluginAAXCategory", "PLUGIN_AAX_CATEGORY",
+                               [isSynthAudioPlugin](const juce::String&) {
+                                 return juce::StringArray{
+                                   isSynthAudioPlugin ? "AAX_ePlugInCategory_SWGenerators"
+                                                      : "AAX_ePlugInCategory_None"};
                                });
         }
       }
@@ -1358,7 +1336,7 @@ int main(int argc, char* argv[])
         {
           return pModulePath->getStringAttribute("path");
         }
-        return juce::String{};
+        return {};
       }();
 
       wLn("jucer_project_module(");
