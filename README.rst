@@ -154,9 +154,11 @@ Then we convert ``MyGreatProject.jucer`` to a new ``CMakeLists.txt`` file: ::
 
   $ cd <root>/MyGreatProject/
 
-  $ ../FRUT/prefix/FRUT/bin/Jucer2Reprojucer MyGreatProject.jucer ../FRUT/prefix/FRUT/cmake/Reprojucer.cmake
+  $ ../FRUT/prefix/FRUT/bin/Jucer2Reprojucer MyGreatProject.jucer ../FRUT/prefix/FRUT/cmake/Reprojucer.cmake --juce-modules="../JUCE/modules"
 
   <root>/MyGreatProject/CMakeLists.txt has been successfully generated.
+
+*Note that the* ``--juce-modules`` *argument is only necessary if* ``MyGreatProject.jucer`` *uses modules from the global "JUCE Modules" path set in Projucer.*
 
 Now we can build ``MyGreatProject`` using CMake: ::
 
