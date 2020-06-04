@@ -319,6 +319,10 @@ contributors:
       <a href="https://github.com/McMartin/FRUT/issues?q=is%3Aissue+author%3Amhetrick" title="Bug reports">🐛</a>
     </td>
     <td>
+      <a href="https://github.com/importjingles"><img src="https://github.com/importjingles.png" width="100"><br />Alex</a>
+      <br />
+      <a href="https://github.com/McMartin/FRUT/pulls?q=state%3Amerged+author%3Aimportjingles" title="Code">💻</a>
+      <a href="https://github.com/McMartin/FRUT/pulls?q=state%3Amerged+reviewed-by%3Aimportjingles+-author%3Aimportjingles+" title="Pull Request reviews">👀</a>
     </td>
     <td>
     </td>
