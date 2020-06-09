@@ -439,13 +439,9 @@ int main(int argc, char* argv[])
   }();
 
   const auto reprojucerFilePath = juce::String{argumentParser[2]};
-  const auto reprojucerFile = reprojucerFilePath.isNotEmpty()
-                                ? getChildFileFromWorkingDirectory(reprojucerFilePath)
-                                : juce::File{};
-
   if (reprojucerFilePath.isNotEmpty()
-      && (!reprojucerFile.existsAsFile()
-          || !reprojucerFile.getFileName().endsWith("Reprojucer.cmake")))
+      && (!reprojucerFilePath.endsWith("Reprojucer.cmake")
+          || !getChildFileFromWorkingDirectory(reprojucerFilePath).existsAsFile()))
   {
     printError(reprojucerFilePath + " is not a valid Reprojucer.cmake file.");
     return 1;
@@ -621,7 +617,8 @@ int main(int argc, char* argv[])
     if (reprojucerFilePath.isNotEmpty())
     {
       wLn("list(APPEND CMAKE_MODULE_PATH \"${CMAKE_CURRENT_LIST_DIR}/",
-          reprojucerFile.getParentDirectory()
+          getChildFileFromWorkingDirectory(reprojucerFilePath)
+            .getParentDirectory()
             .getRelativePathFrom(juce::File::getCurrentWorkingDirectory())
             .replace("\\", "/"),
           "\")");
