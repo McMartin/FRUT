@@ -393,6 +393,31 @@ int main(int argc, char* argv[])
   const auto jucerFilePath = juce::String{argumentParser[1]};
   const auto jucerFile = getChildFileFromWorkingDirectory(jucerFilePath);
 
+  const auto reprojucerFilePath = juce::String{argumentParser[2]};
+  if (reprojucerFilePath.isNotEmpty()
+      && (!reprojucerFilePath.endsWith("Reprojucer.cmake")
+          || !getChildFileFromWorkingDirectory(reprojucerFilePath).existsAsFile()))
+  {
+    printError(reprojucerFilePath + " is not a valid Reprojucer.cmake file.");
+    return 1;
+  }
+
+  const auto juceModulesPath = juce::String{argumentParser("--juce-modules").str()};
+  const auto juceModules = getChildFileFromWorkingDirectory(juceModulesPath);
+  if (!juceModules.isDirectory())
+  {
+    printError("No such directory (--juce-modules): " + juceModulesPath);
+    return 1;
+  }
+
+  const auto userModulesPath = juce::String{argumentParser("--user-modules").str()};
+  const auto userModules = getChildFileFromWorkingDirectory(userModulesPath);
+  if (!userModules.isDirectory())
+  {
+    printError("No such directory (--user-modules): " + userModulesPath);
+    return 1;
+  }
+
   const auto xml = std::unique_ptr<juce::XmlElement>{juce::XmlDocument::parse(jucerFile)};
   if (xml == nullptr || !xml->hasTagName("JUCERPROJECT"))
   {
@@ -437,31 +462,6 @@ int main(int argc, char* argv[])
       std::exit(1);
     }
   }();
-
-  const auto reprojucerFilePath = juce::String{argumentParser[2]};
-  if (reprojucerFilePath.isNotEmpty()
-      && (!reprojucerFilePath.endsWith("Reprojucer.cmake")
-          || !getChildFileFromWorkingDirectory(reprojucerFilePath).existsAsFile()))
-  {
-    printError(reprojucerFilePath + " is not a valid Reprojucer.cmake file.");
-    return 1;
-  }
-
-  const auto juceModulesPath = juce::String{argumentParser("--juce-modules").str()};
-  const auto juceModules = getChildFileFromWorkingDirectory(juceModulesPath);
-  if (!juceModules.isDirectory())
-  {
-    printError("No such directory (--juce-modules): " + juceModulesPath);
-    return 1;
-  }
-
-  const auto userModulesPath = juce::String{argumentParser("--user-modules").str()};
-  const auto userModules = getChildFileFromWorkingDirectory(userModulesPath);
-  if (!userModules.isDirectory())
-  {
-    printError("No such directory (--user-modules): " + userModulesPath);
-    return 1;
-  }
 
   juce::MemoryOutputStream outputStream;
   LineWriter wLn{outputStream};
