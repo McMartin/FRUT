@@ -680,21 +680,17 @@ int main(int argc, char* argv[])
 
   // set({JUCE,USER}_MODULES_GLOBAL_PATH)
   {
-    auto shouldAddEmptyLines = false;
-
     if (juceModulesPath.isNotEmpty())
     {
       wLn("set(JUCE_MODULES_GLOBAL_PATH \"", cmakeAbsolutePath(juceModulesPath), "\")");
-      shouldAddEmptyLines = true;
     }
 
     if (userModulesPath.isNotEmpty())
     {
       wLn("set(USER_MODULES_GLOBAL_PATH \"", cmakeAbsolutePath(userModulesPath), "\")");
-      shouldAddEmptyLines = true;
     }
 
-    if (shouldAddEmptyLines)
+    if (juceModulesPath.isNotEmpty() || userModulesPath.isNotEmpty())
     {
       wLn();
       wLn();
