@@ -639,8 +639,14 @@ int main(int argc, char* argv[])
         getChildFileFromWorkingDirectory(args.reprojucerFilePath)
           .getParentDirectory()
           .getRelativePathFrom(juce::File::getCurrentWorkingDirectory());
+      // On Windows, it is not possible to make a relative path between two drives, so
+      // `relativeReprojucerDirPath` might be absolute if Reprojucer.cmake is on another
+      // drive.
       const auto reprojucerDirCMakePath =
-        "${CMAKE_CURRENT_LIST_DIR}/" + relativeReprojucerDirPath.replace("\\", "/");
+        (juce::File::isAbsolutePath(relativeReprojucerDirPath)
+           ? relativeReprojucerDirPath
+           : "${CMAKE_CURRENT_LIST_DIR}/" + relativeReprojucerDirPath)
+          .replace("\\", "/");
       wLn("list(APPEND CMAKE_MODULE_PATH \"", reprojucerDirCMakePath, "\")");
     }
     else
