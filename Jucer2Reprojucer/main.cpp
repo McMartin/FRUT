@@ -147,6 +147,12 @@ void printError(const juce::String& error)
 }
 
 
+juce::File getChildFileFromWorkingDirectory(const juce::StringRef relativeOrAbsolutePath)
+{
+  return juce::File::getCurrentWorkingDirectory().getChildFile(relativeOrAbsolutePath);
+}
+
+
 // Matches juce::var::VariantType_String::toBool. This means that `toBoolLikeVar(s)` and
 // `bool{juce::var{s}}` are equivalent.
 bool toBoolLikeVar(const juce::String& s)
@@ -178,7 +184,7 @@ juce::String makeValidIdentifier(juce::String s)
 
 juce::String cmakeAbsolutePath(const juce::String& path)
 {
-  const auto file = juce::File::getCurrentWorkingDirectory().getChildFile(path);
+  const auto file = getChildFileFromWorkingDirectory(path);
   return (juce::File::isAbsolutePath(path)
             ? file.getFullPathName()
             : "${CMAKE_CURRENT_LIST_DIR}/"
@@ -310,10 +316,18 @@ void writeUserNotes(LineWriter& wLn, const juce::XmlElement& element)
   }
 }
 
-} // namespace
+
+struct Arguments
+{
+  juce::String jucerFilePath;
+  juce::String reprojucerFilePath;
+  juce::String juceModulesPath;
+  juce::String userModulesPath;
+  bool relocatable;
+};
 
 
-int main(int argc, char* argv[])
+Arguments parseArguments(const int argc, const char* const argv[])
 {
   const std::vector<std::string> knownFlags{"h", "help", "relocatable"};
   const std::vector<std::string> knownParams{"juce-modules", "user-modules"};
@@ -381,17 +395,52 @@ int main(int argc, char* argv[])
       << "                              the location of the .jucer file, but requires\n"
       << "                              defining a variable when calling cmake\n"
       << std::endl;
-    return askingForHelp ? 0 : 1;
+    std::exit(askingForHelp ? 0 : 1);
   }
 
-  const auto jucerFilePath = juce::String{argumentParser[1]};
-  const auto jucerFile =
-    juce::File::getCurrentWorkingDirectory().getChildFile(jucerFilePath);
+  auto jucerFilePath = juce::String{argumentParser[1]};
+
+  auto reprojucerFilePath = juce::String{argumentParser[2]};
+  if (reprojucerFilePath.isNotEmpty()
+      && (!reprojucerFilePath.endsWith("Reprojucer.cmake")
+          || !getChildFileFromWorkingDirectory(reprojucerFilePath).existsAsFile()))
+  {
+    printError(reprojucerFilePath + " is not a valid Reprojucer.cmake file.");
+    std::exit(1);
+  }
+
+  auto juceModulesPath = juce::String{argumentParser("--juce-modules").str()};
+  if (!getChildFileFromWorkingDirectory(juceModulesPath).isDirectory())
+  {
+    printError("No such directory (--juce-modules): " + juceModulesPath);
+    std::exit(1);
+  }
+
+  auto userModulesPath = juce::String{argumentParser("--user-modules").str()};
+  if (!getChildFileFromWorkingDirectory(userModulesPath).isDirectory())
+  {
+    printError("No such directory (--user-modules): " + userModulesPath);
+    std::exit(1);
+  }
+
+  return {std::move(jucerFilePath), std::move(reprojucerFilePath),
+          std::move(juceModulesPath), std::move(userModulesPath),
+          argumentParser["--relocatable"]};
+}
+
+} // namespace
+
+
+int main(int argc, char* argv[])
+{
+  const auto args = parseArguments(argc, argv);
+
+  const auto jucerFile = getChildFileFromWorkingDirectory(args.jucerFilePath);
 
   const auto xml = std::unique_ptr<juce::XmlElement>{juce::XmlDocument::parse(jucerFile)};
   if (xml == nullptr || !xml->hasTagName("JUCERPROJECT"))
   {
-    printError(jucerFilePath + " is not a valid Jucer project.");
+    printError(args.jucerFilePath + " is not a valid Jucer project.");
     return 1;
   }
 
@@ -413,13 +462,13 @@ int main(int argc, char* argv[])
   const auto jucerVersionTokens = juce::StringArray::fromTokens(jucerVersion, ".", {});
   if (jucerVersionTokens.size() != 3)
   {
-    printError(jucerFilePath + " is not a valid Jucer project.");
+    printError(args.jucerFilePath + " is not a valid Jucer project.");
     return 1;
   }
 
   using Version = std::tuple<int, int, int>;
 
-  const auto jucerVersionAsTuple = [&jucerVersionTokens, &jucerFilePath]() {
+  const auto jucerVersionAsTuple = [&jucerVersionTokens, &args]() {
     try
     {
       return Version{std::stoi(jucerVersionTokens[0].toStdString()),
@@ -428,42 +477,10 @@ int main(int argc, char* argv[])
     }
     catch (const std::invalid_argument&)
     {
-      printError(jucerFilePath + " is not a valid Jucer project.");
+      printError(args.jucerFilePath + " is not a valid Jucer project.");
       std::exit(1);
     }
   }();
-
-  const auto reprojucerFilePath = juce::String{argumentParser[2]};
-  const auto reprojucerFile =
-    reprojucerFilePath.isNotEmpty()
-      ? juce::File::getCurrentWorkingDirectory().getChildFile(reprojucerFilePath)
-      : juce::File{};
-
-  if (reprojucerFilePath.isNotEmpty()
-      && (!reprojucerFile.existsAsFile()
-          || !reprojucerFile.getFileName().endsWith("Reprojucer.cmake")))
-  {
-    printError(reprojucerFilePath + " is not a valid Reprojucer.cmake file.");
-    return 1;
-  }
-
-  const auto juceModulesPath = juce::String{argumentParser("--juce-modules").str()};
-  const auto juceModules =
-    juce::File::getCurrentWorkingDirectory().getChildFile(juceModulesPath);
-  if (!juceModules.isDirectory())
-  {
-    printError("No such directory (--juce-modules): " + juceModulesPath);
-    return 1;
-  }
-
-  const auto userModulesPath = juce::String{argumentParser("--user-modules").str()};
-  const auto userModules =
-    juce::File::getCurrentWorkingDirectory().getChildFile(userModulesPath);
-  if (!userModules.isDirectory())
-  {
-    printError("No such directory (--user-modules): " + userModulesPath);
-    return 1;
-  }
 
   juce::MemoryOutputStream outputStream;
   LineWriter wLn{outputStream};
@@ -616,10 +633,11 @@ int main(int argc, char* argv[])
 
   // include(Reprojucer)
   {
-    if (reprojucerFilePath.isNotEmpty())
+    if (args.reprojucerFilePath.isNotEmpty())
     {
       wLn("list(APPEND CMAKE_MODULE_PATH \"${CMAKE_CURRENT_LIST_DIR}/",
-          reprojucerFile.getParentDirectory()
+          getChildFileFromWorkingDirectory(args.reprojucerFilePath)
+            .getParentDirectory()
             .getRelativePathFrom(juce::File::getCurrentWorkingDirectory())
             .replace("\\", "/"),
           "\")");
@@ -646,7 +664,7 @@ int main(int argc, char* argv[])
 
   // get_filename_component() or set(*_FILE)
   {
-    if (argumentParser["--relocatable"])
+    if (args.relocatable)
     {
       wLn("if(NOT DEFINED ", jucerFileCMakeVar, ")");
       wLn("  message(FATAL_ERROR \"", jucerFileCMakeVar, " must be defined\")");
@@ -661,8 +679,7 @@ int main(int argc, char* argv[])
     {
       wLn("set(", jucerFileCMakeVar);
       const auto relativeJucerFilePath =
-        juce::File::getCurrentWorkingDirectory()
-          .getChildFile(jucerFilePath)
+        getChildFileFromWorkingDirectory(args.jucerFilePath)
           .getRelativePathFrom(juce::File::getCurrentWorkingDirectory());
       // On Windows, it is not possible to make a relative path between two drives, so
       // `relativeJucerFilePath` might be absolute if the .jucer file is on another drive.
@@ -680,21 +697,19 @@ int main(int argc, char* argv[])
 
   // set({JUCE,USER}_MODULES_GLOBAL_PATH)
   {
-    auto shouldAddEmptyLines = false;
-
-    if (juceModulesPath.isNotEmpty())
+    if (args.juceModulesPath.isNotEmpty())
     {
-      wLn("set(JUCE_MODULES_GLOBAL_PATH \"", cmakeAbsolutePath(juceModulesPath), "\")");
-      shouldAddEmptyLines = true;
+      wLn("set(JUCE_MODULES_GLOBAL_PATH \"", cmakeAbsolutePath(args.juceModulesPath),
+          "\")");
     }
 
-    if (userModulesPath.isNotEmpty())
+    if (args.userModulesPath.isNotEmpty())
     {
-      wLn("set(USER_MODULES_GLOBAL_PATH \"", cmakeAbsolutePath(userModulesPath), "\")");
-      shouldAddEmptyLines = true;
+      wLn("set(USER_MODULES_GLOBAL_PATH \"", cmakeAbsolutePath(args.userModulesPath),
+          "\")");
     }
 
-    if (shouldAddEmptyLines)
+    if (args.juceModulesPath.isNotEmpty() || args.userModulesPath.isNotEmpty())
     {
       wLn();
       wLn();
@@ -1299,6 +1314,9 @@ int main(int argc, char* argv[])
       return fallbackXmlElement;
     }();
 
+    const auto juceModules = getChildFileFromWorkingDirectory(args.juceModulesPath);
+    const auto userModules = getChildFileFromWorkingDirectory(args.userModulesPath);
+
     const auto& modules = safeGetChildByName(jucerProject, "MODULES");
     for (auto pModule = modules.getFirstChildElement(); pModule != nullptr;
          pModule = pModule->getNextElement())
@@ -1317,18 +1335,18 @@ int main(int argc, char* argv[])
 
       if (useGlobalPath)
       {
-        if (isJuceModule && juceModulesPath.isEmpty())
+        if (isJuceModule && args.juceModulesPath.isEmpty())
         {
           printError(
-            "At least one JUCE module used in " + jucerFilePath
+            "At least one JUCE module used in " + args.jucerFilePath
             + " relies on the global \"JUCE Modules\" path set in Projucer. You must "
               "provide this path using --juce-modules=\"<global-JUCE-modules-path>\".");
           return 1;
         }
-        if (!isJuceModule && userModulesPath.isEmpty())
+        if (!isJuceModule && args.userModulesPath.isEmpty())
         {
           printError(
-            "At least one user module used in " + jucerFilePath
+            "At least one user module used in " + args.jucerFilePath
             + " relies on the global \"User Modules\" path set in Projucer. You must "
               "provide this path using --user-modules=\"<global-user-modules-path>\".");
           return 1;
@@ -2609,8 +2627,7 @@ int main(int argc, char* argv[])
 
   wLn("jucer_project_end()");
 
-  const auto outputFile =
-    juce::File::getCurrentWorkingDirectory().getChildFile("CMakeLists.txt");
+  const auto outputFile = getChildFileFromWorkingDirectory("CMakeLists.txt");
 
   std::unique_ptr<juce::FileInputStream> fileStream{outputFile.createInputStream()};
   if (fileStream)
