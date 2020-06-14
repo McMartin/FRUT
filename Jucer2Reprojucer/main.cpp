@@ -405,22 +405,30 @@ Arguments parseArguments(const int argc, const char* const argv[])
       && (!reprojucerFilePath.endsWith("Reprojucer.cmake")
           || !getChildFileFromWorkingDirectory(reprojucerFilePath).existsAsFile()))
   {
-    printError(reprojucerFilePath + " is not a valid Reprojucer.cmake file.");
+    printError("'" + reprojucerFilePath + "' is not a valid Reprojucer.cmake file.");
     std::exit(1);
   }
 
   auto juceModulesPath = juce::String{argumentParser("--juce-modules").str()};
-  if (!getChildFileFromWorkingDirectory(juceModulesPath).isDirectory())
+  if (argumentParser("--juce-modules"))
   {
-    printError("No such directory (--juce-modules): " + juceModulesPath);
-    std::exit(1);
+    if (juceModulesPath.isEmpty()
+        || !getChildFileFromWorkingDirectory(juceModulesPath).isDirectory())
+    {
+      printError("No such directory (--juce-modules): '" + juceModulesPath + "'");
+      std::exit(1);
+    }
   }
 
   auto userModulesPath = juce::String{argumentParser("--user-modules").str()};
-  if (!getChildFileFromWorkingDirectory(userModulesPath).isDirectory())
+  if (argumentParser("--user-modules"))
   {
-    printError("No such directory (--user-modules): " + userModulesPath);
-    std::exit(1);
+    if (userModulesPath.isEmpty()
+        || !getChildFileFromWorkingDirectory(userModulesPath).isDirectory())
+    {
+      printError("No such directory (--user-modules): '" + userModulesPath + "'");
+      std::exit(1);
+    }
   }
 
   return {std::move(jucerFilePath), std::move(reprojucerFilePath),
@@ -440,7 +448,7 @@ int main(int argc, char* argv[])
   const auto xml = std::unique_ptr<juce::XmlElement>{juce::XmlDocument::parse(jucerFile)};
   if (xml == nullptr || !xml->hasTagName("JUCERPROJECT"))
   {
-    printError(args.jucerFilePath + " is not a valid Jucer project.");
+    printError("'" + args.jucerFilePath + "' is not a valid Jucer project.");
     return 1;
   }
 
@@ -462,7 +470,7 @@ int main(int argc, char* argv[])
   const auto jucerVersionTokens = juce::StringArray::fromTokens(jucerVersion, ".", {});
   if (jucerVersionTokens.size() != 3)
   {
-    printError(args.jucerFilePath + " is not a valid Jucer project.");
+    printError("'" + args.jucerFilePath + "' is not a valid Jucer project.");
     return 1;
   }
 
@@ -477,7 +485,7 @@ int main(int argc, char* argv[])
     }
     catch (const std::invalid_argument&)
     {
-      printError(args.jucerFilePath + " is not a valid Jucer project.");
+      printError("'" + args.jucerFilePath + "' is not a valid Jucer project.");
       std::exit(1);
     }
   }();
@@ -635,12 +643,19 @@ int main(int argc, char* argv[])
   {
     if (args.reprojucerFilePath.isNotEmpty())
     {
-      wLn("list(APPEND CMAKE_MODULE_PATH \"${CMAKE_CURRENT_LIST_DIR}/",
-          getChildFileFromWorkingDirectory(args.reprojucerFilePath)
-            .getParentDirectory()
-            .getRelativePathFrom(juce::File::getCurrentWorkingDirectory())
-            .replace("\\", "/"),
-          "\")");
+      const auto relativeReprojucerDirPath =
+        getChildFileFromWorkingDirectory(args.reprojucerFilePath)
+          .getParentDirectory()
+          .getRelativePathFrom(juce::File::getCurrentWorkingDirectory());
+      // On Windows, it is not possible to make a relative path between two drives, so
+      // `relativeReprojucerDirPath` might be absolute if Reprojucer.cmake is on another
+      // drive.
+      const auto reprojucerDirCMakePath =
+        (juce::File::isAbsolutePath(relativeReprojucerDirPath)
+           ? relativeReprojucerDirPath
+           : "${CMAKE_CURRENT_LIST_DIR}/" + relativeReprojucerDirPath)
+          .replace("\\", "/");
+      wLn("list(APPEND CMAKE_MODULE_PATH \"", reprojucerDirCMakePath, "\")");
     }
     else
     {
