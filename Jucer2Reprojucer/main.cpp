@@ -635,12 +635,13 @@ int main(int argc, char* argv[])
   {
     if (args.reprojucerFilePath.isNotEmpty())
     {
-      wLn("list(APPEND CMAKE_MODULE_PATH \"${CMAKE_CURRENT_LIST_DIR}/",
-          getChildFileFromWorkingDirectory(args.reprojucerFilePath)
-            .getParentDirectory()
-            .getRelativePathFrom(juce::File::getCurrentWorkingDirectory())
-            .replace("\\", "/"),
-          "\")");
+      const auto relativeReprojucerDirPath =
+        getChildFileFromWorkingDirectory(args.reprojucerFilePath)
+          .getParentDirectory()
+          .getRelativePathFrom(juce::File::getCurrentWorkingDirectory());
+      const auto reprojucerDirCMakePath =
+        "${CMAKE_CURRENT_LIST_DIR}/" + relativeReprojucerDirPath.replace("\\", "/");
+      wLn("list(APPEND CMAKE_MODULE_PATH \"", reprojucerDirCMakePath, "\")");
     }
     else
     {
