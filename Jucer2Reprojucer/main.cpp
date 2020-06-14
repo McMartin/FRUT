@@ -410,17 +410,23 @@ Arguments parseArguments(const int argc, const char* const argv[])
   }
 
   auto juceModulesPath = juce::String{argumentParser("--juce-modules").str()};
-  if (!getChildFileFromWorkingDirectory(juceModulesPath).isDirectory())
+  if (argumentParser("--juce-modules"))
   {
-    printError("No such directory (--juce-modules): '" + juceModulesPath + "'");
-    std::exit(1);
+    if (!getChildFileFromWorkingDirectory(juceModulesPath).isDirectory())
+    {
+      printError("No such directory (--juce-modules): '" + juceModulesPath + "'");
+      std::exit(1);
+    }
   }
 
   auto userModulesPath = juce::String{argumentParser("--user-modules").str()};
-  if (!getChildFileFromWorkingDirectory(userModulesPath).isDirectory())
+  if (argumentParser("--user-modules"))
   {
-    printError("No such directory (--user-modules): '" + userModulesPath + "'");
-    std::exit(1);
+    if (!getChildFileFromWorkingDirectory(userModulesPath).isDirectory())
+    {
+      printError("No such directory (--user-modules): '" + userModulesPath + "'");
+      std::exit(1);
+    }
   }
 
   return {std::move(jucerFilePath), std::move(reprojucerFilePath),
