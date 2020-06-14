@@ -405,21 +405,21 @@ Arguments parseArguments(const int argc, const char* const argv[])
       && (!reprojucerFilePath.endsWith("Reprojucer.cmake")
           || !getChildFileFromWorkingDirectory(reprojucerFilePath).existsAsFile()))
   {
-    printError(reprojucerFilePath + " is not a valid Reprojucer.cmake file.");
+    printError("'" + reprojucerFilePath + "' is not a valid Reprojucer.cmake file.");
     std::exit(1);
   }
 
   auto juceModulesPath = juce::String{argumentParser("--juce-modules").str()};
   if (!getChildFileFromWorkingDirectory(juceModulesPath).isDirectory())
   {
-    printError("No such directory (--juce-modules): " + juceModulesPath);
+    printError("No such directory (--juce-modules): '" + juceModulesPath + "'");
     std::exit(1);
   }
 
   auto userModulesPath = juce::String{argumentParser("--user-modules").str()};
   if (!getChildFileFromWorkingDirectory(userModulesPath).isDirectory())
   {
-    printError("No such directory (--user-modules): " + userModulesPath);
+    printError("No such directory (--user-modules): '" + userModulesPath + "'");
     std::exit(1);
   }
 
@@ -440,7 +440,7 @@ int main(int argc, char* argv[])
   const auto xml = std::unique_ptr<juce::XmlElement>{juce::XmlDocument::parse(jucerFile)};
   if (xml == nullptr || !xml->hasTagName("JUCERPROJECT"))
   {
-    printError(args.jucerFilePath + " is not a valid Jucer project.");
+    printError("'" + args.jucerFilePath + "' is not a valid Jucer project.");
     return 1;
   }
 
@@ -462,7 +462,7 @@ int main(int argc, char* argv[])
   const auto jucerVersionTokens = juce::StringArray::fromTokens(jucerVersion, ".", {});
   if (jucerVersionTokens.size() != 3)
   {
-    printError(args.jucerFilePath + " is not a valid Jucer project.");
+    printError("'" + args.jucerFilePath + "' is not a valid Jucer project.");
     return 1;
   }
 
@@ -477,7 +477,7 @@ int main(int argc, char* argv[])
     }
     catch (const std::invalid_argument&)
     {
-      printError(args.jucerFilePath + " is not a valid Jucer project.");
+      printError("'" + args.jucerFilePath + "' is not a valid Jucer project.");
       std::exit(1);
     }
   }();
