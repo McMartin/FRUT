@@ -182,13 +182,9 @@ juce::String makeValidIdentifier(juce::String s)
 }
 
 
-juce::String cmakeAbsolutePath(const juce::String& path)
+juce::String cmakePath(const juce::String& path)
 {
-  const auto file = getChildFileFromWorkingDirectory(path);
-  return (juce::File::isAbsolutePath(path)
-            ? file.getFullPathName()
-            : "${CMAKE_CURRENT_LIST_DIR}/"
-                + file.getRelativePathFrom(juce::File::getCurrentWorkingDirectory()))
+  return (juce::File::isAbsolutePath(path) ? path : "${CMAKE_CURRENT_LIST_DIR}/" + path)
     .replace("\\", "/");
 }
 
@@ -715,14 +711,12 @@ int main(int argc, char* argv[])
   {
     if (args.juceModulesPath.isNotEmpty())
     {
-      wLn("set(JUCE_MODULES_GLOBAL_PATH \"", cmakeAbsolutePath(args.juceModulesPath),
-          "\")");
+      wLn("set(JUCE_MODULES_GLOBAL_PATH \"", cmakePath(args.juceModulesPath), "\")");
     }
 
     if (args.userModulesPath.isNotEmpty())
     {
-      wLn("set(USER_MODULES_GLOBAL_PATH \"", cmakeAbsolutePath(args.userModulesPath),
-          "\")");
+      wLn("set(USER_MODULES_GLOBAL_PATH \"", cmakePath(args.userModulesPath), "\")");
     }
 
     if (args.juceModulesPath.isNotEmpty() || args.userModulesPath.isNotEmpty())
