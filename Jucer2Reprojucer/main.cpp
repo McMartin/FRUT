@@ -644,15 +644,8 @@ int main(int argc, char* argv[])
         getChildFileFromWorkingDirectory(args.reprojucerFilePath)
           .getParentDirectory()
           .getRelativePathFrom(juce::File::getCurrentWorkingDirectory());
-      // On Windows, it is not possible to make a relative path between two drives, so
-      // `relativeReprojucerDirPath` might be absolute if Reprojucer.cmake is on another
-      // drive.
-      const auto reprojucerDirCMakePath =
-        (juce::File::isAbsolutePath(relativeReprojucerDirPath)
-           ? relativeReprojucerDirPath
-           : "${CMAKE_CURRENT_LIST_DIR}/" + relativeReprojucerDirPath)
-          .replace("\\", "/");
-      wLn("list(APPEND CMAKE_MODULE_PATH \"", reprojucerDirCMakePath, "\")");
+      wLn("list(APPEND CMAKE_MODULE_PATH \"", cmakePath(relativeReprojucerDirPath),
+          "\")");
     }
     else
     {
@@ -693,14 +686,7 @@ int main(int argc, char* argv[])
       const auto relativeJucerFilePath =
         getChildFileFromWorkingDirectory(args.jucerFilePath)
           .getRelativePathFrom(juce::File::getCurrentWorkingDirectory());
-      // On Windows, it is not possible to make a relative path between two drives, so
-      // `relativeJucerFilePath` might be absolute if the .jucer file is on another drive.
-      const auto jucerFileCMakePath =
-        (juce::File::isAbsolutePath(relativeJucerFilePath)
-           ? relativeJucerFilePath
-           : "${CMAKE_CURRENT_LIST_DIR}/" + relativeJucerFilePath)
-          .replace("\\", "/");
-      wLn("  \"", jucerFileCMakePath, "\"");
+      wLn("  \"", cmakePath(relativeJucerFilePath), "\"");
       wLn(")");
     }
     wLn();
