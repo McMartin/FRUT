@@ -487,6 +487,51 @@ int main(int argc, char* argv[])
     }
   }();
 
+  auto needsJuceModulesGlobalPath = false;
+  auto needsUserModulesGlobalPath = false;
+
+  if (const auto pModules = jucerProject.getChildByName("MODULES"))
+  {
+    for (auto pModule = pModules->getFirstChildElement(); pModule != nullptr;
+         pModule = pModule->getNextElement())
+    {
+      if (pModule->isTextElement())
+      {
+        continue;
+      }
+
+      if (toBoolLikeVar(pModule->getStringAttribute("useGlobalPath")))
+      {
+        if (pModule->getStringAttribute("id").startsWith("juce_"))
+        {
+          needsJuceModulesGlobalPath = true;
+        }
+        else
+        {
+          needsUserModulesGlobalPath = true;
+        }
+      }
+    }
+  }
+
+  if (needsJuceModulesGlobalPath && args.juceModulesPath.isEmpty())
+  {
+    printError(
+      "At least one JUCE module used in " + args.jucerFilePath
+      + " relies on the global \"JUCE Modules\" path set in Projucer. You must "
+        "provide this path using --juce-modules=\"<global-JUCE-modules-path>\".");
+    return 1;
+  }
+
+  if (needsUserModulesGlobalPath && args.userModulesPath.isEmpty())
+  {
+    printError(
+      "At least one user module used in " + args.jucerFilePath
+      + " relies on the global \"User Modules\" path set in Projucer. You must "
+        "provide this path using --user-modules=\"<global-user-modules-path>\".");
+    return 1;
+  }
+
   juce::MemoryOutputStream outputStream;
   LineWriter wLn{outputStream};
 
@@ -1332,26 +1377,6 @@ int main(int argc, char* argv[])
       const auto useGlobalPath =
         toBoolLikeVar(module.getStringAttribute("useGlobalPath"));
       const auto isJuceModule = moduleName.startsWith("juce_");
-
-      if (useGlobalPath)
-      {
-        if (isJuceModule && args.juceModulesPath.isEmpty())
-        {
-          printError(
-            "At least one JUCE module used in " + args.jucerFilePath
-            + " relies on the global \"JUCE Modules\" path set in Projucer. You must "
-              "provide this path using --juce-modules=\"<global-JUCE-modules-path>\".");
-          return 1;
-        }
-        if (!isJuceModule && args.userModulesPath.isEmpty())
-        {
-          printError(
-            "At least one user module used in " + args.jucerFilePath
-            + " relies on the global \"User Modules\" path set in Projucer. You must "
-              "provide this path using --user-modules=\"<global-user-modules-path>\".");
-          return 1;
-        }
-      }
 
       const auto modulePath = [&modulePaths, &moduleName]() -> juce::String {
         if (const auto pModulePath = modulePaths.getChildByAttribute("id", moduleName))
