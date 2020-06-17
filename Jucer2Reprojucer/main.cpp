@@ -445,8 +445,9 @@ int main(int argc, char* argv[])
 
   const auto jucerFile = getChildFileFromWorkingDirectory(args.jucerFilePath);
 
-  const auto xml = std::unique_ptr<juce::XmlElement>{juce::XmlDocument::parse(jucerFile)};
-  if (xml == nullptr || !xml->hasTagName("JUCERPROJECT"))
+  const auto pJucerProjucer =
+    std::unique_ptr<juce::XmlElement>{juce::XmlDocument::parse(jucerFile)};
+  if (pJucerProjucer == nullptr || !pJucerProjucer->hasTagName("JUCERPROJECT"))
   {
     printError("'" + args.jucerFilePath + "' is not a valid Jucer project.");
     return 1;
@@ -464,7 +465,7 @@ int main(int argc, char* argv[])
     return fallbackXmlElement;
   };
 
-  const auto& jucerProject = *xml;
+  const auto& jucerProject = *pJucerProjucer;
 
   const auto& jucerVersion = jucerProject.getStringAttribute("jucerVersion");
   const auto jucerVersionTokens = juce::StringArray::fromTokens(jucerVersion, ".", {});
