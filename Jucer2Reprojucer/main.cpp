@@ -711,11 +711,15 @@ int main(int argc, char* argv[])
   {
     if (args.juceModulesPath.isNotEmpty())
     {
+      std::cout << "Using '" << args.juceModulesPath
+                << "' as global \"JUCE Modules\" path." << std::endl;
       wLn("set(JUCE_MODULES_GLOBAL_PATH \"", cmakePath(args.juceModulesPath), "\")");
     }
 
     if (args.userModulesPath.isNotEmpty())
     {
+      std::cout << "Using '" << args.userModulesPath
+                << "' as global \"User Modules\" path." << std::endl;
       wLn("set(USER_MODULES_GLOBAL_PATH \"", cmakePath(args.userModulesPath), "\")");
     }
 
