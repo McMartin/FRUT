@@ -299,6 +299,25 @@ getChildByAttributeRecursively(const juce::XmlElement& parent,
 }
 
 
+std::unique_ptr<juce::XmlElement> parseProjucerSettings()
+{
+  const auto projucerSettingsDirectory =
+#if defined(JUCE_LINUX) && JUCE_LINUX
+    juce::File{"~/.config/Projucer"};
+#elif defined(JUCE_MAC) && JUCE_MAC
+    juce::File{"~/Library/Application Support/Projucer"};
+#elif defined(JUCE_WINDOWS) && JUCE_WINDOWS
+    juce::File::getSpecialLocation(juce::File::userApplicationDataDirectory)
+      .getChildFile("Projucer");
+#else
+  #error Unknown platform
+#endif
+
+  return std::unique_ptr<juce::XmlElement>{juce::XmlDocument::parse(
+    projucerSettingsDirectory.getChildFile("Projucer.settings"))};
+}
+
+
 void writeUserNotes(LineWriter& wLn, const juce::XmlElement& element)
 {
   if (element.hasAttribute("userNotes"))
@@ -514,7 +533,31 @@ int main(int argc, char* argv[])
     }
   }
 
-  const auto& juceModulesGlobalPath = args.juceModulesPath;
+  const auto shouldParseProjucerSettings =
+    (needsJuceModulesGlobalPath && args.juceModulesPath.isEmpty())
+    || (needsUserModulesGlobalPath && args.userModulesPath.isEmpty());
+
+  const auto pProjucerSettings =
+    shouldParseProjucerSettings ? parseProjucerSettings() : nullptr;
+
+  const auto pProjucerGlobalPaths = [&pProjucerSettings]() -> juce::XmlElement* {
+    if (pProjucerSettings && pProjucerSettings->hasTagName("PROPERTIES"))
+    {
+      if (const auto pValue =
+            pProjucerSettings->getChildByAttribute("name", "PROJECT_DEFAULT_SETTINGS"))
+      {
+        return pValue->getChildByName("PROJECT_DEFAULT_SETTINGS");
+      }
+    }
+    return nullptr;
+  }();
+
+  const auto& juceModulesGlobalPath =
+    args.juceModulesPath.isNotEmpty()
+      ? args.juceModulesPath
+      : needsJuceModulesGlobalPath && pProjucerGlobalPaths
+          ? pProjucerGlobalPaths->getStringAttribute("defaultJuceModulePath")
+          : juce::String{};
 
   if (needsJuceModulesGlobalPath && juceModulesGlobalPath.isEmpty())
   {
@@ -525,7 +568,12 @@ int main(int argc, char* argv[])
     return 1;
   }
 
-  const auto& userModulesGlobalPath = args.userModulesPath;
+  const auto& userModulesGlobalPath =
+    args.userModulesPath.isNotEmpty()
+      ? args.userModulesPath
+      : needsUserModulesGlobalPath && pProjucerGlobalPaths
+          ? pProjucerGlobalPaths->getStringAttribute("defaultUserModulePath")
+          : juce::String{};
 
   if (needsUserModulesGlobalPath && userModulesGlobalPath.isEmpty())
   {
