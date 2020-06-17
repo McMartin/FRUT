@@ -514,7 +514,9 @@ int main(int argc, char* argv[])
     }
   }
 
-  if (needsJuceModulesGlobalPath && args.juceModulesPath.isEmpty())
+  const auto& juceModulesGlobalPath = args.juceModulesPath;
+
+  if (needsJuceModulesGlobalPath && juceModulesGlobalPath.isEmpty())
   {
     printError(
       "At least one JUCE module used in " + args.jucerFilePath
@@ -523,7 +525,9 @@ int main(int argc, char* argv[])
     return 1;
   }
 
-  if (needsUserModulesGlobalPath && args.userModulesPath.isEmpty())
+  const auto& userModulesGlobalPath = args.userModulesPath;
+
+  if (needsUserModulesGlobalPath && userModulesGlobalPath.isEmpty())
   {
     printError(
       "At least one user module used in " + args.jucerFilePath
@@ -740,21 +744,21 @@ int main(int argc, char* argv[])
 
   // set({JUCE,USER}_MODULES_GLOBAL_PATH)
   {
-    if (args.juceModulesPath.isNotEmpty())
+    if (juceModulesGlobalPath.isNotEmpty())
     {
-      std::cout << "Using '" << args.juceModulesPath
+      std::cout << "Using '" << juceModulesGlobalPath
                 << "' as global \"JUCE Modules\" path." << std::endl;
-      wLn("set(JUCE_MODULES_GLOBAL_PATH \"", cmakePath(args.juceModulesPath), "\")");
+      wLn("set(JUCE_MODULES_GLOBAL_PATH \"", cmakePath(juceModulesGlobalPath), "\")");
     }
 
-    if (args.userModulesPath.isNotEmpty())
+    if (userModulesGlobalPath.isNotEmpty())
     {
-      std::cout << "Using '" << args.userModulesPath
+      std::cout << "Using '" << userModulesGlobalPath
                 << "' as global \"User Modules\" path." << std::endl;
-      wLn("set(USER_MODULES_GLOBAL_PATH \"", cmakePath(args.userModulesPath), "\")");
+      wLn("set(USER_MODULES_GLOBAL_PATH \"", cmakePath(userModulesGlobalPath), "\")");
     }
 
-    if (args.juceModulesPath.isNotEmpty() || args.userModulesPath.isNotEmpty())
+    if (juceModulesGlobalPath.isNotEmpty() || userModulesGlobalPath.isNotEmpty())
     {
       wLn();
       wLn();
@@ -1359,8 +1363,8 @@ int main(int argc, char* argv[])
       return fallbackXmlElement;
     }();
 
-    const auto juceModules = getChildFileFromWorkingDirectory(args.juceModulesPath);
-    const auto userModules = getChildFileFromWorkingDirectory(args.userModulesPath);
+    const auto juceModules = getChildFileFromWorkingDirectory(juceModulesGlobalPath);
+    const auto userModules = getChildFileFromWorkingDirectory(userModulesGlobalPath);
 
     const auto& modules = safeGetChildByName(jucerProject, "MODULES");
     for (auto pModule = modules.getFirstChildElement(); pModule != nullptr;
