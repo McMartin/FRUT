@@ -182,13 +182,9 @@ juce::String makeValidIdentifier(juce::String s)
 }
 
 
-juce::String cmakeAbsolutePath(const juce::String& path)
+juce::String cmakePath(const juce::String& path)
 {
-  const auto file = getChildFileFromWorkingDirectory(path);
-  return (juce::File::isAbsolutePath(path)
-            ? file.getFullPathName()
-            : "${CMAKE_CURRENT_LIST_DIR}/"
-                + file.getRelativePathFrom(juce::File::getCurrentWorkingDirectory()))
+  return (juce::File::isAbsolutePath(path) ? path : "${CMAKE_CURRENT_LIST_DIR}/" + path)
     .replace("\\", "/");
 }
 
@@ -300,6 +296,25 @@ getChildByAttributeRecursively(const juce::XmlElement& parent,
   }
 
   return nullptr;
+}
+
+
+std::unique_ptr<juce::XmlElement> parseProjucerSettings()
+{
+  const auto projucerSettingsDirectory =
+#if defined(JUCE_LINUX) && JUCE_LINUX
+    juce::File{"~/.config/Projucer"};
+#elif defined(JUCE_MAC) && JUCE_MAC
+    juce::File{"~/Library/Application Support/Projucer"};
+#elif defined(JUCE_WINDOWS) && JUCE_WINDOWS
+    juce::File::getSpecialLocation(juce::File::userApplicationDataDirectory)
+      .getChildFile("Projucer");
+#else
+  #error Unknown platform
+#endif
+
+  return std::unique_ptr<juce::XmlElement>{juce::XmlDocument::parse(
+    projucerSettingsDirectory.getChildFile("Projucer.settings"))};
 }
 
 
@@ -445,8 +460,9 @@ int main(int argc, char* argv[])
 
   const auto jucerFile = getChildFileFromWorkingDirectory(args.jucerFilePath);
 
-  const auto xml = std::unique_ptr<juce::XmlElement>{juce::XmlDocument::parse(jucerFile)};
-  if (xml == nullptr || !xml->hasTagName("JUCERPROJECT"))
+  const auto pJucerProjucer =
+    std::unique_ptr<juce::XmlElement>{juce::XmlDocument::parse(jucerFile)};
+  if (pJucerProjucer == nullptr || !pJucerProjucer->hasTagName("JUCERPROJECT"))
   {
     printError("'" + args.jucerFilePath + "' is not a valid Jucer project.");
     return 1;
@@ -464,7 +480,7 @@ int main(int argc, char* argv[])
     return fallbackXmlElement;
   };
 
-  const auto& jucerProject = *xml;
+  const auto& jucerProject = *pJucerProjucer;
 
   const auto& jucerVersion = jucerProject.getStringAttribute("jucerVersion");
   const auto jucerVersionTokens = juce::StringArray::fromTokens(jucerVersion, ".", {});
@@ -489,6 +505,84 @@ int main(int argc, char* argv[])
       std::exit(1);
     }
   }();
+
+  auto needsJuceModulesGlobalPath = false;
+  auto needsUserModulesGlobalPath = false;
+
+  if (const auto pModules = jucerProject.getChildByName("MODULES"))
+  {
+    for (auto pModule = pModules->getFirstChildElement(); pModule != nullptr;
+         pModule = pModule->getNextElement())
+    {
+      if (pModule->isTextElement())
+      {
+        continue;
+      }
+
+      if (toBoolLikeVar(pModule->getStringAttribute("useGlobalPath")))
+      {
+        if (pModule->getStringAttribute("id").startsWith("juce_"))
+        {
+          needsJuceModulesGlobalPath = true;
+        }
+        else
+        {
+          needsUserModulesGlobalPath = true;
+        }
+      }
+    }
+  }
+
+  const auto shouldParseProjucerSettings =
+    (needsJuceModulesGlobalPath && args.juceModulesPath.isEmpty())
+    || (needsUserModulesGlobalPath && args.userModulesPath.isEmpty());
+
+  const auto pProjucerSettings =
+    shouldParseProjucerSettings ? parseProjucerSettings() : nullptr;
+
+  const auto pProjucerGlobalPaths = [&pProjucerSettings]() -> juce::XmlElement* {
+    if (pProjucerSettings && pProjucerSettings->hasTagName("PROPERTIES"))
+    {
+      if (const auto pValue =
+            pProjucerSettings->getChildByAttribute("name", "PROJECT_DEFAULT_SETTINGS"))
+      {
+        return pValue->getChildByName("PROJECT_DEFAULT_SETTINGS");
+      }
+    }
+    return nullptr;
+  }();
+
+  const auto& juceModulesGlobalPath =
+    args.juceModulesPath.isNotEmpty()
+      ? args.juceModulesPath
+      : needsJuceModulesGlobalPath && pProjucerGlobalPaths
+          ? pProjucerGlobalPaths->getStringAttribute("defaultJuceModulePath")
+          : juce::String{};
+
+  if (needsJuceModulesGlobalPath && juceModulesGlobalPath.isEmpty())
+  {
+    printError(
+      "At least one JUCE module used in " + args.jucerFilePath
+      + " relies on the global \"JUCE Modules\" path set in Projucer. You must "
+        "provide this path using --juce-modules=\"<global-JUCE-modules-path>\".");
+    return 1;
+  }
+
+  const auto& userModulesGlobalPath =
+    args.userModulesPath.isNotEmpty()
+      ? args.userModulesPath
+      : needsUserModulesGlobalPath && pProjucerGlobalPaths
+          ? pProjucerGlobalPaths->getStringAttribute("defaultUserModulePath")
+          : juce::String{};
+
+  if (needsUserModulesGlobalPath && userModulesGlobalPath.isEmpty())
+  {
+    printError(
+      "At least one user module used in " + args.jucerFilePath
+      + " relies on the global \"User Modules\" path set in Projucer. You must "
+        "provide this path using --user-modules=\"<global-user-modules-path>\".");
+    return 1;
+  }
 
   juce::MemoryOutputStream outputStream;
   LineWriter wLn{outputStream};
@@ -647,15 +741,8 @@ int main(int argc, char* argv[])
         getChildFileFromWorkingDirectory(args.reprojucerFilePath)
           .getParentDirectory()
           .getRelativePathFrom(juce::File::getCurrentWorkingDirectory());
-      // On Windows, it is not possible to make a relative path between two drives, so
-      // `relativeReprojucerDirPath` might be absolute if Reprojucer.cmake is on another
-      // drive.
-      const auto reprojucerDirCMakePath =
-        (juce::File::isAbsolutePath(relativeReprojucerDirPath)
-           ? relativeReprojucerDirPath
-           : "${CMAKE_CURRENT_LIST_DIR}/" + relativeReprojucerDirPath)
-          .replace("\\", "/");
-      wLn("list(APPEND CMAKE_MODULE_PATH \"", reprojucerDirCMakePath, "\")");
+      wLn("list(APPEND CMAKE_MODULE_PATH \"", cmakePath(relativeReprojucerDirPath),
+          "\")");
     }
     else
     {
@@ -696,14 +783,7 @@ int main(int argc, char* argv[])
       const auto relativeJucerFilePath =
         getChildFileFromWorkingDirectory(args.jucerFilePath)
           .getRelativePathFrom(juce::File::getCurrentWorkingDirectory());
-      // On Windows, it is not possible to make a relative path between two drives, so
-      // `relativeJucerFilePath` might be absolute if the .jucer file is on another drive.
-      const auto jucerFileCMakePath =
-        (juce::File::isAbsolutePath(relativeJucerFilePath)
-           ? relativeJucerFilePath
-           : "${CMAKE_CURRENT_LIST_DIR}/" + relativeJucerFilePath)
-          .replace("\\", "/");
-      wLn("  \"", jucerFileCMakePath, "\"");
+      wLn("  \"", cmakePath(relativeJucerFilePath), "\"");
       wLn(")");
     }
     wLn();
@@ -712,19 +792,21 @@ int main(int argc, char* argv[])
 
   // set({JUCE,USER}_MODULES_GLOBAL_PATH)
   {
-    if (args.juceModulesPath.isNotEmpty())
+    if (juceModulesGlobalPath.isNotEmpty())
     {
-      wLn("set(JUCE_MODULES_GLOBAL_PATH \"", cmakeAbsolutePath(args.juceModulesPath),
-          "\")");
+      std::cout << "Using '" << juceModulesGlobalPath
+                << "' as global \"JUCE Modules\" path." << std::endl;
+      wLn("set(JUCE_MODULES_GLOBAL_PATH \"", cmakePath(juceModulesGlobalPath), "\")");
     }
 
-    if (args.userModulesPath.isNotEmpty())
+    if (userModulesGlobalPath.isNotEmpty())
     {
-      wLn("set(USER_MODULES_GLOBAL_PATH \"", cmakeAbsolutePath(args.userModulesPath),
-          "\")");
+      std::cout << "Using '" << userModulesGlobalPath
+                << "' as global \"User Modules\" path." << std::endl;
+      wLn("set(USER_MODULES_GLOBAL_PATH \"", cmakePath(userModulesGlobalPath), "\")");
     }
 
-    if (args.juceModulesPath.isNotEmpty() || args.userModulesPath.isNotEmpty())
+    if (juceModulesGlobalPath.isNotEmpty() || userModulesGlobalPath.isNotEmpty())
     {
       wLn();
       wLn();
@@ -1329,8 +1411,8 @@ int main(int argc, char* argv[])
       return fallbackXmlElement;
     }();
 
-    const auto juceModules = getChildFileFromWorkingDirectory(args.juceModulesPath);
-    const auto userModules = getChildFileFromWorkingDirectory(args.userModulesPath);
+    const auto juceModules = getChildFileFromWorkingDirectory(juceModulesGlobalPath);
+    const auto userModules = getChildFileFromWorkingDirectory(userModulesGlobalPath);
 
     const auto& modules = safeGetChildByName(jucerProject, "MODULES");
     for (auto pModule = modules.getFirstChildElement(); pModule != nullptr;
@@ -1347,26 +1429,6 @@ int main(int argc, char* argv[])
       const auto useGlobalPath =
         toBoolLikeVar(module.getStringAttribute("useGlobalPath"));
       const auto isJuceModule = moduleName.startsWith("juce_");
-
-      if (useGlobalPath)
-      {
-        if (isJuceModule && args.juceModulesPath.isEmpty())
-        {
-          printError(
-            "At least one JUCE module used in " + args.jucerFilePath
-            + " relies on the global \"JUCE Modules\" path set in Projucer. You must "
-              "provide this path using --juce-modules=\"<global-JUCE-modules-path>\".");
-          return 1;
-        }
-        if (!isJuceModule && args.userModulesPath.isEmpty())
-        {
-          printError(
-            "At least one user module used in " + args.jucerFilePath
-            + " relies on the global \"User Modules\" path set in Projucer. You must "
-              "provide this path using --user-modules=\"<global-user-modules-path>\".");
-          return 1;
-        }
-      }
 
       const auto modulePath = [&modulePaths, &moduleName]() -> juce::String {
         if (const auto pModulePath = modulePaths.getChildByAttribute("id", moduleName))
