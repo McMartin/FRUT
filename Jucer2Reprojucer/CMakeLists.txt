@@ -74,9 +74,9 @@ jucer_project_settings(
 )
 
 jucer_project_files("Jucer2Reprojucer"
-# Compile   Xcode     Binary    File        Compiler Flag
-#           Resource  Resource              Scheme
-  x         .         .         "main.cpp"  maximum_warnings
+# Compile   Xcode     Binary    File            Compiler Flag
+#           Resource  Resource                  Scheme
+  x         .         .         "src/main.cpp"  maximum_warnings
 )
 
 jucer_project_module(
