@@ -221,6 +221,9 @@ test_script:
   # Check that generated CMakeLists.txt files are up-to-date
   - cd %APPVEYOR_BUILD_FOLDER%
   - >
+    cmake -DJucer2Reprojucer_EXE="prefix/FRUT/bin/Jucer2Reprojucer.exe"
+    -P ci/apply-Jucer2Reprojucer-to-test-jucers.cmake
+  - >
     cmake -DJUCE_VERSION="4.2.0"
     -DJucer2Reprojucer_EXE="prefix/FRUT/bin/Jucer2Reprojucer.exe"
     -P ci/apply-Jucer2Reprojucer-to-JUCE-jucers.cmake
@@ -248,9 +251,6 @@ test_script:
     cmake -DJUCE_VERSION="5.4.7"
     -DJucer2Reprojucer_EXE="prefix/FRUT/bin/Jucer2Reprojucer.exe"
     -P ci/apply-Jucer2Reprojucer-to-JUCE-jucers.cmake
-  - >
-    cmake -DJucer2Reprojucer_EXE="prefix/FRUT/bin/Jucer2Reprojucer.exe"
-    -P ci/apply-Jucer2Reprojucer-to-test-jucers.cmake
   - git diff --quiet
 
   - mkdir %APPVEYOR_BUILD_FOLDER%\ci\AllJuceProjects\build
