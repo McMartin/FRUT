@@ -22,8 +22,6 @@ project(FRUT)
 
 add_subdirectory(Jucer2CMake)
 
-add_subdirectory(Jucer2Reprojucer)
-
 
 set(JUCE_modules_DIRS "${JUCE_ROOT}/modules")
 
@@ -32,3 +30,6 @@ add_subdirectory(cmake/tools)
 install(FILES "${CMAKE_CURRENT_LIST_DIR}/cmake/Reprojucer.cmake" DESTINATION "FRUT/cmake")
 
 install(DIRECTORY "${CMAKE_CURRENT_LIST_DIR}/cmake/data" DESTINATION "FRUT/cmake")
+
+
+add_subdirectory(deprecated/Jucer2Reprojucer)

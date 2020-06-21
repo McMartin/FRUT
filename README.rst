@@ -65,8 +65,9 @@ FRUT currently contains:
 - ``Reprojucer.cmake``, a CMake module that provides high-level functions to reproduce
   how a JUCE project is defined in Projucer,
 
-- ``Jucer2Reprojucer``, a console application that converts ``.jucer`` project files into
-  ready-to-use ``CMakeLists.txt`` files that include and use ``Reprojucer.cmake``,
+- ``Jucer2Reprojucer`` (deprecated in favor of ``Jucer2CMake``), a console application
+  that converts ``.jucer`` project files into ready-to-use ``CMakeLists.txt`` files that
+  include and use ``Reprojucer.cmake``,
 
 - several ``CMakeLists.txt`` files generated from existing ``.jucer`` project files,
   including:
@@ -90,8 +91,9 @@ Requirements
 Supported Projucer exporters
 ----------------------------
 
-``Jucer2CMake``, ``Reprojucer.cmake``, and ``Jucer2Reprojucer`` support the following
-Projucer exporters (also known as "export targets"):
+``Jucer2CMake``, ``Reprojucer.cmake``, and ``Jucer2Reprojucer`` (deprecated in favor of
+``Jucer2CMake``) support the following Projucer exporters (also known as "export
+targets"):
 
 .. raw:: html
 

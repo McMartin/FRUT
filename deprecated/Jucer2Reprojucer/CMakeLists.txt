@@ -23,7 +23,7 @@ cmake_minimum_required(VERSION 3.4)
 project(Jucer2Reprojucer)
 
 
-list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/../cmake")
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/../../cmake")
 include(Reprojucer)
 
 
@@ -70,7 +70,7 @@ jucer_project_settings(
     "WRITE_CRLF_LINE_ENDINGS=$<BOOL:${WRITE_CRLF_LINE_ENDINGS}>"
     "IS_PAID_OR_GPL=${is_paid_or_gpl}"
   HEADER_SEARCH_PATHS
-    "${CMAKE_CURRENT_LIST_DIR}/../third-party"
+    "${CMAKE_CURRENT_LIST_DIR}/../../third-party"
 )
 
 jucer_project_files("Jucer2Reprojucer"
