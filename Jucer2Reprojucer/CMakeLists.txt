@@ -1,5 +1,5 @@
 # Copyright (C) 2017  Matthieu Talbot
-# Copyright (C) 2017-2019  Alain Martin
+# Copyright (C) 2017-2020  Alain Martin
 # Copyright (C) 2017  Florian Goltz
 # Copyright (C) 2018  Dennis Scheffer
 #
@@ -70,7 +70,7 @@ jucer_project_settings(
     "WRITE_CRLF_LINE_ENDINGS=$<BOOL:${WRITE_CRLF_LINE_ENDINGS}>"
     "IS_PAID_OR_GPL=${is_paid_or_gpl}"
   HEADER_SEARCH_PATHS
-    "${CMAKE_CURRENT_LIST_DIR}/third-party"
+    "${CMAKE_CURRENT_LIST_DIR}/../third-party"
 )
 
 jucer_project_files("Jucer2Reprojucer"
