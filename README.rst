@@ -157,7 +157,7 @@ Then we convert ``MyGreatProject.jucer`` to a new ``CMakeLists.txt`` file: ::
 
   $ cd <root>/MyGreatProject/
 
-  $ ../FRUT/prefix/FRUT/bin/Jucer2Reprojucer MyGreatProject.jucer ../FRUT/prefix/FRUT/cmake/Reprojucer.cmake
+  $ ../FRUT/prefix/FRUT/bin/Jucer2CMake reprojucer MyGreatProject.jucer ../FRUT/prefix/FRUT/cmake/Reprojucer.cmake
 
   <root>/MyGreatProject/CMakeLists.txt has been successfully generated.
 

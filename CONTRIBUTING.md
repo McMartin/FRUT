@@ -6,7 +6,7 @@ anything about CMake.
 
 ## Just do it!
 
-You can simply convert your existing JUCE projects using `Jucer2Reprojucer` and build them
+You can simply convert your existing JUCE projects using `Jucer2CMake` and build them
 using CMake (see https://github.com/McMartin/FRUT#getting-started). Then create issues
 (https://github.com/McMartin/FRUT/issues/new) to report any unwanted differences with how
 your projects are usually built when using Projucer.

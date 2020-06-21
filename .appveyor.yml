@@ -105,36 +105,36 @@ for:
       # Check that generated CMakeLists.txt files are up-to-date
       - cd %APPVEYOR_BUILD_FOLDER%
       - >
-        cmake -DJucer2Reprojucer_EXE="prefix/FRUT/bin/Jucer2Reprojucer.exe"
-        -P ci/apply-Jucer2Reprojucer-to-test-jucers.cmake
+        cmake -DJucer2CMake_EXE="prefix/FRUT/bin/Jucer2CMake.exe"
+        -P ci/apply-Jucer2CMake-to-test-jucers.cmake
       - >
         cmake -DJUCE_VERSION="4.2.0"
-        -DJucer2Reprojucer_EXE="prefix/FRUT/bin/Jucer2Reprojucer.exe"
-        -P ci/apply-Jucer2Reprojucer-to-JUCE-jucers.cmake
+        -DJucer2CMake_EXE="prefix/FRUT/bin/Jucer2CMake.exe"
+        -P ci/apply-Jucer2CMake-to-JUCE-jucers.cmake
       - >
         cmake -DJUCE_VERSION="4.3.1"
-        -DJucer2Reprojucer_EXE="prefix/FRUT/bin/Jucer2Reprojucer.exe"
-        -P ci/apply-Jucer2Reprojucer-to-JUCE-jucers.cmake
+        -DJucer2CMake_EXE="prefix/FRUT/bin/Jucer2CMake.exe"
+        -P ci/apply-Jucer2CMake-to-JUCE-jucers.cmake
       - >
         cmake -DJUCE_VERSION="5.0.0"
-        -DJucer2Reprojucer_EXE="prefix/FRUT/bin/Jucer2Reprojucer.exe"
-        -P ci/apply-Jucer2Reprojucer-to-JUCE-jucers.cmake
+        -DJucer2CMake_EXE="prefix/FRUT/bin/Jucer2CMake.exe"
+        -P ci/apply-Jucer2CMake-to-JUCE-jucers.cmake
       - >
         cmake -DJUCE_VERSION="5.2.1"
-        -DJucer2Reprojucer_EXE="prefix/FRUT/bin/Jucer2Reprojucer.exe"
-        -P ci/apply-Jucer2Reprojucer-to-JUCE-jucers.cmake
+        -DJucer2CMake_EXE="prefix/FRUT/bin/Jucer2CMake.exe"
+        -P ci/apply-Jucer2CMake-to-JUCE-jucers.cmake
       - >
         cmake -DJUCE_VERSION="5.3.1"
-        -DJucer2Reprojucer_EXE="prefix/FRUT/bin/Jucer2Reprojucer.exe"
-        -P ci/apply-Jucer2Reprojucer-to-JUCE-jucers.cmake
+        -DJucer2CMake_EXE="prefix/FRUT/bin/Jucer2CMake.exe"
+        -P ci/apply-Jucer2CMake-to-JUCE-jucers.cmake
       - >
         cmake -DJUCE_VERSION="5.4.3"
-        -DJucer2Reprojucer_EXE="prefix/FRUT/bin/Jucer2Reprojucer.exe"
-        -P ci/apply-Jucer2Reprojucer-to-JUCE-jucers.cmake
+        -DJucer2CMake_EXE="prefix/FRUT/bin/Jucer2CMake.exe"
+        -P ci/apply-Jucer2CMake-to-JUCE-jucers.cmake
       - >
         cmake -DJUCE_VERSION="5.4.7"
-        -DJucer2Reprojucer_EXE="prefix/FRUT/bin/Jucer2Reprojucer.exe"
-        -P ci/apply-Jucer2Reprojucer-to-JUCE-jucers.cmake
+        -DJucer2CMake_EXE="prefix/FRUT/bin/Jucer2CMake.exe"
+        -P ci/apply-Jucer2CMake-to-JUCE-jucers.cmake
       - git diff --exit-code
 
   - matrix:
@@ -221,36 +221,36 @@ test_script:
   # Check that generated CMakeLists.txt files are up-to-date
   - cd %APPVEYOR_BUILD_FOLDER%
   - >
-    cmake -DJucer2Reprojucer_EXE="prefix/FRUT/bin/Jucer2Reprojucer.exe"
-    -P ci/apply-Jucer2Reprojucer-to-test-jucers.cmake
+    cmake -DJucer2CMake_EXE="prefix/FRUT/bin/Jucer2CMake.exe"
+    -P ci/apply-Jucer2CMake-to-test-jucers.cmake
   - >
     cmake -DJUCE_VERSION="4.2.0"
-    -DJucer2Reprojucer_EXE="prefix/FRUT/bin/Jucer2Reprojucer.exe"
-    -P ci/apply-Jucer2Reprojucer-to-JUCE-jucers.cmake
+    -DJucer2CMake_EXE="prefix/FRUT/bin/Jucer2CMake.exe"
+    -P ci/apply-Jucer2CMake-to-JUCE-jucers.cmake
   - >
     cmake -DJUCE_VERSION="4.3.1"
-    -DJucer2Reprojucer_EXE="prefix/FRUT/bin/Jucer2Reprojucer.exe"
-    -P ci/apply-Jucer2Reprojucer-to-JUCE-jucers.cmake
+    -DJucer2CMake_EXE="prefix/FRUT/bin/Jucer2CMake.exe"
+    -P ci/apply-Jucer2CMake-to-JUCE-jucers.cmake
   - >
     cmake -DJUCE_VERSION="5.0.0"
-    -DJucer2Reprojucer_EXE="prefix/FRUT/bin/Jucer2Reprojucer.exe"
-    -P ci/apply-Jucer2Reprojucer-to-JUCE-jucers.cmake
+    -DJucer2CMake_EXE="prefix/FRUT/bin/Jucer2CMake.exe"
+    -P ci/apply-Jucer2CMake-to-JUCE-jucers.cmake
   - >
     cmake -DJUCE_VERSION="5.2.1"
-    -DJucer2Reprojucer_EXE="prefix/FRUT/bin/Jucer2Reprojucer.exe"
-    -P ci/apply-Jucer2Reprojucer-to-JUCE-jucers.cmake
+    -DJucer2CMake_EXE="prefix/FRUT/bin/Jucer2CMake.exe"
+    -P ci/apply-Jucer2CMake-to-JUCE-jucers.cmake
   - >
     cmake -DJUCE_VERSION="5.3.1"
-    -DJucer2Reprojucer_EXE="prefix/FRUT/bin/Jucer2Reprojucer.exe"
-    -P ci/apply-Jucer2Reprojucer-to-JUCE-jucers.cmake
+    -DJucer2CMake_EXE="prefix/FRUT/bin/Jucer2CMake.exe"
+    -P ci/apply-Jucer2CMake-to-JUCE-jucers.cmake
   - >
     cmake -DJUCE_VERSION="5.4.3"
-    -DJucer2Reprojucer_EXE="prefix/FRUT/bin/Jucer2Reprojucer.exe"
-    -P ci/apply-Jucer2Reprojucer-to-JUCE-jucers.cmake
+    -DJucer2CMake_EXE="prefix/FRUT/bin/Jucer2CMake.exe"
+    -P ci/apply-Jucer2CMake-to-JUCE-jucers.cmake
   - >
     cmake -DJUCE_VERSION="5.4.7"
-    -DJucer2Reprojucer_EXE="prefix/FRUT/bin/Jucer2Reprojucer.exe"
-    -P ci/apply-Jucer2Reprojucer-to-JUCE-jucers.cmake
+    -DJucer2CMake_EXE="prefix/FRUT/bin/Jucer2CMake.exe"
+    -P ci/apply-Jucer2CMake-to-JUCE-jucers.cmake
   - git diff --quiet
 
   - mkdir %APPVEYOR_BUILD_FOLDER%\ci\AllJuceProjects\build

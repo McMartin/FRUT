@@ -21,15 +21,15 @@ if(NOT IS_DIRECTORY "${tests_DIR}")
 endif()
 
 
-if(NOT DEFINED Jucer2Reprojucer_EXE)
-  message(FATAL_ERROR "Jucer2Reprojucer_EXE must be defined")
+if(NOT DEFINED Jucer2CMake_EXE)
+  message(FATAL_ERROR "Jucer2CMake_EXE must be defined")
 endif()
 
-if(NOT EXISTS ${Jucer2Reprojucer_EXE})
-  message(FATAL_ERROR "No such file: ${Jucer2Reprojucer_EXE}")
+if(NOT EXISTS ${Jucer2CMake_EXE})
+  message(FATAL_ERROR "No such file: ${Jucer2CMake_EXE}")
 endif()
 
-get_filename_component(Jucer2Reprojucer_EXE "${Jucer2Reprojucer_EXE}" ABSOLUTE)
+get_filename_component(Jucer2CMake_EXE "${Jucer2CMake_EXE}" ABSOLUTE)
 
 
 file(GLOB_RECURSE jucer_files "${tests_DIR}/*.jucer")
@@ -39,14 +39,15 @@ foreach(jucer_file IN LISTS jucer_files)
 
   execute_process(WORKING_DIRECTORY ${working_dir}
     COMMAND
-    "${Jucer2Reprojucer_EXE}"
+    "${Jucer2CMake_EXE}"
+    "reprojucer"
     "${jucer_file}"
     "${CMAKE_CURRENT_LIST_DIR}/../cmake/Reprojucer.cmake"
     RESULT_VARIABLE result
   )
 
   if(NOT result EQUAL 0)
-    message(FATAL_ERROR "Failed to run ${Jucer2Reprojucer_EXE} "
+    message(FATAL_ERROR "Failed to run ${Jucer2CMake_EXE} "
       "${jucer_file} ${CMAKE_CURRENT_LIST_DIR}/../cmake/Reprojucer.cmake"
     )
   endif()
