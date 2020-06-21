@@ -20,6 +20,8 @@ cmake_minimum_required(VERSION 3.4)
 project(FRUT)
 
 
+add_subdirectory(Jucer2CMake)
+
 add_subdirectory(Jucer2Reprojucer)
 
 

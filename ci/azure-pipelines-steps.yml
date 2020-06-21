@@ -19,6 +19,7 @@ steps:
     - script: >
         cmake .. -G "$(cmakeGenerator)"
         -DJUCE_ROOT="$(Build.SourcesDirectory)/ci/tmp/JUCE-${{ juceVersion }}"
+        -DJucer2CMake_WRITE_CRLF_LINE_ENDINGS=ON
         -DWRITE_CRLF_LINE_ENDINGS=ON
         ${{ parameters.cmakeOptions }}
       workingDirectory: build

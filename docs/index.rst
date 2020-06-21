@@ -1,4 +1,4 @@
-.. # Copyright (C) 2018-2019  Alain Martin
+.. # Copyright (C) 2018-2020  Alain Martin
 .. #
 .. # This file is part of FRUT.
 .. #
@@ -29,6 +29,9 @@ Contents
 --------
 
 FRUT currently contains:
+
+- ``Jucer2CMake``, a console application that converts ``.jucer`` project files into
+  ready-to-use ``CMakeLists.txt`` files,
 
 - ``Reprojucer.cmake``, a CMake module that provides high-level functions to reproduce
   how a JUCE project is defined in Projucer,
