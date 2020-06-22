@@ -19,6 +19,7 @@ steps:
     - script: >
         cmake .. -G "$(cmakeGenerator)"
         -DJUCE_ROOT="$(Build.SourcesDirectory)/ci/tmp/JUCE-${{ juceVersion }}"
+        -DJucer2CMake_WRITE_CRLF_LINE_ENDINGS=ON
         -DWRITE_CRLF_LINE_ENDINGS=ON
         ${{ parameters.cmakeOptions }}
       workingDirectory: build
@@ -35,14 +36,14 @@ steps:
     displayName: Build and install FRUT in ./prefix
 
   - script: >
-      cmake -DJucer2Reprojucer_EXE="prefix/FRUT/bin/Jucer2Reprojucer.exe"
-      -P ci/apply-Jucer2Reprojucer-to-test-jucers.cmake
+      cmake -DJucer2CMake_EXE="prefix/FRUT/bin/Jucer2CMake.exe"
+      -P ci/apply-Jucer2CMake-to-test-jucers.cmake
     displayName: Re-generate CMakeLists.txt files for test projects
   - ${{ each juceVersion in parameters.juceVersions }}:
     - script: >
         cmake -DJUCE_VERSION="${{ juceVersion }}"
-        -DJucer2Reprojucer_EXE="prefix/FRUT/bin/Jucer2Reprojucer.exe"
-        -P ci/apply-Jucer2Reprojucer-to-JUCE-jucers.cmake
+        -DJucer2CMake_EXE="prefix/FRUT/bin/Jucer2CMake.exe"
+        -P ci/apply-Jucer2CMake-to-JUCE-jucers.cmake
       displayName: Re-generate CMakeLists.txt files for JUCE ${{ juceVersion }}
   - script: git diff --exit-code
     displayName: Check that generated CMakeLists.txt files are up-to-date

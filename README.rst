@@ -59,11 +59,15 @@ Contents
 
 FRUT currently contains:
 
+- ``Jucer2CMake``, a console application that converts ``.jucer`` project files into
+  ready-to-use ``CMakeLists.txt`` files,
+
 - ``Reprojucer.cmake``, a CMake module that provides high-level functions to reproduce
   how a JUCE project is defined in Projucer,
 
-- ``Jucer2Reprojucer``, a console application that converts ``.jucer`` project files into
-  ready-to-use ``CMakeLists.txt`` files that include and use ``Reprojucer.cmake``,
+- ``Jucer2Reprojucer`` (deprecated in favor of ``Jucer2CMake``), a console application
+  that converts ``.jucer`` project files into ready-to-use ``CMakeLists.txt`` files that
+  include and use ``Reprojucer.cmake``,
 
 - several ``CMakeLists.txt`` files generated from existing ``.jucer`` project files,
   including:
@@ -87,8 +91,9 @@ Requirements
 Supported Projucer exporters
 ----------------------------
 
-``Reprojucer.cmake`` and ``Jucer2Reprojucer`` support the following Projucer exporters
-(also known as "export targets"):
+``Jucer2CMake``, ``Reprojucer.cmake``, and ``Jucer2Reprojucer`` (deprecated in favor of
+``Jucer2CMake``) support the following Projucer exporters (also known as "export
+targets"):
 
 .. raw:: html
 
@@ -154,7 +159,7 @@ Then we convert ``MyGreatProject.jucer`` to a new ``CMakeLists.txt`` file: ::
 
   $ cd <root>/MyGreatProject/
 
-  $ ../FRUT/prefix/FRUT/bin/Jucer2Reprojucer MyGreatProject.jucer ../FRUT/prefix/FRUT/cmake/Reprojucer.cmake
+  $ ../FRUT/prefix/FRUT/bin/Jucer2CMake reprojucer MyGreatProject.jucer ../FRUT/prefix/FRUT/cmake/Reprojucer.cmake
 
   <root>/MyGreatProject/CMakeLists.txt has been successfully generated.
 
