@@ -287,11 +287,7 @@ test_script:
     -DJUCER_VST3_SDK_FOLDER="%APPVEYOR_BUILD_FOLDER%/ci/fake-SDKs/VST3"
 
   # Configure all JUCE 5.4.3 projects
-  - >
-    cmake .. -G "%GENERATOR%" -DJUCE_VERSION="5.4.3"
-    -DJUCER_VST3_SDK_FOLDER="%APPVEYOR_BUILD_FOLDER%/ci/fake-SDKs/VST3"
+  - cmake .. -G "%GENERATOR%" -DJUCE_VERSION="5.4.3"
 
   # Configure all JUCE 5.4.7 projects
-  - >
-    cmake .. -G "%GENERATOR%" -DJUCE_VERSION="5.4.7"
-    -DJUCER_VST3_SDK_FOLDER="%APPVEYOR_BUILD_FOLDER%/ci/fake-SDKs/VST3"
+  - cmake .. -G "%GENERATOR%" -DJUCE_VERSION="5.4.7"
