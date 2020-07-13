@@ -487,7 +487,7 @@ int main(int argc, char* argv[])
 
   const auto& jucerProject = *pJucerProjucer;
 
-  const auto& jucerVersion = jucerProject.getStringAttribute("jucerVersion");
+  const auto jucerVersion = jucerProject.getStringAttribute("jucerVersion", "6.0.0");
   const auto jucerVersionTokens = juce::StringArray::fromTokens(jucerVersion, ".", {});
   if (jucerVersionTokens.size() != 3)
   {
