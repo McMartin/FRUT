@@ -62,7 +62,12 @@ set(Reprojucer_supported_exporters_conditions
 
 function(jucer_project_begin)
 
-  _FRUT_parse_arguments("JUCER_VERSION;PROJECT_FILE;PROJECT_ID" "" "${ARGN}")
+  set(single_value_keywords
+    "JUCER_VERSION"
+    "PROJECT_FILE"
+    "PROJECT_ID"
+  )
+  _FRUT_parse_arguments("${single_value_keywords}" "" "${ARGN}")
 
   if(DEFINED _JUCER_VERSION)
     set(JUCER_VERSION "${_JUCER_VERSION}" PARENT_SCOPE)
