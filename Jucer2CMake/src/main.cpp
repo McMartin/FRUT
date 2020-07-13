@@ -821,7 +821,15 @@ int main(int argc, char* argv[])
   // jucer_project_begin()
   {
     wLn("jucer_project_begin(");
-    wLn("  JUCER_VERSION \"", jucerVersion, "\"");
+    if (jucerProject.hasAttribute("jucerFormatVersion"))
+    {
+      wLn("  JUCER_FORMAT_VERSION \"",
+          jucerProject.getStringAttribute("jucerFormatVersion"), "\"");
+    }
+    else
+    {
+      wLn("  JUCER_VERSION \"", jucerVersion, "\"");
+    }
     wLn("  PROJECT_FILE \"${", jucerFileCMakeVar, "}\"");
     convertSetting(jucerProject, "id", "PROJECT_ID", {});
     wLn(")");

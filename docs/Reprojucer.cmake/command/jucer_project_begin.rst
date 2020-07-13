@@ -1,4 +1,4 @@
-.. # Copyright (C) 2017-2018  Alain Martin
+.. # Copyright (C) 2017-2018, 2020  Alain Martin
 .. #
 .. # This file is part of FRUT.
 .. #
@@ -23,6 +23,7 @@ Indicate the beginning of a JUCE project.
 ::
 
   jucer_project_begin(
+    [JUCER_FORMAT_VERSION <jucer_format_version>]
     [JUCER_VERSION <jucer_version>]
     [PROJECT_FILE <jucer_file_path>]
     [PROJECT_ID <jucer_project_id>]
