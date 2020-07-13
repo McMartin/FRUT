@@ -331,6 +331,9 @@ contributors:
       <a href="https://github.com/McMartin/FRUT/pulls?q=state%3Amerged+reviewed-by%3Aimportjingles+-author%3Aimportjingles+" title="Pull Request reviews">👀</a>
     </td>
     <td>
+      <a href="https://github.com/E-Fir"><img src="https://github.com/E-Fir.png" width="100"><br />Alexey Romanoff</a>
+      <br />
+      <a href="https://github.com/McMartin/FRUT/issues?q=is%3Aissue+author%3AE-Fir" title="Bug reports">🐛</a>
     </td>
     <td>
     </td>
