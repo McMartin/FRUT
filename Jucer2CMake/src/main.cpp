@@ -487,7 +487,7 @@ int main(int argc, char* argv[])
 
   const auto& jucerProject = *pJucerProjucer;
 
-  const auto& jucerVersion = jucerProject.getStringAttribute("jucerVersion");
+  const auto jucerVersion = jucerProject.getStringAttribute("jucerVersion", "6.0.0");
   const auto jucerVersionTokens = juce::StringArray::fromTokens(jucerVersion, ".", {});
   if (jucerVersionTokens.size() != 3)
   {
@@ -821,7 +821,15 @@ int main(int argc, char* argv[])
   // jucer_project_begin()
   {
     wLn("jucer_project_begin(");
-    wLn("  JUCER_VERSION \"", jucerVersion, "\"");
+    if (jucerProject.hasAttribute("jucerFormatVersion"))
+    {
+      wLn("  JUCER_FORMAT_VERSION \"",
+          jucerProject.getStringAttribute("jucerFormatVersion"), "\"");
+    }
+    else
+    {
+      wLn("  JUCER_VERSION \"", jucerVersion, "\"");
+    }
     wLn("  PROJECT_FILE \"${", jucerFileCMakeVar, "}\"");
     convertSetting(jucerProject, "id", "PROJECT_ID", {});
     wLn(")");

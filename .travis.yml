@@ -21,8 +21,8 @@ install:
     -- https://github.com/juce-framework/JUCE.git ci/tmp/JUCE-5.4.3
   - git clone --branch=5.4.7 --depth=1 --single-branch
     -- https://github.com/juce-framework/JUCE.git ci/tmp/JUCE-5.4.7
-  - git clone --branch=6.0.0 --depth=1 --single-branch
-    -- https://github.com/juce-framework/JUCE.git ci/tmp/JUCE-6.0.0
+  - git clone --branch=6.0.1 --depth=1 --single-branch
+    -- https://github.com/juce-framework/JUCE.git ci/tmp/JUCE-6.0.1
 
 script-anchors:
   - &script-Makefiles
@@ -92,14 +92,14 @@ script-anchors:
     - cmake .. -G"${GENERATOR}" -DCMAKE_BUILD_TYPE=Release
       -DJUCE_ROOT="${TRAVIS_BUILD_DIR}/ci/tmp/JUCE-5.4.7"
 
-    # Configure and build FRUT with JUCE 6.0.0
+    # Configure and build FRUT with JUCE 6.0.1
     - cd ${TRAVIS_BUILD_DIR}/Debug_build
     - cmake .. -G"${GENERATOR}" -DCMAKE_BUILD_TYPE=Debug
-      -DJUCE_ROOT="${TRAVIS_BUILD_DIR}/ci/tmp/JUCE-6.0.0"
+      -DJUCE_ROOT="${TRAVIS_BUILD_DIR}/ci/tmp/JUCE-6.0.1"
     - cmake --build . -- -j4
     - cd ${TRAVIS_BUILD_DIR}/Release_build
     - cmake .. -G"${GENERATOR}" -DCMAKE_BUILD_TYPE=Release
-      -DJUCE_ROOT="${TRAVIS_BUILD_DIR}/ci/tmp/JUCE-6.0.0"
+      -DJUCE_ROOT="${TRAVIS_BUILD_DIR}/ci/tmp/JUCE-6.0.1"
 
     # Build and install FRUT in ./prefix
     - cmake .. -G"${GENERATOR}" -DCMAKE_INSTALL_PREFIX="${TRAVIS_BUILD_DIR}/prefix"
@@ -139,7 +139,7 @@ script-anchors:
       -DJucer2CMake_EXE="prefix/FRUT/bin/Jucer2CMake"
       -P ci/apply-Jucer2CMake-to-JUCE-jucers.cmake
     - >
-      cmake -DJUCE_VERSION="6.0.0"
+      cmake -DJUCE_VERSION="6.0.1"
       -DJucer2CMake_EXE="prefix/FRUT/bin/Jucer2CMake"
       -P ci/apply-Jucer2CMake-to-JUCE-jucers.cmake
     - git diff --exit-code
@@ -219,11 +219,11 @@ script-anchors:
     - cd ${TRAVIS_BUILD_DIR}/ci/AllJuceProjects/Release_build
     - cmake .. -G"${GENERATOR}" -DCMAKE_BUILD_TYPE=Release -DJUCE_VERSION="5.4.7"
 
-    # Configure all JUCE 6.0.0 projects
+    # Configure all JUCE 6.0.1 projects
     - cd ${TRAVIS_BUILD_DIR}/ci/AllJuceProjects/Debug_build
-    - cmake .. -G"${GENERATOR}" -DCMAKE_BUILD_TYPE=Debug -DJUCE_VERSION="6.0.0"
+    - cmake .. -G"${GENERATOR}" -DCMAKE_BUILD_TYPE=Debug -DJUCE_VERSION="6.0.1"
     - cd ${TRAVIS_BUILD_DIR}/ci/AllJuceProjects/Release_build
-    - cmake .. -G"${GENERATOR}" -DCMAKE_BUILD_TYPE=Release -DJUCE_VERSION="6.0.0"
+    - cmake .. -G"${GENERATOR}" -DCMAKE_BUILD_TYPE=Release -DJUCE_VERSION="6.0.1"
 
   - &script-Xcode
     - mkdir ${TRAVIS_BUILD_DIR}/build
@@ -257,8 +257,8 @@ script-anchors:
     - cmake .. -G Xcode -DJUCE_ROOT="${TRAVIS_BUILD_DIR}/ci/tmp/JUCE-5.4.7"
     - cmake --build . --config Debug
 
-    # Configure and build FRUT with JUCE 6.0.0
-    - cmake .. -G Xcode -DJUCE_ROOT="${TRAVIS_BUILD_DIR}/ci/tmp/JUCE-6.0.0"
+    # Configure and build FRUT with JUCE 6.0.1
+    - cmake .. -G Xcode -DJUCE_ROOT="${TRAVIS_BUILD_DIR}/ci/tmp/JUCE-6.0.1"
     - cmake --build . --config Debug
 
     # Build and install FRUT in ./prefix
@@ -313,7 +313,7 @@ script-anchors:
       -DJucer2CMake_EXE="prefix/FRUT/bin/Jucer2CMake"
       -P ci/apply-Jucer2CMake-to-JUCE-jucers.cmake
     - >
-      cmake -DJUCE_VERSION="6.0.0"
+      cmake -DJUCE_VERSION="6.0.1"
       -DJucer2CMake_EXE="prefix/FRUT/bin/Jucer2CMake"
       -P ci/apply-Jucer2CMake-to-JUCE-jucers.cmake
     - git diff --exit-code
@@ -357,8 +357,8 @@ script-anchors:
     # Configure all JUCE 5.4.7 projects
     - cmake .. -G Xcode -DJUCE_VERSION="5.4.7"
 
-    # Configure all JUCE 6.0.0 projects
-    - cmake .. -G Xcode -DJUCE_VERSION="6.0.0"
+    # Configure all JUCE 6.0.1 projects
+    - cmake .. -G Xcode -DJUCE_VERSION="6.0.1"
 
   - &script-Xcode-iOS
     # Run .entitlements files generation tests
@@ -399,8 +399,8 @@ script-anchors:
     # Configure all JUCE 5.4.7 projects
     - cmake .. -G Xcode -DCMAKE_SYSTEM_NAME=iOS -DJUCE_VERSION="5.4.7"
 
-    # Configure all JUCE 6.0.0 projects
-    - cmake .. -G Xcode -DCMAKE_SYSTEM_NAME=iOS -DJUCE_VERSION="6.0.0"
+    # Configure all JUCE 6.0.1 projects
+    - cmake .. -G Xcode -DCMAKE_SYSTEM_NAME=iOS -DJUCE_VERSION="6.0.1"
 
 matrix:
   include:

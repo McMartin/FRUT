@@ -20,7 +20,7 @@ get_filename_component(BinaryBuilder_jucer_FILE
 
 
 jucer_project_begin(
-  JUCER_VERSION "6.0.0"
+  JUCER_FORMAT_VERSION "1"
   PROJECT_FILE "${BinaryBuilder_jucer_FILE}"
   PROJECT_ID "3t6YqETY1"
 )

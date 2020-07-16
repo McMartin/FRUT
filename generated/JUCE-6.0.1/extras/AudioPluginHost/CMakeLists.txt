@@ -20,7 +20,7 @@ get_filename_component(AudioPluginHost_jucer_FILE
 
 
 jucer_project_begin(
-  JUCER_VERSION "6.0.0"
+  JUCER_FORMAT_VERSION "1"
   PROJECT_FILE "${AudioPluginHost_jucer_FILE}"
   PROJECT_ID "NTe0XB0ij"
 )
