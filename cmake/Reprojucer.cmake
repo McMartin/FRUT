@@ -2177,7 +2177,7 @@ function(jucer_project_end)
 
   _FRUT_check_SDK_folders("${current_exporter}")
 
-  _FRUT_generate_AppConfig_header()
+  _FRUT_generate_AppConfig_and_JucePluginDefines_header()
   _FRUT_generate_JuceHeader_header()
 
   if(DEFINED JUCER_SMALL_ICON OR DEFINED JUCER_LARGE_ICON)
@@ -3506,7 +3506,7 @@ function(_FRUT_dec_to_hex dec_value out_hex_value)
 endfunction()
 
 
-function(_FRUT_generate_AppConfig_header)
+function(_FRUT_generate_AppConfig_and_JucePluginDefines_header)
 
   if(DEFINED JUCER_APPCONFIG_USER_CODE_SECTION)
     set(user_code_section "\n${JUCER_APPCONFIG_USER_CODE_SECTION}\n")
@@ -3863,7 +3863,19 @@ function(_FRUT_generate_AppConfig_header)
   if(DEFINED JUCER_VERSION AND JUCER_VERSION VERSION_LESS 5.0.0)
     string(TOUPPER "${JUCER_PROJECT_ID}" upper_project_id)
     set(template_file "${Reprojucer_data_DIR}/AppConfig-4.h.in")
+  elseif(DEFINED JUCER_VERSION AND JUCER_VERSION VERSION_LESS 6.0.0)
+    set(template_file "${Reprojucer_data_DIR}/AppConfig-5.h.in")
   else()
+    if(JUCER_PROJECT_TYPE STREQUAL "Audio Plug-in")
+      configure_file("${Reprojucer_data_DIR}/JucePluginDefines.h.in"
+        "JuceLibraryCode/JucePluginDefines.h" @ONLY
+      )
+      list(APPEND JUCER_PROJECT_FILES
+        "${CMAKE_CURRENT_BINARY_DIR}/JuceLibraryCode/JucePluginDefines.h"
+      )
+      set(include_JucePluginDefines_header "\n#include \"JucePluginDefines.h\"\n")
+    endif()
+
     set(template_file "${Reprojucer_data_DIR}/AppConfig.h.in")
   endif()
   configure_file("${template_file}" "JuceLibraryCode/AppConfig.h" @ONLY)

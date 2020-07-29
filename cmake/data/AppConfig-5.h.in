@@ -11,7 +11,7 @@
 
 //==============================================================================
 // [BEGIN_USER_CODE_SECTION]@user_code_section@// [END_USER_CODE_SECTION]
-@include_JucePluginDefines_header@
+
 /*
   ==============================================================================
 
@@ -51,3 +51,4 @@
   #define  JUCE_STANDALONE_APPLICATION @is_standalone_application@
  #endif
 #endif
+@audio_plugin_settings_defines@
