@@ -73,11 +73,11 @@ User documentation
 .. _JUCE 6.0.1: https://github.com/juce-framework/JUCE/tree/6.0.1
 .. _JUCE: https://github.com/juce-framework/JUCE
 .. _Projucer: https://juce.com/discover/projucer
-.. _generated/JUCE-4.2.0: https://github.com/McMartin/FRUT/tree/master/generated/JUCE-4.2.0
-.. _generated/JUCE-4.3.1: https://github.com/McMartin/FRUT/tree/master/generated/JUCE-4.3.1
-.. _generated/JUCE-5.0.0: https://github.com/McMartin/FRUT/tree/master/generated/JUCE-5.0.0
-.. _generated/JUCE-5.2.1: https://github.com/McMartin/FRUT/tree/master/generated/JUCE-5.2.1
-.. _generated/JUCE-5.3.1: https://github.com/McMartin/FRUT/tree/master/generated/JUCE-5.3.1
-.. _generated/JUCE-5.4.3: https://github.com/McMartin/FRUT/tree/master/generated/JUCE-5.4.3
-.. _generated/JUCE-5.4.7: https://github.com/McMartin/FRUT/tree/master/generated/JUCE-5.4.7
-.. _generated/JUCE-6.0.1: https://github.com/McMartin/FRUT/tree/master/generated/JUCE-6.0.1
+.. _generated/JUCE-4.2.0: https://github.com/McMartin/FRUT/tree/main/generated/JUCE-4.2.0
+.. _generated/JUCE-4.3.1: https://github.com/McMartin/FRUT/tree/main/generated/JUCE-4.3.1
+.. _generated/JUCE-5.0.0: https://github.com/McMartin/FRUT/tree/main/generated/JUCE-5.0.0
+.. _generated/JUCE-5.2.1: https://github.com/McMartin/FRUT/tree/main/generated/JUCE-5.2.1
+.. _generated/JUCE-5.3.1: https://github.com/McMartin/FRUT/tree/main/generated/JUCE-5.3.1
+.. _generated/JUCE-5.4.3: https://github.com/McMartin/FRUT/tree/main/generated/JUCE-5.4.3
+.. _generated/JUCE-5.4.7: https://github.com/McMartin/FRUT/tree/main/generated/JUCE-5.4.7
+.. _generated/JUCE-6.0.1: https://github.com/McMartin/FRUT/tree/main/generated/JUCE-6.0.1

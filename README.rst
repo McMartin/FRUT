@@ -207,7 +207,7 @@ contributors:
       <br />
       <a href="https://github.com/McMartin/FRUT/pulls?q=state%3Amerged+author%3AMcMartin" title="Code">💻</a>
       <a href="https://github.com/McMartin/FRUT/pulls?q=state%3Amerged+reviewed-by%3AMcMartin+-author%3AMcMartin+" title="Pull Request reviews">👀</a>
-      <a href="https://github.com/McMartin/FRUT/commits/master/docs?author=McMartin" title="Documentation">📖</a>
+      <a href="https://github.com/McMartin/FRUT/commits/main/docs?author=McMartin" title="Documentation">📖</a>
     </td>
     <td>
       <a href="https://github.com/MartyLake"><img src="https://github.com/MartyLake.png" width="100"><br />Matthieu Talbot</a>
@@ -360,15 +360,15 @@ even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE
   :target: CODE_OF_CONDUCT.md
   :alt: Contributor Covenant Code of Conduct
 
-.. |AppVeyor| image:: https://ci.appveyor.com/api/projects/status/github/McMartin/frut?branch=master&svg=true
+.. |AppVeyor| image:: https://ci.appveyor.com/api/projects/status/github/McMartin/frut?branch=main&svg=true
   :target: https://ci.appveyor.com/project/McMartin/frut
   :alt: AppVeyor build status
 
-.. |Azure_Pipelines| image:: https://dev.azure.com/McMartin/FRUT/_apis/build/status/McMartin.FRUT?branchName=master
+.. |Azure_Pipelines| image:: https://dev.azure.com/McMartin/FRUT/_apis/build/status/McMartin.FRUT?branchName=main
   :target: https://dev.azure.com/McMartin/FRUT/_build?definitionId=2
   :alt: Azure Pipelines build status
 
-.. |Travis_CI| image:: https://travis-ci.org/McMartin/FRUT.svg?branch=master
+.. |Travis_CI| image:: https://travis-ci.org/McMartin/FRUT.svg?branch=main
   :target: https://travis-ci.org/McMartin/FRUT
   :alt: Travis CI build status
 

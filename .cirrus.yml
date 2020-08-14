@@ -1,7 +1,7 @@
 task:
   name: clang-format
 
-  only_if: $CIRRUS_BASE_BRANCH == "master" || $CIRRUS_BRANCH == "master"
+  only_if: $CIRRUS_BASE_BRANCH == "main" || $CIRRUS_BRANCH == "main"
 
   container:
     image: rsmmr/clang:9.0

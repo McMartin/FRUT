@@ -31,7 +31,7 @@ Example
 -------
 
 From `the AudioPluginHost extra of JUCE 5.4.3 <https://github.com/McMartin/FRUT/blob/
-master/generated/JUCE-5.4.3/extras/AudioPluginHost/CMakeLists.txt#L185-L192>`_:
+main/generated/JUCE-5.4.3/extras/AudioPluginHost/CMakeLists.txt#L185-L192>`_:
 
 .. code-block:: cmake
   :lineno-start: 185

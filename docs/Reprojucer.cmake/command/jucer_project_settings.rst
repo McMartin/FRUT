@@ -58,7 +58,7 @@ Define the settings specific to a JUCE project.
 Example
 -------
 
-From `the DemoRunner example of JUCE 5.4.3 <https://github.com/McMartin/FRUT/blob/master/
+From `the DemoRunner example of JUCE 5.4.3 <https://github.com/McMartin/FRUT/blob/main/
 generated/JUCE-5.4.3/examples/DemoRunner/CMakeLists.txt#L28-L43>`_:
 
 .. code-block:: cmake
