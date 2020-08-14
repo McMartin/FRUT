@@ -106,7 +106,7 @@ Examples
 --------
 
 From `the NetworkGraphicsDemo extra of JUCE 5.4.3 <https://github.com/McMartin/FRUT/blob/
-master/generated/JUCE-5.4.3/extras/NetworkGraphicsDemo/CMakeLists.txt#L176-L182>`_:
+main/generated/JUCE-5.4.3/extras/NetworkGraphicsDemo/CMakeLists.txt#L176-L182>`_:
 
 .. code-block:: cmake
   :lineno-start: 176
@@ -121,7 +121,7 @@ master/generated/JUCE-5.4.3/extras/NetworkGraphicsDemo/CMakeLists.txt#L176-L182>
 
 
 From `the UnitTestRunner extra of JUCE 5.4.3 <https://github.com/McMartin/FRUT/blob/
-master/generated/JUCE-5.4.3/extras/UnitTestRunner/CMakeLists.txt#L277-L284>`_:
+main/generated/JUCE-5.4.3/extras/UnitTestRunner/CMakeLists.txt#L277-L284>`_:
 
 .. code-block:: cmake
   :lineno-start: 277
@@ -136,7 +136,7 @@ master/generated/JUCE-5.4.3/extras/UnitTestRunner/CMakeLists.txt#L277-L284>`_:
   )
 
 
-From `the Projucer extra of JUCE 5.4.3 <https://github.com/McMartin/FRUT/blob/master/
+From `the Projucer extra of JUCE 5.4.3 <https://github.com/McMartin/FRUT/blob/main/
 generated/JUCE-5.4.3/extras/Projucer/CMakeLists.txt#L726-L733>`_:
 
 .. code-block:: cmake

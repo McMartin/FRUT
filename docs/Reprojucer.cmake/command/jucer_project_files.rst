@@ -37,7 +37,7 @@ sub-group of ``A/B``.
 Example
 -------
 
-From `the AUv3Synth example of JUCE 5.2.1 <https://github.com/McMartin/FRUT/blob/master/
+From `the AUv3Synth example of JUCE 5.2.1 <https://github.com/McMartin/FRUT/blob/main/
 generated/JUCE-5.2.1/examples/AUv3Synth/CMakeLists.txt#L68-L82>`_:
 
 .. code-block:: cmake

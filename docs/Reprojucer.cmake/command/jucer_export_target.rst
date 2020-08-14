@@ -128,7 +128,7 @@ Examples
 --------
 
 From `the AudioPluginHost extra of JUCE 5.4.3 <https://github.com/McMartin/FRUT/blob/
-master/generated/JUCE-5.4.3/extras/AudioPluginHost/CMakeLists.txt#L194-L208>`_:
+main/generated/JUCE-5.4.3/extras/AudioPluginHost/CMakeLists.txt#L194-L208>`_:
 
 .. code-block:: cmake
   :lineno-start: 194
@@ -150,7 +150,7 @@ master/generated/JUCE-5.4.3/extras/AudioPluginHost/CMakeLists.txt#L194-L208>`_:
   )
 
 
-From `the DemoRunner example of JUCE 5.4.3 <https://github.com/McMartin/FRUT/blob/master/
+From `the DemoRunner example of JUCE 5.4.3 <https://github.com/McMartin/FRUT/blob/main/
 generated/JUCE-5.4.3/examples/DemoRunner/CMakeLists.txt#L372-L380>`_:
 
 .. code-block:: cmake
@@ -168,7 +168,7 @@ generated/JUCE-5.4.3/examples/DemoRunner/CMakeLists.txt#L372-L380>`_:
 
 
 From `the Projucer extra of JUCE 5.4.3 <https://github.com/McMartin/FRUT/blob/
-master/generated/JUCE-5.4.3/extras/Projucer/CMakeLists.txt#L719-L724>`_:
+main/generated/JUCE-5.4.3/extras/Projucer/CMakeLists.txt#L719-L724>`_:
 
 .. code-block:: cmake
   :lineno-start: 719
