@@ -4857,7 +4857,7 @@ endfunction()
 
 function(_FRUT_make_valid_configuration_name config out_var)
 
-  string(REGEX REPLACE "[^A-Za-z0-9_]" " " config "${config}")
+  string(REGEX REPLACE "[^A-Za-z0-9_]+" " " config "${config}")
   string(STRIP "${config}" config)
   string(REGEX REPLACE "[ ]+" "_" config "${config}")
   set(${out_var} "${config}" PARENT_SCOPE)
