@@ -1594,7 +1594,7 @@ int main(int argc, char* argv[])
               || exporter.hasAttribute("postbuildCommand")))
       {
         wLn("  TARGET_PROJECT_FOLDER \"", exporter.getStringAttribute("targetFolder"),
-            "\"  # only used by PREBUILD_SHELL_SCRIPT and POSTBUILD_SHELL_SCRIPT");
+            "\" # only used by PREBUILD_SHELL_SCRIPT and POSTBUILD_SHELL_SCRIPT");
       }
 
       const auto isVSExporter = exporterType == "VS2019" || exporterType == "VS2017"
