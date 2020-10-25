@@ -29,8 +29,8 @@ install:
     -- https://github.com/juce-framework/JUCE.git ci/tmp/JUCE-5.4.3
   - git clone --branch=5.4.7 --depth=1 --single-branch
     -- https://github.com/juce-framework/JUCE.git ci/tmp/JUCE-5.4.7
-  - git clone --branch=6.0.1 --depth=1 --single-branch
-    -- https://github.com/juce-framework/JUCE.git ci/tmp/JUCE-6.0.1
+  - git clone --branch=6.0.5 --depth=1 --single-branch
+    -- https://github.com/juce-framework/JUCE.git ci/tmp/JUCE-6.0.5
 
 for:
   - matrix:
@@ -105,16 +105,16 @@ for:
         cmake .. -G "MinGW Makefiles" -DCMAKE_BUILD_TYPE=Release
         -DJUCE_ROOT="%APPVEYOR_BUILD_FOLDER%/ci/tmp/JUCE-5.4.7"
 
-      # Configure and build FRUT with JUCE 6.0.1
+      # Configure and build FRUT with JUCE 6.0.5
       - cd %APPVEYOR_BUILD_FOLDER%\build_Debug
       - >
         cmake .. -G "MinGW Makefiles" -DCMAKE_BUILD_TYPE=Debug
-        -DJUCE_ROOT="%APPVEYOR_BUILD_FOLDER%/ci/tmp/JUCE-6.0.1"
+        -DJUCE_ROOT="%APPVEYOR_BUILD_FOLDER%/ci/tmp/JUCE-6.0.5"
       - cmake --build . -- -j4
       - cd %APPVEYOR_BUILD_FOLDER%\build_Release
       - >
         cmake .. -G "MinGW Makefiles" -DCMAKE_BUILD_TYPE=Release
-        -DJUCE_ROOT="%APPVEYOR_BUILD_FOLDER%/ci/tmp/JUCE-6.0.1"
+        -DJUCE_ROOT="%APPVEYOR_BUILD_FOLDER%/ci/tmp/JUCE-6.0.5"
 
       # Build and install FRUT in ./prefix
       - cmake .. -DCMAKE_INSTALL_PREFIX="%APPVEYOR_BUILD_FOLDER%/prefix"
@@ -155,7 +155,7 @@ for:
         -DJucer2CMake_EXE="prefix/FRUT/bin/Jucer2CMake.exe"
         -P ci/apply-Jucer2CMake-reprojucer-to-JUCE-jucers.cmake
       - >
-        cmake -DJUCE_VERSION="6.0.1"
+        cmake -DJUCE_VERSION="6.0.5"
         -DJucer2CMake_EXE="prefix/FRUT/bin/Jucer2CMake.exe"
         -P ci/apply-Jucer2CMake-reprojucer-to-JUCE-jucers.cmake
       - git diff --exit-code
@@ -230,8 +230,8 @@ build_script:
   - cmake .. -G "%GENERATOR%" -DJUCE_ROOT="%APPVEYOR_BUILD_FOLDER%/ci/tmp/JUCE-5.4.7"
   - cmake --build . --config Debug -- -v:m -maxcpucount
 
-  # Configure and build FRUT with JUCE 6.0.1
-  - cmake .. -G "%GENERATOR%" -DJUCE_ROOT="%APPVEYOR_BUILD_FOLDER%/ci/tmp/JUCE-6.0.1"
+  # Configure and build FRUT with JUCE 6.0.5
+  - cmake .. -G "%GENERATOR%" -DJUCE_ROOT="%APPVEYOR_BUILD_FOLDER%/ci/tmp/JUCE-6.0.5"
   - cmake --build . --config Debug -- -v:m -maxcpucount
 
   # Build and install FRUT in ./prefix
@@ -273,7 +273,7 @@ test_script:
     -DJucer2CMake_EXE="prefix/FRUT/bin/Jucer2CMake.exe"
     -P ci/apply-Jucer2CMake-reprojucer-to-JUCE-jucers.cmake
   - >
-    cmake -DJUCE_VERSION="6.0.1"
+    cmake -DJUCE_VERSION="6.0.5"
     -DJucer2CMake_EXE="prefix/FRUT/bin/Jucer2CMake.exe"
     -P ci/apply-Jucer2CMake-reprojucer-to-JUCE-jucers.cmake
   - git diff --quiet
@@ -317,5 +317,5 @@ test_script:
   # Configure all JUCE 5.4.7 projects
   - cmake .. -G "%GENERATOR%" -DJUCE_VERSION="5.4.7"
 
-  # Configure all JUCE 6.0.1 projects
-  - cmake .. -G "%GENERATOR%" -DJUCE_VERSION="6.0.1"
+  # Configure all JUCE 6.0.5 projects
+  - cmake .. -G "%GENERATOR%" -DJUCE_VERSION="6.0.5"

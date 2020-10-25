@@ -27,7 +27,7 @@ jucer_project_begin(
 
 jucer_project_settings(
   PROJECT_NAME "Projucer"
-  PROJECT_VERSION "6.0.1"
+  PROJECT_VERSION "6.0.5"
   COMPANY_NAME "Raw Material Software Limited"
   COMPANY_COPYRIGHT "Raw Material Software Limited"
   REPORT_JUCE_APP_USAGE OFF # Required for closed source applications without an Indie or Pro JUCE license
@@ -173,6 +173,7 @@ jucer_project_files("Projucer/BinaryData"
 #           Resource  Resource
   .         .         x         "Source/BinaryData/colourscheme_dark.xml"
   .         .         x         "Source/BinaryData/colourscheme_light.xml"
+  .         .         x         "../Build/CMake/juce_runtime_arch_detection.cpp"
 )
 
 jucer_project_files("Projucer/CodeEditor"
