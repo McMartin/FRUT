@@ -79,6 +79,7 @@
 #include <iostream>
 #include <locale>
 #include <map>
+#include <regex>
 #include <string>
 #include <tuple>
 #include <vector>
@@ -178,6 +179,19 @@ juce::String makeValidIdentifier(juce::String s)
   }
 
   return s;
+}
+
+
+// Matches _FRUT_make_valid_configuration_name in Reprojucer.cmake.
+juce::String makeValidConfigurationName(const juce::String& configurationName)
+{
+  auto validName = configurationName.toStdString();
+
+  validName = std::regex_replace(validName, std::regex{"[^A-Za-z0-9_]+"}, " ");
+  validName = juce::String{validName}.trim().toStdString();
+  validName = std::regex_replace(validName, std::regex{"[ ]+"}, "_");
+
+  return validName;
 }
 
 
@@ -1563,6 +1577,8 @@ int main(int argc, char* argv[])
       {"CODEBLOCKS_LINUX", "Code::Blocks (Linux)"},
     };
 
+    juce::StringPairArray configurationNamesMapping;
+
     const auto& exportFormats = safeGetChildByName(jucerProject, "EXPORTFORMATS");
     for (auto pExporter = exportFormats.getFirstChildElement(); pExporter != nullptr;
          pExporter = pExporter->getNextElement())
@@ -1594,7 +1610,7 @@ int main(int argc, char* argv[])
               || exporter.hasAttribute("postbuildCommand")))
       {
         wLn("  TARGET_PROJECT_FOLDER \"", exporter.getStringAttribute("targetFolder"),
-            "\"  # only used by PREBUILD_SHELL_SCRIPT and POSTBUILD_SHELL_SCRIPT");
+            "\" # only used by PREBUILD_SHELL_SCRIPT and POSTBUILD_SHELL_SCRIPT");
       }
 
       const auto isVSExporter = exporterType == "VS2019" || exporterType == "VS2017"
@@ -2180,7 +2196,37 @@ int main(int argc, char* argv[])
 
         wLn("jucer_export_target_configuration(");
         wLn("  \"", exporterName, "\"");
-        wLn("  NAME \"", configuration.getStringAttribute("name"), "\"");
+
+        const auto originalName = configuration.getStringAttribute("name");
+        if (std::regex_match(originalName.toStdString(), std::regex{"^[A-Za-z0-9_]+$"}))
+        {
+          wLn("  NAME \"", originalName, "\"");
+        }
+        else
+        {
+          if (!configurationNamesMapping.containsKey(originalName))
+          {
+            const auto validNameWithoutSuffix = makeValidConfigurationName(originalName);
+
+            auto numberSuffix = 1;
+            auto validName = validNameWithoutSuffix;
+            while (configurationNamesMapping.getAllValues().contains(validName))
+            {
+              validName = validNameWithoutSuffix + "_" + juce::String{numberSuffix++};
+            }
+
+            configurationNamesMapping.set(originalName, validName);
+
+            std::cerr << "warning: \"" << originalName
+                      << "\" is not a valid CMake build configuration name. It has been "
+                         "changed to \""
+                      << validName << "\" in the generated CMakeLists.txt file."
+                      << std::endl;
+          }
+
+          wLn("  NAME \"", configurationNamesMapping[originalName], "\" # originally \"",
+              originalName, "\" in ", jucerFileName);
+        }
 
         const auto isDebug = toBoolLikeVar(configuration.getStringAttribute("isDebug"));
         wLn("  DEBUG_MODE ", (isDebug ? "ON" : "OFF"));

@@ -2190,7 +2190,7 @@ function(jucer_project_end)
 
     if(DEFINED icon_filename)
       set(JUCER_ICON_FILE "${CMAKE_CURRENT_BINARY_DIR}/${icon_filename}")
-      if(NOT APPLE)  # handled in _FRUT_add_bundle_resources()
+      if(NOT APPLE) # handled in _FRUT_add_bundle_resources()
         source_group("Juce Library Code" FILES "${JUCER_ICON_FILE}")
       endif()
     endif()
@@ -2879,7 +2879,7 @@ function(jucer_project_end)
     if(JUCER_RUN_POST_EXPORT_SHELL_COMMANDS)
       message(STATUS "[${JUCER_PROJECT_NAME}] Running '${user_cmd}'")
       execute_process(COMMAND ${full_cmd}
-        TIMEOUT 10  # seconds
+        TIMEOUT 10 # seconds
         RESULT_VARIABLE cmd_result
       )
       if(NOT cmd_result EQUAL 0)
@@ -4857,7 +4857,7 @@ endfunction()
 
 function(_FRUT_make_valid_configuration_name config out_var)
 
-  string(REGEX REPLACE "[^A-Za-z0-9_]" " " config "${config}")
+  string(REGEX REPLACE "[^A-Za-z0-9_]+" " " config "${config}")
   string(STRIP "${config}" config)
   string(REGEX REPLACE "[ ]+" "_" config "${config}")
   set(${out_var} "${config}" PARENT_SCOPE)

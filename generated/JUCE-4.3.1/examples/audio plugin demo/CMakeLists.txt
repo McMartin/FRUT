@@ -169,7 +169,7 @@ jucer_project_module(
 
 jucer_export_target(
   "Xcode (MacOSX)"
-  TARGET_PROJECT_FOLDER "Builds/MacOSX"  # only used by PREBUILD_SHELL_SCRIPT and POSTBUILD_SHELL_SCRIPT
+  TARGET_PROJECT_FOLDER "Builds/MacOSX" # only used by PREBUILD_SHELL_SCRIPT and POSTBUILD_SHELL_SCRIPT
   # VST3_SDK_FOLDER
   # POSTBUILD_SHELL_SCRIPT
 )
