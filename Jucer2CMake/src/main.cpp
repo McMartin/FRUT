@@ -24,7 +24,6 @@
   #pragma clang diagnostic ignored "-Wcast-qual"
   #pragma clang diagnostic ignored "-Wdocumentation"
   #pragma clang diagnostic ignored "-Wdocumentation-unknown-command"
-  #pragma clang diagnostic ignored "-Wexit-time-destructors"
   #pragma clang diagnostic ignored "-Wextra-semi"
   #pragma clang diagnostic ignored "-Wglobal-constructors"
   #pragma clang diagnostic ignored "-Wimplicit-fallthrough"
@@ -285,6 +284,25 @@ juce::StringArray parsePreprocessorDefinitions(const juce::String& input)
 }
 
 
+const juce::XmlElement& getFallbackXmlElement() noexcept
+{
+  static const juce::XmlElement fallbackXmlElement{":"};
+  return fallbackXmlElement;
+}
+
+
+const juce::XmlElement& safeGetChildByName(const juce::XmlElement& element,
+                                           const juce::StringRef childName)
+{
+  if (const auto pChild = element.getChildByName(childName))
+  {
+    return *pChild;
+  }
+
+  return getFallbackXmlElement();
+}
+
+
 const juce::XmlElement*
 getChildByAttributeRecursively(const juce::XmlElement& parent,
                                const juce::StringRef attributeName,
@@ -486,18 +504,6 @@ int main(int argc, char* argv[])
     printError("'" + args.jucerFilePath + "' is not a valid Jucer project.");
     return 1;
   }
-
-  const juce::XmlElement fallbackXmlElement{":"};
-  const auto safeGetChildByName =
-    [&fallbackXmlElement](const juce::XmlElement& element,
-                          const juce::StringRef childName) -> const juce::XmlElement& {
-    if (const auto pChild = element.getChildByName(childName))
-    {
-      return *pChild;
-    }
-
-    return fallbackXmlElement;
-  };
 
   const auto& jucerProject = *pJucerProject;
 
@@ -1424,8 +1430,7 @@ int main(int argc, char* argv[])
 
   // jucer_project_module()
   {
-    const auto& modulePaths = [&safeGetChildByName, &jucerProject,
-                               &fallbackXmlElement]() -> const juce::XmlElement& {
+    const auto& modulePaths = [&jucerProject]() -> const juce::XmlElement& {
       const auto& exportFormats = safeGetChildByName(jucerProject, "EXPORTFORMATS");
       for (auto pExporter = exportFormats.getFirstChildElement(); pExporter != nullptr;
            pExporter = pExporter->getNextElement())
@@ -1435,7 +1440,7 @@ int main(int argc, char* argv[])
           return safeGetChildByName(*pExporter, "MODULEPATHS");
         }
       }
-      return fallbackXmlElement;
+      return getFallbackXmlElement();
     }();
 
     const auto juceModules = getChildFileFromWorkingDirectory(juceModulesGlobalPath);
@@ -1743,7 +1748,7 @@ int main(int argc, char* argv[])
                                    "GNU_COMPILER_EXTENSIONS", {});
 
       const auto convertIcon =
-        [&safeGetChildByName, &jucerProject](const juce::String& fileId) -> juce::String {
+        [&jucerProject](const juce::String& fileId) -> juce::String {
         if (fileId.isNotEmpty())
         {
           if (const auto pFile = getChildByAttributeRecursively(
