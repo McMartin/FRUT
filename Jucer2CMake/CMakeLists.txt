@@ -119,7 +119,12 @@ target_link_libraries(Jucer2CMake PRIVATE Jucer2CMake_JUCE)
 
 if(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
   target_compile_options(Jucer2CMake PRIVATE
-    -Werror -Weverything -Wno-c++98-compat -Wno-c++98-compat-pedantic -Wno-padded
+    -Werror
+    -Weverything
+    -Wno-c++98-compat
+    -Wno-c++98-compat-pedantic
+    -Wno-exit-time-destructors
+    -Wno-padded
   )
 elseif(CMAKE_CXX_COMPILER_ID MATCHES "GNU")
   target_compile_options(Jucer2CMake PRIVATE -Werror -Wall -Wextra)
