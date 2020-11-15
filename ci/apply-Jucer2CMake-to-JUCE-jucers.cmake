@@ -49,7 +49,7 @@ foreach(jucer_file IN LISTS jucer_files)
     message(FATAL_ERROR "Cannot change working directory to ${working_dir}")
   endif()
 
-  execute_process(WORKING_DIRECTORY ${working_dir}
+  execute_process(WORKING_DIRECTORY "${working_dir}"
     COMMAND
     "${Jucer2CMake_EXE}"
     "reprojucer"

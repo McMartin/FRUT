@@ -37,7 +37,7 @@ file(GLOB_RECURSE jucer_files "${tests_DIR}/*.jucer")
 foreach(jucer_file IN LISTS jucer_files)
   get_filename_component(working_dir "${jucer_file}" DIRECTORY)
 
-  execute_process(WORKING_DIRECTORY ${working_dir}
+  execute_process(WORKING_DIRECTORY "${working_dir}"
     COMMAND
     "${Jucer2CMake_EXE}"
     "reprojucer"
