@@ -35,20 +35,22 @@ get_filename_component(Jucer2CMake_EXE "${Jucer2CMake_EXE}" ABSOLUTE)
 file(GLOB_RECURSE jucer_files "${tests_DIR}/*.jucer")
 
 foreach(jucer_file IN LISTS jucer_files)
-  get_filename_component(working_dir "${jucer_file}" DIRECTORY)
-
-  execute_process(WORKING_DIRECTORY "${working_dir}"
-    COMMAND
+  set(command
     "${Jucer2CMake_EXE}"
     "reprojucer"
     "${jucer_file}"
     "${CMAKE_CURRENT_LIST_DIR}/../cmake/Reprojucer.cmake"
+  )
+
+  get_filename_component(working_dir "${jucer_file}" DIRECTORY)
+
+  execute_process(COMMAND ${command}
+    WORKING_DIRECTORY "${working_dir}"
     RESULT_VARIABLE result
   )
 
   if(NOT result EQUAL 0)
-    message(FATAL_ERROR "Failed to run ${Jucer2CMake_EXE} "
-      "${jucer_file} ${CMAKE_CURRENT_LIST_DIR}/../cmake/Reprojucer.cmake"
-    )
+    string(REPLACE ";" " " command_string "${command}")
+    message(FATAL_ERROR "Failed to run `${command_string}`")
   endif()
 endforeach()
