@@ -109,39 +109,39 @@ script-anchors:
     - cd ${TRAVIS_BUILD_DIR}
     - >
       cmake -DJucer2CMake_EXE="prefix/FRUT/bin/Jucer2CMake"
-      -P ci/apply-Jucer2CMake-to-test-jucers.cmake
+      -P ci/apply-Jucer2CMake-reprojucer-to-test-jucers.cmake
     - >
       cmake -DJUCE_VERSION="4.2.0"
       -DJucer2CMake_EXE="prefix/FRUT/bin/Jucer2CMake"
-      -P ci/apply-Jucer2CMake-to-JUCE-jucers.cmake
+      -P ci/apply-Jucer2CMake-reprojucer-to-JUCE-jucers.cmake
     - >
       cmake -DJUCE_VERSION="4.3.1"
       -DJucer2CMake_EXE="prefix/FRUT/bin/Jucer2CMake"
-      -P ci/apply-Jucer2CMake-to-JUCE-jucers.cmake
+      -P ci/apply-Jucer2CMake-reprojucer-to-JUCE-jucers.cmake
     - >
       cmake -DJUCE_VERSION="5.0.0"
       -DJucer2CMake_EXE="prefix/FRUT/bin/Jucer2CMake"
-      -P ci/apply-Jucer2CMake-to-JUCE-jucers.cmake
+      -P ci/apply-Jucer2CMake-reprojucer-to-JUCE-jucers.cmake
     - >
       cmake -DJUCE_VERSION="5.2.1"
       -DJucer2CMake_EXE="prefix/FRUT/bin/Jucer2CMake"
-      -P ci/apply-Jucer2CMake-to-JUCE-jucers.cmake
+      -P ci/apply-Jucer2CMake-reprojucer-to-JUCE-jucers.cmake
     - >
       cmake -DJUCE_VERSION="5.3.1"
       -DJucer2CMake_EXE="prefix/FRUT/bin/Jucer2CMake"
-      -P ci/apply-Jucer2CMake-to-JUCE-jucers.cmake
+      -P ci/apply-Jucer2CMake-reprojucer-to-JUCE-jucers.cmake
     - >
       cmake -DJUCE_VERSION="5.4.3"
       -DJucer2CMake_EXE="prefix/FRUT/bin/Jucer2CMake"
-      -P ci/apply-Jucer2CMake-to-JUCE-jucers.cmake
+      -P ci/apply-Jucer2CMake-reprojucer-to-JUCE-jucers.cmake
     - >
       cmake -DJUCE_VERSION="5.4.7"
       -DJucer2CMake_EXE="prefix/FRUT/bin/Jucer2CMake"
-      -P ci/apply-Jucer2CMake-to-JUCE-jucers.cmake
+      -P ci/apply-Jucer2CMake-reprojucer-to-JUCE-jucers.cmake
     - >
       cmake -DJUCE_VERSION="6.0.1"
       -DJucer2CMake_EXE="prefix/FRUT/bin/Jucer2CMake"
-      -P ci/apply-Jucer2CMake-to-JUCE-jucers.cmake
+      -P ci/apply-Jucer2CMake-reprojucer-to-JUCE-jucers.cmake
     - git diff --exit-code
 
     - mkdir ${TRAVIS_BUILD_DIR}/ci/AllJuceProjects/Debug_build
@@ -283,39 +283,39 @@ script-anchors:
     - cd ${TRAVIS_BUILD_DIR}
     - >
       cmake -DJucer2CMake_EXE="prefix/FRUT/bin/Jucer2CMake"
-      -P ci/apply-Jucer2CMake-to-test-jucers.cmake
+      -P ci/apply-Jucer2CMake-reprojucer-to-test-jucers.cmake
     - >
       cmake -DJUCE_VERSION="4.2.0"
       -DJucer2CMake_EXE="prefix/FRUT/bin/Jucer2CMake"
-      -P ci/apply-Jucer2CMake-to-JUCE-jucers.cmake
+      -P ci/apply-Jucer2CMake-reprojucer-to-JUCE-jucers.cmake
     - >
       cmake -DJUCE_VERSION="4.3.1"
       -DJucer2CMake_EXE="prefix/FRUT/bin/Jucer2CMake"
-      -P ci/apply-Jucer2CMake-to-JUCE-jucers.cmake
+      -P ci/apply-Jucer2CMake-reprojucer-to-JUCE-jucers.cmake
     - >
       cmake -DJUCE_VERSION="5.0.0"
       -DJucer2CMake_EXE="prefix/FRUT/bin/Jucer2CMake"
-      -P ci/apply-Jucer2CMake-to-JUCE-jucers.cmake
+      -P ci/apply-Jucer2CMake-reprojucer-to-JUCE-jucers.cmake
     - >
       cmake -DJUCE_VERSION="5.2.1"
       -DJucer2CMake_EXE="prefix/FRUT/bin/Jucer2CMake"
-      -P ci/apply-Jucer2CMake-to-JUCE-jucers.cmake
+      -P ci/apply-Jucer2CMake-reprojucer-to-JUCE-jucers.cmake
     - >
       cmake -DJUCE_VERSION="5.3.1"
       -DJucer2CMake_EXE="prefix/FRUT/bin/Jucer2CMake"
-      -P ci/apply-Jucer2CMake-to-JUCE-jucers.cmake
+      -P ci/apply-Jucer2CMake-reprojucer-to-JUCE-jucers.cmake
     - >
       cmake -DJUCE_VERSION="5.4.3"
       -DJucer2CMake_EXE="prefix/FRUT/bin/Jucer2CMake"
-      -P ci/apply-Jucer2CMake-to-JUCE-jucers.cmake
+      -P ci/apply-Jucer2CMake-reprojucer-to-JUCE-jucers.cmake
     - >
       cmake -DJUCE_VERSION="5.4.7"
       -DJucer2CMake_EXE="prefix/FRUT/bin/Jucer2CMake"
-      -P ci/apply-Jucer2CMake-to-JUCE-jucers.cmake
+      -P ci/apply-Jucer2CMake-reprojucer-to-JUCE-jucers.cmake
     - >
       cmake -DJUCE_VERSION="6.0.1"
       -DJucer2CMake_EXE="prefix/FRUT/bin/Jucer2CMake"
-      -P ci/apply-Jucer2CMake-to-JUCE-jucers.cmake
+      -P ci/apply-Jucer2CMake-reprojucer-to-JUCE-jucers.cmake
     - git diff --exit-code
 
     - mkdir ${TRAVIS_BUILD_DIR}/ci/AllJuceProjects/build
