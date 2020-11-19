@@ -412,6 +412,12 @@ Arguments parseArguments(const int argc, const char* const argv[])
 
   if (!askingForHelp)
   {
+    if (argumentParser.size() >= 2 && juce::String{argumentParser[1]} != "reprojucer")
+    {
+      printError("invalid mode \"" + juce::String{argumentParser[1]} + "\"");
+      errorInArguments = true;
+    }
+
     if (argumentParser.size() < 3)
     {
       printError("not enough positional arguments");
@@ -420,12 +426,6 @@ Arguments parseArguments(const int argc, const char* const argv[])
     else if (argumentParser.size() > 4)
     {
       printError("too many positional arguments");
-      errorInArguments = true;
-    }
-
-    if (argumentParser.size() >= 2 && juce::String{argumentParser[1]} != "reprojucer")
-    {
-      printError("invalid mode \"" + juce::String{argumentParser[1]} + "\"");
       errorInArguments = true;
     }
   }
