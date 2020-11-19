@@ -449,7 +449,7 @@ Arguments parseArguments(const int argc, const char* const argv[])
       << "    --relocatable             makes the CMakeLists.txt file independent from\n"
       << "                              the location of the .jucer file, but requires\n"
       << "                              defining a variable when calling cmake\n"
-      << std::endl;
+      << std::flush;
     std::exit(askingForHelp ? 0 : 1);
   }
 
