@@ -391,25 +391,6 @@ Arguments parseArguments(const int argc, const char* const argv[])
   const auto askingForHelp = argumentParser[{"-h", "--help"}];
   auto errorInArguments = false;
 
-  for (const auto& flag : argumentParser.flags())
-  {
-    if (std::find(knownFlags.begin(), knownFlags.end(), flag) == knownFlags.end())
-    {
-      printError("unknown option \"" + flag + "\"");
-      errorInArguments = true;
-    }
-  }
-
-  for (const auto& paramAndValue : argumentParser.params())
-  {
-    const auto& param = std::get<0>(paramAndValue);
-    if (std::find(knownParams.begin(), knownParams.end(), param) == knownParams.end())
-    {
-      printError("unknown option \"" + param + "\"");
-      errorInArguments = true;
-    }
-  }
-
   if (!askingForHelp)
   {
     if (argumentParser.size() >= 2 && juce::String{argumentParser[1]} != "reprojucer")
@@ -426,6 +407,25 @@ Arguments parseArguments(const int argc, const char* const argv[])
     else if (argumentParser.size() > 4)
     {
       printError("too many positional arguments");
+      errorInArguments = true;
+    }
+  }
+
+  for (const auto& flag : argumentParser.flags())
+  {
+    if (std::find(knownFlags.begin(), knownFlags.end(), flag) == knownFlags.end())
+    {
+      printError("unknown option \"" + flag + "\"");
+      errorInArguments = true;
+    }
+  }
+
+  for (const auto& paramAndValue : argumentParser.params())
+  {
+    const auto& param = std::get<0>(paramAndValue);
+    if (std::find(knownParams.begin(), knownParams.end(), param) == knownParams.end())
+    {
+      printError("unknown option \"" + param + "\"");
       errorInArguments = true;
     }
   }
