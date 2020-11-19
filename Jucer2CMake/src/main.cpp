@@ -413,7 +413,12 @@ Arguments parseArguments(const int argc, const char* const argv[])
 
   for (const auto& flag : argumentParser.flags())
   {
-    if (std::find(knownFlags.begin(), knownFlags.end(), flag) == knownFlags.end())
+    if (std::find(knownParams.begin(), knownParams.end(), flag) != knownParams.end())
+    {
+      printError("expected one argument for \"" + flag + "\"");
+      errorInArguments = true;
+    }
+    else if (std::find(knownFlags.begin(), knownFlags.end(), flag) == knownFlags.end())
     {
       printError("unknown option \"" + flag + "\"");
       errorInArguments = true;
