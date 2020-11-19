@@ -436,6 +436,12 @@ Arguments parseArguments(const int argc, const char* const argv[])
       << "usage: Jucer2CMake reprojucer <jucer_project_file> [<Reprojucer.cmake_file>]\n"
       << "                   [-h] [--juce-modules=<path>] [--user-modules=<path>]\n"
       << "                   [--relocatable]\n"
+      << std::flush;
+  }
+
+  if (askingForHelp)
+  {
+    std::cerr
       << "\n"
       << "Converts a .jucer file into a CMakeLists.txt file that uses Reprojucer.cmake.\n"
       << "The CMakeLists.txt file is written in the current working directory.\n"
@@ -450,7 +456,12 @@ Arguments parseArguments(const int argc, const char* const argv[])
       << "                              the location of the .jucer file, but requires\n"
       << "                              defining a variable when calling cmake\n"
       << std::flush;
-    std::exit(askingForHelp ? 0 : 1);
+    std::exit(0);
+  }
+
+  if (errorInArguments)
+  {
+    std::exit(1);
   }
 
   auto jucerFilePath = juce::String{argumentParser[2]};
