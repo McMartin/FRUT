@@ -411,14 +411,18 @@ Arguments parseArguments(const int argc, const char* const argv[])
     }
   }
 
+  const auto contains = [](const std::vector<std::string>& v, const std::string& s) {
+    return std::find(v.begin(), v.end(), s) != v.end();
+  };
+
   for (const auto& flag : argumentParser.flags())
   {
-    if (std::find(knownParams.begin(), knownParams.end(), flag) != knownParams.end())
+    if (contains(knownParams, flag))
     {
       printError("expected one argument for \"" + flag + "\"");
       errorInArguments = true;
     }
-    else if (std::find(knownFlags.begin(), knownFlags.end(), flag) == knownFlags.end())
+    else if (!contains(knownFlags, flag))
     {
       printError("unknown option \"" + flag + "\"");
       errorInArguments = true;
@@ -428,7 +432,7 @@ Arguments parseArguments(const int argc, const char* const argv[])
   for (const auto& paramAndValue : argumentParser.params())
   {
     const auto& param = std::get<0>(paramAndValue);
-    if (std::find(knownParams.begin(), knownParams.end(), param) == knownParams.end())
+    if (!contains(knownParams, param))
     {
       printError("unknown option \"" + param + "\"");
       errorInArguments = true;
