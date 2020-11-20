@@ -439,7 +439,7 @@ Arguments parseArguments(const int argc, const char* const argv[])
   {
     std::cerr
       << "usage: Jucer2CMake reprojucer <jucer_project_file> [<Reprojucer.cmake_file>]\n"
-      << "                   [-h] [--juce-modules=<path>] [--user-modules=<path>]\n"
+      << "                   [--help] [--juce-modules=<path>] [--user-modules=<path>]\n"
       << "                   [--relocatable]\n"
       << std::flush;
   }
