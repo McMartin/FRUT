@@ -391,27 +391,14 @@ Arguments parseArguments(const int argc, const char* const argv[])
   const auto askingForHelp = argumentParser[{"-h", "--help"}];
   auto errorInArguments = false;
 
-  for (const auto& flag : argumentParser.flags())
-  {
-    if (std::find(knownFlags.begin(), knownFlags.end(), flag) == knownFlags.end())
-    {
-      printError("unknown option \"" + flag + "\"");
-      errorInArguments = true;
-    }
-  }
-
-  for (const auto& paramAndValue : argumentParser.params())
-  {
-    const auto& param = std::get<0>(paramAndValue);
-    if (std::find(knownParams.begin(), knownParams.end(), param) == knownParams.end())
-    {
-      printError("unknown option \"" + param + "\"");
-      errorInArguments = true;
-    }
-  }
-
   if (!askingForHelp)
   {
+    if (argumentParser.size() >= 2 && juce::String{argumentParser[1]} != "reprojucer")
+    {
+      printError("invalid mode \"" + juce::String{argumentParser[1]} + "\"");
+      errorInArguments = true;
+    }
+
     if (argumentParser.size() < 3)
     {
       printError("not enough positional arguments");
@@ -422,10 +409,32 @@ Arguments parseArguments(const int argc, const char* const argv[])
       printError("too many positional arguments");
       errorInArguments = true;
     }
+  }
 
-    if (juce::String{argumentParser[1]} != "reprojucer")
+  const auto contains = [](const std::vector<std::string>& v, const std::string& s) {
+    return std::find(v.begin(), v.end(), s) != v.end();
+  };
+
+  for (const auto& flag : argumentParser.flags())
+  {
+    if (contains(knownParams, flag))
     {
-      printError("invalid mode \"" + juce::String{argumentParser[1]} + "\"");
+      printError("expected one argument for \"" + flag + "\"");
+      errorInArguments = true;
+    }
+    else if (!contains(knownFlags, flag))
+    {
+      printError("unknown option \"" + flag + "\"");
+      errorInArguments = true;
+    }
+  }
+
+  for (const auto& paramAndValue : argumentParser.params())
+  {
+    const auto& param = std::get<0>(paramAndValue);
+    if (!contains(knownParams, param))
+    {
+      printError("unknown option \"" + param + "\"");
       errorInArguments = true;
     }
   }
@@ -434,8 +443,14 @@ Arguments parseArguments(const int argc, const char* const argv[])
   {
     std::cerr
       << "usage: Jucer2CMake reprojucer <jucer_project_file> [<Reprojucer.cmake_file>]\n"
-      << "                   [-h] [--juce-modules=<path>] [--user-modules=<path>]\n"
+      << "                   [--help] [--juce-modules=<path>] [--user-modules=<path>]\n"
       << "                   [--relocatable]\n"
+      << std::flush;
+  }
+
+  if (askingForHelp)
+  {
+    std::cerr
       << "\n"
       << "Converts a .jucer file into a CMakeLists.txt file that uses Reprojucer.cmake.\n"
       << "The CMakeLists.txt file is written in the current working directory.\n"
@@ -449,8 +464,13 @@ Arguments parseArguments(const int argc, const char* const argv[])
       << "    --relocatable             makes the CMakeLists.txt file independent from\n"
       << "                              the location of the .jucer file, but requires\n"
       << "                              defining a variable when calling cmake\n"
-      << std::endl;
-    std::exit(askingForHelp ? 0 : 1);
+      << std::flush;
+    std::exit(0);
+  }
+
+  if (errorInArguments)
+  {
+    std::exit(1);
   }
 
   auto jucerFilePath = juce::String{argumentParser[2]};
