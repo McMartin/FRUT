@@ -20,6 +20,9 @@
 
 #if defined(__clang__)
   #pragma clang diagnostic push
+  #if __has_warning("-Watomic-implicit-seq-cst")
+    #pragma clang diagnostic ignored "-Watomic-implicit-seq-cst"
+  #endif
   #pragma clang diagnostic ignored "-Wcast-align"
   #pragma clang diagnostic ignored "-Wcast-qual"
   #pragma clang diagnostic ignored "-Wdocumentation"
