@@ -11,6 +11,41 @@ jobs:
     steps:
       - template: ci/azure-pipelines/steps-iOS.yml
 
+  - job: Linux_CodeBlocks
+    displayName: Linux / CodeBlocks - Unix Makefiles
+    pool:
+      vmImage: ubuntu-18.04
+    variables:
+      cmakeGenerator: "CodeBlocks - Unix Makefiles"
+    steps:
+      - script: >
+          sudo apt-get install libcurl4-openssl-dev libxcursor-dev libxinerama-dev
+          libxrandr-dev
+        displayName: Install apt packages
+      - template: ci/azure-pipelines/steps-Makefiles.yml
+
+  - job: Linux_Make
+    displayName: Linux / Unix Makefiles
+    pool:
+      vmImage: ubuntu-16.04
+    variables:
+      cmakeGenerator: "Unix Makefiles"
+    steps:
+      - script: >
+          sudo apt-get install libasound2-dev libcurl4-openssl-dev libxcursor-dev
+          libxinerama-dev libxrandr-dev webkit2gtk-4.0
+        displayName: Install apt packages
+      - template: ci/azure-pipelines/steps-Makefiles.yml
+
+  - job: macOS_Make
+    displayName: macOS / Unix Makefiles
+    pool:
+      vmImage: macOS-10.14
+    variables:
+      cmakeGenerator: "Unix Makefiles"
+    steps:
+      - template: ci/azure-pipelines/steps-Makefiles.yml
+
   - job: macOS_Xcode
     displayName: macOS / Xcode
     pool:
