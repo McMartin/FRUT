@@ -4,20 +4,22 @@ trigger:
       - main
 
 jobs:
-  - job: VS2017
+  - job: Windows_VS2017
+    displayName: Windows / Visual Studio 2017
     pool:
       vmImage: vs2017-win2016
     variables:
       cmakeGenerator: "Visual Studio 15 2017"
     steps:
-      - template: ci/azure-pipelines-steps.yml
+      - template: ci/azure-pipelines/steps-VS.yml
         parameters:
           cmakeOptions: -DCMAKE_SYSTEM_VERSION=10.0.15063.0
 
-  - job: VS2019
+  - job: Windows_VS2019
+    displayName: Windows / Visual Studio 2019
     pool:
       vmImage: windows-2019
     variables:
       cmakeGenerator: "Visual Studio 16 2019"
     steps:
-      - template: ci/azure-pipelines-steps.yml
+      - template: ci/azure-pipelines/steps-VS.yml
