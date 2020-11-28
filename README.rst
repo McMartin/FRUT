@@ -1,4 +1,4 @@
-|Code_of_Conduct| |AppVeyor| |Azure_Pipelines| |Travis_CI| |Read_the_Docs|
+|Code_of_Conduct| |AppVeyor| |Azure_Pipelines| |Read_the_Docs|
 
 .. image:: FRUT.svg
   :target: https://github.com/McMartin/FRUT
@@ -367,10 +367,6 @@ even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE
 .. |Azure_Pipelines| image:: https://dev.azure.com/McMartin/FRUT/_apis/build/status/McMartin.FRUT?branchName=main
   :target: https://dev.azure.com/McMartin/FRUT/_build?definitionId=2
   :alt: Azure Pipelines build status
-
-.. |Travis_CI| image:: https://travis-ci.org/McMartin/FRUT.svg?branch=main
-  :target: https://travis-ci.org/McMartin/FRUT
-  :alt: Travis CI build status
 
 .. |Read_the_Docs| image:: https://readthedocs.org/projects/frut/badge/?version=latest
   :target: https://frut.readthedocs.io
