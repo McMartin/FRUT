@@ -3,6 +3,11 @@ trigger:
     include:
       - main
 
+parameters:
+  - name: juceVersions
+    type: object
+    default: [4.2.0, 4.3.1, 5.0.0, 5.2.1, 5.3.1, 5.4.3, 5.4.7, 6.0.1]
+
 jobs:
   - job: iOS
     displayName: iOS / Xcode
@@ -10,6 +15,8 @@ jobs:
       vmImage: macOS-10.15
     steps:
       - template: ci/azure-pipelines/steps-iOS.yml
+        parameters:
+          juceVersions: ${{ parameters.juceVersions }}
 
   - job: Linux_CodeBlocks
     displayName: Linux / CodeBlocks - Unix Makefiles
@@ -23,6 +30,8 @@ jobs:
           libxrandr-dev
         displayName: Install apt packages
       - template: ci/azure-pipelines/steps-Makefiles.yml
+        parameters:
+          juceVersions: ${{ parameters.juceVersions }}
 
   - job: Linux_Make
     displayName: Linux / Unix Makefiles
@@ -36,6 +45,8 @@ jobs:
           libxinerama-dev libxrandr-dev webkit2gtk-4.0
         displayName: Install apt packages
       - template: ci/azure-pipelines/steps-Makefiles.yml
+        parameters:
+          juceVersions: ${{ parameters.juceVersions }}
 
   - job: macOS_Make
     displayName: macOS / Unix Makefiles
@@ -45,6 +56,8 @@ jobs:
       cmakeGenerator: "Unix Makefiles"
     steps:
       - template: ci/azure-pipelines/steps-Makefiles.yml
+        parameters:
+          juceVersions: ${{ parameters.juceVersions }}
 
   - job: macOS_Xcode
     displayName: macOS / Xcode
@@ -52,6 +65,8 @@ jobs:
       vmImage: macOS-10.15
     steps:
       - template: ci/azure-pipelines/steps-Xcode.yml
+        parameters:
+          juceVersions: ${{ parameters.juceVersions }}
 
   - job: Windows_VS2017
     displayName: Windows / Visual Studio 2017
@@ -63,6 +78,7 @@ jobs:
       - template: ci/azure-pipelines/steps-VS.yml
         parameters:
           cmakeOptions: -DCMAKE_SYSTEM_VERSION=10.0.15063.0
+          juceVersions: ${{ parameters.juceVersions }}
 
   - job: Windows_VS2019
     displayName: Windows / Visual Studio 2019
@@ -72,3 +88,5 @@ jobs:
       cmakeGenerator: "Visual Studio 16 2019"
     steps:
       - template: ci/azure-pipelines/steps-VS.yml
+        parameters:
+          juceVersions: ${{ parameters.juceVersions }}
