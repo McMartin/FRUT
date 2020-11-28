@@ -11,6 +11,13 @@ jobs:
     steps:
       - template: ci/azure-pipelines/steps-iOS.yml
 
+  - job: macOS_Xcode
+    displayName: macOS / Xcode
+    pool:
+      vmImage: macOS-10.15
+    steps:
+      - template: ci/azure-pipelines/steps-Xcode.yml
+
   - job: Windows_VS2017
     displayName: Windows / Visual Studio 2017
     pool:
