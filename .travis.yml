@@ -4,28 +4,27 @@ branches:
 
 language: cpp
 
-install:
-  - cmake --version
-
-  - git clone --branch=4.2.0 --depth=1 --single-branch
-    -- https://github.com/juce-framework/JUCE.git ci/tmp/JUCE-4.2.0
-  - git clone --branch=4.3.1 --depth=1 --single-branch
-    -- https://github.com/juce-framework/JUCE.git ci/tmp/JUCE-4.3.1
-  - git clone --branch=5.0.0 --depth=1 --single-branch
-    -- https://github.com/juce-framework/JUCE.git ci/tmp/JUCE-5.0.0
-  - git clone --branch=5.2.1 --depth=1 --single-branch
-    -- https://github.com/juce-framework/JUCE.git ci/tmp/JUCE-5.2.1
-  - git clone --branch=5.3.1 --depth=1 --single-branch
-    -- https://github.com/juce-framework/JUCE.git ci/tmp/JUCE-5.3.1
-  - git clone --branch=5.4.3 --depth=1 --single-branch
-    -- https://github.com/juce-framework/JUCE.git ci/tmp/JUCE-5.4.3
-  - git clone --branch=5.4.7 --depth=1 --single-branch
-    -- https://github.com/juce-framework/JUCE.git ci/tmp/JUCE-5.4.7
-  - git clone --branch=6.0.1 --depth=1 --single-branch
-    -- https://github.com/juce-framework/JUCE.git ci/tmp/JUCE-6.0.1
-
 script-anchors:
   - &script-Makefiles
+    - cmake --version
+
+    - git clone --branch=4.2.0 --depth=1 --single-branch
+      -- https://github.com/juce-framework/JUCE.git ci/tmp/JUCE-4.2.0
+    - git clone --branch=4.3.1 --depth=1 --single-branch
+      -- https://github.com/juce-framework/JUCE.git ci/tmp/JUCE-4.3.1
+    - git clone --branch=5.0.0 --depth=1 --single-branch
+      -- https://github.com/juce-framework/JUCE.git ci/tmp/JUCE-5.0.0
+    - git clone --branch=5.2.1 --depth=1 --single-branch
+      -- https://github.com/juce-framework/JUCE.git ci/tmp/JUCE-5.2.1
+    - git clone --branch=5.3.1 --depth=1 --single-branch
+      -- https://github.com/juce-framework/JUCE.git ci/tmp/JUCE-5.3.1
+    - git clone --branch=5.4.3 --depth=1 --single-branch
+      -- https://github.com/juce-framework/JUCE.git ci/tmp/JUCE-5.4.3
+    - git clone --branch=5.4.7 --depth=1 --single-branch
+      -- https://github.com/juce-framework/JUCE.git ci/tmp/JUCE-5.4.7
+    - git clone --branch=6.0.1 --depth=1 --single-branch
+      -- https://github.com/juce-framework/JUCE.git ci/tmp/JUCE-6.0.1
+
     - mkdir ${TRAVIS_BUILD_DIR}/Debug_build
     - mkdir ${TRAVIS_BUILD_DIR}/Release_build
 
@@ -226,6 +225,25 @@ script-anchors:
     - cmake .. -G"${GENERATOR}" -DCMAKE_BUILD_TYPE=Release -DJUCE_VERSION="6.0.1"
 
   - &script-Xcode
+    - cmake --version
+
+    - git clone --branch=4.2.0 --depth=1 --single-branch
+      -- https://github.com/juce-framework/JUCE.git ci/tmp/JUCE-4.2.0
+    - git clone --branch=4.3.1 --depth=1 --single-branch
+      -- https://github.com/juce-framework/JUCE.git ci/tmp/JUCE-4.3.1
+    - git clone --branch=5.0.0 --depth=1 --single-branch
+      -- https://github.com/juce-framework/JUCE.git ci/tmp/JUCE-5.0.0
+    - git clone --branch=5.2.1 --depth=1 --single-branch
+      -- https://github.com/juce-framework/JUCE.git ci/tmp/JUCE-5.2.1
+    - git clone --branch=5.3.1 --depth=1 --single-branch
+      -- https://github.com/juce-framework/JUCE.git ci/tmp/JUCE-5.3.1
+    - git clone --branch=5.4.3 --depth=1 --single-branch
+      -- https://github.com/juce-framework/JUCE.git ci/tmp/JUCE-5.4.3
+    - git clone --branch=5.4.7 --depth=1 --single-branch
+      -- https://github.com/juce-framework/JUCE.git ci/tmp/JUCE-5.4.7
+    - git clone --branch=6.0.1 --depth=1 --single-branch
+      -- https://github.com/juce-framework/JUCE.git ci/tmp/JUCE-6.0.1
+
     - mkdir ${TRAVIS_BUILD_DIR}/build
     - cd ${TRAVIS_BUILD_DIR}/build
 
@@ -361,6 +379,25 @@ script-anchors:
     - cmake .. -G Xcode -DJUCE_VERSION="6.0.1"
 
   - &script-Xcode-iOS
+    - cmake --version
+
+    - git clone --branch=4.2.0 --depth=1 --single-branch
+      -- https://github.com/juce-framework/JUCE.git ci/tmp/JUCE-4.2.0
+    - git clone --branch=4.3.1 --depth=1 --single-branch
+      -- https://github.com/juce-framework/JUCE.git ci/tmp/JUCE-4.3.1
+    - git clone --branch=5.0.0 --depth=1 --single-branch
+      -- https://github.com/juce-framework/JUCE.git ci/tmp/JUCE-5.0.0
+    - git clone --branch=5.2.1 --depth=1 --single-branch
+      -- https://github.com/juce-framework/JUCE.git ci/tmp/JUCE-5.2.1
+    - git clone --branch=5.3.1 --depth=1 --single-branch
+      -- https://github.com/juce-framework/JUCE.git ci/tmp/JUCE-5.3.1
+    - git clone --branch=5.4.3 --depth=1 --single-branch
+      -- https://github.com/juce-framework/JUCE.git ci/tmp/JUCE-5.4.3
+    - git clone --branch=5.4.7 --depth=1 --single-branch
+      -- https://github.com/juce-framework/JUCE.git ci/tmp/JUCE-5.4.7
+    - git clone --branch=6.0.1 --depth=1 --single-branch
+      -- https://github.com/juce-framework/JUCE.git ci/tmp/JUCE-6.0.1
+
     # Run .entitlements files generation tests
     - cd ${TRAVIS_BUILD_DIR}/tests/test-projects/entitlements-generation/guiapp-iOS/binary_dir
     - cmake .. -G Xcode -DCMAKE_SYSTEM_NAME=iOS
