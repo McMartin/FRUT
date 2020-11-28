@@ -1,0 +1,39 @@
+parameters:
+  juceVersions: [4.2.0, 4.3.1, 5.0.0, 5.2.1, 5.3.1, 5.4.3, 5.4.7, 6.0.1]
+
+steps:
+  - script: cmake --version
+    displayName: CMake version
+
+  - ${{ each juceVersion in parameters.juceVersions }}:
+    - script: >
+        git clone --branch=${{ juceVersion }} --depth=1 --single-branch
+        -- https://github.com/juce-framework/JUCE.git ci/tmp/JUCE-${{ juceVersion }}
+      displayName: Clone JUCE ${{ juceVersion }}
+
+  - script: cmake .. -G Xcode -DCMAKE_SYSTEM_NAME=iOS
+    workingDirectory: tests/test-projects/entitlements-generation/guiapp-iOS/binary_dir
+    displayName: Re-generate .entitlements files for GUI Application projects
+  - script: cmake .. -G Xcode -DCMAKE_SYSTEM_NAME=iOS
+    workingDirectory: tests/test-projects/entitlements-generation/plugin-iOS/binary_dir
+    displayName: Re-generate .entitlements files for Audio Plug-In projects
+  - script: git diff --exit-code
+    displayName: Check that .entitlements files haven't changed
+
+  - script: cmake .. -G Xcode -DCMAKE_SYSTEM_NAME=iOS
+    workingDirectory: tests/test-projects/plist-generation/guiapp-iOS/binary_dir
+    displayName: Re-generate .plist files for GUI Application projects
+  - script: cmake .. -G Xcode -DCMAKE_SYSTEM_NAME=iOS
+    workingDirectory: tests/test-projects/plist-generation/plugin-iOS/binary_dir
+    displayName: Re-generate .plist files for Audio Plug-In projects
+  - script: git diff --exit-code
+    displayName: Check that .plist files haven't changed
+
+  - script: mkdir ci/AllJuceProjects/build
+    displayName: mkdir ci/AllJuceProjects/build
+
+  - ${{ each juceVersion in parameters.juceVersions }}:
+    - script: >
+        cmake .. -G Xcode -DCMAKE_SYSTEM_NAME=iOS -DJUCE_VERSION="${{ juceVersion }}"
+      workingDirectory: ci/AllJuceProjects/build
+      displayName: Configure all JUCE ${{ juceVersion }} projects

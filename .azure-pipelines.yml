@@ -4,6 +4,13 @@ trigger:
       - main
 
 jobs:
+  - job: iOS
+    displayName: iOS / Xcode
+    pool:
+      vmImage: macOS-10.15
+    steps:
+      - template: ci/azure-pipelines/steps-iOS.yml
+
   - job: Windows_VS2017
     displayName: Windows / Visual Studio 2017
     pool:
