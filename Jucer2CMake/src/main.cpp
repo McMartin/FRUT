@@ -381,13 +381,13 @@ struct Arguments
 
 Arguments parseArguments(const int argc, const char* const argv[])
 {
-  const std::vector<std::string> knownFlags{"h", "help", "relocatable"};
-  const std::vector<std::string> knownParams{"juce-modules", "user-modules"};
+  const juce::StringArray knownFlags{"h", "help", "relocatable"};
+  const juce::StringArray knownParams{"juce-modules", "user-modules"};
 
   argh::parser argumentParser;
   for (const auto& param : knownParams)
   {
-    argumentParser.add_param(param);
+    argumentParser.add_param(param.toStdString());
   }
   argumentParser.parse(argc, argv);
 
@@ -414,18 +414,14 @@ Arguments parseArguments(const int argc, const char* const argv[])
     }
   }
 
-  const auto contains = [](const std::vector<std::string>& v, const std::string& s) {
-    return std::find(v.begin(), v.end(), s) != v.end();
-  };
-
   for (const auto& flag : argumentParser.flags())
   {
-    if (contains(knownParams, flag))
+    if (knownParams.contains(juce::String{flag}))
     {
       printError("expected one argument for \"" + flag + "\"");
       errorInArguments = true;
     }
-    else if (!contains(knownFlags, flag))
+    else if (!knownFlags.contains(juce::String{flag}))
     {
       printError("unknown option \"" + flag + "\"");
       errorInArguments = true;
@@ -435,7 +431,7 @@ Arguments parseArguments(const int argc, const char* const argv[])
   for (const auto& paramAndValue : argumentParser.params())
   {
     const auto& param = std::get<0>(paramAndValue);
-    if (!contains(knownParams, param))
+    if (!knownParams.contains(juce::String{param}))
     {
       printError("unknown option \"" + param + "\"");
       errorInArguments = true;
