@@ -431,7 +431,13 @@ Arguments parseArguments(const int argc, const char* const argv[])
   for (const auto& paramAndValue : argumentParser.params())
   {
     const auto& param = std::get<0>(paramAndValue);
-    if (!knownParams.contains(juce::String{param}))
+    if (knownFlags.contains(juce::String{param}))
+    {
+      const auto& value = std::get<1>(paramAndValue);
+      printError("unexpected argument \"" + value + "\" for \"" + param + "\"");
+      errorInArguments = true;
+    }
+    else if (!knownParams.contains(juce::String{param}))
     {
       printError("unknown option \"" + param + "\"");
       errorInArguments = true;
