@@ -396,9 +396,9 @@ Arguments parseArguments(const int argc, const char* const argv[])
 
   if (!askingForHelp)
   {
-    if (argumentParser.size() >= 2 && juce::String{argumentParser[1]} != "reprojucer")
+    if (argumentParser.size() >= 2 && argumentParser[1] != "reprojucer")
     {
-      printError("invalid mode \"" + juce::String{argumentParser[1]} + "\"");
+      printError("invalid mode \"" + argumentParser[1] + "\"");
       errorInArguments = true;
     }
 
