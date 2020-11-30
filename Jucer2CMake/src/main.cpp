@@ -463,7 +463,13 @@ Arguments parseArguments(const int argc, const char* const argv[])
 
   if (askingForHelp || errorInArguments)
   {
-    std::cerr << reprojucerUsage << reprojucerHelpText << std::flush;
+    std::cerr << reprojucerUsage << std::flush;
+
+    if (askingForHelp)
+    {
+      std::cerr << reprojucerHelpText << std::flush;
+    }
+
     std::exit(askingForHelp ? 0 : 1);
   }
 
