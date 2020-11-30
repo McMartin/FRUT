@@ -442,26 +442,28 @@ Arguments parseArguments(const int argc, const char* const argv[])
     }
   }
 
+  const auto reprojucerUsage =
+    "usage: Jucer2CMake reprojucer <jucer_project_file> [<Reprojucer.cmake_file>]\n"
+    "                   [--help] [--juce-modules=<path>] [--user-modules=<path>]\n"
+    "                   [--relocatable]\n";
+  const auto reprojucerHelpText =
+    "\n"
+    "Converts a .jucer file into a CMakeLists.txt file that uses Reprojucer.cmake.\n"
+    "The CMakeLists.txt file is written in the current working directory.\n"
+    "\n"
+    "    <jucer_project_file>      path to the .jucer file to convert\n"
+    "    <Reprojucer.cmake_file>   path to Reprojucer.cmake\n"
+    "\n"
+    "    -h, --help                show this help message and exit\n"
+    "    --juce-modules <path>     global path to JUCE modules\n"
+    "    --user-modules <path>     global path to user modules\n"
+    "    --relocatable             makes the CMakeLists.txt file independent from\n"
+    "                              the location of the .jucer file, but requires\n"
+    "                              defining a variable when calling cmake\n";
+
   if (askingForHelp || errorInArguments)
   {
-    std::cerr
-      << "usage: Jucer2CMake reprojucer <jucer_project_file> [<Reprojucer.cmake_file>]\n"
-      << "                   [--help] [--juce-modules=<path>] [--user-modules=<path>]\n"
-      << "                   [--relocatable]\n"
-      << "\n"
-      << "Converts a .jucer file into a CMakeLists.txt file that uses Reprojucer.cmake.\n"
-      << "The CMakeLists.txt file is written in the current working directory.\n"
-      << "\n"
-      << "    <jucer_project_file>      path to the .jucer file to convert\n"
-      << "    <Reprojucer.cmake_file>   path to Reprojucer.cmake\n"
-      << "\n"
-      << "    -h, --help                show this help message and exit\n"
-      << "    --juce-modules <path>     global path to JUCE modules\n"
-      << "    --user-modules <path>     global path to user modules\n"
-      << "    --relocatable             makes the CMakeLists.txt file independent from\n"
-      << "                              the location of the .jucer file, but requires\n"
-      << "                              defining a variable when calling cmake\n"
-      << std::flush;
+    std::cerr << reprojucerUsage << reprojucerHelpText << std::flush;
     std::exit(askingForHelp ? 0 : 1);
   }
 
