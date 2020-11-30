@@ -1,0 +1,63 @@
+parameters:
+  - name: cmakeOptions
+    default: ''
+  - name: juceVersions
+    type: object
+
+steps:
+  - script: cmake --version
+    displayName: CMake version
+
+  - ${{ each juceVersion in parameters.juceVersions }}:
+    - script: >
+        git clone --branch=${{ juceVersion }} --depth=1 --single-branch
+        -- https://github.com/juce-framework/JUCE.git ci/tmp/JUCE-${{ juceVersion }}
+      displayName: Clone JUCE ${{ juceVersion }}
+
+  - script: mkdir build
+    displayName: mkdir build
+
+  - ${{ each juceVersion in parameters.juceVersions }}:
+    - script: >
+        cmake .. -G "$(cmakeGenerator)"
+        -DJUCE_ROOT="$(Build.SourcesDirectory)/ci/tmp/JUCE-${{ juceVersion }}"
+        -DJucer2CMake_WRITE_CRLF_LINE_ENDINGS=ON
+        -DWRITE_CRLF_LINE_ENDINGS=ON
+        ${{ parameters.cmakeOptions }}
+      workingDirectory: build
+      displayName: Configure FRUT with JUCE ${{ juceVersion }}
+    - script: cmake --build . --config Debug -- -v:m -maxcpucount
+      workingDirectory: build
+      displayName: Build FRUT with JUCE ${{ juceVersion }}
+
+  - script: cmake .. -DCMAKE_INSTALL_PREFIX="$(Build.SourcesDirectory)/prefix"
+    workingDirectory: build
+    displayName: Configure FRUT for installation in ./prefix
+  - script: cmake --build . --config Release --target install -- -v:m -maxcpucount
+    workingDirectory: build
+    displayName: Build and install FRUT in ./prefix
+
+  - script: >
+      cmake -DJucer2CMake_EXE="prefix/FRUT/bin/Jucer2CMake.exe"
+      -P ci/apply-Jucer2CMake-reprojucer-to-test-jucers.cmake
+    displayName: Re-generate CMakeLists.txt files for test projects
+  - ${{ each juceVersion in parameters.juceVersions }}:
+    - script: >
+        cmake -DJUCE_VERSION="${{ juceVersion }}"
+        -DJucer2CMake_EXE="prefix/FRUT/bin/Jucer2CMake.exe"
+        -P ci/apply-Jucer2CMake-reprojucer-to-JUCE-jucers.cmake
+      displayName: Re-generate CMakeLists.txt files for JUCE ${{ juceVersion }}
+  - script: git diff --exit-code
+    displayName: Check that generated CMakeLists.txt files are up-to-date
+
+  - script: mkdir ci\AllJuceProjects\build
+    displayName: mkdir ci/AllJuceProjects/build
+
+  - ${{ each juceVersion in parameters.juceVersions }}:
+    - script: >
+        cmake .. -G "$(cmakeGenerator)" -DJUCE_VERSION="${{ juceVersion }}"
+        -DJUCER_AAX_SDK_FOLDER="$(Build.SourcesDirectory)/ci/fake-SDKs/AAX"
+        -DJUCER_VST3_SDK_FOLDER="$(Build.SourcesDirectory)/ci/fake-SDKs/VST3"
+        -DJUCER_VST_SDK_FOLDER="$(Build.SourcesDirectory)/ci/fake-SDKs/VST"
+      workingDirectory: ci/AllJuceProjects/build
+      displayName: Configure all JUCE ${{ juceVersion }} projects

@@ -3,21 +3,90 @@ trigger:
     include:
       - main
 
+parameters:
+  - name: juceVersions
+    type: object
+    default: [4.2.0, 4.3.1, 5.0.0, 5.2.1, 5.3.1, 5.4.3, 5.4.7, 6.0.1]
+
 jobs:
-  - job: VS2017
+  - job: iOS
+    displayName: iOS / Xcode
+    pool:
+      vmImage: macOS-10.15
+    steps:
+      - template: ci/azure-pipelines/steps-iOS.yml
+        parameters:
+          juceVersions: ${{ parameters.juceVersions }}
+
+  - job: Linux_CodeBlocks
+    displayName: Linux / CodeBlocks - Unix Makefiles
+    pool:
+      vmImage: ubuntu-18.04
+    variables:
+      cmakeGenerator: "CodeBlocks - Unix Makefiles"
+    steps:
+      - script: >
+          sudo apt-get install libcurl4-openssl-dev libxcursor-dev libxinerama-dev
+          libxrandr-dev
+        displayName: Install apt packages
+      - template: ci/azure-pipelines/steps-Makefiles.yml
+        parameters:
+          juceVersions: ${{ parameters.juceVersions }}
+
+  - job: Linux_Make
+    displayName: Linux / Unix Makefiles
+    pool:
+      vmImage: ubuntu-16.04
+    variables:
+      cmakeGenerator: "Unix Makefiles"
+    steps:
+      - script: >
+          sudo apt-get install libasound2-dev libcurl4-openssl-dev libxcursor-dev
+          libxinerama-dev libxrandr-dev webkit2gtk-4.0
+        displayName: Install apt packages
+      - template: ci/azure-pipelines/steps-Makefiles.yml
+        parameters:
+          juceVersions: ${{ parameters.juceVersions }}
+
+  - job: macOS_Make
+    displayName: macOS / Unix Makefiles
+    pool:
+      vmImage: macOS-10.14
+    variables:
+      cmakeGenerator: "Unix Makefiles"
+    steps:
+      - template: ci/azure-pipelines/steps-Makefiles.yml
+        parameters:
+          juceVersions: ${{ parameters.juceVersions }}
+
+  - job: macOS_Xcode
+    displayName: macOS / Xcode
+    pool:
+      vmImage: macOS-10.15
+    steps:
+      - template: ci/azure-pipelines/steps-Xcode.yml
+        parameters:
+          juceVersions: ${{ parameters.juceVersions }}
+
+  - job: Windows_VS2017
+    displayName: Windows / Visual Studio 2017
     pool:
       vmImage: vs2017-win2016
     variables:
       cmakeGenerator: "Visual Studio 15 2017"
     steps:
-      - template: ci/azure-pipelines-steps.yml
+      - template: ci/azure-pipelines/steps-VS.yml
         parameters:
           cmakeOptions: -DCMAKE_SYSTEM_VERSION=10.0.15063.0
+          juceVersions: ${{ parameters.juceVersions }}
 
-  - job: VS2019
+  - job: Windows_VS2019
+    displayName: Windows / Visual Studio 2019
     pool:
       vmImage: windows-2019
     variables:
       cmakeGenerator: "Visual Studio 16 2019"
     steps:
-      - template: ci/azure-pipelines-steps.yml
+      - template: ci/azure-pipelines/steps-VS.yml
+        parameters:
+          juceVersions: ${{ parameters.juceVersions }}

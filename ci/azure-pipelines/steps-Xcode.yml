@@ -1,6 +1,6 @@
 parameters:
-  cmakeOptions: ''
-  juceVersions: [4.2.0, 4.3.1, 5.0.0, 5.2.1, 5.3.1, 5.4.3, 5.4.7, 6.0.1]
+  - name: juceVersions
+    type: object
 
 steps:
   - script: cmake --version
@@ -17,43 +17,58 @@ steps:
 
   - ${{ each juceVersion in parameters.juceVersions }}:
     - script: >
-        cmake .. -G "$(cmakeGenerator)"
+        cmake .. -G Xcode
         -DJUCE_ROOT="$(Build.SourcesDirectory)/ci/tmp/JUCE-${{ juceVersion }}"
-        -DJucer2CMake_WRITE_CRLF_LINE_ENDINGS=ON
-        -DWRITE_CRLF_LINE_ENDINGS=ON
-        ${{ parameters.cmakeOptions }}
       workingDirectory: build
       displayName: Configure FRUT with JUCE ${{ juceVersion }}
-    - script: cmake --build . --config Debug -- -v:m -maxcpucount
+    - script: cmake --build . --config Debug
       workingDirectory: build
       displayName: Build FRUT with JUCE ${{ juceVersion }}
 
-  - script: cmake .. -DCMAKE_INSTALL_PREFIX="$(Build.SourcesDirectory)/prefix"
+  - script: cmake .. -G Xcode -DCMAKE_INSTALL_PREFIX="$(Build.SourcesDirectory)/prefix"
     workingDirectory: build
     displayName: Configure FRUT for installation in ./prefix
-  - script: cmake --build . --config Release --target install -- -v:m -maxcpucount
+  - script: cmake --build . --config Release --target install
     workingDirectory: build
     displayName: Build and install FRUT in ./prefix
 
+  - script: cmake .. -G Xcode
+    workingDirectory: tests/test-projects/entitlements-generation/guiapp-MacOSX/binary_dir
+    displayName: Re-generate .entitlements files for GUI Application projects
+  - script: cmake .. -G Xcode
+    workingDirectory: tests/test-projects/entitlements-generation/plugin-MacOSX/binary_dir
+    displayName: Re-generate .entitlements files for Audio Plug-In projects
+  - script: git diff --exit-code
+    displayName: Check that .entitlements files haven't changed
+
+  - script: cmake .. -G Xcode
+    workingDirectory: tests/test-projects/plist-generation/guiapp-MacOSX/binary_dir
+    displayName: Re-generate .plist files for GUI Application projects
+  - script: cmake .. -G Xcode
+    workingDirectory: tests/test-projects/plist-generation/plugin-MacOSX/binary_dir
+    displayName: Re-generate .plist files for Audio Plug-In projects
+  - script: git diff --exit-code
+    displayName: Check that .plist files haven't changed
+
   - script: >
-      cmake -DJucer2CMake_EXE="prefix/FRUT/bin/Jucer2CMake.exe"
+      cmake -DJucer2CMake_EXE="prefix/FRUT/bin/Jucer2CMake"
       -P ci/apply-Jucer2CMake-reprojucer-to-test-jucers.cmake
     displayName: Re-generate CMakeLists.txt files for test projects
   - ${{ each juceVersion in parameters.juceVersions }}:
     - script: >
         cmake -DJUCE_VERSION="${{ juceVersion }}"
-        -DJucer2CMake_EXE="prefix/FRUT/bin/Jucer2CMake.exe"
+        -DJucer2CMake_EXE="prefix/FRUT/bin/Jucer2CMake"
         -P ci/apply-Jucer2CMake-reprojucer-to-JUCE-jucers.cmake
       displayName: Re-generate CMakeLists.txt files for JUCE ${{ juceVersion }}
   - script: git diff --exit-code
     displayName: Check that generated CMakeLists.txt files are up-to-date
 
-  - script: mkdir ci\AllJuceProjects\build
+  - script: mkdir ci/AllJuceProjects/build
     displayName: mkdir ci/AllJuceProjects/build
 
   - ${{ each juceVersion in parameters.juceVersions }}:
     - script: >
-        cmake .. -G "$(cmakeGenerator)" -DJUCE_VERSION="${{ juceVersion }}"
+        cmake .. -G Xcode -DJUCE_VERSION="${{ juceVersion }}"
         -DJUCER_AAX_SDK_FOLDER="$(Build.SourcesDirectory)/ci/fake-SDKs/AAX"
         -DJUCER_VST3_SDK_FOLDER="$(Build.SourcesDirectory)/ci/fake-SDKs/VST3"
         -DJUCER_VST_SDK_FOLDER="$(Build.SourcesDirectory)/ci/fake-SDKs/VST"
