@@ -381,13 +381,13 @@ struct Arguments
 
 Arguments parseArguments(const int argc, const char* const argv[])
 {
-  const std::vector<std::string> knownFlags{"h", "help", "relocatable"};
-  const std::vector<std::string> knownParams{"juce-modules", "user-modules"};
+  const juce::StringArray knownFlags{"h", "help", "relocatable"};
+  const juce::StringArray knownParams{"juce-modules", "user-modules"};
 
   argh::parser argumentParser;
   for (const auto& param : knownParams)
   {
-    argumentParser.add_param(param);
+    argumentParser.add_param(param.toStdString());
   }
   argumentParser.parse(argc, argv);
 
@@ -396,9 +396,9 @@ Arguments parseArguments(const int argc, const char* const argv[])
 
   if (!askingForHelp)
   {
-    if (argumentParser.size() >= 2 && juce::String{argumentParser[1]} != "reprojucer")
+    if (argumentParser.size() >= 2 && argumentParser[1] != "reprojucer")
     {
-      printError("invalid mode \"" + juce::String{argumentParser[1]} + "\"");
+      printError("invalid mode \"" + argumentParser[1] + "\"");
       errorInArguments = true;
     }
 
@@ -414,18 +414,14 @@ Arguments parseArguments(const int argc, const char* const argv[])
     }
   }
 
-  const auto contains = [](const std::vector<std::string>& v, const std::string& s) {
-    return std::find(v.begin(), v.end(), s) != v.end();
-  };
-
   for (const auto& flag : argumentParser.flags())
   {
-    if (contains(knownParams, flag))
+    if (knownParams.contains(juce::String{flag}))
     {
       printError("expected one argument for \"" + flag + "\"");
       errorInArguments = true;
     }
-    else if (!contains(knownFlags, flag))
+    else if (!knownFlags.contains(juce::String{flag}))
     {
       printError("unknown option \"" + flag + "\"");
       errorInArguments = true;
@@ -435,45 +431,48 @@ Arguments parseArguments(const int argc, const char* const argv[])
   for (const auto& paramAndValue : argumentParser.params())
   {
     const auto& param = std::get<0>(paramAndValue);
-    if (!contains(knownParams, param))
+    if (knownFlags.contains(juce::String{param}))
+    {
+      const auto& value = std::get<1>(paramAndValue);
+      printError("unexpected argument \"" + value + "\" for \"" + param + "\"");
+      errorInArguments = true;
+    }
+    else if (!knownParams.contains(juce::String{param}))
     {
       printError("unknown option \"" + param + "\"");
       errorInArguments = true;
     }
   }
 
+  const auto reprojucerUsage =
+    "usage: Jucer2CMake reprojucer <jucer_project_file> [<Reprojucer.cmake_file>]\n"
+    "                   [--help] [--juce-modules=<path>] [--user-modules=<path>]\n"
+    "                   [--relocatable]\n";
+  const auto reprojucerHelpText =
+    "\n"
+    "Converts a .jucer file into a CMakeLists.txt file that uses Reprojucer.cmake.\n"
+    "The CMakeLists.txt file is written in the current working directory.\n"
+    "\n"
+    "    <jucer_project_file>      path to the .jucer file to convert\n"
+    "    <Reprojucer.cmake_file>   path to Reprojucer.cmake\n"
+    "\n"
+    "    -h, --help                show this help message and exit\n"
+    "    --juce-modules <path>     global path to JUCE modules\n"
+    "    --user-modules <path>     global path to user modules\n"
+    "    --relocatable             makes the CMakeLists.txt file independent from\n"
+    "                              the location of the .jucer file, but requires\n"
+    "                              defining a variable when calling cmake\n";
+
   if (askingForHelp || errorInArguments)
   {
-    std::cerr
-      << "usage: Jucer2CMake reprojucer <jucer_project_file> [<Reprojucer.cmake_file>]\n"
-      << "                   [--help] [--juce-modules=<path>] [--user-modules=<path>]\n"
-      << "                   [--relocatable]\n"
-      << std::flush;
-  }
+    std::cerr << reprojucerUsage << std::flush;
 
-  if (askingForHelp)
-  {
-    std::cerr
-      << "\n"
-      << "Converts a .jucer file into a CMakeLists.txt file that uses Reprojucer.cmake.\n"
-      << "The CMakeLists.txt file is written in the current working directory.\n"
-      << "\n"
-      << "    <jucer_project_file>      path to the .jucer file to convert\n"
-      << "    <Reprojucer.cmake_file>   path to Reprojucer.cmake\n"
-      << "\n"
-      << "    -h, --help                show this help message and exit\n"
-      << "    --juce-modules <path>     global path to JUCE modules\n"
-      << "    --user-modules <path>     global path to user modules\n"
-      << "    --relocatable             makes the CMakeLists.txt file independent from\n"
-      << "                              the location of the .jucer file, but requires\n"
-      << "                              defining a variable when calling cmake\n"
-      << std::flush;
-    std::exit(0);
-  }
+    if (askingForHelp)
+    {
+      std::cerr << reprojucerHelpText << std::flush;
+    }
 
-  if (errorInArguments)
-  {
-    std::exit(1);
+    std::exit(askingForHelp ? 0 : 1);
   }
 
   auto jucerFilePath = juce::String{argumentParser[2]};
