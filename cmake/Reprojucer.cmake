@@ -3192,8 +3192,14 @@ function(_FRUT_build_and_install_tool tool_name tool_version)
     endif()
 
     message(STATUS "Building ${tool_name} in \"${binary_dir}\"")
+    set(build_command "${CMAKE_COMMAND}" "--build" "${binary_dir}")
+    if(CMAKE_GENERATOR STREQUAL "Xcode")
+      list(APPEND build_command "--" "-parallelizeTargets")
+    elseif(NOT CMAKE_VERSION VERSION_LESS 3.12)
+      list(APPEND build_command "--parallel")
+    endif()
     execute_process(
-      COMMAND "${CMAKE_COMMAND}" "--build" "${binary_dir}"
+      COMMAND ${build_command}
       OUTPUT_VARIABLE build_output
       RESULT_VARIABLE build_result
     )
