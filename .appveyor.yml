@@ -186,10 +186,6 @@ for:
       - cmake .. -G "%GENERATOR%" -DJUCE_ROOT="%APPVEYOR_BUILD_FOLDER%/ci/tmp/JUCE-5.4.3"
       - cmake --build . --config Debug -- -v:m -maxcpucount
 
-      # Configure and build FRUT with JUCE 5.4.3
-      - cmake .. -G "%GENERATOR%" -DJUCE_ROOT="%APPVEYOR_BUILD_FOLDER%/ci/tmp/JUCE-5.4.3"
-      - cmake --build . --config Debug -- -v:m -maxcpucount
-
       # Build and install FRUT in ./prefix
       - cmake .. -DCMAKE_INSTALL_PREFIX="%APPVEYOR_BUILD_FOLDER%/prefix"
       - cmake --build . --config Release --target install -- -v:m -maxcpucount
@@ -216,10 +212,6 @@ build_script:
 
   # Configure and build FRUT with JUCE 5.3.1
   - cmake .. -G "%GENERATOR%" -DJUCE_ROOT="%APPVEYOR_BUILD_FOLDER%/ci/tmp/JUCE-5.3.1"
-  - cmake --build . --config Debug -- -v:m -maxcpucount
-
-  # Configure and build FRUT with JUCE 5.4.3
-  - cmake .. -G "%GENERATOR%" -DJUCE_ROOT="%APPVEYOR_BUILD_FOLDER%/ci/tmp/JUCE-5.4.3"
   - cmake --build . --config Debug -- -v:m -maxcpucount
 
   # Configure and build FRUT with JUCE 5.4.3
