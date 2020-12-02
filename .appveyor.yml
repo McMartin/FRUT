@@ -66,6 +66,9 @@ for:
         cmake .. -G "MinGW Makefiles" -DCMAKE_BUILD_TYPE=Release
         -DJUCE_ROOT="%APPVEYOR_BUILD_FOLDER%/ci/tmp/JUCE-4.3.1"
 
+      # JUCE 5.0.0 doesn't build with MinGW due to some undeclared symbols in
+      # modules/juce_gui_basics/native/juce_win32_Windowing.cpp
+
       # Configure and build FRUT with JUCE 5.2.1
       - cd %APPVEYOR_BUILD_FOLDER%\build_Debug
       - >
@@ -76,6 +79,9 @@ for:
       - >
         cmake .. -G "MinGW Makefiles" -DCMAKE_BUILD_TYPE=Release
         -DJUCE_ROOT="%APPVEYOR_BUILD_FOLDER%/ci/tmp/JUCE-5.2.1"
+
+      # JUCE 5.3.1 doesn't build with MinGW due to some undeclared symbols in
+      # modules/juce_core/native/juce_win32_Files.cpp
 
       # Configure and build FRUT with JUCE 5.4.3
       - cd %APPVEYOR_BUILD_FOLDER%\build_Debug
@@ -185,6 +191,8 @@ for:
       # Configure and build FRUT with JUCE 5.4.3
       - cmake .. -G "%GENERATOR%" -DJUCE_ROOT="%APPVEYOR_BUILD_FOLDER%/ci/tmp/JUCE-5.4.3"
       - cmake --build . --config Debug -- -v:m -maxcpucount
+
+      # JUCE 5.4.3 is the last JUCE version that supports Visual Studio 2013
 
       # Build and install FRUT in ./prefix
       - cmake .. -DCMAKE_INSTALL_PREFIX="%APPVEYOR_BUILD_FOLDER%/prefix"
