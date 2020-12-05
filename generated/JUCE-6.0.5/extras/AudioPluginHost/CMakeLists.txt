@@ -76,7 +76,6 @@ jucer_project_module(
   # JUCE_USE_WINRT_MIDI
   # JUCE_ASIO
   JUCE_WASAPI ON
-  # JUCE_WASAPI_EXCLUSIVE
   JUCE_DIRECTSOUND ON
   JUCE_ALSA ON
   # JUCE_JACK
@@ -189,18 +188,13 @@ jucer_project_module(
   PATH "../../modules"
 )
 
-jucer_project_module(
-  juce_video
-  PATH "../../modules"
-  JUCE_USE_CAMERA OFF
-  # JUCE_SYNC_VIDEO_VOLUME_WITH_OS_MEDIA_VOLUME
-)
-
 jucer_export_target(
   "Xcode (MacOSX)"
   # VST3_SDK_FOLDER
   ICON_SMALL "Source/JUCEAppIcon.png"
   ICON_LARGE "Source/JUCEAppIcon.png"
+  CUSTOM_XCODE_RESOURCE_FOLDERS
+    "../../examples/Assets"
   MICROPHONE_ACCESS ON
 )
 
@@ -324,6 +318,8 @@ jucer_export_target(
   "Xcode (iOS)"
   ICON_SMALL "Source/JUCEAppIcon.png"
   ICON_LARGE "Source/JUCEAppIcon.png"
+  CUSTOM_XCODE_RESOURCE_FOLDERS
+    "../../examples/Assets"
   DEVICE_FAMILY "Universal"
   # IPHONE_SCREEN_ORIENTATION
   # IPAD_SCREEN_ORIENTATION

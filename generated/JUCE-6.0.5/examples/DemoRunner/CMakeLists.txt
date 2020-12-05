@@ -27,7 +27,7 @@ jucer_project_begin(
 
 jucer_project_settings(
   PROJECT_NAME "DemoRunner"
-  PROJECT_VERSION "6.0.1"
+  PROJECT_VERSION "6.0.5"
   COMPANY_NAME "Raw Material Software Limited"
   COMPANY_COPYRIGHT "Copyright (c) 2020 - Raw Material Software Limited"
   COMPANY_WEBSITE "https://www.juce.com/"
@@ -35,7 +35,7 @@ jucer_project_settings(
   REPORT_JUCE_APP_USAGE OFF # Required for closed source applications without an Indie or Pro JUCE license
   DISPLAY_THE_JUCE_SPLASH_SCREEN ON # Required for closed source applications without an Indie or Pro JUCE license
   PROJECT_TYPE "GUI Application"
-  BUNDLE_IDENTIFIER "com.juce.demorunner"
+  BUNDLE_IDENTIFIER "com.rmsl.juce.demorunner"
   CXX_LANGUAGE_STANDARD "C++14"
   PREPROCESSOR_DEFINITIONS
     "JUCE_DEMO_RUNNER=1"
@@ -85,7 +85,6 @@ jucer_project_module(
   # JUCE_USE_WINRT_MIDI
   # JUCE_ASIO
   # JUCE_WASAPI
-  # JUCE_WASAPI_EXCLUSIVE
   # JUCE_DIRECTSOUND
   # JUCE_ALSA
   # JUCE_JACK
