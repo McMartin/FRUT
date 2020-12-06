@@ -170,33 +170,33 @@ for:
 
       # Configure and build FRUT with JUCE 4.2.0
       - cmake .. -G "%GENERATOR%" -DJUCE_ROOT="%APPVEYOR_BUILD_FOLDER%/ci/tmp/JUCE-4.2.0"
-      - cmake --build . --config Debug --parallel -- -v:m
+      - cmake --build . --config Debug --parallel
 
       # Configure and build FRUT with JUCE 4.3.1
       - cmake .. -G "%GENERATOR%" -DJUCE_ROOT="%APPVEYOR_BUILD_FOLDER%/ci/tmp/JUCE-4.3.1"
-      - cmake --build . --config Debug --parallel -- -v:m
+      - cmake --build . --config Debug --parallel
 
       # Configure and build FRUT with JUCE 5.0.0
       - cmake .. -G "%GENERATOR%" -DJUCE_ROOT="%APPVEYOR_BUILD_FOLDER%/ci/tmp/JUCE-5.0.0"
-      - cmake --build . --config Debug --parallel -- -v:m
+      - cmake --build . --config Debug --parallel
 
       # Configure and build FRUT with JUCE 5.2.1
       - cmake .. -G "%GENERATOR%" -DJUCE_ROOT="%APPVEYOR_BUILD_FOLDER%/ci/tmp/JUCE-5.2.1"
-      - cmake --build . --config Debug --parallel -- -v:m
+      - cmake --build . --config Debug --parallel
 
       # Configure and build FRUT with JUCE 5.3.1
       - cmake .. -G "%GENERATOR%" -DJUCE_ROOT="%APPVEYOR_BUILD_FOLDER%/ci/tmp/JUCE-5.3.1"
-      - cmake --build . --config Debug --parallel -- -v:m
+      - cmake --build . --config Debug --parallel
 
       # Configure and build FRUT with JUCE 5.4.3
       - cmake .. -G "%GENERATOR%" -DJUCE_ROOT="%APPVEYOR_BUILD_FOLDER%/ci/tmp/JUCE-5.4.3"
-      - cmake --build . --config Debug --parallel -- -v:m
+      - cmake --build . --config Debug --parallel
 
       # JUCE 5.4.3 is the last JUCE version that supports Visual Studio 2013
 
       # Build and install FRUT in ./prefix
       - cmake .. -DCMAKE_INSTALL_PREFIX="%APPVEYOR_BUILD_FOLDER%/prefix"
-      - cmake --build . --config Release --target install --parallel -- -v:m
+      - cmake --build . --config Release --target install --parallel
 
 build_script:
   - mkdir %APPVEYOR_BUILD_FOLDER%\build
@@ -204,39 +204,39 @@ build_script:
 
   # Configure and build FRUT with JUCE 4.2.0
   - cmake .. -G "%GENERATOR%" -DJUCE_ROOT="%APPVEYOR_BUILD_FOLDER%/ci/tmp/JUCE-4.2.0"
-  - cmake --build . --config Debug --parallel -- -v:m
+  - cmake --build . --config Debug --parallel
 
   # Configure and build FRUT with JUCE 4.3.1
   - cmake .. -G "%GENERATOR%" -DJUCE_ROOT="%APPVEYOR_BUILD_FOLDER%/ci/tmp/JUCE-4.3.1"
-  - cmake --build . --config Debug --parallel -- -v:m
+  - cmake --build . --config Debug --parallel
 
   # Configure and build FRUT with JUCE 5.0.0
   - cmake .. -G "%GENERATOR%" -DJUCE_ROOT="%APPVEYOR_BUILD_FOLDER%/ci/tmp/JUCE-5.0.0"
-  - cmake --build . --config Debug --parallel -- -v:m
+  - cmake --build . --config Debug --parallel
 
   # Configure and build FRUT with JUCE 5.2.1
   - cmake .. -G "%GENERATOR%" -DJUCE_ROOT="%APPVEYOR_BUILD_FOLDER%/ci/tmp/JUCE-5.2.1"
-  - cmake --build . --config Debug --parallel -- -v:m
+  - cmake --build . --config Debug --parallel
 
   # Configure and build FRUT with JUCE 5.3.1
   - cmake .. -G "%GENERATOR%" -DJUCE_ROOT="%APPVEYOR_BUILD_FOLDER%/ci/tmp/JUCE-5.3.1"
-  - cmake --build . --config Debug --parallel -- -v:m
+  - cmake --build . --config Debug --parallel
 
   # Configure and build FRUT with JUCE 5.4.3
   - cmake .. -G "%GENERATOR%" -DJUCE_ROOT="%APPVEYOR_BUILD_FOLDER%/ci/tmp/JUCE-5.4.3"
-  - cmake --build . --config Debug --parallel -- -v:m
+  - cmake --build . --config Debug --parallel
 
   # Configure and build FRUT with JUCE 5.4.7
   - cmake .. -G "%GENERATOR%" -DJUCE_ROOT="%APPVEYOR_BUILD_FOLDER%/ci/tmp/JUCE-5.4.7"
-  - cmake --build . --config Debug --parallel -- -v:m
+  - cmake --build . --config Debug --parallel
 
   # Configure and build FRUT with JUCE 6.0.5
   - cmake .. -G "%GENERATOR%" -DJUCE_ROOT="%APPVEYOR_BUILD_FOLDER%/ci/tmp/JUCE-6.0.5"
-  - cmake --build . --config Debug --parallel -- -v:m
+  - cmake --build . --config Debug --parallel
 
   # Build and install FRUT in ./prefix
   - cmake .. -DCMAKE_INSTALL_PREFIX="%APPVEYOR_BUILD_FOLDER%/prefix"
-  - cmake --build . --config Release --target install --parallel -- -v:m
+  - cmake --build . --config Release --target install --parallel
 
 test_script:
   # Check that generated CMakeLists.txt files are up-to-date
