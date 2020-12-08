@@ -21,14 +21,14 @@ steps:
         -DJUCE_ROOT="$(Build.SourcesDirectory)/ci/tmp/JUCE-${{ juceVersion }}"
       workingDirectory: build
       displayName: Configure FRUT with JUCE ${{ juceVersion }}
-    - script: cmake --build . --config Debug
+    - script: cmake --build . --config Debug -- -parallelizeTargets
       workingDirectory: build
       displayName: Build FRUT with JUCE ${{ juceVersion }}
 
   - script: cmake .. -G Xcode -DCMAKE_INSTALL_PREFIX="$(Build.SourcesDirectory)/prefix"
     workingDirectory: build
     displayName: Configure FRUT for installation in ./prefix
-  - script: cmake --build . --config Release --target install
+  - script: cmake --build . --config Release --target install -- -parallelizeTargets
     workingDirectory: build
     displayName: Build and install FRUT in ./prefix
 
