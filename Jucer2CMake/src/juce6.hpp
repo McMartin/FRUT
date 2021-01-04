@@ -22,6 +22,7 @@
 #include "juce_core.hpp"
 
 #include <cstdlib>
+#include <functional>
 
 
 namespace Jucer2CMake
@@ -108,6 +109,42 @@ inline void writeJuce6CMakeLists(const Arguments&, const juce::XmlElement& jucer
     {
       wLn("  ", juceOptions.getAttributeName(i), "=", juceOptions.getAttributeValue(i));
     }
+
+    wLn(")");
+    wLn();
+  }
+
+  // target_sources
+  {
+    wLn("target_sources(", targetName, " PRIVATE");
+
+    std::function<void(const juce::XmlElement&)> processGroup =
+      [&processGroup, &wLn](const juce::XmlElement& group) {
+        for (auto pFileOrGroup = group.getFirstChildElement(); pFileOrGroup != nullptr;
+             pFileOrGroup = pFileOrGroup->getNextElement())
+        {
+          if (pFileOrGroup->isTextElement())
+          {
+            continue;
+          }
+
+          if (pFileOrGroup->hasTagName("FILE"))
+          {
+            const auto& file = *pFileOrGroup;
+
+            if (file.getStringAttribute("compile").getIntValue() == 1)
+            {
+              wLn("  \"", file.getStringAttribute("file"), "\"");
+            }
+          }
+          else
+          {
+            processGroup(*pFileOrGroup);
+          }
+        }
+      };
+
+    processGroup(getRequiredChild(jucerProject, "MAINGROUP"));
 
     wLn(")");
   }

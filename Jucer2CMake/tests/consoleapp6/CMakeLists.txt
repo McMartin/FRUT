@@ -17,3 +17,7 @@ juce_generate_juce_header(consoleapp6)
 target_compile_definitions(consoleapp6 PRIVATE
   JUCE_STRICT_REFCOUNTEDPOINTER=1
 )
+
+target_sources(consoleapp6 PRIVATE
+  "Source/Main.cpp"
+)
