@@ -52,6 +52,10 @@ steps:
 
   - script: >
       cmake -DJucer2CMake_EXE="prefix/FRUT/bin/Jucer2CMake"
+      -P Jucer2CMake/tests/apply-Jucer2CMake-juce6-to-test-jucers.cmake
+    displayName: Re-generate CMakeLists.txt files for Jucer2CMake test projects
+  - script: >
+      cmake -DJucer2CMake_EXE="prefix/FRUT/bin/Jucer2CMake"
       -P ci/apply-Jucer2CMake-reprojucer-to-test-jucers.cmake
     displayName: Re-generate CMakeLists.txt files for test projects
   - ${{ each juceVersion in parameters.juceVersions }}:
