@@ -16,6 +16,7 @@ juce_generate_juce_header(consoleapp6)
 
 target_compile_definitions(consoleapp6 PRIVATE
   JUCE_STRICT_REFCOUNTEDPOINTER=1
+  JUCE_USE_CURL=0
 )
 
 target_sources(consoleapp6 PRIVATE

@@ -18,6 +18,8 @@ juce_generate_juce_header(audioplug6)
 target_compile_definitions(audioplug6 PUBLIC
   JUCE_STRICT_REFCOUNTEDPOINTER=1
   JUCE_VST3_CAN_REPLACE_VST2=0
+  JUCE_USE_CURL=0
+  JUCE_WEB_BROWSER=0
 )
 
 target_sources(audioplug6 PRIVATE

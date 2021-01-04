@@ -42,6 +42,26 @@ inline const juce::XmlElement& getRequiredChild(const juce::XmlElement& element,
 }
 
 
+inline bool hasModule(const juce::XmlElement& modules, const juce::StringRef moduleId)
+{
+  for (auto pModule = modules.getFirstChildElement(); pModule != nullptr;
+       pModule = pModule->getNextElement())
+  {
+    if (pModule->isTextElement())
+    {
+      continue;
+    }
+
+    if (pModule->getStringAttribute("id") == moduleId)
+    {
+      return true;
+    }
+  }
+
+  return false;
+}
+
+
 inline void writeJuce6CMakeLists(const Arguments&, const juce::XmlElement& jucerProject,
                                  juce::MemoryOutputStream& outputStream)
 {
@@ -108,6 +128,16 @@ inline void writeJuce6CMakeLists(const Arguments&, const juce::XmlElement& jucer
          ++i)
     {
       wLn("  ", juceOptions.getAttributeName(i), "=", juceOptions.getAttributeValue(i));
+    }
+
+    const auto& modules = getRequiredChild(jucerProject, "MODULES");
+    if (hasModule(modules, "juce_core"))
+    {
+      wLn("  JUCE_USE_CURL=0");
+    }
+    if (hasModule(modules, "juce_gui_extra"))
+    {
+      wLn("  JUCE_WEB_BROWSER=0");
     }
 
     wLn(")");

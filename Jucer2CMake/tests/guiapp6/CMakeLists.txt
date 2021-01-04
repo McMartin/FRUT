@@ -16,6 +16,7 @@ juce_generate_juce_header(guiapp6)
 
 target_compile_definitions(guiapp6 PRIVATE
   JUCE_STRICT_REFCOUNTEDPOINTER=1
+  JUCE_USE_CURL=0
 )
 
 target_sources(guiapp6 PRIVATE
