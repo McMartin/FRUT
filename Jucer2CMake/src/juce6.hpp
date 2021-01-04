@@ -25,9 +25,26 @@
 namespace Jucer2CMake
 {
 
-inline void writeJuce6CMakeLists(const Arguments&, const juce::XmlElement&,
-                                 juce::MemoryOutputStream&)
+inline void writeJuce6CMakeLists(const Arguments&, const juce::XmlElement& jucerProject,
+                                 juce::MemoryOutputStream& outputStream)
 {
+  LineWriter wLn{outputStream};
+
+  const auto& projectType = jucerProject.getStringAttribute("projectType");
+  const auto& jucerProjectName = jucerProject.getStringAttribute("name");
+
+  // Preamble
+  {
+    const auto cmakeVersion = projectType == "audioplug" ? "3.15" : "3.12";
+
+    wLn();
+    wLn("cmake_minimum_required(VERSION ", cmakeVersion, ")");
+    wLn();
+    wLn("project(\"", jucerProjectName, "\")");
+    wLn();
+    wLn();
+    wLn("find_package(JUCE CONFIG REQUIRED)");
+  }
 }
 
 } // namespace Jucer2CMake
