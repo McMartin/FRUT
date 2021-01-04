@@ -44,6 +44,34 @@ inline void writeJuce6CMakeLists(const Arguments&, const juce::XmlElement& jucer
     wLn();
     wLn();
     wLn("find_package(JUCE CONFIG REQUIRED)");
+    wLn();
+    wLn();
+  }
+
+  const auto& targetName = jucerProjectName;
+
+  // juce_add_{console_app,gui_app,plugin}
+  {
+    const auto juceAddFunction = [&projectType]() -> juce::String {
+      if (projectType == "guiapp")
+        return "juce_add_gui_app";
+      if (projectType == "consoleapp")
+        return "juce_add_console_app";
+      if (projectType == "audioplug")
+        return "juce_add_plugin";
+      return {};
+    }();
+
+    wLn(juceAddFunction, "(", targetName);
+
+    wLn("  VERSION \"1.0.0\"");
+
+    if (projectType == "audioplug")
+    {
+      wLn("  FORMATS \"AU\" \"VST3\" \"Standalone\"");
+    }
+
+    wLn(")");
   }
 }
 

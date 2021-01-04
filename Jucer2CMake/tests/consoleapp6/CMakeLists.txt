@@ -6,3 +6,8 @@ project("consoleapp6")
 
 
 find_package(JUCE CONFIG REQUIRED)
+
+
+juce_add_console_app(consoleapp6
+  VERSION "1.0.0"
+)

@@ -6,3 +6,9 @@ project("audioplug6")
 
 
 find_package(JUCE CONFIG REQUIRED)
+
+
+juce_add_plugin(audioplug6
+  VERSION "1.0.0"
+  FORMATS "AU" "VST3" "Standalone"
+)
