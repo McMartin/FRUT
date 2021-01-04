@@ -1738,6 +1738,8 @@ function(jucer_export_target_configuration
       set(JUCER_OSX_BASE_SDK_VERSION_${config} "10.${CMAKE_MATCH_1}" PARENT_SCOPE)
     elseif(version MATCHES "^10\\.([7-9]|1[0-5]) SDK$")
       set(JUCER_OSX_BASE_SDK_VERSION_${config} "10.${CMAKE_MATCH_1}" PARENT_SCOPE)
+    elseif(version MATCHES "^11\\.(0) SDK$")
+      set(JUCER_OSX_BASE_SDK_VERSION_${config} "11.${CMAKE_MATCH_1}" PARENT_SCOPE)
     elseif(NOT version STREQUAL "Use Default")
       message(FATAL_ERROR "Unsupported value for OSX_BASE_SDK_VERSION: \"${version}\"")
     endif()
