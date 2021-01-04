@@ -20,6 +20,7 @@
 
 #include "argh.hpp"
 #include "juce_core.hpp"
+#include "utils.hpp"
 
 #include <algorithm>
 #include <cctype>
@@ -38,15 +39,6 @@
 #include <vector>
 
 
-#if !defined(WRITE_CRLF_LINE_ENDINGS)
-  #error WRITE_CRLF_LINE_ENDINGS must be defined
-#endif
-#if WRITE_CRLF_LINE_ENDINGS
-static const auto kNewLine = "\r\n";
-#else
-static const auto kNewLine = '\n';
-#endif
-
 #if !defined(IS_PAID_OR_GPL)
   #error IS_PAID_OR_GPL must be defined
 #endif
@@ -57,54 +49,11 @@ static const auto kDefaultLicenseBasedValue = "ON";
 #endif
 
 
+using namespace Jucer2CMake;
+
+
 namespace
 {
-
-struct LineWriter
-{
-  explicit LineWriter(juce::MemoryOutputStream& stream)
-    : mStream(stream)
-  {
-  }
-
-  LineWriter(const LineWriter&) = delete;
-  LineWriter& operator=(const LineWriter&) = delete;
-
-  template <class Head>
-  void writeToStream(juce::MemoryOutputStream& stream, Head&& head)
-  {
-    stream << std::forward<Head>(head);
-  }
-
-  template <class Head, class... Tail>
-  void writeToStream(juce::MemoryOutputStream& stream, Head&& head, Tail&&... tail)
-  {
-    stream << std::forward<Head>(head);
-    writeToStream(stream, std::forward<Tail>(tail)...);
-  }
-
-  template <typename... Args>
-  void operator()(Args&&... args)
-  {
-    writeToStream(mStream, std::forward<Args>(args)..., kNewLine);
-  }
-
-private:
-  juce::MemoryOutputStream& mStream;
-};
-
-
-void printError(const juce::String& error)
-{
-  std::cerr << "error: " << error << std::endl;
-}
-
-
-juce::File getChildFileFromWorkingDirectory(const juce::StringRef relativeOrAbsolutePath)
-{
-  return juce::File::getCurrentWorkingDirectory().getChildFile(relativeOrAbsolutePath);
-}
-
 
 // Matches juce::var::VariantType_String::toBool. This means that `toBoolLikeVar(s)` and
 // `bool{juce::var{s}}` are equivalent.
@@ -315,17 +264,6 @@ void writeUserNotes(LineWriter& wLn, const juce::XmlElement& element)
     }
   }
 }
-
-
-struct Arguments
-{
-  juce::String mode;
-  juce::String jucerFilePath;
-  juce::String reprojucerFilePath;
-  juce::String juceModulesPath;
-  juce::String userModulesPath;
-  bool relocatable;
-};
 
 
 Arguments parseArguments(const int argc, const char* const argv[])
