@@ -12,3 +12,5 @@ juce_add_plugin(audioplug6
   VERSION "1.0.0"
   FORMATS "AU" "VST3" "Standalone"
 )
+
+juce_generate_juce_header(audioplug6)

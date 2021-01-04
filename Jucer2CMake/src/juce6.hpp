@@ -72,6 +72,12 @@ inline void writeJuce6CMakeLists(const Arguments&, const juce::XmlElement& jucer
     }
 
     wLn(")");
+    wLn();
+  }
+
+  // juce_generate_juce_header
+  {
+    wLn("juce_generate_juce_header(", targetName, ")");
   }
 }
 

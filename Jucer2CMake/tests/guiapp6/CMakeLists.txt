@@ -11,3 +11,5 @@ find_package(JUCE CONFIG REQUIRED)
 juce_add_gui_app(guiapp6
   VERSION "1.0.0"
 )
+
+juce_generate_juce_header(guiapp6)
