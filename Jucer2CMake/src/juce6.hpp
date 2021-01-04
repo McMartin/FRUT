@@ -147,6 +147,26 @@ inline void writeJuce6CMakeLists(const Arguments&, const juce::XmlElement& jucer
     processGroup(getRequiredChild(jucerProject, "MAINGROUP"));
 
     wLn(")");
+    wLn();
+  }
+
+  // target_link_libraries
+  {
+    wLn("target_link_libraries(", targetName, " PRIVATE");
+
+    const auto& modules = getRequiredChild(jucerProject, "MODULES");
+    for (auto pModule = modules.getFirstChildElement(); pModule != nullptr;
+         pModule = pModule->getNextElement())
+    {
+      if (pModule->isTextElement())
+      {
+        continue;
+      }
+
+      wLn("  juce::", pModule->getStringAttribute("id"));
+    }
+
+    wLn(")");
   }
 }
 

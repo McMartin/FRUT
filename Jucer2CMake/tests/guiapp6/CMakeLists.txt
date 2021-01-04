@@ -22,3 +22,11 @@ target_sources(guiapp6 PRIVATE
   "Source/Main.cpp"
   "Source/MainComponent.cpp"
 )
+
+target_link_libraries(guiapp6 PRIVATE
+  juce::juce_core
+  juce::juce_data_structures
+  juce::juce_events
+  juce::juce_graphics
+  juce::juce_gui_basics
+)

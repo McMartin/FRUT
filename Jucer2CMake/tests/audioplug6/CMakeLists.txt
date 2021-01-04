@@ -24,3 +24,18 @@ target_sources(audioplug6 PRIVATE
   "Source/PluginProcessor.cpp"
   "Source/PluginEditor.cpp"
 )
+
+target_link_libraries(audioplug6 PRIVATE
+  juce::juce_audio_basics
+  juce::juce_audio_devices
+  juce::juce_audio_formats
+  juce::juce_audio_plugin_client
+  juce::juce_audio_processors
+  juce::juce_audio_utils
+  juce::juce_core
+  juce::juce_data_structures
+  juce::juce_events
+  juce::juce_graphics
+  juce::juce_gui_basics
+  juce::juce_gui_extra
+)

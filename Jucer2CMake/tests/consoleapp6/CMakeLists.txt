@@ -21,3 +21,9 @@ target_compile_definitions(consoleapp6 PRIVATE
 target_sources(consoleapp6 PRIVATE
   "Source/Main.cpp"
 )
+
+target_link_libraries(consoleapp6 PRIVATE
+  juce::juce_core
+  juce::juce_data_structures
+  juce::juce_events
+)
