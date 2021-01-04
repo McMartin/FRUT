@@ -21,9 +21,25 @@
 
 #include "juce_core.hpp"
 
+#include <cstdlib>
+
 
 namespace Jucer2CMake
 {
+
+inline const juce::XmlElement& getRequiredChild(const juce::XmlElement& element,
+                                                const juce::StringRef childName)
+{
+  if (const auto pChild = element.getChildByName(childName))
+  {
+    return *pChild;
+  }
+
+  printError(element.getTagName() + " element doesn't have " + childName
+             + " child element.");
+  std::exit(1);
+}
+
 
 inline void writeJuce6CMakeLists(const Arguments&, const juce::XmlElement& jucerProject,
                                  juce::MemoryOutputStream& outputStream)
@@ -78,6 +94,22 @@ inline void writeJuce6CMakeLists(const Arguments&, const juce::XmlElement& jucer
   // juce_generate_juce_header
   {
     wLn("juce_generate_juce_header(", targetName, ")");
+    wLn();
+  }
+
+  // target_compile_definitions
+  {
+    const auto scope = projectType == "audioplug" ? "PUBLIC" : "PRIVATE";
+    wLn("target_compile_definitions(", targetName, " ", scope);
+
+    const auto& juceOptions = getRequiredChild(jucerProject, "JUCEOPTIONS");
+    for (auto i = 0, numAttributes = juceOptions.getNumAttributes(); i < numAttributes;
+         ++i)
+    {
+      wLn("  ", juceOptions.getAttributeName(i), "=", juceOptions.getAttributeValue(i));
+    }
+
+    wLn(")");
   }
 }
 

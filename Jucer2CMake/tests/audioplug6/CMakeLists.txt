@@ -14,3 +14,8 @@ juce_add_plugin(audioplug6
 )
 
 juce_generate_juce_header(audioplug6)
+
+target_compile_definitions(audioplug6 PUBLIC
+  JUCE_STRICT_REFCOUNTEDPOINTER=1
+  JUCE_VST3_CAN_REPLACE_VST2=0
+)

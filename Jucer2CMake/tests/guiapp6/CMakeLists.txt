@@ -13,3 +13,7 @@ juce_add_gui_app(guiapp6
 )
 
 juce_generate_juce_header(guiapp6)
+
+target_compile_definitions(guiapp6 PRIVATE
+  JUCE_STRICT_REFCOUNTEDPOINTER=1
+)
