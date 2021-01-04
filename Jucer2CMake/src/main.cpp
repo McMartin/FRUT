@@ -1,5 +1,5 @@
 // Copyright (C) 2017  Matthieu Talbot
-// Copyright (C) 2017-2020  Alain Martin
+// Copyright (C) 2017-2021  Alain Martin
 // Copyright (C) 2017  Florian Goltz
 // Copyright (C) 2019  Johannes Elliesen
 //
@@ -371,6 +371,7 @@ void writeUserNotes(LineWriter& wLn, const juce::XmlElement& element)
 
 struct Arguments
 {
+  juce::String mode;
   juce::String jucerFilePath;
   juce::String reprojucerFilePath;
   juce::String juceModulesPath;
@@ -381,24 +382,36 @@ struct Arguments
 
 Arguments parseArguments(const int argc, const char* const argv[])
 {
-  const juce::StringArray knownFlags{"h", "help", "relocatable"};
-  const juce::StringArray knownParams{"juce-modules", "user-modules"};
+  const auto knownModes = juce::StringArray{"reprojucer"};
+
+  const auto knownFlags = std::map<juce::String, juce::StringArray>{
+    {"reprojucer", {"h", "help", "relocatable"}},
+  };
+
+  const auto knownParams = std::map<juce::String, juce::StringArray>{
+    {"reprojucer", {"juce-modules", "user-modules"}},
+  };
 
   argh::parser argumentParser;
-  for (const auto& param : knownParams)
+  for (const auto& modeAndParams : knownParams)
   {
-    argumentParser.add_param(param.toStdString());
+    for (const auto& param : modeAndParams.second)
+    {
+      argumentParser.add_param(param.toStdString());
+    }
   }
   argumentParser.parse(argc, argv);
 
   const auto askingForHelp = argumentParser[{"-h", "--help"}];
   auto errorInArguments = false;
 
+  auto mode = juce::String{argumentParser[1]};
+
   if (!askingForHelp)
   {
-    if (argumentParser.size() >= 2 && argumentParser[1] != "reprojucer")
+    if (argumentParser.size() >= 2 && !knownModes.contains(mode))
     {
-      printError("invalid mode \"" + argumentParser[1] + "\"");
+      printError("invalid mode \"" + mode + "\"");
       errorInArguments = true;
     }
 
@@ -414,35 +427,54 @@ Arguments parseArguments(const int argc, const char* const argv[])
     }
   }
 
-  for (const auto& flag : argumentParser.flags())
+  if (mode.isNotEmpty())
   {
-    if (knownParams.contains(juce::String{flag}))
+    for (const auto& flag : argumentParser.flags())
     {
-      printError("expected one argument for \"" + flag + "\"");
-      errorInArguments = true;
+      if (knownParams.at(mode).contains(juce::String{flag}))
+      {
+        printError("expected one argument for \"" + flag + "\"");
+        errorInArguments = true;
+      }
+      else if (!knownFlags.at(mode).contains(juce::String{flag}))
+      {
+        printError("unknown option \"" + flag + "\"");
+        errorInArguments = true;
+      }
     }
-    else if (!knownFlags.contains(juce::String{flag}))
+
+    for (const auto& paramAndValue : argumentParser.params())
     {
-      printError("unknown option \"" + flag + "\"");
-      errorInArguments = true;
+      const auto& param = std::get<0>(paramAndValue);
+      if (knownFlags.at(mode).contains(juce::String{param}))
+      {
+        const auto& value = std::get<1>(paramAndValue);
+        printError("unexpected argument \"" + value + "\" for \"" + param + "\"");
+        errorInArguments = true;
+      }
+      else if (!knownParams.at(mode).contains(juce::String{param}))
+      {
+        printError("unknown option \"" + param + "\"");
+        errorInArguments = true;
+      }
     }
   }
 
-  for (const auto& paramAndValue : argumentParser.params())
-  {
-    const auto& param = std::get<0>(paramAndValue);
-    if (knownFlags.contains(juce::String{param}))
-    {
-      const auto& value = std::get<1>(paramAndValue);
-      printError("unexpected argument \"" + value + "\" for \"" + param + "\"");
-      errorInArguments = true;
-    }
-    else if (!knownParams.contains(juce::String{param}))
-    {
-      printError("unknown option \"" + param + "\"");
-      errorInArguments = true;
-    }
-  }
+  const auto noModeUsage =
+    askingForHelp ? "usage: Jucer2CMake <mode> <jucer_project_file> [--help] [<args>]\n"
+                  : "usage: Jucer2CMake {reprojucer} <jucer_project_file> "
+                    "[--help] [<args>]\n";
+  const auto noModeHelpText =
+    "\n"
+    "Converts a .jucer file into a CMakeLists.txt file.\n"
+    "The CMakeLists.txt file is written in the current working directory.\n"
+    "\n"
+    "    <mode>                    what the generated CMakeLists.txt uses:\n"
+    "      reprojucer                - FRUT's Reprojucer\n"
+    "\n"
+    "    <jucer_project_file>      path to the .jucer file to convert\n"
+    "\n"
+    "    -h, --help                show this help message and exit\n";
 
   const auto reprojucerUsage =
     "usage: Jucer2CMake reprojucer <jucer_project_file> [<Reprojucer.cmake_file>]\n"
@@ -463,13 +495,18 @@ Arguments parseArguments(const int argc, const char* const argv[])
     "                              the location of the .jucer file, but requires\n"
     "                              defining a variable when calling cmake\n";
 
+  const auto usage = std::map<juce::String, const char*>{{"", noModeUsage},
+                                                         {"reprojucer", reprojucerUsage}};
+  const auto helpText = std::map<juce::String, const char*>{
+    {"", noModeHelpText}, {"reprojucer", reprojucerHelpText}};
+
   if (askingForHelp || errorInArguments)
   {
-    std::cerr << reprojucerUsage << std::flush;
+    std::cerr << usage.at(mode) << std::flush;
 
     if (askingForHelp)
     {
-      std::cerr << reprojucerHelpText << std::flush;
+      std::cerr << helpText.at(mode) << std::flush;
     }
 
     std::exit(askingForHelp ? 0 : 1);
@@ -508,8 +545,11 @@ Arguments parseArguments(const int argc, const char* const argv[])
     }
   }
 
-  return {std::move(jucerFilePath), std::move(reprojucerFilePath),
-          std::move(juceModulesPath), std::move(userModulesPath),
+  return {std::move(mode),
+          std::move(jucerFilePath),
+          std::move(reprojucerFilePath),
+          std::move(juceModulesPath),
+          std::move(userModulesPath),
           argumentParser["--relocatable"]};
 }
 
