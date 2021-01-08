@@ -758,6 +758,8 @@ function(jucer_export_target exporter)
       "MICROPHONE_ACCESS_TEXT"
       "CAMERA_ACCESS"
       "CAMERA_ACCESS_TEXT"
+      "BLUETOOTH_ACCESS"
+      "BLUETOOTH_ACCESS_TEXT"
       "IN_APP_PURCHASES_CAPABILITY"
       "PUSH_NOTIFICATIONS_CAPABILITY"
       "CUSTOM_PLIST"
@@ -814,8 +816,6 @@ function(jucer_export_target exporter)
       "FILE_SHARING_ENABLED"
       "SUPPORT_DOCUMENT_BROWSER"
       "STATUS_BAR_HIDDEN"
-      "BLUETOOTH_ACCESS"
-      "BLUETOOTH_ACCESS_TEXT"
       "CONTENT_SHARING"
       "AUDIO_BACKGROUND_CAPABILITY"
       "BLUETOOTH_MIDI_BACKGROUND_CAPABILITY"
@@ -4235,18 +4235,23 @@ function(_FRUT_generate_plist_file
     )
   endif()
 
+  if(JUCER_BLUETOOTH_ACCESS)
+    if(DEFINED JUCER_BLUETOOTH_ACCESS_TEXT)
+      set(bluetooth_usage_description "${JUCER_BLUETOOTH_ACCESS_TEXT}")
+    else()
+      string(CONCAT bluetooth_usage_description "This app requires access to Bluetooth to"
+        " function correctly."
+      )
+    endif()
+    string(APPEND plist_entries "
+    <key>NSBluetoothAlwaysUsageDescription</key>
+    <string>${bluetooth_usage_description}</string>"
+    )
+  endif()
+
   if(IOS)
     if(JUCER_BLUETOOTH_ACCESS)
-      if(DEFINED JUCER_BLUETOOTH_ACCESS_TEXT)
-        set(bluetooth_usage_description "${JUCER_BLUETOOTH_ACCESS_TEXT}")
-      else()
-        string(CONCAT bluetooth_usage_description "This app requires access to Bluetooth"
-          " to function correctly."
-        )
-      endif()
       string(APPEND plist_entries "
-    <key>NSBluetoothAlwaysUsageDescription</key>
-    <string>${bluetooth_usage_description}</string>
     <key>NSBluetoothPeripheralUsageDescription</key>
     <string>${bluetooth_usage_description}</string>"
       )

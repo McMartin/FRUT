@@ -89,6 +89,17 @@ function(test_app_plist_camera_access_custom)
   _FRUT_generate_plist_file(target "App-CameraUsage-custom" "APPL" "????")
 endfunction()
 
+function(test_app_plist_bluetooth_access_default)
+  set(JUCER_BLUETOOTH_ACCESS ON)
+  _FRUT_generate_plist_file(target "App-BluetoothUsage-default" "APPL" "????")
+endfunction()
+
+function(test_app_plist_bluetooth_access_custom)
+  set(JUCER_BLUETOOTH_ACCESS ON)
+  set(JUCER_BLUETOOTH_ACCESS_TEXT "Custom Bluetooth Access Text")
+  _FRUT_generate_plist_file(target "App-BluetoothUsage-custom" "APPL" "????")
+endfunction()
+
 function(test_app_plist_send_apple_events_default)
   set(JUCER_SEND_APPLE_EVENTS ON)
   _FRUT_generate_plist_file(target "App-SendAppleEvents-default" "APPL" "????")
@@ -112,6 +123,8 @@ function(test_app_plist_exporter_bundle_identifier)
 endfunction()
 
 
+test_app_plist_bluetooth_access_custom()
+test_app_plist_bluetooth_access_default()
 test_app_plist_bundle_identifier()
 test_app_plist_camera_access_custom()
 test_app_plist_camera_access_default()

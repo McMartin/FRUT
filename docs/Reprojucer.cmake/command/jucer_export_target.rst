@@ -64,8 +64,8 @@ Define the settings specific to an export target.
     [MICROPHONE_ACCESS_TEXT <microphone_access_text>]  # [3]
     [CAMERA_ACCESS <ON|OFF>]  # [3]
     [CAMERA_ACCESS_TEXT <camera_access_text>]  # [3]
-    [BLUETOOTH_ACCESS <ON|OFF>]  # [7]
-    [BLUETOOTH_ACCESS_TEXT <bluetooth_access_text>]  # [7]
+    [BLUETOOTH_ACCESS <ON|OFF>]  # [3]
+    [BLUETOOTH_ACCESS_TEXT <bluetooth_access_text>]  # [3]
     [SEND_APPLE_EVENTS <ON|OFF>]  # [5]
     [SEND_APPLE_EVENTS_TEXT <send_apple_events_text>]  # [5]
 

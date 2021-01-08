@@ -1744,16 +1744,13 @@ inline void writeReprojucerCMakeLists(const Arguments& args,
                                      {});
         convertSettingIfDefined(exporter, "cameraPermissionText", "CAMERA_ACCESS_TEXT",
                                 {});
-      }
-
-      if (exporterType == "XCODE_IPHONE")
-      {
         convertOnOffSettingIfDefined(exporter, "iosBluetoothPermissionNeeded",
                                      "BLUETOOTH_ACCESS", {});
         convertSettingIfDefined(exporter, "iosBluetoothPermissionText",
                                 "BLUETOOTH_ACCESS_TEXT", {});
       }
-      else
+
+      if (exporterType == "XCODE_MAC")
       {
         convertOnOffSettingIfDefined(exporter, "sendAppleEventsPermissionNeeded",
                                      "SEND_APPLE_EVENTS", {});
