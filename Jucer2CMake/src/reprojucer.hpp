@@ -1769,6 +1769,8 @@ inline void writeReprojucerCMakeLists(const Arguments& args,
 
       if (exporterType == "XCODE_IPHONE")
       {
+        convertOnOffSettingIfDefined(exporter, "iosContentSharing", "CONTENT_SHARING",
+                                     {});
         convertOnOffSettingIfDefined(exporter, "iosBackgroundAudio",
                                      "AUDIO_BACKGROUND_CAPABILITY", {});
         convertOnOffSettingIfDefined(exporter, "iosBackgroundBle",
