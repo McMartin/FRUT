@@ -1,4 +1,4 @@
-# Copyright (C) 2019  Alain Martin
+# Copyright (C) 2019, 2021  Alain Martin
 #
 # This file is part of FRUT.
 #
@@ -89,6 +89,17 @@ function(test_app_plist_camera_access_custom)
   _FRUT_generate_plist_file(target "App-CameraUsage-custom" "APPL" "????")
 endfunction()
 
+function(test_app_plist_send_apple_events_default)
+  set(JUCER_SEND_APPLE_EVENTS ON)
+  _FRUT_generate_plist_file(target "App-SendAppleEvents-default" "APPL" "????")
+endfunction()
+
+function(test_app_plist_send_apple_events_custom)
+  set(JUCER_SEND_APPLE_EVENTS ON)
+  set(JUCER_SEND_APPLE_EVENTS_TEXT "Custom Send Apple Events Text")
+  _FRUT_generate_plist_file(target "App-SendAppleEvents-custom" "APPL" "????")
+endfunction()
+
 function(test_app_plist_document_types)
   set(JUCER_DOCUMENT_FILE_EXTENSIONS ".aiff" "flac" ".wav")
   _FRUT_generate_plist_file(target "App-DocumentTypes" "APPL" "????")
@@ -113,4 +124,6 @@ test_app_plist_icon_file()
 test_app_plist_microphone_access_custom()
 test_app_plist_microphone_access_default()
 test_app_plist_pre_5_2_0()
+test_app_plist_send_apple_events_custom()
+test_app_plist_send_apple_events_default()
 test_app_plist_version()

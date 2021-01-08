@@ -1,4 +1,4 @@
-# Copyright (C) 2016-2020  Alain Martin
+# Copyright (C) 2016-2021  Alain Martin
 # Copyright (C) 2017 Matthieu Talbot
 # Copyright (C) 2018-2019 Scott Wheeler
 #
@@ -795,6 +795,8 @@ function(jucer_export_target exporter)
       "APP_SANDBOX_OPTIONS"
       "USE_HARDENED_RUNTIME"
       "HARDENED_RUNTIME_OPTIONS"
+      "SEND_APPLE_EVENTS"
+      "SEND_APPLE_EVENTS_TEXT"
     )
 
     if(JUCER_PROJECT_TYPE STREQUAL "GUI Application")
@@ -1232,6 +1234,14 @@ function(jucer_export_target exporter)
 
   if(DEFINED _BLUETOOTH_ACCESS_TEXT)
     set(JUCER_BLUETOOTH_ACCESS_TEXT "${_BLUETOOTH_ACCESS_TEXT}" PARENT_SCOPE)
+  endif()
+
+  if(DEFINED _SEND_APPLE_EVENTS)
+    set(JUCER_SEND_APPLE_EVENTS "${_SEND_APPLE_EVENTS}" PARENT_SCOPE)
+  endif()
+
+  if(DEFINED _SEND_APPLE_EVENTS_TEXT)
+    set(JUCER_SEND_APPLE_EVENTS_TEXT "${_SEND_APPLE_EVENTS_TEXT}" PARENT_SCOPE)
   endif()
 
   if(DEFINED _IN_APP_PURCHASES_CAPABILITY AND _IN_APP_PURCHASES_CAPABILITY)
@@ -4265,6 +4275,20 @@ function(_FRUT_generate_plist_file
       string(APPEND plist_entries "
     <key>UILaunchStoryboardName</key>
     <string>${storyboard_name}</string>"
+      )
+    endif()
+  else()
+    if(JUCER_SEND_APPLE_EVENTS)
+      if(DEFINED JUCER_SEND_APPLE_EVENTS_TEXT)
+        set(apple_events_usage_description "${JUCER_SEND_APPLE_EVENTS_TEXT}")
+      else()
+        string(CONCAT apple_events_usage_description "This app requires the ability to"
+          " send Apple events to function correctly."
+        )
+      endif()
+      string(APPEND plist_entries "
+    <key>NSAppleEventsUsageDescription</key>
+    <string>${apple_events_usage_description}</string>"
       )
     endif()
   endif()

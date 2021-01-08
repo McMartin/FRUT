@@ -1753,6 +1753,13 @@ inline void writeReprojucerCMakeLists(const Arguments& args,
         convertSettingIfDefined(exporter, "iosBluetoothPermissionText",
                                 "BLUETOOTH_ACCESS_TEXT", {});
       }
+      else
+      {
+        convertOnOffSettingIfDefined(exporter, "sendAppleEventsPermissionNeeded",
+                                     "SEND_APPLE_EVENTS", {});
+        convertSettingIfDefined(exporter, "sendAppleEventsPermissionText",
+                                "SEND_APPLE_EVENTS_TEXT", {});
+      }
 
       if (isXcodeExporter)
       {
