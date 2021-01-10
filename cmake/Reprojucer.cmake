@@ -1,4 +1,4 @@
-# Copyright (C) 2016-2020  Alain Martin
+# Copyright (C) 2016-2021  Alain Martin
 # Copyright (C) 2017 Matthieu Talbot
 # Copyright (C) 2018-2019 Scott Wheeler
 #
@@ -758,6 +758,8 @@ function(jucer_export_target exporter)
       "MICROPHONE_ACCESS_TEXT"
       "CAMERA_ACCESS"
       "CAMERA_ACCESS_TEXT"
+      "BLUETOOTH_ACCESS"
+      "BLUETOOTH_ACCESS_TEXT"
       "IN_APP_PURCHASES_CAPABILITY"
       "PUSH_NOTIFICATIONS_CAPABILITY"
       "CUSTOM_PLIST"
@@ -795,6 +797,8 @@ function(jucer_export_target exporter)
       "APP_SANDBOX_OPTIONS"
       "USE_HARDENED_RUNTIME"
       "HARDENED_RUNTIME_OPTIONS"
+      "SEND_APPLE_EVENTS"
+      "SEND_APPLE_EVENTS_TEXT"
     )
 
     if(JUCER_PROJECT_TYPE STREQUAL "GUI Application")
@@ -812,8 +816,7 @@ function(jucer_export_target exporter)
       "FILE_SHARING_ENABLED"
       "SUPPORT_DOCUMENT_BROWSER"
       "STATUS_BAR_HIDDEN"
-      "BLUETOOTH_ACCESS"
-      "BLUETOOTH_ACCESS_TEXT"
+      "CONTENT_SHARING"
       "AUDIO_BACKGROUND_CAPABILITY"
       "BLUETOOTH_MIDI_BACKGROUND_CAPABILITY"
       "APP_GROUPS_CAPABILITY"
@@ -1234,6 +1237,14 @@ function(jucer_export_target exporter)
     set(JUCER_BLUETOOTH_ACCESS_TEXT "${_BLUETOOTH_ACCESS_TEXT}" PARENT_SCOPE)
   endif()
 
+  if(DEFINED _SEND_APPLE_EVENTS)
+    set(JUCER_SEND_APPLE_EVENTS "${_SEND_APPLE_EVENTS}" PARENT_SCOPE)
+  endif()
+
+  if(DEFINED _SEND_APPLE_EVENTS_TEXT)
+    set(JUCER_SEND_APPLE_EVENTS_TEXT "${_SEND_APPLE_EVENTS_TEXT}" PARENT_SCOPE)
+  endif()
+
   if(DEFINED _IN_APP_PURCHASES_CAPABILITY AND _IN_APP_PURCHASES_CAPABILITY)
     set(JUCER_IN_APP_PURCHASES_CAPABILITY "${_IN_APP_PURCHASES_CAPABILITY}" PARENT_SCOPE)
   endif()
@@ -1247,6 +1258,10 @@ function(jucer_export_target exporter)
     set(JUCER_PUSH_NOTIFICATIONS_CAPABILITY "${_PUSH_NOTIFICATIONS_CAPABILITY}"
       PARENT_SCOPE
     )
+  endif()
+
+  if(DEFINED _CONTENT_SHARING)
+    set(JUCER_CONTENT_SHARING "${_CONTENT_SHARING}" PARENT_SCOPE)
   endif()
 
   if(DEFINED _AUDIO_BACKGROUND_CAPABILITY)
@@ -4220,18 +4235,23 @@ function(_FRUT_generate_plist_file
     )
   endif()
 
+  if(JUCER_BLUETOOTH_ACCESS)
+    if(DEFINED JUCER_BLUETOOTH_ACCESS_TEXT)
+      set(bluetooth_usage_description "${JUCER_BLUETOOTH_ACCESS_TEXT}")
+    else()
+      string(CONCAT bluetooth_usage_description "This app requires access to Bluetooth to"
+        " function correctly."
+      )
+    endif()
+    string(APPEND plist_entries "
+    <key>NSBluetoothAlwaysUsageDescription</key>
+    <string>${bluetooth_usage_description}</string>"
+    )
+  endif()
+
   if(IOS)
     if(JUCER_BLUETOOTH_ACCESS)
-      if(DEFINED JUCER_BLUETOOTH_ACCESS_TEXT)
-        set(bluetooth_usage_description "${JUCER_BLUETOOTH_ACCESS_TEXT}")
-      else()
-        string(CONCAT bluetooth_usage_description "This app requires access to Bluetooth"
-          " to function correctly."
-        )
-      endif()
       string(APPEND plist_entries "
-    <key>NSBluetoothAlwaysUsageDescription</key>
-    <string>${bluetooth_usage_description}</string>
     <key>NSBluetoothPeripheralUsageDescription</key>
     <string>${bluetooth_usage_description}</string>"
       )
@@ -4265,6 +4285,20 @@ function(_FRUT_generate_plist_file
       string(APPEND plist_entries "
     <key>UILaunchStoryboardName</key>
     <string>${storyboard_name}</string>"
+      )
+    endif()
+  else()
+    if(JUCER_SEND_APPLE_EVENTS)
+      if(DEFINED JUCER_SEND_APPLE_EVENTS_TEXT)
+        set(apple_events_usage_description "${JUCER_SEND_APPLE_EVENTS_TEXT}")
+      else()
+        string(CONCAT apple_events_usage_description "This app requires the ability to"
+          " send Apple events to function correctly."
+        )
+      endif()
+      string(APPEND plist_entries "
+    <key>NSAppleEventsUsageDescription</key>
+    <string>${apple_events_usage_description}</string>"
       )
     endif()
   endif()
@@ -5214,6 +5248,13 @@ function(_FRUT_set_compiler_and_linker_settings_APPLE target)
 
   if(JUCER_IN_APP_PURCHASES_CAPABILITY)
     target_compile_definitions(${target} PRIVATE "JUCE_IN_APP_PURCHASES=1")
+  endif()
+
+  if(NOT (DEFINED JUCER_VERSION AND JUCER_VERSION VERSION_LESS 6.0.0)
+    AND IOS
+    AND (NOT DEFINED JUCER_CONTENT_SHARING OR JUCER_CONTENT_SHARING)
+  )
+    target_compile_definitions(${target} PRIVATE "JUCE_CONTENT_SHARING=1")
   endif()
 
   if(JUCER_PUSH_NOTIFICATIONS_CAPABILITY)

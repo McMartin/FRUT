@@ -196,6 +196,8 @@ jucer_export_target(
   CUSTOM_XCODE_RESOURCE_FOLDERS
     "../../examples/Assets"
   MICROPHONE_ACCESS ON
+  SEND_APPLE_EVENTS ON
+  SEND_APPLE_EVENTS_TEXT "This is required for some third-party plug-ins to function correctly."
 )
 
 jucer_export_target_configuration(

@@ -1744,14 +1744,18 @@ inline void writeReprojucerCMakeLists(const Arguments& args,
                                      {});
         convertSettingIfDefined(exporter, "cameraPermissionText", "CAMERA_ACCESS_TEXT",
                                 {});
-      }
-
-      if (exporterType == "XCODE_IPHONE")
-      {
         convertOnOffSettingIfDefined(exporter, "iosBluetoothPermissionNeeded",
                                      "BLUETOOTH_ACCESS", {});
         convertSettingIfDefined(exporter, "iosBluetoothPermissionText",
                                 "BLUETOOTH_ACCESS_TEXT", {});
+      }
+
+      if (exporterType == "XCODE_MAC")
+      {
+        convertOnOffSettingIfDefined(exporter, "sendAppleEventsPermissionNeeded",
+                                     "SEND_APPLE_EVENTS", {});
+        convertSettingIfDefined(exporter, "sendAppleEventsPermissionText",
+                                "SEND_APPLE_EVENTS_TEXT", {});
       }
 
       if (isXcodeExporter)
@@ -1762,6 +1766,8 @@ inline void writeReprojucerCMakeLists(const Arguments& args,
 
       if (exporterType == "XCODE_IPHONE")
       {
+        convertOnOffSettingIfDefined(exporter, "iosContentSharing", "CONTENT_SHARING",
+                                     {});
         convertOnOffSettingIfDefined(exporter, "iosBackgroundAudio",
                                      "AUDIO_BACKGROUND_CAPABILITY", {});
         convertOnOffSettingIfDefined(exporter, "iosBackgroundBle",
