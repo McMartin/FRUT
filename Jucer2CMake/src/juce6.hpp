@@ -199,6 +199,11 @@ inline void writeJuce6CMakeLists(const Arguments&, const juce::XmlElement& jucer
       wLn("    juce::", pModule->getStringAttribute("id"));
     }
 
+    wLn("  PUBLIC");
+    wLn("    juce::juce_recommended_config_flags");
+    wLn("    juce::juce_recommended_lto_flags");
+    wLn("    juce::juce_recommended_warning_flags");
+
     wLn(")");
   }
 }

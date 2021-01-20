@@ -33,4 +33,8 @@ target_link_libraries(guiapp6
     juce::juce_events
     juce::juce_graphics
     juce::juce_gui_basics
+  PUBLIC
+    juce::juce_recommended_config_flags
+    juce::juce_recommended_lto_flags
+    juce::juce_recommended_warning_flags
 )
