@@ -121,23 +121,24 @@ inline void writeJuce6CMakeLists(const Arguments&, const juce::XmlElement& jucer
   // target_compile_definitions
   {
     const auto scope = projectType == "audioplug" ? "PUBLIC" : "PRIVATE";
-    wLn("target_compile_definitions(", targetName, " ", scope);
+    wLn("target_compile_definitions(", targetName);
+    wLn("  ", scope);
 
     const auto& juceOptions = getRequiredChild(jucerProject, "JUCEOPTIONS");
     for (auto i = 0, numAttributes = juceOptions.getNumAttributes(); i < numAttributes;
          ++i)
     {
-      wLn("  ", juceOptions.getAttributeName(i), "=", juceOptions.getAttributeValue(i));
+      wLn("    ", juceOptions.getAttributeName(i), "=", juceOptions.getAttributeValue(i));
     }
 
     const auto& modules = getRequiredChild(jucerProject, "MODULES");
     if (hasModule(modules, "juce_core"))
     {
-      wLn("  JUCE_USE_CURL=0");
+      wLn("    JUCE_USE_CURL=0");
     }
     if (hasModule(modules, "juce_gui_extra"))
     {
-      wLn("  JUCE_WEB_BROWSER=0");
+      wLn("    JUCE_WEB_BROWSER=0");
     }
 
     wLn(")");
@@ -146,7 +147,8 @@ inline void writeJuce6CMakeLists(const Arguments&, const juce::XmlElement& jucer
 
   // target_sources
   {
-    wLn("target_sources(", targetName, " PRIVATE");
+    wLn("target_sources(", targetName);
+    wLn("  PRIVATE");
 
     std::function<void(const juce::XmlElement&)> processGroup =
       [&processGroup, &wLn](const juce::XmlElement& group) {
@@ -164,7 +166,7 @@ inline void writeJuce6CMakeLists(const Arguments&, const juce::XmlElement& jucer
 
             if (file.getStringAttribute("compile").getIntValue() == 1)
             {
-              wLn("  \"", file.getStringAttribute("file"), "\"");
+              wLn("    \"", file.getStringAttribute("file"), "\"");
             }
           }
           else
@@ -182,7 +184,8 @@ inline void writeJuce6CMakeLists(const Arguments&, const juce::XmlElement& jucer
 
   // target_link_libraries
   {
-    wLn("target_link_libraries(", targetName, " PRIVATE");
+    wLn("target_link_libraries(", targetName);
+    wLn("  PRIVATE");
 
     const auto& modules = getRequiredChild(jucerProject, "MODULES");
     for (auto pModule = modules.getFirstChildElement(); pModule != nullptr;
@@ -193,7 +196,7 @@ inline void writeJuce6CMakeLists(const Arguments&, const juce::XmlElement& jucer
         continue;
       }
 
-      wLn("  juce::", pModule->getStringAttribute("id"));
+      wLn("    juce::", pModule->getStringAttribute("id"));
     }
 
     wLn(")");

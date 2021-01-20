@@ -14,20 +14,23 @@ juce_add_gui_app(guiapp6
 
 juce_generate_juce_header(guiapp6)
 
-target_compile_definitions(guiapp6 PRIVATE
-  JUCE_STRICT_REFCOUNTEDPOINTER=1
-  JUCE_USE_CURL=0
+target_compile_definitions(guiapp6
+  PRIVATE
+    JUCE_STRICT_REFCOUNTEDPOINTER=1
+    JUCE_USE_CURL=0
 )
 
-target_sources(guiapp6 PRIVATE
-  "Source/Main.cpp"
-  "Source/MainComponent.cpp"
+target_sources(guiapp6
+  PRIVATE
+    "Source/Main.cpp"
+    "Source/MainComponent.cpp"
 )
 
-target_link_libraries(guiapp6 PRIVATE
-  juce::juce_core
-  juce::juce_data_structures
-  juce::juce_events
-  juce::juce_graphics
-  juce::juce_gui_basics
+target_link_libraries(guiapp6
+  PRIVATE
+    juce::juce_core
+    juce::juce_data_structures
+    juce::juce_events
+    juce::juce_graphics
+    juce::juce_gui_basics
 )
