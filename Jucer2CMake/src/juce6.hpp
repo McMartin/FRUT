@@ -118,26 +118,39 @@ inline void writeJuce6CMakeLists(const Arguments&, const juce::XmlElement& jucer
     wLn();
   }
 
+  const auto kIgnoreCase = false;
+
   // target_compile_definitions
   {
     const auto scope = projectType == "audioplug" ? "PUBLIC" : "PRIVATE";
-    wLn("target_compile_definitions(", targetName, " ", scope);
+    wLn("target_compile_definitions(", targetName);
+    wLn("  ", scope);
+
+    juce::StringArray compileDefinitions;
 
     const auto& juceOptions = getRequiredChild(jucerProject, "JUCEOPTIONS");
     for (auto i = 0, numAttributes = juceOptions.getNumAttributes(); i < numAttributes;
          ++i)
     {
-      wLn("  ", juceOptions.getAttributeName(i), "=", juceOptions.getAttributeValue(i));
+      compileDefinitions.add(juceOptions.getAttributeName(i) + "="
+                             + juceOptions.getAttributeValue(i));
     }
 
     const auto& modules = getRequiredChild(jucerProject, "MODULES");
     if (hasModule(modules, "juce_core"))
     {
-      wLn("  JUCE_USE_CURL=0");
+      compileDefinitions.add("JUCE_USE_CURL=0");
     }
     if (hasModule(modules, "juce_gui_extra"))
     {
-      wLn("  JUCE_WEB_BROWSER=0");
+      compileDefinitions.add("JUCE_WEB_BROWSER=0");
+    }
+
+    compileDefinitions.sort(kIgnoreCase);
+
+    for (const auto& item : compileDefinitions)
+    {
+      wLn("    ", item);
     }
 
     wLn(")");
@@ -146,10 +159,13 @@ inline void writeJuce6CMakeLists(const Arguments&, const juce::XmlElement& jucer
 
   // target_sources
   {
-    wLn("target_sources(", targetName, " PRIVATE");
+    wLn("target_sources(", targetName);
+    wLn("  PRIVATE");
+
+    juce::StringArray sources;
 
     std::function<void(const juce::XmlElement&)> processGroup =
-      [&processGroup, &wLn](const juce::XmlElement& group) {
+      [&processGroup, &sources](const juce::XmlElement& group) {
         for (auto pFileOrGroup = group.getFirstChildElement(); pFileOrGroup != nullptr;
              pFileOrGroup = pFileOrGroup->getNextElement())
         {
@@ -164,7 +180,7 @@ inline void writeJuce6CMakeLists(const Arguments&, const juce::XmlElement& jucer
 
             if (file.getStringAttribute("compile").getIntValue() == 1)
             {
-              wLn("  \"", file.getStringAttribute("file"), "\"");
+              sources.add(file.getStringAttribute("file"));
             }
           }
           else
@@ -176,13 +192,21 @@ inline void writeJuce6CMakeLists(const Arguments&, const juce::XmlElement& jucer
 
     processGroup(getRequiredChild(jucerProject, "MAINGROUP"));
 
+    sources.sort(kIgnoreCase);
+
+    for (const auto& item : sources)
+    {
+      wLn("    \"", item, "\"");
+    }
+
     wLn(")");
     wLn();
   }
 
   // target_link_libraries
   {
-    wLn("target_link_libraries(", targetName, " PRIVATE");
+    wLn("target_link_libraries(", targetName);
+    wLn("  PRIVATE");
 
     const auto& modules = getRequiredChild(jucerProject, "MODULES");
     for (auto pModule = modules.getFirstChildElement(); pModule != nullptr;
@@ -193,8 +217,13 @@ inline void writeJuce6CMakeLists(const Arguments&, const juce::XmlElement& jucer
         continue;
       }
 
-      wLn("  juce::", pModule->getStringAttribute("id"));
+      wLn("    juce::", pModule->getStringAttribute("id"));
     }
+
+    wLn("  PUBLIC");
+    wLn("    juce::juce_recommended_config_flags");
+    wLn("    juce::juce_recommended_lto_flags");
+    wLn("    juce::juce_recommended_warning_flags");
 
     wLn(")");
   }

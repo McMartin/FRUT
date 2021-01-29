@@ -14,17 +14,24 @@ juce_add_console_app(consoleapp6
 
 juce_generate_juce_header(consoleapp6)
 
-target_compile_definitions(consoleapp6 PRIVATE
-  JUCE_STRICT_REFCOUNTEDPOINTER=1
-  JUCE_USE_CURL=0
+target_compile_definitions(consoleapp6
+  PRIVATE
+    JUCE_STRICT_REFCOUNTEDPOINTER=1
+    JUCE_USE_CURL=0
 )
 
-target_sources(consoleapp6 PRIVATE
-  "Source/Main.cpp"
+target_sources(consoleapp6
+  PRIVATE
+    "Source/Main.cpp"
 )
 
-target_link_libraries(consoleapp6 PRIVATE
-  juce::juce_core
-  juce::juce_data_structures
-  juce::juce_events
+target_link_libraries(consoleapp6
+  PRIVATE
+    juce::juce_core
+    juce::juce_data_structures
+    juce::juce_events
+  PUBLIC
+    juce::juce_recommended_config_flags
+    juce::juce_recommended_lto_flags
+    juce::juce_recommended_warning_flags
 )
