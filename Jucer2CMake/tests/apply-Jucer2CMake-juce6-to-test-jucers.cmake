@@ -29,13 +29,8 @@ get_filename_component(Jucer2CMake_EXE "${Jucer2CMake_EXE}" ABSOLUTE)
 file(GLOB_RECURSE jucer_files "${CMAKE_CURRENT_LIST_DIR}/*.jucer")
 
 foreach(jucer_file IN LISTS jucer_files)
-  get_filename_component(working_dir "${jucer_file}" DIRECTORY)
-
   set(command "${Jucer2CMake_EXE}" "juce6" "${jucer_file}")
-  execute_process(COMMAND ${command}
-    WORKING_DIRECTORY "${working_dir}"
-    RESULT_VARIABLE result
-  )
+  execute_process(COMMAND ${command} RESULT_VARIABLE result)
 
   if(NOT result EQUAL 0)
     string(REPLACE ";" " " command_string "${command}")

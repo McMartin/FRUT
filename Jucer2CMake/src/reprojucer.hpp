@@ -533,7 +533,7 @@ inline void writeReprojucerCMakeLists(const Arguments& args,
       const auto relativeReprojucerDirPath =
         getChildFileFromWorkingDirectory(args.reprojucerFilePath)
           .getParentDirectory()
-          .getRelativePathFrom(juce::File::getCurrentWorkingDirectory());
+          .getRelativePathFrom(args.outputDir);
       wLn("list(APPEND CMAKE_MODULE_PATH \"", cmakePath(relativeReprojucerDirPath),
           "\")");
     }
@@ -575,7 +575,7 @@ inline void writeReprojucerCMakeLists(const Arguments& args,
       wLn("set(", jucerFileCMakeVar);
       const auto relativeJucerFilePath =
         getChildFileFromWorkingDirectory(args.jucerFilePath)
-          .getRelativePathFrom(juce::File::getCurrentWorkingDirectory());
+          .getRelativePathFrom(args.outputDir);
       wLn("  \"", cmakePath(relativeJucerFilePath), "\"");
       wLn(")");
     }

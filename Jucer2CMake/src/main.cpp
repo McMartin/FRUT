@@ -124,7 +124,8 @@ Arguments parseArguments(const int argc, const char* const argv[])
   const auto noModeHelpText =
     "\n"
     "Converts a .jucer file into a CMakeLists.txt file.\n"
-    "The CMakeLists.txt file is written in the current working directory.\n"
+    "The CMakeLists.txt file is written next to the .jucer file (juce6 mode) or in\n"
+    "the current working directory (reprojucer mode).\n"
     "\n"
     "    <mode>                    what the generated CMakeLists.txt uses:\n"
     "      juce6                     - JUCE 6's CMake support\n"
@@ -139,7 +140,7 @@ Arguments parseArguments(const int argc, const char* const argv[])
     "\n"
     "Converts a .jucer file into a CMakeLists.txt file that uses JUCE 6's CMake\n"
     "support.\n"
-    "The CMakeLists.txt file is written in the current working directory.\n"
+    "The CMakeLists.txt file is written next to the .jucer file.\n"
     "\n"
     "    <jucer_project_file>      path to the .jucer file to convert\n"
     "\n"
@@ -215,11 +216,16 @@ Arguments parseArguments(const int argc, const char* const argv[])
   auto juceModulesPath = existingDirectoryPath("--juce-modules");
   auto userModulesPath = existingDirectoryPath("--user-modules");
 
+  auto outputDir =
+    mode == "juce6" ? getChildFileFromWorkingDirectory(jucerFilePath).getParentDirectory()
+                    : juce::File::getCurrentWorkingDirectory();
+
   return {std::move(mode),
           std::move(jucerFilePath),
           std::move(reprojucerFilePath),
           std::move(juceModulesPath),
           std::move(userModulesPath),
+          std::move(outputDir),
           argumentParser["--relocatable"]};
 }
 
@@ -261,7 +267,7 @@ int main(int argc, char* argv[])
     return 1;
   }
 
-  const auto outputFile = getChildFileFromWorkingDirectory("CMakeLists.txt");
+  const auto outputFile = args.outputDir.getChildFile("CMakeLists.txt");
 
   std::unique_ptr<juce::FileInputStream> fileStream{outputFile.createInputStream()};
   if (fileStream)
