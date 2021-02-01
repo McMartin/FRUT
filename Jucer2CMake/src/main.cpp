@@ -181,12 +181,23 @@ Arguments parseArguments(const int argc, const char* const argv[])
     std::exit(askingForHelp ? 0 : 1);
   }
 
-  auto jucerFilePath = juce::String{argumentParser[2]};
+  const auto existingFilePath = [&argumentParser](juce::StringRef name, size_t index) {
+    if (argumentParser.size() > index)
+    {
+      auto path = juce::String{argumentParser[index]};
+      if (path.isEmpty() || !getChildFileFromWorkingDirectory(path).existsAsFile())
+      {
+        printError("No such file (" + name + "): '" + path + "'");
+        std::exit(1);
+      }
+      return path;
+    }
+    return juce::String{};
+  };
 
-  auto reprojucerFilePath = juce::String{argumentParser[3]};
-  if (reprojucerFilePath.isNotEmpty()
-      && (!reprojucerFilePath.endsWith("Reprojucer.cmake")
-          || !getChildFileFromWorkingDirectory(reprojucerFilePath).existsAsFile()))
+  auto jucerFilePath = existingFilePath("<jucer_project_file>", 2);
+  auto reprojucerFilePath = existingFilePath("<Reprojucer.cmake_file>", 3);
+  if (reprojucerFilePath.isNotEmpty() && !reprojucerFilePath.endsWith("Reprojucer.cmake"))
   {
     printError("'" + reprojucerFilePath + "' is not a valid Reprojucer.cmake file.");
     std::exit(1);
