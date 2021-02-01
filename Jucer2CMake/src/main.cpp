@@ -197,11 +197,6 @@ Arguments parseArguments(const int argc, const char* const argv[])
 
   auto jucerFilePath = existingFilePath("<jucer_project_file>", 2);
   auto reprojucerFilePath = existingFilePath("<Reprojucer.cmake_file>", 3);
-  if (reprojucerFilePath.isNotEmpty() && !reprojucerFilePath.endsWith("Reprojucer.cmake"))
-  {
-    printError("'" + reprojucerFilePath + "' is not a valid Reprojucer.cmake file.");
-    std::exit(1);
-  }
 
   auto juceModulesPath = juce::String{argumentParser("--juce-modules").str()};
   if (argumentParser("--juce-modules"))

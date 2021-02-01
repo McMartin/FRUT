@@ -294,6 +294,13 @@ inline void writeReprojucerCMakeLists(const Arguments& args,
     }
   }();
 
+  if (args.reprojucerFilePath.isNotEmpty()
+      && !args.reprojucerFilePath.endsWith("Reprojucer.cmake"))
+  {
+    printError("'" + args.reprojucerFilePath + "' is not a valid Reprojucer.cmake file.");
+    std::exit(1);
+  }
+
   auto needsJuceModulesGlobalPath = false;
   auto needsUserModulesGlobalPath = false;
 
