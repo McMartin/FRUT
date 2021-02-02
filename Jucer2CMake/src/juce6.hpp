@@ -113,6 +113,11 @@ inline void writeJuce6CMakeLists(const Arguments&, const juce::XmlElement& jucer
 
     writeProjectSettingIfDefined("bundleIdentifier", "BUNDLE_ID");
 
+    writeProjectSettingIfDefined("companyName", "COMPANY_NAME");
+    writeProjectSettingIfDefined("companyCopyright", "COMPANY_COPYRIGHT");
+    writeProjectSettingIfDefined("companyWebsite", "COMPANY_WEBSITE");
+    writeProjectSettingIfDefined("companyEmail", "COMPANY_EMAIL");
+
     if (projectType == "audioplug")
     {
       wLn("  FORMATS \"VST3\" \"AU\" \"Standalone\"");

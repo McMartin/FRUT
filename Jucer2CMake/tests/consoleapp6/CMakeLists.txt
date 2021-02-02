@@ -10,6 +10,10 @@ find_package(JUCE CONFIG REQUIRED)
 
 juce_add_console_app(consoleapp6
   VERSION "0.1"
+  COMPANY_NAME "The Name of the Company"
+  COMPANY_COPYRIGHT "The Copyright of the Company"
+  COMPANY_WEBSITE "The Website of the Company"
+  COMPANY_EMAIL "The E-mail of the Company"
 )
 
 juce_generate_juce_header(consoleapp6)
