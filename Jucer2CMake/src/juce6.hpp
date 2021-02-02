@@ -105,7 +105,7 @@ inline void writeJuce6CMakeLists(const Arguments&, const juce::XmlElement& jucer
 
     if (projectType == "audioplug")
     {
-      wLn("  FORMATS \"AU\" \"VST3\" \"Standalone\"");
+      wLn("  FORMATS \"VST3\" \"AU\" \"Standalone\"");
     }
 
     wLn(")");
