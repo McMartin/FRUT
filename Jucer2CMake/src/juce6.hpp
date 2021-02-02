@@ -101,7 +101,7 @@ inline void writeJuce6CMakeLists(const Arguments&, const juce::XmlElement& jucer
 
     wLn(juceAddFunction, "(", targetName);
 
-    wLn("  VERSION \"1.0.0\"");
+    wLn("  VERSION \"" + jucerProject.getStringAttribute("version", "1.0.0") + "\"");
 
     if (projectType == "audioplug")
     {
