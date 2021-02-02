@@ -103,6 +103,16 @@ inline void writeJuce6CMakeLists(const Arguments&, const juce::XmlElement& jucer
 
     wLn("  VERSION \"" + jucerProject.getStringAttribute("version", "1.0.0") + "\"");
 
+    const auto writeProjectSettingIfDefined =
+      [&jucerProject, &wLn](juce::StringRef attribute, juce::StringRef keyword) {
+        if (jucerProject.hasAttribute(attribute))
+        {
+          wLn("  ", keyword, " \"", jucerProject.getStringAttribute(attribute), "\"");
+        }
+      };
+
+    writeProjectSettingIfDefined("bundleIdentifier", "BUNDLE_ID");
+
     if (projectType == "audioplug")
     {
       wLn("  FORMATS \"VST3\" \"AU\" \"Standalone\"");
