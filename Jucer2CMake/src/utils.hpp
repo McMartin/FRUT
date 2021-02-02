@@ -33,6 +33,7 @@ struct Arguments
   juce::String reprojucerFilePath;
   juce::String juceModulesPath;
   juce::String userModulesPath;
+  juce::File outputDir;
   bool relocatable;
 };
 

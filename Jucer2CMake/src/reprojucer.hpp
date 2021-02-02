@@ -294,6 +294,13 @@ inline void writeReprojucerCMakeLists(const Arguments& args,
     }
   }();
 
+  if (args.reprojucerFilePath.isNotEmpty()
+      && !args.reprojucerFilePath.endsWith("Reprojucer.cmake"))
+  {
+    printError("'" + args.reprojucerFilePath + "' is not a valid Reprojucer.cmake file.");
+    std::exit(1);
+  }
+
   auto needsJuceModulesGlobalPath = false;
   auto needsUserModulesGlobalPath = false;
 
@@ -526,7 +533,7 @@ inline void writeReprojucerCMakeLists(const Arguments& args,
       const auto relativeReprojucerDirPath =
         getChildFileFromWorkingDirectory(args.reprojucerFilePath)
           .getParentDirectory()
-          .getRelativePathFrom(juce::File::getCurrentWorkingDirectory());
+          .getRelativePathFrom(args.outputDir);
       wLn("list(APPEND CMAKE_MODULE_PATH \"", cmakePath(relativeReprojucerDirPath),
           "\")");
     }
@@ -568,7 +575,7 @@ inline void writeReprojucerCMakeLists(const Arguments& args,
       wLn("set(", jucerFileCMakeVar);
       const auto relativeJucerFilePath =
         getChildFileFromWorkingDirectory(args.jucerFilePath)
-          .getRelativePathFrom(juce::File::getCurrentWorkingDirectory());
+          .getRelativePathFrom(args.outputDir);
       wLn("  \"", cmakePath(relativeJucerFilePath), "\"");
       wLn(")");
     }
