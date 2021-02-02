@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<JUCERPROJECT id="Zvlvys" name="guiapp6" projectType="guiapp" useAppConfig="0"
+              addUsingNamespaceToJuceHeader="0" jucerFormatVersion="1">
+  <MAINGROUP id="reRYiC" name="guiapp6">
+    <GROUP id="{5E27E35D-54BB-581E-3019-8FA0D5081552}" name="Source">
+      <FILE id="G2Fidx" name="Main.cpp" compile="1" resource="0" file="Source/Main.cpp"/>
+      <FILE id="TiLJ1s" name="MainComponent.h" compile="0" resource="0" file="Source/MainComponent.h"/>
+      <FILE id="Hr2rjE" name="MainComponent.cpp" compile="1" resource="0"
+            file="Source/MainComponent.cpp"/>
+    </GROUP>
+  </MAINGROUP>
+  <JUCEOPTIONS JUCE_STRICT_REFCOUNTEDPOINTER="1"/>
+  <EXPORTFORMATS>
+    <LINUX_MAKE targetFolder="Builds/LinuxMakefile">
+      <CONFIGURATIONS>
+        <CONFIGURATION isDebug="1" name="Debug" targetName="guiapp6"/>
+        <CONFIGURATION isDebug="0" name="Release" targetName="guiapp6"/>
+      </CONFIGURATIONS>
+      <MODULEPATHS>
+        <MODULEPATH id="juce_core" path="../../../ci/tmp/JUCE-6.0.1/modules"/>
+        <MODULEPATH id="juce_data_structures" path="../../../ci/tmp/JUCE-6.0.1/modules"/>
+        <MODULEPATH id="juce_events" path="../../../ci/tmp/JUCE-6.0.1/modules"/>
+        <MODULEPATH id="juce_graphics" path="../../../ci/tmp/JUCE-6.0.1/modules"/>
+        <MODULEPATH id="juce_gui_basics" path="../../../ci/tmp/JUCE-6.0.1/modules"/>
+      </MODULEPATHS>
+    </LINUX_MAKE>
+    <VS2019 targetFolder="Builds/VisualStudio2019">
+      <CONFIGURATIONS>
+        <CONFIGURATION isDebug="1" name="Debug" targetName="guiapp6"/>
+        <CONFIGURATION isDebug="0" name="Release" targetName="guiapp6"/>
+      </CONFIGURATIONS>
+      <MODULEPATHS>
+        <MODULEPATH id="juce_core" path="../../../ci/tmp/JUCE-6.0.1/modules"/>
+        <MODULEPATH id="juce_data_structures" path="../../../ci/tmp/JUCE-6.0.1/modules"/>
+        <MODULEPATH id="juce_events" path="../../../ci/tmp/JUCE-6.0.1/modules"/>
+        <MODULEPATH id="juce_graphics" path="../../../ci/tmp/JUCE-6.0.1/modules"/>
+        <MODULEPATH id="juce_gui_basics" path="../../../ci/tmp/JUCE-6.0.1/modules"/>
+      </MODULEPATHS>
+    </VS2019>
+    <XCODE_MAC targetFolder="Builds/MacOSX">
+      <CONFIGURATIONS>
+        <CONFIGURATION isDebug="1" name="Debug" targetName="guiapp6"/>
+        <CONFIGURATION isDebug="0" name="Release" targetName="guiapp6"/>
+      </CONFIGURATIONS>
+      <MODULEPATHS>
+        <MODULEPATH id="juce_core" path="../../../ci/tmp/JUCE-6.0.1/modules"/>
+        <MODULEPATH id="juce_data_structures" path="../../../ci/tmp/JUCE-6.0.1/modules"/>
+        <MODULEPATH id="juce_events" path="../../../ci/tmp/JUCE-6.0.1/modules"/>
+        <MODULEPATH id="juce_graphics" path="../../../ci/tmp/JUCE-6.0.1/modules"/>
+        <MODULEPATH id="juce_gui_basics" path="../../../ci/tmp/JUCE-6.0.1/modules"/>
+      </MODULEPATHS>
+    </XCODE_MAC>
+  </EXPORTFORMATS>
+  <MODULES>
+    <MODULE id="juce_core" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_data_structures" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_events" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_graphics" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_gui_basics" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+  </MODULES>
+</JUCERPROJECT>
