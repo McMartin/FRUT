@@ -101,11 +101,26 @@ inline void writeJuce6CMakeLists(const Arguments&, const juce::XmlElement& jucer
 
     wLn(juceAddFunction, "(", targetName);
 
-    wLn("  VERSION \"1.0.0\"");
+    wLn("  VERSION \"" + jucerProject.getStringAttribute("version", "1.0.0") + "\"");
+
+    const auto writeProjectSettingIfDefined =
+      [&jucerProject, &wLn](juce::StringRef attribute, juce::StringRef keyword) {
+        if (jucerProject.hasAttribute(attribute))
+        {
+          wLn("  ", keyword, " \"", jucerProject.getStringAttribute(attribute), "\"");
+        }
+      };
+
+    writeProjectSettingIfDefined("bundleIdentifier", "BUNDLE_ID");
+
+    writeProjectSettingIfDefined("companyName", "COMPANY_NAME");
+    writeProjectSettingIfDefined("companyCopyright", "COMPANY_COPYRIGHT");
+    writeProjectSettingIfDefined("companyWebsite", "COMPANY_WEBSITE");
+    writeProjectSettingIfDefined("companyEmail", "COMPANY_EMAIL");
 
     if (projectType == "audioplug")
     {
-      wLn("  FORMATS \"AU\" \"VST3\" \"Standalone\"");
+      wLn("  FORMATS \"VST3\" \"AU\" \"Standalone\"");
     }
 
     wLn(")");

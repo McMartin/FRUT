@@ -1,9 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <JUCERPROJECT id="zagqOo" name="consoleapp6" projectType="consoleapp" useAppConfig="0"
-              addUsingNamespaceToJuceHeader="0" jucerFormatVersion="1" version="0.1"
-              companyName="The Name of the Company" companyCopyright="The Copyright of the Company"
-              companyWebsite="The Website of the Company" companyEmail="The E-mail of the Company">
+              addUsingNamespaceToJuceHeader="0" jucerFormatVersion="1">
   <MAINGROUP id="JrFjOU" name="consoleapp6">
     <GROUP id="{8D360D1F-0983-2716-1F73-905D1B856666}" name="Source">
       <FILE id="w0nwo8" name="Main.cpp" compile="1" resource="0" file="Source/Main.cpp"/>

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <JUCERPROJECT id="Zvlvys" name="guiapp6" projectType="guiapp" useAppConfig="0"
-              addUsingNamespaceToJuceHeader="0" jucerFormatVersion="1" bundleIdentifier="org.myorg.myapp">
+              addUsingNamespaceToJuceHeader="0" jucerFormatVersion="1">
   <MAINGROUP id="reRYiC" name="guiapp6">
     <GROUP id="{5E27E35D-54BB-581E-3019-8FA0D5081552}" name="Source">
       <FILE id="G2Fidx" name="Main.cpp" compile="1" resource="0" file="Source/Main.cpp"/>
