@@ -142,6 +142,8 @@ inline void writeJuce6CMakeLists(const Arguments&, const juce::XmlElement& jucer
       {
         wLn("  FORMATS \"", formats.joinIntoString("\" \""), "\"");
       }
+
+      writeProjectSettingIfDefined("pluginName", "PLUGIN_NAME");
     }
 
     wLn(")");
