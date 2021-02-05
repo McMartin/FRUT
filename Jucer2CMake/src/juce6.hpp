@@ -120,7 +120,28 @@ inline void writeJuce6CMakeLists(const Arguments&, const juce::XmlElement& jucer
 
     if (projectType == "audioplug")
     {
-      wLn("  FORMATS \"VST3\" \"AU\" \"Standalone\"");
+      const auto formats =
+        jucerProject.hasAttribute("pluginFormats")
+          ? convertIdsToStrings(
+            juce::StringArray::fromTokens(
+              jucerProject.getStringAttribute("pluginFormats"), ",", {}),
+            {{"buildVST3", "VST3"},
+             {"buildAU", "AU"},
+             {"buildAUv3", "AUv3"},
+             {"buildAAX", "AAX"},
+             {"buildStandalone", "Standalone"},
+             {"buildUnity", "Unity"},
+             {"buildVST", "VST"}})
+          : juce::StringArray{"VST3", "AU", "Standalone"};
+
+      if (formats.isEmpty())
+      {
+        wLn("  # FORMATS");
+      }
+      else
+      {
+        wLn("  FORMATS \"", formats.joinIntoString("\" \""), "\"");
+      }
     }
 
     wLn(")");

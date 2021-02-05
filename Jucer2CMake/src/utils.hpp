@@ -82,6 +82,22 @@ private:
 };
 
 
+inline juce::StringArray
+convertIdsToStrings(const juce::StringArray& ids,
+                    const std::vector<std::pair<juce::String, const char*>>& idsToStrings)
+{
+  juce::StringArray strings;
+  for (const auto& idToString : idsToStrings)
+  {
+    if (ids.contains(idToString.first))
+    {
+      strings.add(idToString.second);
+    }
+  }
+  return strings;
+}
+
+
 inline juce::File
 getChildFileFromWorkingDirectory(const juce::StringRef relativeOrAbsolutePath)
 {
