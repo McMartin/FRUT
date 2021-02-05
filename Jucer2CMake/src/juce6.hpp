@@ -147,6 +147,37 @@ inline void writeJuce6CMakeLists(const Arguments&, const juce::XmlElement& jucer
       writeProjectSettingIfDefined("pluginManufacturerCode", "PLUGIN_MANUFACTURER_CODE");
       writeProjectSettingIfDefined("pluginCode", "PLUGIN_CODE");
       writeProjectSettingIfDefined("pluginDesc", "DESCRIPTION");
+
+      const auto characteristics = juce::StringArray::fromTokens(
+        jucerProject.getStringAttribute("pluginCharacteristicsValue"), ",", {});
+      if (characteristics.contains("pluginIsSynth"))
+      {
+        wLn("  IS_SYNTH TRUE");
+      }
+      if (characteristics.contains("pluginWantsMidiIn"))
+      {
+        wLn("  NEEDS_MIDI_INPUT TRUE");
+      }
+      if (characteristics.contains("pluginProducesMidiOut"))
+      {
+        wLn("  NEEDS_MIDI_OUTPUT TRUE");
+      }
+      if (characteristics.contains("pluginIsMidiEffectPlugin"))
+      {
+        wLn("  IS_MIDI_EFFECT TRUE");
+      }
+      if (characteristics.contains("pluginEditorRequiresKeys"))
+      {
+        wLn("  EDITOR_WANTS_KEYBOARD_FOCUS TRUE");
+      }
+      if (characteristics.contains("pluginAAXDisableBypass"))
+      {
+        wLn("  DISABLE_AAX_BYPASS TRUE");
+      }
+      if (characteristics.contains("pluginAAXDisableMultiMono"))
+      {
+        wLn("  DISABLE_AAX_MULTI_MONO TRUE");
+      }
     }
 
     wLn(")");
