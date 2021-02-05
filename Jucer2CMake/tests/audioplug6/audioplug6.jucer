@@ -6,7 +6,8 @@
               pluginDesc="The description" pluginCharacteristicsValue="pluginAAXDisableBypass,pluginAAXDisableMultiMono,pluginEditorRequiresKeys,pluginIsMidiEffectPlugin,pluginIsSynth,pluginProducesMidiOut,pluginWantsMidiIn"
               aaxIdentifier="org.myorg.myAAXplugin" pluginVSTNumMidiInputs="9"
               pluginVSTNumMidiOutputs="8" pluginVSTCategory="kPlugCategUnknown"
-              pluginVST3Category="Drum,Mastering" pluginAUMainType="'aumi'">
+              pluginVST3Category="Drum,Mastering" pluginAUMainType="'aumi'"
+              pluginAUExportPrefix="prefixAU">
   <MAINGROUP id="FPb8mq" name="audioplug6">
     <GROUP id="{EEC7BF3A-C246-BD0C-A80F-13D54B92FB0B}" name="Source">
       <FILE id="wqYbDN" name="PluginProcessor.cpp" compile="1" resource="0"

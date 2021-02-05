@@ -206,6 +206,8 @@ inline void writeJuce6CMakeLists(const Arguments&, const juce::XmlElement& jucer
               jucerProject.getStringAttribute("pluginAUMainType")),
             "\"");
       }
+
+      writeProjectSettingIfDefined("pluginAUExportPrefix", "AU_EXPORT_PREFIX");
     }
 
     wLn(")");
