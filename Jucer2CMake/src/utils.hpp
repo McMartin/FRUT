@@ -98,6 +98,25 @@ convertIdsToStrings(const juce::StringArray& ids,
 }
 
 
+inline juce::String
+getAUMainTypeConstantFromQuotedFourChars(const juce::String& quotedFourChars)
+{
+  // clang-format off
+  if (quotedFourChars == "'aufx'") return "kAudioUnitType_Effect";
+  if (quotedFourChars == "'aufc'") return "kAudioUnitType_FormatConverter";
+  if (quotedFourChars == "'augn'") return "kAudioUnitType_Generator";
+  if (quotedFourChars == "'aumi'") return "kAudioUnitType_MIDIProcessor";
+  if (quotedFourChars == "'aumx'") return "kAudioUnitType_Mixer";
+  if (quotedFourChars == "'aumu'") return "kAudioUnitType_MusicDevice";
+  if (quotedFourChars == "'aumf'") return "kAudioUnitType_MusicEffect";
+  if (quotedFourChars == "'auol'") return "kAudioUnitType_OfflineEffect";
+  if (quotedFourChars == "'auou'") return "kAudioUnitType_Output";
+  if (quotedFourChars == "'aupn'") return "kAudioUnitType_Panner";
+  // clang-format on
+  return quotedFourChars;
+}
+
+
 inline juce::File
 getChildFileFromWorkingDirectory(const juce::StringRef relativeOrAbsolutePath)
 {

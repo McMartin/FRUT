@@ -198,6 +198,14 @@ inline void writeJuce6CMakeLists(const Arguments&, const juce::XmlElement& jucer
           wLn("  VST3_CATEGORIES \"", vst3Categories.joinIntoString("\" \""), "\"");
         }
       }
+
+      if (jucerProject.hasAttribute("pluginAUMainType"))
+      {
+        wLn("  AU_MAIN_TYPE \"",
+            getAUMainTypeConstantFromQuotedFourChars(
+              jucerProject.getStringAttribute("pluginAUMainType")),
+            "\"");
+      }
     }
 
     wLn(")");

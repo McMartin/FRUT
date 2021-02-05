@@ -888,21 +888,7 @@ inline void writeReprojucerCMakeLists(const Arguments& args,
         if (jucerProject.hasAttribute("pluginAUMainType"))
         {
           convertSetting(jucerProject, "pluginAUMainType", "PLUGIN_AU_MAIN_TYPE",
-                         [](const juce::String& value) -> juce::String {
-                           // clang-format off
-                           if (value == "'aufx'") return "kAudioUnitType_Effect";
-                           if (value == "'aufc'") return "kAudioUnitType_FormatConverter";
-                           if (value == "'augn'") return "kAudioUnitType_Generator";
-                           if (value == "'aumi'") return "kAudioUnitType_MIDIProcessor";
-                           if (value == "'aumx'") return "kAudioUnitType_Mixer";
-                           if (value == "'aumu'") return "kAudioUnitType_MusicDevice";
-                           if (value == "'aumf'") return "kAudioUnitType_MusicEffect";
-                           if (value == "'auol'") return "kAudioUnitType_OfflineEffect";
-                           if (value == "'auou'") return "kAudioUnitType_Output";
-                           if (value == "'aupn'") return "kAudioUnitType_Panner";
-                           // clang-format on
-                           return value;
-                         });
+                         getAUMainTypeConstantFromQuotedFourChars);
         }
         else
         {

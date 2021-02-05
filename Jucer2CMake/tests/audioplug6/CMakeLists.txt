@@ -27,6 +27,7 @@ juce_add_plugin(audioplug6
   VST_NUM_MIDI_OUTS "8"
   VST2_CATEGORY "kPlugCategUnknown"
   VST3_CATEGORIES "Drum" "Mastering"
+  AU_MAIN_TYPE "kAudioUnitType_MIDIProcessor"
 )
 
 juce_generate_juce_header(audioplug6)
