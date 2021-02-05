@@ -22,6 +22,7 @@ juce_add_plugin(audioplug6
   EDITOR_WANTS_KEYBOARD_FOCUS TRUE
   DISABLE_AAX_BYPASS TRUE
   DISABLE_AAX_MULTI_MONO TRUE
+  AAX_IDENTIFIER "org.myorg.myAAXplugin"
 )
 
 juce_generate_juce_header(audioplug6)

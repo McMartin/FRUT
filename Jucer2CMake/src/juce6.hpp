@@ -178,6 +178,8 @@ inline void writeJuce6CMakeLists(const Arguments&, const juce::XmlElement& jucer
       {
         wLn("  DISABLE_AAX_MULTI_MONO TRUE");
       }
+
+      writeProjectSettingIfDefined("aaxIdentifier", "AAX_IDENTIFIER");
     }
 
     wLn(")");
