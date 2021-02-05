@@ -23,6 +23,8 @@ juce_add_plugin(audioplug6
   DISABLE_AAX_BYPASS TRUE
   DISABLE_AAX_MULTI_MONO TRUE
   AAX_IDENTIFIER "org.myorg.myAAXplugin"
+  VST_NUM_MIDI_INS "9"
+  VST_NUM_MIDI_OUTS "8"
 )
 
 juce_generate_juce_header(audioplug6)
