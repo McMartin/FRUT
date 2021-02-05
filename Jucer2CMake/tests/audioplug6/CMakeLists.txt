@@ -13,6 +13,7 @@ juce_add_plugin(audioplug6
   FORMATS "VST3" "Standalone"
   PLUGIN_NAME "PluginName"
   PLUGIN_MANUFACTURER_CODE "Manu"
+  PLUGIN_CODE "Code"
 )
 
 juce_generate_juce_header(audioplug6)

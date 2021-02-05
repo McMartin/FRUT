@@ -145,6 +145,7 @@ inline void writeJuce6CMakeLists(const Arguments&, const juce::XmlElement& jucer
 
       writeProjectSettingIfDefined("pluginName", "PLUGIN_NAME");
       writeProjectSettingIfDefined("pluginManufacturerCode", "PLUGIN_MANUFACTURER_CODE");
+      writeProjectSettingIfDefined("pluginCode", "PLUGIN_CODE");
     }
 
     wLn(")");
