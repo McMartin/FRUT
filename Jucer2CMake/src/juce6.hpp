@@ -183,6 +183,21 @@ inline void writeJuce6CMakeLists(const Arguments&, const juce::XmlElement& jucer
       writeProjectSettingIfDefined("pluginVSTNumMidiInputs", "VST_NUM_MIDI_INS");
       writeProjectSettingIfDefined("pluginVSTNumMidiOutputs", "VST_NUM_MIDI_OUTS");
       writeProjectSettingIfDefined("pluginVSTCategory", "VST2_CATEGORY");
+
+      if (jucerProject.hasAttribute("pluginVST3Category"))
+      {
+        const auto vst3Categories = juce::StringArray::fromTokens(
+          jucerProject.getStringAttribute("pluginVST3Category"), ",", {});
+
+        if (vst3Categories.isEmpty())
+        {
+          wLn("  # VST3_CATEGORIES");
+        }
+        else
+        {
+          wLn("  VST3_CATEGORIES \"", vst3Categories.joinIntoString("\" \""), "\"");
+        }
+      }
     }
 
     wLn(")");
