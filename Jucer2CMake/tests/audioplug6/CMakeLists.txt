@@ -25,6 +25,7 @@ juce_add_plugin(audioplug6
   AAX_IDENTIFIER "org.myorg.myAAXplugin"
   VST_NUM_MIDI_INS "9"
   VST_NUM_MIDI_OUTS "8"
+  VST2_CATEGORY "kPlugCategUnknown"
 )
 
 juce_generate_juce_header(audioplug6)

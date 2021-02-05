@@ -182,6 +182,7 @@ inline void writeJuce6CMakeLists(const Arguments&, const juce::XmlElement& jucer
       writeProjectSettingIfDefined("aaxIdentifier", "AAX_IDENTIFIER");
       writeProjectSettingIfDefined("pluginVSTNumMidiInputs", "VST_NUM_MIDI_INS");
       writeProjectSettingIfDefined("pluginVSTNumMidiOutputs", "VST_NUM_MIDI_OUTS");
+      writeProjectSettingIfDefined("pluginVSTCategory", "VST2_CATEGORY");
     }
 
     wLn(")");
