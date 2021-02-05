@@ -129,4 +129,13 @@ inline void printError(const juce::String& error)
   std::cerr << "error: " << error << std::endl;
 }
 
+
+// Matches juce::var::VariantType_String::toBool. This means that `toBoolLikeVar(s)` and
+// `bool{juce::var{s}}` are equivalent.
+inline bool toBoolLikeVar(const juce::String& s)
+{
+  return s.getIntValue() != 0 || s.trim().equalsIgnoreCase("true")
+         || s.trim().equalsIgnoreCase("yes");
+}
+
 } // namespace Jucer2CMake

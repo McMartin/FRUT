@@ -208,6 +208,14 @@ inline void writeJuce6CMakeLists(const Arguments&, const juce::XmlElement& jucer
       }
 
       writeProjectSettingIfDefined("pluginAUExportPrefix", "AU_EXPORT_PREFIX");
+
+      if (jucerProject.hasAttribute("pluginAUIsSandboxSafe"))
+      {
+        wLn("  AU_SANDBOX_SAFE ",
+            toBoolLikeVar(jucerProject.getStringAttribute("pluginAUIsSandboxSafe"))
+              ? "TRUE"
+              : "FALSE");
+      }
     }
 
     wLn(")");

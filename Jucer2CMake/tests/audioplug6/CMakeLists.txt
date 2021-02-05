@@ -29,6 +29,7 @@ juce_add_plugin(audioplug6
   VST3_CATEGORIES "Drum" "Mastering"
   AU_MAIN_TYPE "kAudioUnitType_MIDIProcessor"
   AU_EXPORT_PREFIX "prefixAU"
+  AU_SANDBOX_SAFE FALSE
 )
 
 juce_generate_juce_header(audioplug6)
