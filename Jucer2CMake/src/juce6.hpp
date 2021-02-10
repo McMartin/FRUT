@@ -267,42 +267,42 @@ inline void writeJuce6CMakeLists(const Arguments&, const juce::XmlElement& jucer
     wLn();
   }
 
+  juce::StringArray sources;
+
+  std::function<void(const juce::XmlElement&)> processGroup =
+    [&processGroup, &sources](const juce::XmlElement& group) {
+      for (auto pFileOrGroup = group.getFirstChildElement(); pFileOrGroup != nullptr;
+           pFileOrGroup = pFileOrGroup->getNextElement())
+      {
+        if (pFileOrGroup->isTextElement())
+        {
+          continue;
+        }
+
+        if (pFileOrGroup->hasTagName("FILE"))
+        {
+          const auto& file = *pFileOrGroup;
+
+          if (file.getStringAttribute("compile").getIntValue() == 1)
+          {
+            sources.add(file.getStringAttribute("file"));
+          }
+        }
+        else
+        {
+          processGroup(*pFileOrGroup);
+        }
+      }
+    };
+
+  processGroup(getRequiredChild(jucerProject, "MAINGROUP"));
+
+  sources.sort(kIgnoreCase);
+
   // target_sources
   {
     wLn("target_sources(", targetName);
     wLn("  PRIVATE");
-
-    juce::StringArray sources;
-
-    std::function<void(const juce::XmlElement&)> processGroup =
-      [&processGroup, &sources](const juce::XmlElement& group) {
-        for (auto pFileOrGroup = group.getFirstChildElement(); pFileOrGroup != nullptr;
-             pFileOrGroup = pFileOrGroup->getNextElement())
-        {
-          if (pFileOrGroup->isTextElement())
-          {
-            continue;
-          }
-
-          if (pFileOrGroup->hasTagName("FILE"))
-          {
-            const auto& file = *pFileOrGroup;
-
-            if (file.getStringAttribute("compile").getIntValue() == 1)
-            {
-              sources.add(file.getStringAttribute("file"));
-            }
-          }
-          else
-          {
-            processGroup(*pFileOrGroup);
-          }
-        }
-      };
-
-    processGroup(getRequiredChild(jucerProject, "MAINGROUP"));
-
-    sources.sort(kIgnoreCase);
 
     for (const auto& item : sources)
     {
