@@ -87,6 +87,14 @@ inline void writeJuce6CMakeLists(const Arguments&, const juce::XmlElement& jucer
 
   const auto& targetName = jucerProjectName;
 
+  const auto writeProjectSettingIfDefined =
+    [&jucerProject, &wLn](juce::StringRef attribute, juce::StringRef keyword) {
+      if (jucerProject.hasAttribute(attribute))
+      {
+        wLn("  ", keyword, " \"", jucerProject.getStringAttribute(attribute), "\"");
+      }
+    };
+
   // juce_add_{console_app,gui_app,plugin}
   {
     const auto juceAddFunction = [&projectType]() -> juce::String {
@@ -102,14 +110,6 @@ inline void writeJuce6CMakeLists(const Arguments&, const juce::XmlElement& jucer
     wLn(juceAddFunction, "(", targetName);
 
     wLn("  VERSION \"" + jucerProject.getStringAttribute("version", "1.0.0") + "\"");
-
-    const auto writeProjectSettingIfDefined =
-      [&jucerProject, &wLn](juce::StringRef attribute, juce::StringRef keyword) {
-        if (jucerProject.hasAttribute(attribute))
-        {
-          wLn("  ", keyword, " \"", jucerProject.getStringAttribute(attribute), "\"");
-        }
-      };
 
     writeProjectSettingIfDefined("bundleIdentifier", "BUNDLE_ID");
 
@@ -323,6 +323,8 @@ inline void writeJuce6CMakeLists(const Arguments&, const juce::XmlElement& jucer
   if (!binarySources.isEmpty())
   {
     wLn("juce_add_binary_data(", targetName, "_BinaryData");
+
+    writeProjectSettingIfDefined("binaryDataNamespace", "NAMESPACE");
 
     wLn("  SOURCES");
     for (const auto& item : binarySources)

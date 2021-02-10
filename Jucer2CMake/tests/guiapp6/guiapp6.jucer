@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <JUCERPROJECT id="Zvlvys" name="guiapp6" projectType="guiapp" useAppConfig="0"
-              addUsingNamespaceToJuceHeader="0" jucerFormatVersion="1" bundleIdentifier="org.myorg.myapp">
+              addUsingNamespaceToJuceHeader="0" jucerFormatVersion="1" bundleIdentifier="org.myorg.myapp"
+              binaryDataNamespace="BinaryNamespace">
   <MAINGROUP id="reRYiC" name="guiapp6">
     <GROUP id="{5E27E35D-54BB-581E-3019-8FA0D5081552}" name="Source">
       <GROUP id="{69F8ED5A-541E-27C1-E4B1-E3EA54ED8487}" name="icons">

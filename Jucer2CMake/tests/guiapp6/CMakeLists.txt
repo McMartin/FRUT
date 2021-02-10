@@ -28,6 +28,7 @@ target_sources(guiapp6
 )
 
 juce_add_binary_data(guiapp6_BinaryData
+  NAMESPACE "BinaryNamespace"
   SOURCES
     "Source/icons/16x16.png"
     "Source/icons/32x32.png"
