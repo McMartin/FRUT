@@ -4,6 +4,10 @@
               addUsingNamespaceToJuceHeader="0" jucerFormatVersion="1" bundleIdentifier="org.myorg.myapp">
   <MAINGROUP id="reRYiC" name="guiapp6">
     <GROUP id="{5E27E35D-54BB-581E-3019-8FA0D5081552}" name="Source">
+      <GROUP id="{69F8ED5A-541E-27C1-E4B1-E3EA54ED8487}" name="icons">
+        <FILE id="FKNKt3" name="16x16.png" compile="0" resource="1" file="Source/icons/16x16.png"/>
+        <FILE id="VxsHF2" name="32x32.png" compile="0" resource="1" file="Source/icons/32x32.png"/>
+      </GROUP>
       <FILE id="G2Fidx" name="Main.cpp" compile="1" resource="0" file="Source/Main.cpp"/>
       <FILE id="TiLJ1s" name="MainComponent.h" compile="0" resource="0" file="Source/MainComponent.h"/>
       <FILE id="Hr2rjE" name="MainComponent.cpp" compile="1" resource="0"

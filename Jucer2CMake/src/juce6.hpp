@@ -268,9 +268,10 @@ inline void writeJuce6CMakeLists(const Arguments&, const juce::XmlElement& jucer
   }
 
   juce::StringArray sources;
+  juce::StringArray binarySources;
 
   std::function<void(const juce::XmlElement&)> processGroup =
-    [&processGroup, &sources](const juce::XmlElement& group) {
+    [&processGroup, &sources, &binarySources](const juce::XmlElement& group) {
       for (auto pFileOrGroup = group.getFirstChildElement(); pFileOrGroup != nullptr;
            pFileOrGroup = pFileOrGroup->getNextElement())
       {
@@ -287,6 +288,10 @@ inline void writeJuce6CMakeLists(const Arguments&, const juce::XmlElement& jucer
           {
             sources.add(file.getStringAttribute("file"));
           }
+          if (file.getStringAttribute("resource").getIntValue() == 1)
+          {
+            binarySources.add(file.getStringAttribute("file"));
+          }
         }
         else
         {
@@ -298,6 +303,7 @@ inline void writeJuce6CMakeLists(const Arguments&, const juce::XmlElement& jucer
   processGroup(getRequiredChild(jucerProject, "MAINGROUP"));
 
   sources.sort(kIgnoreCase);
+  binarySources.sort(kIgnoreCase);
 
   // target_sources
   {
@@ -313,10 +319,30 @@ inline void writeJuce6CMakeLists(const Arguments&, const juce::XmlElement& jucer
     wLn();
   }
 
+  // juce_add_binary_data
+  if (!binarySources.isEmpty())
+  {
+    wLn("juce_add_binary_data(", targetName, "_BinaryData");
+
+    wLn("  SOURCES");
+    for (const auto& item : binarySources)
+    {
+      wLn("    \"", item, "\"");
+    }
+
+    wLn(")");
+    wLn();
+  }
+
   // target_link_libraries
   {
     wLn("target_link_libraries(", targetName);
     wLn("  PRIVATE");
+
+    if (!binarySources.isEmpty())
+    {
+      wLn("    ", targetName, "_BinaryData");
+    }
 
     const auto& modules = getRequiredChild(jucerProject, "MODULES");
     for (auto pModule = modules.getFirstChildElement(); pModule != nullptr;
