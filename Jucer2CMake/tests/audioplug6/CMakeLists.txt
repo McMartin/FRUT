@@ -10,7 +10,26 @@ find_package(JUCE CONFIG REQUIRED)
 
 juce_add_plugin(audioplug6
   VERSION "1.0.0"
-  FORMATS "VST3" "AU" "Standalone"
+  FORMATS "VST3" "Standalone"
+  PLUGIN_NAME "PluginName"
+  PLUGIN_MANUFACTURER_CODE "Manu"
+  PLUGIN_CODE "Code"
+  DESCRIPTION "The description"
+  IS_SYNTH TRUE
+  NEEDS_MIDI_INPUT TRUE
+  NEEDS_MIDI_OUTPUT TRUE
+  IS_MIDI_EFFECT TRUE
+  EDITOR_WANTS_KEYBOARD_FOCUS TRUE
+  DISABLE_AAX_BYPASS TRUE
+  DISABLE_AAX_MULTI_MONO TRUE
+  AAX_IDENTIFIER "org.myorg.myAAXplugin"
+  VST_NUM_MIDI_INS "9"
+  VST_NUM_MIDI_OUTS "8"
+  VST2_CATEGORY "kPlugCategUnknown"
+  VST3_CATEGORIES "Drum" "Mastering"
+  AU_MAIN_TYPE "kAudioUnitType_MIDIProcessor"
+  AU_EXPORT_PREFIX "prefixAU"
+  AU_SANDBOX_SAFE FALSE
 )
 
 juce_generate_juce_header(audioplug6)

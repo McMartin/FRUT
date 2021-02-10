@@ -82,6 +82,41 @@ private:
 };
 
 
+inline juce::StringArray
+convertIdsToStrings(const juce::StringArray& ids,
+                    const std::vector<std::pair<juce::String, const char*>>& idsToStrings)
+{
+  juce::StringArray strings;
+  for (const auto& idToString : idsToStrings)
+  {
+    if (ids.contains(idToString.first))
+    {
+      strings.add(idToString.second);
+    }
+  }
+  return strings;
+}
+
+
+inline juce::String
+getAUMainTypeConstantFromQuotedFourChars(const juce::String& quotedFourChars)
+{
+  // clang-format off
+  if (quotedFourChars == "'aufx'") return "kAudioUnitType_Effect";
+  if (quotedFourChars == "'aufc'") return "kAudioUnitType_FormatConverter";
+  if (quotedFourChars == "'augn'") return "kAudioUnitType_Generator";
+  if (quotedFourChars == "'aumi'") return "kAudioUnitType_MIDIProcessor";
+  if (quotedFourChars == "'aumx'") return "kAudioUnitType_Mixer";
+  if (quotedFourChars == "'aumu'") return "kAudioUnitType_MusicDevice";
+  if (quotedFourChars == "'aumf'") return "kAudioUnitType_MusicEffect";
+  if (quotedFourChars == "'auol'") return "kAudioUnitType_OfflineEffect";
+  if (quotedFourChars == "'auou'") return "kAudioUnitType_Output";
+  if (quotedFourChars == "'aupn'") return "kAudioUnitType_Panner";
+  // clang-format on
+  return quotedFourChars;
+}
+
+
 inline juce::File
 getChildFileFromWorkingDirectory(const juce::StringRef relativeOrAbsolutePath)
 {
@@ -92,6 +127,15 @@ getChildFileFromWorkingDirectory(const juce::StringRef relativeOrAbsolutePath)
 inline void printError(const juce::String& error)
 {
   std::cerr << "error: " << error << std::endl;
+}
+
+
+// Matches juce::var::VariantType_String::toBool. This means that `toBoolLikeVar(s)` and
+// `bool{juce::var{s}}` are equivalent.
+inline bool toBoolLikeVar(const juce::String& s)
+{
+  return s.getIntValue() != 0 || s.trim().equalsIgnoreCase("true")
+         || s.trim().equalsIgnoreCase("yes");
 }
 
 } // namespace Jucer2CMake

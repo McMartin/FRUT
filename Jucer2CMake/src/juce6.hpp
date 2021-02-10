@@ -120,7 +120,102 @@ inline void writeJuce6CMakeLists(const Arguments&, const juce::XmlElement& jucer
 
     if (projectType == "audioplug")
     {
-      wLn("  FORMATS \"VST3\" \"AU\" \"Standalone\"");
+      const auto formats =
+        jucerProject.hasAttribute("pluginFormats")
+          ? convertIdsToStrings(
+            juce::StringArray::fromTokens(
+              jucerProject.getStringAttribute("pluginFormats"), ",", {}),
+            {{"buildVST3", "VST3"},
+             {"buildAU", "AU"},
+             {"buildAUv3", "AUv3"},
+             {"buildAAX", "AAX"},
+             {"buildStandalone", "Standalone"},
+             {"buildUnity", "Unity"},
+             {"buildVST", "VST"}})
+          : juce::StringArray{"VST3", "AU", "Standalone"};
+
+      if (formats.isEmpty())
+      {
+        wLn("  # FORMATS");
+      }
+      else
+      {
+        wLn("  FORMATS \"", formats.joinIntoString("\" \""), "\"");
+      }
+
+      writeProjectSettingIfDefined("pluginName", "PLUGIN_NAME");
+      writeProjectSettingIfDefined("pluginManufacturerCode", "PLUGIN_MANUFACTURER_CODE");
+      writeProjectSettingIfDefined("pluginCode", "PLUGIN_CODE");
+      writeProjectSettingIfDefined("pluginDesc", "DESCRIPTION");
+
+      const auto characteristics = juce::StringArray::fromTokens(
+        jucerProject.getStringAttribute("pluginCharacteristicsValue"), ",", {});
+      if (characteristics.contains("pluginIsSynth"))
+      {
+        wLn("  IS_SYNTH TRUE");
+      }
+      if (characteristics.contains("pluginWantsMidiIn"))
+      {
+        wLn("  NEEDS_MIDI_INPUT TRUE");
+      }
+      if (characteristics.contains("pluginProducesMidiOut"))
+      {
+        wLn("  NEEDS_MIDI_OUTPUT TRUE");
+      }
+      if (characteristics.contains("pluginIsMidiEffectPlugin"))
+      {
+        wLn("  IS_MIDI_EFFECT TRUE");
+      }
+      if (characteristics.contains("pluginEditorRequiresKeys"))
+      {
+        wLn("  EDITOR_WANTS_KEYBOARD_FOCUS TRUE");
+      }
+      if (characteristics.contains("pluginAAXDisableBypass"))
+      {
+        wLn("  DISABLE_AAX_BYPASS TRUE");
+      }
+      if (characteristics.contains("pluginAAXDisableMultiMono"))
+      {
+        wLn("  DISABLE_AAX_MULTI_MONO TRUE");
+      }
+
+      writeProjectSettingIfDefined("aaxIdentifier", "AAX_IDENTIFIER");
+      writeProjectSettingIfDefined("pluginVSTNumMidiInputs", "VST_NUM_MIDI_INS");
+      writeProjectSettingIfDefined("pluginVSTNumMidiOutputs", "VST_NUM_MIDI_OUTS");
+      writeProjectSettingIfDefined("pluginVSTCategory", "VST2_CATEGORY");
+
+      if (jucerProject.hasAttribute("pluginVST3Category"))
+      {
+        const auto vst3Categories = juce::StringArray::fromTokens(
+          jucerProject.getStringAttribute("pluginVST3Category"), ",", {});
+
+        if (vst3Categories.isEmpty())
+        {
+          wLn("  # VST3_CATEGORIES");
+        }
+        else
+        {
+          wLn("  VST3_CATEGORIES \"", vst3Categories.joinIntoString("\" \""), "\"");
+        }
+      }
+
+      if (jucerProject.hasAttribute("pluginAUMainType"))
+      {
+        wLn("  AU_MAIN_TYPE \"",
+            getAUMainTypeConstantFromQuotedFourChars(
+              jucerProject.getStringAttribute("pluginAUMainType")),
+            "\"");
+      }
+
+      writeProjectSettingIfDefined("pluginAUExportPrefix", "AU_EXPORT_PREFIX");
+
+      if (jucerProject.hasAttribute("pluginAUIsSandboxSafe"))
+      {
+        wLn("  AU_SANDBOX_SAFE ",
+            toBoolLikeVar(jucerProject.getStringAttribute("pluginAUIsSandboxSafe"))
+              ? "TRUE"
+              : "FALSE");
+      }
     }
 
     wLn(")");

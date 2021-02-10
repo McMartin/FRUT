@@ -53,15 +53,6 @@ static const auto kDefaultLicenseBasedValue = "ON";
 namespace Jucer2CMake
 {
 
-// Matches juce::var::VariantType_String::toBool. This means that `toBoolLikeVar(s)` and
-// `bool{juce::var{s}}` are equivalent.
-inline bool toBoolLikeVar(const juce::String& s)
-{
-  return s.getIntValue() != 0 || s.trim().equalsIgnoreCase("true")
-         || s.trim().equalsIgnoreCase("yes");
-}
-
-
 inline juce::String makeValidIdentifier(juce::String s)
 {
   if (s.isEmpty())
@@ -113,22 +104,6 @@ inline juce::String escape(const juce::String& charsToEscape, juce::String value
   }
 
   return value;
-}
-
-
-inline juce::StringArray
-convertIdsToStrings(const juce::StringArray& ids,
-                    const std::vector<std::pair<juce::String, const char*>>& idsToStrings)
-{
-  juce::StringArray strings;
-  for (const auto& idToString : idsToStrings)
-  {
-    if (ids.contains(idToString.first))
-    {
-      strings.add(idToString.second);
-    }
-  }
-  return strings;
 }
 
 
@@ -904,21 +879,7 @@ inline void writeReprojucerCMakeLists(const Arguments& args,
         if (jucerProject.hasAttribute("pluginAUMainType"))
         {
           convertSetting(jucerProject, "pluginAUMainType", "PLUGIN_AU_MAIN_TYPE",
-                         [](const juce::String& value) -> juce::String {
-                           // clang-format off
-                           if (value == "'aufx'") return "kAudioUnitType_Effect";
-                           if (value == "'aufc'") return "kAudioUnitType_FormatConverter";
-                           if (value == "'augn'") return "kAudioUnitType_Generator";
-                           if (value == "'aumi'") return "kAudioUnitType_MIDIProcessor";
-                           if (value == "'aumx'") return "kAudioUnitType_Mixer";
-                           if (value == "'aumu'") return "kAudioUnitType_MusicDevice";
-                           if (value == "'aumf'") return "kAudioUnitType_MusicEffect";
-                           if (value == "'auol'") return "kAudioUnitType_OfflineEffect";
-                           if (value == "'auou'") return "kAudioUnitType_Output";
-                           if (value == "'aupn'") return "kAudioUnitType_Panner";
-                           // clang-format on
-                           return value;
-                         });
+                         getAUMainTypeConstantFromQuotedFourChars);
         }
         else
         {
