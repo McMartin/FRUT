@@ -27,8 +27,16 @@ target_sources(guiapp6
     "Source/MainComponent.cpp"
 )
 
+juce_add_binary_data(guiapp6_BinaryData
+  NAMESPACE "BinaryNamespace"
+  SOURCES
+    "Source/icons/16x16.png"
+    "Source/icons/32x32.png"
+)
+
 target_link_libraries(guiapp6
   PRIVATE
+    guiapp6_BinaryData
     juce::juce_core
     juce::juce_data_structures
     juce::juce_events
