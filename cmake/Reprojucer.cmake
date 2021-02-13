@@ -2347,7 +2347,6 @@ function(jucer_project_end)
       ${SharedCode_sources}
       ${JUCER_PROJECT_MODULES_BROWSABLE_FILES}
       ${JUCER_ICON_FILE}
-      ${JUCER_RESOURCES_RC_FILE}
     )
     _FRUT_set_output_directory_properties(${shared_code_target} "Shared Code")
     _FRUT_set_output_name_properties(${shared_code_target})
