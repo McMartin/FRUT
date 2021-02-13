@@ -2241,7 +2241,7 @@ function(jucer_project_end)
   endif()
 
   source_group("JUCE Library Code"
-    REGULAR_EXPRESSION "${CMAKE_CURRENT_BINARY_DIR}/JuceLibraryCode/*"
+    REGULAR_EXPRESSION "${CMAKE_CURRENT_BINARY_DIR}/JuceLibraryCode/"
   )
 
   set_source_files_properties(${JUCER_PROJECT_MODULES_BROWSABLE_FILES}
