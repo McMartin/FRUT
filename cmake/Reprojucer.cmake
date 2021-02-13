@@ -2199,7 +2199,7 @@ function(jucer_project_end)
     unset(icon_filename)
     if(APPLE)
       _FRUT_generate_icon_file("icns" "${CMAKE_CURRENT_BINARY_DIR}" icon_filename)
-    elseif(WIN32)
+    elseif(WIN32 AND NOT JUCER_PROJECT_TYPE STREQUAL "Static Library")
       _FRUT_generate_icon_file("ico" "${CMAKE_CURRENT_BINARY_DIR}" icon_filename)
     endif()
 
