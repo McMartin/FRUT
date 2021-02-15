@@ -678,7 +678,7 @@ function(jucer_project_module module_name PATH_KEYWORD modules_folder)
       get_filename_component(file_dir "${file_path}" DIRECTORY)
       string(REPLACE "${modules_folder}" "" rel_file_dir "${file_dir}")
       string(REPLACE "/" "\\" sub_group_name "${rel_file_dir}")
-      source_group("Juce Modules${sub_group_name}" FILES "${file_path}")
+      source_group("JUCE Modules${sub_group_name}" FILES "${file_path}")
     endforeach()
     list(APPEND JUCER_PROJECT_MODULES_BROWSABLE_FILES ${browsable_files})
     set(JUCER_PROJECT_MODULES_BROWSABLE_FILES "${JUCER_PROJECT_MODULES_BROWSABLE_FILES}"
@@ -2199,14 +2199,14 @@ function(jucer_project_end)
     unset(icon_filename)
     if(APPLE)
       _FRUT_generate_icon_file("icns" "${CMAKE_CURRENT_BINARY_DIR}" icon_filename)
-    elseif(WIN32)
+    elseif(WIN32 AND NOT JUCER_PROJECT_TYPE STREQUAL "Static Library")
       _FRUT_generate_icon_file("ico" "${CMAKE_CURRENT_BINARY_DIR}" icon_filename)
     endif()
 
     if(DEFINED icon_filename)
       set(JUCER_ICON_FILE "${CMAKE_CURRENT_BINARY_DIR}/${icon_filename}")
       if(NOT APPLE) # handled in _FRUT_add_bundle_resources()
-        source_group("Juce Library Code" FILES "${JUCER_ICON_FILE}")
+        source_group("JUCE Library Code" FILES "${JUCER_ICON_FILE}")
       endif()
     endif()
   endif()
@@ -2214,7 +2214,7 @@ function(jucer_project_end)
   if(WIN32 AND NOT JUCER_PROJECT_TYPE STREQUAL "Static Library")
     set(JUCER_RESOURCES_RC_FILE "${CMAKE_CURRENT_BINARY_DIR}/resources.rc")
     _FRUT_generate_resources_rc_file("${JUCER_RESOURCES_RC_FILE}")
-    source_group("Juce Library Code" FILES "${JUCER_RESOURCES_RC_FILE}")
+    source_group("JUCE Library Code" FILES "${JUCER_RESOURCES_RC_FILE}")
   endif()
 
   if(IOS)
@@ -2240,8 +2240,8 @@ function(jucer_project_end)
     endif()
   endif()
 
-  source_group("Juce Library Code"
-    REGULAR_EXPRESSION "${CMAKE_CURRENT_BINARY_DIR}/JuceLibraryCode/*"
+  source_group("JUCE Library Code"
+    REGULAR_EXPRESSION "${CMAKE_CURRENT_BINARY_DIR}/JuceLibraryCode/"
   )
 
   set_source_files_properties(${JUCER_PROJECT_MODULES_BROWSABLE_FILES}
@@ -2347,7 +2347,6 @@ function(jucer_project_end)
       ${SharedCode_sources}
       ${JUCER_PROJECT_MODULES_BROWSABLE_FILES}
       ${JUCER_ICON_FILE}
-      ${JUCER_RESOURCES_RC_FILE}
     )
     _FRUT_set_output_directory_properties(${shared_code_target} "Shared Code")
     _FRUT_set_output_name_properties(${shared_code_target})
