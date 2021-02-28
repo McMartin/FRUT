@@ -145,9 +145,9 @@ inline void writeJuce6CMakeLists(const Arguments&, const juce::XmlElement& jucer
       }
 
       writeProjectSettingIfDefined("pluginName", "PLUGIN_NAME");
+      writeProjectSettingIfDefined("pluginDesc", "DESCRIPTION");
       writeProjectSettingIfDefined("pluginManufacturerCode", "PLUGIN_MANUFACTURER_CODE");
       writeProjectSettingIfDefined("pluginCode", "PLUGIN_CODE");
-      writeProjectSettingIfDefined("pluginDesc", "DESCRIPTION");
 
       const auto characteristics = juce::StringArray::fromTokens(
         jucerProject.getStringAttribute("pluginCharacteristicsValue"), ",", {});
@@ -181,9 +181,26 @@ inline void writeJuce6CMakeLists(const Arguments&, const juce::XmlElement& jucer
       }
 
       writeProjectSettingIfDefined("aaxIdentifier", "AAX_IDENTIFIER");
+      writeProjectSettingIfDefined("pluginAUExportPrefix", "AU_EXPORT_PREFIX");
+
+      if (jucerProject.hasAttribute("pluginAUMainType"))
+      {
+        wLn("  AU_MAIN_TYPE \"",
+            getAUMainTypeConstantFromQuotedFourChars(
+              jucerProject.getStringAttribute("pluginAUMainType")),
+            "\"");
+      }
+
+      if (jucerProject.hasAttribute("pluginAUIsSandboxSafe"))
+      {
+        wLn("  AU_SANDBOX_SAFE ",
+            toBoolLikeVar(jucerProject.getStringAttribute("pluginAUIsSandboxSafe"))
+              ? "TRUE"
+              : "FALSE");
+      }
+
       writeProjectSettingIfDefined("pluginVSTNumMidiInputs", "VST_NUM_MIDI_INS");
       writeProjectSettingIfDefined("pluginVSTNumMidiOutputs", "VST_NUM_MIDI_OUTS");
-      writeProjectSettingIfDefined("pluginVSTCategory", "VST2_CATEGORY");
 
       if (jucerProject.hasAttribute("pluginVST3Category"))
       {
@@ -200,23 +217,7 @@ inline void writeJuce6CMakeLists(const Arguments&, const juce::XmlElement& jucer
         }
       }
 
-      if (jucerProject.hasAttribute("pluginAUMainType"))
-      {
-        wLn("  AU_MAIN_TYPE \"",
-            getAUMainTypeConstantFromQuotedFourChars(
-              jucerProject.getStringAttribute("pluginAUMainType")),
-            "\"");
-      }
-
-      writeProjectSettingIfDefined("pluginAUExportPrefix", "AU_EXPORT_PREFIX");
-
-      if (jucerProject.hasAttribute("pluginAUIsSandboxSafe"))
-      {
-        wLn("  AU_SANDBOX_SAFE ",
-            toBoolLikeVar(jucerProject.getStringAttribute("pluginAUIsSandboxSafe"))
-              ? "TRUE"
-              : "FALSE");
-      }
+      writeProjectSettingIfDefined("pluginVSTCategory", "VST2_CATEGORY");
     }
 
     wLn(")");
