@@ -18,11 +18,11 @@
         <CONFIGURATION isDebug="0" name="Release" targetName="guiapp6"/>
       </CONFIGURATIONS>
       <MODULEPATHS>
-        <MODULEPATH id="juce_core" path="../../../ci/tmp/JUCE-6.0.1/modules"/>
-        <MODULEPATH id="juce_data_structures" path="../../../ci/tmp/JUCE-6.0.1/modules"/>
-        <MODULEPATH id="juce_events" path="../../../ci/tmp/JUCE-6.0.1/modules"/>
-        <MODULEPATH id="juce_graphics" path="../../../ci/tmp/JUCE-6.0.1/modules"/>
-        <MODULEPATH id="juce_gui_basics" path="../../../ci/tmp/JUCE-6.0.1/modules"/>
+        <MODULEPATH id="juce_core"/>
+        <MODULEPATH id="juce_data_structures"/>
+        <MODULEPATH id="juce_events"/>
+        <MODULEPATH id="juce_graphics"/>
+        <MODULEPATH id="juce_gui_basics"/>
       </MODULEPATHS>
     </LINUX_MAKE>
     <VS2019 targetFolder="Builds/VisualStudio2019">
@@ -31,11 +31,11 @@
         <CONFIGURATION isDebug="0" name="Release" targetName="guiapp6"/>
       </CONFIGURATIONS>
       <MODULEPATHS>
-        <MODULEPATH id="juce_core" path="../../../ci/tmp/JUCE-6.0.1/modules"/>
-        <MODULEPATH id="juce_data_structures" path="../../../ci/tmp/JUCE-6.0.1/modules"/>
-        <MODULEPATH id="juce_events" path="../../../ci/tmp/JUCE-6.0.1/modules"/>
-        <MODULEPATH id="juce_graphics" path="../../../ci/tmp/JUCE-6.0.1/modules"/>
-        <MODULEPATH id="juce_gui_basics" path="../../../ci/tmp/JUCE-6.0.1/modules"/>
+        <MODULEPATH id="juce_core"/>
+        <MODULEPATH id="juce_data_structures"/>
+        <MODULEPATH id="juce_events"/>
+        <MODULEPATH id="juce_graphics"/>
+        <MODULEPATH id="juce_gui_basics"/>
       </MODULEPATHS>
     </VS2019>
     <XCODE_MAC targetFolder="Builds/MacOSX">
@@ -44,11 +44,11 @@
         <CONFIGURATION isDebug="0" name="Release" targetName="guiapp6"/>
       </CONFIGURATIONS>
       <MODULEPATHS>
-        <MODULEPATH id="juce_core" path="../../../ci/tmp/JUCE-6.0.1/modules"/>
-        <MODULEPATH id="juce_data_structures" path="../../../ci/tmp/JUCE-6.0.1/modules"/>
-        <MODULEPATH id="juce_events" path="../../../ci/tmp/JUCE-6.0.1/modules"/>
-        <MODULEPATH id="juce_graphics" path="../../../ci/tmp/JUCE-6.0.1/modules"/>
-        <MODULEPATH id="juce_gui_basics" path="../../../ci/tmp/JUCE-6.0.1/modules"/>
+        <MODULEPATH id="juce_core"/>
+        <MODULEPATH id="juce_data_structures"/>
+        <MODULEPATH id="juce_events"/>
+        <MODULEPATH id="juce_graphics"/>
+        <MODULEPATH id="juce_gui_basics"/>
       </MODULEPATHS>
     </XCODE_MAC>
   </EXPORTFORMATS>
