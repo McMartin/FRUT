@@ -109,6 +109,8 @@ inline void writeJuce6CMakeLists(const Arguments&, const juce::XmlElement& jucer
 
     wLn(juceAddFunction, "(", targetName);
 
+    // TODO: PRODUCT_NAME
+
     wLn("  VERSION \"" + jucerProject.getStringAttribute("version", "1.0.0") + "\"");
 
     writeProjectSettingIfDefined("bundleIdentifier", "BUNDLE_ID");
@@ -217,8 +219,55 @@ inline void writeJuce6CMakeLists(const Arguments&, const juce::XmlElement& jucer
         }
       }
 
+      // TODO: AAX_CATEGORY
+
       writeProjectSettingIfDefined("pluginVSTCategory", "VST2_CATEGORY");
+
+      // TODO: COPY_PLUGIN_AFTER_BUILD
+      // TODO: VST3_COPY_DIR
+      // TODO: AU_COPY_DIR
+      // TODO: AAX_COPY_DIR
+      // TODO: UNITY_COPY_DIR
+      // TODO: VST_COPY_DIR
     }
+
+    // TODO: ICON_SMALL
+    // TODO: ICON_BIG
+    // TODO: CUSTOM_XCASSETS_FOLDER
+    // TODO: LAUNCH_STORYBOARD_FILE
+
+    // TODO: IPHONE_SCREEN_ORIENTATIONS
+    // TODO: IPAD_SCREEN_ORIENTATIONS
+    // TODO: FILE_SHARING_ENABLED
+    // TODO: DOCUMENT_BROWSER_ENABLED
+    // TODO: STATUS_BAR_HIDDEN
+    // TODO: DOCUMENT_EXTENSIONS
+    // TODO: APP_SANDBOX_ENABLED
+    // TODO: APP_SANDBOX_INHERIT
+    // TODO: APP_SANDBOX_OPTIONS
+    // TODO: HARDENED_RUNTIME_ENABLED
+    // TODO: HARDENED_RUNTIME_OPTIONS
+    // TODO: MICROPHONE_PERMISSION_ENABLED
+    // TODO: MICROPHONE_PERMISSION_TEXT
+    // TODO: CAMERA_PERMISSION_ENABLED
+    // TODO: CAMERA_PERMISSION_TEXT
+    // TODO: BLUETOOTH_PERMISSION_ENABLED
+    // TODO: BLUETOOTH_PERMISSION_TEXT
+    // TODO: SEND_APPLE_EVENTS_PERMISSION_ENABLED
+    // TODO: SEND_APPLE_EVENTS_PERMISSION_TEXT
+    // TODO: BACKGROUND_AUDIO_ENABLED
+    // TODO: BACKGROUND_BLE_ENABLED
+    // TODO: APP_GROUPS_ENABLED
+    // TODO: APP_GROUP_IDS
+    // TODO: ICLOUD_PERMISSIONS_ENABLED
+    // TODO: PUSH_NOTIFICATIONS_ENABLED
+    // TODO: SUPPRESS_AU_PLIST_RESOURCE_USAGE
+    // TODO: PLIST_TO_MERGE
+
+    // TODO: NEEDS_CURL
+    // TODO: NEEDS_STORE_KIT
+    // TODO: NEEDS_WEB_BROWSER
+    // TODO: PLUGINHOST_AU
 
     wLn(")");
     wLn();
