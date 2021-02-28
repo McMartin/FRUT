@@ -120,6 +120,7 @@ inline void writeJuce6CMakeLists(const Arguments&, const juce::XmlElement& jucer
 
     if (projectType == "audioplug")
     {
+      wLn();
       const auto formats =
         jucerProject.hasAttribute("pluginFormats")
           ? convertIdsToStrings(
