@@ -109,6 +109,8 @@ inline void writeJuce6CMakeLists(const Arguments&, const juce::XmlElement& jucer
 
     wLn(juceAddFunction, "(", targetName);
 
+    // TODO: PRODUCT_NAME
+
     wLn("  VERSION \"" + jucerProject.getStringAttribute("version", "1.0.0") + "\"");
 
     writeProjectSettingIfDefined("bundleIdentifier", "BUNDLE_ID");
@@ -120,6 +122,7 @@ inline void writeJuce6CMakeLists(const Arguments&, const juce::XmlElement& jucer
 
     if (projectType == "audioplug")
     {
+      wLn();
       const auto formats =
         jucerProject.hasAttribute("pluginFormats")
           ? convertIdsToStrings(
@@ -144,9 +147,9 @@ inline void writeJuce6CMakeLists(const Arguments&, const juce::XmlElement& jucer
       }
 
       writeProjectSettingIfDefined("pluginName", "PLUGIN_NAME");
+      writeProjectSettingIfDefined("pluginDesc", "DESCRIPTION");
       writeProjectSettingIfDefined("pluginManufacturerCode", "PLUGIN_MANUFACTURER_CODE");
       writeProjectSettingIfDefined("pluginCode", "PLUGIN_CODE");
-      writeProjectSettingIfDefined("pluginDesc", "DESCRIPTION");
 
       const auto characteristics = juce::StringArray::fromTokens(
         jucerProject.getStringAttribute("pluginCharacteristicsValue"), ",", {});
@@ -180,9 +183,26 @@ inline void writeJuce6CMakeLists(const Arguments&, const juce::XmlElement& jucer
       }
 
       writeProjectSettingIfDefined("aaxIdentifier", "AAX_IDENTIFIER");
+      writeProjectSettingIfDefined("pluginAUExportPrefix", "AU_EXPORT_PREFIX");
+
+      if (jucerProject.hasAttribute("pluginAUMainType"))
+      {
+        wLn("  AU_MAIN_TYPE \"",
+            getAUMainTypeConstantFromQuotedFourChars(
+              jucerProject.getStringAttribute("pluginAUMainType")),
+            "\"");
+      }
+
+      if (jucerProject.hasAttribute("pluginAUIsSandboxSafe"))
+      {
+        wLn("  AU_SANDBOX_SAFE ",
+            toBoolLikeVar(jucerProject.getStringAttribute("pluginAUIsSandboxSafe"))
+              ? "TRUE"
+              : "FALSE");
+      }
+
       writeProjectSettingIfDefined("pluginVSTNumMidiInputs", "VST_NUM_MIDI_INS");
       writeProjectSettingIfDefined("pluginVSTNumMidiOutputs", "VST_NUM_MIDI_OUTS");
-      writeProjectSettingIfDefined("pluginVSTCategory", "VST2_CATEGORY");
 
       if (jucerProject.hasAttribute("pluginVST3Category"))
       {
@@ -199,24 +219,55 @@ inline void writeJuce6CMakeLists(const Arguments&, const juce::XmlElement& jucer
         }
       }
 
-      if (jucerProject.hasAttribute("pluginAUMainType"))
-      {
-        wLn("  AU_MAIN_TYPE \"",
-            getAUMainTypeConstantFromQuotedFourChars(
-              jucerProject.getStringAttribute("pluginAUMainType")),
-            "\"");
-      }
+      // TODO: AAX_CATEGORY
 
-      writeProjectSettingIfDefined("pluginAUExportPrefix", "AU_EXPORT_PREFIX");
+      writeProjectSettingIfDefined("pluginVSTCategory", "VST2_CATEGORY");
 
-      if (jucerProject.hasAttribute("pluginAUIsSandboxSafe"))
-      {
-        wLn("  AU_SANDBOX_SAFE ",
-            toBoolLikeVar(jucerProject.getStringAttribute("pluginAUIsSandboxSafe"))
-              ? "TRUE"
-              : "FALSE");
-      }
+      // TODO: COPY_PLUGIN_AFTER_BUILD
+      // TODO: VST3_COPY_DIR
+      // TODO: AU_COPY_DIR
+      // TODO: AAX_COPY_DIR
+      // TODO: UNITY_COPY_DIR
+      // TODO: VST_COPY_DIR
     }
+
+    // TODO: ICON_SMALL
+    // TODO: ICON_BIG
+    // TODO: CUSTOM_XCASSETS_FOLDER
+    // TODO: LAUNCH_STORYBOARD_FILE
+
+    // TODO: IPHONE_SCREEN_ORIENTATIONS
+    // TODO: IPAD_SCREEN_ORIENTATIONS
+    // TODO: FILE_SHARING_ENABLED
+    // TODO: DOCUMENT_BROWSER_ENABLED
+    // TODO: STATUS_BAR_HIDDEN
+    // TODO: DOCUMENT_EXTENSIONS
+    // TODO: APP_SANDBOX_ENABLED
+    // TODO: APP_SANDBOX_INHERIT
+    // TODO: APP_SANDBOX_OPTIONS
+    // TODO: HARDENED_RUNTIME_ENABLED
+    // TODO: HARDENED_RUNTIME_OPTIONS
+    // TODO: MICROPHONE_PERMISSION_ENABLED
+    // TODO: MICROPHONE_PERMISSION_TEXT
+    // TODO: CAMERA_PERMISSION_ENABLED
+    // TODO: CAMERA_PERMISSION_TEXT
+    // TODO: BLUETOOTH_PERMISSION_ENABLED
+    // TODO: BLUETOOTH_PERMISSION_TEXT
+    // TODO: SEND_APPLE_EVENTS_PERMISSION_ENABLED
+    // TODO: SEND_APPLE_EVENTS_PERMISSION_TEXT
+    // TODO: BACKGROUND_AUDIO_ENABLED
+    // TODO: BACKGROUND_BLE_ENABLED
+    // TODO: APP_GROUPS_ENABLED
+    // TODO: APP_GROUP_IDS
+    // TODO: ICLOUD_PERMISSIONS_ENABLED
+    // TODO: PUSH_NOTIFICATIONS_ENABLED
+    // TODO: SUPPRESS_AU_PLIST_RESOURCE_USAGE
+    // TODO: PLIST_TO_MERGE
+
+    // TODO: NEEDS_CURL
+    // TODO: NEEDS_STORE_KIT
+    // TODO: NEEDS_WEB_BROWSER
+    // TODO: PLUGINHOST_AU
 
     wLn(")");
     wLn();
