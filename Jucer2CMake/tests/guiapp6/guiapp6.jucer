@@ -28,6 +28,7 @@
         <MODULEPATH id="juce_events"/>
         <MODULEPATH id="juce_graphics"/>
         <MODULEPATH id="juce_gui_basics"/>
+        <MODULEPATH id="juce_gui_extra"/>
       </MODULEPATHS>
     </LINUX_MAKE>
     <VS2019 targetFolder="Builds/VisualStudio2019">
@@ -41,6 +42,7 @@
         <MODULEPATH id="juce_events"/>
         <MODULEPATH id="juce_graphics"/>
         <MODULEPATH id="juce_gui_basics"/>
+        <MODULEPATH id="juce_gui_extra"/>
       </MODULEPATHS>
     </VS2019>
     <XCODE_MAC targetFolder="Builds/MacOSX">
@@ -54,6 +56,7 @@
         <MODULEPATH id="juce_events"/>
         <MODULEPATH id="juce_graphics"/>
         <MODULEPATH id="juce_gui_basics"/>
+        <MODULEPATH id="juce_gui_extra"/>
       </MODULEPATHS>
     </XCODE_MAC>
     <XCODE_IPHONE targetFolder="Builds/iOS">
@@ -67,6 +70,7 @@
         <MODULEPATH id="juce_events"/>
         <MODULEPATH id="juce_graphics"/>
         <MODULEPATH id="juce_gui_basics"/>
+        <MODULEPATH id="juce_gui_extra"/>
       </MODULEPATHS>
     </XCODE_IPHONE>
   </EXPORTFORMATS>
@@ -76,5 +80,6 @@
     <MODULE id="juce_events" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
     <MODULE id="juce_graphics" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
     <MODULE id="juce_gui_basics" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_gui_extra" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
   </MODULES>
 </JUCERPROJECT>

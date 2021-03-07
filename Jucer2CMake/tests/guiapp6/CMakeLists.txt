@@ -19,6 +19,7 @@ target_compile_definitions(guiapp6
   PRIVATE
     JUCE_STRICT_REFCOUNTEDPOINTER=1
     JUCE_USE_CURL=0
+    JUCE_WEB_BROWSER=0
 )
 
 target_sources(guiapp6
@@ -42,6 +43,7 @@ target_link_libraries(guiapp6
     juce::juce_events
     juce::juce_graphics
     juce::juce_gui_basics
+    juce::juce_gui_extra
   PUBLIC
     juce::juce_recommended_config_flags
     juce::juce_recommended_lto_flags
