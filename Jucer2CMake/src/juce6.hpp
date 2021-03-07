@@ -62,6 +62,14 @@ inline bool hasModule(const juce::XmlElement& modules, const juce::StringRef mod
 }
 
 
+inline bool isJuceOptionEnabled(const juce::XmlElement& juceOptions,
+                                const juce::StringRef optionName)
+{
+  return juceOptions.hasAttribute(optionName)
+         && toBoolLikeVar(juceOptions.getStringAttribute(optionName));
+}
+
+
 inline void writeJuce6CMakeLists(const Arguments&, const juce::XmlElement& jucerProject,
                                  juce::MemoryOutputStream& outputStream)
 {
@@ -267,9 +275,20 @@ inline void writeJuce6CMakeLists(const Arguments&, const juce::XmlElement& jucer
     // TODO: SUPPRESS_AU_PLIST_RESOURCE_USAGE
     // TODO: PLIST_TO_MERGE
 
-    // TODO: NEEDS_CURL
+    if (hasModule(modules, "juce_core")
+        && isJuceOptionEnabled(juceOptions, "JUCE_USE_CURL"))
+    {
+      wLn("  NEEDS_CURL TRUE");
+    }
+
     // TODO: NEEDS_STORE_KIT
-    // TODO: NEEDS_WEB_BROWSER
+
+    if (hasModule(modules, "juce_gui_extra")
+        && isJuceOptionEnabled(juceOptions, "JUCE_WEB_BROWSER"))
+    {
+      wLn("  NEEDS_WEB_BROWSER TRUE");
+    }
+
     // TODO: PLUGINHOST_AU
 
     wLn(")");
@@ -299,11 +318,12 @@ inline void writeJuce6CMakeLists(const Arguments&, const juce::XmlElement& jucer
                             + juceOptions.getAttributeValue(i));
     }
 
-    if (hasModule(modules, "juce_core"))
+    if (hasModule(modules, "juce_core") && !juceOptions.hasAttribute("JUCE_USE_CURL"))
     {
       moduleConfigFlags.add("JUCE_USE_CURL=0");
     }
-    if (hasModule(modules, "juce_gui_extra"))
+    if (hasModule(modules, "juce_gui_extra")
+        && !juceOptions.hasAttribute("JUCE_WEB_BROWSER"))
     {
       moduleConfigFlags.add("JUCE_WEB_BROWSER=0");
     }
