@@ -289,7 +289,11 @@ inline void writeJuce6CMakeLists(const Arguments&, const juce::XmlElement& jucer
       wLn("  NEEDS_WEB_BROWSER TRUE");
     }
 
-    // TODO: PLUGINHOST_AU
+    if (hasModule(modules, "juce_audio_processors")
+        && isJuceOptionEnabled(juceOptions, "JUCE_PLUGINHOST_AU"))
+    {
+      wLn("  PLUGINHOST_AU TRUE");
+    }
 
     wLn(")");
     wLn();

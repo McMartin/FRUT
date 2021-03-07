@@ -12,12 +12,14 @@ juce_add_gui_app(guiapp6
   VERSION "1.0.0"
   BUNDLE_ID "org.myorg.myapp"
   NEEDS_WEB_BROWSER TRUE
+  PLUGINHOST_AU TRUE
 )
 
 juce_generate_juce_header(guiapp6)
 
 target_compile_definitions(guiapp6
   PRIVATE
+    JUCE_PLUGINHOST_AU=1
     JUCE_STRICT_REFCOUNTEDPOINTER=1
     JUCE_USE_CURL=0
     JUCE_WEB_BROWSER=1
