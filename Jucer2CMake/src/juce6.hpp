@@ -87,6 +87,9 @@ inline void writeJuce6CMakeLists(const Arguments&, const juce::XmlElement& jucer
 
   const auto& targetName = jucerProjectName;
 
+  const auto& modules = getRequiredChild(jucerProject, "MODULES");
+  const auto& juceOptions = getRequiredChild(jucerProject, "JUCEOPTIONS");
+
   const auto writeProjectSettingIfDefined =
     [&jucerProject, &wLn](juce::StringRef attribute, juce::StringRef keyword) {
       if (jucerProject.hasAttribute(attribute))
@@ -289,7 +292,6 @@ inline void writeJuce6CMakeLists(const Arguments&, const juce::XmlElement& jucer
 
     juce::StringArray moduleConfigFlags;
 
-    const auto& juceOptions = getRequiredChild(jucerProject, "JUCEOPTIONS");
     for (auto i = 0, numAttributes = juceOptions.getNumAttributes(); i < numAttributes;
          ++i)
     {
@@ -297,7 +299,6 @@ inline void writeJuce6CMakeLists(const Arguments&, const juce::XmlElement& jucer
                             + juceOptions.getAttributeValue(i));
     }
 
-    const auto& modules = getRequiredChild(jucerProject, "MODULES");
     if (hasModule(modules, "juce_core"))
     {
       moduleConfigFlags.add("JUCE_USE_CURL=0");
@@ -397,7 +398,6 @@ inline void writeJuce6CMakeLists(const Arguments&, const juce::XmlElement& jucer
       wLn("    ", targetName, "_BinaryData");
     }
 
-    const auto& modules = getRequiredChild(jucerProject, "MODULES");
     for (auto pModule = modules.getFirstChildElement(); pModule != nullptr;
          pModule = pModule->getNextElement())
     {
