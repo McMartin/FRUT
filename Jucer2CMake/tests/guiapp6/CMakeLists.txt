@@ -39,6 +39,8 @@ juce_add_binary_data(guiapp6_BinaryData
 target_link_libraries(guiapp6
   PRIVATE
     guiapp6_BinaryData
+    juce::juce_audio_basics
+    juce::juce_audio_processors
     juce::juce_core
     juce::juce_data_structures
     juce::juce_events
