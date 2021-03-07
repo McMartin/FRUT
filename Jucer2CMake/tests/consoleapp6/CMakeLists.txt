@@ -14,6 +14,7 @@ juce_add_console_app(consoleapp6
   COMPANY_COPYRIGHT "The Copyright of the Company"
   COMPANY_WEBSITE "The Website of the Company"
   COMPANY_EMAIL "The E-mail of the Company"
+
   NEEDS_CURL TRUE
 )
 

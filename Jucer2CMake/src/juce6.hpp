@@ -120,6 +120,15 @@ inline void writeJuce6CMakeLists(const Arguments&, const juce::XmlElement& jucer
 
     wLn(juceAddFunction, "(", targetName);
 
+    bool needEmptyLine = false;
+    const auto writeEmptyLineIfNeeded = [&needEmptyLine, &wLn]() {
+      if (needEmptyLine)
+      {
+        wLn();
+        needEmptyLine = false;
+      }
+    };
+
     // TODO: PRODUCT_NAME
 
     wLn("  VERSION \"" + jucerProject.getStringAttribute("version", "1.0.0") + "\"");
@@ -131,9 +140,12 @@ inline void writeJuce6CMakeLists(const Arguments&, const juce::XmlElement& jucer
     writeProjectSettingIfDefined("companyWebsite", "COMPANY_WEBSITE");
     writeProjectSettingIfDefined("companyEmail", "COMPANY_EMAIL");
 
+    needEmptyLine = true;
+
     if (projectType == "audioplug")
     {
-      wLn();
+      writeEmptyLineIfNeeded();
+
       const auto formats =
         jucerProject.hasAttribute("pluginFormats")
           ? convertIdsToStrings(
@@ -242,10 +254,14 @@ inline void writeJuce6CMakeLists(const Arguments&, const juce::XmlElement& jucer
       // TODO: VST_COPY_DIR
     }
 
+    needEmptyLine = true;
+
     // TODO: ICON_SMALL
     // TODO: ICON_BIG
     // TODO: CUSTOM_XCASSETS_FOLDER
     // TODO: LAUNCH_STORYBOARD_FILE
+
+    needEmptyLine = true;
 
     // TODO: IPHONE_SCREEN_ORIENTATIONS
     // TODO: IPAD_SCREEN_ORIENTATIONS
@@ -275,9 +291,12 @@ inline void writeJuce6CMakeLists(const Arguments&, const juce::XmlElement& jucer
     // TODO: SUPPRESS_AU_PLIST_RESOURCE_USAGE
     // TODO: PLIST_TO_MERGE
 
+    needEmptyLine = true;
+
     if (hasModule(modules, "juce_core")
         && isJuceOptionEnabled(juceOptions, "JUCE_USE_CURL"))
     {
+      writeEmptyLineIfNeeded();
       wLn("  NEEDS_CURL TRUE");
     }
 
@@ -286,12 +305,14 @@ inline void writeJuce6CMakeLists(const Arguments&, const juce::XmlElement& jucer
     if (hasModule(modules, "juce_gui_extra")
         && isJuceOptionEnabled(juceOptions, "JUCE_WEB_BROWSER"))
     {
+      writeEmptyLineIfNeeded();
       wLn("  NEEDS_WEB_BROWSER TRUE");
     }
 
     if (hasModule(modules, "juce_audio_processors")
         && isJuceOptionEnabled(juceOptions, "JUCE_PLUGINHOST_AU"))
     {
+      writeEmptyLineIfNeeded();
       wLn("  PLUGINHOST_AU TRUE");
     }
 
