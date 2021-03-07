@@ -14,6 +14,8 @@ juce_add_console_app(consoleapp6
   COMPANY_COPYRIGHT "The Copyright of the Company"
   COMPANY_WEBSITE "The Website of the Company"
   COMPANY_EMAIL "The E-mail of the Company"
+
+  NEEDS_CURL TRUE
 )
 
 juce_generate_juce_header(consoleapp6)
@@ -21,7 +23,7 @@ juce_generate_juce_header(consoleapp6)
 target_compile_definitions(consoleapp6
   PRIVATE
     JUCE_STRICT_REFCOUNTEDPOINTER=1
-    JUCE_USE_CURL=0
+    JUCE_USE_CURL=1
 )
 
 target_sources(consoleapp6
