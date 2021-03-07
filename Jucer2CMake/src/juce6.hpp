@@ -287,29 +287,29 @@ inline void writeJuce6CMakeLists(const Arguments&, const juce::XmlElement& jucer
     wLn("target_compile_definitions(", targetName);
     wLn("  ", scope);
 
-    juce::StringArray compileDefinitions;
+    juce::StringArray moduleConfigFlags;
 
     const auto& juceOptions = getRequiredChild(jucerProject, "JUCEOPTIONS");
     for (auto i = 0, numAttributes = juceOptions.getNumAttributes(); i < numAttributes;
          ++i)
     {
-      compileDefinitions.add(juceOptions.getAttributeName(i) + "="
-                             + juceOptions.getAttributeValue(i));
+      moduleConfigFlags.add(juceOptions.getAttributeName(i) + "="
+                            + juceOptions.getAttributeValue(i));
     }
 
     const auto& modules = getRequiredChild(jucerProject, "MODULES");
     if (hasModule(modules, "juce_core"))
     {
-      compileDefinitions.add("JUCE_USE_CURL=0");
+      moduleConfigFlags.add("JUCE_USE_CURL=0");
     }
     if (hasModule(modules, "juce_gui_extra"))
     {
-      compileDefinitions.add("JUCE_WEB_BROWSER=0");
+      moduleConfigFlags.add("JUCE_WEB_BROWSER=0");
     }
 
-    compileDefinitions.sort(kIgnoreCase);
+    moduleConfigFlags.sort(kIgnoreCase);
 
-    for (const auto& item : compileDefinitions)
+    for (const auto& item : moduleConfigFlags)
     {
       wLn("    ", item);
     }
