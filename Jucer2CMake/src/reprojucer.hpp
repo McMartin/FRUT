@@ -355,23 +355,60 @@ inline void writeReprojucerCMakeLists(const Arguments& args,
 
   LineWriter wLn{outputStream};
 
+  const auto writeUnquoted = [&wLn](const juce::String& cmakeKeyword,
+                                    const juce::String& value) {
+    if (value.isEmpty())
+    {
+      wLn("  # ", cmakeKeyword);
+    }
+    else
+    {
+      wLn("  ", cmakeKeyword, " ", value);
+    }
+  };
+
+  const auto writeQuoted = [&wLn](const juce::String& cmakeKeyword,
+                                  const juce::String& value) {
+    if (value.isEmpty())
+    {
+      wLn("  # ", cmakeKeyword);
+    }
+    else
+    {
+      wLn("  ", cmakeKeyword, " \"", escape("\\\";", value.trimCharactersAtEnd("\\")),
+          "\"");
+    }
+  };
+
+  const auto writeList = [&wLn](const juce::String& cmakeKeyword,
+                                const juce::StringArray& values) {
+    if (values.isEmpty())
+    {
+      wLn("  # ", cmakeKeyword);
+    }
+    else
+    {
+      wLn("  ", cmakeKeyword);
+
+      for (const auto& item : values)
+      {
+        if (item.isNotEmpty())
+        {
+          wLn("    \"", escape("\\\";", item.trimCharactersAtEnd("\\")), "\"");
+        }
+      }
+    }
+  };
+
   const auto convertSetting =
-    [&wLn](const juce::XmlElement& element, const juce::StringRef attributeName,
-           const juce::String& cmakeKeyword,
-           const std::function<juce::String(const juce::String&)>& converterFn) {
+    [&writeQuoted](const juce::XmlElement& element, const juce::StringRef attributeName,
+                   const juce::String& cmakeKeyword,
+                   const std::function<juce::String(const juce::String&)>& converterFn) {
       const auto value = converterFn
                            ? converterFn(element.getStringAttribute(attributeName))
                            : element.getStringAttribute(attributeName);
 
-      if (value.isEmpty())
-      {
-        wLn("  # ", cmakeKeyword);
-      }
-      else
-      {
-        wLn("  ", cmakeKeyword, " \"", escape("\\\";", value.trimCharactersAtEnd("\\")),
-            "\"");
-      }
+      writeQuoted(cmakeKeyword, value);
     };
 
   const auto convertSettingIfDefined =
@@ -401,9 +438,10 @@ inline void writeReprojucerCMakeLists(const Arguments& args,
     };
 
   const auto convertOnOffSetting =
-    [&wLn](const juce::XmlElement& element, const juce::StringRef attributeName,
-           const juce::String& cmakeKeyword,
-           const std::function<juce::String(const juce::String&)>& converterFn) {
+    [&writeUnquoted](
+      const juce::XmlElement& element, const juce::StringRef attributeName,
+      const juce::String& cmakeKeyword,
+      const std::function<juce::String(const juce::String&)>& converterFn) {
       const auto value =
         converterFn
           ? converterFn(element.getStringAttribute(attributeName))
@@ -412,14 +450,7 @@ inline void writeReprojucerCMakeLists(const Arguments& args,
               ? toBoolLikeVar(element.getStringAttribute(attributeName)) ? "ON" : "OFF"
               : ""};
 
-      if (value.isEmpty())
-      {
-        wLn("  # ", cmakeKeyword);
-      }
-      else
-      {
-        wLn("  ", cmakeKeyword, " ", value);
-      }
+      writeUnquoted(cmakeKeyword, value);
     };
 
   const auto convertOnOffSettingIfDefined =
@@ -450,30 +481,16 @@ inline void writeReprojucerCMakeLists(const Arguments& args,
   };
 
   const auto convertSettingAsList =
-    [&wLn](const juce::XmlElement& element, const juce::StringRef attributeName,
-           const juce::String& cmakeKeyword,
-           const std::function<juce::StringArray(const juce::String&)>& converterFn) {
+    [&writeList](
+      const juce::XmlElement& element, const juce::StringRef attributeName,
+      const juce::String& cmakeKeyword,
+      const std::function<juce::StringArray(const juce::String&)>& converterFn) {
       const auto values =
         converterFn
           ? converterFn(element.getStringAttribute(attributeName))
           : juce::StringArray::fromLines(element.getStringAttribute(attributeName));
 
-      if (values.isEmpty())
-      {
-        wLn("  # ", cmakeKeyword);
-      }
-      else
-      {
-        wLn("  ", cmakeKeyword);
-
-        for (const auto& item : values)
-        {
-          if (item.isNotEmpty())
-          {
-            wLn("    \"", escape("\\\";", item.trimCharactersAtEnd("\\")), "\"");
-          }
-        }
-      }
+      writeList(cmakeKeyword, values);
     };
 
   const auto convertSettingAsListIfDefined =
@@ -585,14 +602,14 @@ inline void writeReprojucerCMakeLists(const Arguments& args,
     wLn("jucer_project_begin(");
     if (jucerProject.hasAttribute("jucerFormatVersion"))
     {
-      wLn("  JUCER_FORMAT_VERSION \"",
-          jucerProject.getStringAttribute("jucerFormatVersion"), "\"");
+      writeQuoted("JUCER_FORMAT_VERSION",
+                  jucerProject.getStringAttribute("jucerFormatVersion"));
     }
     else
     {
-      wLn("  JUCER_VERSION \"", jucerVersion, "\"");
+      writeQuoted("JUCER_VERSION", jucerVersion);
     }
-    wLn("  PROJECT_FILE \"${", jucerFileCMakeVar, "}\"");
+    writeQuoted("PROJECT_FILE", "${" + jucerFileCMakeVar + "}");
     convertSetting(jucerProject, "id", "PROJECT_ID", {});
     wLn(")");
     wLn();
@@ -625,7 +642,7 @@ inline void writeReprojucerCMakeLists(const Arguments& args,
       }
       else
       {
-        wLn("  REPORT_JUCE_APP_USAGE ", kDefaultLicenseBasedValue, tagLine);
+        writeUnquoted("REPORT_JUCE_APP_USAGE", kDefaultLicenseBasedValue + tagLine);
       }
 
       if (jucerProject.hasAttribute("displaySplashScreen"))
@@ -638,7 +655,8 @@ inline void writeReprojucerCMakeLists(const Arguments& args,
       }
       else
       {
-        wLn("  DISPLAY_THE_JUCE_SPLASH_SCREEN ", kDefaultLicenseBasedValue, tagLine);
+        writeUnquoted("DISPLAY_THE_JUCE_SPLASH_SCREEN",
+                      kDefaultLicenseBasedValue + tagLine);
       }
 
       convertSettingIfDefined(jucerProject, "splashScreenColour", "SPLASH_SCREEN_COLOUR",
@@ -663,7 +681,7 @@ inline void writeReprojucerCMakeLists(const Arguments& args,
 
       return {};
     }();
-    wLn("  PROJECT_TYPE \"", projectTypeDescription, "\"");
+    writeQuoted("PROJECT_TYPE", projectTypeDescription);
 
     const auto defaultCompanyName = [&jucerProject]() {
       const auto& companyNameString = jucerProject.getStringAttribute("companyName");
@@ -720,11 +738,11 @@ inline void writeReprojucerCMakeLists(const Arguments& args,
     }
     else if (jucerVersionAsTuple > Version{5, 2, 0})
     {
-      wLn("  ", "CXX_LANGUAGE_STANDARD", " \"C++14\"");
+      writeQuoted("CXX_LANGUAGE_STANDARD", "C++14");
     }
     else if (jucerVersionAsTuple > Version{5, 0, 2})
     {
-      wLn("  ", "CXX_LANGUAGE_STANDARD", " \"C++11\"");
+      writeQuoted("CXX_LANGUAGE_STANDARD", "C++11");
     }
 
     convertSettingAsListIfDefined(jucerProject, "defines", "PREPROCESSOR_DEFINITIONS",
@@ -1231,15 +1249,15 @@ inline void writeReprojucerCMakeLists(const Arguments& args,
 
           if (optionValue == "1" || optionValue == "enabled")
           {
-            wLn("  ", moduleOption, " ON");
+            writeUnquoted(moduleOption, "ON");
           }
           else if (optionValue == "0" || optionValue == "disabled")
           {
-            wLn("  ", moduleOption, " OFF");
+            writeUnquoted(moduleOption, "OFF");
           }
           else
           {
-            wLn("  # ", moduleOption);
+            writeUnquoted(moduleOption, "");
           }
         }
       }
@@ -1939,7 +1957,7 @@ inline void writeReprojucerCMakeLists(const Arguments& args,
         const auto originalName = configuration.getStringAttribute("name");
         if (std::regex_match(originalName.toStdString(), std::regex{"^[A-Za-z0-9_]+$"}))
         {
-          wLn("  NAME \"", originalName, "\"");
+          writeQuoted("NAME", originalName);
         }
         else
         {
@@ -1968,7 +1986,7 @@ inline void writeReprojucerCMakeLists(const Arguments& args,
         }
 
         const auto isDebug = toBoolLikeVar(configuration.getStringAttribute("isDebug"));
-        wLn("  DEBUG_MODE ", (isDebug ? "ON" : "OFF"));
+        writeUnquoted("DEBUG_MODE", (isDebug ? "ON" : "OFF"));
 
         convertSettingIfDefined(configuration, "targetName", "BINARY_NAME", {});
         convertSettingIfDefined(configuration, "binaryPath", "BINARY_LOCATION", {});
