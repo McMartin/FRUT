@@ -1564,15 +1564,39 @@ inline void writeReprojucerCMakeLists(const Arguments& args,
 
           return value;
         };
+        const auto screenOrientationsFn = [](const juce::String& value) {
+          return convertIdsToStrings(
+            juce::StringArray::fromTokens(value, ",", {}),
+            {{"UIInterfaceOrientationPortrait", "Portrait"},
+             {"UIInterfaceOrientationPortraitUpsideDown", "Portrait Upside Down"},
+             {"UIInterfaceOrientationLandscapeLeft", "Landscape Left"},
+             {"UIInterfaceOrientationLandscapeRight", "Landscape Right"}});
+        };
         if (exporter.hasAttribute("iosScreenOrientation"))
         {
           const auto value = exporter.getStringAttribute("iosScreenOrientation");
-          writeQuoted("IPHONE_SCREEN_ORIENTATION", screenOrientationFn(value));
+          const auto screenOrientations = screenOrientationsFn(value);
+          if (!screenOrientations.isEmpty())
+          {
+            writeList("IPHONE_SCREEN_ORIENTATION", screenOrientations);
+          }
+          else
+          {
+            writeQuoted("IPHONE_SCREEN_ORIENTATION", screenOrientationFn(value));
+          }
         }
         if (exporter.hasAttribute("iPadScreenOrientation"))
         {
           const auto value = exporter.getStringAttribute("iPadScreenOrientation");
-          writeQuoted("IPAD_SCREEN_ORIENTATION", screenOrientationFn(value));
+          const auto screenOrientations = screenOrientationsFn(value);
+          if (!screenOrientations.isEmpty())
+          {
+            writeList("IPAD_SCREEN_ORIENTATION", screenOrientations);
+          }
+          else
+          {
+            writeQuoted("IPAD_SCREEN_ORIENTATION", screenOrientationFn(value));
+          }
         }
 
         convertOnOffSettingIfDefined(exporter, "UIFileSharingEnabled",

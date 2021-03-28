@@ -811,8 +811,6 @@ function(jucer_export_target exporter)
       "CUSTOM_XCASSETS_FOLDER"
       "CUSTOM_LAUNCH_STORYBOARD"
       "DEVICE_FAMILY"
-      "IPHONE_SCREEN_ORIENTATION"
-      "IPAD_SCREEN_ORIENTATION"
       "FILE_SHARING_ENABLED"
       "SUPPORT_DOCUMENT_BROWSER"
       "STATUS_BAR_HIDDEN"
@@ -822,7 +820,11 @@ function(jucer_export_target exporter)
       "APP_GROUPS_CAPABILITY"
       "ICLOUD_PERMISSIONS"
     )
-    list(APPEND multi_value_keywords "APP_GROUP_ID")
+    list(APPEND multi_value_keywords
+      "IPHONE_SCREEN_ORIENTATION"
+      "IPAD_SCREEN_ORIENTATION"
+      "APP_GROUP_ID"
+    )
   else()
     list(APPEND single_value_keywords "VST_LEGACY_SDK_FOLDER" "VST_SDK_FOLDER")
   endif()
@@ -1015,9 +1017,23 @@ function(jucer_export_target exporter)
         PARENT_SCOPE
       )
     else()
-      message(FATAL_ERROR
-        "Unsupported value for IPHONE_SCREEN_ORIENTATION: \"${screen_orientation}\""
-      )
+      set(screen_orientations "")
+      foreach(item IN LISTS screen_orientation)
+        if(item STREQUAL "Portrait")
+          list(APPEND screen_orientations "UIInterfaceOrientationPortrait")
+        elseif(item STREQUAL "Portrait Upside Down")
+          list(APPEND screen_orientations "UIInterfaceOrientationPortraitUpsideDown")
+        elseif(item STREQUAL "Landscape Left")
+          list(APPEND screen_orientations "UIInterfaceOrientationLandscapeLeft")
+        elseif(item STREQUAL "Landscape Right")
+          list(APPEND screen_orientations "UIInterfaceOrientationLandscapeRight")
+        else()
+          message(FATAL_ERROR
+            "Unsupported value for IPHONE_SCREEN_ORIENTATION: \"${item}\""
+          )
+        endif()
+      endforeach()
+      set(JUCER_IPHONE_SCREEN_ORIENTATIONS "${screen_orientations}" PARENT_SCOPE)
     endif()
   endif()
 
@@ -1038,9 +1054,23 @@ function(jucer_export_target exporter)
         PARENT_SCOPE
       )
     else()
-      message(FATAL_ERROR
-        "Unsupported value for IPAD_SCREEN_ORIENTATION: \"${screen_orientation}\""
-      )
+      set(screen_orientations "")
+      foreach(item IN LISTS screen_orientation)
+        if(item STREQUAL "Portrait")
+          list(APPEND screen_orientations "UIInterfaceOrientationPortrait")
+        elseif(item STREQUAL "Portrait Upside Down")
+          list(APPEND screen_orientations "UIInterfaceOrientationPortraitUpsideDown")
+        elseif(item STREQUAL "Landscape Left")
+          list(APPEND screen_orientations "UIInterfaceOrientationLandscapeLeft")
+        elseif(item STREQUAL "Landscape Right")
+          list(APPEND screen_orientations "UIInterfaceOrientationLandscapeRight")
+        else()
+          message(FATAL_ERROR
+            "Unsupported value for IPAD_SCREEN_ORIENTATION: \"${item}\""
+          )
+        endif()
+      endforeach()
+      set(JUCER_IPAD_SCREEN_ORIENTATIONS "${screen_orientations}" PARENT_SCOPE)
     endif()
   endif()
 
