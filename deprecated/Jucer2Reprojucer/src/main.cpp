@@ -1,5 +1,5 @@
 // Copyright (C) 2017  Matthieu Talbot
-// Copyright (C) 2017-2020  Alain Martin
+// Copyright (C) 2017-2021  Alain Martin
 // Copyright (C) 2017  Florian Goltz
 // Copyright (C) 2019  Johannes Elliesen
 //
@@ -206,9 +206,9 @@ juce::String escape(const juce::String& charsToEscape, juce::String value)
 }
 
 
-juce::StringArray
-convertIdsToStrings(const juce::StringArray& ids,
-                    const std::vector<std::pair<juce::String, const char*>>& idsToStrings)
+juce::StringArray convertIdsToStrings(
+  const juce::StringArray& ids,
+  const std::vector<std::pair<juce::String, const char*>>& idsToStrings)
 {
   juce::StringArray strings;
   for (const auto& idToString : idsToStrings)
@@ -275,10 +275,9 @@ juce::StringArray parsePreprocessorDefinitions(const juce::String& input)
 }
 
 
-const juce::XmlElement*
-getChildByAttributeRecursively(const juce::XmlElement& parent,
-                               const juce::StringRef attributeName,
-                               const juce::StringRef attributeValue)
+const juce::XmlElement* getChildByAttributeRecursively(
+  const juce::XmlElement& parent, const juce::StringRef attributeName,
+  const juce::StringRef attributeValue)
 {
   if (const auto pChild = parent.getChildByAttribute(attributeName, attributeValue))
   {

@@ -179,10 +179,9 @@ inline const juce::XmlElement& safeGetChildByName(const juce::XmlElement& elemen
 }
 
 
-inline const juce::XmlElement*
-getChildByAttributeRecursively(const juce::XmlElement& parent,
-                               const juce::StringRef attributeName,
-                               const juce::StringRef attributeValue)
+inline const juce::XmlElement* getChildByAttributeRecursively(
+  const juce::XmlElement& parent, const juce::StringRef attributeName,
+  const juce::StringRef attributeValue)
 {
   if (const auto pChild = parent.getChildByAttribute(attributeName, attributeValue))
   {
