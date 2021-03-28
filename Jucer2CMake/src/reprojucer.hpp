@@ -1564,10 +1564,16 @@ inline void writeReprojucerCMakeLists(const Arguments& args,
 
           return value;
         };
-        convertSettingIfDefined(exporter, "iosScreenOrientation",
-                                "IPHONE_SCREEN_ORIENTATION", screenOrientationFn);
-        convertSettingIfDefined(exporter, "iPadScreenOrientation",
-                                "IPAD_SCREEN_ORIENTATION", screenOrientationFn);
+        if (exporter.hasAttribute("iosScreenOrientation"))
+        {
+          const auto value = exporter.getStringAttribute("iosScreenOrientation");
+          writeQuoted("IPHONE_SCREEN_ORIENTATION", screenOrientationFn(value));
+        }
+        if (exporter.hasAttribute("iPadScreenOrientation"))
+        {
+          const auto value = exporter.getStringAttribute("iPadScreenOrientation");
+          writeQuoted("IPAD_SCREEN_ORIENTATION", screenOrientationFn(value));
+        }
 
         convertOnOffSettingIfDefined(exporter, "UIFileSharingEnabled",
                                      "FILE_SHARING_ENABLED", {});
