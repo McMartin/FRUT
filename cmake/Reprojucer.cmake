@@ -1008,7 +1008,8 @@ function(jucer_export_target exporter)
       set(JUCER_IPHONE_SCREEN_ORIENTATION "landscape" PARENT_SCOPE)
     else()
       message(FATAL_ERROR
-        "Unsupported value for IPHONE_SCREEN_ORIENTATION: \"${screen_orientation}\"")
+        "Unsupported value for IPHONE_SCREEN_ORIENTATION: \"${screen_orientation}\""
+      )
     endif()
   endif()
 
@@ -1022,7 +1023,8 @@ function(jucer_export_target exporter)
       set(JUCER_IPAD_SCREEN_ORIENTATION "landscape" PARENT_SCOPE)
     else()
       message(FATAL_ERROR
-        "Unsupported value for IPAD_SCREEN_ORIENTATION: \"${screen_orientation}\"")
+        "Unsupported value for IPAD_SCREEN_ORIENTATION: \"${screen_orientation}\""
+      )
     endif()
   endif()
 
