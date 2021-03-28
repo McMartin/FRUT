@@ -1001,11 +1001,19 @@ function(jucer_export_target exporter)
   if(DEFINED _IPHONE_SCREEN_ORIENTATION)
     set(screen_orientation "${_IPHONE_SCREEN_ORIENTATION}")
     if(screen_orientation STREQUAL "Portrait and Landscape")
-      set(JUCER_IPHONE_SCREEN_ORIENTATION "portraitlandscape" PARENT_SCOPE)
+      set(JUCER_IPHONE_SCREEN_ORIENTATIONS
+        "UIInterfaceOrientationPortrait"
+        "UIInterfaceOrientationLandscapeLeft"
+        "UIInterfaceOrientationLandscapeRight"
+        PARENT_SCOPE
+      )
     elseif(screen_orientation STREQUAL "Portrait")
-      set(JUCER_IPHONE_SCREEN_ORIENTATION "portrait" PARENT_SCOPE)
+      set(JUCER_IPHONE_SCREEN_ORIENTATIONS "UIInterfaceOrientationPortrait" PARENT_SCOPE)
     elseif(screen_orientation STREQUAL "Landscape")
-      set(JUCER_IPHONE_SCREEN_ORIENTATION "landscape" PARENT_SCOPE)
+      set(JUCER_IPHONE_SCREEN_ORIENTATIONS
+        "UIInterfaceOrientationLandscapeLeft" "UIInterfaceOrientationLandscapeRight"
+        PARENT_SCOPE
+      )
     else()
       message(FATAL_ERROR
         "Unsupported value for IPHONE_SCREEN_ORIENTATION: \"${screen_orientation}\""
@@ -1016,11 +1024,19 @@ function(jucer_export_target exporter)
   if(DEFINED _IPAD_SCREEN_ORIENTATION)
     set(screen_orientation "${_IPAD_SCREEN_ORIENTATION}")
     if(screen_orientation STREQUAL "Portrait and Landscape")
-      set(JUCER_IPAD_SCREEN_ORIENTATION "portraitlandscape" PARENT_SCOPE)
+      set(JUCER_IPAD_SCREEN_ORIENTATIONS
+        "UIInterfaceOrientationPortrait"
+        "UIInterfaceOrientationLandscapeLeft"
+        "UIInterfaceOrientationLandscapeRight"
+        PARENT_SCOPE
+      )
     elseif(screen_orientation STREQUAL "Portrait")
-      set(JUCER_IPAD_SCREEN_ORIENTATION "portrait" PARENT_SCOPE)
+      set(JUCER_IPAD_SCREEN_ORIENTATIONS "UIInterfaceOrientationPortrait" PARENT_SCOPE)
     elseif(screen_orientation STREQUAL "Landscape")
-      set(JUCER_IPAD_SCREEN_ORIENTATION "landscape" PARENT_SCOPE)
+      set(JUCER_IPAD_SCREEN_ORIENTATIONS
+        "UIInterfaceOrientationLandscapeLeft" "UIInterfaceOrientationLandscapeRight"
+        PARENT_SCOPE
+      )
     else()
       message(FATAL_ERROR
         "Unsupported value for IPAD_SCREEN_ORIENTATION: \"${screen_orientation}\""
@@ -4415,48 +4431,41 @@ function(_FRUT_generate_plist_file
       )
     endif()
 
+    set(default_screen_orientations
+      "UIInterfaceOrientationPortrait"
+      "UIInterfaceOrientationLandscapeLeft"
+      "UIInterfaceOrientationLandscapeRight"
+    )
     string(APPEND plist_entries "
     <key>UISupportedInterfaceOrientations</key>
     <array>"
     )
-    if(DEFINED JUCER_IPHONE_SCREEN_ORIENTATION)
-      set(iphone_screen_orientation "${JUCER_IPHONE_SCREEN_ORIENTATION}")
+    if(DEFINED JUCER_IPHONE_SCREEN_ORIENTATIONS)
+      set(iphone_screen_orientations "${JUCER_IPHONE_SCREEN_ORIENTATIONS}")
     else()
-      set(iphone_screen_orientation "portraitlandscape")
+      set(iphone_screen_orientations "${default_screen_orientations}")
     endif()
-    if(iphone_screen_orientation MATCHES "portrait")
+    foreach(item IN LISTS iphone_screen_orientations)
       string(APPEND plist_entries "
-      <string>UIInterfaceOrientationPortrait</string>"
+      <string>${item}</string>"
       )
-    endif()
-    if(iphone_screen_orientation MATCHES "landscape")
-      string(APPEND plist_entries "
-      <string>UIInterfaceOrientationLandscapeLeft</string>
-      <string>UIInterfaceOrientationLandscapeRight</string>"
-      )
-    endif()
+    endforeach()
     string(APPEND plist_entries "\n    </array>")
-    if(DEFINED JUCER_IPAD_SCREEN_ORIENTATION)
-      set(ipad_screen_orientation "${JUCER_IPAD_SCREEN_ORIENTATION}")
+    if(DEFINED JUCER_IPAD_SCREEN_ORIENTATIONS)
+      set(ipad_screen_orientations "${JUCER_IPAD_SCREEN_ORIENTATIONS}")
     else()
-      set(ipad_screen_orientation "portraitlandscape")
+      set(ipad_screen_orientations "${default_screen_orientations}")
     endif()
-    if(NOT ipad_screen_orientation STREQUAL iphone_screen_orientation)
+    if(NOT ipad_screen_orientations STREQUAL iphone_screen_orientations)
       string(APPEND plist_entries "
     <key>UISupportedInterfaceOrientations~ipad</key>
     <array>"
       )
-      if(ipad_screen_orientation MATCHES "portrait")
+      foreach(item IN LISTS ipad_screen_orientations)
         string(APPEND plist_entries "
-      <string>UIInterfaceOrientationPortrait</string>"
+      <string>${item}</string>"
         )
-      endif()
-      if(ipad_screen_orientation MATCHES "landscape")
-        string(APPEND plist_entries "
-      <string>UIInterfaceOrientationLandscapeLeft</string>
-      <string>UIInterfaceOrientationLandscapeRight</string>"
-        )
-      endif()
+      endforeach()
       string(APPEND plist_entries "\n    </array>")
     endif()
 

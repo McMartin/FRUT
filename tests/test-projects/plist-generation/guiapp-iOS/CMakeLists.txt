@@ -58,19 +58,21 @@ function(test_app_plist_exporter_bundle_identifier)
 endfunction()
 
 
-function(test_app_plist_screen_orientation_default)
-  _FRUT_generate_plist_file(target "App-ScreenOrientation-default" "APPL" "????")
+function(test_app_plist_screen_orientations_default)
+  _FRUT_generate_plist_file(target "App-ScreenOrientations-default" "APPL" "????")
 endfunction()
 
-function(test_app_plist_screen_orientation_identical)
-  set(JUCER_IPHONE_SCREEN_ORIENTATION "portrait")
-  set(JUCER_IPAD_SCREEN_ORIENTATION "portrait")
-  _FRUT_generate_plist_file(target "App-ScreenOrientation-identical" "APPL" "????")
+function(test_app_plist_screen_orientations_identical)
+  set(JUCER_IPHONE_SCREEN_ORIENTATIONS "UIInterfaceOrientationPortrait")
+  set(JUCER_IPAD_SCREEN_ORIENTATIONS "UIInterfaceOrientationPortrait")
+  _FRUT_generate_plist_file(target "App-ScreenOrientations-identical" "APPL" "????")
 endfunction()
 
-function(test_app_plist_screen_orientation_different)
-  set(JUCER_IPHONE_SCREEN_ORIENTATION "landscape")
-  _FRUT_generate_plist_file(target "App-ScreenOrientation-different" "APPL" "????")
+function(test_app_plist_screen_orientations_different)
+  set(JUCER_IPHONE_SCREEN_ORIENTATIONS
+    "UIInterfaceOrientationLandscapeLeft" "UIInterfaceOrientationLandscapeRight"
+  )
+  _FRUT_generate_plist_file(target "App-ScreenOrientations-different" "APPL" "????")
 endfunction()
 
 
@@ -166,9 +168,9 @@ test_app_plist_file_sharing_enabled()
 test_app_plist_microphone_access_custom()
 test_app_plist_microphone_access_default()
 test_app_plist_push_notifications_capability()
-test_app_plist_screen_orientation_default()
-test_app_plist_screen_orientation_different()
-test_app_plist_screen_orientation_identical()
+test_app_plist_screen_orientations_default()
+test_app_plist_screen_orientations_different()
+test_app_plist_screen_orientations_identical()
 test_app_plist_status_bar_hidden()
 test_app_plist_support_document_browser()
 test_app_plist_version()
