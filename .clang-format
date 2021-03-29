@@ -10,4 +10,5 @@ ConstructorInitializerIndentWidth: 2
 ContinuationIndentWidth: 2
 IndentPPDirectives: BeforeHash
 MaxEmptyLinesToKeep: 2
+PenaltyReturnTypeOnItsOwnLine: 120
 PointerAlignment: Left

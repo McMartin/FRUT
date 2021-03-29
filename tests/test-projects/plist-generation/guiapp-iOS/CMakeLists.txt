@@ -1,4 +1,4 @@
-# Copyright (C) 2019  Alain Martin
+# Copyright (C) 2019, 2021  Alain Martin
 #
 # This file is part of FRUT.
 #
@@ -58,17 +58,21 @@ function(test_app_plist_exporter_bundle_identifier)
 endfunction()
 
 
-function(test_app_plist_screen_orientation)
-  foreach(iphone_screen_orientation IN ITEMS "portraitlandscape" "portrait" "landscape")
-    foreach(ipad_screen_orientation IN ITEMS "portraitlandscape" "portrait" "landscape")
-      set(JUCER_IPHONE_SCREEN_ORIENTATION "${iphone_screen_orientation}")
-      set(JUCER_IPAD_SCREEN_ORIENTATION "${ipad_screen_orientation}")
-      _FRUT_generate_plist_file(target
-        "App-ScreenOrientation-iPhone_${iphone_screen_orientation}-iPad_${ipad_screen_orientation}"
-        "APPL" "????"
-      )
-    endforeach()
-  endforeach()
+function(test_app_plist_screen_orientations_default)
+  _FRUT_generate_plist_file(target "App-ScreenOrientations-default" "APPL" "????")
+endfunction()
+
+function(test_app_plist_screen_orientations_identical)
+  set(JUCER_IPHONE_SCREEN_ORIENTATIONS "UIInterfaceOrientationPortrait")
+  set(JUCER_IPAD_SCREEN_ORIENTATIONS "UIInterfaceOrientationPortrait")
+  _FRUT_generate_plist_file(target "App-ScreenOrientations-identical" "APPL" "????")
+endfunction()
+
+function(test_app_plist_screen_orientations_different)
+  set(JUCER_IPHONE_SCREEN_ORIENTATIONS
+    "UIInterfaceOrientationLandscapeLeft" "UIInterfaceOrientationLandscapeRight"
+  )
+  _FRUT_generate_plist_file(target "App-ScreenOrientations-different" "APPL" "????")
 endfunction()
 
 
@@ -164,7 +168,9 @@ test_app_plist_file_sharing_enabled()
 test_app_plist_microphone_access_custom()
 test_app_plist_microphone_access_default()
 test_app_plist_push_notifications_capability()
-test_app_plist_screen_orientation()
+test_app_plist_screen_orientations_default()
+test_app_plist_screen_orientations_different()
+test_app_plist_screen_orientations_identical()
 test_app_plist_status_bar_hidden()
 test_app_plist_support_document_browser()
 test_app_plist_version()

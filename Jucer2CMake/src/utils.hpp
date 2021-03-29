@@ -82,9 +82,9 @@ private:
 };
 
 
-inline juce::StringArray
-convertIdsToStrings(const juce::StringArray& ids,
-                    const std::vector<std::pair<juce::String, const char*>>& idsToStrings)
+inline juce::StringArray convertIdsToStrings(
+  const juce::StringArray& ids,
+  const std::vector<std::pair<juce::String, const char*>>& idsToStrings)
 {
   juce::StringArray strings;
   for (const auto& idToString : idsToStrings)
@@ -98,8 +98,8 @@ convertIdsToStrings(const juce::StringArray& ids,
 }
 
 
-inline juce::String
-getAUMainTypeConstantFromQuotedFourChars(const juce::String& quotedFourChars)
+inline juce::String getAUMainTypeConstantFromQuotedFourChars(
+  const juce::String& quotedFourChars)
 {
   // clang-format off
   if (quotedFourChars == "'aufx'") return "kAudioUnitType_Effect";
@@ -117,8 +117,8 @@ getAUMainTypeConstantFromQuotedFourChars(const juce::String& quotedFourChars)
 }
 
 
-inline juce::File
-getChildFileFromWorkingDirectory(const juce::StringRef relativeOrAbsolutePath)
+inline juce::File getChildFileFromWorkingDirectory(
+  const juce::StringRef relativeOrAbsolutePath)
 {
   return juce::File::getCurrentWorkingDirectory().getChildFile(relativeOrAbsolutePath);
 }

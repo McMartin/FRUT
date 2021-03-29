@@ -54,8 +54,8 @@ Define the settings specific to an export target.
     [HARDENED_RUNTIME_OPTIONS <hardened_runtime_option> [<hardened_runtime_option> ...]]  # [5]
 
     [DEVICE_FAMILY <iPhone|iPad|Universal>]  # [7]
-    [IPHONE_SCREEN_ORIENTATION <Portrait and Landscape|Portrait|Landscape>]  # [7]
-    [IPAD_SCREEN_ORIENTATION <Portrait and Landscape|Portrait|Landscape>]  # [7]
+    [IPHONE_SCREEN_ORIENTATION <screen_orientation> [<screen_orientation> ...]]  # [7]
+    [IPAD_SCREEN_ORIENTATION <screen_orientation> [<screen_orientation> ...]]  # [7]
     [FILE_SHARING_ENABLED <ON|OFF>]  # [7]
     [SUPPORT_DOCUMENT_BROWSER <ON|OFF>]  # [7]
     [STATUS_BAR_HIDDEN <ON|OFF>]  # [7]
