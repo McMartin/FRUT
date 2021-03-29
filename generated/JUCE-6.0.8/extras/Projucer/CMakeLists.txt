@@ -27,7 +27,7 @@ jucer_project_begin(
 
 jucer_project_settings(
   PROJECT_NAME "Projucer"
-  PROJECT_VERSION "6.0.5"
+  PROJECT_VERSION "6.0.8"
   COMPANY_NAME "Raw Material Software Limited"
   COMPANY_COPYRIGHT "Raw Material Software Limited"
   REPORT_JUCE_APP_USAGE OFF # Required for closed source applications without an Indie or Pro JUCE license

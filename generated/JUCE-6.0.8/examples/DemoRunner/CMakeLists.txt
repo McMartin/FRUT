@@ -27,7 +27,7 @@ jucer_project_begin(
 
 jucer_project_settings(
   PROJECT_NAME "DemoRunner"
-  PROJECT_VERSION "6.0.5"
+  PROJECT_VERSION "6.0.8"
   COMPANY_NAME "Raw Material Software Limited"
   COMPANY_COPYRIGHT "Copyright (c) 2020 - Raw Material Software Limited"
   COMPANY_WEBSITE "https://www.juce.com/"
@@ -35,7 +35,7 @@ jucer_project_settings(
   REPORT_JUCE_APP_USAGE OFF # Required for closed source applications without an Indie or Pro JUCE license
   DISPLAY_THE_JUCE_SPLASH_SCREEN ON # Required for closed source applications without an Indie or Pro JUCE license
   PROJECT_TYPE "GUI Application"
-  BUNDLE_IDENTIFIER "com.rmsl.juce.demorunner"
+  BUNDLE_IDENTIFIER "com.rmsl.jucedemorunner"
   CXX_LANGUAGE_STANDARD "C++14"
   PREPROCESSOR_DEFINITIONS
     "JUCE_DEMO_RUNNER=1"
@@ -277,6 +277,16 @@ jucer_export_target(
   ICON_LARGE "Source/JUCEAppIcon.png"
   CUSTOM_XCODE_RESOURCE_FOLDERS
     "../Assets"
+  IPHONE_SCREEN_ORIENTATION
+    "Portrait"
+    "Portrait Upside Down"
+    "Landscape Left"
+    "Landscape Right"
+  IPAD_SCREEN_ORIENTATION
+    "Portrait"
+    "Portrait Upside Down"
+    "Landscape Left"
+    "Landscape Right"
   FILE_SHARING_ENABLED ON
   SUPPORT_DOCUMENT_BROWSER ON
   MICROPHONE_ACCESS ON
