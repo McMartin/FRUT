@@ -4168,6 +4168,7 @@ function(_FRUT_generate_JuceHeader_header)
     set(include_guard_top "#pragma once")
     set(include_guard_bottom "")
   endif()
+
   configure_file("${Reprojucer_data_DIR}/JuceHeader.h.in"
     "JuceLibraryCode/JuceHeader.h" @ONLY
   )
