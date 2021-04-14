@@ -342,6 +342,9 @@ contributors:
       <a href="https://github.com/McMartin/FRUT/issues?q=is%3Aissue+author%3AE-Fir" title="Bug reports">🐛</a>
     </td>
     <td>
+      <a href="https://github.com/benediktsailer"><img src="https://github.com/benediktsailer.png" width="100"><br />Benedikt Sailer</a>
+      <br />
+      <a href="https://github.com/McMartin/FRUT/issues?q=is%3Aissue+author%3Abenediktsailer" title="Bug reports">🐛</a>
     </td>
   </tr>
   </tbody>
