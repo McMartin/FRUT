@@ -4157,6 +4157,14 @@ function(_FRUT_generate_JuceHeader_header)
     string(APPEND modules_includes "\n")
   endif()
 
+  if(DEFINED JUCER_VERSION AND JUCER_VERSION VERSION_LESS 5.3.2)
+    set(company_name_field "")
+  else()
+    string(CONCAT company_name_field "\n"
+      "    const char* const  companyName    = \"${JUCER_COMPANY_NAME}\";"
+    )
+  endif()
+
   if(DEFINED JUCER_VERSION AND JUCER_VERSION VERSION_LESS 5.0.0)
     string(TOUPPER "${JUCER_PROJECT_ID}" upper_project_id)
     string(CONCAT include_guard_top
@@ -4168,6 +4176,7 @@ function(_FRUT_generate_JuceHeader_header)
     set(include_guard_top "#pragma once")
     set(include_guard_bottom "")
   endif()
+
   configure_file("${Reprojucer_data_DIR}/JuceHeader.h.in"
     "JuceLibraryCode/JuceHeader.h" @ONLY
   )
