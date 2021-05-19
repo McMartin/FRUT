@@ -61,8 +61,16 @@ struct LineWriter
   template <typename... Args>
   void operator()(Args&&... args)
   {
+    if (needsEmptyLine)
+    {
+      writeToStream(mStream, kNewLine);
+      needsEmptyLine = false;
+    }
+
     writeToStream(mStream, std::forward<Args>(args)..., kNewLine);
   }
+
+  bool needsEmptyLine = false;
 
 private:
   template <class Head>
