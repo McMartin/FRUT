@@ -106,6 +106,16 @@ inline void writeJuce6CMakeLists(const Arguments&, const juce::XmlElement& jucer
       }
     };
 
+  const auto writeKeywordAndList = [&wLn](const juce::StringRef keyword,
+                                          const juce::StringArray& values) {
+    wLn("  ", keyword);
+
+    for (const auto& item : values)
+    {
+      wLn("    \"", item, "\"");
+    }
+  };
+
   // juce_add_{console_app,gui_app,plugin}
   {
     const auto juceAddFunction = [&projectType]() -> juce::String {
@@ -155,11 +165,7 @@ inline void writeJuce6CMakeLists(const Arguments&, const juce::XmlElement& jucer
       }
       else
       {
-        wLn("  FORMATS");
-        for (const auto& item : formats)
-        {
-          wLn("    \"", item, "\"");
-        }
+        writeKeywordAndList("FORMATS", formats);
       }
 
       writeProjectSettingIfDefined("pluginName", "PLUGIN_NAME");
@@ -231,11 +237,7 @@ inline void writeJuce6CMakeLists(const Arguments&, const juce::XmlElement& jucer
         }
         else
         {
-          wLn("  VST3_CATEGORIES");
-          for (const auto& item : vst3Categories)
-          {
-            wLn("    \"", item, "\"");
-          }
+          writeKeywordAndList("VST3_CATEGORIES", vst3Categories);
         }
       }
 
@@ -402,12 +404,8 @@ inline void writeJuce6CMakeLists(const Arguments&, const juce::XmlElement& jucer
   // target_sources
   {
     wLn("target_sources(", targetName);
-    wLn("  PRIVATE");
 
-    for (const auto& item : sources)
-    {
-      wLn("    \"", item, "\"");
-    }
+    writeKeywordAndList("PRIVATE", sources);
 
     wLn(")");
     wLn();
@@ -420,11 +418,7 @@ inline void writeJuce6CMakeLists(const Arguments&, const juce::XmlElement& jucer
 
     writeProjectSettingIfDefined("binaryDataNamespace", "NAMESPACE");
 
-    wLn("  SOURCES");
-    for (const auto& item : binarySources)
-    {
-      wLn("    \"", item, "\"");
-    }
+    writeKeywordAndList("SOURCES", binarySources);
 
     wLn(")");
     wLn();
