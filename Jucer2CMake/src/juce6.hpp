@@ -155,7 +155,11 @@ inline void writeJuce6CMakeLists(const Arguments&, const juce::XmlElement& jucer
       }
       else
       {
-        wLn("  FORMATS \"", formats.joinIntoString("\" \""), "\"");
+        wLn("  FORMATS");
+        for (const auto& item : formats)
+        {
+          wLn("    \"", item, "\"");
+        }
       }
 
       writeProjectSettingIfDefined("pluginName", "PLUGIN_NAME");
@@ -227,7 +231,11 @@ inline void writeJuce6CMakeLists(const Arguments&, const juce::XmlElement& jucer
         }
         else
         {
-          wLn("  VST3_CATEGORIES \"", vst3Categories.joinIntoString("\" \""), "\"");
+          wLn("  VST3_CATEGORIES");
+          for (const auto& item : vst3Categories)
+          {
+            wLn("    \"", item, "\"");
+          }
         }
       }
 

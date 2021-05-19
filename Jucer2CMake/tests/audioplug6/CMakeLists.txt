@@ -11,7 +11,9 @@ find_package(JUCE CONFIG REQUIRED)
 juce_add_plugin(audioplug6
   VERSION "1.0.0"
 
-  FORMATS "VST3" "Standalone"
+  FORMATS
+    "VST3"
+    "Standalone"
   PLUGIN_NAME "PluginName"
   DESCRIPTION "The description"
   PLUGIN_MANUFACTURER_CODE "Manu"
@@ -29,7 +31,9 @@ juce_add_plugin(audioplug6
   AU_SANDBOX_SAFE FALSE
   VST_NUM_MIDI_INS "9"
   VST_NUM_MIDI_OUTS "8"
-  VST3_CATEGORIES "Drum" "Mastering"
+  VST3_CATEGORIES
+    "Drum"
+    "Mastering"
   VST2_CATEGORY "kPlugCategUnknown"
 )
 
