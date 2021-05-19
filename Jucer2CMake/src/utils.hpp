@@ -58,6 +58,13 @@ struct LineWriter
   LineWriter(const LineWriter&) = delete;
   LineWriter& operator=(const LineWriter&) = delete;
 
+  template <typename... Args>
+  void operator()(Args&&... args)
+  {
+    writeToStream(mStream, std::forward<Args>(args)..., kNewLine);
+  }
+
+private:
   template <class Head>
   void writeToStream(juce::MemoryOutputStream& stream, Head&& head)
   {
@@ -71,13 +78,6 @@ struct LineWriter
     writeToStream(stream, std::forward<Tail>(tail)...);
   }
 
-  template <typename... Args>
-  void operator()(Args&&... args)
-  {
-    writeToStream(mStream, std::forward<Args>(args)..., kNewLine);
-  }
-
-private:
   juce::MemoryOutputStream& mStream;
 };
 
