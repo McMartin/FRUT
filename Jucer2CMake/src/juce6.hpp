@@ -106,6 +106,16 @@ inline void writeJuce6CMakeLists(const Arguments&, const juce::XmlElement& jucer
       }
     };
 
+  const auto writeKeywordAndList = [&wLn](const juce::StringRef keyword,
+                                          const juce::StringArray& values) {
+    wLn("  ", keyword);
+
+    for (const auto& item : values)
+    {
+      wLn("    \"", item, "\"");
+    }
+  };
+
   // juce_add_{console_app,gui_app,plugin}
   {
     const auto juceAddFunction = [&projectType]() -> juce::String {
@@ -120,15 +130,6 @@ inline void writeJuce6CMakeLists(const Arguments&, const juce::XmlElement& jucer
 
     wLn(juceAddFunction, "(", targetName);
 
-    bool needEmptyLine = false;
-    const auto writeEmptyLineIfNeeded = [&needEmptyLine, &wLn]() {
-      if (needEmptyLine)
-      {
-        wLn();
-        needEmptyLine = false;
-      }
-    };
-
     // TODO: PRODUCT_NAME
 
     wLn("  VERSION \"" + jucerProject.getStringAttribute("version", "1.0.0") + "\"");
@@ -140,12 +141,10 @@ inline void writeJuce6CMakeLists(const Arguments&, const juce::XmlElement& jucer
     writeProjectSettingIfDefined("companyWebsite", "COMPANY_WEBSITE");
     writeProjectSettingIfDefined("companyEmail", "COMPANY_EMAIL");
 
-    needEmptyLine = true;
+    wLn.needsEmptyLine = true;
 
     if (projectType == "audioplug")
     {
-      writeEmptyLineIfNeeded();
-
       const auto formats =
         jucerProject.hasAttribute("pluginFormats")
           ? convertIdsToStrings(
@@ -166,7 +165,7 @@ inline void writeJuce6CMakeLists(const Arguments&, const juce::XmlElement& jucer
       }
       else
       {
-        wLn("  FORMATS \"", formats.joinIntoString("\" \""), "\"");
+        writeKeywordAndList("FORMATS", formats);
       }
 
       writeProjectSettingIfDefined("pluginName", "PLUGIN_NAME");
@@ -238,7 +237,7 @@ inline void writeJuce6CMakeLists(const Arguments&, const juce::XmlElement& jucer
         }
         else
         {
-          wLn("  VST3_CATEGORIES \"", vst3Categories.joinIntoString("\" \""), "\"");
+          writeKeywordAndList("VST3_CATEGORIES", vst3Categories);
         }
       }
 
@@ -254,20 +253,22 @@ inline void writeJuce6CMakeLists(const Arguments&, const juce::XmlElement& jucer
       // TODO: VST_COPY_DIR
     }
 
-    needEmptyLine = true;
+    wLn.needsEmptyLine = true;
 
     // TODO: ICON_SMALL
     // TODO: ICON_BIG
     // TODO: CUSTOM_XCASSETS_FOLDER
     // TODO: LAUNCH_STORYBOARD_FILE
 
-    needEmptyLine = true;
+    wLn.needsEmptyLine = true;
 
+    // TODO: TARGETED_DEVICE_FAMILY
     // TODO: IPHONE_SCREEN_ORIENTATIONS
     // TODO: IPAD_SCREEN_ORIENTATIONS
     // TODO: FILE_SHARING_ENABLED
     // TODO: DOCUMENT_BROWSER_ENABLED
     // TODO: STATUS_BAR_HIDDEN
+    // TODO: REQUIRES_FULL_SCREEN
     // TODO: DOCUMENT_EXTENSIONS
     // TODO: APP_SANDBOX_ENABLED
     // TODO: APP_SANDBOX_INHERIT
@@ -291,12 +292,11 @@ inline void writeJuce6CMakeLists(const Arguments&, const juce::XmlElement& jucer
     // TODO: SUPPRESS_AU_PLIST_RESOURCE_USAGE
     // TODO: PLIST_TO_MERGE
 
-    needEmptyLine = true;
+    wLn.needsEmptyLine = true;
 
     if (hasModule(modules, "juce_core")
         && isJuceOptionEnabled(juceOptions, "JUCE_USE_CURL"))
     {
-      writeEmptyLineIfNeeded();
       wLn("  NEEDS_CURL TRUE");
     }
 
@@ -305,17 +305,16 @@ inline void writeJuce6CMakeLists(const Arguments&, const juce::XmlElement& jucer
     if (hasModule(modules, "juce_gui_extra")
         && isJuceOptionEnabled(juceOptions, "JUCE_WEB_BROWSER"))
     {
-      writeEmptyLineIfNeeded();
       wLn("  NEEDS_WEB_BROWSER TRUE");
     }
 
     if (hasModule(modules, "juce_audio_processors")
         && isJuceOptionEnabled(juceOptions, "JUCE_PLUGINHOST_AU"))
     {
-      writeEmptyLineIfNeeded();
       wLn("  PLUGINHOST_AU TRUE");
     }
 
+    wLn.needsEmptyLine = false;
     wLn(")");
     wLn();
   }
@@ -405,12 +404,8 @@ inline void writeJuce6CMakeLists(const Arguments&, const juce::XmlElement& jucer
   // target_sources
   {
     wLn("target_sources(", targetName);
-    wLn("  PRIVATE");
 
-    for (const auto& item : sources)
-    {
-      wLn("    \"", item, "\"");
-    }
+    writeKeywordAndList("PRIVATE", sources);
 
     wLn(")");
     wLn();
@@ -423,11 +418,7 @@ inline void writeJuce6CMakeLists(const Arguments&, const juce::XmlElement& jucer
 
     writeProjectSettingIfDefined("binaryDataNamespace", "NAMESPACE");
 
-    wLn("  SOURCES");
-    for (const auto& item : binarySources)
-    {
-      wLn("    \"", item, "\"");
-    }
+    writeKeywordAndList("SOURCES", binarySources);
 
     wLn(")");
     wLn();
