@@ -347,6 +347,23 @@ contributors:
       <a href="https://github.com/McMartin/FRUT/issues?q=is%3Aissue+author%3Abenediktsailer" title="Bug reports">🐛</a>
     </td>
   </tr>
+  <tr>
+    <td>
+      <a href="https://github.com/steve-baker-cradle"><img src="https://github.com/steve-baker-cradle.png" width="100"><br />Steve Baker</a>
+      <br />
+      <a href="https://github.com/McMartin/FRUT/issues?q=is%3Aissue+author%3Asteve-baker-cradle" title="Bug reports">🐛</a>
+    </td>
+    <td>
+    </td>
+    <td>
+    </td>
+    <td>
+    </td>
+    <td>
+    </td>
+    <td>
+    </td>
+  </tr>
   </tbody>
   </table>
 
