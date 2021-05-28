@@ -65,6 +65,10 @@ if(APPLE)
   )
 endif()
 
+if(MSVC)
+  target_compile_options(tools_juce_gui_basics PRIVATE /bigobj)
+endif()
+
 if(CMAKE_HOST_SYSTEM_NAME STREQUAL "Linux")
   find_package(PkgConfig REQUIRED)
 
