@@ -354,6 +354,9 @@ contributors:
       <a href="https://github.com/McMartin/FRUT/issues?q=is%3Aissue+author%3Asteve-baker-cradle" title="Bug reports">🐛</a>
     </td>
     <td>
+      <a href="https://github.com/dacrome"><img src="https://github.com/dacrome.png" width="100"><br />David Crome</a>
+      <br />
+      <a href="https://github.com/McMartin/FRUT/issues?q=is%3Aissue+author%3Adacrome" title="Bug reports">🐛</a>
     </td>
     <td>
     </td>
