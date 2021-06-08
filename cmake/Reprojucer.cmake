@@ -2978,6 +2978,24 @@ function(_FRUT_abs_path_based_on_jucer_project_dir out_path in_path)
 endfunction()
 
 
+function(_FRUT_abs_path_based_on_jucer_target_project_folder out_path in_path exporter)
+
+  if(NOT IS_ABSOLUTE "${in_path}" AND NOT DEFINED JUCER_TARGET_PROJECT_FOLDER)
+    message(FATAL_ERROR "Cannot join \"\${JUCER_TARGET_PROJECT_FOLDER}\" and"
+      " \"${in_path}\" to construct an absolute path because JUCER_TARGET_PROJECT_FOLDER"
+      " is not defined. You have to provide TARGET_PROJECT_FOLDER when calling"
+      " jucer_export_target(\"${exporter}\")."
+    )
+  endif()
+
+  get_filename_component(in_path "${in_path}" ABSOLUTE
+    BASE_DIR "${JUCER_TARGET_PROJECT_FOLDER}"
+  )
+  set(${out_path} "${in_path}" PARENT_SCOPE)
+
+endfunction()
+
+
 function(_FRUT_add_bundle_resources target)
 
   if(NOT APPLE)
