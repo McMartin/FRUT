@@ -1356,6 +1356,9 @@ inline void writeReprojucerCMakeLists(const Arguments& args,
       const auto isXcodeExporter =
         exporterType == "XCODE_MAC" || exporterType == "XCODE_IPHONE";
 
+      const auto isVSExporter = exporterType == "VS2019" || exporterType == "VS2017"
+                                || exporterType == "VS2015" || exporterType == "VS2013";
+
       if (isXcodeExporter
           && (exporter.hasAttribute("prebuildCommand")
               || exporter.hasAttribute("postbuildCommand")))
@@ -1363,9 +1366,6 @@ inline void writeReprojucerCMakeLists(const Arguments& args,
         wLn("  TARGET_PROJECT_FOLDER \"", exporter.getStringAttribute("targetFolder"),
             "\" # only used by PREBUILD_SHELL_SCRIPT and POSTBUILD_SHELL_SCRIPT");
       }
-
-      const auto isVSExporter = exporterType == "VS2019" || exporterType == "VS2017"
-                                || exporterType == "VS2015" || exporterType == "VS2013";
 
       if (isVSExporter)
       {
