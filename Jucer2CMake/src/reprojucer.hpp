@@ -1359,40 +1359,47 @@ inline void writeReprojucerCMakeLists(const Arguments& args,
       const auto isVSExporter = exporterType == "VS2019" || exporterType == "VS2017"
                                 || exporterType == "VS2015" || exporterType == "VS2013";
 
-      if (isXcodeExporter
-          && (exporter.hasAttribute("prebuildCommand")
-              || exporter.hasAttribute("postbuildCommand")))
+      juce::StringArray needTargetFolder;
+
+      if (isXcodeExporter)
       {
-        wLn("  TARGET_PROJECT_FOLDER \"", exporter.getStringAttribute("targetFolder"),
-            "\" # only used by PREBUILD_SHELL_SCRIPT and POSTBUILD_SHELL_SCRIPT");
+        if (exporter.hasAttribute("prebuildCommand"))
+        {
+          needTargetFolder.add("PREBUILD_SHELL_SCRIPT");
+        }
+        if (exporter.hasAttribute("postbuildCommand"))
+        {
+          needTargetFolder.add("POSTBUILD_SHELL_SCRIPT");
+        }
       }
 
-      if (isVSExporter)
+      for (auto pConfiguration = configurations.getFirstChildElement();
+           pConfiguration != nullptr; pConfiguration = pConfiguration->getNextElement())
       {
-        const auto needsTargetFolder = [&configurations]() {
-          for (auto pConfiguration = configurations.getFirstChildElement();
-               pConfiguration != nullptr;
-               pConfiguration = pConfiguration->getNextElement())
-          {
-            if (pConfiguration->isTextElement())
-            {
-              continue;
-            }
-
-            if (pConfiguration->hasAttribute("prebuildCommand")
-                || pConfiguration->hasAttribute("postbuildCommand"))
-            {
-              return true;
-            }
-          }
-          return false;
-        }();
-
-        if (needsTargetFolder)
+        if (pConfiguration->isTextElement())
         {
-          wLn("  TARGET_PROJECT_FOLDER \"", exporter.getStringAttribute("targetFolder"),
-              "\" # only used by PREBUILD_COMMAND and POSTBUILD_COMMAND");
+          continue;
         }
+
+        if (isVSExporter)
+        {
+          if (pConfiguration->hasAttribute("prebuildCommand"))
+          {
+            needTargetFolder.add("PREBUILD_COMMAND");
+          }
+          if (pConfiguration->hasAttribute("postbuildCommand"))
+          {
+            needTargetFolder.add("POSTBUILD_COMMAND");
+          }
+        }
+      }
+
+      const auto kIgnoreCase = false;
+      needTargetFolder.removeDuplicates(kIgnoreCase);
+      if (!needTargetFolder.isEmpty())
+      {
+        wLn("  TARGET_PROJECT_FOLDER \"", exporter.getStringAttribute("targetFolder"),
+            "\" # used by ", needTargetFolder.joinIntoString(", "));
       }
 
       const auto isAudioPlugin = projectType == "audioplug";

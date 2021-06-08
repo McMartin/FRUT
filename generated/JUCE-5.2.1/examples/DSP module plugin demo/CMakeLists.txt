@@ -241,7 +241,7 @@ jucer_export_target_configuration(
 
 jucer_export_target(
   "Visual Studio 2015"
-  TARGET_PROJECT_FOLDER "Builds/VisualStudio2015" # only used by PREBUILD_COMMAND and POSTBUILD_COMMAND
+  TARGET_PROJECT_FOLDER "Builds/VisualStudio2015" # used by POSTBUILD_COMMAND
 )
 
 jucer_export_target_configuration(
