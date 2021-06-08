@@ -1368,6 +1368,10 @@ inline void writeReprojucerCMakeLists(const Arguments& args,
 
       if (isXcodeExporter)
       {
+        if (exporter.hasAttribute("frameworkSearchPaths"))
+        {
+          needTargetFolder.add("FRAMEWORK_SEARCH_PATHS");
+        }
         if (exporter.hasAttribute("prebuildCommand"))
         {
           needTargetFolder.add("PREBUILD_SHELL_SCRIPT");
