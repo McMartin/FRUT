@@ -462,6 +462,7 @@ jucer_appconfig_header(
 
 jucer_export_target(
   "Xcode (MacOSX)"
+  TARGET_PROJECT_FOLDER "Builds/MacOSX" # used by HEADER_SEARCH_PATHS
   EXTRA_COMPILER_FLAGS
     "-Wall"
     "-Wshadow"
@@ -548,6 +549,7 @@ jucer_export_target_configuration(
 
 jucer_export_target(
   "Visual Studio 2013"
+  TARGET_PROJECT_FOLDER "Builds/VisualStudio2013" # used by HEADER_SEARCH_PATHS
   # EXTRA_LINKER_FLAGS
   # EXTERNAL_LIBRARIES_TO_LINK
   ICON_LARGE "Source/BinaryData/juce_icon.png"
@@ -586,6 +588,7 @@ jucer_export_target_configuration(
 
 jucer_export_target(
   "Visual Studio 2015"
+  TARGET_PROJECT_FOLDER "Builds/VisualStudio2015" # used by HEADER_SEARCH_PATHS
   # EXTERNAL_LIBRARIES_TO_LINK
   ICON_LARGE "Source/BinaryData/juce_icon.png"
   # PLATFORM_TOOLSET "v140"
@@ -648,6 +651,7 @@ jucer_export_target_configuration(
 
 jucer_export_target(
   "Linux Makefile"
+  TARGET_PROJECT_FOLDER "Builds/LinuxMakefile" # used by HEADER_SEARCH_PATHS
   EXTRA_COMPILER_FLAGS
     "-std=c++11"
   # EXTRA_LINKER_FLAGS

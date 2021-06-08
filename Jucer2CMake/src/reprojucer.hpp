@@ -1361,6 +1361,11 @@ inline void writeReprojucerCMakeLists(const Arguments& args,
 
       juce::StringArray needTargetFolder;
 
+      if (jucerProject.hasAttribute("headerPath"))
+      {
+        needTargetFolder.add("HEADER_SEARCH_PATHS");
+      }
+
       if (isXcodeExporter)
       {
         if (exporter.hasAttribute("prebuildCommand"))
@@ -1379,6 +1384,11 @@ inline void writeReprojucerCMakeLists(const Arguments& args,
         if (pConfiguration->isTextElement())
         {
           continue;
+        }
+
+        if (pConfiguration->hasAttribute("headerPath"))
+        {
+          needTargetFolder.add("HEADER_SEARCH_PATHS");
         }
 
         if (isVSExporter)
