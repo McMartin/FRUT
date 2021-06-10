@@ -1356,43 +1356,64 @@ inline void writeReprojucerCMakeLists(const Arguments& args,
       const auto isXcodeExporter =
         exporterType == "XCODE_MAC" || exporterType == "XCODE_IPHONE";
 
-      if (isXcodeExporter
-          && (exporter.hasAttribute("prebuildCommand")
-              || exporter.hasAttribute("postbuildCommand")))
-      {
-        wLn("  TARGET_PROJECT_FOLDER \"", exporter.getStringAttribute("targetFolder"),
-            "\" # only used by PREBUILD_SHELL_SCRIPT and POSTBUILD_SHELL_SCRIPT");
-      }
-
       const auto isVSExporter = exporterType == "VS2019" || exporterType == "VS2017"
                                 || exporterType == "VS2015" || exporterType == "VS2013";
 
-      if (isVSExporter)
+      juce::StringArray needTargetFolder;
+
+      if (jucerProject.hasAttribute("headerPath"))
       {
-        const auto needsTargetFolder = [&configurations]() {
-          for (auto pConfiguration = configurations.getFirstChildElement();
-               pConfiguration != nullptr;
-               pConfiguration = pConfiguration->getNextElement())
-          {
-            if (pConfiguration->isTextElement())
-            {
-              continue;
-            }
+        needTargetFolder.add("HEADER_SEARCH_PATHS");
+      }
 
-            if (pConfiguration->hasAttribute("prebuildCommand")
-                || pConfiguration->hasAttribute("postbuildCommand"))
-            {
-              return true;
-            }
-          }
-          return false;
-        }();
-
-        if (needsTargetFolder)
+      if (isXcodeExporter)
+      {
+        if (exporter.hasAttribute("frameworkSearchPaths"))
         {
-          wLn("  TARGET_PROJECT_FOLDER \"", exporter.getStringAttribute("targetFolder"),
-              "\" # only used by PREBUILD_COMMAND and POSTBUILD_COMMAND");
+          needTargetFolder.add("FRAMEWORK_SEARCH_PATHS");
         }
+        if (exporter.hasAttribute("prebuildCommand"))
+        {
+          needTargetFolder.add("PREBUILD_SHELL_SCRIPT");
+        }
+        if (exporter.hasAttribute("postbuildCommand"))
+        {
+          needTargetFolder.add("POSTBUILD_SHELL_SCRIPT");
+        }
+      }
+
+      for (auto pConfiguration = configurations.getFirstChildElement();
+           pConfiguration != nullptr; pConfiguration = pConfiguration->getNextElement())
+      {
+        if (pConfiguration->isTextElement())
+        {
+          continue;
+        }
+
+        if (pConfiguration->hasAttribute("headerPath"))
+        {
+          needTargetFolder.add("HEADER_SEARCH_PATHS");
+        }
+
+        if (isVSExporter)
+        {
+          if (pConfiguration->hasAttribute("prebuildCommand"))
+          {
+            needTargetFolder.add("PREBUILD_COMMAND");
+          }
+          if (pConfiguration->hasAttribute("postbuildCommand"))
+          {
+            needTargetFolder.add("POSTBUILD_COMMAND");
+          }
+        }
+      }
+
+      const auto kIgnoreCase = false;
+      needTargetFolder.removeDuplicates(kIgnoreCase);
+      if (!needTargetFolder.isEmpty())
+      {
+        wLn("  TARGET_PROJECT_FOLDER \"", exporter.getStringAttribute("targetFolder"),
+            "\" # used by ", needTargetFolder.joinIntoString(", "));
       }
 
       const auto isAudioPlugin = projectType == "audioplug";
