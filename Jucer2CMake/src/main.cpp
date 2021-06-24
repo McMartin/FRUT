@@ -63,15 +63,15 @@ Arguments parseArguments(const int argc, const char* const argv[])
   auto errorInArguments = false;
 
   auto mode = juce::String{argumentParser[1]};
+  if (argumentParser.size() >= 2 && !knownModes.contains(mode))
+  {
+    printError("invalid mode \"" + mode + "\"");
+    mode = "";
+    errorInArguments = true;
+  }
 
   if (!askingForHelp)
   {
-    if (argumentParser.size() >= 2 && !knownModes.contains(mode))
-    {
-      printError("invalid mode \"" + mode + "\"");
-      errorInArguments = true;
-    }
-
     if (argumentParser.size() < 3)
     {
       printError("not enough positional arguments");
