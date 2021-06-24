@@ -38,6 +38,24 @@ struct Arguments
 };
 
 
+struct ExitException
+{
+public:
+  ExitException(const int returnValue)
+    : mReturnValue{returnValue}
+  {
+  }
+
+  int returnValue() const
+  {
+    return mReturnValue;
+  }
+
+private:
+  const int mReturnValue;
+};
+
+
 #if !defined(WRITE_CRLF_LINE_ENDINGS)
   #error WRITE_CRLF_LINE_ENDINGS must be defined
 #endif
