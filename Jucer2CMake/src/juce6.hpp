@@ -38,7 +38,7 @@ inline const juce::XmlElement& getRequiredChild(const juce::XmlElement& element,
 
   printError(element.getTagName() + " element doesn't have " + childName
              + " child element.");
-  std::exit(1);
+  throw ExitException{1};
 }
 
 

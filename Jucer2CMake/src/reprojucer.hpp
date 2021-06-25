@@ -249,7 +249,7 @@ inline void writeReprojucerCMakeLists(const Arguments& args,
   if (jucerVersionTokens.size() != 3)
   {
     printError("'" + args.jucerFilePath + "' is not a valid Jucer project.");
-    std::exit(1);
+    throw ExitException{1};
   }
 
   using Version = std::tuple<int, int, int>;
@@ -264,7 +264,7 @@ inline void writeReprojucerCMakeLists(const Arguments& args,
     catch (const std::invalid_argument&)
     {
       printError("'" + args.jucerFilePath + "' is not a valid Jucer project.");
-      std::exit(1);
+      throw ExitException{1};
     }
   }();
 
@@ -272,7 +272,7 @@ inline void writeReprojucerCMakeLists(const Arguments& args,
       && !args.reprojucerFilePath.endsWith("Reprojucer.cmake"))
   {
     printError("'" + args.reprojucerFilePath + "' is not a valid Reprojucer.cmake file.");
-    std::exit(1);
+    throw ExitException{1};
   }
 
   auto needsJuceModulesGlobalPath = false;
@@ -334,7 +334,7 @@ inline void writeReprojucerCMakeLists(const Arguments& args,
       "At least one JUCE module used in " + args.jucerFilePath
       + " relies on the global \"JUCE Modules\" path set in Projucer. You must "
         "provide this path using --juce-modules=\"<global-JUCE-modules-path>\".");
-    std::exit(1);
+    throw ExitException{1};
   }
 
   const auto& userModulesGlobalPath =
@@ -350,7 +350,7 @@ inline void writeReprojucerCMakeLists(const Arguments& args,
       "At least one user module used in " + args.jucerFilePath
       + " relies on the global \"User Modules\" path set in Projucer. You must "
         "provide this path using --user-modules=\"<global-user-modules-path>\".");
-    std::exit(1);
+    throw ExitException{1};
   }
 
   LineWriter wLn{outputStream};
