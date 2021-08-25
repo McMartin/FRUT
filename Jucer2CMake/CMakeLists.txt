@@ -1,4 +1,4 @@
-# Copyright (C) 2020  Alain Martin
+# Copyright (C) 2020-2021  Alain Martin
 #
 # This file is part of FRUT.
 #
@@ -41,8 +41,7 @@ endif()
 
 
 set(CMAKE_CXX_EXTENSIONS OFF)
-set(CMAKE_CXX_STANDARD 11)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_STANDARD 14)
 
 
 add_library(Jucer2CMake_JUCE STATIC "")

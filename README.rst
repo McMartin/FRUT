@@ -359,6 +359,9 @@ contributors:
       <a href="https://github.com/McMartin/FRUT/issues?q=is%3Aissue+author%3Adacrome" title="Bug reports">🐛</a>
     </td>
     <td>
+      <a href="https://github.com/t-scale"><img src="https://github.com/t-scale.png" width="100"><br />@t-scale</a>
+      <br />
+      <a href="https://github.com/McMartin/FRUT/issues?q=is%3Aissue+author%3At-scale" title="Bug reports">🐛</a>
     </td>
     <td>
     </td>
