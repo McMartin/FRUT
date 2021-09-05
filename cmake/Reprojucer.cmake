@@ -3665,24 +3665,24 @@ function(_FRUT_generate_AppConfig_and_JucePluginDefines_header)
     # See ProjectSaver::writePluginCharacteristicsFile()
     # in JUCE/extras/Projucer/Source/ProjectSaving/jucer_ProjectSaver.cpp
 
-    set(audio_plugin_setting_names
+    set(audio_plugin_flags
       "Build_VST" "Build_VST3" "Build_AU" "Build_AUv3" "Build_RTAS" "Build_AAX"
     )
     if(DEFINED JUCER_VERSION AND JUCER_VERSION VERSION_LESS 5.0.0)
-      list(APPEND audio_plugin_setting_names "Build_STANDALONE")
+      list(APPEND audio_plugin_flags "Build_STANDALONE")
     elseif(DEFINED JUCER_VERSION AND JUCER_VERSION VERSION_LESS 5.1.0)
-      list(APPEND audio_plugin_setting_names "Build_Standalone")
-      list(APPEND audio_plugin_setting_names "Build_STANDALONE")
+      list(APPEND audio_plugin_flags "Build_Standalone")
+      list(APPEND audio_plugin_flags "Build_STANDALONE")
     else()
-      list(APPEND audio_plugin_setting_names "Build_Standalone")
+      list(APPEND audio_plugin_flags "Build_Standalone")
     endif()
     if(NOT (DEFINED JUCER_VERSION AND JUCER_VERSION VERSION_LESS 5.3.2))
-      list(APPEND audio_plugin_setting_names "Build_Unity")
+      list(APPEND audio_plugin_flags "Build_Unity")
     endif()
     if(NOT (DEFINED JUCER_VERSION AND JUCER_VERSION VERSION_LESS 5.0.0))
-      list(APPEND audio_plugin_setting_names "Enable_IAA")
+      list(APPEND audio_plugin_flags "Enable_IAA")
     endif()
-    list(APPEND audio_plugin_setting_names
+    list(APPEND audio_plugin_flags
       "Name" "Desc" "Manufacturer" "ManufacturerWebsite" "ManufacturerEmail"
       "ManufacturerCode" "PluginCode"
       "IsSynth" "WantsMidiInput" "ProducesMidiOutput" "IsMidiEffect"
@@ -3692,9 +3692,9 @@ function(_FRUT_generate_AppConfig_and_JucePluginDefines_header)
     )
     if(DEFINED JUCER_PLUGIN_VST3_CATEGORY
         OR NOT (DEFINED JUCER_VERSION AND JUCER_VERSION VERSION_LESS 5.3.1))
-      list(APPEND audio_plugin_setting_names "Vst3Category")
+      list(APPEND audio_plugin_flags "Vst3Category")
     endif()
-    list(APPEND audio_plugin_setting_names
+    list(APPEND audio_plugin_flags
       "AUMainType" "AUSubType" "AUExportPrefix" "AUExportPrefixQuoted"
       "AUManufacturerCode"
       "CFBundleIdentifier"
@@ -3704,15 +3704,13 @@ function(_FRUT_generate_AppConfig_and_JucePluginDefines_header)
       "AAXDisableBypass" "AAXDisableMultiMono"
     )
     if(NOT (DEFINED JUCER_VERSION AND JUCER_VERSION VERSION_LESS 5.0.0))
-      list(APPEND audio_plugin_setting_names
-        "IAAType" "IAASubType" "IAAName"
-      )
+      list(APPEND audio_plugin_flags "IAAType" "IAASubType" "IAAName")
     endif()
     if(DEFINED JUCER_PLUGIN_VST_NUM_MIDI_INPUTS
         OR DEFINED JUCER_PLUGIN_VST_NUM_MIDI_OUTPUTS
         OR NOT DEFINED JUCER_VERSION
         OR JUCER_VERSION VERSION_GREATER 5.4.1)
-      list(APPEND audio_plugin_setting_names "VSTNumMidiInputs" "VSTNumMidiOutputs")
+      list(APPEND audio_plugin_flags "VSTNumMidiInputs" "VSTNumMidiOutputs")
     endif()
 
     _FRUT_bool_to_int("${JUCER_BUILD_VST}" Build_VST_value)
@@ -3905,7 +3903,7 @@ function(_FRUT_generate_AppConfig_and_JucePluginDefines_header)
         endif()
       endforeach()
 
-      list(APPEND audio_plugin_setting_names
+      list(APPEND audio_plugin_flags
         "MaxNumInputChannels" "MaxNumOutputChannels" "PreferredChannelConfigurations"
       )
       set(MaxNumInputChannels_value "${max_num_input}")
@@ -3919,8 +3917,8 @@ function(_FRUT_generate_AppConfig_and_JucePluginDefines_header)
       "// Audio plugin settings..\n\n"
     )
 
-    foreach(setting_name IN LISTS audio_plugin_setting_names)
-      string(LENGTH "JucePlugin_${setting_name}" right_padding)
+    foreach(flag IN LISTS audio_plugin_flags)
+      string(LENGTH "JucePlugin_${flag}" right_padding)
       set(padding_spaces "")
       while(right_padding LESS 32)
         string(APPEND padding_spaces " ")
@@ -3928,8 +3926,8 @@ function(_FRUT_generate_AppConfig_and_JucePluginDefines_header)
       endwhile()
 
       string(APPEND audio_plugin_settings_defines
-        "#ifndef  JucePlugin_${setting_name}\n"
-        " #define JucePlugin_${setting_name}${padding_spaces}  ${${setting_name}_value}\n"
+        "#ifndef  JucePlugin_${flag}\n"
+        " #define JucePlugin_${flag}${padding_spaces}  ${${flag}_value}\n"
         "#endif\n"
       )
     endforeach()
