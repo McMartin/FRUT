@@ -107,6 +107,7 @@ function(jucer_project_settings)
     "COMPANY_COPYRIGHT"
     "COMPANY_WEBSITE"
     "COMPANY_EMAIL"
+    "USE_GLOBAL_APPCONFIG_HEADER"
     "REPORT_JUCE_APP_USAGE"
     "DISPLAY_THE_JUCE_SPLASH_SCREEN"
     "SPLASH_SCREEN_COLOUR"
@@ -3705,10 +3706,12 @@ function(_FRUT_generate_AppConfig_and_JucePluginDefines_header)
 
     set(template_file "${Reprojucer_data_DIR}/AppConfig.h.in")
   endif()
-  configure_file("${template_file}" "JuceLibraryCode/AppConfig.h" @ONLY)
-  list(APPEND JUCER_PROJECT_FILES
-    "${CMAKE_CURRENT_BINARY_DIR}/JuceLibraryCode/AppConfig.h"
-  )
+  if(NOT DEFINED JUCER_USE_GLOBAL_APPCONFIG_HEADER OR JUCER_USE_GLOBAL_APPCONFIG_HEADER)
+    configure_file("${template_file}" "JuceLibraryCode/AppConfig.h" @ONLY)
+    list(APPEND JUCER_PROJECT_FILES
+      "${CMAKE_CURRENT_BINARY_DIR}/JuceLibraryCode/AppConfig.h"
+    )
+  endif()
 
   set(JUCER_PROJECT_FILES "${JUCER_PROJECT_FILES}" PARENT_SCOPE)
 
@@ -3902,6 +3905,12 @@ function(_FRUT_generate_JuceHeader_header)
     else()
       set(binary_data_include "#include \"BinaryData.h\"\n")
     endif()
+  endif()
+
+  if(DEFINED JUCER_USE_GLOBAL_APPCONFIG_HEADER AND NOT JUCER_USE_GLOBAL_APPCONFIG_HEADER)
+    set(appconfig_include "")
+  else()
+    set(appconfig_include "#include \"AppConfig.h\"\n")
   endif()
 
   set(modules_includes "")
@@ -5049,6 +5058,68 @@ function(_FRUT_sanitize_path_in_user_folder out_path in_path)
 endfunction()
 
 
+function(_FRUT_set_AppConfig_compile_definitions target)
+
+  # See ProjectExporter::getAppConfigDefs
+  # in JUCE/extras/Projucer/Source/ProjectSaving/jucer_ProjectExporter.cpp
+
+  if(DEFINED JUCER_DISPLAY_THE_JUCE_SPLASH_SCREEN
+      AND NOT JUCER_DISPLAY_THE_JUCE_SPLASH_SCREEN)
+    set(display_splash_screen 0)
+  else()
+    set(display_splash_screen 1)
+  endif()
+  if(DEFINED JUCER_REPORT_JUCE_APP_USAGE AND NOT JUCER_REPORT_JUCE_APP_USAGE)
+    set(report_app_usage 0)
+  else()
+    set(report_app_usage 1)
+  endif()
+  if(DEFINED JUCER_SPLASH_SCREEN_COLOUR
+      AND NOT JUCER_SPLASH_SCREEN_COLOUR STREQUAL "Dark")
+    set(use_dark_splash_screen 0)
+  else()
+    set(use_dark_splash_screen 1)
+  endif()
+  target_compile_definitions(${target} PRIVATE
+    "JUCE_DISPLAY_SPLASH_SCREEN=${display_splash_screen}"
+    "JUCE_REPORT_APP_USAGE=${report_app_usage}"
+    "JUCE_USE_DARK_SPLASH_SCREEN=${use_dark_splash_screen}"
+  )
+
+  foreach(module_name IN LISTS JUCER_PROJECT_MODULES)
+    target_compile_definitions(${target} PRIVATE "JUCE_MODULE_AVAILABLE_${module_name}=1")
+  endforeach()
+
+  target_compile_definitions(${target} PRIVATE "JUCE_GLOBAL_MODULE_SETTINGS_INCLUDED=1")
+
+  foreach(module_name IN LISTS JUCER_PROJECT_MODULES)
+    foreach(config_flag IN LISTS JUCER_${module_name}_CONFIG_FLAGS)
+      if(NOT DEFINED JUCER_FLAG_${config_flag})
+      elseif(JUCER_FLAG_${config_flag})
+        target_compile_definitions(${target} PRIVATE "${config_flag}=1")
+      else()
+        target_compile_definitions(${target} PRIVATE "${config_flag}=0")
+      endif()
+    endforeach()
+  endforeach()
+
+  if(JUCER_PROJECT_TYPE STREQUAL "Audio Plug-in")
+    _FRUT_get_audio_plugin_flags(audio_plugin_flags)
+    foreach(flag IN LISTS audio_plugin_flags)
+      target_compile_definitions(${target} PRIVATE "JucePlugin_${flag}=${${flag}_value}")
+    endforeach()
+    target_compile_definitions(${target} PRIVATE
+      "JUCE_STANDALONE_APPLICATION=JucePlugin_Build_Standalone"
+    )
+  elseif(JUCER_PROJECT_TYPE STREQUAL "Dynamic Library")
+    target_compile_definitions(${target} PRIVATE "JUCE_STANDALONE_APPLICATION=0")
+  else()
+    target_compile_definitions(${target} PRIVATE "JUCE_STANDALONE_APPLICATION=1")
+  endif()
+
+endfunction()
+
+
 function(_FRUT_set_bundle_properties target extension)
 
   if(NOT APPLE)
@@ -5161,6 +5232,10 @@ function(_FRUT_set_compiler_and_linker_settings target exporter)
     set(definitions "${JUCER_PREPROCESSOR_DEFINITIONS_${config}}")
     target_compile_definitions(${target} PRIVATE $<$<CONFIG:${config}>:${definitions}>)
   endforeach()
+
+  if(DEFINED JUCER_USE_GLOBAL_APPCONFIG_HEADER AND NOT JUCER_USE_GLOBAL_APPCONFIG_HEADER)
+    _FRUT_set_AppConfig_compile_definitions(${target})
+  endif()
 
   target_compile_options(${target} PRIVATE ${JUCER_EXTRA_COMPILER_FLAGS})
 
