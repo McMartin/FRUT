@@ -108,6 +108,7 @@ function(jucer_project_settings)
     "COMPANY_WEBSITE"
     "COMPANY_EMAIL"
     "USE_GLOBAL_APPCONFIG_HEADER"
+    "ADD_USING_NAMESPACE_JUCE_TO_JUCE_HEADER"
     "REPORT_JUCE_APP_USAGE"
     "DISPLAY_THE_JUCE_SPLASH_SCREEN"
     "SPLASH_SCREEN_COLOUR"
@@ -3922,6 +3923,19 @@ function(_FRUT_generate_JuceHeader_header)
   endforeach()
   if(JUCER_PROJECT_MODULES)
     string(APPEND modules_includes "\n")
+  endif()
+
+  if(DEFINED JUCER_ADD_USING_NAMESPACE_JUCE_TO_JUCE_HEADER
+      AND NOT JUCER_ADD_USING_NAMESPACE_JUCE_TO_JUCE_HEADER)
+    set(using_namespace_juce_block "")
+  else()
+    string(CONCAT using_namespace_juce_block
+      "#if ! DONT_SET_USING_JUCE_NAMESPACE\n"
+      " // If your code uses a lot of JUCE classes, then this will obviously save you\n"
+      " // a lot of typing, but can be disabled by setting DONT_SET_USING_JUCE_NAMESPACE.\n"
+      " using namespace juce;\n"
+      "#endif\n\n"
+    )
   endif()
 
   if(DEFINED JUCER_VERSION AND JUCER_VERSION VERSION_LESS 5.3.2)

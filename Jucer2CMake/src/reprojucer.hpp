@@ -630,6 +630,8 @@ inline void writeReprojucerCMakeLists(const Arguments& args,
 
     convertOnOffSettingIfDefined(jucerProject, "useAppConfig",
                                  "USE_GLOBAL_APPCONFIG_HEADER", {});
+    convertOnOffSettingIfDefined(jucerProject, "addUsingNamespaceToJuceHeader",
+                                 "ADD_USING_NAMESPACE_JUCE_TO_JUCE_HEADER", {});
 
     if (jucerVersionAsTuple >= Version{5, 0, 0})
     {
