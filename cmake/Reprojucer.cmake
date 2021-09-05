@@ -3942,6 +3942,7 @@ function(_FRUT_generate_AppConfig_and_JucePluginDefines_header)
     set(template_file "${Reprojucer_data_DIR}/AppConfig-5.h.in")
   else()
     if(JUCER_PROJECT_TYPE STREQUAL "Audio Plug-in")
+      string(STRIP "${audio_plugin_settings_defines}" audio_plugin_settings_defines)
       configure_file("${Reprojucer_data_DIR}/JucePluginDefines.h.in"
         "JuceLibraryCode/JucePluginDefines.h" @ONLY
       )
