@@ -628,6 +628,11 @@ inline void writeReprojucerCMakeLists(const Arguments& args,
     convertSettingIfDefined(jucerProject, "companyWebsite", "COMPANY_WEBSITE", {});
     convertSettingIfDefined(jucerProject, "companyEmail", "COMPANY_EMAIL", {});
 
+    convertOnOffSettingIfDefined(jucerProject, "useAppConfig",
+                                 "USE_GLOBAL_APPCONFIG_HEADER", {});
+    convertOnOffSettingIfDefined(jucerProject, "addUsingNamespaceToJuceHeader",
+                                 "ADD_USING_NAMESPACE_JUCE_TO_JUCE_HEADER", {});
+
     if (jucerVersionAsTuple >= Version{5, 0, 0})
     {
       const auto tagLine = juce::String{" # Required for closed source applications"

@@ -32,6 +32,8 @@ jucer_project_settings(
   COMPANY_COPYRIGHT "Copyright (c) 2020 - Raw Material Software Limited"
   COMPANY_WEBSITE "https://www.juce.com/"
   COMPANY_EMAIL "info@juce.com"
+  USE_GLOBAL_APPCONFIG_HEADER OFF
+  ADD_USING_NAMESPACE_JUCE_TO_JUCE_HEADER ON
   REPORT_JUCE_APP_USAGE OFF # Required for closed source applications without an Indie or Pro JUCE license
   DISPLAY_THE_JUCE_SPLASH_SCREEN ON # Required for closed source applications without an Indie or Pro JUCE license
   PROJECT_TYPE "GUI Application"

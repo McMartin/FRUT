@@ -107,6 +107,8 @@ function(jucer_project_settings)
     "COMPANY_COPYRIGHT"
     "COMPANY_WEBSITE"
     "COMPANY_EMAIL"
+    "USE_GLOBAL_APPCONFIG_HEADER"
+    "ADD_USING_NAMESPACE_JUCE_TO_JUCE_HEADER"
     "REPORT_JUCE_APP_USAGE"
     "DISPLAY_THE_JUCE_SPLASH_SCREEN"
     "SPLASH_SCREEN_COLOUR"
@@ -3662,256 +3664,7 @@ function(_FRUT_generate_AppConfig_and_JucePluginDefines_header)
   elseif(JUCER_PROJECT_TYPE STREQUAL "Audio Plug-in")
     set(is_standalone_application 0)
 
-    # See ProjectSaver::writePluginCharacteristicsFile()
-    # in JUCE/extras/Projucer/Source/ProjectSaving/jucer_ProjectSaver.cpp
-
-    set(audio_plugin_setting_names
-      "Build_VST" "Build_VST3" "Build_AU" "Build_AUv3" "Build_RTAS" "Build_AAX"
-    )
-    if(DEFINED JUCER_VERSION AND JUCER_VERSION VERSION_LESS 5.0.0)
-      list(APPEND audio_plugin_setting_names "Build_STANDALONE")
-    elseif(DEFINED JUCER_VERSION AND JUCER_VERSION VERSION_LESS 5.1.0)
-      list(APPEND audio_plugin_setting_names "Build_Standalone")
-      list(APPEND audio_plugin_setting_names "Build_STANDALONE")
-    else()
-      list(APPEND audio_plugin_setting_names "Build_Standalone")
-    endif()
-    if(NOT (DEFINED JUCER_VERSION AND JUCER_VERSION VERSION_LESS 5.3.2))
-      list(APPEND audio_plugin_setting_names "Build_Unity")
-    endif()
-    if(NOT (DEFINED JUCER_VERSION AND JUCER_VERSION VERSION_LESS 5.0.0))
-      list(APPEND audio_plugin_setting_names "Enable_IAA")
-    endif()
-    list(APPEND audio_plugin_setting_names
-      "Name" "Desc" "Manufacturer" "ManufacturerWebsite" "ManufacturerEmail"
-      "ManufacturerCode" "PluginCode"
-      "IsSynth" "WantsMidiInput" "ProducesMidiOutput" "IsMidiEffect"
-      "EditorRequiresKeyboardFocus"
-      "Version" "VersionCode" "VersionString"
-      "VSTUniqueID" "VSTCategory"
-    )
-    if(DEFINED JUCER_PLUGIN_VST3_CATEGORY
-        OR NOT (DEFINED JUCER_VERSION AND JUCER_VERSION VERSION_LESS 5.3.1))
-      list(APPEND audio_plugin_setting_names "Vst3Category")
-    endif()
-    list(APPEND audio_plugin_setting_names
-      "AUMainType" "AUSubType" "AUExportPrefix" "AUExportPrefixQuoted"
-      "AUManufacturerCode"
-      "CFBundleIdentifier"
-      "RTASCategory" "RTASManufacturerCode" "RTASProductId" "RTASDisableBypass"
-      "RTASDisableMultiMono"
-      "AAXIdentifier" "AAXManufacturerCode" "AAXProductId" "AAXCategory"
-      "AAXDisableBypass" "AAXDisableMultiMono"
-    )
-    if(NOT (DEFINED JUCER_VERSION AND JUCER_VERSION VERSION_LESS 5.0.0))
-      list(APPEND audio_plugin_setting_names
-        "IAAType" "IAASubType" "IAAName"
-      )
-    endif()
-    if(DEFINED JUCER_PLUGIN_VST_NUM_MIDI_INPUTS
-        OR DEFINED JUCER_PLUGIN_VST_NUM_MIDI_OUTPUTS
-        OR NOT DEFINED JUCER_VERSION
-        OR JUCER_VERSION VERSION_GREATER 5.4.1)
-      list(APPEND audio_plugin_setting_names "VSTNumMidiInputs" "VSTNumMidiOutputs")
-    endif()
-
-    _FRUT_bool_to_int("${JUCER_BUILD_VST}" Build_VST_value)
-    _FRUT_bool_to_int("${JUCER_BUILD_VST3}" Build_VST3_value)
-    _FRUT_bool_to_int("${JUCER_BUILD_AUDIOUNIT}" Build_AU_value)
-    _FRUT_bool_to_int("${JUCER_BUILD_AUDIOUNIT_V3}" Build_AUv3_value)
-    _FRUT_bool_to_int("${JUCER_BUILD_RTAS}" Build_RTAS_value)
-    _FRUT_bool_to_int("${JUCER_BUILD_AAX}" Build_AAX_value)
-    if(DEFINED JUCER_VERSION AND JUCER_VERSION VERSION_LESS 5.0.0)
-      _FRUT_bool_to_int("${JUCER_BUILD_AUDIOUNIT_V3}" Build_STANDALONE_value)
-    elseif(DEFINED JUCER_VERSION AND JUCER_VERSION VERSION_LESS 5.1.0)
-      _FRUT_bool_to_int("${JUCER_BUILD_STANDALONE_PLUGIN}" Build_Standalone_value)
-      set(Build_STANDALONE_value "JucePlugin_Build_Standalone")
-    else()
-      _FRUT_bool_to_int("${JUCER_BUILD_STANDALONE_PLUGIN}" Build_Standalone_value)
-    endif()
-    _FRUT_bool_to_int("${JUCER_BUILD_UNITY_PLUGIN}" Build_Unity_value)
-    _FRUT_bool_to_int("${JUCER_ENABLE_INTER_APP_AUDIO}" Enable_IAA_value)
-
-    set(Name_value "\"${JUCER_PLUGIN_NAME}\"")
-    set(Desc_value "\"${JUCER_PLUGIN_DESCRIPTION}\"")
-    set(Manufacturer_value "\"${JUCER_PLUGIN_MANUFACTURER}\"")
-    set(ManufacturerWebsite_value "\"${JUCER_COMPANY_WEBSITE}\"")
-    set(ManufacturerEmail_value "\"${JUCER_COMPANY_EMAIL}\"")
-
-    _FRUT_char_literal("${JUCER_PLUGIN_MANUFACTURER_CODE}" ManufacturerCode_value)
-    _FRUT_char_literal("${JUCER_PLUGIN_CODE}" PluginCode_value)
-
-    _FRUT_bool_to_int("${JUCER_PLUGIN_IS_A_SYNTH}" IsSynth_value)
-    _FRUT_bool_to_int("${JUCER_PLUGIN_MIDI_INPUT}" WantsMidiInput_value)
-    _FRUT_bool_to_int("${JUCER_PLUGIN_MIDI_OUTPUT}" ProducesMidiOutput_value)
-    _FRUT_bool_to_int("${JUCER_MIDI_EFFECT_PLUGIN}" IsMidiEffect_value)
-    _FRUT_bool_to_int("${JUCER_KEY_FOCUS}" EditorRequiresKeyboardFocus_value)
-
-    set(Version_value "${JUCER_PROJECT_VERSION}")
-    _FRUT_version_to_hex("${JUCER_PROJECT_VERSION}" VersionCode_value)
-    set(VersionString_value "\"${JUCER_PROJECT_VERSION}\"")
-
-    set(VSTUniqueID_value "JucePlugin_PluginCode")
-    if(DEFINED JUCER_PLUGIN_VST_LEGACY_CATEGORY)
-      set(VSTCategory_value "${JUCER_PLUGIN_VST_LEGACY_CATEGORY}")
-    elseif(DEFINED JUCER_PLUGIN_VST_CATEGORY)
-      set(VSTCategory_value "${JUCER_PLUGIN_VST_CATEGORY}")
-    elseif(DEFINED JUCER_VST_CATEGORY)
-      set(VSTCategory_value "${JUCER_VST_CATEGORY}")
-    else()
-      if(JUCER_PLUGIN_IS_A_SYNTH)
-        set(VSTCategory_value "kPlugCategSynth")
-      else()
-        set(VSTCategory_value "kPlugCategEffect")
-      endif()
-    endif()
-
-    if(DEFINED JUCER_PLUGIN_VST3_CATEGORY)
-      _FRUT_compute_vst3_category(vst3_category)
-    else()
-      if(JUCER_PLUGIN_IS_A_SYNTH)
-        set(vst3_category "Instrument|Synth")
-      else()
-        set(vst3_category "Fx")
-      endif()
-    endif()
-    set(Vst3Category_value "\"${vst3_category}\"")
-
-    if(DEFINED JUCER_VERSION AND JUCER_VERSION VERSION_LESS 5.3.1)
-      if(NOT DEFINED JUCER_PLUGIN_AU_MAIN_TYPE OR JUCER_PLUGIN_AU_MAIN_TYPE STREQUAL "")
-        if(JUCER_MIDI_EFFECT_PLUGIN)
-          set(AUMainType_value "'aumi'")
-        elseif(JUCER_PLUGIN_IS_A_SYNTH)
-          set(AUMainType_value "kAudioUnitType_MusicDevice")
-        elseif(JUCER_PLUGIN_MIDI_INPUT)
-          set(AUMainType_value "kAudioUnitType_MusicEffect")
-        else()
-          set(AUMainType_value "kAudioUnitType_Effect")
-        endif()
-      else()
-        set(AUMainType_value "${JUCER_PLUGIN_AU_MAIN_TYPE}")
-      endif()
-    else()
-      if(NOT DEFINED JUCER_PLUGIN_AU_MAIN_TYPE OR JUCER_PLUGIN_AU_MAIN_TYPE STREQUAL "")
-        if(JUCER_MIDI_EFFECT_PLUGIN)
-          set(AUMainType_value "'aumi'")
-        elseif(JUCER_PLUGIN_IS_A_SYNTH)
-          set(AUMainType_value "'aumu'")
-        elseif(JUCER_PLUGIN_MIDI_INPUT)
-          set(AUMainType_value "'aumf'")
-        else()
-          set(AUMainType_value "'aufx'")
-        endif()
-      else()
-        _FRUT_get_au_quoted_four_chars("${JUCER_PLUGIN_AU_MAIN_TYPE}" AUMainType_value)
-      endif()
-    endif()
-
-    set(AUSubType_value "JucePlugin_PluginCode")
-    set(AUExportPrefix_value "${JUCER_PLUGIN_AU_EXPORT_PREFIX}")
-    set(AUExportPrefixQuoted_value "\"${JUCER_PLUGIN_AU_EXPORT_PREFIX}\"")
-    set(AUManufacturerCode_value "JucePlugin_ManufacturerCode")
-
-    set(CFBundleIdentifier_value "${JUCER_BUNDLE_IDENTIFIER}")
-
-    if(DEFINED JUCER_VERSION AND JUCER_VERSION VERSION_LESS 5.3.1)
-      if(JUCER_PLUGIN_IS_A_SYNTH)
-        set(RTASCategory_value "ePlugInCategory_SWGenerators")
-      elseif(NOT DEFINED JUCER_PLUGIN_RTAS_CATEGORY)
-        set(RTASCategory_value "ePlugInCategory_None")
-      else()
-        set(RTASCategory_value "${JUCER_PLUGIN_RTAS_CATEGORY}")
-      endif()
-    else()
-      if(DEFINED JUCER_PLUGIN_RTAS_CATEGORY)
-        _FRUT_compute_rtas_aax_category("RTAS" "ePlugInCategory" RTASCategory_value)
-      else()
-        if(JUCER_PLUGIN_IS_A_SYNTH)
-          set(RTASCategory_value "2048") # ePlugInCategory_SWGenerators
-        else()
-          set(RTASCategory_value "0") # ePlugInCategory_None
-        endif()
-      endif()
-    endif()
-    set(RTASManufacturerCode_value "JucePlugin_ManufacturerCode")
-    set(RTASProductId_value "JucePlugin_PluginCode")
-    _FRUT_bool_to_int("${JUCER_PLUGIN_RTAS_DISABLE_BYPASS}" RTASDisableBypass_value)
-    _FRUT_bool_to_int("${JUCER_PLUGIN_RTAS_DISABLE_MULTI_MONO}"
-      RTASDisableMultiMono_value
-    )
-
-    if(NOT DEFINED JUCER_PLUGIN_AAX_IDENTIFIER)
-      set(AAXIdentifier_value "${JUCER_BUNDLE_IDENTIFIER}")
-    else()
-      set(AAXIdentifier_value "${JUCER_PLUGIN_AAX_IDENTIFIER}")
-    endif()
-    set(AAXManufacturerCode_value "JucePlugin_ManufacturerCode")
-    set(AAXProductId_value "JucePlugin_PluginCode")
-    if(DEFINED JUCER_VERSION AND JUCER_VERSION VERSION_LESS 5.3.1)
-      if(NOT DEFINED JUCER_PLUGIN_AAX_CATEGORY)
-        set(AAXCategory_value "AAX_ePlugInCategory_Dynamics")
-      else()
-        set(AAXCategory_value "${JUCER_PLUGIN_AAX_CATEGORY}")
-      endif()
-    else()
-      if(DEFINED JUCER_PLUGIN_AAX_CATEGORY)
-        _FRUT_compute_rtas_aax_category("AAX" "AAX_ePlugInCategory" AAXCategory_value)
-      else()
-        if(JUCER_PLUGIN_IS_A_SYNTH)
-          set(AAXCategory_value "2048") # AAX_ePlugInCategory_SWGenerators
-        else()
-          set(AAXCategory_value "0") # AAX_ePlugInCategory_None
-        endif()
-      endif()
-    endif()
-    _FRUT_bool_to_int("${JUCER_PLUGIN_AAX_DISABLE_BYPASS}" AAXDisableBypass_value)
-    _FRUT_bool_to_int("${JUCER_PLUGIN_AAX_DISABLE_MULTI_MONO}" AAXDisableMultiMono_value)
-
-    _FRUT_get_iaa_type_code(iaa_type_code)
-    _FRUT_char_literal("${iaa_type_code}" IAAType_value)
-    set(IAASubType_value "JucePlugin_PluginCode")
-    set(IAAName_value "\"${JUCER_PLUGIN_MANUFACTURER}: ${JUCER_PLUGIN_NAME}\"")
-
-    if(DEFINED JUCER_PLUGIN_VST_NUM_MIDI_INPUTS)
-      set(VSTNumMidiInputs_value "${JUCER_PLUGIN_VST_NUM_MIDI_INPUTS}")
-    else()
-      set(VSTNumMidiInputs_value "16")
-    endif()
-    if(DEFINED JUCER_PLUGIN_VST_NUM_MIDI_OUTPUTS)
-      set(VSTNumMidiOutputs_value "${JUCER_PLUGIN_VST_NUM_MIDI_OUTPUTS}")
-    else()
-      set(VSTNumMidiOutputs_value "16")
-    endif()
-
-    string(LENGTH "${JUCER_PLUGIN_CHANNEL_CONFIGURATIONS}" plugin_channel_config_length)
-    if(plugin_channel_config_length GREATER 0)
-      # See countMaxPluginChannels()
-      # in JUCE/extras/Projucer/Source/ProjectSaving/jucer_ProjectSaver.cpp
-      string(REGEX REPLACE "[, {}]" ";" configs "${JUCER_PLUGIN_CHANNEL_CONFIGURATIONS}")
-      set(max_num_input 0)
-      set(max_num_output 0)
-      set(is_input TRUE)
-      foreach(element IN LISTS configs)
-        if(is_input)
-          if(element GREATER max_num_input)
-            set(max_num_input "${element}")
-          endif()
-          set(is_input FALSE)
-        else()
-          if(element GREATER max_num_output)
-            set(max_num_output "${element}")
-          endif()
-          set(is_input TRUE)
-        endif()
-      endforeach()
-
-      list(APPEND audio_plugin_setting_names
-        "MaxNumInputChannels" "MaxNumOutputChannels" "PreferredChannelConfigurations"
-      )
-      set(MaxNumInputChannels_value "${max_num_input}")
-      set(MaxNumOutputChannels_value "${max_num_output}")
-      set(PreferredChannelConfigurations_value "${JUCER_PLUGIN_CHANNEL_CONFIGURATIONS}")
-    endif()
+    _FRUT_get_audio_plugin_flags(audio_plugin_flags)
 
     string(CONCAT audio_plugin_settings_defines
       "\n"
@@ -3919,8 +3672,8 @@ function(_FRUT_generate_AppConfig_and_JucePluginDefines_header)
       "// Audio plugin settings..\n\n"
     )
 
-    foreach(setting_name IN LISTS audio_plugin_setting_names)
-      string(LENGTH "JucePlugin_${setting_name}" right_padding)
+    foreach(flag IN LISTS audio_plugin_flags)
+      string(LENGTH "JucePlugin_${flag}" right_padding)
       set(padding_spaces "")
       while(right_padding LESS 32)
         string(APPEND padding_spaces " ")
@@ -3928,8 +3681,8 @@ function(_FRUT_generate_AppConfig_and_JucePluginDefines_header)
       endwhile()
 
       string(APPEND audio_plugin_settings_defines
-        "#ifndef  JucePlugin_${setting_name}\n"
-        " #define JucePlugin_${setting_name}${padding_spaces}  ${${setting_name}_value}\n"
+        "#ifndef  JucePlugin_${flag}\n"
+        " #define JucePlugin_${flag}${padding_spaces}  ${${flag}_value}\n"
         "#endif\n"
       )
     endforeach()
@@ -3942,6 +3695,7 @@ function(_FRUT_generate_AppConfig_and_JucePluginDefines_header)
     set(template_file "${Reprojucer_data_DIR}/AppConfig-5.h.in")
   else()
     if(JUCER_PROJECT_TYPE STREQUAL "Audio Plug-in")
+      string(STRIP "${audio_plugin_settings_defines}" audio_plugin_settings_defines)
       configure_file("${Reprojucer_data_DIR}/JucePluginDefines.h.in"
         "JuceLibraryCode/JucePluginDefines.h" @ONLY
       )
@@ -3953,10 +3707,12 @@ function(_FRUT_generate_AppConfig_and_JucePluginDefines_header)
 
     set(template_file "${Reprojucer_data_DIR}/AppConfig.h.in")
   endif()
-  configure_file("${template_file}" "JuceLibraryCode/AppConfig.h" @ONLY)
-  list(APPEND JUCER_PROJECT_FILES
-    "${CMAKE_CURRENT_BINARY_DIR}/JuceLibraryCode/AppConfig.h"
-  )
+  if(NOT DEFINED JUCER_USE_GLOBAL_APPCONFIG_HEADER OR JUCER_USE_GLOBAL_APPCONFIG_HEADER)
+    configure_file("${template_file}" "JuceLibraryCode/AppConfig.h" @ONLY)
+    list(APPEND JUCER_PROJECT_FILES
+      "${CMAKE_CURRENT_BINARY_DIR}/JuceLibraryCode/AppConfig.h"
+    )
+  endif()
 
   set(JUCER_PROJECT_FILES "${JUCER_PROJECT_FILES}" PARENT_SCOPE)
 
@@ -4152,6 +3908,12 @@ function(_FRUT_generate_JuceHeader_header)
     endif()
   endif()
 
+  if(DEFINED JUCER_USE_GLOBAL_APPCONFIG_HEADER AND NOT JUCER_USE_GLOBAL_APPCONFIG_HEADER)
+    set(appconfig_include "")
+  else()
+    set(appconfig_include "#include \"AppConfig.h\"\n")
+  endif()
+
   set(modules_includes "")
   if(JUCER_PROJECT_MODULES)
     set(modules_includes "\n")
@@ -4161,6 +3923,19 @@ function(_FRUT_generate_JuceHeader_header)
   endforeach()
   if(JUCER_PROJECT_MODULES)
     string(APPEND modules_includes "\n")
+  endif()
+
+  if(DEFINED JUCER_ADD_USING_NAMESPACE_JUCE_TO_JUCE_HEADER
+      AND NOT JUCER_ADD_USING_NAMESPACE_JUCE_TO_JUCE_HEADER)
+    set(using_namespace_juce_block "")
+  else()
+    string(CONCAT using_namespace_juce_block
+      "#if ! DONT_SET_USING_JUCE_NAMESPACE\n"
+      " // If your code uses a lot of JUCE classes, then this will obviously save you\n"
+      " // a lot of typing, but can be disabled by setting DONT_SET_USING_JUCE_NAMESPACE.\n"
+      " using namespace juce;\n"
+      "#endif\n\n"
+    )
   endif()
 
   if(DEFINED JUCER_VERSION AND JUCER_VERSION VERSION_LESS 5.3.2)
@@ -4784,6 +4559,265 @@ function(_FRUT_get_au_quoted_four_chars au_enum_case out_var)
 endfunction()
 
 
+function(_FRUT_get_audio_plugin_flags out_var)
+
+  # See Project::getAudioPluginFlags()
+  # in JUCE/extras/Projucer/Source/Project/jucer_Project.cpp
+
+  set(audio_plugin_flags
+    "Build_VST" "Build_VST3" "Build_AU" "Build_AUv3" "Build_RTAS" "Build_AAX"
+  )
+  if(DEFINED JUCER_VERSION AND JUCER_VERSION VERSION_LESS 5.0.0)
+    list(APPEND audio_plugin_flags "Build_STANDALONE")
+  elseif(DEFINED JUCER_VERSION AND JUCER_VERSION VERSION_LESS 5.1.0)
+    list(APPEND audio_plugin_flags "Build_Standalone")
+    list(APPEND audio_plugin_flags "Build_STANDALONE")
+  else()
+    list(APPEND audio_plugin_flags "Build_Standalone")
+  endif()
+  if(NOT (DEFINED JUCER_VERSION AND JUCER_VERSION VERSION_LESS 5.3.2))
+    list(APPEND audio_plugin_flags "Build_Unity")
+  endif()
+  if(NOT (DEFINED JUCER_VERSION AND JUCER_VERSION VERSION_LESS 5.0.0))
+    list(APPEND audio_plugin_flags "Enable_IAA")
+  endif()
+  list(APPEND audio_plugin_flags
+    "Name" "Desc" "Manufacturer" "ManufacturerWebsite" "ManufacturerEmail"
+    "ManufacturerCode" "PluginCode"
+    "IsSynth" "WantsMidiInput" "ProducesMidiOutput" "IsMidiEffect"
+    "EditorRequiresKeyboardFocus"
+    "Version" "VersionCode" "VersionString"
+    "VSTUniqueID" "VSTCategory"
+  )
+  if(DEFINED JUCER_PLUGIN_VST3_CATEGORY
+      OR NOT (DEFINED JUCER_VERSION AND JUCER_VERSION VERSION_LESS 5.3.1))
+    list(APPEND audio_plugin_flags "Vst3Category")
+  endif()
+  list(APPEND audio_plugin_flags
+    "AUMainType" "AUSubType" "AUExportPrefix" "AUExportPrefixQuoted"
+    "AUManufacturerCode"
+    "CFBundleIdentifier"
+    "RTASCategory" "RTASManufacturerCode" "RTASProductId" "RTASDisableBypass"
+    "RTASDisableMultiMono"
+    "AAXIdentifier" "AAXManufacturerCode" "AAXProductId" "AAXCategory"
+    "AAXDisableBypass" "AAXDisableMultiMono"
+  )
+  if(NOT (DEFINED JUCER_VERSION AND JUCER_VERSION VERSION_LESS 5.0.0))
+    list(APPEND audio_plugin_flags "IAAType" "IAASubType" "IAAName")
+  endif()
+  if(DEFINED JUCER_PLUGIN_VST_NUM_MIDI_INPUTS
+      OR DEFINED JUCER_PLUGIN_VST_NUM_MIDI_OUTPUTS
+      OR NOT DEFINED JUCER_VERSION
+      OR JUCER_VERSION VERSION_GREATER 5.4.1)
+    list(APPEND audio_plugin_flags "VSTNumMidiInputs" "VSTNumMidiOutputs")
+  endif()
+
+  _FRUT_bool_to_int("${JUCER_BUILD_VST}" Build_VST_value)
+  _FRUT_bool_to_int("${JUCER_BUILD_VST3}" Build_VST3_value)
+  _FRUT_bool_to_int("${JUCER_BUILD_AUDIOUNIT}" Build_AU_value)
+  _FRUT_bool_to_int("${JUCER_BUILD_AUDIOUNIT_V3}" Build_AUv3_value)
+  _FRUT_bool_to_int("${JUCER_BUILD_RTAS}" Build_RTAS_value)
+  _FRUT_bool_to_int("${JUCER_BUILD_AAX}" Build_AAX_value)
+  if(DEFINED JUCER_VERSION AND JUCER_VERSION VERSION_LESS 5.0.0)
+    _FRUT_bool_to_int("${JUCER_BUILD_AUDIOUNIT_V3}" Build_STANDALONE_value)
+  elseif(DEFINED JUCER_VERSION AND JUCER_VERSION VERSION_LESS 5.1.0)
+    _FRUT_bool_to_int("${JUCER_BUILD_STANDALONE_PLUGIN}" Build_Standalone_value)
+    set(Build_STANDALONE_value "JucePlugin_Build_Standalone")
+  else()
+    _FRUT_bool_to_int("${JUCER_BUILD_STANDALONE_PLUGIN}" Build_Standalone_value)
+  endif()
+  _FRUT_bool_to_int("${JUCER_BUILD_UNITY_PLUGIN}" Build_Unity_value)
+  _FRUT_bool_to_int("${JUCER_ENABLE_INTER_APP_AUDIO}" Enable_IAA_value)
+
+  set(Name_value "\"${JUCER_PLUGIN_NAME}\"")
+  set(Desc_value "\"${JUCER_PLUGIN_DESCRIPTION}\"")
+  set(Manufacturer_value "\"${JUCER_PLUGIN_MANUFACTURER}\"")
+  set(ManufacturerWebsite_value "\"${JUCER_COMPANY_WEBSITE}\"")
+  set(ManufacturerEmail_value "\"${JUCER_COMPANY_EMAIL}\"")
+
+  _FRUT_char_literal("${JUCER_PLUGIN_MANUFACTURER_CODE}" ManufacturerCode_value)
+  _FRUT_char_literal("${JUCER_PLUGIN_CODE}" PluginCode_value)
+
+  _FRUT_bool_to_int("${JUCER_PLUGIN_IS_A_SYNTH}" IsSynth_value)
+  _FRUT_bool_to_int("${JUCER_PLUGIN_MIDI_INPUT}" WantsMidiInput_value)
+  _FRUT_bool_to_int("${JUCER_PLUGIN_MIDI_OUTPUT}" ProducesMidiOutput_value)
+  _FRUT_bool_to_int("${JUCER_MIDI_EFFECT_PLUGIN}" IsMidiEffect_value)
+  _FRUT_bool_to_int("${JUCER_KEY_FOCUS}" EditorRequiresKeyboardFocus_value)
+
+  set(Version_value "${JUCER_PROJECT_VERSION}")
+  _FRUT_version_to_hex("${JUCER_PROJECT_VERSION}" VersionCode_value)
+  set(VersionString_value "\"${JUCER_PROJECT_VERSION}\"")
+
+  set(VSTUniqueID_value "JucePlugin_PluginCode")
+  if(DEFINED JUCER_PLUGIN_VST_LEGACY_CATEGORY)
+    set(VSTCategory_value "${JUCER_PLUGIN_VST_LEGACY_CATEGORY}")
+  elseif(DEFINED JUCER_PLUGIN_VST_CATEGORY)
+    set(VSTCategory_value "${JUCER_PLUGIN_VST_CATEGORY}")
+  elseif(DEFINED JUCER_VST_CATEGORY)
+    set(VSTCategory_value "${JUCER_VST_CATEGORY}")
+  else()
+    if(JUCER_PLUGIN_IS_A_SYNTH)
+      set(VSTCategory_value "kPlugCategSynth")
+    else()
+      set(VSTCategory_value "kPlugCategEffect")
+    endif()
+  endif()
+
+  if(DEFINED JUCER_PLUGIN_VST3_CATEGORY)
+    _FRUT_compute_vst3_category(vst3_category)
+  else()
+    if(JUCER_PLUGIN_IS_A_SYNTH)
+      set(vst3_category "Instrument|Synth")
+    else()
+      set(vst3_category "Fx")
+    endif()
+  endif()
+  set(Vst3Category_value "\"${vst3_category}\"")
+
+  if(DEFINED JUCER_VERSION AND JUCER_VERSION VERSION_LESS 5.3.1)
+    if(NOT DEFINED JUCER_PLUGIN_AU_MAIN_TYPE OR JUCER_PLUGIN_AU_MAIN_TYPE STREQUAL "")
+      if(JUCER_MIDI_EFFECT_PLUGIN)
+        set(AUMainType_value "'aumi'")
+      elseif(JUCER_PLUGIN_IS_A_SYNTH)
+        set(AUMainType_value "kAudioUnitType_MusicDevice")
+      elseif(JUCER_PLUGIN_MIDI_INPUT)
+        set(AUMainType_value "kAudioUnitType_MusicEffect")
+      else()
+        set(AUMainType_value "kAudioUnitType_Effect")
+      endif()
+    else()
+      set(AUMainType_value "${JUCER_PLUGIN_AU_MAIN_TYPE}")
+    endif()
+  else()
+    if(NOT DEFINED JUCER_PLUGIN_AU_MAIN_TYPE OR JUCER_PLUGIN_AU_MAIN_TYPE STREQUAL "")
+      if(JUCER_MIDI_EFFECT_PLUGIN)
+        set(AUMainType_value "'aumi'")
+      elseif(JUCER_PLUGIN_IS_A_SYNTH)
+        set(AUMainType_value "'aumu'")
+      elseif(JUCER_PLUGIN_MIDI_INPUT)
+        set(AUMainType_value "'aumf'")
+      else()
+        set(AUMainType_value "'aufx'")
+      endif()
+    else()
+      _FRUT_get_au_quoted_four_chars("${JUCER_PLUGIN_AU_MAIN_TYPE}" AUMainType_value)
+    endif()
+  endif()
+
+  set(AUSubType_value "JucePlugin_PluginCode")
+  set(AUExportPrefix_value "${JUCER_PLUGIN_AU_EXPORT_PREFIX}")
+  set(AUExportPrefixQuoted_value "\"${JUCER_PLUGIN_AU_EXPORT_PREFIX}\"")
+  set(AUManufacturerCode_value "JucePlugin_ManufacturerCode")
+
+  set(CFBundleIdentifier_value "${JUCER_BUNDLE_IDENTIFIER}")
+
+  if(DEFINED JUCER_VERSION AND JUCER_VERSION VERSION_LESS 5.3.1)
+    if(JUCER_PLUGIN_IS_A_SYNTH)
+      set(RTASCategory_value "ePlugInCategory_SWGenerators")
+    elseif(NOT DEFINED JUCER_PLUGIN_RTAS_CATEGORY)
+      set(RTASCategory_value "ePlugInCategory_None")
+    else()
+      set(RTASCategory_value "${JUCER_PLUGIN_RTAS_CATEGORY}")
+    endif()
+  else()
+    if(DEFINED JUCER_PLUGIN_RTAS_CATEGORY)
+      _FRUT_compute_rtas_aax_category("RTAS" "ePlugInCategory" RTASCategory_value)
+    else()
+      if(JUCER_PLUGIN_IS_A_SYNTH)
+        set(RTASCategory_value "2048") # ePlugInCategory_SWGenerators
+      else()
+        set(RTASCategory_value "0") # ePlugInCategory_None
+      endif()
+    endif()
+  endif()
+  set(RTASManufacturerCode_value "JucePlugin_ManufacturerCode")
+  set(RTASProductId_value "JucePlugin_PluginCode")
+  _FRUT_bool_to_int("${JUCER_PLUGIN_RTAS_DISABLE_BYPASS}" RTASDisableBypass_value)
+  _FRUT_bool_to_int("${JUCER_PLUGIN_RTAS_DISABLE_MULTI_MONO}"
+    RTASDisableMultiMono_value
+  )
+
+  if(NOT DEFINED JUCER_PLUGIN_AAX_IDENTIFIER)
+    set(AAXIdentifier_value "${JUCER_BUNDLE_IDENTIFIER}")
+  else()
+    set(AAXIdentifier_value "${JUCER_PLUGIN_AAX_IDENTIFIER}")
+  endif()
+  set(AAXManufacturerCode_value "JucePlugin_ManufacturerCode")
+  set(AAXProductId_value "JucePlugin_PluginCode")
+  if(DEFINED JUCER_VERSION AND JUCER_VERSION VERSION_LESS 5.3.1)
+    if(NOT DEFINED JUCER_PLUGIN_AAX_CATEGORY)
+      set(AAXCategory_value "AAX_ePlugInCategory_Dynamics")
+    else()
+      set(AAXCategory_value "${JUCER_PLUGIN_AAX_CATEGORY}")
+    endif()
+  else()
+    if(DEFINED JUCER_PLUGIN_AAX_CATEGORY)
+      _FRUT_compute_rtas_aax_category("AAX" "AAX_ePlugInCategory" AAXCategory_value)
+    else()
+      if(JUCER_PLUGIN_IS_A_SYNTH)
+        set(AAXCategory_value "2048") # AAX_ePlugInCategory_SWGenerators
+      else()
+        set(AAXCategory_value "0") # AAX_ePlugInCategory_None
+      endif()
+    endif()
+  endif()
+  _FRUT_bool_to_int("${JUCER_PLUGIN_AAX_DISABLE_BYPASS}" AAXDisableBypass_value)
+  _FRUT_bool_to_int("${JUCER_PLUGIN_AAX_DISABLE_MULTI_MONO}" AAXDisableMultiMono_value)
+
+  _FRUT_get_iaa_type_code(iaa_type_code)
+  _FRUT_char_literal("${iaa_type_code}" IAAType_value)
+  set(IAASubType_value "JucePlugin_PluginCode")
+  set(IAAName_value "\"${JUCER_PLUGIN_MANUFACTURER}: ${JUCER_PLUGIN_NAME}\"")
+
+  if(DEFINED JUCER_PLUGIN_VST_NUM_MIDI_INPUTS)
+    set(VSTNumMidiInputs_value "${JUCER_PLUGIN_VST_NUM_MIDI_INPUTS}")
+  else()
+    set(VSTNumMidiInputs_value "16")
+  endif()
+  if(DEFINED JUCER_PLUGIN_VST_NUM_MIDI_OUTPUTS)
+    set(VSTNumMidiOutputs_value "${JUCER_PLUGIN_VST_NUM_MIDI_OUTPUTS}")
+  else()
+    set(VSTNumMidiOutputs_value "16")
+  endif()
+
+  string(LENGTH "${JUCER_PLUGIN_CHANNEL_CONFIGURATIONS}" plugin_channel_config_length)
+  if(plugin_channel_config_length GREATER 0)
+    # See Project::getAudioPluginFlags()::countMaxPluginChannels
+    # in JUCE/extras/Projucer/Source/Project/jucer_Project.cpp
+    string(REGEX REPLACE "[, {}]" ";" configs "${JUCER_PLUGIN_CHANNEL_CONFIGURATIONS}")
+    set(max_num_input 0)
+    set(max_num_output 0)
+    set(is_input TRUE)
+    foreach(element IN LISTS configs)
+      if(is_input)
+        if(element GREATER max_num_input)
+          set(max_num_input "${element}")
+        endif()
+        set(is_input FALSE)
+      else()
+        if(element GREATER max_num_output)
+          set(max_num_output "${element}")
+        endif()
+        set(is_input TRUE)
+      endif()
+    endforeach()
+
+    list(APPEND audio_plugin_flags
+      "MaxNumInputChannels" "MaxNumOutputChannels" "PreferredChannelConfigurations"
+    )
+    set(MaxNumInputChannels_value "${max_num_input}")
+    set(MaxNumOutputChannels_value "${max_num_output}")
+    set(PreferredChannelConfigurations_value "${JUCER_PLUGIN_CHANNEL_CONFIGURATIONS}")
+  endif()
+
+  set(${out_var} "${audio_plugin_flags}" PARENT_SCOPE)
+  foreach(flag IN LISTS audio_plugin_flags)
+    set(${flag}_value "${${flag}_value}" PARENT_SCOPE)
+  endforeach()
+
+endfunction()
+
+
 function(_FRUT_get_iaa_type_code out_var)
 
   if(JUCER_PLUGIN_MIDI_INPUT)
@@ -5038,6 +5072,68 @@ function(_FRUT_sanitize_path_in_user_folder out_path in_path)
 endfunction()
 
 
+function(_FRUT_set_AppConfig_compile_definitions target)
+
+  # See ProjectExporter::getAppConfigDefs
+  # in JUCE/extras/Projucer/Source/ProjectSaving/jucer_ProjectExporter.cpp
+
+  if(DEFINED JUCER_DISPLAY_THE_JUCE_SPLASH_SCREEN
+      AND NOT JUCER_DISPLAY_THE_JUCE_SPLASH_SCREEN)
+    set(display_splash_screen 0)
+  else()
+    set(display_splash_screen 1)
+  endif()
+  if(DEFINED JUCER_REPORT_JUCE_APP_USAGE AND NOT JUCER_REPORT_JUCE_APP_USAGE)
+    set(report_app_usage 0)
+  else()
+    set(report_app_usage 1)
+  endif()
+  if(DEFINED JUCER_SPLASH_SCREEN_COLOUR
+      AND NOT JUCER_SPLASH_SCREEN_COLOUR STREQUAL "Dark")
+    set(use_dark_splash_screen 0)
+  else()
+    set(use_dark_splash_screen 1)
+  endif()
+  target_compile_definitions(${target} PRIVATE
+    "JUCE_DISPLAY_SPLASH_SCREEN=${display_splash_screen}"
+    "JUCE_REPORT_APP_USAGE=${report_app_usage}"
+    "JUCE_USE_DARK_SPLASH_SCREEN=${use_dark_splash_screen}"
+  )
+
+  foreach(module_name IN LISTS JUCER_PROJECT_MODULES)
+    target_compile_definitions(${target} PRIVATE "JUCE_MODULE_AVAILABLE_${module_name}=1")
+  endforeach()
+
+  target_compile_definitions(${target} PRIVATE "JUCE_GLOBAL_MODULE_SETTINGS_INCLUDED=1")
+
+  foreach(module_name IN LISTS JUCER_PROJECT_MODULES)
+    foreach(config_flag IN LISTS JUCER_${module_name}_CONFIG_FLAGS)
+      if(NOT DEFINED JUCER_FLAG_${config_flag})
+      elseif(JUCER_FLAG_${config_flag})
+        target_compile_definitions(${target} PRIVATE "${config_flag}=1")
+      else()
+        target_compile_definitions(${target} PRIVATE "${config_flag}=0")
+      endif()
+    endforeach()
+  endforeach()
+
+  if(JUCER_PROJECT_TYPE STREQUAL "Audio Plug-in")
+    _FRUT_get_audio_plugin_flags(audio_plugin_flags)
+    foreach(flag IN LISTS audio_plugin_flags)
+      target_compile_definitions(${target} PRIVATE "JucePlugin_${flag}=${${flag}_value}")
+    endforeach()
+    target_compile_definitions(${target} PRIVATE
+      "JUCE_STANDALONE_APPLICATION=JucePlugin_Build_Standalone"
+    )
+  elseif(JUCER_PROJECT_TYPE STREQUAL "Dynamic Library")
+    target_compile_definitions(${target} PRIVATE "JUCE_STANDALONE_APPLICATION=0")
+  else()
+    target_compile_definitions(${target} PRIVATE "JUCE_STANDALONE_APPLICATION=1")
+  endif()
+
+endfunction()
+
+
 function(_FRUT_set_bundle_properties target extension)
 
   if(NOT APPLE)
@@ -5150,6 +5246,10 @@ function(_FRUT_set_compiler_and_linker_settings target exporter)
     set(definitions "${JUCER_PREPROCESSOR_DEFINITIONS_${config}}")
     target_compile_definitions(${target} PRIVATE $<$<CONFIG:${config}>:${definitions}>)
   endforeach()
+
+  if(DEFINED JUCER_USE_GLOBAL_APPCONFIG_HEADER AND NOT JUCER_USE_GLOBAL_APPCONFIG_HEADER)
+    _FRUT_set_AppConfig_compile_definitions(${target})
+  endif()
 
   target_compile_options(${target} PRIVATE ${JUCER_EXTRA_COMPILER_FLAGS})
 

@@ -30,6 +30,8 @@ jucer_project_settings(
   PROJECT_VERSION "1.0.0"
   COMPANY_NAME "Raw Material Software Limited"
   COMPANY_COPYRIGHT "Raw Material Software Limited"
+  USE_GLOBAL_APPCONFIG_HEADER OFF
+  ADD_USING_NAMESPACE_JUCE_TO_JUCE_HEADER ON
   REPORT_JUCE_APP_USAGE OFF # Required for closed source applications without an Indie or Pro JUCE license
   DISPLAY_THE_JUCE_SPLASH_SCREEN OFF # Required for closed source applications without an Indie or Pro JUCE license
   PROJECT_TYPE "Static Library"
