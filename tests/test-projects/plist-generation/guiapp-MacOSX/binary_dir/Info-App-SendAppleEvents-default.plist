@@ -3,14 +3,12 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist>
   <dict>
-    <key>LSRequiresIPhoneOS</key>
-    <true/>
-    <key>UIViewControllerBasedStatusBarAppearance</key>
-    <false/>
-    <key>UILaunchStoryboardName</key>
-    <string>LaunchScreen</string>
+    <key>NSAppleEventsUsageDescription</key>
+    <string>This app requires the ability to send Apple events to function correctly.</string>
     <key>CFBundleExecutable</key>
     <string>${EXECUTABLE_NAME}</string>
+    <key>CFBundleIconFile</key>
+    <string></string>
     <key>CFBundleIdentifier</key>
     <string>com.yourcompany.CustomProjectName</string>
     <key>CFBundleName</key>
@@ -29,21 +27,5 @@
     <string></string>
     <key>NSHighResolutionCapable</key>
     <true/>
-    <key>UIRequiresFullScreen</key>
-    <true/>
-    <key>UIStatusBarHidden</key>
-    <true/>
-    <key>UISupportedInterfaceOrientations</key>
-    <array>
-      <string>UIInterfaceOrientationPortrait</string>
-    </array>
-    <key>UISupportedInterfaceOrientations~ipad</key>
-    <array>
-      <string>UIInterfaceOrientationPortrait</string>
-      <string>UIInterfaceOrientationLandscapeLeft</string>
-      <string>UIInterfaceOrientationLandscapeRight</string>
-    </array>
-    <key>UIBackgroundModes</key>
-    <array/>
   </dict>
 </plist>

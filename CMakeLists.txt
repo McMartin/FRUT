@@ -1,4 +1,4 @@
-# Copyright (C) 2018-2019  Alain Martin
+# Copyright (C) 2018-2020  Alain Martin
 #
 # This file is part of FRUT.
 #

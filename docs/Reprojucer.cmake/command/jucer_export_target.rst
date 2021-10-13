@@ -1,4 +1,4 @@
-.. # Copyright (C) 2017-2019  Alain Martin
+.. # Copyright (C) 2017-2021  Alain Martin
 .. #
 .. # This file is part of FRUT.
 .. #
@@ -54,8 +54,8 @@ Define the settings specific to an export target.
     [HARDENED_RUNTIME_OPTIONS <hardened_runtime_option> [<hardened_runtime_option> ...]]  # [5]
 
     [DEVICE_FAMILY <iPhone|iPad|Universal>]  # [7]
-    [IPHONE_SCREEN_ORIENTATION <Portrait and Landscape|Portrait|Landscape>]  # [7]
-    [IPAD_SCREEN_ORIENTATION <Portrait and Landscape|Portrait|Landscape>]  # [7]
+    [IPHONE_SCREEN_ORIENTATION <screen_orientation> [<screen_orientation> ...]]  # [7]
+    [IPAD_SCREEN_ORIENTATION <screen_orientation> [<screen_orientation> ...]]  # [7]
     [FILE_SHARING_ENABLED <ON|OFF>]  # [7]
     [SUPPORT_DOCUMENT_BROWSER <ON|OFF>]  # [7]
     [STATUS_BAR_HIDDEN <ON|OFF>]  # [7]
@@ -64,10 +64,13 @@ Define the settings specific to an export target.
     [MICROPHONE_ACCESS_TEXT <microphone_access_text>]  # [3]
     [CAMERA_ACCESS <ON|OFF>]  # [3]
     [CAMERA_ACCESS_TEXT <camera_access_text>]  # [3]
-    [BLUETOOTH_ACCESS <ON|OFF>]  # [7]
-    [BLUETOOTH_ACCESS_TEXT <bluetooth_access_text>]  # [7]
+    [BLUETOOTH_ACCESS <ON|OFF>]  # [3]
+    [BLUETOOTH_ACCESS_TEXT <bluetooth_access_text>]  # [3]
+    [SEND_APPLE_EVENTS <ON|OFF>]  # [5]
+    [SEND_APPLE_EVENTS_TEXT <send_apple_events_text>]  # [5]
 
     [IN_APP_PURCHASES_CAPABILITY <ON|OFF>]  # [3]
+    [CONTENT_SHARING <ON|OFF>]  # [7]
     [AUDIO_BACKGROUND_CAPABILITY <ON|OFF>]  # [7]
     [BLUETOOTH_MIDI_BACKGROUND_CAPABILITY <ON|OFF>]  # [7]
     [APP_GROUPS_CAPABILITY <ON|OFF>]  # [7]

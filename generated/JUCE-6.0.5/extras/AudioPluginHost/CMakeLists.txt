@@ -30,6 +30,8 @@ jucer_project_settings(
   PROJECT_VERSION "1.0.0"
   COMPANY_NAME "Raw Material Software Limited"
   COMPANY_COPYRIGHT "Raw Material Software Limited"
+  USE_GLOBAL_APPCONFIG_HEADER OFF
+  ADD_USING_NAMESPACE_JUCE_TO_JUCE_HEADER ON
   REPORT_JUCE_APP_USAGE OFF # Required for closed source applications without an Indie or Pro JUCE license
   DISPLAY_THE_JUCE_SPLASH_SCREEN OFF # Required for closed source applications without an Indie or Pro JUCE license
   PROJECT_TYPE "GUI Application"
@@ -196,6 +198,8 @@ jucer_export_target(
   CUSTOM_XCODE_RESOURCE_FOLDERS
     "../../examples/Assets"
   MICROPHONE_ACCESS ON
+  SEND_APPLE_EVENTS ON
+  SEND_APPLE_EVENTS_TEXT "This is required for some third-party plug-ins to function correctly."
 )
 
 jucer_export_target_configuration(

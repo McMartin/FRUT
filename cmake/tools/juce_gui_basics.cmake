@@ -1,4 +1,4 @@
-# Copyright (C) 2017-2020  Alain Martin
+# Copyright (C) 2017-2021  Alain Martin
 # Copyright (C) 2019  David Holland
 #
 # This file is part of FRUT.
@@ -63,6 +63,10 @@ if(APPLE)
   target_link_libraries(tools_juce_gui_basics PUBLIC
     ${Cocoa_framework} ${IOKit_framework} ${QuartzCore_framework}
   )
+endif()
+
+if(MSVC)
+  target_compile_options(tools_juce_gui_basics PRIVATE /bigobj)
 endif()
 
 if(CMAKE_HOST_SYSTEM_NAME STREQUAL "Linux")

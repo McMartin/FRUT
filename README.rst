@@ -80,6 +80,7 @@ FRUT currently contains:
   - ``examples`` and ``extras`` projects from `JUCE 5.4.3`_ (in `generated/JUCE-5.4.3`_)
   - ``examples`` and ``extras`` projects from `JUCE 5.4.7`_ (in `generated/JUCE-5.4.7`_)
   - ``examples`` and ``extras`` projects from `JUCE 6.0.5`_ (in `generated/JUCE-6.0.5`_)
+  - ``examples`` and ``extras`` projects from `JUCE 6.1.0`_ (in `generated/JUCE-6.1.0`_)
 
 
 Requirements
@@ -331,15 +332,41 @@ contributors:
       <a href="https://github.com/McMartin/FRUT/issues?q=is%3Aissue+author%3Amhetrick" title="Bug reports">🐛</a>
     </td>
     <td>
-      <a href="https://github.com/importjingles"><img src="https://github.com/importjingles.png" width="100"><br />Alex</a>
+      <a href="https://github.com/AWildAudioNerd"><img src="https://github.com/AWildAudioNerd.png" width="100"><br />Alex</a>
       <br />
-      <a href="https://github.com/McMartin/FRUT/pulls?q=state%3Amerged+author%3Aimportjingles" title="Code">💻</a>
-      <a href="https://github.com/McMartin/FRUT/pulls?q=state%3Amerged+reviewed-by%3Aimportjingles+-author%3Aimportjingles+" title="Pull Request reviews">👀</a>
+      <a href="https://github.com/McMartin/FRUT/pulls?q=state%3Amerged+author%3AAWildAudioNerd" title="Code">💻</a>
+      <a href="https://github.com/McMartin/FRUT/pulls?q=state%3Amerged+reviewed-by%3AAWildAudioNerd+-author%3AAWildAudioNerd+" title="Pull Request reviews">👀</a>
     </td>
     <td>
       <a href="https://github.com/E-Fir"><img src="https://github.com/E-Fir.png" width="100"><br />Alexey Romanoff</a>
       <br />
       <a href="https://github.com/McMartin/FRUT/issues?q=is%3Aissue+author%3AE-Fir" title="Bug reports">🐛</a>
+    </td>
+    <td>
+      <a href="https://github.com/benediktsailer"><img src="https://github.com/benediktsailer.png" width="100"><br />Benedikt Sailer</a>
+      <br />
+      <a href="https://github.com/McMartin/FRUT/issues?q=is%3Aissue+author%3Abenediktsailer" title="Bug reports">🐛</a>
+    </td>
+  </tr>
+  <tr>
+    <td>
+      <a href="https://github.com/steve-baker-cradle"><img src="https://github.com/steve-baker-cradle.png" width="100"><br />Steve Baker</a>
+      <br />
+      <a href="https://github.com/McMartin/FRUT/issues?q=is%3Aissue+author%3Asteve-baker-cradle" title="Bug reports">🐛</a>
+    </td>
+    <td>
+      <a href="https://github.com/dacrome"><img src="https://github.com/dacrome.png" width="100"><br />David Crome</a>
+      <br />
+      <a href="https://github.com/McMartin/FRUT/issues?q=is%3Aissue+author%3Adacrome" title="Bug reports">🐛</a>
+    </td>
+    <td>
+      <a href="https://github.com/t-scale"><img src="https://github.com/t-scale.png" width="100"><br />@t-scale</a>
+      <br />
+      <a href="https://github.com/McMartin/FRUT/issues?q=is%3Aissue+author%3At-scale" title="Bug reports">🐛</a>
+    </td>
+    <td>
+    </td>
+    <td>
     </td>
     <td>
     </td>
@@ -392,6 +419,7 @@ even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE
 .. _generated/JUCE-5.4.3: generated/JUCE-5.4.3
 .. _generated/JUCE-5.4.7: generated/JUCE-5.4.7
 .. _generated/JUCE-6.0.5: generated/JUCE-6.0.5
+.. _generated/JUCE-6.1.0: generated/JUCE-6.1.0
 
 .. _CMake Generators: https://cmake.org/cmake/help/latest/manual/cmake-generators.7.html
 .. _CMake: https://cmake.org
@@ -404,6 +432,7 @@ even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE
 .. _JUCE 5.4.3: https://github.com/juce-framework/JUCE/tree/5.4.3
 .. _JUCE 5.4.7: https://github.com/juce-framework/JUCE/tree/5.4.7
 .. _JUCE 6.0.5: https://github.com/juce-framework/JUCE/tree/6.0.5
+.. _JUCE 6.0.5: https://github.com/juce-framework/JUCE/tree/6.1.0
 .. _JUCE: https://github.com/juce-framework/JUCE
 .. _Projucer: https://juce.com/discover/projucer
 .. _all-contributors: https://github.com/all-contributors/all-contributors

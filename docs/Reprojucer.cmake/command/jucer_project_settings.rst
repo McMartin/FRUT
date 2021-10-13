@@ -1,4 +1,4 @@
-.. # Copyright (C) 2017-2019  Alain Martin
+.. # Copyright (C) 2017-2020  Alain Martin
 .. #
 .. # This file is part of FRUT.
 .. #
@@ -35,6 +35,9 @@ Define the settings specific to a JUCE project.
     [COMPANY_COPYRIGHT <company_copyright>]
     [COMPANY_WEBSITE <company_website>]
     [COMPANY_EMAIL <company_email>]
+
+    [USE_GLOBAL_APPCONFIG_HEADER <ON|OFF>]
+    [ADD_USING_NAMESPACE_JUCE_TO_JUCE_HEADER <ON|OFF>]
 
     [REPORT_JUCE_APP_USAGE <ON|OFF>]
     [DISPLAY_THE_JUCE_SPLASH_SCREEN <ON|OFF>]
