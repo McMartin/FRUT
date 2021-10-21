@@ -483,6 +483,12 @@ function(jucer_project_module module_name PATH_KEYWORD modules_folder)
     set(proxy_prefix "include_")
   endif()
 
+  if(DEFINED JUCER_USE_GLOBAL_APPCONFIG_HEADER AND NOT JUCER_USE_GLOBAL_APPCONFIG_HEADER)
+    set(appconfig_include "")
+  else()
+    set(appconfig_include "#include \"AppConfig.h\"\n")
+  endif()
+
   set(module_sources "")
   foreach(src_file IN LISTS module_src_files)
     unset(to_compile)
