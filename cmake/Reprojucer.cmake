@@ -2315,7 +2315,7 @@ function(jucer_project_end)
     add_executable(${target} ${all_sources})
     _FRUT_set_output_directory_properties(${target} "ConsoleApp")
     _FRUT_set_output_name_properties(${target})
-    _FRUT_set_compiler_and_linker_settings(${target} "${current_exporter}")
+    _FRUT_set_compiler_and_linker_settings(${target} "ConsoleApp" "${current_exporter}")
     _FRUT_add_extra_commands(${target} "${current_exporter}")
     _FRUT_link_xcode_frameworks(${target} "${current_exporter}")
     _FRUT_set_custom_xcode_flags(${target})
@@ -2326,7 +2326,7 @@ function(jucer_project_end)
     _FRUT_generate_plist_file(${target} "App" "APPL" "????")
     _FRUT_set_output_directory_properties(${target} "App")
     _FRUT_set_output_name_properties(${target})
-    _FRUT_set_compiler_and_linker_settings(${target} "${current_exporter}")
+    _FRUT_set_compiler_and_linker_settings(${target} "GUIApp" "${current_exporter}")
     _FRUT_add_extra_commands(${target} "${current_exporter}")
     _FRUT_link_xcode_frameworks(${target} "${current_exporter}")
     _FRUT_set_custom_xcode_flags(${target})
@@ -2335,7 +2335,9 @@ function(jucer_project_end)
     add_library(${target} STATIC ${all_sources})
     _FRUT_set_output_directory_properties(${target} "Static Library")
     _FRUT_set_output_name_properties(${target})
-    _FRUT_set_compiler_and_linker_settings(${target} "${current_exporter}")
+    _FRUT_set_compiler_and_linker_settings(
+      ${target} "StaticLibrary" "${current_exporter}"
+    )
     _FRUT_add_extra_commands(${target} "${current_exporter}")
     _FRUT_set_custom_xcode_flags(${target})
 
@@ -2343,7 +2345,9 @@ function(jucer_project_end)
     add_library(${target} SHARED ${all_sources})
     _FRUT_set_output_directory_properties(${target} "Dynamic Library")
     _FRUT_set_output_name_properties(${target})
-    _FRUT_set_compiler_and_linker_settings(${target} "${current_exporter}")
+    _FRUT_set_compiler_and_linker_settings(
+      ${target} "DynamicLibrary" "${current_exporter}"
+    )
     _FRUT_add_extra_commands(${target} "${current_exporter}")
     _FRUT_link_xcode_frameworks(${target} "${current_exporter}")
     _FRUT_set_custom_xcode_flags(${target})
@@ -2390,10 +2394,11 @@ function(jucer_project_end)
     )
     _FRUT_set_output_directory_properties(${shared_code_target} "Shared Code")
     _FRUT_set_output_name_properties(${shared_code_target})
-    _FRUT_set_compiler_and_linker_settings(${shared_code_target} "${current_exporter}")
+    _FRUT_set_compiler_and_linker_settings(
+      ${shared_code_target} "SharedCodeTarget" "${current_exporter}"
+    )
     _FRUT_add_extra_commands(${shared_code_target} "${current_exporter}")
     target_compile_definitions(${shared_code_target} PRIVATE "JUCE_SHARED_CODE=1")
-    _FRUT_set_JucePlugin_Build_defines(${shared_code_target} "SharedCodeTarget")
     _FRUT_set_custom_xcode_flags(${shared_code_target})
 
     if(JUCER_BUILD_VST AND NOT IOS)
@@ -2409,7 +2414,9 @@ function(jucer_project_end)
       _FRUT_set_bundle_properties(${vst_target} "vst")
       _FRUT_set_output_directory_properties(${vst_target} "VST")
       _FRUT_set_output_name_properties(${vst_target})
-      _FRUT_set_compiler_and_linker_settings(${vst_target} "${current_exporter}")
+      _FRUT_set_compiler_and_linker_settings(
+        ${vst_target} "VSTPlugIn" "${current_exporter}"
+      )
       _FRUT_add_extra_commands(${vst_target} "${current_exporter}")
       if(APPLE)
         _FRUT_install_to_plugin_binary_location(${vst_target} "VST"
@@ -2425,7 +2432,6 @@ function(jucer_project_end)
           "$ENV{${env_var}}/Steinberg/Vstplugins"
         )
       endif()
-      _FRUT_set_JucePlugin_Build_defines(${vst_target} "VSTPlugIn")
       _FRUT_link_xcode_frameworks(${vst_target} "${current_exporter}")
       _FRUT_set_custom_xcode_flags(${vst_target})
       unset(vst_target)
@@ -2444,7 +2450,9 @@ function(jucer_project_end)
       _FRUT_set_bundle_properties(${vst3_target} "vst3")
       _FRUT_set_output_directory_properties(${vst3_target} "VST3")
       _FRUT_set_output_name_properties(${vst3_target})
-      _FRUT_set_compiler_and_linker_settings(${vst3_target} "${current_exporter}")
+      _FRUT_set_compiler_and_linker_settings(
+        ${vst3_target} "VST3PlugIn" "${current_exporter}"
+      )
       _FRUT_add_extra_commands(${vst3_target} "${current_exporter}")
       if(APPLE)
         _FRUT_install_to_plugin_binary_location(${vst3_target} "VST3"
@@ -2461,7 +2469,6 @@ function(jucer_project_end)
           "$ENV{${common_files_env_var}}/VST3"
         )
       endif()
-      _FRUT_set_JucePlugin_Build_defines(${vst3_target} "VST3PlugIn")
       _FRUT_link_xcode_frameworks(${vst3_target} "${current_exporter}")
       _FRUT_set_custom_xcode_flags(${vst3_target})
       unset(vst3_target)
@@ -2488,12 +2495,13 @@ function(jucer_project_end)
       _FRUT_set_bundle_properties(${au_target} "component")
       _FRUT_set_output_directory_properties(${au_target} "AU")
       _FRUT_set_output_name_properties(${au_target})
-      _FRUT_set_compiler_and_linker_settings(${au_target} "${current_exporter}")
+      _FRUT_set_compiler_and_linker_settings(
+        ${au_target} "AudioUnitPlugIn" "${current_exporter}"
+      )
       _FRUT_add_extra_commands(${au_target} "${current_exporter}")
       _FRUT_install_to_plugin_binary_location(${au_target} "AU"
         "$ENV{HOME}/Library/Audio/Plug-Ins/Components"
       )
-      _FRUT_set_JucePlugin_Build_defines(${au_target} "AudioUnitPlugIn")
       _FRUT_link_xcode_frameworks(${au_target} "${current_exporter}"
         "AudioUnit" "CoreAudioKit"
       )
@@ -2521,9 +2529,10 @@ function(jucer_project_end)
       )
       _FRUT_set_output_directory_properties(${auv3_target} "AUv3 AppExtension")
       _FRUT_set_output_name_properties(${auv3_target})
-      _FRUT_set_compiler_and_linker_settings(${auv3_target} "${current_exporter}")
+      _FRUT_set_compiler_and_linker_settings(
+        ${auv3_target} "AudioUnitv3PlugIn" "${current_exporter}"
+      )
       _FRUT_add_extra_commands(${auv3_target} "${current_exporter}")
-      _FRUT_set_JucePlugin_Build_defines(${auv3_target} "AudioUnitv3PlugIn")
       set(extra_xcode_frameworks "AVFoundation" "CoreAudioKit")
       if(NOT IOS)
         list(APPEND extra_xcode_frameworks "AudioUnit")
@@ -2548,7 +2557,9 @@ function(jucer_project_end)
       _FRUT_set_bundle_properties(${rtas_target} "dpm")
       _FRUT_set_output_directory_properties(${rtas_target} "RTAS")
       _FRUT_set_output_name_properties(${rtas_target})
-      _FRUT_set_compiler_and_linker_settings(${rtas_target} "${current_exporter}")
+      _FRUT_set_compiler_and_linker_settings(
+        ${rtas_target} "RTASPlugIn" "${current_exporter}"
+      )
       _FRUT_add_extra_commands(${rtas_target} "${current_exporter}")
       if(APPLE)
         # See XcodeProjectExporter::XcodeTarget::getTargetExtraHeaderSearchPaths()
@@ -2673,7 +2684,6 @@ function(jucer_project_end)
           "$ENV{${common_files_env_var}}/Digidesign/DAE/Plug-Ins"
         )
       endif()
-      _FRUT_set_JucePlugin_Build_defines(${rtas_target} "RTASPlugIn")
       _FRUT_link_xcode_frameworks(${rtas_target} "${current_exporter}")
       _FRUT_set_custom_xcode_flags(${rtas_target})
       unset(rtas_target)
@@ -2692,7 +2702,9 @@ function(jucer_project_end)
       _FRUT_set_bundle_properties(${aax_target} "aaxplugin")
       _FRUT_set_output_directory_properties(${aax_target} "AAX")
       _FRUT_set_output_name_properties(${aax_target})
-      _FRUT_set_compiler_and_linker_settings(${aax_target} "${current_exporter}")
+      _FRUT_set_compiler_and_linker_settings(
+        ${aax_target} "AAXPlugIn" "${current_exporter}"
+      )
       _FRUT_add_extra_commands(${aax_target} "${current_exporter}")
       if(APPLE)
         foreach(config IN LISTS JUCER_PROJECT_CONFIGURATIONS)
@@ -2787,7 +2799,6 @@ function(jucer_project_end)
           )
         endif()
       endif()
-      _FRUT_set_JucePlugin_Build_defines(${aax_target} "AAXPlugIn")
       _FRUT_link_xcode_frameworks(${aax_target} "${current_exporter}")
       _FRUT_set_custom_xcode_flags(${aax_target})
       unset(aax_target)
@@ -2820,9 +2831,10 @@ function(jucer_project_end)
       endif()
       _FRUT_set_output_directory_properties(${standalone_target} "Standalone Plugin")
       _FRUT_set_output_name_properties(${standalone_target})
-      _FRUT_set_compiler_and_linker_settings(${standalone_target} "${current_exporter}")
+      _FRUT_set_compiler_and_linker_settings(
+        ${standalone_target} "StandalonePlugIn" "${current_exporter}"
+      )
       _FRUT_add_extra_commands(${standalone_target} "${current_exporter}")
-      _FRUT_set_JucePlugin_Build_defines(${standalone_target} "StandalonePlugIn")
       _FRUT_link_xcode_frameworks(${standalone_target} "${current_exporter}")
       if(TARGET ${target}_AUv3_AppExtension)
         add_dependencies(${standalone_target} ${target}_AUv3_AppExtension)
@@ -2863,7 +2875,9 @@ function(jucer_project_end)
       _FRUT_set_bundle_properties(${unity_target} "bundle")
       _FRUT_set_output_directory_properties(${unity_target} "Unity Plugin")
       _FRUT_set_output_name_properties_Unity(${unity_target})
-      _FRUT_set_compiler_and_linker_settings(${unity_target} "${current_exporter}")
+      _FRUT_set_compiler_and_linker_settings(
+        ${unity_target} "UnityPlugIn" "${current_exporter}"
+      )
       _FRUT_add_extra_commands(${unity_target} "${current_exporter}")
 
       set(project_name "${JUCER_PROJECT_NAME}")
@@ -2911,7 +2925,6 @@ function(jucer_project_end)
           endif()
         endforeach()
       endif()
-      _FRUT_set_JucePlugin_Build_defines(${unity_target} "UnityPlugIn")
       _FRUT_link_xcode_frameworks(${unity_target} "${current_exporter}")
       _FRUT_set_custom_xcode_flags(${unity_target})
       unset(unity_target)
@@ -5160,7 +5173,7 @@ function(_FRUT_set_bundle_properties target extension)
 endfunction()
 
 
-function(_FRUT_set_compiler_and_linker_settings target exporter)
+function(_FRUT_set_compiler_and_linker_settings target target_type exporter)
 
   target_include_directories(${target} PRIVATE
     "${CMAKE_CURRENT_BINARY_DIR}/JuceLibraryCode"
@@ -5255,6 +5268,8 @@ function(_FRUT_set_compiler_and_linker_settings target exporter)
 
   if(DEFINED JUCER_USE_GLOBAL_APPCONFIG_HEADER AND NOT JUCER_USE_GLOBAL_APPCONFIG_HEADER)
     _FRUT_set_AppConfig_compile_definitions(${target})
+  elseif(JUCER_PROJECT_TYPE STREQUAL "Audio Plug-in")
+    _FRUT_set_JucePlugin_Build_defines(${target} ${target_type})
   endif()
 
   target_compile_options(${target} PRIVATE ${JUCER_EXTRA_COMPILER_FLAGS})
