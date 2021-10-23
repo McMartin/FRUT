@@ -2413,6 +2413,7 @@ function(jucer_project_end)
       _FRUT_generate_plist_file(${vst_target} "VST" "BNDL" "????")
       _FRUT_set_bundle_properties(${vst_target} "vst")
       _FRUT_set_output_directory_properties(${vst_target} "VST")
+      set_target_properties(${vst_target} PROPERTIES PREFIX "")
       _FRUT_set_output_name_properties(${vst_target})
       _FRUT_set_compiler_and_linker_settings(
         ${vst_target} "VSTPlugIn" "${current_exporter}"
