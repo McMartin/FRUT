@@ -6271,6 +6271,8 @@ endfunction()
 
 function(_FRUT_set_output_name_properties_Unity unity_target)
 
+  set_target_properties(${unity_target} PROPERTIES PREFIX "")
+
   # Like _FRUT_set_output_name_properties(${unity_target}), but handles the
   # "audioplugin" prefix as well
   foreach(config IN LISTS JUCER_PROJECT_CONFIGURATIONS)
