@@ -2334,7 +2334,11 @@ function(jucer_project_end)
   elseif(JUCER_PROJECT_TYPE STREQUAL "Static Library")
     add_library(${target} STATIC ${all_sources})
     _FRUT_set_output_directory_properties(${target} "Static Library")
-    _FRUT_set_output_name_properties(${target})
+    if(APPLE OR current_exporter STREQUAL "Linux Makefile")
+      _FRUT_set_output_name_properties(${target} ADD_lib_PREFIX)
+    else()
+      _FRUT_set_output_name_properties(${target})
+    endif()
     _FRUT_set_compiler_and_linker_settings(
       ${target} "StaticLibrary" "${current_exporter}"
     )
@@ -2344,7 +2348,11 @@ function(jucer_project_end)
   elseif(JUCER_PROJECT_TYPE STREQUAL "Dynamic Library")
     add_library(${target} SHARED ${all_sources})
     _FRUT_set_output_directory_properties(${target} "Dynamic Library")
-    _FRUT_set_output_name_properties(${target})
+    if(current_exporter STREQUAL "Linux Makefile")
+      _FRUT_set_output_name_properties(${target} ADD_lib_PREFIX)
+    else()
+      _FRUT_set_output_name_properties(${target})
+    endif()
     _FRUT_set_compiler_and_linker_settings(
       ${target} "DynamicLibrary" "${current_exporter}"
     )
@@ -2393,7 +2401,11 @@ function(jucer_project_end)
       ${JUCER_ICON_FILE}
     )
     _FRUT_set_output_directory_properties(${shared_code_target} "Shared Code")
-    _FRUT_set_output_name_properties(${shared_code_target})
+    if(APPLE)
+      _FRUT_set_output_name_properties(${shared_code_target} ADD_lib_PREFIX)
+    else()
+      _FRUT_set_output_name_properties(${shared_code_target})
+    endif()
     _FRUT_set_compiler_and_linker_settings(
       ${shared_code_target} "SharedCodeTarget" "${current_exporter}"
     )
@@ -2413,7 +2425,6 @@ function(jucer_project_end)
       _FRUT_generate_plist_file(${vst_target} "VST" "BNDL" "????")
       _FRUT_set_bundle_properties(${vst_target} "vst")
       _FRUT_set_output_directory_properties(${vst_target} "VST")
-      set_target_properties(${vst_target} PROPERTIES PREFIX "")
       _FRUT_set_output_name_properties(${vst_target})
       _FRUT_set_compiler_and_linker_settings(
         ${vst_target} "VSTPlugIn" "${current_exporter}"
@@ -6253,6 +6264,14 @@ endfunction()
 
 function(_FRUT_set_output_name_properties target)
 
+  if(DEFINED ARGV1)
+    if(NOT ARGV1 STREQUAL "ADD_lib_PREFIX")
+      message(FATAL_ERROR "Unexpected argument \"${ARGV1}\"")
+    endif()
+  endif()
+
+  set_target_properties(${target} PROPERTIES PREFIX "")
+
   foreach(config IN LISTS JUCER_PROJECT_CONFIGURATIONS)
     string(TOUPPER "${config}" upper_config)
 
@@ -6260,6 +6279,9 @@ function(_FRUT_set_output_name_properties target)
       set(output_name "${JUCER_BINARY_NAME_${config}}")
     else()
       set(output_name "${JUCER_PROJECT_NAME}")
+    endif()
+    if(NOT output_name MATCHES "^lib" AND ARGV1 STREQUAL "ADD_lib_PREFIX")
+      set(output_name "lib${output_name}")
     endif()
     set_target_properties(${target} PROPERTIES
       OUTPUT_NAME_${upper_config} "${output_name}"
