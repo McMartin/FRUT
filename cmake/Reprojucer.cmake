@@ -3019,20 +3019,9 @@ function(jucer_project_end)
       if(APPLE)
         _FRUT_install_to_plugin_binary_location(${unity_target} "UNITY" "")
       elseif(MSVC)
-        _FRUT_install_to_plugin_binary_location(${unity_target} "UNITY" "")
-
-        set(component "_install_${unity_target}_to_UNITY_binary_location")
-        foreach(config IN LISTS JUCER_PROJECT_CONFIGURATIONS)
-          if(DEFINED JUCER_UNITY_BINARY_LOCATION_${config}
-              AND JUCER_ENABLE_PLUGIN_COPY_STEP_${config})
-            set(destination "${JUCER_UNITY_BINARY_LOCATION_${config}}")
-            if(NOT destination STREQUAL "")
-              install(FILES "${unity_script_file}" CONFIGURATIONS "${config}"
-                COMPONENT "${component}" DESTINATION "${destination}"
-              )
-            endif()
-          endif()
-        endforeach()
+        _FRUT_install_to_plugin_binary_location(
+          ${unity_target} "UNITY" "" FILES "${unity_script_file}"
+        )
       endif()
       _FRUT_link_xcode_frameworks(${unity_target} "${current_exporter}")
       _FRUT_set_custom_xcode_flags(${unity_target})
@@ -5003,6 +4992,12 @@ endfunction()
 
 function(_FRUT_install_to_plugin_binary_location target plugin_type default_destination)
 
+  if(DEFINED ARGV3)
+    if(NOT ARGV3 STREQUAL "FILES")
+      message(FATAL_ERROR "Unexpected argument \"${ARGV3}\"")
+    endif()
+  endif()
+
   set(component "_install_${target}_to_${plugin_type}_binary_location")
 
   set(should_install FALSE)
@@ -5019,6 +5014,11 @@ function(_FRUT_install_to_plugin_binary_location target plugin_type default_dest
         install(TARGETS ${target} CONFIGURATIONS "${config}"
           COMPONENT "${component}" DESTINATION "${destination}"
         )
+        if(ARGV3 STREQUAL "FILES")
+          install(${ARGN} CONFIGURATIONS "${config}"
+            COMPONENT "${component}" DESTINATION "${destination}"
+          )
+        endif()
         set(should_install TRUE)
       endif()
     endif()
