@@ -5766,6 +5766,10 @@ function(_FRUT_set_compiler_and_linker_settings_Linux target)
     target_link_libraries(${target} PRIVATE "-l${linux_lib}")
   endforeach()
 
+  if(JUCER_PROJECT_TYPE STREQUAL "Audio Plug-in" OR JUCER_PROJECT_TYPE STREQUAL "Dynamic Library")
+    target_compile_options(${target} PRIVATE "-fPIC")
+  endif()
+
 endfunction()
 
 
