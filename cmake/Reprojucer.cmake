@@ -2894,7 +2894,7 @@ function(jucer_project_end)
 
       set(project_name "${JUCER_PROJECT_NAME}")
       if(NOT project_name MATCHES "^[Aa][Uu][Dd][Ii][Oo][Pp][Ll][Uu][Gg][Ii][Nn]")
-        string(CONCAT project_name "audioplugin_" "${project_name}")
+        set(project_name "audioplugin_${project_name}")
       endif()
       set(plugin_name "${project_name}")
       string(REPLACE " " "_" plugin_class_name "${plugin_name}")
@@ -6306,7 +6306,7 @@ function(_FRUT_set_output_name_properties_Unity unity_target)
       set(output_name "${JUCER_PROJECT_NAME}")
     endif()
     if(NOT output_name MATCHES "^[Aa][Uu][Dd][Ii][Oo][Pp][Ll][Uu][Gg][Ii][Nn]")
-      string(CONCAT output_name "audioplugin_" "${output_name}")
+      set(output_name "audioplugin_${output_name}")
     endif()
     set_target_properties(${unity_target} PROPERTIES
       OUTPUT_NAME_${upper_config} "${output_name}"
