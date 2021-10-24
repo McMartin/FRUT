@@ -2967,6 +2967,22 @@ function(jucer_project_end)
       _FRUT_generate_plist_file(${unity_target} "Unity_Plugin" "BNDL" "????")
       _FRUT_set_bundle_properties(${unity_target} "bundle")
       _FRUT_set_output_directory_properties(${unity_target} "Unity Plugin")
+      if(NOT (DEFINED JUCER_VERSION AND JUCER_VERSION VERSION_LESS 6.0.0)
+          AND CMAKE_HOST_SYSTEM_NAME STREQUAL "Linux")
+        foreach(config IN LISTS JUCER_PROJECT_CONFIGURATIONS)
+          string(TOUPPER "${config}" upper_config)
+          set(unity_dir "Unity")
+          get_target_property(
+            output_directory ${unity_target} LIBRARY_OUTPUT_DIRECTORY_${upper_config}
+          )
+          if(output_directory)
+            set(unity_dir "${output_directory}/${unity_dir}")
+          endif()
+          set_target_properties(${unity_target} PROPERTIES
+            LIBRARY_OUTPUT_DIRECTORY_${upper_config} "${unity_dir}"
+          )
+        endforeach()
+      endif()
       _FRUT_set_output_name_properties_Unity(${unity_target})
       _FRUT_set_compiler_and_linker_settings(
         ${unity_target} "UnityPlugIn" "${current_exporter}"
