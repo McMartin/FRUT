@@ -1657,6 +1657,7 @@ function(jucer_export_target_configuration
       "ENABLE_PLUGIN_COPY_STEP"
       "VST3_BINARY_LOCATION"
       "UNITY_BINARY_LOCATION"
+      "VST_LEGACY_BINARY_LOCATION"
     )
   endif()
 
@@ -2458,6 +2459,8 @@ function(jucer_project_end)
         _FRUT_install_to_plugin_binary_location(${vst_target} "VST"
           "$ENV{${env_var}}/Steinberg/Vstplugins"
         )
+      elseif(CMAKE_HOST_SYSTEM_NAME STREQUAL "Linux")
+        _FRUT_install_to_plugin_binary_location(${vst_target} "VST" "$ENV{HOME}/.vst")
       endif()
       _FRUT_link_xcode_frameworks(${vst_target} "${current_exporter}")
       _FRUT_set_custom_xcode_flags(${vst_target})

@@ -2535,6 +2535,8 @@ inline void writeReprojucerCMakeLists(const Arguments& args,
                                   "VST3_BINARY_LOCATION", {});
           convertSettingIfDefined(configuration, "unityPluginBinaryLocation",
                                   "UNITY_BINARY_LOCATION", {});
+          convertSettingIfDefined(configuration, "vstBinaryLocation",
+                                  "VST_LEGACY_BINARY_LOCATION", {});
         }
 
         const auto codeBlocksArchitecture =
