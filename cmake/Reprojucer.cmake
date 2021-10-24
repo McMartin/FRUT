@@ -2334,7 +2334,11 @@ function(jucer_project_end)
   elseif(JUCER_PROJECT_TYPE STREQUAL "Static Library")
     add_library(${target} STATIC ${all_sources})
     _FRUT_set_output_directory_properties(${target} "Static Library")
-    _FRUT_set_output_name_properties(${target})
+    if(APPLE OR current_exporter STREQUAL "Linux Makefile")
+      _FRUT_set_output_name_properties(${target} ADD_lib_PREFIX)
+    else()
+      _FRUT_set_output_name_properties(${target})
+    endif()
     _FRUT_set_compiler_and_linker_settings(
       ${target} "StaticLibrary" "${current_exporter}"
     )
@@ -2344,7 +2348,11 @@ function(jucer_project_end)
   elseif(JUCER_PROJECT_TYPE STREQUAL "Dynamic Library")
     add_library(${target} SHARED ${all_sources})
     _FRUT_set_output_directory_properties(${target} "Dynamic Library")
-    _FRUT_set_output_name_properties(${target})
+    if(current_exporter STREQUAL "Linux Makefile")
+      _FRUT_set_output_name_properties(${target} ADD_lib_PREFIX)
+    else()
+      _FRUT_set_output_name_properties(${target})
+    endif()
     _FRUT_set_compiler_and_linker_settings(
       ${target} "DynamicLibrary" "${current_exporter}"
     )
@@ -2393,7 +2401,11 @@ function(jucer_project_end)
       ${JUCER_ICON_FILE}
     )
     _FRUT_set_output_directory_properties(${shared_code_target} "Shared Code")
-    _FRUT_set_output_name_properties(${shared_code_target})
+    if(APPLE)
+      _FRUT_set_output_name_properties(${shared_code_target} ADD_lib_PREFIX)
+    else()
+      _FRUT_set_output_name_properties(${shared_code_target})
+    endif()
     _FRUT_set_compiler_and_linker_settings(
       ${shared_code_target} "SharedCodeTarget" "${current_exporter}"
     )
@@ -2882,10 +2894,10 @@ function(jucer_project_end)
 
       set(project_name "${JUCER_PROJECT_NAME}")
       if(NOT project_name MATCHES "^[Aa][Uu][Dd][Ii][Oo][Pp][Ll][Uu][Gg][Ii][Nn]")
-        string(CONCAT project_name "audioplugin_" "${project_name}")
+        set(project_name "audioplugin_${project_name}")
       endif()
+      string(REPLACE " " "_" plugin_class_name "${project_name}")
       set(plugin_name "${project_name}")
-      string(REPLACE " " "_" plugin_class_name "${plugin_name}")
       set(plugin_vendor "${JUCER_PLUGIN_MANUFACTURER}")
       set(plugin_description "${JUCER_PLUGIN_DESCRIPTION}")
       set(unity_script_file
@@ -6252,6 +6264,14 @@ endfunction()
 
 function(_FRUT_set_output_name_properties target)
 
+  if(DEFINED ARGV1)
+    if(NOT ARGV1 STREQUAL "ADD_lib_PREFIX")
+      message(FATAL_ERROR "Unexpected argument \"${ARGV1}\"")
+    endif()
+  endif()
+
+  set_target_properties(${target} PROPERTIES PREFIX "")
+
   foreach(config IN LISTS JUCER_PROJECT_CONFIGURATIONS)
     string(TOUPPER "${config}" upper_config)
 
@@ -6259,6 +6279,9 @@ function(_FRUT_set_output_name_properties target)
       set(output_name "${JUCER_BINARY_NAME_${config}}")
     else()
       set(output_name "${JUCER_PROJECT_NAME}")
+    endif()
+    if(NOT output_name MATCHES "^lib" AND ARGV1 STREQUAL "ADD_lib_PREFIX")
+      set(output_name "lib${output_name}")
     endif()
     set_target_properties(${target} PROPERTIES
       OUTPUT_NAME_${upper_config} "${output_name}"
@@ -6269,6 +6292,8 @@ endfunction()
 
 
 function(_FRUT_set_output_name_properties_Unity unity_target)
+
+  set_target_properties(${unity_target} PROPERTIES PREFIX "")
 
   # Like _FRUT_set_output_name_properties(${unity_target}), but handles the
   # "audioplugin" prefix as well
@@ -6281,7 +6306,7 @@ function(_FRUT_set_output_name_properties_Unity unity_target)
       set(output_name "${JUCER_PROJECT_NAME}")
     endif()
     if(NOT output_name MATCHES "^[Aa][Uu][Dd][Ii][Oo][Pp][Ll][Uu][Gg][Ii][Nn]")
-      string(CONCAT output_name "audioplugin_" "${output_name}")
+      set(output_name "audioplugin_${output_name}")
     endif()
     set_target_properties(${unity_target} PROPERTIES
       OUTPUT_NAME_${upper_config} "${output_name}"
