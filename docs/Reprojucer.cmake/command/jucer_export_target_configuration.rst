@@ -46,7 +46,7 @@ Define the settings specific to a configuration associated with an export target
     [AU_BINARY_LOCATION <binary_location>]  # [3]
     [RTAS_BINARY_LOCATION <binary_location>]  # [2]
     [AAX_BINARY_LOCATION <binary_location>]  # [2]
-    [UNITY_BINARY_LOCATION <binary_location>]  # [2]
+    [UNITY_BINARY_LOCATION <binary_location>]  # [1]
     [VST_LEGACY_BINARY_LOCATION <binary_location>]  # [2]
 
     [OSX_BASE_SDK_VERSION <osx_sdk>]  # [4]

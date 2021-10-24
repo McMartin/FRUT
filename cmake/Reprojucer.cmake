@@ -1656,6 +1656,7 @@ function(jucer_export_target_configuration
       "ARCHITECTURE"
       "ENABLE_PLUGIN_COPY_STEP"
       "VST3_BINARY_LOCATION"
+      "UNITY_BINARY_LOCATION"
     )
   endif()
 
@@ -3021,6 +3022,10 @@ function(jucer_project_end)
       elseif(MSVC)
         _FRUT_install_to_plugin_binary_location(
           ${unity_target} "UNITY" "" FILES "${unity_script_file}"
+        )
+      elseif(CMAKE_HOST_SYSTEM_NAME STREQUAL "Linux")
+        _FRUT_install_to_plugin_binary_location(
+          ${unity_target} "UNITY" "$ENV{HOME}/UnityPlugins" FILES "${unity_script_file}"
         )
       endif()
       _FRUT_link_xcode_frameworks(${unity_target} "${current_exporter}")
@@ -5009,8 +5014,9 @@ function(_FRUT_install_to_plugin_binary_location target plugin_type default_dest
       set(destination "${default_destination}")
     endif()
     if(NOT destination STREQUAL "")
-      if(JUCER_ENABLE_PLUGIN_COPY_STEP_${config}
-          OR (NOT DEFINED JUCER_ENABLE_PLUGIN_COPY_STEP_${config} AND APPLE))
+      if((NOT DEFINED JUCER_ENABLE_PLUGIN_COPY_STEP_${config}
+            AND (APPLE OR CMAKE_HOST_SYSTEM_NAME STREQUAL "Linux"))
+          OR JUCER_ENABLE_PLUGIN_COPY_STEP_${config})
         install(TARGETS ${target} CONFIGURATIONS "${config}"
           COMPONENT "${component}" DESTINATION "${destination}"
         )
