@@ -492,6 +492,11 @@ function(jucer_project_module module_name PATH_KEYWORD modules_folder)
   set(can_build_vst3 FALSE)
   if((APPLE AND NOT IOS) OR MSVC)
     set(can_build_vst3 TRUE)
+  elseif(
+    NOT (DEFINED JUCER_VERSION AND JUCER_VERSION VERSION_LESS 6.0.0)
+    AND CMAKE_HOST_SYSTEM_NAME STREQUAL "Linux"
+  )
+    set(can_build_vst3 TRUE)
   endif()
 
   set(module_sources "")
@@ -2457,6 +2462,11 @@ function(jucer_project_end)
     set(can_build_vst3 FALSE)
     if((APPLE AND NOT IOS) OR MSVC)
       set(can_build_vst3 TRUE)
+    elseif(
+      NOT (DEFINED JUCER_VERSION AND JUCER_VERSION VERSION_LESS 6.0.0)
+      AND CMAKE_HOST_SYSTEM_NAME STREQUAL "Linux"
+    )
+      set(can_build_vst3 TRUE)
     endif()
     if(JUCER_BUILD_VST3 AND can_build_vst3)
       set(vst3_target "${target}_VST3")
@@ -2489,6 +2499,22 @@ function(jucer_project_end)
         _FRUT_install_to_plugin_binary_location(${vst3_target} "VST3"
           "$ENV{${common_files_env_var}}/VST3"
         )
+      elseif(CMAKE_HOST_SYSTEM_NAME STREQUAL "Linux")
+        foreach(config IN LISTS JUCER_PROJECT_CONFIGURATIONS)
+          string(TOUPPER "${config}" upper_config)
+          get_target_property(output_name ${vst3_target} OUTPUT_NAME_${upper_config})
+          set(vst3_dir "${output_name}.vst3")
+          get_target_property(
+            output_directory ${vst3_target} LIBRARY_OUTPUT_DIRECTORY_${upper_config}
+          )
+          if(output_directory)
+            set(vst3_dir "${output_directory}/${vst3_dir}")
+          endif()
+          set(vst3_subdir "Contents/x86_64-linux")
+          set_target_properties(${vst3_target} PROPERTIES
+            LIBRARY_OUTPUT_DIRECTORY_${upper_config} "${vst3_dir}/${vst3_subdir}"
+          )
+        endforeach()
       endif()
       _FRUT_link_xcode_frameworks(${vst3_target} "${current_exporter}")
       _FRUT_set_custom_xcode_flags(${vst3_target})
