@@ -2500,6 +2500,19 @@ function(jucer_project_end)
           "$ENV{${common_files_env_var}}/VST3"
         )
       elseif(CMAKE_HOST_SYSTEM_NAME STREQUAL "Linux")
+        try_compile(
+          RESULT_VAR "${CMAKE_CURRENT_BINARY_DIR}"
+          "${Reprojucer_data_DIR}/juce_runtime_arch_detection.cpp"
+          OUTPUT_VARIABLE arch_detection_output
+        )
+        if(arch_detection_output MATCHES "JUCE_ARCH ([A-Za-z0-9_]+)")
+          set(vst3_arch "${CMAKE_MATCH_1}")
+        else()
+          message(
+            FATAL_ERROR "Failed to find \"JUCE_ARCH <vst3_arch>\" in compiler output"
+          )
+        endif()
+
         foreach(config IN LISTS JUCER_PROJECT_CONFIGURATIONS)
           string(TOUPPER "${config}" upper_config)
           get_target_property(output_name ${vst3_target} OUTPUT_NAME_${upper_config})
@@ -2510,7 +2523,7 @@ function(jucer_project_end)
           if(output_directory)
             set(vst3_dir "${output_directory}/${vst3_dir}")
           endif()
-          set(vst3_subdir "Contents/x86_64-linux")
+          set(vst3_subdir "Contents/${vst3_arch}-linux")
           set_target_properties(${vst3_target} PROPERTIES
             LIBRARY_OUTPUT_DIRECTORY_${upper_config} "${vst3_dir}/${vst3_subdir}"
           )
