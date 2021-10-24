@@ -365,6 +365,9 @@ contributors:
       <a href="https://github.com/McMartin/FRUT/issues?q=is%3Aissue+author%3At-scale" title="Bug reports">🐛</a>
     </td>
     <td>
+      <a href="https://github.com/butchwarns"><img src="https://github.com/butchwarns.png" width="100"><br />Butch Warns</a>
+      <br />
+      <a href="https://github.com/McMartin/FRUT/issues?q=is%3Aissue+author%3Abutchwarns" title="Bug reports">🐛</a>
     </td>
     <td>
     </td>
