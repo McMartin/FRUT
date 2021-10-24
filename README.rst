@@ -332,10 +332,10 @@ contributors:
       <a href="https://github.com/McMartin/FRUT/issues?q=is%3Aissue+author%3Amhetrick" title="Bug reports">🐛</a>
     </td>
     <td>
-      <a href="https://github.com/AWildAudioNerd"><img src="https://github.com/AWildAudioNerd.png" width="100"><br />Alex</a>
+      <a href="https://github.com/alexmadeathing"><img src="https://github.com/alexmadeathing.png" width="100"><br />Alex</a>
       <br />
-      <a href="https://github.com/McMartin/FRUT/pulls?q=state%3Amerged+author%3AAWildAudioNerd" title="Code">💻</a>
-      <a href="https://github.com/McMartin/FRUT/pulls?q=state%3Amerged+reviewed-by%3AAWildAudioNerd+-author%3AAWildAudioNerd+" title="Pull Request reviews">👀</a>
+      <a href="https://github.com/McMartin/FRUT/pulls?q=state%3Amerged+author%3Aalexmadeathing" title="Code">💻</a>
+      <a href="https://github.com/McMartin/FRUT/pulls?q=state%3Amerged+reviewed-by%3Aalexmadeathing+-author%3Aalexmadeathing+" title="Pull Request reviews">👀</a>
     </td>
     <td>
       <a href="https://github.com/E-Fir"><img src="https://github.com/E-Fir.png" width="100"><br />Alexey Romanoff</a>
