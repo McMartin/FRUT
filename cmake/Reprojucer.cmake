@@ -1652,7 +1652,11 @@ function(jucer_export_target_configuration
   endif()
 
   if(exporter STREQUAL "Linux Makefile")
-    list(APPEND single_value_keywords "ARCHITECTURE")
+    list(APPEND single_value_keywords
+      "ARCHITECTURE"
+      "ENABLE_PLUGIN_COPY_STEP"
+      "VST3_BINARY_LOCATION"
+    )
   endif()
 
   if(exporter MATCHES "^Code::Blocks \\((Windows|Linux)\\)$")
@@ -2513,6 +2517,9 @@ function(jucer_project_end)
           )
         endif()
 
+        set(component "_install_${vst3_target}_to_VST3_binary_location")
+        set(should_install FALSE)
+
         foreach(config IN LISTS JUCER_PROJECT_CONFIGURATIONS)
           string(TOUPPER "${config}" upper_config)
           get_target_property(output_name ${vst3_target} OUTPUT_NAME_${upper_config})
@@ -2527,7 +2534,33 @@ function(jucer_project_end)
           set_target_properties(${vst3_target} PROPERTIES
             LIBRARY_OUTPUT_DIRECTORY_${upper_config} "${vst3_dir}/${vst3_subdir}"
           )
+
+          if(NOT DEFINED JUCER_ENABLE_PLUGIN_COPY_STEP_${config}
+              OR JUCER_ENABLE_PLUGIN_COPY_STEP_${config})
+            if(DEFINED JUCER_VST3_BINARY_LOCATION_${config})
+              set(destination "${JUCER_VST3_BINARY_LOCATION_${config}}")
+            else()
+              set(destination "$ENV{HOME}/.vst3")
+            endif()
+            get_filename_component(vst3_dir "${vst3_dir}" ABSOLUTE
+              BASE_DIR "${CMAKE_CURRENT_BINARY_DIR}"
+            )
+            install(DIRECTORY "${vst3_dir}" CONFIGURATIONS "${config}"
+              COMPONENT "${component}" DESTINATION "${destination}"
+            )
+            set(should_install TRUE)
+          endif()
         endforeach()
+
+        if(should_install)
+          add_custom_command(TARGET ${vst3_target} POST_BUILD
+            COMMAND
+            "${CMAKE_COMMAND}"
+            "-DCMAKE_INSTALL_CONFIG_NAME=$<CONFIG>"
+            "-DCMAKE_INSTALL_COMPONENT=${component}"
+            "-P" "${CMAKE_CURRENT_BINARY_DIR}/cmake_install.cmake"
+          )
+        endif()
       endif()
       _FRUT_link_xcode_frameworks(${vst3_target} "${current_exporter}")
       _FRUT_set_custom_xcode_flags(${vst3_target})

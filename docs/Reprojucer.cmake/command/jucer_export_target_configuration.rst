@@ -40,9 +40,9 @@ Define the settings specific to a configuration associated with an export target
     [ADD_RECOMMENDED_COMPILER_WARNING_FLAGS <Enabled|Disabled>]  # [3]
     [ADD_RECOMMENDED_COMPILER_WARNING_FLAGS <GCC|GCC 7 and below|LLVM|Disabled>]  # [9]
 
-    [ENABLE_PLUGIN_COPY_STEP <ON|OFF>]  # [2]
+    [ENABLE_PLUGIN_COPY_STEP <ON|OFF>]  # [1]
     [VST_BINARY_LOCATION <binary_location>]  # [2]
-    [VST3_BINARY_LOCATION <binary_location>]  # [2]
+    [VST3_BINARY_LOCATION <binary_location>]  # [1]
     [AU_BINARY_LOCATION <binary_location>]  # [3]
     [RTAS_BINARY_LOCATION <binary_location>]  # [2]
     [AAX_BINARY_LOCATION <binary_location>]  # [2]
@@ -84,6 +84,9 @@ Define the settings specific to a configuration associated with an export target
 
 Optional keywords support:
 
+- ``[1]``: only supported by the ``"Xcode (MacOSX)"``, ``"Xcode (iOS)"``,
+  ``"Visual Studio 2019"``, ``"Visual Studio 2017"``, ``"Visual Studio 2015"``,
+  ``"Visual Studio 2013"``, and ``"Linux Makefile"`` exporters.
 - ``[2]``: only supported by the ``"Xcode (MacOSX)"``, ``"Xcode (iOS)"``,
   ``"Visual Studio 2019"``, ``"Visual Studio 2017"``, ``"Visual Studio 2015"``, and
   ``"Visual Studio 2013"`` exporters.
