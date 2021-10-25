@@ -2527,6 +2527,16 @@ inline void writeReprojucerCMakeLists(const Arguments& args,
 
                                     return {};
                                   });
+
+          convertOnOffSettingIfDefined(configuration, "enablePluginBinaryCopyStep",
+                                       "ENABLE_PLUGIN_COPY_STEP", {});
+
+          convertSettingIfDefined(configuration, "vst3BinaryLocation",
+                                  "VST3_BINARY_LOCATION", {});
+          convertSettingIfDefined(configuration, "unityPluginBinaryLocation",
+                                  "UNITY_BINARY_LOCATION", {});
+          convertSettingIfDefined(configuration, "vstBinaryLocation",
+                                  "VST_LEGACY_BINARY_LOCATION", {});
         }
 
         const auto codeBlocksArchitecture =

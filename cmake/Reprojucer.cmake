@@ -489,6 +489,16 @@ function(jucer_project_module module_name PATH_KEYWORD modules_folder)
     set(appconfig_include "#include \"AppConfig.h\"\n")
   endif()
 
+  set(can_build_vst3 FALSE)
+  if((APPLE AND NOT IOS) OR MSVC)
+    set(can_build_vst3 TRUE)
+  elseif(
+    NOT (DEFINED JUCER_VERSION AND JUCER_VERSION VERSION_LESS 6.0.0)
+    AND CMAKE_HOST_SYSTEM_NAME STREQUAL "Linux"
+  )
+    set(can_build_vst3 TRUE)
+  endif()
+
   set(module_sources "")
   foreach(src_file IN LISTS module_src_files)
     unset(to_compile)
@@ -498,7 +508,7 @@ function(jucer_project_module module_name PATH_KEYWORD modules_folder)
       OR (src_file MATCHES "_AAX[._]"  AND NOT (JUCER_BUILD_AAX          AND ((APPLE AND NOT IOS) OR MSVC)))
       OR (src_file MATCHES "_RTAS[._]" AND NOT (JUCER_BUILD_RTAS         AND ((APPLE AND NOT IOS) OR MSVC)))
       OR (src_file MATCHES "_VST2[._]" AND NOT (JUCER_BUILD_VST          AND NOT IOS))
-      OR (src_file MATCHES "_VST3[._]" AND NOT (JUCER_BUILD_VST3         AND ((APPLE AND NOT IOS) OR MSVC)))
+      OR (src_file MATCHES "_VST3[._]" AND NOT (JUCER_BUILD_VST3         AND can_build_vst3))
     )
       set(to_compile FALSE)
     endif()
@@ -1642,7 +1652,13 @@ function(jucer_export_target_configuration
   endif()
 
   if(exporter STREQUAL "Linux Makefile")
-    list(APPEND single_value_keywords "ARCHITECTURE")
+    list(APPEND single_value_keywords
+      "ARCHITECTURE"
+      "ENABLE_PLUGIN_COPY_STEP"
+      "VST3_BINARY_LOCATION"
+      "UNITY_BINARY_LOCATION"
+      "VST_LEGACY_BINARY_LOCATION"
+    )
   endif()
 
   if(exporter MATCHES "^Code::Blocks \\((Windows|Linux)\\)$")
@@ -2443,13 +2459,24 @@ function(jucer_project_end)
         _FRUT_install_to_plugin_binary_location(${vst_target} "VST"
           "$ENV{${env_var}}/Steinberg/Vstplugins"
         )
+      elseif(CMAKE_HOST_SYSTEM_NAME STREQUAL "Linux")
+        _FRUT_install_to_plugin_binary_location(${vst_target} "VST" "$ENV{HOME}/.vst")
       endif()
       _FRUT_link_xcode_frameworks(${vst_target} "${current_exporter}")
       _FRUT_set_custom_xcode_flags(${vst_target})
       unset(vst_target)
     endif()
 
-    if(JUCER_BUILD_VST3 AND ((APPLE AND NOT IOS) OR MSVC))
+    set(can_build_vst3 FALSE)
+    if((APPLE AND NOT IOS) OR MSVC)
+      set(can_build_vst3 TRUE)
+    elseif(
+      NOT (DEFINED JUCER_VERSION AND JUCER_VERSION VERSION_LESS 6.0.0)
+      AND CMAKE_HOST_SYSTEM_NAME STREQUAL "Linux"
+    )
+      set(can_build_vst3 TRUE)
+    endif()
+    if(JUCER_BUILD_VST3 AND can_build_vst3)
       set(vst3_target "${target}_VST3")
       add_library(${vst3_target} MODULE
         ${VST3_sources}
@@ -2480,6 +2507,64 @@ function(jucer_project_end)
         _FRUT_install_to_plugin_binary_location(${vst3_target} "VST3"
           "$ENV{${common_files_env_var}}/VST3"
         )
+      elseif(CMAKE_HOST_SYSTEM_NAME STREQUAL "Linux")
+        try_compile(
+          RESULT_VAR "${CMAKE_CURRENT_BINARY_DIR}"
+          "${Reprojucer_data_DIR}/juce_runtime_arch_detection.cpp"
+          OUTPUT_VARIABLE arch_detection_output
+        )
+        if(arch_detection_output MATCHES "JUCE_ARCH ([A-Za-z0-9_]+)")
+          set(vst3_arch "${CMAKE_MATCH_1}")
+        else()
+          message(
+            FATAL_ERROR "Failed to find \"JUCE_ARCH <vst3_arch>\" in compiler output"
+          )
+        endif()
+
+        set(component "_install_${vst3_target}_to_VST3_binary_location")
+        set(should_install FALSE)
+
+        foreach(config IN LISTS JUCER_PROJECT_CONFIGURATIONS)
+          string(TOUPPER "${config}" upper_config)
+          get_target_property(output_name ${vst3_target} OUTPUT_NAME_${upper_config})
+          set(vst3_dir "${output_name}.vst3")
+          get_target_property(
+            output_directory ${vst3_target} LIBRARY_OUTPUT_DIRECTORY_${upper_config}
+          )
+          if(output_directory)
+            set(vst3_dir "${output_directory}/${vst3_dir}")
+          endif()
+          set(vst3_subdir "Contents/${vst3_arch}-linux")
+          set_target_properties(${vst3_target} PROPERTIES
+            LIBRARY_OUTPUT_DIRECTORY_${upper_config} "${vst3_dir}/${vst3_subdir}"
+          )
+
+          if(NOT DEFINED JUCER_ENABLE_PLUGIN_COPY_STEP_${config}
+              OR JUCER_ENABLE_PLUGIN_COPY_STEP_${config})
+            if(DEFINED JUCER_VST3_BINARY_LOCATION_${config})
+              set(destination "${JUCER_VST3_BINARY_LOCATION_${config}}")
+            else()
+              set(destination "$ENV{HOME}/.vst3")
+            endif()
+            get_filename_component(vst3_dir "${vst3_dir}" ABSOLUTE
+              BASE_DIR "${CMAKE_CURRENT_BINARY_DIR}"
+            )
+            install(DIRECTORY "${vst3_dir}" CONFIGURATIONS "${config}"
+              COMPONENT "${component}" DESTINATION "${destination}"
+            )
+            set(should_install TRUE)
+          endif()
+        endforeach()
+
+        if(should_install)
+          add_custom_command(TARGET ${vst3_target} POST_BUILD
+            COMMAND
+            "${CMAKE_COMMAND}"
+            "-DCMAKE_INSTALL_CONFIG_NAME=$<CONFIG>"
+            "-DCMAKE_INSTALL_COMPONENT=${component}"
+            "-P" "${CMAKE_CURRENT_BINARY_DIR}/cmake_install.cmake"
+          )
+        endif()
       endif()
       _FRUT_link_xcode_frameworks(${vst3_target} "${current_exporter}")
       _FRUT_set_custom_xcode_flags(${vst3_target})
@@ -2886,6 +2971,22 @@ function(jucer_project_end)
       _FRUT_generate_plist_file(${unity_target} "Unity_Plugin" "BNDL" "????")
       _FRUT_set_bundle_properties(${unity_target} "bundle")
       _FRUT_set_output_directory_properties(${unity_target} "Unity Plugin")
+      if(NOT (DEFINED JUCER_VERSION AND JUCER_VERSION VERSION_LESS 6.0.0)
+          AND CMAKE_HOST_SYSTEM_NAME STREQUAL "Linux")
+        foreach(config IN LISTS JUCER_PROJECT_CONFIGURATIONS)
+          string(TOUPPER "${config}" upper_config)
+          set(unity_dir "Unity")
+          get_target_property(
+            output_directory ${unity_target} LIBRARY_OUTPUT_DIRECTORY_${upper_config}
+          )
+          if(output_directory)
+            set(unity_dir "${output_directory}/${unity_dir}")
+          endif()
+          set_target_properties(${unity_target} PROPERTIES
+            LIBRARY_OUTPUT_DIRECTORY_${upper_config} "${unity_dir}"
+          )
+        endforeach()
+      endif()
       _FRUT_set_output_name_properties_Unity(${unity_target})
       _FRUT_set_compiler_and_linker_settings(
         ${unity_target} "UnityPlugIn" "${current_exporter}"
@@ -2922,20 +3023,13 @@ function(jucer_project_end)
       if(APPLE)
         _FRUT_install_to_plugin_binary_location(${unity_target} "UNITY" "")
       elseif(MSVC)
-        _FRUT_install_to_plugin_binary_location(${unity_target} "UNITY" "")
-
-        set(component "_install_${unity_target}_to_UNITY_binary_location")
-        foreach(config IN LISTS JUCER_PROJECT_CONFIGURATIONS)
-          if(DEFINED JUCER_UNITY_BINARY_LOCATION_${config}
-              AND JUCER_ENABLE_PLUGIN_COPY_STEP_${config})
-            set(destination "${JUCER_UNITY_BINARY_LOCATION_${config}}")
-            if(NOT destination STREQUAL "")
-              install(FILES "${unity_script_file}" CONFIGURATIONS "${config}"
-                COMPONENT "${component}" DESTINATION "${destination}"
-              )
-            endif()
-          endif()
-        endforeach()
+        _FRUT_install_to_plugin_binary_location(
+          ${unity_target} "UNITY" "" FILES "${unity_script_file}"
+        )
+      elseif(CMAKE_HOST_SYSTEM_NAME STREQUAL "Linux")
+        _FRUT_install_to_plugin_binary_location(
+          ${unity_target} "UNITY" "$ENV{HOME}/UnityPlugins" FILES "${unity_script_file}"
+        )
       endif()
       _FRUT_link_xcode_frameworks(${unity_target} "${current_exporter}")
       _FRUT_set_custom_xcode_flags(${unity_target})
@@ -4906,6 +5000,12 @@ endfunction()
 
 function(_FRUT_install_to_plugin_binary_location target plugin_type default_destination)
 
+  if(DEFINED ARGV3)
+    if(NOT ARGV3 STREQUAL "FILES")
+      message(FATAL_ERROR "Unexpected argument \"${ARGV3}\"")
+    endif()
+  endif()
+
   set(component "_install_${target}_to_${plugin_type}_binary_location")
 
   set(should_install FALSE)
@@ -4917,11 +5017,17 @@ function(_FRUT_install_to_plugin_binary_location target plugin_type default_dest
       set(destination "${default_destination}")
     endif()
     if(NOT destination STREQUAL "")
-      if(JUCER_ENABLE_PLUGIN_COPY_STEP_${config}
-          OR (NOT DEFINED JUCER_ENABLE_PLUGIN_COPY_STEP_${config} AND APPLE))
+      if((NOT DEFINED JUCER_ENABLE_PLUGIN_COPY_STEP_${config}
+            AND (APPLE OR CMAKE_HOST_SYSTEM_NAME STREQUAL "Linux"))
+          OR JUCER_ENABLE_PLUGIN_COPY_STEP_${config})
         install(TARGETS ${target} CONFIGURATIONS "${config}"
           COMPONENT "${component}" DESTINATION "${destination}"
         )
+        if(ARGV3 STREQUAL "FILES")
+          install(${ARGN} CONFIGURATIONS "${config}"
+            COMPONENT "${component}" DESTINATION "${destination}"
+          )
+        endif()
         set(should_install TRUE)
       endif()
     endif()
@@ -5765,6 +5871,10 @@ function(_FRUT_set_compiler_and_linker_settings_Linux target)
     endif()
     target_link_libraries(${target} PRIVATE "-l${linux_lib}")
   endforeach()
+
+  if(JUCER_PROJECT_TYPE STREQUAL "Audio Plug-in" OR JUCER_PROJECT_TYPE STREQUAL "Dynamic Library")
+    target_compile_options(${target} PRIVATE "-fPIC")
+  endif()
 
 endfunction()
 
