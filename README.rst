@@ -430,7 +430,7 @@ even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE
 .. _JUCE 5.4.3: https://github.com/juce-framework/JUCE/tree/5.4.3
 .. _JUCE 5.4.7: https://github.com/juce-framework/JUCE/tree/5.4.7
 .. _JUCE 6.0.5: https://github.com/juce-framework/JUCE/tree/6.0.5
-.. _JUCE 6.0.5: https://github.com/juce-framework/JUCE/tree/6.1.0
+.. _JUCE 6.1.0: https://github.com/juce-framework/JUCE/tree/6.1.0
 .. _JUCE: https://github.com/juce-framework/JUCE
 .. _Projucer: https://juce.com/discover/projucer
 .. _all-contributors: https://github.com/all-contributors/all-contributors
