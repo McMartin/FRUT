@@ -5821,8 +5821,14 @@ function(_FRUT_set_compiler_and_linker_settings_Linux target)
         target_compile_options(${target} PRIVATE
           $<$<CONFIG:${config}>:${JUCER_ARCHITECTURE_FLAG_${config}}>
         )
+        set_property(TARGET ${target} APPEND_STRING PROPERTY
+          LINK_FLAGS_${upper_config} " ${JUCER_ARCHITECTURE_FLAG_${config}}"
+        )
       else()
         target_compile_options(${target} PRIVATE $<$<CONFIG:${config}>:-march=native>)
+        set_property(TARGET ${target} APPEND_STRING PROPERTY
+          LINK_FLAGS_${upper_config} " -march=native"
+        )
       endif()
     endif()
   endforeach()
