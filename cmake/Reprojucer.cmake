@@ -5809,33 +5809,21 @@ function(_FRUT_set_compiler_and_linker_settings_Linux target)
 
     if(CMAKE_EXTRA_GENERATOR STREQUAL "CodeBlocks")
       if(DEFINED JUCER_ARCHITECTURE_FLAG_${config})
-        target_compile_options(${target} PRIVATE
-          $<$<CONFIG:${config}>:${JUCER_ARCHITECTURE_FLAG_${config}}>
-        )
-        set_property(TARGET ${target} APPEND_STRING PROPERTY
-          LINK_FLAGS_${upper_config} " ${JUCER_ARCHITECTURE_FLAG_${config}}"
-        )
+        set(architecture_flag "${JUCER_ARCHITECTURE_FLAG_${config}}")
       else()
-        target_compile_options(${target} PRIVATE $<$<CONFIG:${config}>:-m64>)
-        set_property(TARGET ${target} APPEND_STRING PROPERTY
-          LINK_FLAGS_${upper_config} " -m64"
-        )
+        set(architecture_flag "-m64")
       endif()
     else()
       if(DEFINED JUCER_ARCHITECTURE_FLAG_${config})
-        target_compile_options(${target} PRIVATE
-          $<$<CONFIG:${config}>:${JUCER_ARCHITECTURE_FLAG_${config}}>
-        )
-        set_property(TARGET ${target} APPEND_STRING PROPERTY
-          LINK_FLAGS_${upper_config} " ${JUCER_ARCHITECTURE_FLAG_${config}}"
-        )
+        set(architecture_flag "${JUCER_ARCHITECTURE_FLAG_${config}}")
       else()
-        target_compile_options(${target} PRIVATE $<$<CONFIG:${config}>:-march=native>)
-        set_property(TARGET ${target} APPEND_STRING PROPERTY
-          LINK_FLAGS_${upper_config} " -march=native"
-        )
+        set(architecture_flag "-march=native")
       endif()
     endif()
+    target_compile_options(${target} PRIVATE $<$<CONFIG:${config}>:${architecture_flag}>)
+    set_property(TARGET ${target} APPEND_STRING PROPERTY
+      LINK_FLAGS_${upper_config} " ${architecture_flag}"
+    )
   endforeach()
 
   set(linux_packages ${JUCER_PROJECT_LINUX_PACKAGES} ${JUCER_PKGCONFIG_LIBRARIES})
