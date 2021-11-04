@@ -124,14 +124,12 @@ jucer_export_target_configuration(
   "Code::Blocks (Windows)"
   NAME "Debug"
   DEBUG_MODE ON
-  ARCHITECTURE "64-bit (-m64)"
 )
 
 jucer_export_target_configuration(
   "Code::Blocks (Windows)"
   NAME "Release"
   DEBUG_MODE OFF
-  ARCHITECTURE "64-bit (-m64)"
 )
 
 jucer_export_target(
@@ -142,14 +140,12 @@ jucer_export_target_configuration(
   "Code::Blocks (Linux)"
   NAME "Debug"
   DEBUG_MODE ON
-  ARCHITECTURE "64-bit (-m64)"
 )
 
 jucer_export_target_configuration(
   "Code::Blocks (Linux)"
   NAME "Release"
   DEBUG_MODE OFF
-  ARCHITECTURE "64-bit (-m64)"
 )
 
 jucer_project_end()

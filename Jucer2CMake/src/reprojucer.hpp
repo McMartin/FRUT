@@ -2559,7 +2559,8 @@ inline void writeReprojucerCMakeLists(const Arguments& args,
         if (exporterType == "CODEBLOCKS_WINDOWS")
         {
           if (configuration.hasAttribute("windowsCodeBlocksArchitecture")
-              || jucerVersionAsTuple >= Version{5, 0, 0})
+              || (jucerVersionAsTuple >= Version{5, 0, 0}
+                  && jucerVersionAsTuple < Version{5, 2, 1}))
           {
             convertSetting(configuration, "windowsCodeBlocksArchitecture", "ARCHITECTURE",
                            codeBlocksArchitecture);
@@ -2569,7 +2570,8 @@ inline void writeReprojucerCMakeLists(const Arguments& args,
         if (exporterType == "CODEBLOCKS_LINUX")
         {
           if (configuration.hasAttribute("linuxCodeBlocksArchitecture")
-              || jucerVersionAsTuple >= Version{5, 0, 0})
+              || (jucerVersionAsTuple >= Version{5, 0, 0}
+                  && jucerVersionAsTuple < Version{5, 2, 1}))
           {
             convertSetting(configuration, "linuxCodeBlocksArchitecture", "ARCHITECTURE",
                            codeBlocksArchitecture);
