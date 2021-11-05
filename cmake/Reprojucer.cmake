@@ -2085,7 +2085,8 @@ function(jucer_export_target_configuration
 
   if(DEFINED _ARCHITECTURE AND exporter STREQUAL "Linux Makefile")
     set(architecture "${_ARCHITECTURE}")
-    if(architecture STREQUAL "(Default)" OR architecture STREQUAL "Native")
+    unset(architecture_flag)
+    if(architecture STREQUAL "Native")
       set(architecture_flag "-march=native")
     elseif(architecture STREQUAL "<None>")
       set(architecture_flag "")
@@ -2097,14 +2098,17 @@ function(jucer_export_target_configuration
       set(architecture_flag "-march=armv6")
     elseif(architecture STREQUAL "ARM v7")
       set(architecture_flag "-march=armv7")
-    else()
+    elseif(NOT (architecture STREQUAL "(Default)" OR architecture STREQUAL "Default"))
       message(FATAL_ERROR "Unsupported value for ARCHITECTURE: \"${architecture}\"")
     endif()
-    set(JUCER_ARCHITECTURE_FLAG_${config} "${architecture_flag}" PARENT_SCOPE)
+    if(DEFINED architecture_flag)
+      set(JUCER_ARCHITECTURE_FLAG_${config} "${architecture_flag}" PARENT_SCOPE)
+    endif()
   endif()
 
   if(DEFINED _ARCHITECTURE AND exporter MATCHES "^Code::Blocks \\((Windows|Linux)\\)$")
     set(architecture "${_ARCHITECTURE}")
+    unset(architecture_flag)
     if(architecture STREQUAL "32-bit (-m32)")
       set(architecture_flag "-m32")
     elseif(architecture STREQUAL "64-bit (-m64)")
@@ -2113,10 +2117,12 @@ function(jucer_export_target_configuration
       set(architecture_flag "-march=armv6")
     elseif(architecture STREQUAL "ARM v7")
       set(architecture_flag "-march=armv7")
-    else()
+    elseif(NOT architecture STREQUAL "Default")
       message(FATAL_ERROR "Unsupported value for ARCHITECTURE: \"${architecture}\"")
     endif()
-    set(JUCER_ARCHITECTURE_FLAG_${config} "${architecture_flag}" PARENT_SCOPE)
+    if(DEFINED architecture_flag)
+      set(JUCER_ARCHITECTURE_FLAG_${config} "${architecture_flag}" PARENT_SCOPE)
+    endif()
   endif()
 
 endfunction()
@@ -5807,24 +5813,23 @@ function(_FRUT_set_compiler_and_linker_settings_Linux target)
       )
     endif()
 
-    if(CMAKE_EXTRA_GENERATOR STREQUAL "CodeBlocks")
-      if(DEFINED JUCER_ARCHITECTURE_FLAG_${config})
-        target_compile_options(${target} PRIVATE
-          $<$<CONFIG:${config}>:${JUCER_ARCHITECTURE_FLAG_${config}}>
-        )
-        set_property(TARGET ${target} APPEND_STRING PROPERTY
-          LINK_FLAGS_${upper_config} " ${JUCER_ARCHITECTURE_FLAG_${config}}"
-        )
-      endif()
+    if(DEFINED JUCER_ARCHITECTURE_FLAG_${config})
+      set(architecture_flag "${JUCER_ARCHITECTURE_FLAG_${config}}")
     else()
-      if(DEFINED JUCER_ARCHITECTURE_FLAG_${config})
-        target_compile_options(${target} PRIVATE
-          $<$<CONFIG:${config}>:${JUCER_ARCHITECTURE_FLAG_${config}}>
-        )
+      if(CMAKE_EXTRA_GENERATOR STREQUAL "CodeBlocks")
+        set(architecture_flag "-m64")
       else()
-        target_compile_options(${target} PRIVATE $<$<CONFIG:${config}>:-march=native>)
+        if(DEFINED JUCER_VERSION AND JUCER_VERSION VERSION_LESS 5.4.7)
+          set(architecture_flag "-march=native")
+        else()
+          set(architecture_flag "")
+        endif()
       endif()
     endif()
+    target_compile_options(${target} PRIVATE $<$<CONFIG:${config}>:${architecture_flag}>)
+    set_property(TARGET ${target} APPEND_STRING PROPERTY
+      LINK_FLAGS_${upper_config} " ${architecture_flag}"
+    )
   endforeach()
 
   set(linux_packages ${JUCER_PROJECT_LINUX_PACKAGES} ${JUCER_PKGCONFIG_LIBRARIES})
