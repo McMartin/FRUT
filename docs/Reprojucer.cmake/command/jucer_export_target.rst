@@ -1,4 +1,4 @@
-.. # Copyright (C) 2017-2021  Alain Martin
+.. # Copyright (C) 2017-2022  Alain Martin
 .. #
 .. # This file is part of FRUT.
 .. #
@@ -108,9 +108,9 @@ Define the settings specific to an export target.
 
 Optional keywords support:
 
-- ``[1]``: only supported by the ``"Xcode (MacOSX)"``, ``"Visual Studio 2019"``,
-  ``"Visual Studio 2017"``, ``"Visual Studio 2015"``, and ``"Visual Studio 2013"``
-  exporters.
+- ``[1]``: only supported by the ``"Xcode (MacOSX)"``, ``"Visual Studio 2012"``,
+  ``"Visual Studio 2019"``, ``"Visual Studio 2017"``, ``"Visual Studio 2015"``, and
+  ``"Visual Studio 2013"`` exporters.
 - ``[2]``: only supported by the ``"Xcode (MacOSX)"``, ``"Xcode (iOS)"``,
   ``"Linux Makefile"``, ``"Code::Blocks (Windows)"``, and ``"Code::Blocks (Linux)"``
   exporters.
@@ -121,8 +121,9 @@ Optional keywords support:
 - ``[6]``: only supported by the ``"Xcode (MacOSX)"`` exporter, on ``"GUI Application"``
   projects.
 - ``[7]``: only supported by the ``"Xcode (iOS)"`` exporter.
-- ``[8]``: only supported by the ``"Visual Studio 2019"``, ``"Visual Studio 2017"``,
-  ``"Visual Studio 2015"``, and ``"Visual Studio 2013"`` exporters.
+- ``[8]``: only supported by the ``"Visual Studio 2012"``, ``"Visual Studio 2019"``,
+  ``"Visual Studio 2017"``, ``"Visual Studio 2015"``, and ``"Visual Studio 2013"``
+  exporters.
 - ``[9]``: only supported by the ``"Linux Makefile"`` exporter.
 - ``[10]``: only supported by the ``"Code::Blocks (Windows)"`` exporter.
 
