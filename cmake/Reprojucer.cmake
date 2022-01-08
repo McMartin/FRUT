@@ -1,4 +1,4 @@
-# Copyright (C) 2016-2021  Alain Martin
+# Copyright (C) 2016-2022  Alain Martin
 # Copyright (C) 2017 Matthieu Talbot
 # Copyright (C) 2018-2019 Scott Wheeler
 #
@@ -50,7 +50,7 @@ set(Reprojucer_supported_exporters
 set(Reprojucer_supported_exporters_conditions
   "APPLE\;AND\;NOT\;IOS"
   "IOS"
-  "MSVC_VERSION\;GREATER\;1919"
+  "MSVC_VERSION\;GREATER\;1919\;AND\;MSVC_VERSION\;LESS\;1930"
   "MSVC_VERSION\;GREATER\;1909\;AND\;MSVC_VERSION\;LESS\;1920"
   "MSVC_VERSION\;EQUAL\;1900"
   "MSVC_VERSION\;EQUAL\;1800"
@@ -703,7 +703,7 @@ function(jucer_project_module module_name PATH_KEYWORD modules_folder)
   elseif(APPLE)
     set(module_lib_dir "${module_dir}/libs/MacOSX")
   elseif(MSVC)
-    if(MSVC_VERSION GREATER 1919)
+    if(MSVC_VERSION GREATER 1919 AND MSVC_VERSION LESS 1930)
       set(module_lib_dir "${module_dir}/libs/VisualStudio2019")
     elseif(MSVC_VERSION GREATER 1909 AND MSVC_VERSION LESS 1920)
       set(module_lib_dir "${module_dir}/libs/VisualStudio2017")
