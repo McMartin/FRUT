@@ -1441,18 +1441,13 @@ function(jucer_export_target exporter)
   if(DEFINED _PLATFORM_TOOLSET)
     set(toolset "${_PLATFORM_TOOLSET}")
     if((exporter STREQUAL "Visual Studio 2019"
-          AND (toolset STREQUAL "v140" OR toolset STREQUAL "v140_xp"
-            OR toolset STREQUAL "v141" OR toolset STREQUAL "v141_xp"
-            OR toolset STREQUAL "v142"))
+          AND toolset MATCHES "^(v140(_xp)?|v141(_xp)?|v142)$")
         OR (exporter STREQUAL "Visual Studio 2017"
-          AND (toolset STREQUAL "v140" OR toolset STREQUAL "v140_xp"
-            OR toolset STREQUAL "v141" OR toolset STREQUAL "v141_xp"))
+          AND toolset MATCHES "^(v140(_xp)?|v141(_xp)?)$")
         OR (exporter STREQUAL "Visual Studio 2015"
-          AND (toolset STREQUAL "v140" OR toolset STREQUAL "v140_xp"
-            OR toolset STREQUAL "CTP_Nov2013"))
+          AND toolset MATCHES "^(v140(_xp)?|CTP_Nov2013)$")
         OR (exporter STREQUAL "Visual Studio 2013"
-          AND (toolset STREQUAL "v120" OR toolset STREQUAL "v120_xp"
-            OR toolset STREQUAL "Windows7" OR toolset STREQUAL "CTP_Nov2013")))
+          AND toolset MATCHES "^(v120(_xp)?|Windows7|CTP_Nov2013)$"))
       if(NOT toolset STREQUAL "${CMAKE_VS_PLATFORM_TOOLSET}")
         message(FATAL_ERROR "You must call `cmake -T ${toolset}` in order to build with"
           " the toolset \"${toolset}\"."
