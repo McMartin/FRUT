@@ -90,3 +90,15 @@ jobs:
       - template: ci/azure-pipelines/steps-VS.yml
         parameters:
           juceVersions: ${{ parameters.juceVersions }}
+
+  - job: Windows_VS2022
+    displayName: Windows / Visual Studio 2022
+    pool:
+      vmImage: windows-2022
+    variables:
+      cmakeGenerator: "Visual Studio 17 2022"
+    steps:
+      - template: ci/azure-pipelines/steps-VS.yml
+        parameters:
+          cmakeOptions: -DCMAKE_SYSTEM_VERSION=10.0.19041.0
+          juceVersions: ${{ parameters.juceVersions }}
