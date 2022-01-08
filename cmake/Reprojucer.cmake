@@ -837,7 +837,7 @@ function(jucer_export_target exporter)
     list(APPEND single_value_keywords "VST_LEGACY_SDK_FOLDER" "VST_SDK_FOLDER")
   endif()
 
-  if(exporter MATCHES "^Visual Studio 201(9|7|5|3)$")
+  if(exporter MATCHES "^Visual Studio 201[9753]$")
     list(APPEND single_value_keywords
       "VST3_SDK_FOLDER"
       "AAX_SDK_FOLDER"
@@ -1620,7 +1620,7 @@ function(jucer_export_target_configuration
     list(APPEND single_value_keywords "IOS_DEPLOYMENT_TARGET")
   endif()
 
-  if(exporter MATCHES "^Visual Studio 201(9|7|5|3)$")
+  if(exporter MATCHES "^Visual Studio 201[9753]$")
     list(APPEND single_value_keywords
       "ENABLE_PLUGIN_COPY_STEP"
       "VST_BINARY_LOCATION"
@@ -1731,7 +1731,7 @@ function(jucer_export_target_configuration
 
   if(DEFINED _OPTIMISATION)
     set(optimisation "${_OPTIMISATION}")
-    if(exporter MATCHES "^Visual Studio 201(9|7|5|3)$")
+    if(exporter MATCHES "^Visual Studio 201[9753]$")
       if(optimisation STREQUAL "No optimisation")
         set(optimisation_flag "/Od")
       elseif(optimisation STREQUAL "Minimise size")
@@ -2035,7 +2035,7 @@ function(jucer_export_target_configuration
     endif()
   endif()
 
-  if(DEFINED _ARCHITECTURE AND exporter MATCHES "^Visual Studio 201(9|7|5|3)$")
+  if(DEFINED _ARCHITECTURE AND exporter MATCHES "^Visual Studio 201[9753]$")
     if(_ARCHITECTURE STREQUAL "32-bit")
       set(wants_x64 FALSE)
     elseif(_ARCHITECTURE STREQUAL "x64")
