@@ -51,7 +51,7 @@ jobs:
   - job: macOS_Make
     displayName: macOS / Unix Makefiles
     pool:
-      vmImage: macOS-10.14
+      vmImage: macOS-10.15
     variables:
       cmakeGenerator: "Unix Makefiles"
     steps:
