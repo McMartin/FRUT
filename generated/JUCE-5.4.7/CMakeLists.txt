@@ -1,4 +1,4 @@
-# Copyright (C) 2019  Alain Martin
+# Copyright (C) 2019, 2022  Alain Martin
 #
 # This file is part of FRUT.
 #
@@ -28,7 +28,12 @@ get_filename_component(JUCE_ROOT "${JUCE_ROOT}" ABSOLUTE BASE_DIR "${CMAKE_BINAR
 project(JUCE-5.4.7)
 
 
-if(MSVC_VERSION LESS 1900)
+if(MSVC_VERSION GREATER 1929)
+  message(WARNING "Skipping JUCE-5.4.7 because none of its sub-projects supports the "
+    "\"Visual Studio 2022\" exporter"
+  )
+  return()
+elseif(MSVC_VERSION LESS 1900)
   message(WARNING "Skipping JUCE-5.4.7 because none of its sub-projects supports the "
     "\"Visual Studio 2013\" exporter"
   )

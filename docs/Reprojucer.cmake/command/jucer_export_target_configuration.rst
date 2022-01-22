@@ -1,4 +1,4 @@
-.. # Copyright (C) 2017-2020  Alain Martin
+.. # Copyright (C) 2017-2022  Alain Martin
 .. #
 .. # This file is part of FRUT.
 .. #
@@ -85,22 +85,24 @@ Define the settings specific to a configuration associated with an export target
 Optional keywords support:
 
 - ``[1]``: only supported by the ``"Xcode (MacOSX)"``, ``"Xcode (iOS)"``,
-  ``"Visual Studio 2019"``, ``"Visual Studio 2017"``, ``"Visual Studio 2015"``,
-  ``"Visual Studio 2013"``, and ``"Linux Makefile"`` exporters.
+  ``"Visual Studio 2012"``, ``"Visual Studio 2019"``, ``"Visual Studio 2017"``,
+  ``"Visual Studio 2015"``, ``"Visual Studio 2013"``, and ``"Linux Makefile"`` exporters.
 - ``[2]``: only supported by the ``"Xcode (MacOSX)"``, ``"Xcode (iOS)"``,
-  ``"Visual Studio 2019"``, ``"Visual Studio 2017"``, ``"Visual Studio 2015"``, and
-  ``"Visual Studio 2013"`` exporters.
+  ``"Visual Studio 2012"``, ``"Visual Studio 2019"``, ``"Visual Studio 2017"``,
+  ``"Visual Studio 2015"``, and ``"Visual Studio 2013"`` exporters.
 - ``[3]``: only supported by the ``"Xcode (MacOSX)"`` and ``"Xcode (iOS)"`` exporters.
 - ``[4]``: only supported by the ``"Xcode (MacOSX)"`` exporter.
 - ``[5]``: only supported by the ``"Xcode (iOS)"`` exporter.
-- ``[6]``: only supported by the ``"Visual Studio 2019"``, ``"Visual Studio 2017"``,
-  ``"Visual Studio 2015"``, and ``"Visual Studio 2013"`` exporters.
-- ``[7]``: only supported by the ``"Visual Studio 2019"``, ``"Visual Studio 2017"``,
-  ``"Visual Studio 2015"``, and ``"Visual Studio 2013"`` exporters, when ``DEBUG_MODE`` is
-  ``OFF``.
-- ``[8]``: only supported by the ``"Visual Studio 2019"``, ``"Visual Studio 2017"``,
-  ``"Visual Studio 2015"``, ``"Visual Studio 2013"``, ``"Linux Makefile"``,
-  ``"Code::Blocks (Windows)"``, and ``"Code::Blocks (Linux)"`` exporters.
+- ``[6]``: only supported by the ``"Visual Studio 2012"``, ``"Visual Studio 2019"``,
+  ``"Visual Studio 2017"``, ``"Visual Studio 2015"``, and ``"Visual Studio 2013"``
+  exporters.
+- ``[7]``: only supported by the ``"Visual Studio 2012"``, ``"Visual Studio 2019"``,
+  ``"Visual Studio 2017"``, ``"Visual Studio 2015"``, and ``"Visual Studio 2013"``
+  exporters, when ``DEBUG_MODE`` is ``OFF``.
+- ``[8]``: only supported by the ``"Visual Studio 2012"``, ``"Visual Studio 2019"``,
+  ``"Visual Studio 2017"``, ``"Visual Studio 2015"``, ``"Visual Studio 2013"``,
+  ``"Linux Makefile"``, ``"Code::Blocks (Windows)"``, and ``"Code::Blocks (Linux)"``
+  exporters.
 - ``[9]``: only support by the ``"Linux Makefile"``, ``"Code::Blocks (Windows)"``, and
   ``"Code::Blocks (Linux)"`` exporters.
 

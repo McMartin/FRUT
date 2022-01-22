@@ -1,5 +1,5 @@
 // Copyright (C) 2017  Matthieu Talbot
-// Copyright (C) 2017-2021  Alain Martin
+// Copyright (C) 2017-2022  Alain Martin
 // Copyright (C) 2017  Florian Goltz
 // Copyright (C) 2019  Johannes Elliesen
 //
@@ -1318,12 +1318,15 @@ inline void writeReprojucerCMakeLists(const Arguments& args,
 
   // jucer_export_target() and jucer_export_target_configuration()
   {
-    const auto supportedExporters = juce::StringArray{
-      "XCODE_MAC",  "XCODE_IPHONE",       "VS2019",          "VS2017", "VS2015", "VS2013",
-      "LINUX_MAKE", "CODEBLOCKS_WINDOWS", "CODEBLOCKS_LINUX"};
+    const auto supportedExporters =
+      juce::StringArray{"XCODE_MAC",       "XCODE_IPHONE", "VS2022",
+                        "VS2019",          "VS2017",       "VS2015",
+                        "VS2013",          "LINUX_MAKE",   "CODEBLOCKS_WINDOWS",
+                        "CODEBLOCKS_LINUX"};
     const auto exporterNames = std::map<juce::String, const char*>{
       {"XCODE_MAC", "Xcode (MacOSX)"},
       {"XCODE_IPHONE", "Xcode (iOS)"},
+      {"VS2022", "Visual Studio 2022"},
       {"VS2019", "Visual Studio 2019"},
       {"VS2017", "Visual Studio 2017"},
       {"VS2015", "Visual Studio 2015"},
@@ -1361,8 +1364,9 @@ inline void writeReprojucerCMakeLists(const Arguments& args,
       const auto isXcodeExporter =
         exporterType == "XCODE_MAC" || exporterType == "XCODE_IPHONE";
 
-      const auto isVSExporter = exporterType == "VS2019" || exporterType == "VS2017"
-                                || exporterType == "VS2015" || exporterType == "VS2013";
+      const auto isVSExporter = exporterType == "VS2022" || exporterType == "VS2019"
+                                || exporterType == "VS2017" || exporterType == "VS2015"
+                                || exporterType == "VS2013";
 
       juce::StringArray needTargetFolder;
 

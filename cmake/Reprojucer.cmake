@@ -1,4 +1,4 @@
-# Copyright (C) 2016-2021  Alain Martin
+# Copyright (C) 2016-2022  Alain Martin
 # Copyright (C) 2017 Matthieu Talbot
 # Copyright (C) 2018-2019 Scott Wheeler
 #
@@ -39,6 +39,7 @@ set(Reprojucer_data_DIR "${Reprojucer.cmake_DIR}/data")
 set(Reprojucer_supported_exporters
   "Xcode (MacOSX)"
   "Xcode (iOS)"
+  "Visual Studio 2022"
   "Visual Studio 2019"
   "Visual Studio 2017"
   "Visual Studio 2015"
@@ -50,7 +51,8 @@ set(Reprojucer_supported_exporters
 set(Reprojucer_supported_exporters_conditions
   "APPLE\;AND\;NOT\;IOS"
   "IOS"
-  "MSVC_VERSION\;GREATER\;1919"
+  "MSVC_VERSION\;GREATER\;1929\;AND\;MSVC_VERSION\;LESS\;1940"
+  "MSVC_VERSION\;GREATER\;1919\;AND\;MSVC_VERSION\;LESS\;1930"
   "MSVC_VERSION\;GREATER\;1909\;AND\;MSVC_VERSION\;LESS\;1920"
   "MSVC_VERSION\;EQUAL\;1900"
   "MSVC_VERSION\;EQUAL\;1800"
@@ -703,7 +705,9 @@ function(jucer_project_module module_name PATH_KEYWORD modules_folder)
   elseif(APPLE)
     set(module_lib_dir "${module_dir}/libs/MacOSX")
   elseif(MSVC)
-    if(MSVC_VERSION GREATER 1919)
+    if(MSVC_VERSION GREATER 1929 AND MSVC_VERSION LESS 1940)
+      set(module_lib_dir "${module_dir}/libs/VisualStudio2022")
+    elseif(MSVC_VERSION GREATER 1919 AND MSVC_VERSION LESS 1930)
       set(module_lib_dir "${module_dir}/libs/VisualStudio2019")
     elseif(MSVC_VERSION GREATER 1909 AND MSVC_VERSION LESS 1920)
       set(module_lib_dir "${module_dir}/libs/VisualStudio2017")
@@ -837,7 +841,7 @@ function(jucer_export_target exporter)
     list(APPEND single_value_keywords "VST_LEGACY_SDK_FOLDER" "VST_SDK_FOLDER")
   endif()
 
-  if(exporter MATCHES "^Visual Studio 201(9|7|5|3)$")
+  if(exporter MATCHES "^Visual Studio 20(22|1[9753])$")
     list(APPEND single_value_keywords
       "VST3_SDK_FOLDER"
       "AAX_SDK_FOLDER"
@@ -1440,19 +1444,16 @@ function(jucer_export_target exporter)
 
   if(DEFINED _PLATFORM_TOOLSET)
     set(toolset "${_PLATFORM_TOOLSET}")
-    if((exporter STREQUAL "Visual Studio 2019"
-          AND (toolset STREQUAL "v140" OR toolset STREQUAL "v140_xp"
-            OR toolset STREQUAL "v141" OR toolset STREQUAL "v141_xp"
-            OR toolset STREQUAL "v142"))
+    if((exporter STREQUAL "Visual Studio 2022"
+          AND toolset MATCHES "^(v140(_xp)?|v141(_xp)?|v142|v143)$")
+        OR (exporter STREQUAL "Visual Studio 2019"
+          AND toolset MATCHES "^(v140(_xp)?|v141(_xp)?|v142)$")
         OR (exporter STREQUAL "Visual Studio 2017"
-          AND (toolset STREQUAL "v140" OR toolset STREQUAL "v140_xp"
-            OR toolset STREQUAL "v141" OR toolset STREQUAL "v141_xp"))
+          AND toolset MATCHES "^(v140(_xp)?|v141(_xp)?)$")
         OR (exporter STREQUAL "Visual Studio 2015"
-          AND (toolset STREQUAL "v140" OR toolset STREQUAL "v140_xp"
-            OR toolset STREQUAL "CTP_Nov2013"))
+          AND toolset MATCHES "^(v140(_xp)?|CTP_Nov2013)$")
         OR (exporter STREQUAL "Visual Studio 2013"
-          AND (toolset STREQUAL "v120" OR toolset STREQUAL "v120_xp"
-            OR toolset STREQUAL "Windows7" OR toolset STREQUAL "CTP_Nov2013")))
+          AND toolset MATCHES "^(v120(_xp)?|Windows7|CTP_Nov2013)$"))
       if(NOT toolset STREQUAL "${CMAKE_VS_PLATFORM_TOOLSET}")
         message(FATAL_ERROR "You must call `cmake -T ${toolset}` in order to build with"
           " the toolset \"${toolset}\"."
@@ -1620,7 +1621,7 @@ function(jucer_export_target_configuration
     list(APPEND single_value_keywords "IOS_DEPLOYMENT_TARGET")
   endif()
 
-  if(exporter MATCHES "^Visual Studio 201(9|7|5|3)$")
+  if(exporter MATCHES "^Visual Studio 20(22|1[9753])$")
     list(APPEND single_value_keywords
       "ENABLE_PLUGIN_COPY_STEP"
       "VST_BINARY_LOCATION"
@@ -1731,7 +1732,7 @@ function(jucer_export_target_configuration
 
   if(DEFINED _OPTIMISATION)
     set(optimisation "${_OPTIMISATION}")
-    if(exporter MATCHES "^Visual Studio 201(9|7|5|3)$")
+    if(exporter MATCHES "^Visual Studio 20(22|1[9753])$")
       if(optimisation STREQUAL "No optimisation")
         set(optimisation_flag "/Od")
       elseif(optimisation STREQUAL "Minimise size")
@@ -2035,7 +2036,7 @@ function(jucer_export_target_configuration
     endif()
   endif()
 
-  if(DEFINED _ARCHITECTURE AND exporter MATCHES "^Visual Studio 201(9|7|5|3)$")
+  if(DEFINED _ARCHITECTURE AND exporter MATCHES "^Visual Studio 20(22|1[9753])$")
     if(_ARCHITECTURE STREQUAL "32-bit")
       set(wants_x64 FALSE)
     elseif(_ARCHITECTURE STREQUAL "x64")
@@ -2131,7 +2132,7 @@ endfunction()
 function(jucer_project_end)
 
   unset(current_exporter)
-  foreach(exporter_index RANGE 8)
+  foreach(exporter_index RANGE 9)
     list(GET Reprojucer_supported_exporters_conditions ${exporter_index} condition)
     if(${condition})
       if(DEFINED current_exporter)

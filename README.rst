@@ -103,6 +103,7 @@ known as "export targets"):
       <a href="https://github.com/McMartin/FRUT/labels/exporter%3A%20Xcode">2 unsupported Xcode exporter settings</a>
     </td></tr>
     <tr><td align="center">✔️</td><td>Xcode (iOS)</td><td>version 3.14 minimum<br/><pre>-G Xcode -DCMAKE_SYSTEM_NAME=iOS</pre></td></tr>
+    <tr><td align="center">✔️</td><td>Visual Studio 2022</td><td>version 3.21 minimum</td><td></td></tr>
     <tr><td align="center">✔️</td><td>Visual Studio 2019</td><td>version 3.14 minimum</td><td></td></tr>
     <tr><td align="center">✔️</td><td>Visual Studio 2017</td><td>version 3.7 minimum<br/>(3.13.3 when VS&nbsp;2019 is installed)</td><td></td></tr>
     <tr><td align="center">✔️</td><td>Visual Studio 2015</td><td></td><td></td></tr>
@@ -183,7 +184,7 @@ Now we can build ``MyGreatProject`` using CMake: ::
 
 ``<generator>`` can be one of many `CMake Generators`_ supported by your platform,
 including Ninja, NMake Makefiles (on Windows), Unix Makefiles (on Linux and macOS), Visual
-Studio 2013, 2015, 2017 and 2019 (on Windows), and Xcode (on macOS).
+Studio 2013, 2015, 2017, 2019 and 2022 (on Windows), and Xcode (on macOS).
 
 
 Contributing
