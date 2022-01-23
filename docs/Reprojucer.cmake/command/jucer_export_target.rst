@@ -108,7 +108,7 @@ Define the settings specific to an export target.
 
 Optional keywords support:
 
-- ``[1]``: only supported by the ``"Xcode (MacOSX)"``, ``"Visual Studio 2012"``,
+- ``[1]``: only supported by the ``"Xcode (MacOSX)"``, ``"Visual Studio 2022"``,
   ``"Visual Studio 2019"``, ``"Visual Studio 2017"``, ``"Visual Studio 2015"``, and
   ``"Visual Studio 2013"`` exporters.
 - ``[2]``: only supported by the ``"Xcode (MacOSX)"``, ``"Xcode (iOS)"``,
@@ -121,7 +121,7 @@ Optional keywords support:
 - ``[6]``: only supported by the ``"Xcode (MacOSX)"`` exporter, on ``"GUI Application"``
   projects.
 - ``[7]``: only supported by the ``"Xcode (iOS)"`` exporter.
-- ``[8]``: only supported by the ``"Visual Studio 2012"``, ``"Visual Studio 2019"``,
+- ``[8]``: only supported by the ``"Visual Studio 2022"``, ``"Visual Studio 2019"``,
   ``"Visual Studio 2017"``, ``"Visual Studio 2015"``, and ``"Visual Studio 2013"``
   exporters.
 - ``[9]``: only supported by the ``"Linux Makefile"`` exporter.
