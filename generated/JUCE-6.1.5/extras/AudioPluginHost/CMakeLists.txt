@@ -21,7 +21,7 @@ get_filename_component(AudioPluginHost_jucer_FILE
 
 jucer_project_begin(
   JUCER_FORMAT_VERSION "1"
-  JUCER_VERSION "6.1.0"
+  JUCER_VERSION "6.1.5"
   PROJECT_FILE "${AudioPluginHost_jucer_FILE}"
   PROJECT_ID "NTe0XB0ij"
 )
@@ -66,6 +66,17 @@ jucer_project_files("AudioPluginHost/Source"
 #           Resource  Resource
   x         .         .         "Source/HostStartup.cpp"
   .         .         .         "Source/JUCEAppIcon.png"
+)
+
+jucer_project_files("AudioPluginHost/BinaryData"
+# Compile   Xcode     Binary    File
+#           Resource  Resource
+  .         .         x         "../../examples/Assets/cassette_recorder.wav"
+  .         .         x         "../../examples/Assets/cello.wav"
+  .         .         x         "../../examples/Assets/guitar_amp.wav"
+  .         .         x         "../../examples/Assets/proaudio.path"
+  .         .         x         "../../examples/Assets/reverb_ir.wav"
+  .         .         x         "../../examples/Assets/singing.ogg"
 )
 
 jucer_project_module(
@@ -313,6 +324,32 @@ jucer_export_target_configuration(
 
 jucer_export_target_configuration(
   "Visual Studio 2019"
+  NAME "Release"
+  DEBUG_MODE OFF
+  BINARY_NAME "AudioPluginHost"
+  DEBUG_INFORMATION_FORMAT "Program Database (/Zi)"
+)
+
+jucer_export_target(
+  "Visual Studio 2022"
+  # VST3_SDK_FOLDER
+  EXTRA_COMPILER_FLAGS
+    "/w44265"
+    "/w45038"
+    "/w44062"
+  ICON_SMALL "Source/JUCEAppIcon.png"
+  ICON_LARGE "Source/JUCEAppIcon.png"
+)
+
+jucer_export_target_configuration(
+  "Visual Studio 2022"
+  NAME "Debug"
+  DEBUG_MODE ON
+  BINARY_NAME "AudioPluginHost"
+)
+
+jucer_export_target_configuration(
+  "Visual Studio 2022"
   NAME "Release"
   DEBUG_MODE OFF
   BINARY_NAME "AudioPluginHost"

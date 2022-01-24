@@ -21,14 +21,14 @@ get_filename_component(DemoRunner_jucer_FILE
 
 jucer_project_begin(
   JUCER_FORMAT_VERSION "1"
-  JUCER_VERSION "6.1.0"
+  JUCER_VERSION "6.1.5"
   PROJECT_FILE "${DemoRunner_jucer_FILE}"
   PROJECT_ID "yj7xMM"
 )
 
 jucer_project_settings(
   PROJECT_NAME "DemoRunner"
-  PROJECT_VERSION "6.1.0"
+  PROJECT_VERSION "6.1.5"
   COMPANY_NAME "Raw Material Software Limited"
   COMPANY_COPYRIGHT "Copyright (c) 2020 - Raw Material Software Limited"
   COMPANY_WEBSITE "https://www.juce.com/"
@@ -234,6 +234,7 @@ jucer_export_target(
     "../Utilities"
   MICROPHONE_ACCESS ON
   CAMERA_ACCESS ON
+  BLUETOOTH_ACCESS ON
 )
 
 jucer_export_target_configuration(
@@ -372,6 +373,31 @@ jucer_export_target_configuration(
 
 jucer_export_target_configuration(
   "Visual Studio 2019"
+  NAME "Release"
+  DEBUG_MODE OFF
+  BINARY_NAME "DemoRunner"
+  RUNTIME_LIBRARY "Use static runtime"
+)
+
+jucer_export_target(
+  "Visual Studio 2022"
+  EXTRA_COMPILER_FLAGS
+    "/w44265"
+    "/w45038"
+    "/w44062"
+  ICON_SMALL "Source/JUCEAppIcon.png"
+  ICON_LARGE "Source/JUCEAppIcon.png"
+)
+
+jucer_export_target_configuration(
+  "Visual Studio 2022"
+  NAME "Debug"
+  DEBUG_MODE ON
+  BINARY_NAME "DemoRunner"
+)
+
+jucer_export_target_configuration(
+  "Visual Studio 2022"
   NAME "Release"
   DEBUG_MODE OFF
   BINARY_NAME "DemoRunner"
