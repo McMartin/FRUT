@@ -27,7 +27,7 @@ jucer_project_begin(
 
 jucer_project_settings(
   PROJECT_NAME "Projucer"
-  PROJECT_VERSION "6.1.0"
+  PROJECT_VERSION "6.1.4"
   COMPANY_NAME "Raw Material Software Limited"
   COMPANY_COPYRIGHT "Raw Material Software Limited"
   USE_GLOBAL_APPCONFIG_HEADER OFF
@@ -606,6 +606,35 @@ jucer_export_target_configuration(
 
 jucer_export_target_configuration(
   "Visual Studio 2019"
+  NAME "Release"
+  DEBUG_MODE OFF
+  BINARY_NAME "Projucer"
+  LINK_TIME_OPTIMISATION OFF
+  OPTIMISATION "Maximise speed"
+  RUNTIME_LIBRARY "Use static runtime"
+  DEBUG_INFORMATION_FORMAT "None"
+)
+
+jucer_export_target(
+  "Visual Studio 2022"
+  EXTRA_COMPILER_FLAGS
+    "/w44265"
+    "/w45038"
+    "/w44062"
+  ICON_SMALL "Source/BinaryData/Icons/juce_icon.png"
+  ICON_LARGE "Source/BinaryData/Icons/juce_icon.png"
+)
+
+jucer_export_target_configuration(
+  "Visual Studio 2022"
+  NAME "Debug"
+  DEBUG_MODE ON
+  BINARY_NAME "Projucer"
+  RUNTIME_LIBRARY "Use static runtime"
+)
+
+jucer_export_target_configuration(
+  "Visual Studio 2022"
   NAME "Release"
   DEBUG_MODE OFF
   BINARY_NAME "Projucer"

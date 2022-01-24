@@ -100,18 +100,18 @@ jucer_export_target_configuration(
 )
 
 jucer_export_target(
-  "Visual Studio 2019"
+  "Visual Studio 2022"
 )
 
 jucer_export_target_configuration(
-  "Visual Studio 2019"
+  "Visual Studio 2022"
   NAME "Debug"
   DEBUG_MODE ON
   BINARY_NAME "BinaryBuilder"
 )
 
 jucer_export_target_configuration(
-  "Visual Studio 2019"
+  "Visual Studio 2022"
   NAME "Release"
   DEBUG_MODE OFF
   BINARY_NAME "BinaryBuilder"
