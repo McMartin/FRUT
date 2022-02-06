@@ -5701,6 +5701,8 @@ function(_FRUT_set_compiler_and_linker_settings_APPLE target)
     endif()
   endif()
 
+  set(development_team_id_string "${JUCER_DEVELOPMENT_TEAM_ID}")
+
   unset(all_confs_code_sign_identity)
   foreach(config IN LISTS JUCER_PROJECT_CONFIGURATIONS)
     unset(identity)
@@ -5711,7 +5713,7 @@ function(_FRUT_set_compiler_and_linker_settings_APPLE target)
         set(identity "iPhone Developer")
       endif()
     else()
-      if(DEFINED JUCER_DEVELOPMENT_TEAM_ID AND NOT JUCER_DEVELOPMENT_TEAM_ID STREQUAL "")
+      if(NOT development_team_id_string STREQUAL "")
         if(DEFINED JUCER_CODE_SIGNING_IDENTITY_${config})
           set(identity "${JUCER_CODE_SIGNING_IDENTITY_${config}}")
         else()
@@ -5736,9 +5738,9 @@ function(_FRUT_set_compiler_and_linker_settings_APPLE target)
     )
   endif()
 
-  if(DEFINED JUCER_DEVELOPMENT_TEAM_ID AND NOT JUCER_DEVELOPMENT_TEAM_ID STREQUAL "")
+  if(NOT development_team_id_string STREQUAL "")
     set_target_properties(${target} PROPERTIES
-      XCODE_ATTRIBUTE_DEVELOPMENT_TEAM "${JUCER_DEVELOPMENT_TEAM_ID}"
+      XCODE_ATTRIBUTE_DEVELOPMENT_TEAM "${development_team_id_string}"
     )
   endif()
 
