@@ -6179,7 +6179,9 @@ function(_FRUT_set_cxx_language_standard_properties target)
 
     elseif(MSVC)
       if(MSVC_VERSION EQUAL 1900 OR MSVC_VERSION GREATER 1900) # VS2015 and later
-        if(cxx_language_standard STREQUAL "17")
+        if(cxx_language_standard STREQUAL "17" AND MSVC_VERSION LESS 1911)
+          # -std:c++17 is available since Visual Studio 2017 version 15.3, which is
+          # MSVC_VERSION 1911.
           set(cxx_language_standard "latest")
         endif()
         if(NOT cxx_language_standard STREQUAL "11")
