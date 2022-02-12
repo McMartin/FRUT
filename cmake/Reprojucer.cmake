@@ -2336,6 +2336,7 @@ function(jucer_project_end)
       message(FATAL_ERROR "Console Application projects are not supported on iOS")
     endif()
     add_executable(${target} ${all_sources})
+    _FRUT_set_product_bundle_identifier(${target})
     _FRUT_set_output_directory_properties(${target} "ConsoleApp")
     _FRUT_set_output_name_properties(${target})
     _FRUT_set_compiler_and_linker_settings(${target} "ConsoleApp" "${current_exporter}")
@@ -2356,6 +2357,7 @@ function(jucer_project_end)
 
   elseif(JUCER_PROJECT_TYPE STREQUAL "Static Library")
     add_library(${target} STATIC ${all_sources})
+    _FRUT_set_product_bundle_identifier(${target})
     _FRUT_set_output_directory_properties(${target} "Static Library")
     if(APPLE OR current_exporter STREQUAL "Linux Makefile")
       _FRUT_set_output_name_properties(${target} ADD_lib_PREFIX)
@@ -2370,6 +2372,7 @@ function(jucer_project_end)
 
   elseif(JUCER_PROJECT_TYPE STREQUAL "Dynamic Library")
     add_library(${target} SHARED ${all_sources})
+    _FRUT_set_product_bundle_identifier(${target})
     _FRUT_set_output_directory_properties(${target} "Dynamic Library")
     if(current_exporter STREQUAL "Linux Makefile")
       _FRUT_set_output_name_properties(${target} ADD_lib_PREFIX)
@@ -2423,6 +2426,7 @@ function(jucer_project_end)
       ${JUCER_PROJECT_MODULES_BROWSABLE_FILES}
       ${JUCER_ICON_FILE}
     )
+    _FRUT_set_product_bundle_identifier(${shared_code_target})
     _FRUT_set_output_directory_properties(${shared_code_target} "Shared Code")
     if(APPLE)
       _FRUT_set_output_name_properties(${shared_code_target} ADD_lib_PREFIX)
@@ -6428,6 +6432,22 @@ function(_FRUT_set_output_name_properties_Unity unity_target)
       OUTPUT_NAME_${upper_config} "${output_name}"
     )
   endforeach()
+
+endfunction()
+
+
+function(_FRUT_set_product_bundle_identifier target)
+
+  if(DEFINED JUCER_EXPORTER_BUNDLE_IDENTIFIER
+      AND NOT JUCER_EXPORTER_BUNDLE_IDENTIFIER STREQUAL "")
+    set(bundle_identifier "${JUCER_EXPORTER_BUNDLE_IDENTIFIER}")
+  else()
+    set(bundle_identifier "${JUCER_BUNDLE_IDENTIFIER}")
+  endif()
+
+  set_target_properties(${target} PROPERTIES
+    XCODE_ATTRIBUTE_PRODUCT_BUNDLE_IDENTIFIER "${bundle_identifier}"
+  )
 
 endfunction()
 
