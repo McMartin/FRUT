@@ -1,4 +1,4 @@
-# Copyright (C) 2017-2020  Alain Martin
+# Copyright (C) 2017-2020, 2022  Alain Martin
 #
 # This file is part of FRUT.
 #
@@ -49,6 +49,8 @@ foreach(jucer_file IN LISTS jucer_files)
     "reprojucer"
     "${JUCE_ROOT}/${jucer_file}"
     "${CMAKE_CURRENT_LIST_DIR}/../cmake/Reprojucer.cmake"
+    "--jucer-version"
+    "${JUCE_VERSION}"
     "--relocatable"
   )
 
