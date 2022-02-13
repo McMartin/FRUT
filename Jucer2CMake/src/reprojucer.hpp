@@ -244,12 +244,14 @@ inline void writeReprojucerCMakeLists(const Arguments& args,
 {
   const auto jucerFile = getChildFileFromWorkingDirectory(args.jucerFilePath);
 
-  const auto jucerVersion = jucerProject.getStringAttribute("jucerVersion", "latest");
+  const auto jucerVersion = args.jucerVersion.isNotEmpty()
+                              ? args.jucerVersion
+                              : jucerProject.getStringAttribute("jucerVersion", "latest");
   const auto jucerVersionTokens = juce::StringArray::fromTokens(
     jucerVersion == "latest" ? "1000.0.0" : jucerVersion, ".", {});
   if (jucerVersionTokens.size() != 3)
   {
-    printError("'" + args.jucerFilePath + "' is not a valid Jucer project.");
+    printError("'" + jucerVersion + "' is not a valid Jucer version.");
     throw ExitException{1};
   }
 
