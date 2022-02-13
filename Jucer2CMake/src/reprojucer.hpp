@@ -606,7 +606,7 @@ inline void writeReprojucerCMakeLists(const Arguments& args,
       writeQuoted("JUCER_FORMAT_VERSION",
                   jucerProject.getStringAttribute("jucerFormatVersion"));
     }
-    else
+    if (jucerVersion != "latest")
     {
       writeQuoted("JUCER_VERSION", jucerVersion);
     }
