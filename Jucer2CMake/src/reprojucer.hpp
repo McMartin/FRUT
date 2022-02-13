@@ -735,6 +735,9 @@ inline void writeReprojucerCMakeLists(const Arguments& args,
                        if (value == "17")
                          return "C++17";
 
+                       if (value == "20")
+                         return "C++20";
+
                        if (value == "latest")
                          return "Use Latest";
 
