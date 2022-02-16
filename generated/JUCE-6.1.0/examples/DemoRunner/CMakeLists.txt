@@ -21,6 +21,7 @@ get_filename_component(DemoRunner_jucer_FILE
 
 jucer_project_begin(
   JUCER_FORMAT_VERSION "1"
+  JUCER_VERSION "6.1.0"
   PROJECT_FILE "${DemoRunner_jucer_FILE}"
   PROJECT_ID "yj7xMM"
 )

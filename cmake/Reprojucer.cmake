@@ -660,14 +660,10 @@ function(jucer_project_module module_name PATH_KEYWORD modules_folder)
     unset(project_cxx_standard)
     if(DEFINED JUCER_CXX_LANGUAGE_STANDARD)
       set(project_cxx_standard "${JUCER_CXX_LANGUAGE_STANDARD}")
-    elseif(DEFINED JUCER_VERSION)
-      if(JUCER_VERSION VERSION_LESS 5.1.0)
-        # "C++ Language Standard" didn't exist before JUCE version 5.1.0
-      elseif(JUCER_VERSION VERSION_LESS 5.2.1)
-        set(project_cxx_standard 11)
-      else()
-        set(project_cxx_standard 14)
-      endif()
+    elseif(DEFINED JUCER_VERSION AND JUCER_VERSION VERSION_LESS 5.1.0)
+      # "C++ Language Standard" didn't exist before JUCE version 5.1.0
+    elseif(DEFINED JUCER_VERSION AND JUCER_VERSION VERSION_LESS 5.2.1)
+      set(project_cxx_standard 11)
     else()
       set(project_cxx_standard 14)
     endif()
@@ -1889,7 +1885,7 @@ function(jucer_export_target_configuration
 
   if(DEFINED _CXX_LIBRARY)
     set(cxx_library "${_CXX_LIBRARY}")
-    if(NOT (DEFINED JUCER_VERSION AND JUCER_VERION VERSION_LESS 5.3.2))
+    if(NOT (DEFINED JUCER_VERSION AND JUCER_VERSION VERSION_LESS 5.3.2))
       message(WARNING "The setting \"C++ Library\" was removed in Projucer 5.3.2, so"
         " CXX_LIBRARY \"${cxx_library}\" will be ignored."
       )

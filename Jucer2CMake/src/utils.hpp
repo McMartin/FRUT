@@ -1,4 +1,4 @@
-// Copyright (C) 2021  Alain Martin
+// Copyright (C) 2021-2022  Alain Martin
 //
 // This file is part of FRUT.
 //
@@ -31,6 +31,7 @@ struct Arguments
   juce::String mode;
   juce::String jucerFilePath;
   juce::String reprojucerFilePath;
+  juce::String jucerVersion;
   juce::String juceModulesPath;
   juce::String userModulesPath;
   juce::File outputDir;

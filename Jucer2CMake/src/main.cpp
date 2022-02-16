@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2021  Alain Martin
+// Copyright (C) 2017-2022  Alain Martin
 //
 // This file is part of FRUT.
 //
@@ -46,7 +46,7 @@ Arguments parseArguments(const int argc, const char* const argv[])
 
   const auto knownParams = std::map<juce::String, juce::StringArray>{
     {"juce6", {}},
-    {"reprojucer", {"juce-modules", "user-modules"}},
+    {"reprojucer", {"jucer-version", "juce-modules", "user-modules"}},
   };
 
   argh::parser argumentParser;
@@ -159,6 +159,7 @@ Arguments parseArguments(const int argc, const char* const argv[])
     "    <Reprojucer.cmake_file>   path to Reprojucer.cmake\n"
     "\n"
     "    -h, --help                show this help message and exit\n"
+    "    --jucer-version <version> version of Projucer that last saved the .jucer file\n"
     "    --juce-modules <path>     global path to JUCE modules\n"
     "    --user-modules <path>     global path to user modules\n"
     "    --relocatable             makes the CMakeLists.txt file independent from\n"
@@ -199,6 +200,8 @@ Arguments parseArguments(const int argc, const char* const argv[])
   auto jucerFilePath = existingFilePath("<jucer_project_file>", 2);
   auto reprojucerFilePath = existingFilePath("<Reprojucer.cmake_file>", 3);
 
+  auto jucerVersion = juce::String{argumentParser("--jucer-version", "").str()};
+
   const auto existingDirectoryPath = [&argumentParser](const std::string& name) {
     if (const auto stream = argumentParser(name))
     {
@@ -223,6 +226,7 @@ Arguments parseArguments(const int argc, const char* const argv[])
   return {std::move(mode),
           std::move(jucerFilePath),
           std::move(reprojucerFilePath),
+          std::move(jucerVersion),
           std::move(juceModulesPath),
           std::move(userModulesPath),
           std::move(outputDir),
