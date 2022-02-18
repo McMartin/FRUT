@@ -77,7 +77,6 @@ jobs:
     steps:
       - template: ci/azure-pipelines/steps-VS.yml
         parameters:
-          cmakeOptions: -DCMAKE_SYSTEM_VERSION=10.0.15063.0
           juceVersions: ${{ parameters.juceVersions }}
 
   - job: Windows_VS2019
