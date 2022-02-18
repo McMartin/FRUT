@@ -100,5 +100,4 @@ jobs:
     steps:
       - template: ci/azure-pipelines/steps-VS.yml
         parameters:
-          cmakeOptions: -DCMAKE_SYSTEM_VERSION=10.0.19041.0
           juceVersions: ${{ parameters.juceVersions }}
