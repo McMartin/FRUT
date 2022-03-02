@@ -5635,12 +5635,13 @@ function(_FRUT_set_compiler_and_linker_settings_APPLE target)
     foreach(config IN LISTS JUCER_PROJECT_CONFIGURATIONS)
       if(DEFINED JUCER_IOS_DEPLOYMENT_TARGET_${config}
           AND NOT JUCER_IOS_DEPLOYMENT_TARGET_${config} STREQUAL "default")
-        string(APPEND all_confs_ios_deployment_target
-          "$<$<CONFIG:${config}>:${JUCER_IOS_DEPLOYMENT_TARGET_${config}}>"
-        )
+        set(ios_deployment_target "${JUCER_IOS_DEPLOYMENT_TARGET_${config}}")
       else()
-        string(APPEND all_confs_ios_deployment_target "$<$<CONFIG:${config}>:9.3>")
+        set(ios_deployment_target "9.3")
       endif()
+      string(APPEND all_confs_ios_deployment_target
+        "$<$<CONFIG:${config}>:${ios_deployment_target}>"
+      )
     endforeach()
     set_target_properties(${target} PROPERTIES
       XCODE_ATTRIBUTE_IPHONEOS_DEPLOYMENT_TARGET "${all_confs_ios_deployment_target}"
