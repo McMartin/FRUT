@@ -5736,8 +5736,8 @@ function(_FRUT_set_compiler_and_linker_settings_APPLE target)
           XCODE_ATTRIBUTE_CODE_SIGN_IDENTITY[variant=${config}] "${identity}"
         )
       endif()
-      if(NOT identity STREQUAL "" AND NOT is_using_default_signing_identity)
-        if(NOT (DEFINED JUCER_VERSION AND JUCER_VERSION VERSION_LESS 6.1.0))
+      if(NOT (DEFINED JUCER_VERSION AND JUCER_VERSION VERSION_LESS 6.1.0))
+        if(NOT identity STREQUAL "" AND NOT is_using_default_signing_identity)
           set_target_properties(${target} PROPERTIES
             XCODE_ATTRIBUTE_CODE_SIGN_STYLE[variant=${config}] "Manual"
           )
