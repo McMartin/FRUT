@@ -21,14 +21,14 @@ get_filename_component(Projucer_jucer_FILE
 
 jucer_project_begin(
   JUCER_FORMAT_VERSION "1"
-  JUCER_VERSION "6.1.0"
+  JUCER_VERSION "6.1.6"
   PROJECT_FILE "${Projucer_jucer_FILE}"
   PROJECT_ID "M70qfTRRk"
 )
 
 jucer_project_settings(
   PROJECT_NAME "Projucer"
-  PROJECT_VERSION "6.1.0"
+  PROJECT_VERSION "6.1.6"
   COMPANY_NAME "Raw Material Software Limited"
   COMPANY_COPYRIGHT "Raw Material Software Limited"
   USE_GLOBAL_APPCONFIG_HEADER OFF
@@ -389,7 +389,6 @@ jucer_project_files("Projucer/Utility/Helpers"
   .         .         .         "Source/Utility/Helpers/jucer_PresetIDs.h"
   .         .         .         "Source/Utility/Helpers/jucer_TranslationHelpers.h"
   .         .         .         "Source/Utility/Helpers/jucer_ValueSourceHelpers.h"
-  .         .         .         "Source/Utility/Helpers/jucer_ValueWithDefaultWrapper.h"
   x         .         .         "Source/Utility/Helpers/jucer_VersionInfo.cpp"
   .         .         .         "Source/Utility/Helpers/jucer_VersionInfo.h"
 )
@@ -607,6 +606,35 @@ jucer_export_target_configuration(
 
 jucer_export_target_configuration(
   "Visual Studio 2019"
+  NAME "Release"
+  DEBUG_MODE OFF
+  BINARY_NAME "Projucer"
+  LINK_TIME_OPTIMISATION OFF
+  OPTIMISATION "Maximise speed"
+  RUNTIME_LIBRARY "Use static runtime"
+  DEBUG_INFORMATION_FORMAT "None"
+)
+
+jucer_export_target(
+  "Visual Studio 2022"
+  EXTRA_COMPILER_FLAGS
+    "/w44265"
+    "/w45038"
+    "/w44062"
+  ICON_SMALL "Source/BinaryData/Icons/juce_icon.png"
+  ICON_LARGE "Source/BinaryData/Icons/juce_icon.png"
+)
+
+jucer_export_target_configuration(
+  "Visual Studio 2022"
+  NAME "Debug"
+  DEBUG_MODE ON
+  BINARY_NAME "Projucer"
+  RUNTIME_LIBRARY "Use static runtime"
+)
+
+jucer_export_target_configuration(
+  "Visual Studio 2022"
   NAME "Release"
   DEBUG_MODE OFF
   BINARY_NAME "Projucer"
