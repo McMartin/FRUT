@@ -4144,19 +4144,14 @@ function(_FRUT_generate_plist_file
       )
     endif()
 
-    unset(all_confs_plist_defines)
     foreach(config IN LISTS JUCER_PROJECT_CONFIGURATIONS)
       if(JUCER_PLIST_PREPROCESSOR_DEFINITIONS_${config})
-        string(APPEND all_confs_plist_defines
-          "$<$<CONFIG:${config}>:${JUCER_PLIST_PREPROCESSOR_DEFINITIONS_${config}}>"
+        set_target_properties(${target} PROPERTIES
+          XCODE_ATTRIBUTE_INFOPLIST_PREPROCESSOR_DEFINITIONS[variant=${config}]
+          "${JUCER_PLIST_PREPROCESSOR_DEFINITIONS_${config}}"
         )
       endif()
     endforeach()
-    if(DEFINED all_confs_plist_defines)
-      set_target_properties(${target} PROPERTIES
-        XCODE_ATTRIBUTE_INFOPLIST_PREPROCESSOR_DEFINITIONS "${all_confs_plist_defines}"
-      )
-    endif()
   else()
     set(bundle_executable "\${MACOSX_BUNDLE_EXECUTABLE_NAME}")
     set_target_properties(${target} PROPERTIES
@@ -5529,19 +5524,14 @@ function(_FRUT_set_compiler_and_linker_settings_APPLE target)
 
   if(CMAKE_GENERATOR STREQUAL "Xcode")
     if(DEFINED JUCER_VERSION AND JUCER_VERSION VERSION_LESS 5.3.2)
-      unset(all_confs_cxx_library)
       foreach(config IN LISTS JUCER_PROJECT_CONFIGURATIONS)
         if(DEFINED JUCER_CXX_LIBRARY_${config})
-          string(APPEND all_confs_cxx_library
-            "$<$<CONFIG:${config}>:${JUCER_CXX_LIBRARY_${config}}>"
+          set_target_properties(${target} PROPERTIES
+            XCODE_ATTRIBUTE_CLANG_CXX_LIBRARY[variant=${config}]
+            "${JUCER_CXX_LIBRARY_${config}}"
           )
         endif()
       endforeach()
-      if(DEFINED all_confs_cxx_library)
-        set_target_properties(${target} PROPERTIES
-          XCODE_ATTRIBUTE_CLANG_CXX_LIBRARY "${all_confs_cxx_library}"
-        )
-      endif()
     else()
       set_target_properties(${target} PROPERTIES
         XCODE_ATTRIBUTE_CLANG_CXX_LIBRARY "libc++"
@@ -5593,18 +5583,13 @@ function(_FRUT_set_compiler_and_linker_settings_APPLE target)
     endif()
   else()
     if(CMAKE_GENERATOR STREQUAL "Xcode")
-      set(all_confs_archs "")
       foreach(config IN LISTS JUCER_PROJECT_CONFIGURATIONS)
         if(DEFINED JUCER_XCODE_ARCHS_${config})
-          set(xcode_archs "${JUCER_XCODE_ARCHS_${config}}")
-          string(APPEND all_confs_archs "$<$<CONFIG:${config}>:${xcode_archs}>")
+          set_target_properties(${target} PROPERTIES
+            XCODE_ATTRIBUTE_ARCHS[variant=${config}] "${JUCER_XCODE_ARCHS_${config}}"
+          )
         endif()
       endforeach()
-      if(NOT all_confs_archs STREQUAL "")
-        set_target_properties(${target} PROPERTIES
-          XCODE_ATTRIBUTE_ARCHS "${all_confs_archs}"
-        )
-      endif()
     else()
       foreach(config IN LISTS JUCER_PROJECT_CONFIGURATIONS)
         if(DEFINED JUCER_OSX_ARCHITECTURES_${config})
@@ -5631,7 +5616,6 @@ function(_FRUT_set_compiler_and_linker_settings_APPLE target)
       XCODE_ATTRIBUTE_TARGETED_DEVICE_FAMILY "${targeted_device_family}"
     )
 
-    set(all_confs_ios_deployment_target "")
     foreach(config IN LISTS JUCER_PROJECT_CONFIGURATIONS)
       if(DEFINED JUCER_IOS_DEPLOYMENT_TARGET_${config}
           AND NOT JUCER_IOS_DEPLOYMENT_TARGET_${config} STREQUAL "default")
@@ -5639,16 +5623,12 @@ function(_FRUT_set_compiler_and_linker_settings_APPLE target)
       else()
         set(ios_deployment_target "9.3")
       endif()
-      string(APPEND all_confs_ios_deployment_target
-        "$<$<CONFIG:${config}>:${ios_deployment_target}>"
+      set_target_properties(${target} PROPERTIES
+        XCODE_ATTRIBUTE_IPHONEOS_DEPLOYMENT_TARGET[variant=${config}]
+        "${ios_deployment_target}"
       )
     endforeach()
-    set_target_properties(${target} PROPERTIES
-      XCODE_ATTRIBUTE_IPHONEOS_DEPLOYMENT_TARGET "${all_confs_ios_deployment_target}"
-    )
   elseif(CMAKE_GENERATOR STREQUAL "Xcode")
-    set(all_confs_osx_deployment_target "")
-    set(all_confs_sdkroot "")
     foreach(config IN LISTS JUCER_PROJECT_CONFIGURATIONS)
       set(osx_deployment_target "10.11")
       if(DEFINED JUCER_OSX_DEPLOYMENT_TARGET_${config})
@@ -5659,20 +5639,18 @@ function(_FRUT_set_compiler_and_linker_settings_APPLE target)
         set(osx_deployment_target "10.11")
         message(STATUS "Set OSX Deployment Target to 10.11 for ${target} in ${config}")
       endif()
-      string(APPEND all_confs_osx_deployment_target
-        "$<$<CONFIG:${config}>:${osx_deployment_target}>"
+      set_target_properties(${target} PROPERTIES
+        XCODE_ATTRIBUTE_MACOSX_DEPLOYMENT_TARGET[variant=${config}]
+        "${osx_deployment_target}"
       )
 
       if(DEFINED JUCER_OSX_BASE_SDK_VERSION_${config})
-        string(APPEND all_confs_sdkroot
-          "$<$<CONFIG:${config}>:macosx${JUCER_OSX_BASE_SDK_VERSION_${config}}>"
+        set_target_properties(${target} PROPERTIES
+          XCODE_ATTRIBUTE_SDKROOT[variant=${config}]
+          "macosx${JUCER_OSX_BASE_SDK_VERSION_${config}}"
         )
       endif()
     endforeach()
-    set_target_properties(${target} PROPERTIES
-      XCODE_ATTRIBUTE_MACOSX_DEPLOYMENT_TARGET "${all_confs_osx_deployment_target}"
-      XCODE_ATTRIBUTE_SDKROOT "${all_confs_sdkroot}"
-    )
   else()
     set(osx_deployment_target "10.11")
     if(DEFINED JUCER_OSX_DEPLOYMENT_TARGET_${CMAKE_BUILD_TYPE})
@@ -5700,17 +5678,18 @@ function(_FRUT_set_compiler_and_linker_settings_APPLE target)
 
   set(development_team_id_string "${JUCER_DEVELOPMENT_TEAM_ID}")
 
-  unset(all_confs_code_sign_identity)
-  unset(all_confs_code_sign_style)
   if(DEFINED JUCER_VERSION AND JUCER_VERSION VERSION_LESS 5.4.5)
     foreach(config IN LISTS JUCER_PROJECT_CONFIGURATIONS)
-      unset(identity)
       if(IOS)
         if(DEFINED JUCER_CODE_SIGNING_IDENTITY_${config})
           set(identity "${JUCER_CODE_SIGNING_IDENTITY_${config}}")
         else()
           set(identity "iPhone Developer")
         endif()
+        set_target_properties(${target} PROPERTIES
+          XCODE_ATTRIBUTE_CODE_SIGN_IDENTITY[sdk=iphoneos*][variant=${config}]
+          "${identity}"
+        )
       else()
         if(DEFINED JUCER_CODE_SIGNING_IDENTITY_${config}
             AND NOT JUCER_CODE_SIGNING_IDENTITY_${config} STREQUAL "Mac Developer")
@@ -5724,10 +5703,10 @@ function(_FRUT_set_compiler_and_linker_settings_APPLE target)
           else()
             set(identity "${JUCER_CODE_SIGNING_IDENTITY_${config}}")
           endif()
+          set_target_properties(${target} PROPERTIES
+            XCODE_ATTRIBUTE_CODE_SIGN_IDENTITY[variant=${config}] "${identity}"
+          )
         endif()
-      endif()
-      if(DEFINED identity)
-        string(APPEND all_confs_code_sign_identity $<$<CONFIG:${config}>:${identity}>)
       endif()
     endforeach()
   else()
@@ -5747,26 +5726,24 @@ function(_FRUT_set_compiler_and_linker_settings_APPLE target)
       else()
         set(identity "${identity_string}")
       endif()
-      string(APPEND all_confs_code_sign_identity $<$<CONFIG:${config}>:${identity}>)
+      if(IOS)
+        set_target_properties(${target} PROPERTIES
+          XCODE_ATTRIBUTE_CODE_SIGN_IDENTITY[sdk=iphoneos*][variant=${config}]
+          "${identity}"
+        )
+      else()
+        set_target_properties(${target} PROPERTIES
+          XCODE_ATTRIBUTE_CODE_SIGN_IDENTITY[variant=${config}] "${identity}"
+        )
+      endif()
       if(NOT identity STREQUAL "" AND NOT is_using_default_signing_identity)
-        string(APPEND all_confs_code_sign_style $<$<CONFIG:${config}>:Manual>)
+        if(NOT (DEFINED JUCER_VERSION AND JUCER_VERSION VERSION_LESS 6.1.0))
+          set_target_properties(${target} PROPERTIES
+            XCODE_ATTRIBUTE_CODE_SIGN_STYLE[variant=${config}] "Manual"
+          )
+        endif()
       endif()
     endforeach()
-  endif()
-  if(IOS)
-    set_target_properties(${target} PROPERTIES
-      XCODE_ATTRIBUTE_CODE_SIGN_IDENTITY[sdk=iphoneos*] "${all_confs_code_sign_identity}"
-    )
-  elseif(DEFINED all_confs_code_sign_identity)
-    set_target_properties(${target} PROPERTIES
-      XCODE_ATTRIBUTE_CODE_SIGN_IDENTITY "${all_confs_code_sign_identity}"
-    )
-  endif()
-  if(DEFINED all_confs_code_sign_style AND
-      NOT (DEFINED JUCER_VERSION AND JUCER_VERSION VERSION_LESS 6.1.0))
-    set_target_properties(${target} PROPERTIES
-      XCODE_ATTRIBUTE_CODE_SIGN_STYLE "${all_confs_code_sign_style}"
-    )
   endif()
 
   if(NOT development_team_id_string STREQUAL "")
@@ -6126,7 +6103,6 @@ endfunction()
 
 function(_FRUT_set_custom_xcode_flags target)
 
-  unset(all_flags)
   foreach(config IN LISTS JUCER_PROJECT_CONFIGURATIONS)
     if(DEFINED JUCER_CUSTOM_XCODE_FLAGS_${config})
       foreach(xcode_flag IN LISTS JUCER_CUSTOM_XCODE_FLAGS_${config})
@@ -6134,20 +6110,12 @@ function(_FRUT_set_custom_xcode_flags target)
         if(NOT CMAKE_MATCH_0)
           message(FATAL_ERROR "Invalid Xcode flag: \"${xcode_flag}\"")
         endif()
-        list(APPEND all_flags "${CMAKE_MATCH_1}")
-        set(value "${CMAKE_MATCH_2}")
-        string(APPEND all_confs_${CMAKE_MATCH_1} "$<$<CONFIG:${config}>:${value}>")
+        set_target_properties(${target} PROPERTIES
+          XCODE_ATTRIBUTE_${CMAKE_MATCH_1}[variant=${config}] "${CMAKE_MATCH_2}"
+        )
       endforeach()
     endif()
   endforeach()
-
-  if(DEFINED all_flags)
-    foreach(flag IN LISTS all_flags)
-      set_target_properties(${target} PROPERTIES
-        XCODE_ATTRIBUTE_${flag} "${all_confs_${flag}}"
-      )
-    endforeach()
-  endif()
 
 endfunction()
 
@@ -6207,7 +6175,6 @@ function(_FRUT_set_cxx_language_standard_properties target)
   else()
     if(APPLE)
       if(CMAKE_GENERATOR STREQUAL "Xcode")
-        set(all_confs_cxx_language_standard "")
         foreach(config IN LISTS JUCER_PROJECT_CONFIGURATIONS)
           if(DEFINED JUCER_VERSION AND JUCER_VERSION VERSION_LESS 5.1.0)
             set(cxx_language_standard "c++0x")
@@ -6221,13 +6188,11 @@ function(_FRUT_set_cxx_language_standard_properties target)
               "${JUCER_CXX_LANGUAGE_STANDARD_${config}}"
             )
           endif()
-          string(APPEND all_confs_cxx_language_standard
-            "$<$<CONFIG:${config}>:${cxx_language_standard}>"
+          set_target_properties(${target} PROPERTIES
+            XCODE_ATTRIBUTE_CLANG_CXX_LANGUAGE_STANDARD[variant=${config}]
+            "${cxx_language_standard}"
           )
         endforeach()
-        set_target_properties(${target} PROPERTIES
-          XCODE_ATTRIBUTE_CLANG_CXX_LANGUAGE_STANDARD "${all_confs_cxx_language_standard}"
-        )
       else()
         set_target_properties(${target} PROPERTIES CXX_EXTENSIONS OFF)
         if(DEFINED JUCER_VERSION AND JUCER_VERSION VERSION_LESS 5.2.1)
