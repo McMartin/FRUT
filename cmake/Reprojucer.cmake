@@ -1825,10 +1825,9 @@ function(jucer_export_target_configuration
 
   if(DEFINED _OSX_ARCHITECTURE)
     set(architecture "${_OSX_ARCHITECTURE}")
+    unset(osx_architectures)
     unset(xcode_archs)
     if(architecture STREQUAL "Native architecture of build machine")
-      # Consider as default
-      unset(osx_architectures)
       if(CMAKE_GENERATOR STREQUAL "Xcode")
         set(xcode_archs "$(NATIVE_ARCH_ACTUAL)")
       endif()
