@@ -5061,7 +5061,7 @@ function(_FRUT_link_xcode_frameworks target exporter)
     list(APPEND xcode_frameworks "ImageIO")
   endif()
   if(JUCER_IN_APP_PURCHASES_CAPABILITY)
-    list(APPEND osx_frameworks "StoreKit")
+    list(APPEND xcode_frameworks "StoreKit")
   endif()
 
   if(xcode_frameworks)
