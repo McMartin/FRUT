@@ -76,7 +76,7 @@ FRUT currently contains:
   - ``examples`` and ``extras`` projects from `JUCE 5.4.3`_ (in `generated/JUCE-5.4.3`_)
   - ``examples`` and ``extras`` projects from `JUCE 5.4.7`_ (in `generated/JUCE-5.4.7`_)
   - ``examples`` and ``extras`` projects from `JUCE 6.0.5`_ (in `generated/JUCE-6.0.5`_)
-  - ``examples`` and ``extras`` projects from `JUCE 6.1.0`_ (in `generated/JUCE-6.1.0`_)
+  - ``examples`` and ``extras`` projects from `JUCE 6.1.6`_ (in `generated/JUCE-6.1.6`_)
 
 
 Requirements
@@ -418,7 +418,7 @@ even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE
 .. _generated/JUCE-5.4.3: generated/JUCE-5.4.3
 .. _generated/JUCE-5.4.7: generated/JUCE-5.4.7
 .. _generated/JUCE-6.0.5: generated/JUCE-6.0.5
-.. _generated/JUCE-6.1.0: generated/JUCE-6.1.0
+.. _generated/JUCE-6.1.6: generated/JUCE-6.1.6
 
 .. _CMake Generators: https://cmake.org/cmake/help/latest/manual/cmake-generators.7.html
 .. _CMake: https://cmake.org
@@ -431,7 +431,7 @@ even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE
 .. _JUCE 5.4.3: https://github.com/juce-framework/JUCE/tree/5.4.3
 .. _JUCE 5.4.7: https://github.com/juce-framework/JUCE/tree/5.4.7
 .. _JUCE 6.0.5: https://github.com/juce-framework/JUCE/tree/6.0.5
-.. _JUCE 6.1.0: https://github.com/juce-framework/JUCE/tree/6.1.0
+.. _JUCE 6.1.6: https://github.com/juce-framework/JUCE/tree/6.1.6
 .. _JUCE: https://github.com/juce-framework/JUCE
 .. _Projucer: https://juce.com/discover/projucer
 .. _all-contributors: https://github.com/all-contributors/all-contributors

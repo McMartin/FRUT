@@ -21,7 +21,7 @@ get_filename_component(BinaryBuilder_jucer_FILE
 
 jucer_project_begin(
   JUCER_FORMAT_VERSION "1"
-  JUCER_VERSION "6.1.0"
+  JUCER_VERSION "6.1.6"
   PROJECT_FILE "${BinaryBuilder_jucer_FILE}"
   PROJECT_ID "3t6YqETY1"
 )
@@ -101,18 +101,18 @@ jucer_export_target_configuration(
 )
 
 jucer_export_target(
-  "Visual Studio 2019"
+  "Visual Studio 2022"
 )
 
 jucer_export_target_configuration(
-  "Visual Studio 2019"
+  "Visual Studio 2022"
   NAME "Debug"
   DEBUG_MODE ON
   BINARY_NAME "BinaryBuilder"
 )
 
 jucer_export_target_configuration(
-  "Visual Studio 2019"
+  "Visual Studio 2022"
   NAME "Release"
   DEBUG_MODE OFF
   BINARY_NAME "BinaryBuilder"
