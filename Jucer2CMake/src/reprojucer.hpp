@@ -2262,8 +2262,8 @@ inline void writeReprojucerCMakeLists(const Arguments& args,
         if (exporterType == "XCODE_MAC")
         {
           const auto sdks = juce::StringArray{
-            "10.5 SDK",  "10.6 SDK",  "10.7 SDK",  "10.8 SDK",  "10.9 SDK",
-            "10.10 SDK", "10.11 SDK", "10.12 SDK", "10.13 SDK", "10.14 SDK",
+            "10.5 SDK",  "10.6 SDK",  "10.7 SDK",  "10.8 SDK",  "10.9 SDK",  "10.10 SDK",
+            "10.11 SDK", "10.12 SDK", "10.13 SDK", "10.14 SDK", "10.15 SDK",
           };
 
           convertSettingIfDefined(configuration, "osxSDK", "OSX_BASE_SDK_VERSION",
