@@ -4990,7 +4990,7 @@ endfunction()
 
 function(_FRUT_install_to_plugin_binary_location target plugin_type default_destination)
 
-  if(DEFINED ARGV3)
+  if(ARGC GREATER 3)
     if(NOT ARGV3 STREQUAL "FILES")
       message(FATAL_ERROR "Unexpected argument \"${ARGV3}\"")
     endif()
@@ -6379,7 +6379,7 @@ endfunction()
 
 function(_FRUT_set_output_name_properties target)
 
-  if(DEFINED ARGV1)
+  if(ARGC GREATER 1)
     if(NOT ARGV1 STREQUAL "ADD_lib_PREFIX")
       message(FATAL_ERROR "Unexpected argument \"${ARGV1}\"")
     endif()
