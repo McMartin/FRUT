@@ -366,6 +366,9 @@ contributors:
       <a href="https://github.com/McMartin/FRUT/issues?q=is%3Aissue+author%3Abutchwarns" title="Bug reports">🐛</a>
     </td>
     <td>
+      <a href="https://github.com/SuganthanBC"><img src="https://github.com/SuganthanBC.png" width="100"><br />Suganthan BC</a>
+      <br />
+      <a href="https://github.com/McMartin/FRUT/issues?q=is%3Aissue+author%3ASuganthanBC" title="Bug reports">🐛</a>
     </td>
     <td>
     </td>
