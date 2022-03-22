@@ -68,17 +68,6 @@ jobs:
         parameters:
           juceVersions: ${{ parameters.juceVersions }}
 
-  - job: Windows_VS2017
-    displayName: Windows / Visual Studio 2017
-    pool:
-      vmImage: vs2017-win2016
-    variables:
-      cmakeGenerator: "Visual Studio 15 2017"
-    steps:
-      - template: ci/azure-pipelines/steps-VS.yml
-        parameters:
-          juceVersions: ${{ parameters.juceVersions }}
-
   - job: Windows_VS2019
     displayName: Windows / Visual Studio 2019
     pool:
