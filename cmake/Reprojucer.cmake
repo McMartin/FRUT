@@ -3425,6 +3425,12 @@ endfunction()
 
 function(_FRUT_char_literal value out_char_literal)
 
+  if(ARGC GREATER 2)
+    if(NOT ARGV2 STREQUAL "WITH_COMMENT")
+      message(FATAL_ERROR "Unexpected argument \"${ARGV2}\"")
+    endif()
+  endif()
+
   set(all_ascii_codes "")
   foreach(ascii_code RANGE 1 127)
     list(APPEND all_ascii_codes ${ascii_code})
@@ -3454,7 +3460,11 @@ function(_FRUT_char_literal value out_char_literal)
 
   _FRUT_dec_to_hex("${dec_value}" hex_value)
 
-  set(${out_char_literal} "${hex_value} // '${four_chars}'" PARENT_SCOPE)
+  if(ARGV2 STREQUAL "WITH_COMMENT")
+    set(${out_char_literal} "${hex_value} // '${four_chars}'" PARENT_SCOPE)
+  else()
+    set(${out_char_literal} "${hex_value}" PARENT_SCOPE)
+  endif()
 
 endfunction()
 
@@ -3784,7 +3794,7 @@ function(_FRUT_generate_AppConfig_and_JucePluginDefines_header)
   elseif(JUCER_PROJECT_TYPE STREQUAL "Audio Plug-in")
     set(is_standalone_application 0)
 
-    _FRUT_get_audio_plugin_flags(audio_plugin_flags)
+    _FRUT_get_audio_plugin_flags(audio_plugin_flags WITH_COMMENTS)
 
     string(CONCAT audio_plugin_settings_defines
       "\n"
@@ -4676,6 +4686,12 @@ endfunction()
 
 function(_FRUT_get_audio_plugin_flags out_var)
 
+  if(ARGC GREATER 1)
+    if(NOT ARGV1 STREQUAL "WITH_COMMENTS")
+      message(FATAL_ERROR "Unexpected argument \"${ARGV1}\"")
+    endif()
+  endif()
+
   # See Project::getAudioPluginFlags()
   # in JUCE/extras/Projucer/Source/Project/jucer_Project.cpp
 
@@ -4750,8 +4766,15 @@ function(_FRUT_get_audio_plugin_flags out_var)
   set(ManufacturerWebsite_value "\"${JUCER_COMPANY_WEBSITE}\"")
   set(ManufacturerEmail_value "\"${JUCER_COMPANY_EMAIL}\"")
 
-  _FRUT_char_literal("${JUCER_PLUGIN_MANUFACTURER_CODE}" ManufacturerCode_value)
-  _FRUT_char_literal("${JUCER_PLUGIN_CODE}" PluginCode_value)
+  if(ARGV1 STREQUAL "WITH_COMMENTS")
+    _FRUT_char_literal(
+      "${JUCER_PLUGIN_MANUFACTURER_CODE}" ManufacturerCode_value WITH_COMMENT
+    )
+    _FRUT_char_literal("${JUCER_PLUGIN_CODE}" PluginCode_value WITH_COMMENT)
+  else()
+    _FRUT_char_literal("${JUCER_PLUGIN_MANUFACTURER_CODE}" ManufacturerCode_value)
+    _FRUT_char_literal("${JUCER_PLUGIN_CODE}" PluginCode_value)
+  endif()
 
   _FRUT_bool_to_int("${JUCER_PLUGIN_IS_A_SYNTH}" IsSynth_value)
   _FRUT_bool_to_int("${JUCER_PLUGIN_MIDI_INPUT}" WantsMidiInput_value)
@@ -4880,7 +4903,11 @@ function(_FRUT_get_audio_plugin_flags out_var)
   _FRUT_bool_to_int("${JUCER_PLUGIN_AAX_DISABLE_MULTI_MONO}" AAXDisableMultiMono_value)
 
   _FRUT_get_iaa_type_code(iaa_type_code)
-  _FRUT_char_literal("${iaa_type_code}" IAAType_value)
+  if(ARGV1 STREQUAL "WITH_COMMENTS")
+    _FRUT_char_literal("${iaa_type_code}" IAAType_value WITH_COMMENT)
+  else()
+    _FRUT_char_literal("${iaa_type_code}" IAAType_value)
+  endif()
   set(IAASubType_value "JucePlugin_PluginCode")
   set(IAAName_value "\"${JUCER_PLUGIN_MANUFACTURER}: ${JUCER_PLUGIN_NAME}\"")
 
