@@ -8,9 +8,9 @@ image: Visual Studio 2015
 
 environment:
   matrix:
-    - GENERATOR: "MinGW Makefiles"
-    - GENERATOR: "Visual Studio 12 2013"
-    - GENERATOR: "Visual Studio 14 2015"
+    - GENERATOR: MinGW Makefiles
+    - GENERATOR: Visual Studio 12 2013
+    - GENERATOR: Visual Studio 14 2015
 
 install:
   - cmake --version
@@ -37,7 +37,7 @@ install:
 for:
   - matrix:
       only:
-        - GENERATOR: "MinGW Makefiles"
+        - GENERATOR: MinGW Makefiles
 
     build_script:
       - set PATH=%PATH:C:\Program Files\Git\usr\bin;=%
@@ -174,7 +174,7 @@ for:
 
   - matrix:
       only:
-        - GENERATOR: "Visual Studio 12 2013"
+        - GENERATOR: Visual Studio 12 2013
 
     build_script:
       - mkdir %APPVEYOR_BUILD_FOLDER%\build
