@@ -4,13 +4,14 @@ branches:
 
 clone_depth: 50
 
-image: Visual Studio 2015
-
 environment:
   matrix:
-    - GENERATOR: MinGW Makefiles
-    - GENERATOR: Visual Studio 12 2013
-    - GENERATOR: Visual Studio 14 2015
+    - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
+      GENERATOR: MinGW Makefiles
+    - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
+      GENERATOR: Visual Studio 12 2013
+    - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
+      GENERATOR: Visual Studio 14 2015
 
 install:
   - cmake --version
