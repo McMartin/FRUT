@@ -3377,14 +3377,14 @@ function(_FRUT_add_Rez_command_to_AU_plugin au_target)
   set(all_confs_sysroot "")
   set(all_confs_include_audio_unit_headers "")
   foreach(config IN LISTS JUCER_PROJECT_CONFIGURATIONS)
-    foreach(osx_architecture IN LISTS JUCER_MACOS_ARCHITECTURES_${config})
+    foreach(macos_architecture IN LISTS JUCER_MACOS_ARCHITECTURES_${config})
       list(APPEND rez_defines
         "$<$<CONFIG:${config}>:-d>"
-        "$<$<CONFIG:${config}>:${osx_architecture}_YES>"
+        "$<$<CONFIG:${config}>:${macos_architecture}_YES>"
       )
       list(APPEND rez_archs
         "$<$<CONFIG:${config}>:-arch>"
-        "$<$<CONFIG:${config}>:${osx_architecture}>"
+        "$<$<CONFIG:${config}>:${macos_architecture}>"
       )
     endforeach()
 
@@ -5558,8 +5558,8 @@ function(_FRUT_set_compiler_and_linker_settings target target_type exporter)
           if(CMAKE_GENERATOR STREQUAL "Xcode")
             set(arch "\${CURRENT_ARCH}")
           elseif(DEFINED JUCER_MACOS_ARCHITECTURES_${config})
-            list(LENGTH JUCER_MACOS_ARCHITECTURES_${config} osx_architectures_length)
-            if(osx_architectures_length EQUAL 1)
+            list(LENGTH JUCER_MACOS_ARCHITECTURES_${config} macos_architectures_length)
+            if(macos_architectures_length EQUAL 1)
               set(arch "${JUCER_MACOS_ARCHITECTURES_${config}}")
             endif()
           endif()
@@ -5742,18 +5742,18 @@ function(_FRUT_set_compiler_and_linker_settings_APPLE target)
     endforeach()
   elseif(CMAKE_GENERATOR STREQUAL "Xcode")
     foreach(config IN LISTS JUCER_PROJECT_CONFIGURATIONS)
-      set(osx_deployment_target "10.11")
+      set(macos_deployment_target "10.11")
       if(DEFINED JUCER_MACOS_DEPLOYMENT_TARGET_${config})
-        set(osx_deployment_target "${JUCER_MACOS_DEPLOYMENT_TARGET_${config}}")
+        set(macos_deployment_target "${JUCER_MACOS_DEPLOYMENT_TARGET_${config}}")
       endif()
       if(target MATCHES "_AUv3_AppExtension$"
-          AND osx_deployment_target VERSION_LESS 10.11)
-        set(osx_deployment_target "10.11")
+          AND macos_deployment_target VERSION_LESS 10.11)
+        set(macos_deployment_target "10.11")
         message(STATUS "Set macOS Deployment Target to 10.11 for ${target} in ${config}")
       endif()
       set_target_properties(${target} PROPERTIES
         XCODE_ATTRIBUTE_MACOSX_DEPLOYMENT_TARGET[variant=${config}]
-        "${osx_deployment_target}"
+        "${macos_deployment_target}"
       )
 
       unset(sdkroot)
@@ -5771,19 +5771,20 @@ function(_FRUT_set_compiler_and_linker_settings_APPLE target)
       endif()
     endforeach()
   else()
-    set(osx_deployment_target "10.11")
+    set(macos_deployment_target "10.11")
     if(DEFINED JUCER_MACOS_DEPLOYMENT_TARGET_${CMAKE_BUILD_TYPE})
-      set(osx_deployment_target "${JUCER_MACOS_DEPLOYMENT_TARGET_${CMAKE_BUILD_TYPE}}")
+      set(macos_deployment_target "${JUCER_MACOS_DEPLOYMENT_TARGET_${CMAKE_BUILD_TYPE}}")
     endif()
-    if(target MATCHES "_AUv3_AppExtension$" AND osx_deployment_target VERSION_LESS 10.11)
-      set(osx_deployment_target "10.11")
+    if(target MATCHES "_AUv3_AppExtension$"
+        AND macos_deployment_target VERSION_LESS 10.11)
+      set(macos_deployment_target "10.11")
       message(STATUS "Set macOS Deployment Target to 10.11 for ${target}")
     endif()
     target_compile_options(${target} PRIVATE
-      "-mmacosx-version-min=${osx_deployment_target}"
+      "-mmacosx-version-min=${macos_deployment_target}"
     )
     set_property(TARGET ${target} APPEND_STRING PROPERTY
-      LINK_FLAGS " -mmacosx-version-min=${osx_deployment_target}"
+      LINK_FLAGS " -mmacosx-version-min=${macos_deployment_target}"
     )
 
     set(sysroot "${JUCER_MACOSX_SDK_PATH_${CMAKE_BUILD_TYPE}}")
