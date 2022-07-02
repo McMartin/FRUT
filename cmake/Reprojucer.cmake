@@ -1807,8 +1807,10 @@ function(jucer_export_target_configuration
     elseif(version MATCHES "^10\\.([7-9]|10) SDK$"
         AND DEFINED JUCER_VERSION AND JUCER_VERSION VERSION_LESS 5.4.4)
       set(JUCER_OSX_BASE_SDK_VERSION_${config} "10.${CMAKE_MATCH_1}" PARENT_SCOPE)
-    elseif(version MATCHES "^10\\.(1[1-5]) SDK$")
+    elseif(version MATCHES "^10\\.(1[1-6]) SDK$")
       set(JUCER_OSX_BASE_SDK_VERSION_${config} "10.${CMAKE_MATCH_1}" PARENT_SCOPE)
+    elseif(version STREQUAL "11.0 SDK")
+      set(JUCER_OSX_BASE_SDK_VERSION_${config} "11.0" PARENT_SCOPE)
     elseif(NOT version MATCHES "^(Use )?Default$")
       message(FATAL_ERROR "Unsupported value for OSX_BASE_SDK_VERSION: \"${version}\"")
     endif()
@@ -1819,8 +1821,10 @@ function(jucer_export_target_configuration
     if(target MATCHES "^10\\.([5-6])$"
         AND DEFINED JUCER_VERSION AND JUCER_VERSION VERSION_LESS 5.3.2)
       set(JUCER_OSX_DEPLOYMENT_TARGET_${config} "10.${CMAKE_MATCH_1}" PARENT_SCOPE)
-    elseif(target MATCHES "^10\\.([7-9]|1[0-5])$")
+    elseif(target MATCHES "^10\\.([7-9]|1[0-6])$")
       set(JUCER_OSX_DEPLOYMENT_TARGET_${config} "10.${CMAKE_MATCH_1}" PARENT_SCOPE)
+    elseif(target STREQUAL "11.0")
+      set(JUCER_OSX_DEPLOYMENT_TARGET_${config} "11.0" PARENT_SCOPE)
     elseif(NOT target MATCHES "^(Use )?Default$")
       message(FATAL_ERROR "Unsupported value for OSX_DEPLOYMENT_TARGET: \"${target}\"")
     endif()
