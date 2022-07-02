@@ -49,9 +49,9 @@ Define the settings specific to a configuration associated with an export target
     [UNITY_BINARY_LOCATION <binary_location>]  # [1]
     [VST_LEGACY_BINARY_LOCATION <binary_location>]  # [1]
 
-    [OSX_BASE_SDK_VERSION <osx_sdk>]  # [4]
-    [OSX_DEPLOYMENT_TARGET <osx_deployment_target>]  # [4]
-    [OSX_ARCHITECTURE <osx_architecture>]  # [4]
+    [MACOS_BASE_SDK_VERSION <macos_sdk>]  # [4]
+    [MACOS_DEPLOYMENT_TARGET <macos_deployment_target>]  # [4]
+    [MACOS_ARCHITECTURE <macos_architecture>]  # [4]
 
     [IOS_DEPLOYMENT_TARGET <ios_deployment_target>]  # [5]
 

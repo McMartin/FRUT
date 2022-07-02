@@ -2268,7 +2268,9 @@ inline void writeReprojucerCMakeLists(const Arguments& args,
           };
 
           convertSettingIfDefined(
-            configuration, "osxSDK", "OSX_BASE_SDK_VERSION",
+            configuration, "osxSDK",
+            jucerVersionAsTuple < Version{6, 0, 2} ? "OSX_BASE_SDK_VERSION"
+                                                   : "MACOS_BASE_SDK_VERSION",
             [&jucerVersionAsTuple, &sdks](const juce::String& value) -> juce::String {
               if (value == "default")
                 return jucerVersionAsTuple < Version{5, 2, 1} ? "Use Default" : "Default";
@@ -2280,7 +2282,9 @@ inline void writeReprojucerCMakeLists(const Arguments& args,
             });
 
           convertSettingIfDefined(
-            configuration, "osxCompatibility", "OSX_DEPLOYMENT_TARGET",
+            configuration, "osxCompatibility",
+            jucerVersionAsTuple < Version{6, 0, 2} ? "OSX_DEPLOYMENT_TARGET"
+                                                   : "MACOS_DEPLOYMENT_TARGET",
             [&jucerVersionAsTuple, &sdks](const juce::String& value) -> juce::String {
               if (value == "default")
                 return jucerVersionAsTuple < Version{5, 2, 1} ? "Use Default" : "Default";
@@ -2291,28 +2295,50 @@ inline void writeReprojucerCMakeLists(const Arguments& args,
               return {};
             });
 
-          convertSettingIfDefined(
-            configuration, "osxArchitecture", "OSX_ARCHITECTURE",
-            [&jucerVersionAsTuple](const juce::String& value) -> juce::String {
-              if (value == "default")
-                return jucerVersionAsTuple < Version{5, 2, 1} ? "Use Default" : "Default";
+          if (jucerVersionAsTuple < Version{6, 0, 2})
+          {
+            convertSettingIfDefined(
+              configuration, "osxArchitecture", "OSX_ARCHITECTURE",
+              [&jucerVersionAsTuple](const juce::String& value) -> juce::String {
+                if (value == "default")
+                  return jucerVersionAsTuple < Version{5, 2, 1} ? "Use Default"
+                                                                : "Default";
 
-              if (value == "Native")
-                return "Native architecture of build machine";
+                if (value == "Native")
+                  return "Native architecture of build machine";
 
-              if (value == "32BitUniversal")
-                return "Universal Binary (32-bit)";
+                if (value == "32BitUniversal")
+                  return "Universal Binary (32-bit)";
 
-              if (value == "64BitUniversal")
-                return "Universal Binary (32/64-bit)";
+                if (value == "64BitUniversal")
+                  return "Universal Binary (32/64-bit)";
 
-              if (value == "64BitIntel")
-                return jucerVersionAsTuple < Version{6, 0, 2}
-                         ? "64-bit Intel"
-                         : "Universal Binary (64-bit)";
+                if (value == "64BitIntel")
+                  return "64-bit Intel";
 
-              return {};
-            });
+                return {};
+              });
+          }
+          else
+          {
+            convertSettingIfDefined(configuration, "osxArchitecture",
+                                    "MACOS_ARCHITECTURE",
+                                    [](const juce::String& value) -> juce::String {
+                                      if (value == "Native")
+                                        return "Native architecture of build machine";
+
+                                      if (value == "32BitUniversal")
+                                        return "Standard 32-bit";
+
+                                      if (value == "64BitUniversal")
+                                        return "Standard 32/64-bit";
+
+                                      if (value == "64BitIntel")
+                                        return "Standard 64-bit";
+
+                                      return {};
+                                    });
+          }
         }
 
         if (isXcodeExporter)

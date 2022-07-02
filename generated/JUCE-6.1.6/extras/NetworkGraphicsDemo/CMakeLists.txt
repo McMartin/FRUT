@@ -184,7 +184,7 @@ jucer_export_target_configuration(
   NAME "Debug"
   DEBUG_MODE ON
   BINARY_NAME "JUCE Network Graphics Demo"
-  OSX_DEPLOYMENT_TARGET "10.9"
+  MACOS_DEPLOYMENT_TARGET "10.9"
 )
 
 jucer_export_target_configuration(
@@ -192,7 +192,7 @@ jucer_export_target_configuration(
   NAME "Release"
   DEBUG_MODE OFF
   BINARY_NAME "JUCE Network Graphics Demo"
-  OSX_DEPLOYMENT_TARGET "10.9"
+  MACOS_DEPLOYMENT_TARGET "10.9"
 )
 
 jucer_export_target(

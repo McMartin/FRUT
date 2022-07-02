@@ -208,7 +208,7 @@ jucer_export_target_configuration(
   DEBUG_MODE ON
   BINARY_NAME "UnitTestRunner"
   ADD_RECOMMENDED_COMPILER_WARNING_FLAGS "Enabled"
-  OSX_DEPLOYMENT_TARGET "10.10"
+  MACOS_DEPLOYMENT_TARGET "10.10"
 )
 
 jucer_export_target_configuration(
@@ -217,7 +217,7 @@ jucer_export_target_configuration(
   DEBUG_MODE OFF
   BINARY_NAME "UnitTestRunner"
   ADD_RECOMMENDED_COMPILER_WARNING_FLAGS "Enabled"
-  OSX_DEPLOYMENT_TARGET "10.10"
+  MACOS_DEPLOYMENT_TARGET "10.10"
 )
 
 jucer_export_target(
