@@ -37,7 +37,7 @@ set(Reprojucer.cmake_DIR "${CMAKE_CURRENT_LIST_DIR}")
 set(Reprojucer_data_DIR "${Reprojucer.cmake_DIR}/data")
 
 set(Reprojucer_supported_exporters
-  "Xcode (MacOSX)"
+  "Xcode (macOS)"
   "Xcode (iOS)"
   "Visual Studio 2022"
   "Visual Studio 2019"
@@ -738,6 +738,9 @@ endfunction()
 
 function(jucer_export_target exporter)
 
+  if(exporter STREQUAL "Xcode (MacOSX)")
+    set(exporter "Xcode (macOS)")
+  endif()
   if(NOT exporter IN_LIST Reprojucer_supported_exporters)
     message(FATAL_ERROR "Unsupported exporter: ${exporter}\n"
       "Supported exporters: ${Reprojucer_supported_exporters}"
@@ -760,7 +763,7 @@ function(jucer_export_target exporter)
     "EXTERNAL_LIBRARIES_TO_LINK"
   )
 
-  if(exporter STREQUAL "Xcode (MacOSX)" OR exporter STREQUAL "Xcode (iOS)")
+  if(exporter STREQUAL "Xcode (macOS)" OR exporter STREQUAL "Xcode (iOS)")
     list(APPEND single_value_keywords
       "MICROPHONE_ACCESS"
       "MICROPHONE_ACCESS_TEXT"
@@ -795,7 +798,7 @@ function(jucer_export_target exporter)
     endif()
   endif()
 
-  if(exporter STREQUAL "Xcode (MacOSX)")
+  if(exporter STREQUAL "Xcode (macOS)")
     list(APPEND single_value_keywords
       "VST3_SDK_FOLDER"
       "AAX_SDK_FOLDER"
@@ -1530,6 +1533,9 @@ function(jucer_export_target_configuration
   exporter NAME_KEYWORD config DEBUG_MODE_KEYWORD is_debug
 )
 
+  if(exporter STREQUAL "Xcode (MacOSX)")
+    set(exporter "Xcode (macOS)")
+  endif()
   if(NOT exporter IN_LIST Reprojucer_supported_exporters)
     message(FATAL_ERROR "Unsupported exporter: ${exporter}\n"
       "Supported exporters: ${Reprojucer_supported_exporters}"
@@ -1583,7 +1589,7 @@ function(jucer_export_target_configuration
     "LINK_TIME_OPTIMISATION"
   )
 
-  if(exporter STREQUAL "Xcode (MacOSX)" OR exporter STREQUAL "Xcode (iOS)")
+  if(exporter STREQUAL "Xcode (macOS)" OR exporter STREQUAL "Xcode (iOS)")
     list(APPEND single_value_keywords
       "ENABLE_PLUGIN_COPY_STEP"
       "VST_BINARY_LOCATION"
@@ -1605,7 +1611,7 @@ function(jucer_export_target_configuration
     )
   endif()
 
-  if(exporter STREQUAL "Xcode (MacOSX)")
+  if(exporter STREQUAL "Xcode (macOS)")
     list(APPEND single_value_keywords
       "MACOS_BASE_SDK_VERSION"
       "OSX_BASE_SDK_VERSION"
@@ -1703,7 +1709,7 @@ function(jucer_export_target_configuration
   if(DEFINED _ADD_RECOMMENDED_COMPILER_WARNING_FLAGS)
     set(kind_text "${_ADD_RECOMMENDED_COMPILER_WARNING_FLAGS}")
     unset(kind)
-    if(exporter STREQUAL "Xcode (MacOSX)" OR exporter STREQUAL "Xcode (iOS)")
+    if(exporter STREQUAL "Xcode (macOS)" OR exporter STREQUAL "Xcode (iOS)")
       if(kind_text STREQUAL "Enabled")
         set(kind "LLVM")
       elseif(kind_text STREQUAL "Disabled")

@@ -108,17 +108,17 @@ Define the settings specific to an export target.
 
 Optional keywords support:
 
-- ``[1]``: only supported by the ``"Xcode (MacOSX)"``, ``"Visual Studio 2022"``,
+- ``[1]``: only supported by the ``"Xcode (macOS)"``, ``"Visual Studio 2022"``,
   ``"Visual Studio 2019"``, ``"Visual Studio 2017"``, ``"Visual Studio 2015"``, and
   ``"Visual Studio 2013"`` exporters.
-- ``[2]``: only supported by the ``"Xcode (MacOSX)"``, ``"Xcode (iOS)"``,
+- ``[2]``: only supported by the ``"Xcode (macOS)"``, ``"Xcode (iOS)"``,
   ``"Linux Makefile"``, ``"Code::Blocks (Windows)"``, and ``"Code::Blocks (Linux)"``
   exporters.
-- ``[3]``: only supported by the ``"Xcode (MacOSX)"`` and ``"Xcode (iOS)"`` exporters.
-- ``[4]``: only supported by the ``"Xcode (MacOSX)"`` and ``"Xcode (iOS)"`` exporters, on
+- ``[3]``: only supported by the ``"Xcode (macOS)"`` and ``"Xcode (iOS)"`` exporters.
+- ``[4]``: only supported by the ``"Xcode (macOS)"`` and ``"Xcode (iOS)"`` exporters, on
   ``"Audio Plug-in"`` projects.
-- ``[5]``: only supported by the ``"Xcode (MacOSX)"`` exporter.
-- ``[6]``: only supported by the ``"Xcode (MacOSX)"`` exporter, on ``"GUI Application"``
+- ``[5]``: only supported by the ``"Xcode (macOS)"`` exporter.
+- ``[6]``: only supported by the ``"Xcode (macOS)"`` exporter, on ``"GUI Application"``
   projects.
 - ``[7]``: only supported by the ``"Xcode (iOS)"`` exporter.
 - ``[8]``: only supported by the ``"Visual Studio 2022"``, ``"Visual Studio 2019"``,

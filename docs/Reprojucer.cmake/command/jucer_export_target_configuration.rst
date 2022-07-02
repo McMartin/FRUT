@@ -84,14 +84,14 @@ Define the settings specific to a configuration associated with an export target
 
 Optional keywords support:
 
-- ``[1]``: only supported by the ``"Xcode (MacOSX)"``, ``"Xcode (iOS)"``,
+- ``[1]``: only supported by the ``"Xcode (macOS)"``, ``"Xcode (iOS)"``,
   ``"Visual Studio 2022"``, ``"Visual Studio 2019"``, ``"Visual Studio 2017"``,
   ``"Visual Studio 2015"``, ``"Visual Studio 2013"``, and ``"Linux Makefile"`` exporters.
-- ``[2]``: only supported by the ``"Xcode (MacOSX)"``, ``"Xcode (iOS)"``,
+- ``[2]``: only supported by the ``"Xcode (macOS)"``, ``"Xcode (iOS)"``,
   ``"Visual Studio 2022"``, ``"Visual Studio 2019"``, ``"Visual Studio 2017"``,
   ``"Visual Studio 2015"``, and ``"Visual Studio 2013"`` exporters.
-- ``[3]``: only supported by the ``"Xcode (MacOSX)"`` and ``"Xcode (iOS)"`` exporters.
-- ``[4]``: only supported by the ``"Xcode (MacOSX)"`` exporter.
+- ``[3]``: only supported by the ``"Xcode (macOS)"`` and ``"Xcode (iOS)"`` exporters.
+- ``[4]``: only supported by the ``"Xcode (macOS)"`` exporter.
 - ``[5]``: only supported by the ``"Xcode (iOS)"`` exporter.
 - ``[6]``: only supported by the ``"Visual Studio 2022"``, ``"Visual Studio 2019"``,
   ``"Visual Studio 2017"``, ``"Visual Studio 2015"``, and ``"Visual Studio 2013"``

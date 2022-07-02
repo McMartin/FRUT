@@ -1330,7 +1330,8 @@ inline void writeReprojucerCMakeLists(const Arguments& args,
                         "VS2013",          "LINUX_MAKE",   "CODEBLOCKS_WINDOWS",
                         "CODEBLOCKS_LINUX"};
     const auto exporterNames = std::map<juce::String, const char*>{
-      {"XCODE_MAC", "Xcode (MacOSX)"},
+      {"XCODE_MAC",
+       jucerVersionAsTuple < Version{6, 0, 2} ? "Xcode (MacOSX)" : "Xcode (macOS)"},
       {"XCODE_IPHONE", "Xcode (iOS)"},
       {"VS2022", "Visual Studio 2022"},
       {"VS2019", "Visual Studio 2019"},
