@@ -517,6 +517,7 @@ jucer_export_target_configuration(
   DEBUG_MODE ON
   BINARY_NAME "Projucer"
   ADD_RECOMMENDED_COMPILER_WARNING_FLAGS "Enabled"
+  MACOS_DEPLOYMENT_TARGET "10.12"
   CXX_LIBRARY "LLVM libc++"
 )
 
@@ -527,6 +528,7 @@ jucer_export_target_configuration(
   BINARY_NAME "Projucer"
   LINK_TIME_OPTIMISATION OFF
   ADD_RECOMMENDED_COMPILER_WARNING_FLAGS "Enabled"
+  MACOS_DEPLOYMENT_TARGET "10.12"
   CXX_LIBRARY "LLVM libc++"
 )
 

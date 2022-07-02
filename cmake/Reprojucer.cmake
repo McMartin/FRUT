@@ -1613,6 +1613,7 @@ function(jucer_export_target_configuration
 
   if(exporter STREQUAL "Xcode (macOS)")
     list(APPEND single_value_keywords
+      "MACOS_BASE_SDK"
       "MACOS_BASE_SDK_VERSION"
       "OSX_BASE_SDK_VERSION"
       "MACOS_DEPLOYMENT_TARGET"
@@ -1808,7 +1809,14 @@ function(jucer_export_target_configuration
     set(JUCER_VST_BINARY_LOCATION_${config} "${binary_location}" PARENT_SCOPE)
   endif()
 
+  if(DEFINED _MACOS_BASE_SDK)
+    set(JUCER_MACOS_BASE_SDK_${config} "${_MACOS_BASE_SDK}" PARENT_SCOPE)
+  endif()
+
   if(DEFINED _MACOS_BASE_SDK_VERSION)
+    if(NOT (DEFINED JUCER_VERSION AND JUCER_VERSION VERSION_LESS 6.1.0))
+      message(WARNING "MACOS_BASE_SDK_VERSION is deprecated, use MACOS_BASE_SDK instead.")
+    endif()
     set(version "${_MACOS_BASE_SDK_VERSION}")
     if(version MATCHES "^10\\.(1[1-6]) SDK$")
       set(JUCER_MACOS_BASE_SDK_VERSION_${config} "10.${CMAKE_MATCH_1}" PARENT_SCOPE)
@@ -1820,7 +1828,9 @@ function(jucer_export_target_configuration
   endif()
 
   if(DEFINED _OSX_BASE_SDK_VERSION)
-    if(NOT (DEFINED JUCER_VERSION AND JUCER_VERSION VERSION_LESS 6.0.2))
+    if(NOT (DEFINED JUCER_VERSION AND JUCER_VERSION VERSION_LESS 6.1.0))
+      message(WARNING "OSX_BASE_SDK_VERSION is deprecated, use MACOS_BASE_SDK instead.")
+    elseif(NOT (DEFINED JUCER_VERSION AND JUCER_VERSION VERSION_LESS 6.0.2))
       message(WARNING "OSX_BASE_SDK_VERSION is deprecated, use MACOS_BASE_SDK_VERSION"
         " instead."
       )
@@ -1843,13 +1853,18 @@ function(jucer_export_target_configuration
 
   if(DEFINED _MACOS_DEPLOYMENT_TARGET)
     set(target "${_MACOS_DEPLOYMENT_TARGET}")
-    if(target MATCHES "^10\\.([7-9]|1[0-6])$")
-      set(JUCER_MACOS_DEPLOYMENT_TARGET_${config} "10.${CMAKE_MATCH_1}" PARENT_SCOPE)
-    elseif(target MATCHES "^11\\.([0-1])$")
-      set(JUCER_MACOS_DEPLOYMENT_TARGET_${config} "11.${CMAKE_MATCH_1}" PARENT_SCOPE)
-    elseif(NOT target STREQUAL "Default")
-      message(FATAL_ERROR "Unsupported value for MACOS_DEPLOYMENT_TARGET: \"${target}\"")
+    if(DEFINED JUCER_VERSION AND JUCER_VERSION VERSION_LESS 6.1.0)
+      if(target MATCHES "^10\\.([7-9]|1[0-6])$")
+        set(JUCER_MACOS_DEPLOYMENT_TARGET_${config} "10.${CMAKE_MATCH_1}" PARENT_SCOPE)
+      elseif(target MATCHES "^11\\.([0-1])$")
+        set(JUCER_MACOS_DEPLOYMENT_TARGET_${config} "11.${CMAKE_MATCH_1}" PARENT_SCOPE)
+      elseif(NOT target STREQUAL "Default")
+        message(FATAL_ERROR
+          "Unsupported value for MACOS_DEPLOYMENT_TARGET: \"${target}\""
+        )
+      endif()
     endif()
+    set(JUCER_MACOS_DEPLOYMENT_TARGET_${config} "${target}" PARENT_SCOPE)
   endif()
 
   if(DEFINED _OSX_DEPLOYMENT_TARGET)
@@ -2287,11 +2302,13 @@ function(jucer_project_end)
       "JUCER_OSX_BASE_SDK_VERSION_${config}"
       "JUCER_OSX_DEPLOYMENT_TARGET_${config}"
       "JUCER_OSX_ARCHITECTURES_${config}"
+      "JUCER_MACOS_BASE_SDK_VERSION_${config}"
     )
     set(new_vars
       "JUCER_MACOS_BASE_SDK_VERSION_${config}"
       "JUCER_MACOS_DEPLOYMENT_TARGET_${config}"
       "JUCER_MACOS_ARCHITECTURES_${config}"
+      "JUCER_MACOS_BASE_SDK_${config}"
     )
     foreach(index RANGE 2)
       list(GET old_vars ${index} old_var)
@@ -2324,7 +2341,7 @@ function(jucer_project_end)
     endif()
   elseif(APPLE)
     foreach(config IN LISTS JUCER_PROJECT_CONFIGURATIONS)
-      set(sdk_version "${JUCER_MACOS_BASE_SDK_VERSION_${config}}")
+      set(sdk_version "${JUCER_MACOS_BASE_SDK_${config}}")
       execute_process(
         COMMAND "xcrun" "--sdk" "macosx${sdk_version}" "--show-sdk-path"
         OUTPUT_VARIABLE sdk_path
@@ -5213,7 +5230,7 @@ function(_FRUT_link_xcode_frameworks target exporter)
     else()
       foreach(config IN LISTS JUCER_PROJECT_CONFIGURATIONS)
         set(CMAKE_FRAMEWORK_PATH "")
-        set(sdk_version "${JUCER_MACOS_BASE_SDK_VERSION_${config}}")
+        set(sdk_version "${JUCER_MACOS_BASE_SDK_${config}}")
         set(sdk_path "${JUCER_MACOSX_SDK_PATH_${config}}")
         if(IS_DIRECTORY "${sdk_path}")
           set(CMAKE_FRAMEWORK_PATH "${sdk_path}/System/Library/Frameworks")
@@ -5764,11 +5781,11 @@ function(_FRUT_set_compiler_and_linker_settings_APPLE target)
 
       unset(sdkroot)
       if(DEFINED JUCER_VERSION AND JUCER_VERSION VERSION_LESS 5.4.6)
-        if(DEFINED JUCER_MACOS_BASE_SDK_VERSION_${config})
-          set(sdkroot "macosx${JUCER_MACOS_BASE_SDK_VERSION_${config}}")
+        if(DEFINED JUCER_MACOS_BASE_SDK_${config})
+          set(sdkroot "macosx${JUCER_MACOS_BASE_SDK_${config}}")
         endif()
       else()
-        set(sdkroot "macosx${JUCER_MACOS_BASE_SDK_VERSION_${config}}")
+        set(sdkroot "macosx${JUCER_MACOS_BASE_SDK_${config}}")
       endif()
       if(DEFINED sdkroot)
         set_target_properties(${target} PROPERTIES

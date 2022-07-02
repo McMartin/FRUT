@@ -2256,8 +2256,16 @@ inline void writeReprojucerCMakeLists(const Arguments& args,
 
         if (exporterType == "XCODE_IPHONE")
         {
-          convertSettingIfDefined(configuration, "iosCompatibility",
-                                  "IOS_DEPLOYMENT_TARGET", {});
+          if (configuration.hasAttribute("iosDeploymentTarget"))
+          {
+            convertSetting(configuration, "iosDeploymentTarget", "IOS_DEPLOYMENT_TARGET",
+                           {});
+          }
+          else
+          {
+            convertSettingIfDefined(configuration, "iosCompatibility",
+                                    "IOS_DEPLOYMENT_TARGET", {});
+          }
         }
 
         if (exporterType == "XCODE_MAC")
@@ -2268,33 +2276,50 @@ inline void writeReprojucerCMakeLists(const Arguments& args,
             "10.15 SDK", "10.16 SDK", "11.0 SDK",  "11.1 SDK",
           };
 
-          convertSettingIfDefined(
-            configuration, "osxSDK",
-            jucerVersionAsTuple < Version{6, 0, 2} ? "OSX_BASE_SDK_VERSION"
-                                                   : "MACOS_BASE_SDK_VERSION",
-            [&jucerVersionAsTuple, &sdks](const juce::String& value) -> juce::String {
-              if (value == "default")
-                return jucerVersionAsTuple < Version{5, 2, 1} ? "Use Default" : "Default";
+          if (configuration.hasAttribute("macOSBaseSDK"))
+          {
+            convertSetting(configuration, "macOSBaseSDK", "MACOS_BASE_SDK", {});
+          }
+          else
+          {
+            convertSettingIfDefined(
+              configuration, "osxSDK",
+              jucerVersionAsTuple < Version{6, 0, 2} ? "OSX_BASE_SDK_VERSION"
+                                                     : "MACOS_BASE_SDK_VERSION",
+              [&jucerVersionAsTuple, &sdks](const juce::String& value) -> juce::String {
+                if (value == "default")
+                  return jucerVersionAsTuple < Version{5, 2, 1} ? "Use Default"
+                                                                : "Default";
 
-              if (sdks.contains(value))
-                return value;
+                if (sdks.contains(value))
+                  return value;
 
-              return {};
-            });
+                return {};
+              });
+          }
 
-          convertSettingIfDefined(
-            configuration, "osxCompatibility",
-            jucerVersionAsTuple < Version{6, 0, 2} ? "OSX_DEPLOYMENT_TARGET"
-                                                   : "MACOS_DEPLOYMENT_TARGET",
-            [&jucerVersionAsTuple, &sdks](const juce::String& value) -> juce::String {
-              if (value == "default")
-                return jucerVersionAsTuple < Version{5, 2, 1} ? "Use Default" : "Default";
+          if (configuration.hasAttribute("macOSDeploymentTarget"))
+          {
+            convertSetting(configuration, "macOSDeploymentTarget",
+                           "MACOS_DEPLOYMENT_TARGET", {});
+          }
+          else
+          {
+            convertSettingIfDefined(
+              configuration, "osxCompatibility",
+              jucerVersionAsTuple < Version{6, 0, 2} ? "OSX_DEPLOYMENT_TARGET"
+                                                     : "MACOS_DEPLOYMENT_TARGET",
+              [&jucerVersionAsTuple, &sdks](const juce::String& value) -> juce::String {
+                if (value == "default")
+                  return jucerVersionAsTuple < Version{5, 2, 1} ? "Use Default"
+                                                                : "Default";
 
-              if (sdks.contains(value))
-                return value.substring(0, value.length() - 4);
+                if (sdks.contains(value))
+                  return value.substring(0, value.length() - 4);
 
-              return {};
-            });
+                return {};
+              });
+          }
 
           if (jucerVersionAsTuple < Version{6, 0, 2})
           {
