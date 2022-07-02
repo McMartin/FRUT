@@ -2256,6 +2256,8 @@ inline void writeReprojucerCMakeLists(const Arguments& args,
 
         if (exporterType == "XCODE_IPHONE")
         {
+          convertSettingIfDefined(configuration, "iosBaseSDK", "IOS_BASE_SDK", {});
+
           if (configuration.hasAttribute("iosDeploymentTarget"))
           {
             convertSetting(configuration, "iosDeploymentTarget", "IOS_DEPLOYMENT_TARGET",

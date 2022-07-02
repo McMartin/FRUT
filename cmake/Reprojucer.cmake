@@ -1624,7 +1624,7 @@ function(jucer_export_target_configuration
   endif()
 
   if(exporter STREQUAL "Xcode (iOS)")
-    list(APPEND single_value_keywords "IOS_DEPLOYMENT_TARGET")
+    list(APPEND single_value_keywords "IOS_BASE_SDK" "IOS_DEPLOYMENT_TARGET")
   endif()
 
   if(exporter MATCHES "^Visual Studio 20(22|1[9753])$")
@@ -1934,6 +1934,10 @@ function(jucer_export_target_configuration
       set(JUCER_OSX_ARCHITECTURES_${config} "${osx_architectures}" PARENT_SCOPE)
     endif()
     set(JUCER_XCODE_ARCHS_${config} "${xcode_archs}" PARENT_SCOPE)
+  endif()
+
+  if(DEFINED _IOS_BASE_SDK)
+    set(JUCER_IOS_BASE_SDK_${config} "${_IOS_BASE_SDK}" PARENT_SCOPE)
   endif()
 
   if(DEFINED _IOS_DEPLOYMENT_TARGET)
@@ -5747,11 +5751,14 @@ function(_FRUT_set_compiler_and_linker_settings_APPLE target)
     set_target_properties(${target} PROPERTIES
       XCODE_ATTRIBUTE_ASSETCATALOG_COMPILER_APPICON_NAME "AppIcon"
       XCODE_ATTRIBUTE_ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME "LaunchImage"
-      XCODE_ATTRIBUTE_SDKROOT "iphoneos"
       XCODE_ATTRIBUTE_TARGETED_DEVICE_FAMILY "${targeted_device_family}"
     )
 
     foreach(config IN LISTS JUCER_PROJECT_CONFIGURATIONS)
+      set_target_properties(${target} PROPERTIES
+        XCODE_ATTRIBUTE_SDKROOT[variant=${config}]
+        "iphoneos${JUCER_IOS_BASE_SDK_${config}}"
+      )
       if(DEFINED JUCER_IOS_DEPLOYMENT_TARGET_${config}
           AND NOT JUCER_IOS_DEPLOYMENT_TARGET_${config} STREQUAL "default")
         set(ios_deployment_target "${JUCER_IOS_DEPLOYMENT_TARGET_${config}}")

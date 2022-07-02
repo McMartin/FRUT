@@ -53,6 +53,7 @@ Define the settings specific to a configuration associated with an export target
     [MACOS_DEPLOYMENT_TARGET <macos_deployment_target>]  # [4]
     [MACOS_ARCHITECTURE <macos_architecture>]  # [4]
 
+    [IOS_BASE_SDK <ios_base_sdk>]  # [5]
     [IOS_DEPLOYMENT_TARGET <ios_deployment_target>]  # [5]
 
     [CUSTOM_XCODE_FLAGS <xcode_flag> [<xcode_flag> ...]]  # [3]
