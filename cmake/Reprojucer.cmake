@@ -1841,7 +1841,8 @@ function(jucer_export_target_configuration
     elseif(architecture STREQUAL "Universal Binary (32/64-bit)")
       set(osx_architectures "x86_64" "i386")
       set(xcode_archs "$(ARCHS_STANDARD_32_64_BIT)")
-    elseif(architecture STREQUAL "64-bit Intel")
+    elseif(architecture STREQUAL "64-bit Intel"
+        OR architecture STREQUAL "Universal Binary (64-bit)")
       set(osx_architectures "x86_64")
       set(xcode_archs "$(ARCHS_STANDARD_64_BIT)")
     elseif(NOT architecture MATCHES "^(Use )?Default$")

@@ -2307,7 +2307,9 @@ inline void writeReprojucerCMakeLists(const Arguments& args,
                 return "Universal Binary (32/64-bit)";
 
               if (value == "64BitIntel")
-                return "64-bit Intel";
+                return jucerVersionAsTuple < Version{6, 0, 2}
+                         ? "64-bit Intel"
+                         : "Universal Binary (64-bit)";
 
               return {};
             });
