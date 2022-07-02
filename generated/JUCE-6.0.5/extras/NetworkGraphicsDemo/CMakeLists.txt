@@ -175,12 +175,12 @@ jucer_project_module(
 )
 
 jucer_export_target(
-  "Xcode (MacOSX)"
+  "Xcode (macOS)"
   ICON_LARGE "Source/juce_icon.png"
 )
 
 jucer_export_target_configuration(
-  "Xcode (MacOSX)"
+  "Xcode (macOS)"
   NAME "Debug"
   DEBUG_MODE ON
   BINARY_NAME "JUCE Network Graphics Demo"
@@ -188,7 +188,7 @@ jucer_export_target_configuration(
 )
 
 jucer_export_target_configuration(
-  "Xcode (MacOSX)"
+  "Xcode (macOS)"
   NAME "Release"
   DEBUG_MODE OFF
   BINARY_NAME "JUCE Network Graphics Demo"

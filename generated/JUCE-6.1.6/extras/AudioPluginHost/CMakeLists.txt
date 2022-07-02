@@ -203,7 +203,7 @@ jucer_project_module(
 )
 
 jucer_export_target(
-  "Xcode (MacOSX)"
+  "Xcode (macOS)"
   # VST3_SDK_FOLDER
   ICON_SMALL "Source/JUCEAppIcon.png"
   ICON_LARGE "Source/JUCEAppIcon.png"
@@ -215,7 +215,7 @@ jucer_export_target(
 )
 
 jucer_export_target_configuration(
-  "Xcode (MacOSX)"
+  "Xcode (macOS)"
   NAME "Debug"
   DEBUG_MODE ON
   BINARY_NAME "AudioPluginHost"
@@ -223,7 +223,7 @@ jucer_export_target_configuration(
 )
 
 jucer_export_target_configuration(
-  "Xcode (MacOSX)"
+  "Xcode (macOS)"
   NAME "Release"
   DEBUG_MODE OFF
   BINARY_NAME "AudioPluginHost"

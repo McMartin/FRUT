@@ -63,18 +63,18 @@ jucer_project_module(
 )
 
 jucer_export_target(
-  "Xcode (MacOSX)"
+  "Xcode (macOS)"
 )
 
 jucer_export_target_configuration(
-  "Xcode (MacOSX)"
+  "Xcode (macOS)"
   NAME "Debug"
   DEBUG_MODE ON
   BINARY_NAME "BinaryBuilder"
 )
 
 jucer_export_target_configuration(
-  "Xcode (MacOSX)"
+  "Xcode (macOS)"
   NAME "Release"
   DEBUG_MODE OFF
   BINARY_NAME "BinaryBuilder"

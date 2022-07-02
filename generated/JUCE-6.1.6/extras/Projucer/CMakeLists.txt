@@ -489,7 +489,7 @@ jucer_project_module(
 )
 
 jucer_export_target(
-  "Xcode (MacOSX)"
+  "Xcode (macOS)"
   ICON_SMALL "Source/BinaryData/Icons/juce_icon.png"
   ICON_LARGE "Source/BinaryData/Icons/juce_icon.png"
   DOCUMENT_FILE_EXTENSIONS
@@ -512,7 +512,7 @@ jucer_export_target(
 )
 
 jucer_export_target_configuration(
-  "Xcode (MacOSX)"
+  "Xcode (macOS)"
   NAME "Debug"
   DEBUG_MODE ON
   BINARY_NAME "Projucer"
@@ -521,7 +521,7 @@ jucer_export_target_configuration(
 )
 
 jucer_export_target_configuration(
-  "Xcode (MacOSX)"
+  "Xcode (macOS)"
   NAME "Release"
   DEBUG_MODE OFF
   BINARY_NAME "Projucer"

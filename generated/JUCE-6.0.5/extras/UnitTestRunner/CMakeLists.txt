@@ -199,11 +199,11 @@ jucer_project_module(
 )
 
 jucer_export_target(
-  "Xcode (MacOSX)"
+  "Xcode (macOS)"
 )
 
 jucer_export_target_configuration(
-  "Xcode (MacOSX)"
+  "Xcode (macOS)"
   NAME "Debug"
   DEBUG_MODE ON
   BINARY_NAME "UnitTestRunner"
@@ -212,7 +212,7 @@ jucer_export_target_configuration(
 )
 
 jucer_export_target_configuration(
-  "Xcode (MacOSX)"
+  "Xcode (macOS)"
   NAME "Release"
   DEBUG_MODE OFF
   BINARY_NAME "UnitTestRunner"
