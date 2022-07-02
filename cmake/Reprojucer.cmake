@@ -5662,10 +5662,17 @@ function(_FRUT_set_compiler_and_linker_settings_APPLE target)
         "${osx_deployment_target}"
       )
 
-      if(DEFINED JUCER_OSX_BASE_SDK_VERSION_${config})
+      unset(sdkroot)
+      if(DEFINED JUCER_VERSION AND JUCER_VERSION VERSION_LESS 5.4.6)
+        if(DEFINED JUCER_OSX_BASE_SDK_VERSION_${config})
+          set(sdkroot "macosx${JUCER_OSX_BASE_SDK_VERSION_${config}}")
+        endif()
+      else()
+        set(sdkroot "macosx${JUCER_OSX_BASE_SDK_VERSION_${config}}")
+      endif()
+      if(DEFINED sdkroot)
         set_target_properties(${target} PROPERTIES
-          XCODE_ATTRIBUTE_SDKROOT[variant=${config}]
-          "macosx${JUCER_OSX_BASE_SDK_VERSION_${config}}"
+          XCODE_ATTRIBUTE_SDKROOT[variant=${config}] "${sdkroot}"
         )
       endif()
     endforeach()
