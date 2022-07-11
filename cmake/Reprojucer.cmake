@@ -5777,8 +5777,15 @@ function(_FRUT_set_compiler_and_linker_settings_APPLE target)
 
   if(NOT IOS AND NOT (DEFINED JUCER_VERSION AND JUCER_VERSION VERSION_LESS 6.0.2))
     unset(valid_archs)
+    set(excluded_archs "")
     if(DEFINED JUCER_VALID_ARCHITECTURES AND NOT JUCER_VALID_ARCHITECTURES STREQUAL "")
       string(REPLACE ";" " " valid_archs "${JUCER_VALID_ARCHITECTURES}")
+      foreach(arch "i386" "x86_64" "arm64" "arm64e")
+        if(NOT arch IN_LIST JUCER_VALID_ARCHITECTURES)
+          list(APPEND excluded_archs "${arch}")
+        endif()
+      endforeach()
+      string(REPLACE ";" " " excluded_archs "${excluded_archs}")
     elseif(NOT DEFINED JUCER_VALID_ARCHITECTURES)
       set(valid_archs "i386 x86_64 arm64 arm64e")
     endif()
@@ -5786,6 +5793,11 @@ function(_FRUT_set_compiler_and_linker_settings_APPLE target)
       set_target_properties(${target} PROPERTIES
         XCODE_ATTRIBUTE_VALID_ARCHS "${valid_archs}"
       )
+      if(NOT (DEFINED JUCER_VERSION AND JUCER_VERSION VERSION_LESS 6.1.3))
+        set_target_properties(${target} PROPERTIES
+          XCODE_ATTRIBUTE_EXCLUDED_ARCHS "${excluded_archs}"
+        )
+      endif()
     endif()
   endif()
 
