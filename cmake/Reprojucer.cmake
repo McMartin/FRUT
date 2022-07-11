@@ -5724,7 +5724,7 @@ function(_FRUT_set_compiler_and_linker_settings_APPLE target)
     target_compile_definitions(${target} PRIVATE "JUCE_PUSH_NOTIFICATIONS=1")
   endif()
 
-  if(target MATCHES "_AUv3_AppExtension$")
+  if(NOT IOS AND target MATCHES "_AUv3_AppExtension$")
     if(CMAKE_GENERATOR STREQUAL "Xcode")
       set_target_properties(${target} PROPERTIES
         XCODE_ATTRIBUTE_ARCHS "$(ARCHS_STANDARD_64_BIT)"
