@@ -810,6 +810,7 @@ function(jucer_export_target exporter)
       "VST3_SDK_FOLDER"
       "AAX_SDK_FOLDER"
       "RTAS_SDK_FOLDER"
+      "VALID_ARCHITECTURES"
       "USE_APP_SANDBOX"
       "APP_SANDBOX_INHERITANCE"
       "APP_SANDBOX_OPTIONS"
@@ -1106,6 +1107,15 @@ function(jucer_export_target exporter)
 
   if(DEFINED _DOCUMENT_FILE_EXTENSIONS)
     set(JUCER_DOCUMENT_FILE_EXTENSIONS "${_DOCUMENT_FILE_EXTENSIONS}" PARENT_SCOPE)
+  endif()
+
+  if(DEFINED _VALID_ARCHITECTURES)
+    if(NOT CMAKE_GENERATOR STREQUAL "Xcode")
+      message(WARNING "VALID_ARCHITECTURES is only supported when using the Xcode"
+        " generator. You can call `cmake -G Xcode` to do so."
+      )
+    endif()
+    set(JUCER_VALID_ARCHITECTURES "${_VALID_ARCHITECTURES}" PARENT_SCOPE)
   endif()
 
   if(DEFINED _USE_APP_SANDBOX)
@@ -5752,6 +5762,20 @@ function(_FRUT_set_compiler_and_linker_settings_APPLE target)
           )
         endif()
       endforeach()
+    endif()
+  endif()
+
+  if(NOT IOS AND NOT (DEFINED JUCER_VERSION AND JUCER_VERSION VERSION_LESS 6.0.2))
+    unset(valid_archs)
+    if(DEFINED JUCER_VALID_ARCHITECTURES AND NOT JUCER_VALID_ARCHITECTURES STREQUAL "")
+      string(REPLACE ";" " " valid_archs "${JUCER_VALID_ARCHITECTURES}")
+    elseif(NOT DEFINED JUCER_VALID_ARCHITECTURES)
+      set(valid_archs "i386 x86_64 arm64 arm64e")
+    endif()
+    if(DEFINED valid_archs)
+      set_target_properties(${target} PROPERTIES
+        XCODE_ATTRIBUTE_VALID_ARCHS "${valid_archs}"
+      )
     endif()
   endif()
 
