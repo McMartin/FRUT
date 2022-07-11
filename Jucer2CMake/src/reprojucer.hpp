@@ -1677,6 +1677,11 @@ inline void writeReprojucerCMakeLists(const Arguments& args,
             });
         }
 
+        convertSettingAsListIfDefined(exporter, "xcodeValidArchs", "VALID_ARCHITECTURES",
+                                      [](const juce::String& value) {
+                                        return juce::StringArray::fromTokens(value, ",",
+                                                                             {});
+                                      });
         convertOnOffSettingIfDefined(exporter, "appSandbox", "USE_APP_SANDBOX", {});
         convertOnOffSettingIfDefined(exporter, "appSandboxInheritance",
                                      "APP_SANDBOX_INHERITANCE", {});
