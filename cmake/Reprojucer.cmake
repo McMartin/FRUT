@@ -5737,6 +5737,10 @@ function(_FRUT_set_compiler_and_linker_settings_APPLE target)
           set_target_properties(${target} PROPERTIES
             XCODE_ATTRIBUTE_ARCHS[variant=${config}] "${JUCER_XCODE_ARCHS_${config}}"
           )
+        elseif(JUCER_CONFIGURATION_IS_DEBUG_${config})
+          set_target_properties(${target} PROPERTIES
+            XCODE_ATTRIBUTE_ONLY_ACTIVE_ARCH[variant=${config}] "YES"
+          )
         endif()
       endforeach()
     else()
