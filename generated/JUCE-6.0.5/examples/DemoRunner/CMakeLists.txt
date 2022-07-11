@@ -228,7 +228,7 @@ jucer_project_module(
 )
 
 jucer_export_target(
-  "Xcode (MacOSX)"
+  "Xcode (macOS)"
   ICON_SMALL "Source/JUCEAppIcon.png"
   ICON_LARGE "Source/JUCEAppIcon.png"
   CUSTOM_XCODE_RESOURCE_FOLDERS
@@ -243,14 +243,14 @@ jucer_export_target(
 )
 
 jucer_export_target_configuration(
-  "Xcode (MacOSX)"
+  "Xcode (macOS)"
   NAME "Debug"
   DEBUG_MODE ON
   ADD_RECOMMENDED_COMPILER_WARNING_FLAGS "Enabled"
 )
 
 jucer_export_target_configuration(
-  "Xcode (MacOSX)"
+  "Xcode (macOS)"
   NAME "Release"
   DEBUG_MODE OFF
   ADD_RECOMMENDED_COMPILER_WARNING_FLAGS "Enabled"

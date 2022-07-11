@@ -94,7 +94,7 @@ if(NOT MSVC_VERSION LESS 1920)
 endif()
 
 
-# "Xcode (MacOSX)", "Visual Studio 2019" and "Linux Makefile" exporters
+# "Xcode (macOS)", "Visual Studio 2019" and "Linux Makefile" exporters
 
 if((APPLE AND NOT IOS) OR MSVC_VERSION GREATER 1919
     OR CMAKE_HOST_SYSTEM_NAME STREQUAL "Linux")

@@ -199,25 +199,25 @@ jucer_project_module(
 )
 
 jucer_export_target(
-  "Xcode (MacOSX)"
+  "Xcode (macOS)"
 )
 
 jucer_export_target_configuration(
-  "Xcode (MacOSX)"
+  "Xcode (macOS)"
   NAME "Debug"
   DEBUG_MODE ON
   BINARY_NAME "UnitTestRunner"
   ADD_RECOMMENDED_COMPILER_WARNING_FLAGS "Enabled"
-  OSX_DEPLOYMENT_TARGET "10.10"
+  MACOS_DEPLOYMENT_TARGET "10.10"
 )
 
 jucer_export_target_configuration(
-  "Xcode (MacOSX)"
+  "Xcode (macOS)"
   NAME "Release"
   DEBUG_MODE OFF
   BINARY_NAME "UnitTestRunner"
   ADD_RECOMMENDED_COMPILER_WARNING_FLAGS "Enabled"
-  OSX_DEPLOYMENT_TARGET "10.10"
+  MACOS_DEPLOYMENT_TARGET "10.10"
 )
 
 jucer_export_target(

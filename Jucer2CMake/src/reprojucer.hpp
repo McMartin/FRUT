@@ -1330,7 +1330,8 @@ inline void writeReprojucerCMakeLists(const Arguments& args,
                         "VS2013",          "LINUX_MAKE",   "CODEBLOCKS_WINDOWS",
                         "CODEBLOCKS_LINUX"};
     const auto exporterNames = std::map<juce::String, const char*>{
-      {"XCODE_MAC", "Xcode (MacOSX)"},
+      {"XCODE_MAC",
+       jucerVersionAsTuple < Version{6, 0, 2} ? "Xcode (MacOSX)" : "Xcode (macOS)"},
       {"XCODE_IPHONE", "Xcode (iOS)"},
       {"VS2022", "Visual Studio 2022"},
       {"VS2019", "Visual Studio 2019"},
@@ -2255,59 +2256,117 @@ inline void writeReprojucerCMakeLists(const Arguments& args,
 
         if (exporterType == "XCODE_IPHONE")
         {
-          convertSettingIfDefined(configuration, "iosCompatibility",
-                                  "IOS_DEPLOYMENT_TARGET", {});
+          convertSettingIfDefined(configuration, "iosBaseSDK", "IOS_BASE_SDK", {});
+
+          if (configuration.hasAttribute("iosDeploymentTarget"))
+          {
+            convertSetting(configuration, "iosDeploymentTarget", "IOS_DEPLOYMENT_TARGET",
+                           {});
+          }
+          else
+          {
+            convertSettingIfDefined(configuration, "iosCompatibility",
+                                    "IOS_DEPLOYMENT_TARGET", {});
+          }
         }
 
         if (exporterType == "XCODE_MAC")
         {
           const auto sdks = juce::StringArray{
-            "10.5 SDK",  "10.6 SDK",  "10.7 SDK",  "10.8 SDK",  "10.9 SDK",  "10.10 SDK",
-            "10.11 SDK", "10.12 SDK", "10.13 SDK", "10.14 SDK", "10.15 SDK",
+            "10.5 SDK",  "10.6 SDK",  "10.7 SDK",  "10.8 SDK",  "10.9 SDK",
+            "10.10 SDK", "10.11 SDK", "10.12 SDK", "10.13 SDK", "10.14 SDK",
+            "10.15 SDK", "10.16 SDK", "11.0 SDK",  "11.1 SDK",
           };
 
-          convertSettingIfDefined(configuration, "osxSDK", "OSX_BASE_SDK_VERSION",
-                                  [&sdks](const juce::String& value) -> juce::String {
-                                    if (value == "default")
-                                      return "Use Default";
+          if (configuration.hasAttribute("macOSBaseSDK"))
+          {
+            convertSetting(configuration, "macOSBaseSDK", "MACOS_BASE_SDK", {});
+          }
+          else
+          {
+            convertSettingIfDefined(
+              configuration, "osxSDK",
+              jucerVersionAsTuple < Version{6, 0, 2} ? "OSX_BASE_SDK_VERSION"
+                                                     : "MACOS_BASE_SDK_VERSION",
+              [&jucerVersionAsTuple, &sdks](const juce::String& value) -> juce::String {
+                if (value == "default")
+                  return jucerVersionAsTuple < Version{5, 2, 1} ? "Use Default"
+                                                                : "Default";
 
-                                    if (sdks.contains(value))
-                                      return value;
+                if (sdks.contains(value))
+                  return value;
 
-                                    return {};
-                                  });
+                return {};
+              });
+          }
 
-          convertSettingIfDefined(configuration, "osxCompatibility",
-                                  "OSX_DEPLOYMENT_TARGET",
-                                  [&sdks](const juce::String& value) -> juce::String {
-                                    if (value == "default")
-                                      return "Use Default";
+          if (configuration.hasAttribute("macOSDeploymentTarget"))
+          {
+            convertSetting(configuration, "macOSDeploymentTarget",
+                           "MACOS_DEPLOYMENT_TARGET", {});
+          }
+          else
+          {
+            convertSettingIfDefined(
+              configuration, "osxCompatibility",
+              jucerVersionAsTuple < Version{6, 0, 2} ? "OSX_DEPLOYMENT_TARGET"
+                                                     : "MACOS_DEPLOYMENT_TARGET",
+              [&jucerVersionAsTuple, &sdks](const juce::String& value) -> juce::String {
+                if (value == "default")
+                  return jucerVersionAsTuple < Version{5, 2, 1} ? "Use Default"
+                                                                : "Default";
 
-                                    if (sdks.contains(value))
-                                      return value.substring(0, value.length() - 4);
+                if (sdks.contains(value))
+                  return value.substring(0, value.length() - 4);
 
-                                    return {};
-                                  });
+                return {};
+              });
+          }
 
-          convertSettingIfDefined(configuration, "osxArchitecture", "OSX_ARCHITECTURE",
-                                  [](const juce::String& value) -> juce::String {
-                                    if (value == "default")
-                                      return "Use Default";
+          if (jucerVersionAsTuple < Version{6, 0, 2})
+          {
+            convertSettingIfDefined(
+              configuration, "osxArchitecture", "OSX_ARCHITECTURE",
+              [&jucerVersionAsTuple](const juce::String& value) -> juce::String {
+                if (value == "default")
+                  return jucerVersionAsTuple < Version{5, 2, 1} ? "Use Default"
+                                                                : "Default";
 
-                                    if (value == "Native")
-                                      return "Native architecture of build machine";
+                if (value == "Native")
+                  return "Native architecture of build machine";
 
-                                    if (value == "32BitUniversal")
-                                      return "Universal Binary (32-bit)";
+                if (value == "32BitUniversal")
+                  return "Universal Binary (32-bit)";
 
-                                    if (value == "64BitUniversal")
-                                      return "Universal Binary (32/64-bit)";
+                if (value == "64BitUniversal")
+                  return "Universal Binary (32/64-bit)";
 
-                                    if (value == "64BitIntel")
-                                      return "64-bit Intel";
+                if (value == "64BitIntel")
+                  return "64-bit Intel";
 
-                                    return {};
-                                  });
+                return {};
+              });
+          }
+          else
+          {
+            convertSettingIfDefined(configuration, "osxArchitecture",
+                                    "MACOS_ARCHITECTURE",
+                                    [](const juce::String& value) -> juce::String {
+                                      if (value == "Native")
+                                        return "Native architecture of build machine";
+
+                                      if (value == "32BitUniversal")
+                                        return "Standard 32-bit";
+
+                                      if (value == "64BitUniversal")
+                                        return "Standard 32/64-bit";
+
+                                      if (value == "64BitIntel")
+                                        return "Standard 64-bit";
+
+                                      return {};
+                                    });
+          }
         }
 
         if (isXcodeExporter)
@@ -2358,19 +2417,20 @@ inline void writeReprojucerCMakeLists(const Arguments& args,
                                     return {};
                                   });
 
-          convertSettingIfDefined(configuration, "cppLibType", "CXX_LIBRARY",
-                                  [](const juce::String& value) -> juce::String {
-                                    if (value.isEmpty())
-                                      return "Use Default";
+          convertSettingIfDefined(
+            configuration, "cppLibType", "CXX_LIBRARY",
+            [&jucerVersionAsTuple](const juce::String& value) -> juce::String {
+              if (value.isEmpty())
+                return jucerVersionAsTuple < Version{5, 2, 1} ? "Use Default" : "Default";
 
-                                    if (value == "libc++")
-                                      return "LLVM libc++";
+              if (value == "libc++")
+                return "LLVM libc++";
 
-                                    if (value == "libstdc++")
-                                      return "GNU libstdc++";
+              if (value == "libstdc++")
+                return "GNU libstdc++";
 
-                                    return {};
-                                  });
+              return {};
+            });
 
           convertSettingIfDefined(configuration, "codeSigningIdentity",
                                   "CODE_SIGNING_IDENTITY", {});
@@ -2422,19 +2482,20 @@ inline void writeReprojucerCMakeLists(const Arguments& args,
           convertOnOffSettingIfDefined(configuration, "warningsAreErrors",
                                        "TREAT_WARNINGS_AS_ERRORS", {});
 
-          convertSettingIfDefined(configuration, "useRuntimeLibDLL", "RUNTIME_LIBRARY",
-                                  [](const juce::String& value) -> juce::String {
-                                    if (value.isEmpty())
-                                      return "(Default)";
+          convertSettingIfDefined(
+            configuration, "useRuntimeLibDLL", "RUNTIME_LIBRARY",
+            [&jucerVersionAsTuple](const juce::String& value) -> juce::String {
+              if (value.isEmpty())
+                return jucerVersionAsTuple < Version{5, 2, 1} ? "(Default)" : "Default";
 
-                                    if (value == "0")
-                                      return "Use static runtime";
+              if (value == "0")
+                return "Use static runtime";
 
-                                    if (value == "1")
-                                      return "Use DLL runtime";
+              if (value == "1")
+                return "Use DLL runtime";
 
-                                    return {};
-                                  });
+              return {};
+            });
 
           if (jucerVersionAsTuple < Version{5, 2, 0})
           {
