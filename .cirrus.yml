@@ -8,6 +8,6 @@ task:
 
   test_script:
     - clang-format -version
-    - 'git ls-files {Jucer2CMake/src,cmake/tools}/"*."{cpp,h}
+    - 'git ls-files {Jucer2CMake/src,cmake/tools}/"*."{cpp,h,hpp}
       | xargs -d\\n clang-format -i -style=file -verbose'
     - git diff --exit-code
