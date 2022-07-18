@@ -5364,11 +5364,6 @@ function(_FRUT_set_AppConfig_compile_definitions target)
   else()
     set(display_splash_screen 1)
   endif()
-  if(DEFINED JUCER_REPORT_JUCE_APP_USAGE AND NOT JUCER_REPORT_JUCE_APP_USAGE)
-    set(report_app_usage 0)
-  else()
-    set(report_app_usage 1)
-  endif()
   if(DEFINED JUCER_SPLASH_SCREEN_COLOUR
       AND NOT JUCER_SPLASH_SCREEN_COLOUR STREQUAL "Dark")
     set(use_dark_splash_screen 0)
@@ -5377,9 +5372,19 @@ function(_FRUT_set_AppConfig_compile_definitions target)
   endif()
   target_compile_definitions(${target} PRIVATE
     "JUCE_DISPLAY_SPLASH_SCREEN=${display_splash_screen}"
-    "JUCE_REPORT_APP_USAGE=${report_app_usage}"
     "JUCE_USE_DARK_SPLASH_SCREEN=${use_dark_splash_screen}"
   )
+
+  if(DEFINED JUCER_VERSION AND JUCER_VERSION VERSION_LESS 6.0.0)
+    if(DEFINED JUCER_REPORT_JUCE_APP_USAGE AND NOT JUCER_REPORT_JUCE_APP_USAGE)
+      set(report_app_usage 0)
+    else()
+      set(report_app_usage 1)
+    endif()
+    target_compile_definitions(${target} PRIVATE
+      "JUCE_REPORT_APP_USAGE=${report_app_usage}"
+    )
+  endif()
 
   foreach(module_name IN LISTS JUCER_PROJECT_MODULES)
     target_compile_definitions(${target} PRIVATE "JUCE_MODULE_AVAILABLE_${module_name}=1")

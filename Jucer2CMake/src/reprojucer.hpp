@@ -656,7 +656,7 @@ inline void writeReprojucerCMakeLists(const Arguments& args,
     const auto tagLine = juce::String{" # Required for closed source applications"
                                       " without an Indie or Pro JUCE license"};
 
-    if (jucerVersionAsTuple >= Version{5, 0, 0})
+    if (jucerVersionAsTuple >= Version{5, 0, 0} && jucerVersionAsTuple < Version{6, 0, 0})
     {
       if (jucerProject.hasAttribute("reportAppUsage"))
       {
@@ -669,7 +669,10 @@ inline void writeReprojucerCMakeLists(const Arguments& args,
       {
         writeUnquoted("REPORT_JUCE_APP_USAGE", kDefaultLicenseBasedValue + tagLine);
       }
+    }
 
+    if (jucerVersionAsTuple >= Version{5, 0, 0})
+    {
       if (jucerProject.hasAttribute("displaySplashScreen"))
       {
         convertOnOffSetting(jucerProject, "displaySplashScreen",
