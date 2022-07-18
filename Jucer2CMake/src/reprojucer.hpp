@@ -653,11 +653,11 @@ inline void writeReprojucerCMakeLists(const Arguments& args,
     convertOnOffSettingIfDefined(jucerProject, "addUsingNamespaceToJuceHeader",
                                  "ADD_USING_NAMESPACE_JUCE_TO_JUCE_HEADER", {});
 
+    const auto tagLine = juce::String{" # Required for closed source applications"
+                                      " without an Indie or Pro JUCE license"};
+
     if (jucerVersionAsTuple >= Version{5, 0, 0})
     {
-      const auto tagLine = juce::String{" # Required for closed source applications"
-                                        " without an Indie or Pro JUCE license"};
-
       if (jucerProject.hasAttribute("reportAppUsage"))
       {
         convertOnOffSetting(jucerProject, "reportAppUsage", "REPORT_JUCE_APP_USAGE",
