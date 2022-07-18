@@ -372,6 +372,10 @@ contributors:
       <a href="https://github.com/McMartin/FRUT/issues?q=is%3Aissue+author%3ASuganthanBC" title="Bug reports">🐛</a>
     </td>
     <td>
+      <a href="https://github.com/Riuzakiii"><img src="https://github.com/Riuzakiii.png" width="100"><br />Thiébaud Fuchs</a>
+      <br />
+      <a href="https://github.com/McMartin/FRUT/issues?q=is%3Aissue+author%3ARiuzakiii" title="Bug reports">🐛</a>
+      <a href="https://github.com/McMartin/FRUT/pulls?q=state%3Amerged+author%3ARiuzakiii" title="Code">💻</a>
     </td>
   </tr>
   </tbody>
