@@ -1,4 +1,4 @@
-# Copyright (C) 2017-2021  Alain Martin
+# Copyright (C) 2017-2022  Alain Martin
 # Copyright (C) 2019  David Holland
 #
 # This file is part of FRUT.
@@ -62,6 +62,10 @@ if(APPLE)
 
   target_link_libraries(tools_juce_gui_basics PUBLIC
     ${Cocoa_framework} ${IOKit_framework} ${QuartzCore_framework}
+  )
+  target_link_libraries(tools_juce_gui_basics PUBLIC
+    "-weak_framework Metal"
+    "-weak_framework MetalKit"
   )
 endif()
 
