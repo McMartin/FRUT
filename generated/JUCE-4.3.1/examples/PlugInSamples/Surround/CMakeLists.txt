@@ -255,6 +255,7 @@ jucer_export_target_configuration(
 
 jucer_export_target(
   "Linux Makefile"
+  TARGET_PROJECT_FOLDER "Builds/LinuxMakefile" # used by EXTRA_LIBRARY_SEARCH_PATHS
   # EXTRA_PREPROCESSOR_DEFINITIONS
   EXTRA_COMPILER_FLAGS
     "-Wall"

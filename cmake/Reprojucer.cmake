@@ -1,6 +1,7 @@
 # Copyright (C) 2016-2022  Alain Martin
 # Copyright (C) 2017 Matthieu Talbot
 # Copyright (C) 2018-2019 Scott Wheeler
+# Copyright (C) 2022  Thiébaud Fuchs
 #
 # This file is part of FRUT.
 #
@@ -1694,13 +1695,9 @@ function(jucer_export_target_configuration
   endif()
 
   if(DEFINED _EXTRA_LIBRARY_SEARCH_PATHS)
-    set(library_search_paths "")
-    foreach(path IN LISTS _EXTRA_LIBRARY_SEARCH_PATHS)
-      file(TO_CMAKE_PATH "${path}" path)
-      _FRUT_abs_path_based_on_jucer_project_dir(path "${path}")
-      list(APPEND library_search_paths "${path}")
-    endforeach()
-    set(JUCER_EXTRA_LIBRARY_SEARCH_PATHS_${config} "${library_search_paths}" PARENT_SCOPE)
+    set(JUCER_EXTRA_LIBRARY_SEARCH_PATHS_${config} "${_EXTRA_LIBRARY_SEARCH_PATHS}"
+      PARENT_SCOPE
+    )
   endif()
 
   if(DEFINED _PREPROCESSOR_DEFINITIONS)
@@ -5549,6 +5546,8 @@ function(_FRUT_set_compiler_and_linker_settings target target_type exporter)
 
   foreach(config IN LISTS JUCER_PROJECT_CONFIGURATIONS)
     foreach(path IN LISTS JUCER_EXTRA_LIBRARY_SEARCH_PATHS_${config})
+      file(TO_CMAKE_PATH "${path}" path)
+      _FRUT_abs_path_based_on_jucer_target_project_folder(path "${path}" "${exporter}")
       if(MSVC)
         target_link_libraries(${target} PRIVATE $<$<CONFIG:${config}>:-LIBPATH:${path}>)
       else()

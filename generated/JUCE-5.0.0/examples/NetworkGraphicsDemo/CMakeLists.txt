@@ -263,6 +263,7 @@ jucer_export_target_configuration(
 
 jucer_export_target(
   "Linux Makefile"
+  TARGET_PROJECT_FOLDER "Builds/LinuxMakefile" # used by EXTRA_LIBRARY_SEARCH_PATHS
   ICON_LARGE "Source/juce_icon.png"
 )
 

@@ -2,6 +2,7 @@
 // Copyright (C) 2017-2022  Alain Martin
 // Copyright (C) 2017  Florian Goltz
 // Copyright (C) 2019  Johannes Elliesen
+// Copyright (C) 2022  Thiébaud Fuchs
 //
 // This file is part of FRUT.
 //
@@ -157,6 +158,22 @@ inline juce::StringArray parsePreprocessorDefinitions(const juce::String& input)
   }
 
   return definitions;
+}
+
+
+inline juce::StringArray parseSearchPaths(const juce::String& input)
+{
+  juce::StringArray unquotedPaths;
+
+  for (const auto& path : juce::StringArray::fromTokens(input, ";\r\n", {}))
+  {
+    if (path.isNotEmpty())
+    {
+      unquotedPaths.add(path.unquoted());
+    }
+  }
+
+  return unquotedPaths;
 }
 
 
@@ -758,10 +775,8 @@ inline void writeReprojucerCMakeLists(const Arguments& args,
 
     convertSettingAsListIfDefined(jucerProject, "defines", "PREPROCESSOR_DEFINITIONS",
                                   parsePreprocessorDefinitions);
-    convertSettingAsListIfDefined(
-      jucerProject, "headerPath", "HEADER_SEARCH_PATHS", [](const juce::String& value) {
-        return juce::StringArray::fromTokens(value, ";\r\n", {});
-      });
+    convertSettingAsListIfDefined(jucerProject, "headerPath", "HEADER_SEARCH_PATHS",
+                                  parseSearchPaths);
 
     convertSettingIfDefined(jucerProject, "postExportShellCommandPosix",
                             "POST_EXPORT_SHELL_COMMAND_MACOS_LINUX", {});
@@ -1409,6 +1424,10 @@ inline void writeReprojucerCMakeLists(const Arguments& args,
         if (pConfiguration->hasAttribute("headerPath"))
         {
           needTargetFolder.add("HEADER_SEARCH_PATHS");
+        }
+        if (pConfiguration->hasAttribute("libraryPath"))
+        {
+          needTargetFolder.add("EXTRA_LIBRARY_SEARCH_PATHS");
         }
 
         if (isVSExporter)
@@ -2058,53 +2077,10 @@ inline void writeReprojucerCMakeLists(const Arguments& args,
         convertSettingIfDefined(configuration, "targetName", "BINARY_NAME", {});
         convertSettingIfDefined(configuration, "binaryPath", "BINARY_LOCATION", {});
 
-        const auto isAbsolutePath = [](const juce::String& path) {
-          return path.startsWithChar('/') || path.startsWithChar('~')
-                 || path.startsWithChar('$')
-                 || (juce::CharacterFunctions::isLetter(path[0]) && path[1] == ':');
-        };
-
-        const auto jucerFileDir = jucerFile.getParentDirectory();
-        const auto targetProjectDir =
-          jucerFileDir.getChildFile(exporter.getStringAttribute("targetFolder"));
-
-        const auto convertSearchPaths =
-          [&isAbsolutePath, &jucerFileDir,
-           &targetProjectDir](const juce::String& searchPaths) -> juce::StringArray {
-          if (searchPaths.isEmpty())
-          {
-            return {};
-          }
-
-          juce::StringArray absOrRelToJucerFileDirPaths;
-
-          for (const auto& path : juce::StringArray::fromTokens(searchPaths, ";\r\n", {}))
-          {
-            if (path.isEmpty())
-            {
-              continue;
-            }
-
-            const auto unquotedPath = path.unquoted();
-
-            if (isAbsolutePath(unquotedPath))
-            {
-              absOrRelToJucerFileDirPaths.add(unquotedPath);
-            }
-            else
-            {
-              absOrRelToJucerFileDirPaths.add(targetProjectDir.getChildFile(unquotedPath)
-                                                .getRelativePathFrom(jucerFileDir));
-            }
-          }
-
-          return absOrRelToJucerFileDirPaths;
-        };
-
         convertSettingAsListIfDefined(configuration, "headerPath", "HEADER_SEARCH_PATHS",
-                                      convertSearchPaths);
+                                      parseSearchPaths);
         convertSettingAsListIfDefined(configuration, "libraryPath",
-                                      "EXTRA_LIBRARY_SEARCH_PATHS", convertSearchPaths);
+                                      "EXTRA_LIBRARY_SEARCH_PATHS", parseSearchPaths);
 
         convertSettingAsListIfDefined(configuration, "defines",
                                       "PREPROCESSOR_DEFINITIONS",
