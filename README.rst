@@ -279,10 +279,10 @@ contributors:
   </tr>
   <tr>
     <td>
-      <a href="https://github.com/czyjerry"><img src="https://github.com/czyjerry.png" width="100"><br />Jerry Chan</a>
+      <a href="https://github.com/czy-29"><img src="https://github.com/czy-29.png" width="100"><br />Jerry Chan</a>
       <br />
-      <a href="https://github.com/McMartin/FRUT/issues?q=is%3Aissue+author%3Aczyjerry" title="Bug reports">🐛</a>
-      <a href="https://github.com/McMartin/FRUT/pulls?q=state%3Amerged+reviewed-by%3Aczyjerry+-author%3Aczyjerry+" title="Pull Request reviews">👀</a>
+      <a href="https://github.com/McMartin/FRUT/issues?q=is%3Aissue+author%3Aczy-29" title="Bug reports">🐛</a>
+      <a href="https://github.com/McMartin/FRUT/pulls?q=state%3Amerged+reviewed-by%3Aczy-29+-author%3Aczy-29+" title="Pull Request reviews">👀</a>
     </td>
     <td>
       <a href="https://github.com/franklange"><img src="https://github.com/franklange.png" width="100"><br />Frank Lange</a>
