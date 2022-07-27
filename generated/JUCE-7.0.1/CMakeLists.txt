@@ -25,27 +25,27 @@ endif()
 get_filename_component(JUCE_ROOT "${JUCE_ROOT}" ABSOLUTE BASE_DIR "${CMAKE_BINARY_DIR}")
 
 
-project(JUCE-7.0.0)
+project(JUCE-7.0.1)
 
 
 if(MSVC_VERSION LESS 1900)
-  message(WARNING "Skipping JUCE-7.0.0 because none of its sub-projects supports the "
+  message(WARNING "Skipping JUCE-7.0.1 because none of its sub-projects supports the "
     "\"Visual Studio 2013\" exporter"
   )
   return()
 elseif(MSVC_VERSION LESS 1910)
-  message(WARNING "Skipping JUCE-7.0.0 because none of its sub-projects supports the "
+  message(WARNING "Skipping JUCE-7.0.1 because none of its sub-projects supports the "
     "\"Visual Studio 2015\" exporter"
   )
   return()
 elseif(WIN32 AND NOT MSVC)
-  message(WARNING "Skipping JUCE-7.0.0 because none of its sub-projects supports the "
+  message(WARNING "Skipping JUCE-7.0.1 because none of its sub-projects supports the "
     "\"Code::Blocks (Windows)\" exporter"
   )
   return()
 elseif(CMAKE_HOST_SYSTEM_NAME STREQUAL Linux
     AND CMAKE_EXTRA_GENERATOR STREQUAL CodeBlocks)
-  message(WARNING "Skipping JUCE-7.0.0 because none of its sub-projects supports the "
+  message(WARNING "Skipping JUCE-7.0.1 because none of its sub-projects supports the "
     "\"Code::Blocks (Linux)\" exporter"
   )
   return()
