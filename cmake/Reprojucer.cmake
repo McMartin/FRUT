@@ -814,9 +814,11 @@ function(jucer_export_target exporter)
       "APP_SANDBOX_INHERITANCE"
       "APP_SANDBOX_OPTIONS"
       "USE_HARDENED_RUNTIME"
-      "HARDENED_RUNTIME_OPTIONS"
       "SEND_APPLE_EVENTS"
       "SEND_APPLE_EVENTS_TEXT"
+    )
+    list(APPEND multi_value_keywords
+      "HARDENED_RUNTIME_OPTIONS"
     )
 
     if(JUCER_PROJECT_TYPE STREQUAL "GUI Application")
