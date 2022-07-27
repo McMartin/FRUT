@@ -5739,6 +5739,12 @@ function(_FRUT_set_compiler_and_linker_settings_APPLE target)
           set_target_properties(${target} PROPERTIES
             XCODE_ATTRIBUTE_ARCHS[variant=${config}] "${JUCER_XCODE_ARCHS_${config}}"
           )
+        else()
+          if(NOT CMAKE_VERSION VERSION_LESS 3.18.1 AND NOT XCODE_VERSION VERSION_LESS 12)
+            set_target_properties(${target} PROPERTIES
+              XCODE_ATTRIBUTE_ARCHS[variant=${config}] "$(ARCHS_STANDARD)"
+            )
+          endif()
         endif()
       endforeach()
     else()
