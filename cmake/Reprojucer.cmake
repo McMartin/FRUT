@@ -812,12 +812,12 @@ function(jucer_export_target exporter)
       "RTAS_SDK_FOLDER"
       "USE_APP_SANDBOX"
       "APP_SANDBOX_INHERITANCE"
-      "APP_SANDBOX_OPTIONS"
       "USE_HARDENED_RUNTIME"
       "SEND_APPLE_EVENTS"
       "SEND_APPLE_EVENTS_TEXT"
     )
     list(APPEND multi_value_keywords
+      "APP_SANDBOX_OPTIONS"
       "HARDENED_RUNTIME_OPTIONS"
     )
 
