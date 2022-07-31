@@ -783,6 +783,7 @@ function(jucer_export_target exporter)
       "CUSTOM_PLIST"
       "PLIST_PREPROCESS"
       "PLIST_PREFIX_HEADER"
+      "SUPPRESS_AUDIOUNIT_PLIST_RESOURCE_USAGE_KEY"
       "PREBUILD_SHELL_SCRIPT"
       "POSTBUILD_SHELL_SCRIPT"
       "EXPORTER_BUNDLE_IDENTIFIER"
@@ -1381,6 +1382,12 @@ function(jucer_export_target exporter)
       )
     endif()
     set(JUCER_PLIST_PREFIX_HEADER "${prefix_header}" PARENT_SCOPE)
+  endif()
+
+  if(DEFINED _SUPPRESS_AUDIOUNIT_PLIST_RESOURCE_USAGE_KEY)
+    set(JUCER_SUPPRESS_AUDIOUNIT_PLIST_RESOURCE_USAGE_KEY
+      "${_SUPPRESS_AUDIOUNIT_PLIST_RESOURCE_USAGE_KEY}" PARENT_SCOPE
+    )
   endif()
 
   if(DEFINED _EXTRA_SYSTEM_FRAMEWORKS)
@@ -4625,7 +4632,8 @@ function(_FRUT_generate_plist_file
         <key>sandboxSafe</key>
         <true/>"
       )
-    elseif(NOT (DEFINED JUCER_VERSION AND JUCER_VERSION VERSION_LESS 5.4.0))
+    elseif(NOT (DEFINED JUCER_VERSION AND JUCER_VERSION VERSION_LESS 5.4.0)
+        AND NOT JUCER_SUPPRESS_AUDIOUNIT_PLIST_RESOURCE_USAGE_KEY)
       string(APPEND plist_entries "
         <key>resourceUsage</key>
         <dict>
