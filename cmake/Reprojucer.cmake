@@ -772,6 +772,7 @@ function(jucer_export_target exporter)
 
   if(exporter STREQUAL "Xcode (macOS)" OR exporter STREQUAL "Xcode (iOS)")
     list(APPEND single_value_keywords
+      "USE_LEGACY_BUILD_SYSTEM"
       "MICROPHONE_ACCESS"
       "MICROPHONE_ACCESS_TEXT"
       "CAMERA_ACCESS"
@@ -1110,6 +1111,14 @@ function(jucer_export_target exporter)
 
   if(DEFINED _DOCUMENT_FILE_EXTENSIONS)
     set(JUCER_DOCUMENT_FILE_EXTENSIONS "${_DOCUMENT_FILE_EXTENSIONS}" PARENT_SCOPE)
+  endif()
+
+  if(DEFINED _USE_LEGACY_BUILD_SYSTEM)
+    if(CMAKE_GENERATOR STREQUAL "Xcode")
+      _FRUT_warn_about_unsupported_setting(
+        "USE_LEGACY_BUILD_SYSTEM" "Use Legacy Build System" 738
+      )
+    endif()
   endif()
 
   if(DEFINED _VALID_ARCHITECTURES)

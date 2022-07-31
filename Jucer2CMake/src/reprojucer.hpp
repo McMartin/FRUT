@@ -1676,7 +1676,13 @@ inline void writeReprojucerCMakeLists(const Arguments& args,
               return juce::StringArray::fromTokens(value, ",", {});
             });
         }
+      }
 
+      convertOnOffSettingIfDefined(exporter, "useLegacyBuildSystem",
+                                   "USE_LEGACY_BUILD_SYSTEM", {});
+
+      if (exporterType == "XCODE_MAC")
+      {
         convertSettingAsListIfDefined(exporter, "xcodeValidArchs", "VALID_ARCHITECTURES",
                                       [](const juce::String& value) {
                                         return juce::StringArray::fromTokens(value, ",",
