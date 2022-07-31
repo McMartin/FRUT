@@ -860,6 +860,7 @@ function(jucer_export_target exporter)
       "MANIFEST_FILE"
       "PLATFORM_TOOLSET"
       "USE_IPP_LIBRARY"
+      "USE_IPP_LIBRARY_ONE_API"
       "WINDOWS_TARGET_PLATFORM"
     )
 
@@ -1513,6 +1514,12 @@ function(jucer_export_target exporter)
     elseif(NOT ipp_library STREQUAL "No")
       message(FATAL_ERROR "Unsupported value for USE_IPP_LIBRARY: \"${ipp_library}\"")
     endif()
+  endif()
+
+  if(DEFINED _USE_IPP_LIBRARY_ONE_API)
+    _FRUT_warn_about_unsupported_setting(
+      "USE_IPP_LIBRARY_ONE_API" "Use IPP Library (oneAPI)" 739
+    )
   endif()
 
   if(DEFINED _WINDOWS_TARGET_PLATFORM)

@@ -1976,6 +1976,23 @@ inline void writeReprojucerCMakeLists(const Arguments& args,
             return {};
           });
 
+        convertSettingIfDefined(exporter, "IPP1ALibrary", "USE_IPP_LIBRARY_ONE_API",
+                                [](const juce::String& value) -> juce::String {
+                                  if (value.isEmpty())
+                                    return "No";
+
+                                  if (value == "true")
+                                    return "Yes (Default Linking)";
+
+                                  if (value == "Static_Library")
+                                    return "Static Library";
+
+                                  if (value == "Dynamic_Library")
+                                    return "Dynamic Library";
+
+                                  return value;
+                                });
+
         convertSettingIfDefined(exporter, "windowsTargetPlatformVersion",
                                 "WINDOWS_TARGET_PLATFORM", {});
 
