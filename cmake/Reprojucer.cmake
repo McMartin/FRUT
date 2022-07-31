@@ -1617,6 +1617,8 @@ function(jucer_export_target_configuration
 
   if(exporter STREQUAL "Xcode (macOS)" OR exporter STREQUAL "Xcode (iOS)")
     list(APPEND single_value_keywords
+      "USE_PRECOMPILED_HEADER"
+      "PRECOMPILED_HEADER_FILE"
       "ENABLE_PLUGIN_COPY_STEP"
       "VST_BINARY_LOCATION"
       "VST3_BINARY_LOCATION"
@@ -1655,6 +1657,8 @@ function(jucer_export_target_configuration
 
   if(exporter MATCHES "^Visual Studio 20(22|1[9753])$")
     list(APPEND single_value_keywords
+      "USE_PRECOMPILED_HEADER"
+      "PRECOMPILED_HEADER_FILE"
       "ENABLE_PLUGIN_COPY_STEP"
       "VST_BINARY_LOCATION"
       "VST3_BINARY_LOCATION"
@@ -1788,6 +1792,16 @@ function(jucer_export_target_configuration
       endif()
     endif()
     set(JUCER_OPTIMISATION_FLAG_${config} "${optimisation_flag}" PARENT_SCOPE)
+  endif()
+
+  if(DEFINED _USE_PRECOMPILED_HEADER)
+    _FRUT_warn_about_unsupported_setting(
+      "USE_PRECOMPILED_HEADER" "Use Precompiled Header" 737
+    )
+  endif()
+
+  if(DEFINED _PRECOMPILED_HEADER_FILE)
+    # TODO with USE_PRECOMPILED_HEADER
   endif()
 
   if(DEFINED _ENABLE_PLUGIN_COPY_STEP)

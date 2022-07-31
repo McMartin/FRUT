@@ -2114,6 +2114,15 @@ inline void writeReprojucerCMakeLists(const Arguments& args,
                                        });
         }
 
+        if (isXcodeExporter || isVSExporter)
+        {
+          convertOnOffSettingIfDefined(configuration, "usePrecompiledHeaderFile",
+                                       "USE_PRECOMPILED_HEADER", {});
+
+          convertSettingIfDefined(configuration, "precompiledHeaderFile",
+                                  "PRECOMPILED_HEADER_FILE", {});
+        }
+
         if (isXcodeExporter)
         {
           convertSettingIfDefined(configuration, "recommendedWarnings",
