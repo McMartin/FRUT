@@ -6717,7 +6717,7 @@ function(_FRUT_warn_about_unsupported_setting setting projucer_setting issue_num
   message(WARNING "Reprojucer.cmake doesn't support the setting ${setting}"
     " (\"${projucer_setting}\" in Projucer). If you would like Reprojucer.cmake to"
     " support this setting, please write a new comment on the issue \"Reprojucer.cmake"
-    " doesn't support the setting ${setting}\" on GitHub:"
+    " doesn't support the setting `${setting}`\" on GitHub:"
     " https://github.com/McMartin/FRUT/issues/${issue_number}"
   )
 
