@@ -861,6 +861,7 @@ function(jucer_export_target exporter)
       "PLATFORM_TOOLSET"
       "USE_IPP_LIBRARY"
       "USE_IPP_LIBRARY_ONE_API"
+      "USE_MKL_LIBRARY_ONE_API"
       "WINDOWS_TARGET_PLATFORM"
     )
 
@@ -1519,6 +1520,12 @@ function(jucer_export_target exporter)
   if(DEFINED _USE_IPP_LIBRARY_ONE_API)
     _FRUT_warn_about_unsupported_setting(
       "USE_IPP_LIBRARY_ONE_API" "Use IPP Library (oneAPI)" 739
+    )
+  endif()
+
+  if(DEFINED _USE_MKL_LIBRARY_ONE_API)
+    _FRUT_warn_about_unsupported_setting(
+      "USE_MKL_LIBRARY_ONE_API" "Use MKL Library (oneAPI)" 740
     )
   endif()
 

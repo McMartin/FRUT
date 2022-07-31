@@ -1993,6 +1993,11 @@ inline void writeReprojucerCMakeLists(const Arguments& args,
                                   return value;
                                 });
 
+        convertSettingIfDefined(exporter, "MKL1ALibrary", "USE_MKL_LIBRARY_ONE_API",
+                                [](const juce::String& value) -> juce::String {
+                                  return value.isEmpty() ? "No" : value;
+                                });
+
         convertSettingIfDefined(exporter, "windowsTargetPlatformVersion",
                                 "WINDOWS_TARGET_PLATFORM", {});
 
