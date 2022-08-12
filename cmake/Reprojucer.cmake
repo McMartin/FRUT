@@ -812,11 +812,14 @@ function(jucer_export_target exporter)
       "RTAS_SDK_FOLDER"
       "USE_APP_SANDBOX"
       "APP_SANDBOX_INHERITANCE"
-      "APP_SANDBOX_OPTIONS"
       "USE_HARDENED_RUNTIME"
-      "HARDENED_RUNTIME_OPTIONS"
       "SEND_APPLE_EVENTS"
       "SEND_APPLE_EVENTS_TEXT"
+    )
+    list(APPEND multi_value_keywords
+      "VALID_ARCHITECTURES"
+      "APP_SANDBOX_OPTIONS"
+      "HARDENED_RUNTIME_OPTIONS"
     )
 
     if(JUCER_PROJECT_TYPE STREQUAL "GUI Application")
@@ -1106,6 +1109,15 @@ function(jucer_export_target exporter)
 
   if(DEFINED _DOCUMENT_FILE_EXTENSIONS)
     set(JUCER_DOCUMENT_FILE_EXTENSIONS "${_DOCUMENT_FILE_EXTENSIONS}" PARENT_SCOPE)
+  endif()
+
+  if(DEFINED _VALID_ARCHITECTURES)
+    if(NOT CMAKE_GENERATOR STREQUAL "Xcode")
+      message(WARNING "VALID_ARCHITECTURES is only supported when using the Xcode"
+        " generator. You can call `cmake -G Xcode` to do so."
+      )
+    endif()
+    set(JUCER_VALID_ARCHITECTURES "${_VALID_ARCHITECTURES}" PARENT_SCOPE)
   endif()
 
   if(DEFINED _USE_APP_SANDBOX)
@@ -5722,7 +5734,7 @@ function(_FRUT_set_compiler_and_linker_settings_APPLE target)
     target_compile_definitions(${target} PRIVATE "JUCE_PUSH_NOTIFICATIONS=1")
   endif()
 
-  if(target MATCHES "_AUv3_AppExtension$")
+  if(NOT IOS AND target MATCHES "_AUv3_AppExtension$")
     if(CMAKE_GENERATOR STREQUAL "Xcode")
       set_target_properties(${target} PROPERTIES
         XCODE_ATTRIBUTE_ARCHS "$(ARCHS_STANDARD_64_BIT)"
@@ -5737,6 +5749,18 @@ function(_FRUT_set_compiler_and_linker_settings_APPLE target)
           set_target_properties(${target} PROPERTIES
             XCODE_ATTRIBUTE_ARCHS[variant=${config}] "${JUCER_XCODE_ARCHS_${config}}"
           )
+        else()
+          if(NOT CMAKE_VERSION VERSION_LESS 3.18.1 AND NOT XCODE_VERSION VERSION_LESS 12)
+            set_target_properties(${target} PROPERTIES
+              XCODE_ATTRIBUTE_ARCHS[variant=${config}] "$(ARCHS_STANDARD)"
+            )
+          endif()
+
+          if(JUCER_CONFIGURATION_IS_DEBUG_${config})
+            set_target_properties(${target} PROPERTIES
+              XCODE_ATTRIBUTE_ONLY_ACTIVE_ARCH[variant=${config}] "YES"
+            )
+          endif()
         endif()
       endforeach()
     else()
@@ -5748,6 +5772,32 @@ function(_FRUT_set_compiler_and_linker_settings_APPLE target)
           )
         endif()
       endforeach()
+    endif()
+  endif()
+
+  if(NOT IOS AND NOT (DEFINED JUCER_VERSION AND JUCER_VERSION VERSION_LESS 6.0.2))
+    unset(valid_archs)
+    set(excluded_archs "")
+    if(DEFINED JUCER_VALID_ARCHITECTURES AND NOT JUCER_VALID_ARCHITECTURES STREQUAL "")
+      string(REPLACE ";" " " valid_archs "${JUCER_VALID_ARCHITECTURES}")
+      foreach(arch "i386" "x86_64" "arm64" "arm64e")
+        if(NOT arch IN_LIST JUCER_VALID_ARCHITECTURES)
+          list(APPEND excluded_archs "${arch}")
+        endif()
+      endforeach()
+      string(REPLACE ";" " " excluded_archs "${excluded_archs}")
+    elseif(NOT DEFINED JUCER_VALID_ARCHITECTURES)
+      set(valid_archs "i386 x86_64 arm64 arm64e")
+    endif()
+    if(DEFINED valid_archs)
+      set_target_properties(${target} PROPERTIES
+        XCODE_ATTRIBUTE_VALID_ARCHS "${valid_archs}"
+      )
+      if(NOT (DEFINED JUCER_VERSION AND JUCER_VERSION VERSION_LESS 6.1.3))
+        set_target_properties(${target} PROPERTIES
+          XCODE_ATTRIBUTE_EXCLUDED_ARCHS "${excluded_archs}"
+        )
+      endif()
     endif()
   endif()
 

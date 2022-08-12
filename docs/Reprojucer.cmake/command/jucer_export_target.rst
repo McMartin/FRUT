@@ -47,6 +47,7 @@ Define the settings specific to an export target.
     [ADD_DUPLICATE_RESOURCES_FOLDER_TO_APP_EXTENSION <ON|OFF>]  # [4]
 
     [DOCUMENT_FILE_EXTENSIONS <file_extension> [<file_extension> ...]]  # [6]
+    [VALID_ARCHITECTURES <architecture> [<architecture> ...]]  # [5]
     [USE_APP_SANDBOX <ON|OFF>]  # [5]
     [APP_SANDBOX_INHERITANCE <ON|OFF>]  # [5]
     [APP_SANDBOX_OPTIONS <app_sandbox_option> [<app_sandbox_option> ...]]  # [5]
