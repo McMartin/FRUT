@@ -1881,6 +1881,9 @@ inline void writeReprojucerCMakeLists(const Arguments& args,
         convertSettingIfDefined(exporter, "pListPrefixHeader", "PLIST_PREFIX_HEADER",
                                 convertPrefixHeader);
 
+        convertOnOffSettingIfDefined(exporter, "suppressPlistResourceUsage",
+                                     "SUPPRESS_AUDIOUNIT_PLIST_RESOURCE_USAGE_KEY", {});
+
         convertSettingAsListIfDefined(
           exporter, "extraFrameworks",
           jucerVersionAsTuple > Version{5, 3, 2} ? "EXTRA_SYSTEM_FRAMEWORKS"
