@@ -46,6 +46,13 @@ Define the settings specific to an export target.
     [CUSTOM_XCODE_RESOURCE_FOLDERS <xcode_resource_folder> [<xcode_resource_folder> ...]]  # [3]
     [ADD_DUPLICATE_RESOURCES_FOLDER_TO_APP_EXTENSION <ON|OFF>]  # [4]
 
+    [DEVICE_FAMILY <iPhone|iPad|Universal>]  # [7]
+    [IPHONE_SCREEN_ORIENTATION <screen_orientation> [<screen_orientation> ...]]  # [7]
+    [IPAD_SCREEN_ORIENTATION <screen_orientation> [<screen_orientation> ...]]  # [7]
+    [FILE_SHARING_ENABLED <ON|OFF>]  # [7]
+    [SUPPORT_DOCUMENT_BROWSER <ON|OFF>]  # [7]
+    [STATUS_BAR_HIDDEN <ON|OFF>]  # [7]
+
     [DOCUMENT_FILE_EXTENSIONS <file_extension> [<file_extension> ...]]  # [6]
     [VALID_ARCHITECTURES <architecture> [<architecture> ...]]  # [5]
     [USE_APP_SANDBOX <ON|OFF>]  # [5]
@@ -53,13 +60,6 @@ Define the settings specific to an export target.
     [APP_SANDBOX_OPTIONS <app_sandbox_option> [<app_sandbox_option> ...]]  # [5]
     [USE_HARDENED_RUNTIME <ON|OFF>]  # [5]
     [HARDENED_RUNTIME_OPTIONS <hardened_runtime_option> [<hardened_runtime_option> ...]]  # [5]
-
-    [DEVICE_FAMILY <iPhone|iPad|Universal>]  # [7]
-    [IPHONE_SCREEN_ORIENTATION <screen_orientation> [<screen_orientation> ...]]  # [7]
-    [IPAD_SCREEN_ORIENTATION <screen_orientation> [<screen_orientation> ...]]  # [7]
-    [FILE_SHARING_ENABLED <ON|OFF>]  # [7]
-    [SUPPORT_DOCUMENT_BROWSER <ON|OFF>]  # [7]
-    [STATUS_BAR_HIDDEN <ON|OFF>]  # [7]
 
     [MICROPHONE_ACCESS <ON|OFF>]  # [3]
     [MICROPHONE_ACCESS_TEXT <microphone_access_text>]  # [3]

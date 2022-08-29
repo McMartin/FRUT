@@ -772,6 +772,7 @@ function(jucer_export_target exporter)
 
   if(exporter STREQUAL "Xcode (macOS)" OR exporter STREQUAL "Xcode (iOS)")
     list(APPEND single_value_keywords
+      "USE_LEGACY_BUILD_SYSTEM"
       "MICROPHONE_ACCESS"
       "MICROPHONE_ACCESS_TEXT"
       "CAMERA_ACCESS"
@@ -859,6 +860,8 @@ function(jucer_export_target exporter)
       "MANIFEST_FILE"
       "PLATFORM_TOOLSET"
       "USE_IPP_LIBRARY"
+      "USE_IPP_LIBRARY_ONE_API"
+      "USE_MKL_LIBRARY_ONE_API"
       "WINDOWS_TARGET_PLATFORM"
     )
 
@@ -1110,6 +1113,14 @@ function(jucer_export_target exporter)
 
   if(DEFINED _DOCUMENT_FILE_EXTENSIONS)
     set(JUCER_DOCUMENT_FILE_EXTENSIONS "${_DOCUMENT_FILE_EXTENSIONS}" PARENT_SCOPE)
+  endif()
+
+  if(DEFINED _USE_LEGACY_BUILD_SYSTEM)
+    if(CMAKE_GENERATOR STREQUAL "Xcode")
+      _FRUT_warn_about_unsupported_setting(
+        "USE_LEGACY_BUILD_SYSTEM" "Use Legacy Build System" 738
+      )
+    endif()
   endif()
 
   if(DEFINED _VALID_ARCHITECTURES)
@@ -1506,6 +1517,18 @@ function(jucer_export_target exporter)
     endif()
   endif()
 
+  if(DEFINED _USE_IPP_LIBRARY_ONE_API)
+    _FRUT_warn_about_unsupported_setting(
+      "USE_IPP_LIBRARY_ONE_API" "Use IPP Library (oneAPI)" 739
+    )
+  endif()
+
+  if(DEFINED _USE_MKL_LIBRARY_ONE_API)
+    _FRUT_warn_about_unsupported_setting(
+      "USE_MKL_LIBRARY_ONE_API" "Use MKL Library (oneAPI)" 740
+    )
+  endif()
+
   if(DEFINED _WINDOWS_TARGET_PLATFORM)
     set(platform "${_WINDOWS_TARGET_PLATFORM}")
     if(NOT platform STREQUAL CMAKE_VS_WINDOWS_TARGET_PLATFORM_VERSION)
@@ -1617,6 +1640,8 @@ function(jucer_export_target_configuration
 
   if(exporter STREQUAL "Xcode (macOS)" OR exporter STREQUAL "Xcode (iOS)")
     list(APPEND single_value_keywords
+      "USE_PRECOMPILED_HEADER"
+      "PRECOMPILED_HEADER_FILE"
       "ENABLE_PLUGIN_COPY_STEP"
       "VST_BINARY_LOCATION"
       "VST3_BINARY_LOCATION"
@@ -1655,6 +1680,8 @@ function(jucer_export_target_configuration
 
   if(exporter MATCHES "^Visual Studio 20(22|1[9753])$")
     list(APPEND single_value_keywords
+      "USE_PRECOMPILED_HEADER"
+      "PRECOMPILED_HEADER_FILE"
       "ENABLE_PLUGIN_COPY_STEP"
       "VST_BINARY_LOCATION"
       "VST3_BINARY_LOCATION"
@@ -1788,6 +1815,16 @@ function(jucer_export_target_configuration
       endif()
     endif()
     set(JUCER_OPTIMISATION_FLAG_${config} "${optimisation_flag}" PARENT_SCOPE)
+  endif()
+
+  if(DEFINED _USE_PRECOMPILED_HEADER)
+    _FRUT_warn_about_unsupported_setting(
+      "USE_PRECOMPILED_HEADER" "Use Precompiled Header" 737
+    )
+  endif()
+
+  if(DEFINED _PRECOMPILED_HEADER_FILE)
+    # TODO with USE_PRECOMPILED_HEADER
   endif()
 
   if(DEFINED _ENABLE_PLUGIN_COPY_STEP)
@@ -6717,7 +6754,7 @@ function(_FRUT_warn_about_unsupported_setting setting projucer_setting issue_num
   message(WARNING "Reprojucer.cmake doesn't support the setting ${setting}"
     " (\"${projucer_setting}\" in Projucer). If you would like Reprojucer.cmake to"
     " support this setting, please write a new comment on the issue \"Reprojucer.cmake"
-    " doesn't support the setting ${setting}\" on GitHub:"
+    " doesn't support the setting `${setting}`\" on GitHub:"
     " https://github.com/McMartin/FRUT/issues/${issue_number}"
   )
 
