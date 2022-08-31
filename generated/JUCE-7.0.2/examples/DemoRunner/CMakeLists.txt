@@ -21,14 +21,14 @@ get_filename_component(DemoRunner_jucer_FILE
 
 jucer_project_begin(
   JUCER_FORMAT_VERSION "1"
-  JUCER_VERSION "7.0.1"
+  JUCER_VERSION "7.0.2"
   PROJECT_FILE "${DemoRunner_jucer_FILE}"
   PROJECT_ID "yj7xMM"
 )
 
 jucer_project_settings(
   PROJECT_NAME "DemoRunner"
-  PROJECT_VERSION "7.0.1"
+  PROJECT_VERSION "7.0.2"
   COMPANY_NAME "Raw Material Software Limited"
   COMPANY_COPYRIGHT "Copyright (c) 2020 - Raw Material Software Limited"
   COMPANY_WEBSITE "https://www.juce.com/"
