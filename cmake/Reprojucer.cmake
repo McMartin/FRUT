@@ -4408,11 +4408,18 @@ function(_FRUT_generate_plist_file
     <true/>"
     )
 
-    if(NOT target MATCHES "_AUv3_AppExtension$")
-      string(APPEND plist_entries "
+    if(DEFINED JUCER_VERSION AND JUCER_VERSION VERSION_LESS 6.0.8)
+      if(NOT target MATCHES "_AUv3_AppExtension$")
+        string(APPEND plist_entries "
     <key>UIViewControllerBasedStatusBarAppearance</key>
     <false/>"
-      )
+        )
+      endif()
+    else()
+      string(APPEND plist_entries "
+    <key>UIViewControllerBasedStatusBarAppearance</key>
+    <true/>"
+       )
     endif()
 
     if(

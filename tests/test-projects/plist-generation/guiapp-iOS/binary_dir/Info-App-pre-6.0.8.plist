@@ -6,7 +6,7 @@
     <key>LSRequiresIPhoneOS</key>
     <true/>
     <key>UIViewControllerBasedStatusBarAppearance</key>
-    <true/>
+    <false/>
     <key>UILaunchStoryboardName</key>
     <string>LaunchScreen</string>
     <key>CFBundleExecutable</key>
@@ -40,10 +40,6 @@
       <string>UIInterfaceOrientationLandscapeRight</string>
     </array>
     <key>UIBackgroundModes</key>
-    <array>
-      <string>audio</string>
-      <string>bluetooth-central</string>
-      <string>remote-notification</string>
-    </array>
+    <array/>
   </dict>
 </plist>

@@ -5,14 +5,12 @@
   <dict>
     <key>LSRequiresIPhoneOS</key>
     <true/>
-    <key>UIViewControllerBasedStatusBarAppearance</key>
-    <true/>
     <key>UILaunchStoryboardName</key>
     <string>LaunchScreen</string>
     <key>CFBundleExecutable</key>
     <string>${EXECUTABLE_NAME}</string>
     <key>CFBundleIdentifier</key>
-    <string>com.custom.exporterBundleIdentifier.exporterBundleIdentifierAUv3</string>
+    <string>com.yourcompany.CustomProjectName.CustomProjectNameAUv3</string>
     <key>CFBundleName</key>
     <string>Custom Project Name</string>
     <key>CFBundleDisplayName</key>

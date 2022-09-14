@@ -1,4 +1,4 @@
-# Copyright (C) 2019, 2021  Alain Martin
+# Copyright (C) 2019, 2021-2022  Alain Martin
 #
 # This file is part of FRUT.
 #
@@ -34,6 +34,11 @@ add_custom_target(target)
 
 function(test_app_plist_default)
   _FRUT_generate_plist_file(target "App-default" "APPL" "????")
+endfunction()
+
+function(test_app_plist_pre_6_0_8)
+  set(JUCER_VERSION "6.0.5")
+  _FRUT_generate_plist_file(target "App-pre-6.0.8" "APPL" "????")
 endfunction()
 
 function(test_app_plist_version)
@@ -167,6 +172,7 @@ test_app_plist_exporter_bundle_identifier()
 test_app_plist_file_sharing_enabled()
 test_app_plist_microphone_access_custom()
 test_app_plist_microphone_access_default()
+test_app_plist_pre_6_0_8()
 test_app_plist_push_notifications_capability()
 test_app_plist_screen_orientations_default()
 test_app_plist_screen_orientations_different()
