@@ -1664,6 +1664,8 @@ inline void writeReprojucerCMakeLists(const Arguments& args,
                                      "SUPPORT_DOCUMENT_BROWSER", {});
         convertOnOffSettingIfDefined(exporter, "UIStatusBarHidden", "STATUS_BAR_HIDDEN",
                                      {});
+        convertOnOffSettingIfDefined(exporter, "UIRequiresFullScreen",
+                                     "REQUIRES_FULL_SCREEN", {});
       }
 
       if (exporterType == "XCODE_MAC")
