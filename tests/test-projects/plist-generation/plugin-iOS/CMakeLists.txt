@@ -1,4 +1,4 @@
-# Copyright (C) 2019  Alain Martin
+# Copyright (C) 2019, 2022  Alain Martin
 #
 # This file is part of FRUT.
 #
@@ -42,6 +42,11 @@ function(test_AUv3_AppExtension_plist_default)
   _FRUT_generate_plist_file(target_AUv3_AppExtension "AUv3_AppExtension-default" "XPC!" "????")
 endfunction()
 
+function(test_AUv3_AppExtension_plist_pre_6_0_8)
+  set(JUCER_VERSION "6.0.5")
+  _FRUT_generate_plist_file(target_AUv3_AppExtension "AUv3_AppExtension-pre-6.0.8" "XPC!" "????")
+endfunction()
+
 function(test_AUv3_AppExtension_plist_Synth)
   set(JUCER_PLUGIN_IS_A_SYNTH ON)
   _FRUT_generate_plist_file(target_AUv3_AppExtension "AUv3_AppExtension-Synth" "XPC!" "????")
@@ -75,5 +80,6 @@ test_AUv3_AppExtension_plist_Synth()
 test_AUv3_AppExtension_plist_default()
 test_AUv3_AppExtension_plist_exporter_bundle_identifier()
 test_AUv3_AppExtension_plist_factoryFunction()
+test_AUv3_AppExtension_plist_pre_6_0_8()
 test_Standalone_Plugin_plist_IAA()
 test_Standalone_Plugin_plist_default()

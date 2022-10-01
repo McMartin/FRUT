@@ -837,6 +837,7 @@ function(jucer_export_target exporter)
       "FILE_SHARING_ENABLED"
       "SUPPORT_DOCUMENT_BROWSER"
       "STATUS_BAR_HIDDEN"
+      "REQUIRES_FULL_SCREEN"
       "CONTENT_SHARING"
       "AUDIO_BACKGROUND_CAPABILITY"
       "BLUETOOTH_MIDI_BACKGROUND_CAPABILITY"
@@ -1109,6 +1110,10 @@ function(jucer_export_target exporter)
 
   if(DEFINED _STATUS_BAR_HIDDEN)
     set(JUCER_STATUS_BAR_HIDDEN "${_STATUS_BAR_HIDDEN}" PARENT_SCOPE)
+  endif()
+
+  if(DEFINED _REQUIRES_FULL_SCREEN)
+    set(JUCER_REQUIRES_FULL_SCREEN "${_REQUIRES_FULL_SCREEN}" PARENT_SCOPE)
   endif()
 
   if(DEFINED _DOCUMENT_FILE_EXTENSIONS)
@@ -4408,11 +4413,18 @@ function(_FRUT_generate_plist_file
     <true/>"
     )
 
-    if(NOT target MATCHES "_AUv3_AppExtension$")
-      string(APPEND plist_entries "
+    if(DEFINED JUCER_VERSION AND JUCER_VERSION VERSION_LESS 6.0.8)
+      if(NOT target MATCHES "_AUv3_AppExtension$")
+        string(APPEND plist_entries "
     <key>UIViewControllerBasedStatusBarAppearance</key>
     <false/>"
-      )
+        )
+      endif()
+    else()
+      string(APPEND plist_entries "
+    <key>UIViewControllerBasedStatusBarAppearance</key>
+    <true/>"
+       )
     endif()
 
     if(
@@ -4540,7 +4552,8 @@ function(_FRUT_generate_plist_file
     )
   endif()
 
-  if(JUCER_STATUS_BAR_HIDDEN AND NOT target MATCHES "_AUv3_AppExtension$")
+  if(DEFINED JUCER_VERSION AND JUCER_VERSION VERSION_LESS 6.0.8
+      AND JUCER_STATUS_BAR_HIDDEN AND NOT target MATCHES "_AUv3_AppExtension$")
     string(APPEND plist_entries "
     <key>UIStatusBarHidden</key>
     <true/>"
@@ -4548,15 +4561,35 @@ function(_FRUT_generate_plist_file
   endif()
 
   if(IOS AND NOT target MATCHES "_AUv3_AppExtension$")
-    string(APPEND plist_entries "
+    if(DEFINED JUCER_VERSION AND JUCER_VERSION VERSION_LESS 6.0.8)
+      string(APPEND plist_entries "
     <key>UIRequiresFullScreen</key>
     <true/>"
-    )
-    if(NOT JUCER_STATUS_BAR_HIDDEN)
-      string(APPEND plist_entries "
+      )
+      if(NOT JUCER_STATUS_BAR_HIDDEN)
+        string(APPEND plist_entries "
     <key>UIStatusBarHidden</key>
     <true/>"
-      )
+        )
+      endif()
+    else()
+      if(JUCER_STATUS_BAR_HIDDEN)
+        string(APPEND plist_entries "
+    <key>UIStatusBarHidden</key>
+    <true/>"
+        )
+      endif()
+      if(NOT DEFINED JUCER_REQUIRES_FULL_SCREEN OR JUCER_REQUIRES_FULL_SCREEN)
+        string(APPEND plist_entries "
+    <key>UIRequiresFullScreen</key>
+    <true/>"
+        )
+      else()
+        string(APPEND plist_entries "
+    <key>UIRequiresFullScreen</key>
+    <false/>"
+        )
+      endif()
     endif()
 
     set(default_screen_orientations

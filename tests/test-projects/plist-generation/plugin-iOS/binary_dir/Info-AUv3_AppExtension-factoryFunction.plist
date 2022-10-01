@@ -5,6 +5,8 @@
   <dict>
     <key>LSRequiresIPhoneOS</key>
     <true/>
+    <key>UIViewControllerBasedStatusBarAppearance</key>
+    <true/>
     <key>UILaunchStoryboardName</key>
     <string>LaunchScreen</string>
     <key>CFBundleExecutable</key>

@@ -52,6 +52,7 @@ Define the settings specific to an export target.
     [FILE_SHARING_ENABLED <ON|OFF>]  # [7]
     [SUPPORT_DOCUMENT_BROWSER <ON|OFF>]  # [7]
     [STATUS_BAR_HIDDEN <ON|OFF>]  # [7]
+    [REQUIRES_FULL_SCREEN <ON|OFF>]  # [7]
 
     [DOCUMENT_FILE_EXTENSIONS <file_extension> [<file_extension> ...]]  # [6]
     [VALID_ARCHITECTURES <architecture> [<architecture> ...]]  # [5]
