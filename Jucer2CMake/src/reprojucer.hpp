@@ -1273,7 +1273,7 @@ inline void writeReprojucerCMakeLists(const Arguments& args,
       {
         if (line.startsWith("/** Config: "))
         {
-          const auto moduleOption = line.substring(12);
+          const auto moduleOption = line.substring(12).trim();
           const auto& optionValue = modulesOptions.getStringAttribute(moduleOption);
 
           if (optionValue == "1" || optionValue == "enabled")
