@@ -767,6 +767,10 @@ inline void writeReprojucerCMakeLists(const Arguments& args,
                        return {};
                      });
     }
+    else if (jucerVersionAsTuple >= Version{7, 0, 3})
+    {
+      writeQuoted("CXX_LANGUAGE_STANDARD", "C++17");
+    }
     else if (jucerVersionAsTuple > Version{5, 2, 0})
     {
       writeQuoted("CXX_LANGUAGE_STANDARD", "C++14");
