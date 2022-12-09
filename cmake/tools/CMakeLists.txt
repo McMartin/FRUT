@@ -1,4 +1,4 @@
-# Copyright (C) 2020-2021  Alain Martin
+# Copyright (C) 2020-2022  Alain Martin
 #
 # This file is part of FRUT.
 #
@@ -60,12 +60,7 @@ endif()
 
 
 set(CMAKE_CXX_EXTENSIONS OFF)
-if(DEFINED CMAKE_VS_WINDOWS_TARGET_PLATFORM_VERSION
-    AND NOT CMAKE_VS_WINDOWS_TARGET_PLATFORM_VERSION VERSION_LESS 10.0.20348.0)
-  set(CMAKE_CXX_STANDARD 17)
-else()
-  set(CMAKE_CXX_STANDARD 14)
-endif()
+set(CMAKE_CXX_STANDARD 17)
 
 
 if(built_by_Reprojucer)
