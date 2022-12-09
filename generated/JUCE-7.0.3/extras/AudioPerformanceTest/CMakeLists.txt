@@ -21,7 +21,7 @@ get_filename_component(AudioPerformanceTest_jucer_FILE
 
 jucer_project_begin(
   JUCER_FORMAT_VERSION "1"
-  JUCER_VERSION "7.0.2"
+  JUCER_VERSION "7.0.3"
   PROJECT_FILE "${AudioPerformanceTest_jucer_FILE}"
   PROJECT_ID "AKfc5m"
 )
@@ -36,7 +36,7 @@ jucer_project_settings(
   DISPLAY_THE_JUCE_SPLASH_SCREEN OFF # Required for closed source applications without an Indie or Pro JUCE license
   PROJECT_TYPE "GUI Application"
   BUNDLE_IDENTIFIER "com.juce.AudioPerformanceTest"
-  CXX_LANGUAGE_STANDARD "C++14"
+  CXX_LANGUAGE_STANDARD "C++17"
 )
 
 jucer_project_files("AudioPerformanceTest/Source"

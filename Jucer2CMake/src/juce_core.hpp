@@ -1,4 +1,4 @@
-// Copyright (C) 2021  Alain Martin
+// Copyright (C) 2021-2022  Alain Martin
 //
 // This file is part of FRUT.
 //
@@ -32,6 +32,7 @@
   #if __has_warning("-Winconsistent-missing-destructor-override")
     #pragma clang diagnostic ignored "-Winconsistent-missing-destructor-override"
   #endif
+  #pragma clang diagnostic ignored "-Wmissing-variable-declarations"
   #pragma clang diagnostic ignored "-Wold-style-cast"
   #pragma clang diagnostic ignored "-Wsign-conversion"
   #pragma clang diagnostic ignored "-Wundef"
