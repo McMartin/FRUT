@@ -21,14 +21,14 @@ get_filename_component(Projucer_jucer_FILE
 
 jucer_project_begin(
   JUCER_FORMAT_VERSION "1"
-  JUCER_VERSION "7.0.2"
+  JUCER_VERSION "7.0.3"
   PROJECT_FILE "${Projucer_jucer_FILE}"
   PROJECT_ID "M70qfTRRk"
 )
 
 jucer_project_settings(
   PROJECT_NAME "Projucer"
-  PROJECT_VERSION "7.0.2"
+  PROJECT_VERSION "7.0.3"
   COMPANY_NAME "Raw Material Software Limited"
   COMPANY_COPYRIGHT "Raw Material Software Limited"
   USE_GLOBAL_APPCONFIG_HEADER OFF
@@ -37,7 +37,7 @@ jucer_project_settings(
   SPLASH_SCREEN_COLOUR "Dark"
   PROJECT_TYPE "GUI Application"
   BUNDLE_IDENTIFIER "com.juce.theprojucer"
-  CXX_LANGUAGE_STANDARD "C++14"
+  CXX_LANGUAGE_STANDARD "C++17"
 )
 
 jucer_project_files("Projucer/Application/StartPage"
@@ -520,7 +520,6 @@ jucer_export_target_configuration(
   DEBUG_MODE ON
   BINARY_NAME "Projucer"
   ADD_RECOMMENDED_COMPILER_WARNING_FLAGS "Enabled"
-  MACOS_DEPLOYMENT_TARGET "10.12"
   CXX_LIBRARY "LLVM libc++"
 )
 
@@ -531,7 +530,6 @@ jucer_export_target_configuration(
   BINARY_NAME "Projucer"
   LINK_TIME_OPTIMISATION OFF
   ADD_RECOMMENDED_COMPILER_WARNING_FLAGS "Enabled"
-  MACOS_DEPLOYMENT_TARGET "10.12"
   CXX_LIBRARY "LLVM libc++"
 )
 

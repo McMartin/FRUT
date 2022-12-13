@@ -1,4 +1,4 @@
-# Copyright (C) 2017-2020  Alain Martin
+# Copyright (C) 2017-2020, 2022  Alain Martin
 #
 # This file is part of FRUT.
 #
@@ -37,7 +37,10 @@ target_compile_definitions(tools_juce_core PUBLIC
 )
 
 if(APPLE)
-  target_compile_options(tools_juce_core PRIVATE -Wno-deprecated-declarations)
+  target_compile_options(tools_juce_core PRIVATE
+    -Wno-deprecated-declarations
+    -Wno-register
+  )
 
   find_library(Cocoa_framework "Cocoa")
   find_library(IOKit_framework "IOKit")

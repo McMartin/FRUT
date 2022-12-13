@@ -1,4 +1,4 @@
-# Copyright (C) 2020-2021  Alain Martin
+# Copyright (C) 2020-2022  Alain Martin
 #
 # This file is part of FRUT.
 #
@@ -41,12 +41,7 @@ endif()
 
 
 set(CMAKE_CXX_EXTENSIONS OFF)
-if(DEFINED CMAKE_VS_WINDOWS_TARGET_PLATFORM_VERSION
-    AND NOT CMAKE_VS_WINDOWS_TARGET_PLATFORM_VERSION VERSION_LESS 10.0.20348.0)
-  set(CMAKE_CXX_STANDARD 17)
-else()
-  set(CMAKE_CXX_STANDARD 14)
-endif()
+set(CMAKE_CXX_STANDARD 17)
 
 
 add_library(Jucer2CMake_JUCE STATIC "")
@@ -71,7 +66,10 @@ target_compile_definitions(Jucer2CMake_JUCE PUBLIC
 )
 
 if(APPLE)
-  target_compile_options(Jucer2CMake_JUCE PRIVATE -Wno-deprecated-declarations)
+  target_compile_options(Jucer2CMake_JUCE PRIVATE
+    -Wno-deprecated-declarations
+    -Wno-register
+  )
 
   find_library(Cocoa_framework "Cocoa")
   find_library(IOKit_framework "IOKit")
