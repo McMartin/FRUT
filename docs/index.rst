@@ -48,7 +48,7 @@ FRUT currently contains:
   - ``examples`` and ``extras`` projects from `JUCE 5.4.7`_ (in `generated/JUCE-5.4.7`_)
   - ``examples`` and ``extras`` projects from `JUCE 6.0.5`_ (in `generated/JUCE-6.0.5`_)
   - ``examples`` and ``extras`` projects from `JUCE 6.1.6`_ (in `generated/JUCE-6.1.6`_)
-  - ``examples`` and ``extras`` projects from `JUCE 7.0.3`_ (in `generated/JUCE-7.0.3`_)
+  - ``examples`` and ``extras`` projects from `JUCE 7.0.4`_ (in `generated/JUCE-7.0.4`_)
 
 
 User documentation
@@ -70,7 +70,7 @@ User documentation
 .. _JUCE 5.4.7: https://github.com/juce-framework/JUCE/tree/5.4.7
 .. _JUCE 6.0.5: https://github.com/juce-framework/JUCE/tree/6.0.5
 .. _JUCE 6.1.6: https://github.com/juce-framework/JUCE/tree/6.1.6
-.. _JUCE 7.0.3: https://github.com/juce-framework/JUCE/tree/7.0.3
+.. _JUCE 7.0.4: https://github.com/juce-framework/JUCE/tree/7.0.4
 .. _JUCE: https://github.com/juce-framework/JUCE
 .. _Projucer: https://juce.com/discover/projucer
 .. _generated/JUCE-4.2.0: https://github.com/McMartin/FRUT/tree/main/generated/JUCE-4.2.0
@@ -82,4 +82,4 @@ User documentation
 .. _generated/JUCE-5.4.7: https://github.com/McMartin/FRUT/tree/main/generated/JUCE-5.4.7
 .. _generated/JUCE-6.0.5: https://github.com/McMartin/FRUT/tree/main/generated/JUCE-6.0.5
 .. _generated/JUCE-6.1.6: https://github.com/McMartin/FRUT/tree/main/generated/JUCE-6.1.6
-.. _generated/JUCE-7.0.3: https://github.com/McMartin/FRUT/tree/main/generated/JUCE-7.0.3
+.. _generated/JUCE-7.0.4: https://github.com/McMartin/FRUT/tree/main/generated/JUCE-7.0.4
