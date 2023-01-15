@@ -380,6 +380,23 @@ contributors:
       <a href="https://github.com/McMartin/FRUT/pulls?q=state%3Amerged+author%3ARiuzakiii" title="Code">💻</a>
     </td>
   </tr>
+  <tr>
+    <td>
+      <a href="https://github.com/hsetlik"><img src="https://github.com/hsetlik.png" width="100"><br />Hayden Setlik</a>
+      <br />
+      <a href="https://github.com/McMartin/FRUT/issues?q=is%3Aissue+author%3Ahsetlik" title="Bug reports">🐛</a>
+    </td>
+    <td>
+    </td>
+    <td>
+    </td>
+    <td>
+    </td>
+    <td>
+    </td>
+    <td>
+    </td>
+  </tr>
   </tbody>
   </table>
 
