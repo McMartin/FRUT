@@ -306,6 +306,7 @@ contributors:
       <a href="https://github.com/dimitrisudell"><img src="https://github.com/dimitrisudell.png" width="100"><br />Dimitri Sudell</a>
       <br />
       <a href="https://github.com/McMartin/FRUT/issues?q=is%3Aissue+author%3Adimitrisudell" title="Bug reports">🐛</a>
+      <a href="https://github.com/McMartin/FRUT/pulls?q=state%3Amerged+reviewed-by%3Adimitrisudell+-author%3Adimitrisudell" title="Pull Request reviews">👀</a>
     </td>
     <td>
       <a href="https://github.com/danra"><img src="https://github.com/danra.png" width="100"><br />Dan Raviv</a>
