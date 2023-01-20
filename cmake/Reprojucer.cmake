@@ -1,4 +1,4 @@
-# Copyright (C) 2016-2022  Alain Martin
+# Copyright (C) 2016-2023  Alain Martin
 # Copyright (C) 2017 Matthieu Talbot
 # Copyright (C) 2018-2019 Scott Wheeler
 # Copyright (C) 2022  Thiébaud Fuchs
@@ -2769,6 +2769,14 @@ function(jucer_project_end)
       endforeach()
       if(DEFINED rez_inputs)
         _FRUT_add_Rez_command_to_AU_plugin(${au_target} ${rez_inputs})
+      endif()
+      if(NOT (DEFINED JUCER_VERSION AND JUCER_VERSION VERSION_LESS 7.0.3))
+        set(juce_audio_plugin_client_dir
+          "${JUCER_PROJECT_MODULE_juce_audio_plugin_client_PATH}/juce_audio_plugin_client"
+        )
+        target_include_directories(${au_target} PRIVATE
+          "${juce_audio_plugin_client_dir}/AU"
+        )
       endif()
 
       _FRUT_generate_plist_file(${au_target} "AU" "BNDL" "????")
