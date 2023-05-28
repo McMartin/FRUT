@@ -3,6 +3,7 @@
 // Copyright (C) 2017  Florian Goltz
 // Copyright (C) 2019  Johannes Elliesen
 // Copyright (C) 2022  Thiébaud Fuchs
+// Copyright (C) 2023  Adrian Ostrowski
 //
 // This file is part of FRUT.
 //
@@ -387,6 +388,18 @@ inline void writeReprojucerCMakeLists(const Arguments& args,
     }
   };
 
+  const auto writeBracket = [&wLn](const juce::String& cmakeKeyword,
+                                   const juce::String& value) {
+    if (value.isEmpty())
+    {
+      wLn("  # ", cmakeKeyword);
+    }
+    else
+    {
+      wLn("  ", cmakeKeyword, " [=[", value, "]=]");
+    }
+  };
+
   const auto writeQuoted = [&wLn](const juce::String& cmakeKeyword,
                                   const juce::String& value) {
     if (value.isEmpty())
@@ -499,6 +512,28 @@ inline void writeReprojucerCMakeLists(const Arguments& args,
                           [&defaultValue](const juce::String&) { return defaultValue; });
     }
   };
+
+  const auto convertRawStringSetting =
+    [&writeBracket](const juce::XmlElement& element, const juce::StringRef attributeName,
+                    const juce::String& cmakeKeyword,
+                    const std::function<juce::String(const juce::String&)>& converterFn) {
+      const auto value = converterFn
+                           ? converterFn(element.getStringAttribute(attributeName))
+                           : element.getStringAttribute(attributeName);
+
+      writeBracket(cmakeKeyword, value);
+    };
+
+  const auto convertRawStringSettingIfDefined =
+    [&convertRawStringSetting](
+      const juce::XmlElement& element, const juce::StringRef attributeName,
+      const juce::String& cmakeKeyword,
+      const std::function<juce::String(const juce::String&)>& converterFn) {
+      if (element.hasAttribute(attributeName))
+      {
+        convertRawStringSetting(element, attributeName, cmakeKeyword, converterFn);
+      }
+    };
 
   const auto convertSettingAsList =
     [&writeList](
@@ -785,10 +820,10 @@ inline void writeReprojucerCMakeLists(const Arguments& args,
     convertSettingAsListIfDefined(jucerProject, "headerPath", "HEADER_SEARCH_PATHS",
                                   parseSearchPaths);
 
-    convertSettingIfDefined(jucerProject, "postExportShellCommandPosix",
-                            "POST_EXPORT_SHELL_COMMAND_MACOS_LINUX", {});
-    convertSettingIfDefined(jucerProject, "postExportShellCommandWin",
-                            "POST_EXPORT_SHELL_COMMAND_WINDOWS", {});
+    convertRawStringSettingIfDefined(jucerProject, "postExportShellCommandPosix",
+                                     "POST_EXPORT_SHELL_COMMAND_MACOS_LINUX", {});
+    convertRawStringSettingIfDefined(jucerProject, "postExportShellCommandWin",
+                                     "POST_EXPORT_SHELL_COMMAND_WINDOWS", {});
 
     writeUserNotes(wLn, jucerProject);
 
@@ -1914,9 +1949,10 @@ inline void writeReprojucerCMakeLists(const Arguments& args,
                                       "EMBEDDED_FRAMEWORKS", {});
         convertSettingAsListIfDefined(exporter, "xcodeSubprojects", "XCODE_SUBPROJECTS",
                                       {});
-        convertSettingIfDefined(exporter, "prebuildCommand", "PREBUILD_SHELL_SCRIPT", {});
-        convertSettingIfDefined(exporter, "postbuildCommand", "POSTBUILD_SHELL_SCRIPT",
-                                {});
+        convertRawStringSettingIfDefined(exporter, "prebuildCommand",
+                                         "PREBUILD_SHELL_SCRIPT", {});
+        convertRawStringSettingIfDefined(exporter, "postbuildCommand",
+                                         "POSTBUILD_SHELL_SCRIPT", {});
         convertSettingIfDefined(exporter, "bundleIdentifier",
                                 "EXPORTER_BUNDLE_IDENTIFIER", {});
         convertSettingIfDefined(exporter, "iosDevelopmentTeamID", "DEVELOPMENT_TEAM_ID",
