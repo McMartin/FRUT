@@ -12,7 +12,7 @@ jobs:
   - job: iOS
     displayName: iOS / Xcode
     pool:
-      vmImage: macOS-10.15
+      vmImage: macOS-12
     steps:
       - template: ci/azure-pipelines/steps-iOS.yml
         parameters:
@@ -21,14 +21,18 @@ jobs:
   - job: Linux_CodeBlocks
     displayName: Linux / CodeBlocks - Unix Makefiles
     pool:
-      vmImage: ubuntu-18.04
+      vmImage: ubuntu-20.04
     variables:
       cmakeGenerator: "CodeBlocks - Unix Makefiles"
     steps:
       - script: >
-          sudo apt-get update && sudo apt-get install libcurl4-openssl-dev libxcursor-dev
-          libxinerama-dev libxrandr-dev
+          sudo apt update && sudo apt install libxcursor-dev libxinerama-dev libxrandr-dev
         displayName: Install apt packages
+      - script: >
+          sudo apt install gcc-8 g++-8
+          && sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-8 10
+          && sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-8 10
+        displayName: Install GCC 8 (old versions of JUCE don't build with GCC 9)
       - template: ci/azure-pipelines/steps-Makefiles.yml
         parameters:
           juceVersions: ${{ parameters.juceVersions }}
@@ -36,14 +40,20 @@ jobs:
   - job: Linux_Make
     displayName: Linux / Unix Makefiles
     pool:
-      vmImage: ubuntu-18.04
+      vmImage: ubuntu-20.04
     variables:
       cmakeGenerator: "Unix Makefiles"
     steps:
       - script: >
-          sudo apt-get update && sudo apt-get install libasound2-dev libcurl4-openssl-dev
-          libxcursor-dev libxinerama-dev libxrandr-dev webkit2gtk-4.0
+          sudo apt update && sudo apt install gcc-8 g++-8 libasound2-dev
+          libcurl4-openssl-dev libxcursor-dev libxinerama-dev libxrandr-dev
+          libwebkit2gtk-4.0-dev
         displayName: Install apt packages
+      - script: >
+          sudo apt install gcc-8 g++-8
+          && sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-8 10
+          && sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-8 10
+        displayName: Install GCC 8 (old versions of JUCE don't build with GCC 9)
       - template: ci/azure-pipelines/steps-Makefiles.yml
         parameters:
           juceVersions: ${{ parameters.juceVersions }}
@@ -51,7 +61,7 @@ jobs:
   - job: macOS_Make
     displayName: macOS / Unix Makefiles
     pool:
-      vmImage: macOS-10.15
+      vmImage: macOS-11
     variables:
       cmakeGenerator: "Unix Makefiles"
     steps:
@@ -62,7 +72,7 @@ jobs:
   - job: macOS_Xcode
     displayName: macOS / Xcode
     pool:
-      vmImage: macOS-10.15
+      vmImage: macOS-11
     steps:
       - template: ci/azure-pipelines/steps-Xcode.yml
         parameters:
