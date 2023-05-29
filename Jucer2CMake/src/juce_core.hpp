@@ -1,4 +1,4 @@
-// Copyright (C) 2021-2022  Alain Martin
+// Copyright (C) 2021-2023  Alain Martin
 //
 // This file is part of FRUT.
 //
@@ -35,6 +35,12 @@
   #pragma clang diagnostic ignored "-Wmissing-variable-declarations"
   #pragma clang diagnostic ignored "-Wold-style-cast"
   #pragma clang diagnostic ignored "-Wsign-conversion"
+  #if __has_warning("-Wsuggest-destructor-override")
+    #pragma clang diagnostic ignored "-Wsuggest-destructor-override"
+  #endif
+  #if __has_warning("-Wsuggest-override")
+    #pragma clang diagnostic ignored "-Wsuggest-override"
+  #endif
   #pragma clang diagnostic ignored "-Wundef"
   #if __has_warning("-Wundefined-func-template")
     #pragma clang diagnostic ignored "-Wundefined-func-template"
