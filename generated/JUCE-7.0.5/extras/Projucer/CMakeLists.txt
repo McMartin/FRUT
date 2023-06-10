@@ -21,14 +21,14 @@ get_filename_component(Projucer_jucer_FILE
 
 jucer_project_begin(
   JUCER_FORMAT_VERSION "1"
-  JUCER_VERSION "7.0.4"
+  JUCER_VERSION "7.0.5"
   PROJECT_FILE "${Projucer_jucer_FILE}"
   PROJECT_ID "M70qfTRRk"
 )
 
 jucer_project_settings(
   PROJECT_NAME "Projucer"
-  PROJECT_VERSION "7.0.4"
+  PROJECT_VERSION "7.0.5"
   COMPANY_NAME "Raw Material Software Limited"
   COMPANY_COPYRIGHT "Raw Material Software Limited"
   USE_GLOBAL_APPCONFIG_HEADER OFF
