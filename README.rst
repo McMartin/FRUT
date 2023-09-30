@@ -388,6 +388,9 @@ contributors:
       <a href="https://github.com/McMartin/FRUT/issues?q=is%3Aissue+author%3Ahsetlik" title="Bug reports">🐛</a>
     </td>
     <td>
+      <a href="https://github.com/aostrowski"><img src="https://github.com/aostrowski.png" width="100"><br />Adrian Ostrowski</a>
+      <br />
+      <a href="https://github.com/McMartin/FRUT/pulls?q=state%3Amerged+author%3Aaostrowski" title="Code">💻</a>
     </td>
     <td>
     </td>
