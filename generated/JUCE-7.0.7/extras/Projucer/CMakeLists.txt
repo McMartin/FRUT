@@ -21,14 +21,14 @@ get_filename_component(Projucer_jucer_FILE
 
 jucer_project_begin(
   JUCER_FORMAT_VERSION "1"
-  JUCER_VERSION "7.0.5"
+  JUCER_VERSION "7.0.7"
   PROJECT_FILE "${Projucer_jucer_FILE}"
   PROJECT_ID "M70qfTRRk"
 )
 
 jucer_project_settings(
   PROJECT_NAME "Projucer"
-  PROJECT_VERSION "7.0.5"
+  PROJECT_VERSION "7.0.7"
   COMPANY_NAME "Raw Material Software Limited"
   COMPANY_COPYRIGHT "Raw Material Software Limited"
   USE_GLOBAL_APPCONFIG_HEADER OFF
@@ -180,6 +180,8 @@ jucer_project_files("Projucer/BinaryData"
   .         .         x         "Source/BinaryData/colourscheme_dark.xml"
   .         .         x         "Source/BinaryData/colourscheme_light.xml"
   .         .         x         "../Build/CMake/juce_runtime_arch_detection.cpp"
+  .         .         x         "../Build/CMake/juce_LinuxSubprocessHelper.cpp"
+  .         .         x         "Source/BinaryData/juce_SimpleBinaryBuilder.cpp"
 )
 
 jucer_project_files("Projucer/CodeEditor"
