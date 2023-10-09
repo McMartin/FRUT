@@ -393,6 +393,9 @@ contributors:
       <a href="https://github.com/McMartin/FRUT/pulls?q=state%3Amerged+author%3Aaostrowski" title="Code">💻</a>
     </td>
     <td>
+      <a href="https://github.com/nperreau"><img src="https://github.com/nperreau.png" width="100"><br />Naïl Perreau</a>
+      <br />
+      <a href="https://github.com/McMartin/FRUT/issues?q=is%3Aissue+author%3Anperreau" title="Bug reports">🐛</a>
     </td>
     <td>
     </td>
