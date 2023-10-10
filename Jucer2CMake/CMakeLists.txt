@@ -1,4 +1,4 @@
-# Copyright (C) 2020-2022  Alain Martin
+# Copyright (C) 2020-2023  Alain Martin
 #
 # This file is part of FRUT.
 #
@@ -72,9 +72,13 @@ if(APPLE)
   )
 
   find_library(Cocoa_framework "Cocoa")
+  find_library(Foundation_framework "Foundation")
   find_library(IOKit_framework "IOKit")
+  find_library(Security_framework "Security")
 
-  target_link_libraries(Jucer2CMake_JUCE PUBLIC ${Cocoa_framework} ${IOKit_framework})
+  target_link_libraries(Jucer2CMake_JUCE PUBLIC
+    ${Cocoa_framework} ${Foundation_framework} ${IOKit_framework} ${Security_framework}
+  )
 endif()
 
 if(CMAKE_HOST_SYSTEM_NAME STREQUAL "Linux")
